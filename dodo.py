@@ -14,6 +14,22 @@ from doit.tools import title_with_actions
 home = expanduser("~")
 bml_tools_dir = environ.get("BML_TOOLS_DIRECTORY", join(home, "dev/bml"))
 
+def bml_include_dependencies(bml_path):
+    # bml files can include others, so spend time scanning every bml file
+    # for new include directives every time a bml file is saved
+    # doit api may have a way to provide only the changed files to the task?
+    with open(bml_path) as f:
+        include_deps = []
+        for line in f.readlines():
+            line = line.strip()
+            if line.startswith("#INCLUDE"):
+                include_directive_tokens = line.split()
+                if len(include_directive_tokens) > 1:
+                    included_file = include_directive_tokens[1].strip()
+                    include_deps.append(included_file)
+    include_deps_unique = list(set(include_deps))
+    return include_deps_unique
+
 def task_bml2html():
     """Create html file from bridge bidding markup language file."""
     bml2html_path = join(bml_tools_dir, "bml2html.py")
@@ -26,7 +42,7 @@ def task_bml2html():
         yield {
             'name': basename(bml_path),
             'actions': [f"python {bml2html_path} {bml_path}"],
-            'file_dep': [bml_path],  # stops unnecessary rebuilds
+            'file_dep': [bml_path] + bml_include_dependencies(bml_path),
             'targets': [html_output_path(bml_path)],
             'title': title_with_actions
         }
