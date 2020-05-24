@@ -1,0 +1,75 @@
+#+TITLE: Natural intermediate 2C Opening
+
+* 2!c Opener
+
+2!c = 11--15 hcp, 6+!c or reasonable 5+!c and 4 card major.
+
+- Some 5--4--2--2 hands will go to NT openings.
+- Better to pass some minimum 5--4--3--1 hands with poor clubs.
+
+
+2C--
+P = 0--8
+2D = forcing inquiry, 8+ HCP
+    2NT = no major, non-minimum, balanced
+        3C invitational, others GF
+        3D =  stop ask
+            3M = M + !d
+            3NT = both Majors
+            4C no stops
+        4C = force
+        3HS = natural, GF
+    3C = no major, minimum
+      3D =  stop ask (looking for 1 guard)
+        3HS = HS guard
+        3N = D guard
+    2HS = 4 card major, only 5 clubs
+        2S/3D =  natural GF
+        3D = stopper ask
+            3oM = stop other major
+            3M = stop diamonds
+            3N = both stops
+            4C = no stops
+        2NT = natural limited
+        3C = natural limited
+        3M raise = natural limit raise
+        3NT = to play
+        3S/4CD = Major agreed, Splinter
+        4M raise = to play
+    3D = 6!c--4!d, non-minimum
+    3HS = 6C--5M
+        4C = agrees clubs, GF
+        other suit = agrees Major, cue bid
+    3N = solid 6 card suit, balanced
+2HS = NF, 8--12 & 5+ suit
+    P = 2 trumps
+    3X = 1 trump or less escape
+        4th suit natural
+    3HS raise = 3+ trumps
+2NT = relay to 3C
+    3C relay
+        P = pre-empt
+        3D = invitational single suited hand
+        3H = GF !h + !d
+        3S = GF !s + !d
+        3N = GF !h + !s
+3C = (slight) Invite, ~9--10 HCP.
+    3DHS = stopper shows
+3DHS = natural GF, strong suit
+    4X = new suit cue bid, Hx or better support
+3H
+    3S = cue bid, Hx or better !h support
+    3N = no support
+    4C = good club suit
+3N = to play
+4C = obstructive
+4DHS = splinter, clubs agreed
+4N = Blackwood
+
+** Interference
+
+- Negative doubles to 3S with 8--10 or 11+ (stronger) no stopper, fit searching.
+- XX = penalty interest.
+- 2NT = 10--11 natural.
+- Cue bid = 12+ forcing.
+- Raise competitive.

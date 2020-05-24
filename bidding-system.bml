@@ -1,0 +1,12 @@
+#+TITLE: Two-Way Weak Strong Club
+#+DESCRIPTION: Weak Strong Club (Swedish style) with 4 card Majors. 14-16 NT. Multi 2D, 2H Both Majors, 2S Spades + minor
+
+// Comment: note pasting bml modules to nested positions in bidding tables seems
+// incomplete. Unindenting 2 extra to the left on the line following #PASTE
+// seems to make stuff line up again
+
+#INCLUDE opening-summary.bml
+#INCLUDE 2club-opening.bml
+#INCLUDE 2level-preempts.bml
+#INCLUDE high-openings.bml
+///
