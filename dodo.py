@@ -5,54 +5,126 @@
 # - All commands are relative to dodo.py (doit runs in the working dir of dodo.py
 #   even if ran from a different directory `doit -f path/to/dodo.py`)
 from glob import glob
+import json
 from os import environ
-from os.path import abspath, basename, dirname, expanduser, join, splitext
+from os.path import abspath, basename, dirname, exists, expanduser, join, splitext
 from shutil import copyfile
+from typing import Iterator, List, NewType, Optional
 
 from doit.tools import title_with_actions
 
-home = expanduser("~")
-bml_tools_dir = environ.get("BML_TOOLS_DIRECTORY", join(home, "dev/bml"))
+Path = NewType("Path", str)
 
-def bml_include_dependencies(bml_path):
+home = Path(expanduser("~"))
+bml_tools_dir = Path(environ.get("BML_TOOLS_DIRECTORY", join(home, "dev/bml")))
+bml_includes_cache_file = ".include-deps.json"
+
+
+def bml_include_dependencies(bml_path: Path) -> List[Path]:
     # bml files can include others, so spend time scanning every bml file
     # for new include directives every time a bml file is saved
-    # doit api may have a way to provide only the changed files to the task?
-    with open(bml_path) as f:
-        include_deps = []
-        for line in f.readlines():
+    def includes(file_handle) -> Iterator[Path]:
+        for line in file_handle.readlines():
             line = line.strip()
             if line.startswith("#INCLUDE"):
-                include_directive_tokens = line.split()
+                include_directive_tokens = line.split(maxsplit=1)
                 if len(include_directive_tokens) > 1:
+                    # We assume the file name is not quoted, just a free form path string
                     included_file = include_directive_tokens[1].strip()
-                    include_deps.append(included_file)
-    include_deps_unique = list(set(include_deps))
-    return include_deps_unique
+                    yield Path(included_file)
+
+    with open(bml_path) as f:
+        unique_deps = {include for include in includes(f) if include != bml_path}
+        return list(unique_deps)
+
+
+def read_bml_includes_cache(bml_path: Path) -> Optional[List[Path]]:
+    if not exists(bml_includes_cache_file):
+        return None
+
+    with open(bml_includes_cache_file) as f:
+        try:
+            existing_deps = json.load(f)
+        except Exception:
+            # Manually edited messed up json perhaps
+            return None
+
+        if bml_path in existing_deps:
+            return existing_deps[bml_path]
+        else:
+            return None  # Manually edited perhaps (assuming we got the task order correct)
+
+
+def update_bml_includes_cache(bml_path: Path, bml_deps: List[Path]):
+    existing_deps = {}
+    if exists(bml_includes_cache_file):
+        with open(bml_includes_cache_file) as f:
+            try:
+                existing_deps = json.load(f)
+            except Exception:
+                pass
+
+    existing_deps[bml_path] = bml_deps
+
+    with open(bml_includes_cache_file, "w") as f:
+        json.dump(existing_deps, f, indent=4)
+
+
+def task_bml_include_cache():
+    """Populate the bml include cache."""
+    input_bml_file_paths = glob("*.bml")
+
+    def calc_include_deps_and_cache(file_dep) -> None:
+        bml_path = Path(file_dep)
+        bml_deps = bml_include_dependencies(bml_path)
+        update_bml_includes_cache(bml_path, bml_deps)
+
+    for bml_path in input_bml_file_paths:
+        # We don't use a target as doit cannot deal with more than one input file affecting the same output file
+        # and we are using a single cache file instead of one cache file per input file.
+        # This does mean that we are using the order of the tasks in this file to have the include cache updated
+        # before the html task reads the include cache as part of determining changing file dependencies
+        # The html task itself cannot use the include cache file as a doit file_dep dependency as it is being updated
+        # by other unrelated bml file changes.
+        # Actually, using a different notion of an update (not just tracking file modifications) if another feature of
+        # doit that could be applied if interested enough.
+        yield {
+            'name': basename(bml_path),
+            'actions': [(calc_include_deps_and_cache, [bml_path])],
+            'file_dep': [bml_path],
+            'title': title_with_actions
+        }
+
 
 def task_bml2html():
     """Create html file from bridge bidding markup language file."""
-    bml2html_path = join(bml_tools_dir, "bml2html.py")
+    bml2html_path = Path(join(bml_tools_dir, "bml2html.py"))
     input_bml_file_paths = glob("*.bml")
 
-    def html_output_path(bml_path):
-        return splitext(bml_path)[0] + ".html"
+    def html_output_path(bml_path: Path) -> Path:
+        return Path(splitext(bml_path)[0] + ".html")
 
     for bml_path in input_bml_file_paths:
+        bml_deps = read_bml_includes_cache(bml_path)
+        if bml_deps is None:
+            bml_deps = bml_include_dependencies(bml_path)
+            update_bml_includes_cache(bml_path, bml_deps)
+
         yield {
             'name': basename(bml_path),
             'actions': [f"python {bml2html_path} {bml_path}"],
-            'file_dep': [bml_path] + bml_include_dependencies(bml_path),
+            'file_dep': [bml_path] + bml_deps,
             'targets': [html_output_path(bml_path)],
             'title': title_with_actions
         }
 
+
 def task_bmlcss():
     """Copy the bml CSS style sheet to this directory."""
     css_basename = "bml.css"
-    src_css_file = join(bml_tools_dir, css_basename)
+    src_css_file = Path(join(bml_tools_dir, css_basename))
 
-    def copy_file():
+    def copy_file() -> None:
         # OS neutral compared to running a shell command
         copyfile(src_css_file, css_basename)
 
