@@ -46,7 +46,7 @@ There's probably a number of reasonable approaches to this. The most convenient 
 `bridge-bidding-system` directory in [Visual Studio Code](https://code.visualstudio.com/), install the
 [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) extension for VSCode and open
 a generated html file with the live server (command `Live Server: Open with Live Server`). At that point any web
-browser can pointed to `http://127.0.0.1:5500/` and you will any viewed html file live reload as changes are made.
+browser can pointed to `http://127.0.0.1:5500/` and you will see any viewed html file live reload as changes are made.
 
 ## Comments on BML Tool Usage
 

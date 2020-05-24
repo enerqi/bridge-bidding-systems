@@ -7,6 +7,7 @@
 from glob import glob
 from os import environ
 from os.path import abspath, basename, dirname, expanduser, join, splitext
+from shutil import copyfile
 
 from doit.tools import title_with_actions
 
@@ -29,3 +30,19 @@ def task_bml2html():
             'targets': [html_output_path(bml_path)],
             'title': title_with_actions
         }
+
+def task_bmlcss():
+    """Copy the bml CSS style sheet to this directory."""
+    css_basename = "bml.css"
+    src_css_file = join(bml_tools_dir, css_basename)
+
+    def copy_file():
+        # OS neutral compared to running a shell command
+        copyfile(src_css_file, css_basename)
+
+    return {
+        'actions': [copy_file],
+        'file_dep': [src_css_file],
+        'targets': [css_basename],
+        'title': title_with_actions
+    }
