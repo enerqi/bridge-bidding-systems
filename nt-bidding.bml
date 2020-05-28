@@ -1,0 +1,158 @@
+#+TITLE: NT Bidding
+#+DESCRIPTION: Notrump openings, responses, defences, escapes etc.
+
+* NT Ranges
+
+1N = 14--16 hcp, possibly a 5 card major in 3rd.
+(1x)--P--(P)--1NT = 14--16 hcp, protective same
+(1x)--P--(P)--2NT = 19--21 hcp
+2N = 20--21 hcp, *with* a 5 card major or 6 card minor
+
+2D--2HS--2N = 20--21 hcp, no 5 card major or 6 card minor
+
+(1x)--1N  = 15-17
+(1x)--X then free NT bid = 18--20 hcp
+(1x)--X then free jump NT bid = 21+ hcp
+(2x)--2N = 16-18
+
+* NT Schemes
+
+Blanket approaches to bidding when natural 1NT and 2NT bids made by our side.
+
+- 1NT/2NT opened
+- 1NT/2NT overcall
+- 1C--1/2X--1N/2N rebid
+- 1C--(any)--1/2X--(any)--1N/2N rebid
+- 1C--1M--2C--2N
+- 1C--1M--2C--2D--2H--3C+
+- 1C--1M--2C--3N
+
+Do *not* use blanket NT scheme when:
+
+- NTs are *rebid* after natural suit opening
+
+#CUT minor_suit_enquiry_3s
+3S Minor suit enquiry (slam force if < 5--5 in !c!d)
+    3N	no 4card minor, passable
+		4C	5--5+, GF
+		4D	5--5+, Slam interest.
+			4NT	Discouraging
+		4NT	Quantitative
+	4m	4+ cards possible slam interest
+		4M	5--5+ cue bid
+		4NT	RKCB
+	4N	Both minors <4 KCs,
+		5m	Natural no slam interest
+	4HS	4+ of the 6KCs, agrees C/D w/ both minors.
+#ENDCUT
+
+1N--
+    2C  Stayman.
+        2D
+            3HS = 5--4 Majors invitational
+    2DHS
+        3CD = strong GF, slam interest probably
+        4C = Gerber
+        4NT = Natural limit raise
+    2DH  Transfer
+            Breaking = natural, to partner's suit with ok hand. Other suit is excitement.
+    2S  balanced invite or slam try
+        2NT = minimum.
+        3x = maximum 4+ card suit.
+    2NT/3C  transfer pre-empt or invite or slam try in !c or !d with 6+ card suit
+    3DH  transfer pre-empt or slam try in !h or !s with 6+ card suit
+        3HS = relay
+        4X = cue bid
+    #PASTE minor_suit_enquiry_3s \F=S
+4C  Gerber
+    4D  Nothing
+    4HS/5CD to play
+    4N quantitative small slam try
+    5N quantitative grand slam try
+
+2N--
+    3C   4 card Stayman
+    3DH	 Transfer
+    #PASTE minor_suit_enquiry_3s \F=S
+3N	 S/O
+    4C	 Gerber
+    4D	 not used
+    4HS  play
+    4N   Quantitative
+
+* NT Defence
+
+Competing over 1NT. More aggressive when opponents are NonVulnerable.
+
+- Whether with/without interference from opener/responder, new suits shows some SUPP. E.G. (1N)--2H--2S = double fit to some extent.
+- Raise mostly competitive, bid game w/ good max.
+- X is *penalty* against *non-strong NT*
+- X is *takeout* against *Strong NT*, some shape with *4--5 spades*, 12+ HCP
+- *4th* sitting under X is *always takeout* with *4--5 spades*, 12+ HCP
+- Note, X as T/O could also be played at Matchpoints, but need a strength bid for IMPs vs weak notrumps so don’t miss game
+
+(1N)--
+2C = playable in three suits including !c, (not !s when X=takeout)
+    2NT = bid again
+2D = both majors 4--4+
+	2NT = bid again
+2HS = natural
+    3HS = competitive raise, bid game with good max
+2N = minors takeout
+3CD = natural intermediate
+3HS = pre-empt
+3N = both majors, GF
+
+** When opponents run from 1N doubled
+
+- Lebensohl is on -- 2 bids are to play
+- X of a natural suit by doubler's partner is 2--3 trumps. Can pass with 4 trumps, or wait for re-opening double.
+- Doubler's partner maybe passing with penalty interest (after a future re-opening X) or weak hand that wants to escape
+  with both majors -- expecting a re-opening double.
+- Another double from the penalty doubler is re-opening.
+- Note, maybe better to play X of a Major by doubler's partner as takeout, but another memory strain.
+
+
+* NT Interference and Lebensohl
+
+Lebensohl is played in a number of blanket NT and other places where the idea is relevant.
+Most important is its use against weak twos and after we have made natural opening strength
+(or better) 1NT bids.
+
+1. 1NT--(Overcall)
+2. (1X)--1NT Overcall by us including Protective -- (bid over)
+3. (1NT)--X--(Escape/ XX/ P)
+4. (1NT)--X--(transfer) (also considered running from 1N)
+5. (Weak 2)--X.
+6. (2!c/2!d) Precision/ limited two bid then -- X
+7. (1X)--X--(2X).
+8. Weak Strong club interference defence.
+9. (2D)--P--(2HS)--X (pass or correct)
+10. 1NT--(X) when X is for *takeout*
+
+Classic Lebensohl:
+
+- Going via 2NT shows the *weaker* hand (instead of slow shows strong hand)
+- Cue bid asks for (denies) a stop and is GF
+- Direct cue bid used to show a 4card other major
+- Slow cue bid via 2NT denies a 4card other major
+- Slow 3N via 2NT denies a 4 card other major, and promises a stop
+- 3N direct denies a 4 card other major, and promises a stop
+- If a suit is available at the 2 level, then 2x is competitive, 2N--3x invitational, 3x GF
+
+* NT Escape
+
+Escaping from 1N penalty doubled. XX of a takeout double is natural!
+
+1N--(X)
+XX = relay to 2C
+    2C
+        P = clubs escape 5+ suite
+        2DH = natural 5+ suit
+        2S = same as direct 2S (or play as extra weak)
+    2C = !c + !s
+    2D = !d + !s
+    2H = !h + !s
+    2S = natural
+
+

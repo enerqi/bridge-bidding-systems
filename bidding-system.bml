@@ -6,7 +6,16 @@
 // seems to make stuff line up again
 
 #INCLUDE opening-summary.bml
+#INCLUDE 1c-opening.bml
+#INCLUDE uncontested-bidding.bml
+#INCLUDE nt-bidding.bml
+#INCLUDE competitive-bidding.bml
 #INCLUDE 2club-opening.bml
 #INCLUDE 2level-preempts.bml
 #INCLUDE high-openings.bml
-///
+
+** Terminology
+
+- Responder is the partner of the opening bidder.
+
+- Advancer is the partner of the first overcaller (of the opening side)

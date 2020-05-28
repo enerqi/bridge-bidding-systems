@@ -4,7 +4,7 @@
 
 ** 1st/2nd/3rd
 
-Sound 6 card weak Two
+Sound 6 card weak Two =OR= Balanced 20-21 no 5 card !h!s or 6 card !c!d
 
 - 5--9 hcp
 - Lead directing, contract directing, constructive
@@ -12,24 +12,44 @@ Sound 6 card weak Two
 - Other 4 card M would have to be very poor or 3rd position
 - Voids ok if points low enough to keep out of a 1 level opening bid
 - Suit quality is more about playing trick potential than top honour counts
-
-( =OR= )
-
-Balanced 20-21
-- definitely no 5 card major or 6 card minor
-
-The flexibility to open 2!s with a 6 card weak two in 3rd implies the suit remains
-high quality in 3rd.
+- The flexibility to open 2!s with a 6 card weak two in 3rd implies the suit remains high quality in 3rd.
 
 ** 4th
+
+6 card major ~10--13 hcp =OR= Balanced 20-21 no 5 card !h!s or 6 card !c!d
 
 - Higher probability of being balanced 20-21 hand
 - More likely to open 2!s with 10-13 spade suit and pass a !h holding
 
-6 card major ~10--13 hcp
 
-( =OR= )
+2D
+    2HS = pass/correct (weak or a game try in the other suit)
+        2N = Big NT
+        3CD = Big NT with 5 card !c/!d
+    2N = strong enquiry
+        3CD = min in !h/!s
+        3HS = sound, non-minimum
+        3N = Big NT
+    3CD = mini-splinter with at least 4/3 in majors, 12+ useful hcp
+    3HS = weak (< 10 hcp) pass/correct paradox bids
+    3N = weak (< 10 hcp) 4-4 majors (willing to go to 4 level)
+    4C = weak (< 10 hcp) 5!h + 4!s
+    4D = weak (< 10 hcp) 4!h + 5!s
+    4M = natural, to play
 
-Balanced 20-21 - definitely no 5 card major or 6 card minor
+2D--(X)
+    XX = Diamonds and values
+    any = same system
 
+2D--(2HS)
+    X = Takeout
+
+2D--(3x) or above
+    X = Penalty
+
+2D--(P)--2N--(3HS)
+    X = Penalty (my weak two)
+
+2D--(P)--2N--(3x)
+    3HS = sound, non-minimum
 

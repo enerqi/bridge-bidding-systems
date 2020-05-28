@@ -1,0 +1,91 @@
+#+TITLE: General constructive auctions without interference
+
+* Constructive uncontested auctions
+
+Meanings of things like jump rebids, jump shifts and tools to show
+support for partner.
+
+** Jump Rebids, Opener
+
+1DHS--any
+    3DHS = strong suit, max range, at least semi-solid (4 tricks probable opposite xx).
+
+1DHS--1HS
+    2N = 3 card support, min
+    3N = 3 card support, max
+
+1DHS--2H
+    3N = 3 card support, max
+
+** Jump Rebids, Responder
+
+12+ hcp, strong suit, at least semi-solid (4 tricks probable opposite xx).
+
+** Two Suited Rebids, Opener
+
+Most bids are obvious, do what you can with your strength.
+It depends if partner did a 2--over--1 bid.
+
+- 1-over-1 then jump shifts below 4 level require 5--5+
+- 4 level jump shifts are splinters for partner's response suit
+
+** Two Suited Rebids, Responder
+
+Much as with opener:
+
+- Jump shift below 4 level shows 5--5+ shape
+- 4 level jump shifts are splinters
+- Rebid of a suit at the 3 level following opener's reverse is GF
+
+** Forcing / Non-Forcing
+
+- 1DHS and following auctions with 2 suits are NF.
+- Responder bidding a third suit, is F1. Opener rebidding their suit for the third time is NF (1!d--1!s--2!d--2!h--3!d),
+  all else GF.
+- Pulling 2N is GF unless known to be limited
+- After opener's reverse (1!d--1!s--2!h), responder picking one of their suits or 2N is NF. All else GF.
+
+** NHS Major Raises
+
+1!h--2!s or 1!s--3!c with invitational hands
+
+1M--2!s/3!c
+    1step = GF, interesting hand not covered by 4x bid
+    3M = major rebid is NF, minimum
+    3x = 4+ cards, game try  (if played as shortage, would be same as Jacoby)
+    3N = natural, 4 card major
+    4x = non-minimum, natural 5+ other suit
+    4M = to play (no interesting feature)
+
+1H--2S--2N  (GF, interesting hand not covered by 4x bid)
+    3C = another relay
+        3D = relay forced
+            3H/4CD = good side suit, not 5 carder
+                4x = cue bids
+    3x = cue bid
+    3N = natural
+
+1S--3C--3D  (GF, interesting hand not covered by 4x bid)
+    3H = another relay
+        3S = relay forced
+            4CDH = good side suit, not 5 carder
+                4c = cue bids
+    3x = cue bid
+    3N = natural
+
+May want to change those...not sure it makes much sense with
+only invite hands and responses are quite similar to Jacoby
+except the relay to help distinguish some strong side suits
+from 5 carder suits
+
+
+** 1!d--2N GF NT
+
+Only used over 1!d, Jacoby over 1!h!s.
+
+1D--2N
+    3C = natural, could !c canape
+    3D = natural
+    3HS = natural, 4 card major
+    3N = natural
+    4x = 6!d, 5 card side suit
