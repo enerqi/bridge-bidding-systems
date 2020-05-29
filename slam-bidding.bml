@@ -1,0 +1,145 @@
+#+TITLE: Slam Bidding
+
+Blanket rules for 4N and cue bids when exploring slams. Plus some slam finding conventions.
+
+* Slam Bidding
+
+** What is 4N?
+
+Natural, ace asking, key card asking or takeout? Here's another ordered blanket rules list:
+
+1. Partner *never* bid - Takeout
+2. Major suit *raised* - RKB
+3. Major suit set - RKB
+4. Non-Jump 4N without Major raised or "set" - Natural
+5. 1N *opened*, and no major set - Natural
+6. NT bid raised - Natural
+7. Otherwise - RKB for last bid OR implied !h!s else Blackwood
+
+** Cue Bids
+
+Italian style, showing 1st or 2nd round control.
+
+Initiation should not be made with just a second round control or two of course.
+Initiator probably has 2 first round controls and a second round control in the third
+suit unless very distributional. Responder can afford to have a less decent hand and
+let the initiator push them.
+
+- Assume 3 level bids are natural, even if possibly cues to start slam probes
+- Jumping to 4 level ambiguously (4 minor or new major after 1st round of bidding) is a cue bid
+
+** Slam Convention Interference Defence
+
+Your enquiry asking bids (e.g. RKB, Gerber, Free 5M raise) can disturbed by:
+
+1. opponents bid their suit(s) below our suit sign off
+2. opponets bid their suit(s) above our suit sign off, or even bid our suit
+3. opponents X the asking bid
+4. opponents X the asking bid and it's the suit we want to play in
+
+For (1) and (3) we have *ROPI DOPI*
+
+- X = 0 steps
+- Pass = 1 step
+- next lowest bid is the 2nd step
+
+For (2) we have *ROPE DOPE*
+
+- X = 1
+- Pass = 0 or 2 seps
+- next lowest bid is the 3rd step
+
+Rarely, when (4) happens - XX is to play (e.g. 5!s XX + 1 > 6!s made).
+
+** Gerber 4!c
+
+Only played over the 1N and 2N schemes, so just remember when the NT schemes are played.
+
+4C
+    4D = 0/4 aces
+    4H = 1 ace
+    4S = 2 aces
+    4N = 3 aces
+
+5C = king ask follow on
+    5D = 0/4 kings
+    5H = 1 king
+    5S = 2 kings
+    5N = 3 kings
+
+** 4CD RKB Minorwood
+
+Bidding 4!c!d *after already agreeing* the minor is RKB for that minor.
+When first agreed at the 4 level it is *not*(hmm?) Minorwood.
+
+** RKB 4N
+
+4 Ace key cards + King trumps. "1430" step responses.
+
+- 5!c = 1 or 4 kc
+- 5!d = 3 or 0 kc
+- 5!h = 2 kc
+- 5!s = 2kc with Q trumps
+- 5N = 2 or 4 kc + some void
+- 6x = 1 or 3 kc + void in specific suit
+- 6slam = odd kc + void in higher suit
+
+4N--5C/5D
+    step = first non-trump - Q ask
+        5x/6x = side K, have Q trumps
+        5N = no side K, have Q trumps
+        6slam = no Q
+4N--5x
+    5N = K ask, keep bidding side Kings in side suits from here
+        6x = lowest side K
+        6slam = no side K
+
+** EKB (Voidwood)
+
+Jumps shifts above game level with an agreed suit.
+Shows a void in the suit bid and asking for keycard showing step responses.
+
+- !c agreed then 5!d, 5!h, 5!s
+- !d agreed then !h, 5!s
+- !h agreed then 4!s, 5!c, 5!d
+- !s agreed then 5!c, 5!d, 5!h
+
+Plain *0/4, 1, 2, 3* KC step responses are safer.
+
+4x/5x EKB
+    xstep = 0/4, 1, 2, 3 step responses
+        1step = first non-trump - Q ask
+            6side = lowest side K, have Q
+            6slam = no Q
+        5N = K ask, keep bidding side Kings in side suits from here
+            6side = lowest side K
+            6slam = no side K
+
+
+** Free 5x Major Raise
+
+This asking bid can be given a multi meaning (control of opponents or unbid suit), but for ease,
+normally used only as a trump quality ask.
+
+5HS
+    P = 0 or 1 top honour
+    5N = AK + extra length
+    6CDH = Solid suit and 2nd round control
+    6HS = raise to slam, 2 of top 3 honours
+
+Iff it's obvious to both players that we have all the top 3 honours, it could be used as a 2nd round or better control
+ask for some other suit, which should also be obvious.
+
+5HS  (when obviously we have all the top honours)
+    5N = have guarded 2nd round control, e.g. KQ
+    6x = cue bid in other suit shows 1st round in the implied asked suit.
+    6HS = raise to slam, have 2nd round control in implied suit
+
+** GSF 5N
+
+Free 5N bid. Same as detailed in 5N over high level openings.
+
+5N = asking about honour quality in the agreed trump suit
+    6C = 1 or 2 honours  (unknown if !c trumps)
+    6x = 2 honours
+    7x = 3 honours

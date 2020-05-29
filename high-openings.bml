@@ -11,3 +11,145 @@
     3N = long clubs
 
 See 2NT Scheme for the rest.
+
+* Control Asking Bids
+
+Slam exploratory ask about a specific suit, played over high level openings
+
+- NT = King
+- 1step = rubbish
+- 2steps = singleton
+- 3steps = Ace
+- 4steps = A--K or A--Q (A--K, would only be for Namyats/SAT type strength!)
+- 5steps = void
+
+* 3C Constructive
+
+13--16 hcp, 7+!c and 3+ honours
+
+3C
+    3D = NT stop ask
+        3HS = stop
+            4C = NF
+            4D = cue bid
+            4oM = cue bid
+            4HS = natural 5 card support
+        3N = !d stop only
+            4C = NF
+            4DHS = cue bid
+        4C = no stop
+    3HS = natural, GF, 6+ card suit
+        3S/4DH = new suit cue bid, Hx or xxx better support
+        4C = no support
+        4HS = raise 2 card support
+    4C = obstructive
+    4D = Redwood, RKB for clubs
+    4HS = Contrl Asking Bid - step responses
+        4N = King etc.
+
+3C--3D--(X)
+    P = no !d stop
+        XX another stopper ask
+    XX = !d stop
+
+3C--(3DHS/4DHS)
+    X = penalty
+
+* 3DHS Openings
+
+P/T integrity required (in 1st/2nd), max 1 outside A/K, no 4 card side Major.
+
+3D
+    3M = natural, F1
+    3N = to play
+    4D = obstructive
+    4HS = control asking bid
+    4N = Blackwood
+    5C = control asking bid
+    5N = GSF
+        6C = 1 honour
+        6HS = 2 honours
+        7HS = 3 honours
+3HS
+    3S/4CD = natural, F1 OR Cue bid
+    3N = to play
+    4HS = obstructive
+    4N = RKB
+    5CD = control asking bid (not ekb)
+    5N = GSF
+        6C = 1 honour
+        6HS = 2 honours
+        7HS = 3 honours
+
+* 3N Opening as 4!c/!d pre-empt
+
+General 4 level minor pre-empt, very distributional not considered suitable for 3N.
+P/T integrity required (in 1st/2nd), max 1 outside A/K, no 4 card side Major.
+3N allows partner to play NT if they have enough controls and entries.
+
+3N in *4th* is usually a general *punt*, no specific details.
+
+3N
+    4C/5C = pass or correct
+    6C/7C = pass or correct
+    4HS = natural
+    4N = Blackwood
+
+* 4CD Intermediate Major Pre-empts Opening
+
+"Pre-empts" with extra values, often *minimum* opening hand values, ~8--8.5 P/T.
+"South African Texas / Namyats".
+
+4CD  !h/!s intermediate pre-empt
+    4HS = to play
+    4x = new suit, control asking bid
+    4N = RKB
+    5CD = control asking bid (not ekb)
+    5HS = free raise, trump quality ask
+        5N = AK + extra length (8 cards in this case)
+        6HS = 2 top 3 honours
+        6x = solid suit and side 2nd round control
+    5N = GSF
+        6C = 1 or 2 honours
+        6D = 2 honours
+        7CD = 3 honours
+    6x = to play
+    7x = to play
+
+* 4HS/5CD Openings
+
+P/T integrity required (in 1st/2nd), rare distributions, max 1 outside A/K
+
+4HS
+    4S = control asking bid
+    4N = RKB
+    5CDH = control asking bid
+    5HS = free raise, trump quality ask
+        5N = AK + extra length
+        6HS = 2 top 3 honours
+        6x = solid suit and side 2nd round control
+    5N = GSF
+        6C = 1 honour
+        6HS = 2 honours
+        7HS = 3 honours
+    6x = to play
+    7x = to play
+4H
+    5S = EKB (jump slam bids themselves are never EKB)
+
+5CD
+    5DHS = control asking bids
+    5N = GSF
+        6C = 1 or 2 honours
+        6D = 2 honours
+        7CD = 3 honours
+    6x = to play
+    7x = to play
+
+* 4N Opening Specific Ace Ask
+
+4N
+    5C = no ace
+    5DHS = specific ace
+    5N = 2 aces
+    6C = !c specific ace

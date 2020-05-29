@@ -26,6 +26,7 @@ Blanket approaches to bidding when natural 1NT and 2NT bids made by our side.
 - 1C--1M--2C--2N
 - 1C--1M--2C--2D--2H--3C+
 - 1C--1M--2C--3N
+- (2x)-2N
 
 Do *not* use blanket NT scheme when:
 
@@ -64,7 +65,7 @@ Do *not* use blanket NT scheme when:
         3HS = relay
         4X = cue bid
     #PASTE minor_suit_enquiry_3s \F=S
-4C  Gerber
+    4C  Gerber
     4D  Nothing
     4HS/5CD to play
     4N quantitative small slam try
@@ -74,7 +75,7 @@ Do *not* use blanket NT scheme when:
     3C   4 card Stayman
     3DH	 Transfer
     #PASTE minor_suit_enquiry_3s \F=S
-3N	 S/O
+    3N	 S/O
     4C	 Gerber
     4D	 not used
     4HS  play
