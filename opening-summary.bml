@@ -13,9 +13,13 @@ This initial section provides a guide to the basics responses without going into
   4\X = long suit with some trick potential, non-minimum
 #ENDCUT
 
+
 1C  Weak or Strong Club:
-      - 10( =sound= )/11--13 (9--13 in 3rd) possibly 5--4--2--2, no 5cM
-      - 17+ any
+      - 11--13 balanced / semi-balanced (5-4-2-2), maybe 5--3--3--2 bad 5cM
+      - 12--15 4!s--4!h--1!d--4!c shape
+      - 16+ !cs unbalanced
+      - 17+ balanced, 17--19 or 22+
+      - 17+ unbalanced, not 4--4--4--1
   1D Negative 0--7 HCP or 15+ GF no 4cM, if balanced 19+
   1HS natural positive 4+ suit before longer minor, F1
   1N  no major, balanced minimal positive
@@ -23,21 +27,42 @@ This initial section provides a guide to the basics responses without going into
   3N  no major, balanced
   2CD  natural positive < GF, 5+ suit unbalanced
   2HS  semi-positive 5--8 HCP, no outside Ace or King, continue as pre-empt
-  3CD  invite to 3NT, natural 6cm
+  3CD  invite to 3NT, natural 6 card !c/!d
+  3HS  4--7 hcp, decent 7 card suit
   4CD  AKQ/AKJ to seven in the Major, no outside controls, cue bids to follow
   4HS  Gambling
 
-1D  11--16, 4+ diamonds, maybe !c canape
-  2D  F1 support
-  2H  NHS (Next Higher Suit) Raise
-  2S/3C Weak JS
-  2NT game forcing NT, partner can check for 4 card majors or not.
-  3D/4D  Obstructive
-  3HS/4C Splinter 16+ HCP (13--15 splinter use NHS)
+1D  Natural !d:
+      - 12--15, 4--4--4--1 with 4!d
+      - 11--16, unbalanced, maybe longer !c (canape)
+      - 11--19, unbalanced, single diamond suit
+      - 11--21, unbalanced < GF, longer diamonds two or three suiter
+  1M  4+ cards, 6+ hcp, maybe !d fit or long !c with weaker hands
+    1N = 4+!c, forcing
+    2C = usually 6+!d, forcing
+    2D = 3 card Major support, 11--14, NF
+    2M = 4-card support, 11--14
+    2oM = natural, 18+ GF
+    2N = strong, single !d suiter
+    3C = strong, 5--5 minors
+    3D = intermediate, single !d suiter
+    3M = 4 card invite, 16+
+    3oM = Splinter, 16+
+  1N  ~7--11 flat or 7--9 !c hand, NF
+  2C  7--10 !d support OR GF 5+!c OR balanced
+  2D  weak 6 card sound ~4--8 in !h or !s
+    2M = paradox pass/correct responses
+  2H  5!s + 4 or 5!h, max 9 hcp, reverse flannery
+  2S  !d raise 11+
+  2N  invite, 3--3 majors, 4/5!cs
+  3C  invite ~10-11 hcp, 6+!cs
+  3D/4D < 7 hcp, Obstructive, 4+ !d, e.g (31)45 or better
+  3HS/4C Splinter 16+ HCP
   3NT 13--15 balanced, 3--3 Majors
+  4HS to play
   4NT RKB
 
-1H = 10( =sound= )--16 4 cards if 4!s--4!h--1!d--4!c or 4!s--4!h--0!d--5!c bad clubs, else 5+ carder
+1H = (10)11--16, 5 card Major
   2H 6--9 HCP, 4+ SUPP or 3 & singleton
   2S NHS Raise
   #PASTE jacoby \M=H \X=CDS
@@ -48,7 +73,7 @@ This initial section provides a guide to the basics responses without going into
   4S/5CD EKB
   4NT RKB
 
-1S 10( =sound= )--16 4 cards if 4!s--4!h--1!d--4!c or 4!s--4!h--0!d--5!c bad clubs, else 5+ carder
+1S (10)11--16, 5 card Major
   2S  6--9 HCP, 4+ SUPP or 3 & singleton
   #PASTE jacoby \M=S \X=CDH
   3C = NHS raise
@@ -59,9 +84,16 @@ This initial section provides a guide to the basics responses without going into
   4NT RKB
   5CDH EKB
 
-1NT 14--16 balanced, possibly a 5 card major in 3rd.
-2C  11--15 HCP, 6 card suit or 5 cards + 4 card major. Some 5--4--2--2 hands -> NT openings.
-2D  Multi with 6+!h or 6+!s sound weak two or 20--21 NT
+1NT 14--16 balanced, maybe 5 card major or 5--4--2--2 long !c/!d.
+2C  (11)12--15(16) hcp, 6 card suit or 5 cards + 4 card major. Some 5!c--4!h/!s--(2--2) may open NT.
+2D  Multi with sound 6 card weak Two OR 4--4--4--1 (any singleton), 4+ control points, 16+ hcp
 2H  Both majors - VUL: 6--9 HCP, 9+ cards. NV: 3--7 HCP, 8+ cards.
 2S  5 spades + 4 card minor, 6--9 HCP. Undisciplined in 3rd.
-2NT 20--21 NT with a 5 card major or 6 card minor
+2NT 20--21 NT
+3C  13--16, 7+ !cs, 3 honours
+3DHS pre-empt, max 1 outside A/K
+3N  !c/!d, 4 level minor pre-empt
+4CD roughly minimum opening, ~8--8.5 P/T pre-empts in !h/!s
+4HS pre-empt, max 1 outside A/K
+4N  specific ace ask
+5CD pre-empt
