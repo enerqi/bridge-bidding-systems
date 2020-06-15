@@ -3,8 +3,6 @@
 
 * Uncontested Openings Summary
 
-This initial section provides a guide to the basics responses without going into much detail about following auctions.
-
 #CUT jacoby
 2N Jacoby GF NT
   3\X = shortage
@@ -15,11 +13,10 @@ This initial section provides a guide to the basics responses without going into
 
 
 1C  Weak or Strong Club:
-      - 11--13 balanced / semi-balanced (5-4-2-2), maybe 5--3--3--2 bad 5cM
-      - 12--15 4!s--4!h--1!d--4!c shape
-      - 16+ !cs unbalanced
-      - 17+ balanced, 17--19 or 22+
-      - 17+ unbalanced, not 4--4--4--1
+      - (12)--15 balanced / semi-balanced (5-4-2-2), maybe 5--3--3--2 bad 5cM
+      - Good 12 implies 4+ !s or both majors, not just no wasted honours, maybe 5cM
+      - 17+ unbalanced
+      - 21+ balanced
   1D Negative 0--7 HCP or 15+ GF no 4cM, if balanced 19+
   1HS natural positive 4+ suit before longer minor, F1
   1N  no major, balanced minimal positive
@@ -33,7 +30,7 @@ This initial section provides a guide to the basics responses without going into
   4HS  Gambling
 
 1D  Natural !d:
-      - 12--15, 4--4--4--1 with 4!d
+      - 11--15, 4--4--4--1 with 4!d
       - 11--16, unbalanced, maybe longer !c (canape)
       - 11--19, unbalanced, single diamond suit
       - 11--21, unbalanced < GF, longer diamonds two or three suiter
@@ -63,35 +60,61 @@ This initial section provides a guide to the basics responses without going into
   4NT RKB
 
 1H = (10)11--16, 5 card Major
-  2H 6--9 HCP, 4+ SUPP or 3 & singleton
-  2S NHS Raise
-  #PASTE jacoby \M=H \X=CDS
-  3CD = mini-splinter in !c/!d
-  3H/4H Obstructive
-  3S/4CD Splinter 16+ HCP (13--15 splinter use NHS)
-  3NT 13--15 flat + 3 card SUPP
-  4S/5CD EKB
-  4NT RKB
+  1S = natural, 4+ cards
+  1N = 100% forcing, 0+ hcp, often concealing standard single raise or 4!s and invite values
+  2C = GF, usually 5 cards. Never 4--3--3--3 shape. Never 4--4--3--2 and 3 or 4 !hs (use 2N).
+  2D = GF, usually 5 cards
+  2H = *not* normal 6--9 raise (use 1N), invite ~(9)10--12, 3 card support
+  2S = 6+!s, 0--9 hcp, no !h fit  (note 1!s and 2!s rebid is invitational)
+    2N = rare, raise if high cards in minors or Ace !s, e.g. x/AKQJxxx/Ax/xxx
+      3H = no stopper
+    3CD = NF, 6--5+ shape
+    3H = NF, natural, "better hearts than your spades"
+    3S = invite
+    3N = undefined
+    4CD = splinter, miracle slam hunt, e.g. Kxxx/AKxxxx/x/Ax v.s. AJxxxx/xx/xxx/xxx.
+    4H = NF, rare
+    4S = to play
+  2N = limit+ raise
+  3C = 6+ !cs, invitational ~10--12, no major support
+  3D = 6+ !ds, invitational ~10--12, no major support
+  3H = mixed raise (weak limit raise), ~7--9 4 (5) card support, distributional.
+  3S = unknown singleton splinter, 10--13 hcp
+  3N = splinter !s, 13--16 hcp
+  4C = splinter !c, 13--16 hcp
+  4D = splinter !d, 13--16 hcp
+  4H = obstructive
+  4S = pre-empt
+  4N = RKB
 
 1S (10)11--16, 5 card Major
-  2S  6--9 HCP, 4+ SUPP or 3 & singleton
-  #PASTE jacoby \M=S \X=CDH
-  3C = NHS raise
-  3DH   mini-splinter in !d/!h
-  3S/4S Obstructive
-  3NT 13--15 flat + 3 card SUPP
-  4CDH  Splinter 16+ HCP (13--15 splinter use NHS)
-  4NT RKB
-  5CDH EKB
+  1N = 100% forcing, 0+ hcp, often concealing standard single raise
+  2C = GF, usuall 5 cards. Denies 4!s--3--3--3.
+  2D = GF, usually 5 cards, maybe 2--4--4--3
+  2H = GF, 5+ suit
+  3CDH = 6+ suit, invitational ~10--12, no major support
+  3S = mixed raise (weak limit raise), ~7--9 4 (5) card support, distributional.
+  3N = unknown singleton splinter, 10--13 hcp
+    4C = ask
+      4D = !d
+      4H = !h
+      4S = !c
+  4C = splinter !c OR !h, 13--16 hcp
+    4D = ask
+      4H = !h
+      4S = !c
+  4D = splinter !d, 13--16 hcp
+  4H = to play
+  4S = obstructive, to play
+  4N = RKB
 
-1NT 14--16 balanced, maybe 5 card major or 5--4--2--2 long !c/!d.
-2C  (11)12--15(16) hcp, 6 card suit or 5 cards + 4 card major. Some 5!c--4!h/!s--(2--2) may open NT.
-2D  Multi with sound 6 card weak Two OR 4--4--4--1 (any singleton), 4+ control points, 16+ hcp
-2H  Both majors - VUL: 6--9 HCP, 9+ cards. NV: 3--7 HCP, 8+ cards.
-2S  5 spades + 4 card minor, 6--9 HCP. Undisciplined in 3rd.
-2NT 20--21 NT
-3C  13--16, 7+ !cs, 3 honours
-3DHS pre-empt, max 1 outside A/K
+1NT 16--18 balanced, maybe 5 card major or 5--4--2--2 long !c/!d.
+2C  11--16 hcp, 6+ card suit
+2D  Precision style 2D, (11)12--16 hcp, 4--4--1--4, 4--4--0--5, 4--3--1--5, or 3--4--1--5
+2H  Both majors - 7--10 HCP constructive. 3rd position VUL 5--10. 3rd position NV 3--10 4--4+
+2S  5 spades + 4 card minor, 7--10 HCP. Undisciplined in 3rd.
+2NT 19--20 NT
+3CDHS pre-empt, max 1 outside A/K
 3N  !c/!d, 4 level minor pre-empt
 4CD roughly minimum opening, ~8--8.5 P/T pre-empts in !h/!s
 4HS pre-empt, max 1 outside A/K

@@ -2,7 +2,7 @@
 
 * 2NT Opening
 
-20--21 NT, see 2NT Scheme.
+19--20 NT, see 2NT Scheme.
 
 * Control Asking Bids
 
@@ -15,39 +15,7 @@ Slam exploratory ask about a specific suit, played over high level openings
 - 4steps = A--K or A--Q (A--K, would only be for Namyats/SAT type strength!)
 - 5steps = void
 
-* 3C Constructive
-
-13--16 hcp, 7+!c and 3+ honours
-
-3C
-    3D = NT stop ask
-        3HS = stop
-            4C = NF
-            4D = cue bid
-            4oM = cue bid
-            4HS = natural 5 card support
-        3N = !d stop only
-            4C = NF
-            4DHS = cue bid
-        4C = no stop
-    3HS = natural, GF, 6+ card suit
-        3S/4DH = new suit cue bid, Hx or xxx better support
-        4C = no support
-        4HS = raise 2 card support
-    4C = obstructive
-    4D = Redwood, RKB for clubs
-    4HS = Contrl Asking Bid - step responses
-        4N = King etc.
-
-3C--3D--(X)
-    P = no !d stop
-        XX another stopper ask
-    XX = !d stop
-
-3C--(3DHS/4DHS)
-    X = penalty
-
-* 3DHS Openings
+* 3CDHS Openings
 
 P/T integrity required (in 1st/2nd), max 1 outside A/K, no 4 card side Major.
 
