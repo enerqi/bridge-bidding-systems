@@ -4,7 +4,7 @@
 * NT Ranges
 
 1N = 16--18 hcp, maybe 5 card major or 5--4--2--2 long !c/!d.
-(1x)--P--(P)--1NT = 14--16 hcp, protective same
+(1x)--P--(P)--1NT = 14--16 hcp, protective
 (1x)--P--(P)--2NT = 19--21 hcp
 2N = 19--20 hcp, maybe 5 card major or 5--4--2--2 long !c/!d.
 
@@ -78,6 +78,355 @@ Do *not* use blanket NT scheme when:
     4D	 not used
     4HS  play
     4N   Quantitative
+
+
+** new ideas
+
+*** 1NT
+
+There is no balanced invite. Stop in 1N or punt.
+
+1N--
+    2C = Stayman, forcing. Never with a weak 4--4 hand. With 5--4 or 5--5 just sign off in one.
+    2D = transfer to !h
+        2H = 2 or 3 cards
+            2S = *artificial*, GF values
+                2N = relay
+                    3C = short spades, 3 suited with 5!h, natural continuations
+                        3S = unsure of game
+                        3N = good spade stops
+                    3D = short diamonds, similar continuations
+                    3H = short clubs, e.g. 3--5--4--1, maybe 2--6--4--1 !d fit searching
+                    3S = 2--5--2--4 slam try
+                        3N = to play, reject slam try
+                        4C = !h slam try
+                        4D = !d slam try
+                        4H = to play, reject slam try
+                    4CD = natural, second suit 6--5+, slam try (stayman auctions show 5--5)
+        2N = 4 cards
+    2H = transfer to !s
+        2S = 2 or 3 cards
+        2N = 4 cards
+
+1N--
+    2S = transfer to !c
+        2N = no club support
+            3C = to play
+            3DHS = shortness, interested in 5!c or 6!c (maybe only if opener fits shortage)
+            3N = to play, presumably slam try that failed
+            4C = 7!c with 2+ top honours, two shortages, 4 card major 1+ honour, 7--4--1--1
+                4D = relay for major
+                    4HS = 4 card !h/!s, NF
+                        4N = to play
+                        5HS = invitational
+                    4N = 4 card !h, extra strong, NF but very encouraging
+                    5C = 4 card !s, extra strong, NF but very encouraging
+            4D = GF+ transfer to !h, five card major, 6+ !c (use stayman with 5--5 or 4--6)
+                4H = to play
+                4S = Kickback RKB for !h
+                5C = to play
+                5D = cue bid, !h support
+            4H = GF+ transfer to !s, five card major, 6+ !c
+                4S = to play
+                4N = RKB for !s
+                5C = to play
+                5DH = cue bid, !s support
+            4S = RKB for !c, forces slam opposite 2 keycards
+            4N = NF, no shortness, big !c, 2--2--2--7 or maybe 6 card 6322, missing !c honour
+            5C = *forcing!, RKB*, no shortness, big !c, 2--2--2--7 or maybe 6 card 6322
+                stepX = RKB
+                    StepY = Queen ask or extra trick ask, any cheapest bid except 6!C
+        3C = support 3+ cards. Continuations similar as over 2N.
+            3DHS = shortness, interested in 5!c or 6!c (maybe only if opener fits shortage)
+            3N = to play, presumably slam try that failed
+            4C = 7!c with 2+ top honours, two shortages, 4 card major 1+ honour, 7--4--1--1
+                4D = relay for major
+                    4HS = 4 card !h/!s, NF
+                        4N = to play
+                        5HS = invitational
+                    4N = 4 card !h, extra strong, NF but very encouraging
+                    5C = 4 card !s, extra strong, NF but very encouraging
+            4D = GF+ transfer to !h, five card major, 6+ !c (use stayman with 5--5 or 4--6)
+                4H = to play
+                4S = Six KC RKB for !c and !h (1/4, 3/0, 2/5, 2/5+Q, 2/5+two queens)
+                5C = to play
+                5D = cue bid, !h support
+            4H = GF+ transfer to !s, five card major, 6+ !c
+                4S = to play
+                4N = Six KC RKB for !c and !s (1/4, 3/0, 2/5, 2/5+Q, 2/5+two queens)
+                5C = to play
+                5DH = cue bid, !s support
+            4S = RKB for !c, forces slam opposite 2 keycards
+            4N = NF, no shortness, big !c, 2--2--2--7 or maybe 6 card 6322, missing !c honour
+            5C = *forcing!, RKB*, no shortness, big !c, 2--2--2--7 or maybe 6 card 6322
+                stepX = RKB
+                    StepY = Queen ask or extra trick ask, any cheapest bid except 6!C
+    2N = transfer to !d. Continuations similar to 2!s tranfer to !c.
+        3C = rejection
+            4C = 7411 with long !d and 4 card major
+        3D = support 3+ cards
+            4C = 7411 with long !d and 4 card major
+        4N = NF, !d slam try, see above
+        5C = forcing, !d slam, see above
+    3C = invitational+ but not slam interest (transfer and rebid if so), 5--5+ in !h+!s
+        3D = 2--2 in the majors, rejection values
+            3M = to play
+            4C = pick a major
+            4DH = transfer (probably 6--5 choosing the longer one or much better quality)
+        3HS = to play, minimum
+            3N = can play there
+            4CD = minor fragment 5--5 and 3 card minor (void in other minor), minor slam try
+            4HS = to play, 6--5 probably
+        3N = 2--2 in the majors, good values
+            4C = pick a major
+            4DH = transfer (probably 6--5 choosing the longer one or much better quality)
+        4C = !h transfers with a maximum, just in case responder has mild slam interest
+            4D = retransfer (you play it)
+            4H = to play
+        4D = !s transfer with maximum
+            4H = retransfer (you play it)
+            4S = to play
+        4HS = to play, no particular extra values
+    3D = minors invitational, 5--5 exactly !c+!d
+        P = minimum
+        3HS = stopper
+        3N = natural
+        4C = signoff
+        4H = RKB for !c, big fit
+        4S = RKB for !d, big fit
+    3H = minors 5--5+, GF !c+!d
+        3S = !d agreed
+            4H = redwood for !d
+        3N = strong major stoppers
+        4C = !c agreed
+            4D = redwood for !c
+    3S = 5--4--2--2 in minors, slam interest
+        3N = no minor interest, stopped majors
+            4CD = slam push showing 5 card minor
+        4CD = 4 card support
+        4HS = good suit 5 card major
+        4N = longest minor signoff, no major stops, poor quality or not 5 card major
+    3N = to play
+    4C = Gerber, with RKB like responses. Except for 5!c follow on ask, all natural.
+        4D = 1/4 aces
+            4N = to play v.s. 1 ace
+            5C = King ask, also 1430 responses
+        4H = 0/3 aces
+            4N = to play v.s. 0 aces
+            5C = King ask, also 1430 responses
+        4S = 2 aces
+            5C = King ask, also 1430 responses
+    4D = texas transfer to !h
+        4H = xfer
+            4S = Kickback RKB
+    4H = texas transfer to !s
+        4S = xfer
+            4N = RKB
+    4S = to play
+    4N = quantitative, when 4 card major only 4--3--3--3, not 5--4--2--2 minors, not 5--3--3--2 major
+         So, 4--4--3--2 both minors, 5--3--3--2 minor or any 4--3--3--3.
+    5CD = slam tries with 1--1--4!d--7!c or 1--1--7!d--4!c exactly
+
+
+*** 2NT
+
+For 2N there are more tools to find 4--4 or 5--3 major fits before 3N, more so than over 1N
+as entries tend to be a problem with the small hand.
+
+2N--
+    3C = 5 card stayman, 3+ card major only.
+        3D = no 5cM, not 4 !hs, maybe 4!ss
+            3H = 4 !s
+                3S = have !s fit
+                    3N = slam try, never interested in NT!
+                3N = no fit
+            3S = 5+ !ss but also had !hs
+                3N = 2 card !s suit only
+                    4H = 5--5 in !h + !s, slight slam interest (would 2!h !s transfer and bid 4H if weaker)
+                4x = 4 card !s support and good hand, trick source or values concentrated
+                4S = 3+ card !s support
+            4C = natural, often (3-1)--4!d--5!c, or 4441/4450 long !c
+                4D = no 4 card !c support AND 4+ !ds
+                4H = cue bid, !c support
+                    4S = nextStep, Redwood for !c
+                    4N = substitute !s control bid
+                4S = cue bid, !c support
+                    4N = nextStep, Redwood for !c
+                4N = no minor interest, 4--3--3--3
+                5C = to play, !c support
+            4D = natural 5 !ds, often (3--1)--5!d--4!c, or 1--4--5--3
+                4HS = cue bid, !d support
+                5C = cue bid, !d support
+                4N = 2 card !d suit only
+                    !c = contract to play
+                5D = to play
+            4H = 5--5 !h+!s, forcing, strong slam interest, (too strong for 3!s then 4!h mild slam interest)
+                4S = !s fit, forcing
+                    4N = RKB !s
+                    5CD = minor void
+                4N = 2--2 majors, NF
+                    5CD = minor fragment 5530
+                    5HS = 6--5
+                    6x = to play
+                5C = 1/4 RKB response for !h
+                5D = 3/0 RKB response for !h
+                5H = 2 RKB response for !h
+                5S = 2 + Queen RKB response for !h etc.
+        3H = 4/5 !hs, not !s
+            3S = !h length ask, maybe with 4 !h
+                3N = 4 cards
+                    4CD = natural, forcing e.g. 1--3--(5--4) hand
+                        4x = minor support, control bid
+                            nextStep = Redwood for minor
+                        4N = rejects minor
+                4CD = 5 cards, good slam hand
+                4H = 5 cards
+            3N = to play, probably 4!s, no !h interest
+            4C = natural, slam interest with 4!s and !cs (maybe 4 cards only), < 3 !hs
+                4D = 4 or 5 !ds, no club support
+                4HS = cue bid, 4 card !c support
+                4N = no minor interest
+                5C = 4 card !c support
+            4D = natural 5+ cards, slam interest, 4 !ss + !ds, < 3 !hs, longer !d or no !cs
+                4HS = cue bid, 4 card !d support
+                    step1 = Redwood for !d
+                4N = no support
+                5C = cue bid, 4 card !d support
+            4N = quantitative
+        3S = 5 !ss, natural
+            4CD = natural, 4 cards
+                4N = minor rejection
+            4H = !s slam try
+        3N = 4--4 !h/!s
+            4C = !d 5+ suit
+                4N = minor rejection
+            4D = !h transfer
+            4H = !s transfer
+            4S = !c 5+ suit
+                4N = minor rejection
+    3D = !h transfer, 5+ cards
+        3H = (2 cards !hs and < 5!s) OR 3 card !h support
+            3S = natural, 4 card !s suit  (4!s and 5!h)
+                3N = natural
+                    4CD = 3 suiter
+            4C = natural, 4/5 card minor  (e.g. 5!h + 4/5 !c)
+                4D = cheapest bid in responder's shortness, !h slam try
+                4H = 3 card !h support confirmed
+                4S = 2nd cheapest bid in responder's shortness, !c slam try
+                4N = minor rejection (no 4 card support)
+            4D = natural, 4/5 card minor  (e.g. 5!h + 4/5 !d)
+                4H = 3 card !h support confirmed
+                4S = cheapest bid in responder's shortness, !h slam try
+                4N = minor rejection (no 4 card support)
+                    5C = 0--5!h--4!d--4!c 3 suiter
+                5C = 2nd cheapest bid in responder's shortness, !d slam try
+            4H = slam try !h
+        3S = 5!ss, 2 !hs (so responder can bid 3!d !h transfer with 3!s and 5!h safely and fit find)
+            4CD = natural, second suit, knows opener has 5--2--3--3 shape 3 card support
+                4HS = cue bid, minor slam try
+                    step1 = Redwood for minor
+            4H = !h slam try, NF
+            4S = to play
+            4N = quantitative
+            5S = !s slam try
+        3N = 3--4--3--3 exactly (no side doubleton for 4!h bid)
+            4D = retransfer to !h
+            4H = !h slam try, NF
+            other = !h slam try
+        4CD = 4 or 5 card !h support + minor trick source, e.g. 5--4--2--2, 4--4--3--2 shape
+        4H = 4 or 5 card !h support + doubleton (bid 3N with 3--4--3--3)
+    3H = !s tranfer, 5+ cards
+        3S = 3 !ss or 2!ss and < 5 !hs
+            4C = 5!s--5!c (or 5431) mild slam interest
+                4D = !s slam try
+                4H = !c slam try
+                4S = no slam interest
+                4N = no slam interest (e.g. 5--4--2--2 wrong doubletons)
+            4D = 5!s--5!d (or 5431) mild slam interest
+                4H = !s slam try
+                4S = no slam interest
+                    5C = natural, 5--4--4--0 three suiter
+                4N = no slam interest (e.g. 5--4--2--2 wrong doubletons)
+                    5C = natural, 5--4--4--0 three suiter
+                5C = !d slam try
+            4H = 5--5 majors, NF  (would start with stayman if 5--5 slam interest)
+        3N = 2 !ss only, but 5!hs, 2--5--3--3
+            4CD = natural, 5 cards knowing of 3 card support
+                4x = cue bid
+                    step1 = Redwood for minor etc.
+        4CD = super accept + minor trick source
+            4H = retransfer to !s
+        4H = super accept + !h trick source (presumably 4--4 majors)
+        4S = super accept
+    3S = minors, 5--5 or 6--4, GF
+        3N = good double major stoppers, first priority for opener to check
+            4CD = longer suit
+            4HS = shortage
+        4C = !c fit, worse !d
+            4D = extra !d length
+                4H = Redwood for !d
+            4HS = cue bid, !c slam try
+                nextStep = Redwood !c
+        4D = !d fit, worse !c
+            4HS = cue bid
+                nextStep = Redwood !d
+        4HS = strong 5 card major, NF
+        4N = pick a minor, e.g. 3--3 minors, good controls but one weaker major (single stop)
+    3N = to play
+    4C = !d slam try, 5+ cards
+        4D = fit, slam interest
+            4H = Redwood for !d
+        4S = cue bid, slam try
+        4N = reject !d
+        5C = cue bid, slam try
+    4D = texas !h transfer
+        4H = complete
+            4S = Kickback
+    4H = texas !s transfer
+    4S = substitute bid for !cs, could be 5332.
+        4N = reject !c
+    4N = semi/balanced slam try, e.g. 5--4 in !c+!d or 4-3-3-3 with minor.
+        P = not accepting slam try
+        5CD = 4 card minor support, slam accepting
+            5N = to play, suit not liked
+        5HS = 5 card major 5--3--3--2 and slam values
+            5N = to play, suit not liked
+    5C = super gerber, 1/4, 3/0, 2 responses. No K follow up available.
+    5N = semi/balanced slam force, bid suits to try for seven
+
+
+2N--(3x)
+    X = negative
+
+2N--(X)  showing Majors
+    XX = game values
+    3CD = NF, natural
+    3M = stopper cue bid
+
+2N--(3C) showing majors
+    X = showing !c
+    3D = NF, natural
+    3M = stopper cue bid
+
+2N--(3N+)
+    X = values
+    Bids = GF
+
+2N--3C--(X)
+    P = to play with some support from partner
+        XX = by responder, rescue
+    XX = to play interest
+    3D = no !c interest, no major
+    3M = 5 card major, if want to show it
+
+2N--3C--(Others)
+    X = penalty
+
+2N--3DH--(X)
+    P = doubleton support
+        XX = retransfer by responder
+        3M = to play
+    XX = to play interest
 
 * NT Defence
 

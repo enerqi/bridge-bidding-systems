@@ -114,7 +114,7 @@ If < invitational without 6+ !d suit, pass.
 
 2C--2D
     2H = any 4 card major
-        2S = specific major ask, with at least one 4 card major
+        2S = specific major ask, with at least one 4 card major, maybe weak !d signoff
             2N = !h, any strength
                 3C = !c signoff attempt, no !h support, maybe < 10 hcp
                 3D = escape to !d with !s and !d, 4--6 or 4--7 trying !d to play
@@ -135,7 +135,6 @@ If < invitational without 6+ !d suit, pass.
                 4S = to play
                 4N = RKB !s
             3D = !s, maximum, continuation most same as after 3!c !s minimum
-                3D = escape to !d with !h and !d, 4--6 or 4--7, wants signoff !d
                 3H = natural, 5 cards, GF
                 3S = forcing (opener has shown acceptance values)
                 3N = to play
@@ -349,14 +348,14 @@ If < invitational without 6+ !d suit, pass.
             4D = doubleton !s
                 4H = !s slam try
                 4S = to play
-                4N= minor slam suggestion
+                4N = minor slam suggestion
             4HS = 3--0--4--6 with !s support, 4!h slam interest, 4!s not
                 5CD = prefers to play in minor
         3N = to play, maybe even 5 card major with strong stoppers in others
             4N = quantitative
         4C = natural, forcing (passed hand = invite), !c slam try, no long major to show
             4D = Redwood !c, probably with 2+ keycards
-            4M = fragement 2 or 3 cards, probably with 2+ keycards
+            4M = fragment 2 or 3 cards, probably with 2+ keycards
                 step1 = Redwood !c (ignoring voids in responses)
             4N = zero keycards for !c, not enough for Redwood, probably 1--1--4--7
             5C = 1 keycard for !c, not enough for Redwood, probably 1--1--4--7
