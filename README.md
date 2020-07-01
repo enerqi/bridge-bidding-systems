@@ -29,12 +29,13 @@ files everytime you save changes to a bml file in this directory. Open a command
 ```shell
 
 cd bridge-bidding-systems
-watchexec --exts bml doit
+watchexec --exts bml,css doit
 ```
 
-- Watchexec is now monitoring this directory for any file system changes to files with the extension `.bml`.
+- Watchexec is now monitoring this directory for any file system changes to files with the extension `.bml` (or `.css`).
 - Whenever a change is found the `doit` program is run
 - `doit` looks at `dodo.py` and runs all the tasks in there.
+- the `task_publish_main_bidding` in `dodo.py` will probably fail unless you have a 'W:' windows volume, could be deleted. It's meant for continuously publishing the output to a webserver directory. Untried, but `watchexec --exts bml,css doit ignore task_publish_main_bidding` could be what is needed.
 
 The `dodo.py` task automation program uses the `bml2html.py` python program found in the bml tools.
 
@@ -53,7 +54,3 @@ browser can point to `http://127.0.0.1:5500/` and you will see any viewed html f
 The [BML tools](https://github.com/enerqi/bml) have my own changes applied to the
 [main BML tools](https://github.com/Kungsgeten/bml) repository. E.g. the html files have a `.html` extension instead
 of `.htm`.
-
-Something about the CUT/PASTE bml feature is difficult. Pasting bml modules to nested (indented) positions in bidding
-tables seems incomplete. However, unindenting 2 extra to the left on the line following a #PASTE directive seems
-to fix it.

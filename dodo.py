@@ -134,3 +134,23 @@ def task_bmlcss():
         'targets': [css_basename],
         'title': title_with_actions
     }
+
+
+def task_publish_main_bidding():
+    """Copy the main bidding html and css document to the web server root."""
+    src_file = "bidding-system.html"
+    dst_file = f"W:/{src_file}"
+    css_file = "bml.css"
+    dst_css = f"W:/{css_file}"
+
+    def copy_file(dependencies, targets) -> None:
+        copyfile(dependencies[0], targets[0])
+
+    for src, dst in [(src_file, dst_file), (css_file, dst_css)]:
+        yield {
+            'name': basename(src),
+            'actions': [copy_file],
+            'file_dep': [src],
+            'targets': [dst],
+            'title': title_with_actions
+        }
