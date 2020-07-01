@@ -11,19 +11,18 @@
   4\X = long suit with some trick potential, non-minimum
 #ENDCUT
 
-
-1C  Weak or Strong Club:
-      - (12)--15 balanced / semi-balanced (5-4-2-2), maybe 5--3--3--2 bad 5cM
+1C  [Weak or Strong Club](#1C Weak Strong):
+      - (12)--15 balanced / semi-balanced (5-4-2-2) or (1-4)-3!d-5!c, 5--3--3--2 bad 5cM
       - Good 12 implies 4+ !s or both majors, not just no wasted honours, maybe 5cM
       - 17+ unbalanced
       - 21+ balanced
-  1D Negative 0--7 HCP or 15+ GF no 4cM, if balanced 19+
-  1HS natural positive 4+ suit before longer minor, F1
-  1N  no major, balanced minimal positive
-  2N  no major, balanced invite
-  3N  no major, balanced
-  2CD  natural positive < GF, 5+ suit unbalanced
-  2HS  semi-positive 5--8 HCP, no outside Ace or King, continue as pre-empt
+  [1D](#1C--1D) Negative 0--7 HCP or 15+ GF no 4cM, if balanced 19+
+  [1HS](#1C--1HS) natural positive 4+ suit before longer minor, F1
+  [1N](#1C--1N)  no major, balanced minimal positive
+  [2N](#1C--2N/3N)  no major, balanced invite
+  [3N](#1C--2N/3N)  no major, balanced
+  [2CD](#1C--2CD)  natural positive < GF, 5+ suit unbalanced
+  [2HS](#1C--2HS)  semi-positive 5--8 HCP, no outside Ace or King, continue as pre-empt
   3CD  invite to 3NT, natural 6 card !c/!d
   3HS  4--7 hcp, decent 7 card suit
   4CD  AKQ/AKJ to seven in the Major, no outside controls, cue bids to follow
@@ -46,8 +45,8 @@
     3M = 4 card invite, 16+
     3oM = Splinter, 16+
   1N  ~7--11 flat or 7--9 !c hand, NF
-  2C  7--10 !d support OR GF 5+!c OR balanced
-  2D  weak 6 card sound ~4--8 in !h or !s
+  2C  !d support 7--10 OR GF 5+!c OR balanced
+  2D  multi major weak 6 card sound ~4--8 in !h or !s
     2M = paradox pass/correct responses
   2H  5!s + 4 or 5!h, max 9 hcp, reverse flannery
   2S  !d raise 11+
@@ -64,7 +63,7 @@
   1N = 100% forcing, 0+ hcp, often concealing standard single raise or 4!s and invite values
   2C = GF, usually 5 cards. Never 4--3--3--3 shape. Never 4--4--3--2 and 3 or 4 !hs (use 2N).
   2D = GF, usually 5 cards
-  2H = *not* normal 6--9 raise (use 1N), invite ~(9)10--12, 3 card support
+  2H = invite ~(9)10--12, 3 card support
   2S = 6+!s, 0--9 hcp, no !h fit  (note 1!s and 2!s rebid is invitational)
     2N = rare, raise if high cards in minors or Ace !s, e.g. x/AKQJxxx/Ax/xxx
       3H = no stopper
@@ -89,9 +88,10 @@
 
 1S (10)11--16, 5 card Major
   1N = 100% forcing, 0+ hcp, often concealing standard single raise
-  2C = GF, usuall 5 cards. Denies 4!s--3--3--3.
+  2C = GF, usually 5 cards. Denies 4!s--3--3--3.
   2D = GF, usually 5 cards, maybe 2--4--4--3
   2H = GF, 5+ suit
+  2S = invite ~(9)10--12, 3 card support
   3CDH = 6+ suit, invitational ~10--12, no major support
   3S = mixed raise (weak limit raise), ~7--9 4 (5) card support, distributional.
   3N = unknown singleton splinter, 10--13 hcp
@@ -108,15 +108,15 @@
   4S = obstructive, to play
   4N = RKB
 
-1NT 16--18 balanced, maybe 5 card major or 5--4--2--2 long !c/!d.
-2C  11--16 hcp, 6+ card suit
-2D  Precision style 2D, (11)12--16 hcp, 4--4--1--4, 4--4--0--5, 4--3--1--5, or 3--4--1--5
-2H  Both majors - 7--10 HCP constructive. 3rd position VUL 5--10. 3rd position NV 3--10 4--4+
-2S  5 spades + 4 card minor constructive, 7--10 HCP. Undisciplined in 3rd.
-2NT 19--20 NT
-3CDHS pre-empt, max 1 outside A/K
-3N  !c/!d, 4 level minor pre-empt
-4CD roughly minimum opening, ~8--8.5 P/T pre-empts in !h/!s
-4HS pre-empt, max 1 outside A/K
-4N  specific ace ask
-5CD pre-empt
+1NT [16--18 balanced](#1NT), maybe 5 card major or 5--4--2--2 long !c/!d.
+2C  [11--16 hcp, 6+ card suit](#2C Opener)
+2D  [2D Precision Style 3 Suiter](#2D Precision Style 3 Suiter), (11)12--16 hcp, 4--4--1--4, 4--4--0--5, 4--3--1--5, or 3--4--1--5
+2H  [Both majors](#2H Majors Opening) - 7--10 HCP constructive. 3rd position VUL 5--10. 3rd position NV 3--10 4--4+
+2S  [5 spades + 4 card minor](#2S Opening - Dutch or Undisciplined) constructive, 7--10 HCP. [Undisciplined in 3rd](#2S Opening - Dutch or Undisciplined)
+2NT [19--20 NT](#2NT)
+3CDHS [pre-empt, max 1 outside A/K](#3CDHS Openings)
+3N  [!c/!d, 4 level minor pre-empt](#3N Opening as 4C or 4D pre-empt)
+4CD [roughly minimum opening, ~8--8.5 P/T pre-empts in !h/!s](#4CD Intermediate Major Pre-empts Opening)
+4HS [pre-empt, max 1 outside A/K](#4H 4S 5C 5D Openings)
+4N  [specific ace ask](#4N Opening Specific Ace Ask)
+5CD [pre-empt](#4H 4S 5C 5D Openings)
