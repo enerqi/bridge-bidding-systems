@@ -19,7 +19,7 @@
     3C = singleton major support
     3D/oM = NF, natural, 5 card suit. 3!s over 2!h is nearly GF.
         4thSuit = equal preference for game suit
-    3HS = 3 card support, NF, not complete mimimum
+    3HS = 3 card support, NF, not complete minimum
     3N = natural, probably running suit, void/singleton in major
     4C = 4 card support, 7--4
     4x = splinter
@@ -50,7 +50,7 @@
             4C = no oM stop, still GF
         3N = to play
         4C = forcing, !c and !d fit
-            4H = Redwood (or six ace rKc)
+            4H = Redwood [or six ace RKB](#Double Fit RKB)
         4D = forcing, control bidding or Redwood to follow
             4H = Redwood
         4H = Redwood, !d slam try
@@ -114,6 +114,18 @@ If < invitational without 6+ !d suit, pass.
 
 2C--2D
     2H = any 4 card major
+    2S = no 4 card side suit (minimum 6322/7222 OR shortness 6331, 7321, 7330)
+    2N = 4 card !d side suit, any strength
+    3C = maximum, no 4 card side suit (6322/7222 or any shortness 6331, 7321, 7330)
+    3DHS = 6--5, forcing, natural bids follow.
+    3N = 2--2--2--7 or 6322 shape, maximum, solid clubs, no guaranteed side stoppers
+    4C = usually 4--8 in minors, or 1--1--3--8, forcing
+    4DHS = 7--5, excellent playing strength, 2 top losers with !c as trumps
+    4N = 3--1--1--8
+    5C = 1--3--1--8
+
+2C--2D
+    2H = any 4 card major
         2S = specific major ask, with at least one 4 card major, maybe weak !d signoff
             2N = !h, any strength
                 3C = !c signoff attempt, no !h support, maybe < 10 hcp
@@ -155,7 +167,7 @@ If < invitational without 6+ !d suit, pass.
             3N = no fit
             4C = unsuitable NT, e.g. broken !c suit
             4DH = cue, slam try
-    2S = no 4 card major and (minimum 6322/7222 OR any range shortness 6331, 7321, 7330)
+    2S = no 4 card side suit (minimum 6322/7222 OR shortness 6331, 7321, 7330)
         2N = general GF  (passed hand = natural, invite)
             3C = minimum 6322/7222
                 3D = natural, forcing, !d contract interest, maybe canape
@@ -224,7 +236,7 @@ If < invitational without 6+ !d suit, pass.
                 4S = RKB for !h
                 4N = quantitative
         3C = invite strength, can play !c vs minimum. Maybe singleton !c - 4441, (43)51
-            P = any mimimum
+            P = any minimum
             3D = short !d, extra values - allows 5--3 major fit check by responder
                 3H = 5 hearts (possibly 4 looking for 4--3 fit)
                     3S = 0--2 !h support
@@ -372,7 +384,7 @@ If < invitational without 6+ !d suit, pass.
         4S = Redwood !d
         4N = quantitative
         5CD = to play
-    3C = maximum, no 4 card major and (6322/7222 or any shortness)
+    3C = maximum, no 4 card side suit (6322/7222 or any shortness 6331, 7321, 7330)
     3DHS = 6--5, forcing, natural bids follow.
         oM = forcing, natural (e.g. 6 or 7 cards)
         4C = forcing
