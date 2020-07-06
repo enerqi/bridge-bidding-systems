@@ -21,10 +21,10 @@ After the 1D reponse (commonly weak, but could be GF) opener bids
         2C = checkback stayman
             2D = no 3 card major
             2HS = 3 card major
-        2D = canape, longer !d than !h!s
-        2HS = artificial major rebid shows !c canape, as checkback with a 5 card Major
+        2D = canapé, longer !d than !h!s
+        2HS = artificial major rebid shows !c canapé, as checkback with a 5 card Major
         2oM = natural
-        3CD = canape, very strong longer !c/!d than !h/!s
+        3CD = canapé, very strong longer !c/!d than !h/!s
     2X = 5--7 hcp, 5+ cards
     2HS = single raise, 3--7 hcp, 4+ support
         3HS = re-raise natural minimum strong
@@ -66,9 +66,9 @@ After the 1D reponse (commonly weak, but could be GF) opener bids
 
 ** 1C--1HS
 
-After a positive major response there is *no canape bidding from opener*,
-responders 1HS is already canape and only one side of the partnership ever
-does canape bidding.
+After a positive major response there is *no canapé bidding from opener*,
+responders 1HS is already canapé and only one side of the partnership ever
+does canapé bidding.
 
 #CUT jacoby_responses
 3\X = shortage
@@ -102,13 +102,13 @@ does canape bidding.
         3oM = strong, clubs and other major, e.g. 6--5 shape
     2HS = rebid with 6+ card suit
     2N = 12+ balanced, *NT Scheme* follows
-    3C/!d = 6 card minor, canape
+    3C/!d = 6 card minor, canapé
     3M = self sufficient suit, no shortage
     3oM = self sufficient suit first bid suit, short in other major
     4CD = self sufficient suit first bid suit, short in !c/!d
     3N = 8-11 balanced, *NT Scheme* follows
 2DHS = natural GF
-    3CD = new suit is canape
+    3CD = new suit is canapé
     3x/4x = jump rebid is self-sufficient
 2M = raise with weak club hand and 4 card support
 2N = Jacoby 4+ trump support and 19+ hcp
