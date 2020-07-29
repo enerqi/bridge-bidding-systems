@@ -42,19 +42,19 @@ Responses show strength first, then shape.
             3N = to play, probably !c fit, !d stoppers, no slam opposite minimum
             4C = !c invite
             4N = quantitative, probably 3--3--5--2
-        3D = maximum, 4--4--1--4, GF
+        3D = maximum, 4--4--1--4, Maximum, GF v.s. unpassed hand
             3HS = !h/!s slam try
             4C = !c slam try
-        3H = maximum, 4--4--0--5, GF
+        3H = maximum, 4--4--0--5, Maximum, GF v.s. unpassed hand
             3S = !s slam try
             4C = !c slam try
             4D = !h slam try
             game = to play
-        3S = maximum, 4--3--1--5, GF
+        3S = maximum, 4--3--1--5, Maximum, GF v.s. unpassed hand
             4C = !c slam try
             4D = !s slam try
             game = to play
-        3N = maximum, 3--4--1--5, GF
+        3N = maximum, 3--4--1--5, Maximum, GF v.s. unpassed hand
             4C = !c slam try
             4D = !h slam try
             game = to play
@@ -126,20 +126,20 @@ Both majors, longest one unknown.
 
 ** 1st/2nd
 
-- 7--10 hcp, 5--4 or 5--5 shape.
-- Constructive with values well placed, no wasted honours.
-- 5--4--2--2 shape should have at most one honour, only Ace or King, in one of the doubletons
-- Not 3 suited.
+- Constructive 7--(11) hcp, 5--4 or 5--5 shape.
+- 1+ honour both suits
+- Beware/downgrade potentially wasted honours e.g Qx in 5--4--2--2
+- Never 5--4--4--0 / 4--4--4--1.
 
 ** 3rd
 
 *** VUL
 
-- 5--10 hcp, 5--4 or 5--5 shape.
+- 5--11 hcp, 5--4 or 5--5 shape.
 
 *** NV
 
-- 3--10 hcp, 4--4, 5--4 or 5--5 shape. Destructive, pre-emptive.
+- 3--11 hcp, 4--4, 5--4 or 5--5 shape. Destructive, pre-emptive.
 
 2H
     2S = to play
@@ -152,7 +152,7 @@ Both majors, longest one unknown.
             3HS = invite
         3D = 5--5 any range, GF
             3M = forcing, slam interest, suit picked
-        3H = 4!h--5!s, GF
+        3H = 5!h--4!s, GF
         3S = 5!s--4!h, GF
         3N = 4!s--4!h, GF
     3C = NF, escape
@@ -173,14 +173,14 @@ Both majors, longest one unknown.
 
 * 2S Opening - Dutch or Undisciplined
 
-~7--10 hcp, 5!s + !c/!d OR generic weak 2!s in 3rd
+~7--(11) hcp, 5!s + !c/!d OR generic weak 2!s in 3rd
 
 ** 1st/2nd
 
-- 5--4--x--x shape, !s + minor. 5--5--x--x if very weak (6)7--8 hcp.
-- 5--4--2--2 shape should have at most one honour, Ace or King, in one of the doubletons
-- Not 5--3--3--2, 5--4--4--0
-- Lead directing, contract directing, constructive
+- 5--4--x--x shape, !s + minor. 5--5--x--x if weak 7--9 hcp.
+- Lead directing, contract directing, constructive with 1+ top honours in !s.
+- Beware/downgrade potentially wasted honours e.g Qx in 5--4--2--2, max 1 honour in doubletons with 5--4--2--2
+- Never 5--3--3--2, 5--4--4--0
 
 ** 3rd
 
@@ -191,7 +191,7 @@ Both majors, longest one unknown.
 
 ** 4th
 
-6 card !s ~ 10--13 hcp (in place of multi 2!d)
+6 card !s ~ 10--13 hcp
 
 2S
     2N = Lebensohl

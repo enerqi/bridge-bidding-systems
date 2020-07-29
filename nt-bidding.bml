@@ -63,6 +63,7 @@ Responding:
 #ENDCUT
 
 1N
+    (any) [interference handling](#Overcalls of our NT)
     2C = [stayman forcing, never weak 4--4 hands, nor weak 5--4/5--5 majors.](#1N--2C)
         2D = [no 4 card major](#1N--2C--2D)
         2H = [4/5 card !h suit, not 4 !ss](#1N--2C--2H)
@@ -291,10 +292,11 @@ Stayman, forcing. Never with a weak 4--4 hand. With 5--4 or 5--5 majors just tra
             4H = to play
             4S = kickback RKB
     3H = transfer to !s (normally just complete as responder may have 3 suit bad hand)
-        3N = forcing, 4 card !s support (semi)balanced slam try, may sign off in !h slam later
-        4CDH = shortage
-        4S = to play
-        4N = RKB
+        3S = complete transfer
+            3N = forcing, 4 card !s support (semi)balanced slam try, may sign off in !h slam later
+            4CDH = shortage
+            4S = to play
+            4N = RKB
     3S = Roth shortness bid in !s, no 4 card major (transfer if so)
     3N = to play, e.g. xxx,Q,Axxx,Kxxxx
     4CD = 5 card minor slam try (semi)balanced
@@ -795,24 +797,192 @@ Most important is its use against weak twos and after we have made natural openi
 Classic Lebensohl:
 
 - Going via 2NT shows the *weaker* hand (instead of slow shows strong hand)
-- Cue bid asks for (denies) a stop and is GF
-- Direct cue bid used to show a 4card other major
+- Cue bid denies a stop and is GF, whether direct or via 2NT
+- Direct cue bid used to show a 4card other major, or even stayman both majors
 - Slow cue bid via 2NT denies a 4card other major
 - Slow 3N via 2NT denies a 4 card other major, and promises a stop
 - 3N direct denies a 4 card other major, and promises a stop
 - If a suit is available at the 2 level, then 2x is competitive, 2N--3x invitational, 3x GF
 
-* NT Escape
+** Non-Penalty X of NT
 
-Escaping from 1N penalty doubled. XX of a takeout double is natural!
+Playing a strong NT, X is usually takeout or specific suit(s) showing
 
 1N--(X)
-XX = relay to 2C
-    2C
-        P = clubs escape 5+ suite
-        2DH = natural 5+ suit
-        2S = same as direct 2S (or play as extra weak)
+    XX = penalty interest, GF if not doubling opponents
+    Others = [1N system on](#1NT)
+
+- Partner and Opener's delayed X at 2 level of opponents' bids is takeout (of the suit(s) shown)
+- Partner and Opener's delayed X at 3 level of opponents' bids is penalty (strength to play 1NTX has been shown by passing first)
+
+With 1N--P--P--(X) balancing double, partner need not be that strong yet still
+
+- Partner and Opener's X at 2 level of opponents' bids is takeout (of the suit(s) shown)
+- Partner and Opener's X at 3 level of opponents' bids is penalty
+
+1N--(P)--P--(X)
+    2HS = 5 card major.
+
+** Overcalls of our NT
+
+1N--(2C)
+    X = stand in for 2!c
+    Others = [1N system on](#1NT)
+
+1N--(2DHS)
+    X = takeout iff suit natural, staymanic, normally a doubleton (unlike cue)
+    2x = NF
+    2N+ = transfer Lebensohl
+    Cue = shortness (Roth-like), staymanic
+    3N = suggests stopper, not guaranteed
+    4DH = texas transfer (even to opponents suit (psyche, strong whatever))
+
+Tranfer Lebensohl examples.
+
+1N--(2H)
+    2N = !c
+    3C = !d
+    3D = !s
+    3H = short !h and usually 4!ss
+    3S = minors 5--4+, no major interest
+        4CD = NF
+1N--(2S)
+    2N = !c
+    3C = !d
+    3D = !h
+    3H = minors 5--4+, no major interest
+        4CD = NF
+    3S = short !s and usually 4!hs
+
+- Note if the overcall promised another unknown suit we do not consider it.
+- When the overcall does show two specific suits, X is negative for the other suits
+
+1N--(2x two known suits)
+    2-newsuit = to play
+    Cue = staymanic for major
+    2N = transfer to lowest other suit, invite+
+    3C = tranfer to higher other suit, invite+
+    3DH = stopper
+    3S = 5--5+ other two suits (regardless if they have !s)
+
+1N--(2x two other suits) e.g. 2D both majors
+    double = negative for other suits
+    2Cue = natural, e.g. taking back !ss
+    2N = transfer Lebensohl
+    3Cue = stopper
+
+1N--(2H both majors)
+    2S = natural (they might have bad !s suit poorly positioned or psyche)
+
+1N--(2x transfer overcall)
+    X = negative of show suit
+    2Cue = singleton stayman, NF
+    3Cue = singleton stayman, GF
+    2N = transfer Lebensohl
+
+
+1N--(P)--2C
+    (X)
+        XX = to play interest, good !c
+            2D = 3 suiter short in !c (was going to pass a 2!d response)
+            3D = long !d + 4 card major
+        P = !c tolerance, e.g. 4 cards
+            2D = 3 suiter short in !c (was going to pass a 2!d response)
+            3D = long !d + 4 card major
+        2D+ = no major, no !c contract interest. System on.
+    (2D)
+        P = nothing to say (bid 2!h/!s with a major or 2N with both majors).
+        X = penalty
+        2H+ = system on. System remains on if opponents bid no more, pretend opener bid 2!d.
+    (2HS)
+        P = neutral by opener
+            X = penalty by responder also
+            2N = minors
+            3CD = forcing, natural
+            Cue = stop ask
+        X = penalty
+        2H = 4/5 !h
+        2S = 4/5 !s
+        3H = 4/5 !h (over 2!s)
+    (3x)
+        P = neutral
+        X = penalty
+        3HS = 4 card major
+        4H = (over 3!s) 5 card major
+
+1N--(P)--2DH
+    (X)
+        XX = to play interest
+        P = doubleton in transfer suit
+            XX = retransfer ask (with invitational+ values)
+            2HS = transfer suit is to play
+    (Cue) bidding partners transfer suit with 2!h or 2!s
+        P = doubleton
+        X = 3 card support
+    (higher)
+        P = nothing special
+            X = takeout typically with doubleton, can start a force
+            3-lower = NF, lower ranking new suit
+            Cue = shortness, good hand, stop check
+            4x = GF
+        X = penalty
+        accept = complete transfer next level, fit + non-minimum
+        new-suit = FNJ fit + side suit
+
+1N--(P)--2S+
+    (X)
+        XX = to play interest
+        any = system on
+
+1N--(2N)
+    P = weak or competitive if re-open with a X
+    X = any GF, penalty interest
+    3CD = forcing in !h/!s, assuming 2N showed both minors
+    3HS = NF
+    4DH = texas transfer
+
+1N--(3CD)
+    X = negative
+    3DHS = forcing
+    4C = forcing
+    4DH = texas transfer
+
+1N--(3HS)
+    X = negative
+    3S = forcing
+    4CD = forcing
+
+1N--(4x)
+    X = penalty
+
+* NT Escape
+
+Escaping from 1N penalty doubled.
+
+- X by opener is always takeout
+
+1N--(X)
+    P = stronger, happy to play.
+    XX = relay to 2C
+        2C
+            P = clubs escape 5+ suite
+            2DH = natural 5+ suit
     2C = !c + !s
     2D = !d + !s
     2H = !h + !s
     2S = natural
+    2N = forcing, fit searching
+    3x = forcing, natural offensive hand
+
+1N--(X)--P--(escape)--P
+    2x = F1, invitational+ values
+    3CD = F1, invitational+ values
+    3HS = GF
+    2N = invitational
+    Cue = stopper ask
+    X = negative
+
+1N--(P)--P--(X)--P--(any)
+    2N = minors, balancing
+    X = negative
+

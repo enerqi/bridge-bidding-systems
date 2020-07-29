@@ -13,7 +13,7 @@ After the 1D reponse (commonly weak, but could be GF) opener bids
 *majors before minors* so can compete in part scores.
 
 1C--1D  (Negative 0--7 hcp or 15+ GF no 4cM, if balanced 19+)
-1HS = weak hand with 3--4 cards OR strong hand 4+ cards
+1HS = weak/strong hand with 4 cards
     P = very poor, 0--3
     1S = 0--7, 4+ suit, F1 v.s. strong hand
         1N = strong hand
@@ -38,8 +38,8 @@ After the 1D reponse (commonly weak, but could be GF) opener bids
     3S = minors enquiry (see 2NT scheme)
     3N = ~19--21 balanced, no majors
 
-1N 17--19 strong NT. NT Scheme follows.
-2CD
+1N [weak NT, NT Scheme follows](#1NT)
+2C
     2DHS = natural, forcing (could be 15+)
         3CD = rebid is NF
         3X = natural 2nd suit
@@ -49,10 +49,11 @@ After the 1D reponse (commonly weak, but could be GF) opener bids
     3CD raise = natural, NF
     3DHS = mini-splinter jumps
     3N = natural, to play
+2D = strong, short !d, continue as [Precision Style 3 Suiter](#2D Precision Style 3 Suiter)
 2HS = 8+ PT Acol-2, ~19--21 hcp
     2S/3C = next suit double negative (e.g. 0--3 hcp)
         3HS = suit rebid after is the only none GF bid
-2N = 22--23 strong NT. NT Scheme follows.
+2N = 21--23 strong NT. NT Scheme follows.
 3CD = GF natural
     3DHS = natural suit
         4DHS = raise with Hx or xxx or better
@@ -87,27 +88,14 @@ does canapé bidding.
     3N = 8-10, balanced, two card !s support
     4CD = Splinter, 4 card !s support
     4S = 8-10, 4 card card !s support
-1N = natural, 10-13 NT. NT scheme follows.
-2C = artificial ask, natural 5+!c or strong balanced hand
-    2D = no 6 card major, no 5 card other major
-        2H = opener has 22+ balanced
-            2S = natural 5 cards (would use 3 level transfer with 6 cards)
-            2N = < 3 control points (A=2, K=1)
-            3C+ = NT scheme responses follow at 3 level and above
-        2S = strong, 5!c and 4 card other major
-        2N = 17-19 balanced
-        3C = strong, 6!c natural
-        3D = strong, 5!c and 4!d
-        3M = strong, 3 card major support, 5--4 or 6--4 in !c/!d
-        3oM = strong, clubs and other major, e.g. 6--5 shape
-    2HS = rebid with 6+ card suit
-    2N = 12+ balanced, *NT Scheme* follows
-    3C/!d = 6 card minor, canapé
-    3M = self sufficient suit, no shortage
-    3oM = self sufficient suit first bid suit, short in other major
-    4CD = self sufficient suit first bid suit, short in !c/!d
-    3N = 8-11 balanced, *NT Scheme* follows
-2DHS = natural GF
+1N = [weak NT, NT Scheme follows](#1NT)
+2D = artificial, excellent max or 5 card weak raise 14--15
+    2N = features ask
+        3CD = long minor
+        3oM = singleton
+        3M = nothing extra
+        4M = 5 cards
+2CHS = natural GF
     3CD = new suit is canapé
     3x/4x = jump rebid is self-sufficient
 2M = raise with weak club hand and 4 card support
@@ -250,5 +238,3 @@ X = penalty (may change this)
 1C--(P)--1H+--(any)
     P =  weak hand
     2H = raise, weak hand
-
-Argh

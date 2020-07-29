@@ -1,8 +1,8 @@
 #+TITLE: Slam Bidding
 
-Blanket rules for 4N and cue bids when exploring slams. Plus some slam finding conventions.
-
 * Slam Bidding
+
+Blanket rules for 4N and cue bids when exploring slams. Plus some slam finding conventions.
 
 ** What is 4N?
 
@@ -27,6 +27,14 @@ let the initiator push them.
 
 - Assume 3 level bids are natural, even if possibly cues to start slam probes
 - Jumping to 4 level ambiguously (4 minor or new major after 1st round of bidding) is a cue bid
+
+*** shortness ask general responses
+
+As a general principle, when one partner makes a totally artificial
+bid to ask the other about the location of a shortness (or of an as-yet-
+unidentified second long suit), we usually adopt the general pattern of
+showing by making ascending numeric responses. E.g. 4--5--1--3 !s/!h/!d/!c is lower than
+4--5--2--2 then 4--5--3--1 etc, so 1 step is !d sigleton, 2 steps none, 3 steps !c singleton
 
 ** Slam Convention Interference Defence
 

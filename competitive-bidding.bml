@@ -37,3 +37,68 @@ Standard meanings by the defender sitting under the declarer:
 
 
 ...TODO, Fit Jumps, HCR etc.
+
+** Strong Club Defence
+
+Show majors, especially !s and bid to limit. Pass then later bid unusual NT if really want
+to show !c+!d.
+
+(1C)--
+    X = !s 4 cards + 5/6 card minor.
+      (P)
+        P = !c suit
+        1D = Pass/Correct minor
+          1H = 3 card !h fragment and long !c suit
+          1S = 4 good !s happy with 4--3 fit
+        !c/!d = pass/correct any level (unless rebid later self-sufficient suit)
+        1N = 4 card !s limit raise, opening hand+
+        2N = 5 card !s limit raise, opening hand+
+      (XX)
+          P = play if you have !c  (1!cXX is not game)
+      (any)
+         !c/!d = pass/correct any level
+         NT = constructive !s raise
+    1D = 4--4/5--4 both majors (longer !h 5--4 is better as it will be choosen when advancer is equal length)
+      !h/!s = bid to level
+      1N = constructive in !h/!s, e.g. 3--3
+      2C = to play
+      2N = constructive game invite in !h/!s, bid 4 with max
+    1HS = natural, often 5 cards
+      (P)
+        1N = 3 card support, constructive game invite
+        2N = 4 card support, constructive game invite
+      (X)
+        XX = 2 card support, part score competition interest at 2 level if partner has 6
+    1N = 5!s + 5 other
+      (P)
+        2C = escape ask
+        2D = escape !d/!h or single !d suiter
+        2H = escape !h only
+      (X)
+        XX = escape ask
+        2CDH = single suit, to play
+    2x = natural, 6 cards normally
+      2y = FNJ implications
+      2N = invitational
+    2N = 5!h + !c/!d
+      3C = escape ask
+      3DS = natural
+
+(1C)--P--(1D)
+  X = same as 1!d overcall of 1C
+
+(1C)--P--(Any)
+  X = both majors OR iff responder showed a major then other major + minor
+  NT = takeout, lower suits, 4 in a suit that can be bid at 1 level, 5 card suit if must be bid at 2level
+  Others = natural
+
+** Natural Prepared / Swedish / Polish Club Defence
+
+(1C)
+  1D = decent values or lead directing, very unlikely to have a major
+    NewSuit = NF at all levels, jumps stronger though
+    2C = forcing, HCR or major force
+    3C = jump cue, mixed raise ~6--9, 4 card support + shortage
+  1M = natural, light
+    3C = jump cue, mixed raise
+

@@ -33,7 +33,7 @@
       - 11--16, unbalanced, maybe longer 5 card !c (canapé)
       - 11--19, unbalanced, single diamond suit
       - 11--21, unbalanced < GF, longer diamonds two or three suiter
-  1M  4+ cards, 6+ hcp, maybe !d fit or long !c with weaker hands
+  1M  4+ cards, 6+ hcp, maybe !d fit or canapé long !c with weaker hands
     1N = 4+!c, forcing
     2C = usually 6+!d, forcing
     2D = 3 card Major support, 11--14, NF
@@ -58,12 +58,12 @@
   4HS to play
   4NT RKB
 
-1H = (10)11--16, 5 card Major
-  1S = natural, 4+ cards
-  1N = 100% forcing, 0+ hcp, often concealing standard single raise or 4!s and invite values
+1H = [(10)11--16, 5 card Major all positions](#1H Opening)
+  1S = [natural, 4+ cards or 5+ cards without 3 card !h support](#1H--1S)
+  1N = [100% forcing, 0+ hcp, often concealing standard single raise or 4!s and invite values](#1H--1N)
   2C = GF, usually 5 cards. Never 4--3--3--3 shape. Never 4--4--3--2 and 3 or 4 !hs (use 2N).
   2D = GF, usually 5 cards
-  2H = invite ~(9)10--12, 3 card support
+  2H = [invite ~(9)10--12, 3 card support](#1H--2H)
   2S = 6+!s, 0--9 hcp, no !h fit  (note 1!s and 2!s rebid is invitational)
     2N = rare, raise if high cards in minors or Ace !s, e.g. x/AKQJxxx/Ax/xxx
       3H = no stopper
@@ -86,7 +86,7 @@
   4S = pre-empt
   4N = RKB
 
-1S (10)11--16, 5 card Major
+1S [(10)11--16, 5 card Major](#1S Opening)
   1N = 100% forcing, 0+ hcp, often concealing standard single raise
   2C = GF, usually 5 cards. Denies 4!s--3--3--3.
   2D = GF, usually 5 cards, maybe 2--4--4--3
