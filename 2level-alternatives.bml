@@ -1,0 +1,231 @@
+#+TITLE: Alternative 2 level openings
+
+* 2D Multi Opening (*Not currently part of the main system*)
+
+** 1st/2nd/3rd
+
+Sound 6 card weak Two =OR= 4--4--4--1 (any singleton), 4+ control points, 16+ hcp
+
+- 5--9 hcp
+- Lead directing, contract directing, constructive
+- 6--3--x--x, rarely 6--4, rarely 4 card other major, QJ or K10 or A10 minimum
+- Other 4 card M would have to be very poor or 3rd position
+- Voids ok if points low enough to keep out of a 1 level opening bid
+- Suit quality is more about playing trick potential than top honour counts
+- The flexibility to open 2!s with a 6 card weak two in 3rd implies the suit remains high quality in 3rd.
+
+** 4th
+
+6 card major ~10--13 hcp =OR= 4--4--4--1 (any singleton), 4+ control points, 16+ hcp
+
+- Higher probability of being 4--4--4--1
+- More likely to open 2!s with 10--13 spade suit and pass a !h holding
+
+2D
+    2HS = pass/correct (weak or a game try in the other suit)
+        2N = 4--4--4--1 hand
+            3C = enquiry (responses as over 2N strong enquiry)
+            3D = scramble (4--4--4--1 hand passes unless singleton)
+            3H = scramble (4--4--4--1 hand passes unless singleton)
+            3S = weak, 6!s
+    2N = strong enquiry
+        3C = some 6 card major
+            3D = GF
+                3HS = minimum
+                4HS = maximum
+            3HS = pass/correct paradox
+            3N = to play
+        3D = minimum 3 suiter, short !h
+            3H = 2nd ask
+            3N = to play
+        3H = minimum 3 suiter, short !s
+            3S = 2nd ask
+            3N = to play
+        3S = maximum 3 suiter, short, two way !c or !d
+            3N = special clarification ask
+                4C = maximum 3 suiter, short !d
+                    4D = 2nd ask
+                    4N = to play
+                4D = maximum 3 suiter, short !c, 5 losers, *as if 2nd ask made*
+                    4N = to play
+                4H = maximum 3 suiter, short !c, 4 losers, *as if 2nd ask made*
+                    4N = to play
+                4S = maximum 3 suiter, short !c, 3 losers, *as if 2nd ask made*
+                    4N = to play
+                4N = maximum 3 suiter, short !c, 2 losers, *as if 2nd ask made*
+                    5C = *3rd* ask
+        3N = minimum 3 suiter, short !c
+            4C = 2nd ask
+        4C = minimum 3 suiter, short !d
+            4D = 2nd ask
+            4N = to play
+        4D = maximum 3 suiter, short !h
+            4H = 2nd ask
+            4N = to play
+        4H = maximum 3 suiter, short !s
+            4S = 2nd ask
+            4N = to play
+    3CD = mini-splinter with at least 4/3 in majors, 12+ useful hcp
+    3HS = weak (< 10 hcp) pass/correct paradox bids
+    3N = weak (< 10 hcp) 4-4 majors (willing to go to 4 level)
+    4C = weak (< 10 hcp) 5!h + 4!s
+    4D = weak (< 10 hcp) 4!h + 5!s
+    4M = natural, to play
+
+*** 4--4--4--1 Asking Bids
+
+- 1st Ask responses differentiate broad lower (6-9 loser) or upper (2-5 losers) range
+- Asks (2nd - loser count, 3rd - control points) are always done by bidding the short suit.
+- 4th (queen) ask is the lowest of 5NT or the short suit
+- A singleton King is not a control point and it is a loser
+- Qxxx is two losers
+
+A simpler system is possible but is very vague and space consuming for 4--4--4--1 hands. It's also possible to handle
+5--4--4--0 hands but that requires differentiating singleton v.s. void shortage and the 2nd ask responses showing losers
+are likely too overloaded given the wide range of hands we can open on.
+
+Second ask gives more definition on the loser count:
+
+- Step1 = 9 or 5  (lower range vs upper range hand)
+- Step2 = 8 or 4
+- Step3 = 7 or 3
+- Step4 = 6 or 2
+
+Third ask checks blue club controls (A=2, K=1):
+
+- Step1 = 6 or 4  (upper range vs lower range hand)
+- Step2 = 7 or 5
+- Step3 = 8 or 6
+- Step4 = 9 or 7
+- Step5 = 10 or 8
+- Step6 = 11 or 9
+- Step7 = 12 or 10
+
+Fourth ask checks for queens NOT held, grand slam fishing:
+
+- The 4441 hand is asked to bid the lowest suit (which may be his shortage) *without* a queen
+- Partner then passes, or sets the suit with the understanding that opener must raise 6 to 7 if holding that queen.
+
+*** interference
+
+2D--(X)
+    XX = Diamonds and values
+    any = same system
+
+2D--(2HS)
+    X = Takeout
+
+2D--(3x) or above
+    X = Penalty
+    3HS = pass or correct
+
+2D--(P)--2N--(3HS)
+    X = Penalty (my weak two, or 4--4--4--1 strong)
+
+2D--(P)--2N--(3x)
+    3HS = sound, non-minimum
+
+
+* 2H Both Majors (*Not currently part of the main system*)
+
+Both majors, longest one unknown.
+
+** 1st/2nd
+
+- Constructive 7--(11) hcp, 5--4 or 5--5 shape.
+- 1+ honour both suits
+- Beware/downgrade potentially wasted honours e.g Qx in 5--4--2--2
+- Never 5--4--4--0 / 4--4--4--1.
+
+** 3rd
+
+*** VUL
+
+- 5--11 hcp, 5--4 or 5--5 shape.
+
+*** NV
+
+- 3--11 hcp, 4--4, 5--4 or 5--5 shape. Destructive, pre-emptive.
+
+2H
+    2S = to play
+    2N = asking bid
+        3C = minimum, only not GF bid
+            3D = asking bid
+                3H = 4!s--5!h
+                3S = 5!s--4!h
+                3N = 4!s--4!h
+            3HS = invite
+        3D = 5--5 any range, GF
+            3M = forcing, slam interest, suit picked
+        3H = 5!h--4!s, GF
+        3S = 5!s--4!h, GF
+        3N = 4!s--4!h, GF
+    3C = NF, escape
+    3D = invite, both majors 3--3 in !s!h
+    3HS = obstructive
+    4CD = splinter
+
+2H--(X)
+    XX = penalty interest
+    any = same system
+
+2H--(any)
+    X = penalty
+    3x = natural, implying some support
+    Cue = limit+ raise
+    4CD = Fit jump
+
+
+* 2S Opening - Dutch or Undisciplined
+
+~7--(11) hcp, 5!s + !c/!d OR generic weak 2!s in 3rd
+
+*** 1st/2nd
+
+- 5--4--x--x shape, !s + minor. 5--5--x--x if weak 7--9 hcp.
+- Lead directing, contract directing, constructive with 1+ top honours in !s.
+- Beware/downgrade potentially wasted honours e.g Qx in 5--4--2--2, max 1 honour in doubletons with 5--4--2--2
+- Never 5--3--3--2, 5--4--4--0
+
+*** 3rd
+
+6--11 hcp
+
+- Undisciplined weak two: 5--4, 5--5, 6 card poor quality, possibly 4 card other major.
+- 5--3--3--2 only if NV and excellent lead directing suit quality
+
+*** 4th
+
+6 card !s ~ 10--13 hcp
+
+2S
+    2N = Lebensohl
+        3C = relay
+            P = escape, long !c
+            3D = escape, long !d
+            3H = escape, long !h
+    3C = pass or correct to minor (with long minor can be right to bid the suit you do not
+         have to escape instead of Lebensohl)
+    3D = game try+ in !s. May use to probe for slam.
+    3H = natural, forcing
+    3S = obstructive
+    3N = to play
+    4CD = splinter
+    4HS = to play, sound or obstructive
+    5CD = to play, sound or obstructive
+
+2S--(X)  Takeout or Penalty
+    2N = *minor ask*
+    3CD = escape, natural
+    3H = fit non jump
+    4CD = fit jump
+    4H = to play
+    XX = penalty interest
+
+2S--(3x)
+    X = penalty
+    3y = natural, implying some support
+    4x = cue, slam try
+    4CD = fit jump / fit non jump
+    4HS = to play

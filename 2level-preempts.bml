@@ -1,4 +1,4 @@
-#+TITLE: 2D Three Suiter, 2H and 2S pre-empts
+#+TITLE: 2D Three Suiter, 2H and 2S Pre-empts and Defences
 
 * 2D Precision Style 3 Suiter
 
@@ -120,109 +120,121 @@ Responses show strength first, then shape.
     3HS = maximum opener
     4D = maximum opener, both majors
 
-* 2H Majors Opening
+* 2HS Weak Opening
 
-Both majors, longest one unknown.
-
-** 1st/2nd
-
-- Constructive 7--(11) hcp, 5--4 or 5--5 shape.
-- 1+ honour both suits
-- Beware/downgrade potentially wasted honours e.g Qx in 5--4--2--2
-- Never 5--4--4--0 / 4--4--4--1.
-
-** 3rd
-
-*** VUL
-
-- 5--11 hcp, 5--4 or 5--5 shape.
-
-*** NV
-
-- 3--11 hcp, 4--4, 5--4 or 5--5 shape. Destructive, pre-emptive.
-
-2H
-    2S = to play
-    2N = asking bid
-        3C = minimum, only not GF bid
-            3D = asking bid
-                3H = 4!s--5!h
-                3S = 5!s--4!h
-                3N = 4!s--4!h
-            3HS = invite
-        3D = 5--5 any range, GF
-            3M = forcing, slam interest, suit picked
-        3H = 5!h--4!s, GF
-        3S = 5!s--4!h, GF
-        3N = 4!s--4!h, GF
-    3C = NF, escape
-    3D = invite, both majors 3--3 in !s!h
-    3HS = obstructive
-    4CD = splinter
-
-2H--(X)
-    XX = penalty interest
-    any = same system
-
-2H--(any)
-    X = penalty
-    3x = natural, implying some support
-    Cue = limit+ raise
-    4CD = Fit jump
-
-
-* 2S Opening - Dutch or Undisciplined
-
-~7--(11) hcp, 5!s + !c/!d OR generic weak 2!s in 3rd
+~7--(11), 6 card suit
 
 ** 1st/2nd
 
-- 5--4--x--x shape, !s + minor. 5--5--x--x if weak 7--9 hcp.
-- Lead directing, contract directing, constructive with 1+ top honours in !s.
-- Beware/downgrade potentially wasted honours e.g Qx in 5--4--2--2, max 1 honour in doubletons with 5--4--2--2
-- Never 5--3--3--2, 5--4--4--0
+- relatively constructive, no more than one Ace weaker than opening hand.
+- suit quality 1 top honour, not too concerned
+- extreme shape with long 4/5 card minor possible
+- beware downgrade wasted values e.g. Qx/KQxxxx/xxx/xx
+- blue moon 5 card !s suit KQJ109 + side K
 
 ** 3rd
 
-6--11 hcp
-
+- ~5--11
 - Undisciplined weak two: 5--4, 5--5, 6 card poor quality, possibly 4 card other major.
-- 5--3--3--2 only if NV and excellent lead directing suit quality
 
 ** 4th
 
-6 card !s ~ 10--13 hcp
+- ~9--11
 
-2S
-    2N = Lebensohl
-        3C = relay
-            P = escape, long !c
-            3D = escape, long !d
-            3H = escape, long !h
-    3C = pass or correct to minor (with long minor can be right to bid the suit you do not
-         have to escape instead of Lebensohl)
-    3D = game try+ in !s. May use to probe for slam.
-    3H = natural, forcing
-    3S = obstructive
-    3N = to play
-    4CD = splinter
-    4HS = to play, sound or obstructive
-    5CD = to play, sound or obstructive
-
-2S--(X)  Takeout or Penalty
-    2N = *minor ask*
-    3CD = escape, natural
-    3H = fit non jump
-    4CD = fit jump
-    4H = to play
-    XX = penalty interest
-
-2S--(3x)
-    X = penalty
-    3y = natural, implying some support
-    4x = cue, slam try
-    4CD = fit jump / fit non jump
+2H = weak two
+    2S = NF, natural, either weak 6+ !s short !hs OR invitational strength 5+ !s short !hs
+        3CD = partial fit (Hx) + maximum
+        3S = raise with fit (xxx+) mandatory
+    2N = puppet to 3!c, maybe !h raise OR !c signoff
+        3C = relayed
+            P = !c sign off
+            3D = shortness ask, !h support, typically slam try
+                3H = minimum, no shortness
+                3S = !s singleton/void, control bid continuations
+                3N = maximum, no shortness
+                4C = !c singleton/void
+                4D = !d singleton/void
+                4H = 1 loser !h suit, no shortness
+            3H = !h game try, !c values
+            3S = natural, !cs and !ss, 5--5+ usually
+            3N = !h support, willing to play 3N
+            4C = natural, forcing, !c slam try
+            4D = natural, forcing, !cs and !ds, longer !cs
+            4H = delayed splinter, short !s
+    3C = !d transfer, invitational+, 6+ cards or 5 cards and !h support
+        3D = none of the below
+        3H = minimum, good !h, avoiding 3!d contract
+        3S = !d fit (xxx+), !s stopper, maximum
+        3N = !d fit, !c stopper, maximum
+        4C = !d fit, singleton !c, maximum
+        4D = !d fit, nothing in !c/!s, maximum
+        4H = self-sufficient suit
+    3D = !h transfer, invitational+
+    3H = weak limit raise
+        4H = extreme shape e.g. 6--5, x/A109xxx/KJxxx/x
+    3S = natural, GF, (passed hands fit jump)
+    3N = to play, non-correctable
+    4CD = splinters !h support, (passed hands fit jump)
     4HS = to play
+    4N = Blackwood (bid 3!d or splinter, then 4!s Kickback for RKB)
+
+2S = weak two
+    2N = puppet to 3!c
+        3C = relayed
+            P = !c sign off
+            3D = shortness ask, !s support, typically slam try
+                3H = !h singleton
+                3S = minimum, no shortness
+                3N = maximum, no shortness
+                4CD = !c/!d singleton/void
+                4H = void !h
+                4S = 1 loser !s suit, no shortness
+            3H = natural, forcing, !cs and !hs, 5--5+ usually
+            3S = !s game try, !c values
+            3N = !s support, willing to play 3N
+            4C = natural, forcing, !c slam try
+            4D = natural, forcing, !cs and !ds, longer !cs
+            4H = delayed splinter, short !h
+    3C = !d transfer, assumed invitational, maybe weak - sign off 4!d over max responses, 6+ cards or 5 cards and !s support
+        3D = none of the below
+        3H = !d fit (xxx+), !h stopper, maximum
+        3S = minimum, good !s, avoiding 3!d contract
+        3N = !d fit, !c stopper, maximum
+        4C = !d fit, singleton !c, maximum
+        4D = !d fit, nothing in !c/!s, maximum
+        4S = self-sufficient suit
+    3D = !h transfer, 6 good or 7 cards, assumed invitational, primarily !h not NT interest
+        3H = nothing special
+        3S = unlikely, !h suit should be better on misfit
+        4H = some judged non-minimum fit
+    3H = !s transfer, invitational raise
+    3S = weak limit raise
+        4S = extreme shape
+    3N = to play, non-correctable
+    4CD = splinters !s support, (passed hands fit jump)
+    4H = to play, (passed hands fit jump)
+    4S = to play
+    4N = Blackwood (bid 3!h or splinter, then 4N for RKB)
+
+** 2HS interference
+
+2HS--(X)
+    XX = penalty values, we play or they play doubled
+    P/X = pass then later double also penalty
+    2N--3N = system on
+    4CD = fit jumps, where would have been splinters
+    4H = to play, by unpassed hand
+2H--(2S)
+    2N--3H = system on
+    3S = stopper ask
+    4CD = fit jumps
+2HS--(3x)
+    newSuit = natural, forcing by unpassed hand
+2HS--(2!s/3!c!d!h)
+    X = penalty
+2HS--P--(P)--(2!s/3!c!d!h)--P--P
+    X = re-opening takeout
+
 
 * Two Bid Defences
 

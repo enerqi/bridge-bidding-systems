@@ -6,6 +6,7 @@
 - by judgement a minimum 5!h and 6!c/!d may show a 5--5 hand bidding !h first
 
 1H = (10)11--16, 5 card Major
+  (any) = [interference](#1H interference)
   1S = [natural, 4+ cards or 5+ cards without 3 card !h support](#1H--1S)
   1N = [100% forcing, 0+ hcp, often concealing standard single raise or 4!s and invite values](#1H--1N)
   2C = [GF (passed hand 10--12), usually 5 cards. Never 4--3--3--3 shape. Never 4--4--3--2 and 3 or 4 !hs (use 2N).](#1H--2C)
@@ -446,8 +447,7 @@ due to limited openings. In addition to the club system there will always be a b
 
 - Rebid of the major after 2/1 GF shows the minimum or other catchall bids, not a 6th card
 - usually 5 card !c suit (only likely 4 carder is 3--2--4--4)
-- never 4--3--3--3
-- never 3/4 card support and 4--4--3--2 (use 2N raise instead)
+- never 4--3--3--3 / 4--4--3--2 with card support (use 2N raise instead)
 - Versus a passed hand, bids above 2!h are GF
 - 2!h rebid versus a passed hand is never a maximum
 - 3!h rebid versus a passed hand has lower requirements, just a max and 6 card suit
@@ -661,8 +661,8 @@ remaining below 4!h:
     4S = Kickback RKB
 3N = any maximum 5--3--3--2/6--3--3--2, all suits stopped
     4S = Kickback RKB
-4CDH = maximum, 5--5+ (4!h showing !ss which would be 5--6 shape or 7--4--1--1), responder should only care about the Ace in other suits
-4H = maximum, 5!h--6!s / 7!s--4!h--1--1 OR versus passed hand fast arrival game bid
+4CD = maximum, 5--5+ (4!h showing !ss which would be 5--6 shape or 7--4--1--1), responder should only care about the Ace in other suits
+4H = maximum, 5!s--6!h / 7!h--4!s--1--1 OR versus passed hand fast arrival game bid
 4S = Kickback RKB
 4N = EKB !s void
 5CD = EKB
@@ -698,6 +698,7 @@ Similar to 1!h--3!c:
 4C = Redwood for !ds
 4D = slam try forcing, looking for control bid
 4H = to play
+4S = splinter for !ds
 4N = substitute short !c splinter, with 2 aces as cannot use RKB
 
 ** 1H--3H
@@ -731,12 +732,322 @@ but will be driving to five level at least. Possibly void and needs to decide if
 to five level.
 
 XX = Ace showing by opener after opponents lead directing double
+
 4S = Kickback RKB, maybe important to bid if 4!c/4!d was doubled and 5!c/!d raise impending
+
+** 1H interference
+
+1H--(X)
+    XX = doubleton !h, 6+ hcp, encourage 6 card suit rebid
+    1S = natural, forcing (by unpassed hand), ignores the double
+    1N = !cs
+    2C = !ds
+    2D = !hs, invitational
+    2H = ~5--9, with less pass then bid later
+    2S = weak jump shift
+    2N = invitational+ 4 card raise, 2N system on
+    3CDS = fit jump
+
+Second round bids ignore the T/O X if advancer bids nothing, e.g. 1H--(X)--1S--(P)--1N--(P)
+then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
+
+1H--(1!s)
+    D = negative or game force expecting to bid a suit next
+        1N = no !s stop guarantee, opener can cue later to check for one
+    1N = natural, ~7--10, !s stopper
+        (2!c) = opponents compete
+            2x = minimum
+            3x = maximum
+        (2!d!h!s) = opponents compete
+            2N = strong raise
+            3H = weak raise
+    2CD = negative freebid, 0--10
+    3CD = forcing, too much shape to start with a negative X
+    3S = splinter, opponent's suit
+    4CD = fit jump
+
+1H--(1N)
+    X = penalty
+    2C = some one suiter hand
+        2D = relay, NF (may pass with !ds)
+    2D = !d + !s
+    2H = natural
+    2S = !s + !c
+    2N = no trump cue bid, too shapely to X
+        3C = relay for responder to bid a forcing suit
+
+1H--(2!c)
+    X = negative or GF bidding a weaker suit next time or stop asking
+    2DS = negative freebid, 0--10
+    2H = natural
+    2N = natural
+    3C = invite+ !hs
+    3D = forcing, 6+ suit when unpassed, invite passed hand
+    3H = mixed raise (weak limit)
+    3S = forcing, 6+ suit when unpassed, Fit Jump passed hand
+
+1H--(2!d)
+    X = negative or GF bidding a weaker suit next time or stop asking
+    2H = natural
+    2S = negative freebid, 0--10
+    2N = natural
+    3C = forcing
+    3D = invite+ !hs
+    3H = mixed raise (weak limit)
+    3S = forcing, 6+ suit when unpassed, Fit Jump passed hand
+
+1H--(2!h)
+    X = force, leading to penalty or forcing new suit bid
+    2S = cue of implied major, limit+ raise
+    2N = natural
+    3CD = natural, NF invitational. With known minor to cue, shows forcing other minor bid.
+    3H = NF
+    3S = splinter
+    4CD = splinter (of their known suit), or fit jump (of unbid suit)
+
+1H--(2!s)
+    X = negative
+    2N = natural v.s. weak two, but v.s. intermediate+ overcall shows invitational+ !hs
+    3x = forcing
+
+1H--(2N)  presumably minors
+    X = penalty interest, but can also pass then X showing values but not much in their suit
+    3C = other major, invitational+
+    3D = invitational+, !h
+    3H = weaker
+    4CD = splinter
+    4HS = to play (passed hand - fit jump other major)
+
+1H--(3x)
+    X = negative
+    NewSuit = forcing
+    cue = support showing, invitational or GF if below/above 3!hs
+
+1H--(3x) two suiter including suit bid
+    lowCue = below 3!h, invitational in !hs
+    highCue = above 3!h, GF in !hs
+    X = penalty
+
+*** 4th only overcalls:
+
+1H--1S--(X)
+    P = doubleton !s, nothing to bid
+    XX = support, otherwise ignore the double
+
+1H--1N--(X)
+    XX = artificial, good suit mild extras, 6 !hs, not shapely enough for 3!h bid
+
+1H--1N--(2DS)
+    X = takeout, e.g. x/AKxxx/Axxx/Qxx of 2!s overcall
+
+Two level overcalls passed backaround to responder, e.g. 1H--1N--(2D)--P--(P), bids are as if uninterrupted,
+e.g. 2!s showing 4!ss exactly and NF invite.
+
+After bids/raises by opponents to the three level, bids show much the same as the uninterrupted 2 level
+auction, except there's more guessing, e.g. 3!s showing 4!ss exactly and NF invite, but gambling on final contract
+a little.
+
+1H--1N--(3x)
+    X = takeout, good hand extra strength
+
+*** responder passing, 4th hand reopens
+
+1H--(P)--P--(X)
+    XX = artificial, good suit mild extras, 6 !hs, not shapely enough for 3!h bid
+    1N = unspecified 4 card minor on way to 2!h bid, e.g. xx/KQJ10xx/AJQx/x
+        2x = lowest suit can play in
+    2CD = 5 card suit normally
+
+Responder can also re-open on their second bid, X takeout at the 2 level, but penalty
+at the 3 level.
 
 * 1S Opening
 
 - by judgement a minimum 5!s and 6!h may show a 5--5 hand bidding !s first
 
+** 1S--2S
+
+Invite ~10--12 (9 with singleton), 3 card support (a Drury raise in all positions).
+
+- use forcing NT for the "normal", weak 6--9 raise use
+- a traditional forcing NT has to jump to 3M often risking one off
+- frequently passed
+
+2N = relay to long suit game try
+    3C = puppet
+        3D = long !c
+        3H = long !d
+        3S = long !h
+3C = special two-way bid, short !c game try
+    3D = responders normal puppet, though can just bid 4!s directly
+        3H = wants responder to bid 3N if balanced, e.g. AK10xxx/AQJ/xx/xx
+        3S = short !c game try
+3D = short !d game try
+3H = short !h game try
+3S = game try, no shortness, usually no second 4 card suit, often 5--3--3--2/6--3--3--2
+3N = 5--3--3--2/6--3--3--2 maximum, likely spread out values
+4CDH = natural, 5 cards, slam try, want partner to try [RKB](#RKB 4N) and go slam with 2 aces.
+4S = any game hand, hiding information
+4N = [RKB](#RKB 4N), maybe e.g. AKxxxx/AKxxx/x/x
+
+** 1S--1N
+
+- 100% forcing
+- zero+ count if some fit exists
+- standard single raise hand (6--9)
+- maybe 1--4--4--4 GF, reducing 2/1 GF bids with only 4 card suits, though 17+ hcp still 2/1 GF
+
+2C = could be short 3 card
+    P = 5+!c usually, hope for best contract. Maybe 1--4--4--4 or worst 1--4--5--3.
+    2DH = natural, NF, usually 6 cards
+    2S = NF preference, often 3/4 card support like standard 2 level raise
+        3CDH = Game try any 14+, possibly only 3 cards
+    2N = natural invite, 1--2 !ss
+    3C = 8-11, 5+ !cs natural raise, NF
+    3D = special bid, GF 1--4--4--4, suggests stronger !d than !h suit (splinter by passed hand)
+    3H = special bid, GF 1--4--4--4, suggests stronger !h than d suit (splinter by passed hand)
+    3S = 3 card support, invitational
+    3N = to play
+    4C = forcing, !c slam try, e.g. 1--1--5--6
+    4D = giant !c support, void splinter
+    4H = giant !c support, void splinter
+2D = natural, could be short 3 card
+    P = best contract guess, usually 5 cards, maybe 1--4--4--4 or even 1--4--3--5
+    2H = natural, NF, usually 6 cards
+    2S = NF preference, often 3/4 card support like standard 2 level raise
+        3CDH = Game try any 14+, possibly only 3 cards
+    2N = natural invite, 1--2 !ss
+    3C = natural, NF
+    3D = 8-11, 5+ !ds natural raise, NF
+    3H = special bid, 1--4--4--4
+    3S = 3 card support, invitational
+    3N = to play
+    4C = splinter for !d
+    4D = unlikely, natural forcing, freak shape
+    4H = splinter for !d
+2H = natural, 5--4+ including 5--4--4--0 / 5--4--0--4
+    2S = NF preference
+    2N = natural, invitational
+        3CD = forcing
+    3CD = natural, NF
+    3H = natural, invitational
+    3S = natural, invitational, double fit majors, can choose either game
+    3N = to play
+    4CD = slam try !h raise with concentrated values, usually Ace, *not* splinter, passed hand fit jump
+    4H = to play
+2S = natural, 6+ !ss
+    2N = invitational, implying singleton !s
+        3x = NF, e.g. weak 6--4
+        3S = NF
+    3CD = natural, to play
+    3H = natural forcing, presumably 4 cards
+    3S = invite, often doubleton
+    3N = natural, e.g. AKQ/xx/Q10xx/Qxxx
+    4H = to play
+2N = semi-natural, 3!s rebid but with solid !ss, NT suited shape
+    3S = to play
+    3x = stoppers
+3CD = NF, 6--5+, maximum
+    3om = stop probe at first OR slam try if returns to !ss
+    3H = natural, 6 cards, forcing
+    4om = !s slam try
+    4m = forcing
+3H = invitational NF, good non-minimum hand, 6--5+
+    4CD = slam try !h, control bid
+3S = invitational !s, often 7 cards
+    4CD = !s slam try, long suit trick source, e.g. Kxx/Kx/xx/KQxxx hope !c honour support
+    4H = natural
+3N = not happening
+4CDH = 7--5 !s + other suit
+    lowNewSuit = void ask
+        1step = !h void + 1 ace
+        2step = !c/!d void + 1 ace
+        5S = 2 voids, 7--6 shape
+            5N = Ace ask
+                6CDH = 0/1/2 Aces
+        5N = upper void + 2 aces
+        6CD = suit rebid lower void + 2 aces
+    4N = Ace asking implying responder has the side suit aces
+        5CDH = 0/1/2 Aces
+
+** 1S--2C
+
+2/1 GF (10--12 by passed hand).
+
+- usually 5 card !c suit (only likely 4 carder is 3--2--4--4)
+- never 4--3--3--3 / 4--4--3--2 with 4 card support (use 2N raise instead)
+- Only likely 4 carder hands are 2--3--4--4 / 2--4--3--4, (use 1N instead with 1--4--4--4)
+- Versus a passed hand, bids above 2!s are GF
+- 2!s rebid versus a passed hand is never a maximum
+- 3!s rebid versus a passed hand has lower requirements, just a max and 6 card suit
+
+
+** 1S interference
+
+Similar to [1H interference](#1H interference).
+
+- Jumps to 4!h after a negative X should show 5 cards, e.g. 1S--(2C)--X--(P)--4H, to account for
+general forces with negative doubles.
+
+1S--(X)
+    XX = doubleton !s, 6+ hcp, encourage 6 card suit rebid
+    1N = !cs
+    2C = !ds
+    2D = !hs
+    2H = !ss, invitational
+    2S = ~5--9, with less pass then bid later
+    2N = invitational+ 4 card raise, 2N system on
+    3CDH = fit jump
+
+1S--(1N)
+    X = penalty
+    2C = some one suiter hand
+        2D = relay, NF (may pass with !ds)
+    2D = !d + !h
+    2H = !h + !c
+    2N = no trump cue bid, too shapely to X
+        3C = relay for responder to bid a forcing suit
+
+1S--(2!c)
+    X = negative or GF bidding a weaker suit next time or stop asking
+    2DH = negative freebid, 0--10
+    2N = natural
+    3C = invite+ !ss
+    3D = forcing, 6+ suit when unpassed, invite passed hand (no weak 2 !d opening)
+    3H = forcing, 6+ suit when unpassed, fit jump passed hand
+    3S = mixed raise (weak limit)
+
+1H--(2!d)
+    X = negative or GF bidding a weaker suit next time or stop asking
+    2H = negative freebid, 0--10
+    2S = natural
+    2N = natural
+    3C = forcing, 6+ suit when unpassed, invite passed hand
+    3D = invite+ !ss
+    3H = forcing, 6+ suit when unpassed, Fit Jump passed hand
+    3S = mixed raise (weak limit)
+
+1S--(2!h)
+    X = negative or GF bidding a weaker suit next time or stop asking
+    2S = normal natural raise
+    2N = natural
+    3CD = natural, forcing
+    3H = invite+ !ss
+    3S = mixed raise (weak limit)
+
+Higher interference see [1H interference](#1H interference).
+
+*** responder passing, 4th hand reopens
+
+1S--(P)--P--(X)
+    XX = artificial, good suit mild extras, 6 !ss, not shapely enough for 3!s bid
+    1N = unspecified 4 card side suit on way to 2!s bid, e.g. KQJ10xx/xx/AJQx/x
+        2x = lowest suit can play in
+            2H = showing 4 card !h suit, 6 !ss
+    2CD = 5 card suit normally
+
+Responder can also re-open on their second bid, X takeout at the 2 level, but penalty
+at the 3 level.
 
 * Constructive uncontested auctions
 
