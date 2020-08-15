@@ -207,7 +207,7 @@ If < invitational without 6+ !d suit, pass.
                 4D = !s support and !d void
                 4H = !s support, cue bid
             4N = quantitative
-        3H = short !h, extra values. Responder can bid !s naturally now.
+        3H = short !h. Responder can bid !s naturally now.
             3S = natural
                 3N = 0--2 !s
                     4D = 5+ !d second suit
@@ -224,7 +224,7 @@ If < invitational without 6+ !d suit, pass.
             4D = !c support, good hand opposite known short !d
             4N = quantitative
             5C = to play
-        3S = short !s, extra values and 3 card !h support
+        3S = short !s and 3 card !h support
             4C = natural, forcing
             4D = !c or !h slam try
                 4H = no slam interest
@@ -232,7 +232,7 @@ If < invitational without 6+ !d suit, pass.
                 4S = Redwood !c
             4S = RKB for !h
             4N = quantitative
-        3N = short !s, extra values, 0--2 !h, e.g. 1--2--3--7
+        3N = short !s, 0--2 !h, e.g. 1--2--3--7
             4C = natural, forcing
             4D = !c slam try
                 4H = Redwood !c
