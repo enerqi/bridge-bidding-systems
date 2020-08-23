@@ -17,13 +17,13 @@
   3C = [6+ !cs, invitational ~10--12, no major support](#1H--3C)
   3D = [6+ !ds, invitational ~10--12, no major support](#1H--3D)
   3H = [mixed raise (weak limit raise), ~7--9 4 (5) card support, distributional.](#1H--3H)
-  3S = [unknown singleton splinter, 10--13 hcp, ~9--12 by passed hand](#1H--3S)
-  3N = [splinter !s, 13--16 hcp, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
-  4C = [splinter !c, 13--16 hcp, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
-  4D = [splinter !d, 13--16 hcp, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
+  3S = [unknown singleton splinter, 10--13 hcp 3 cover cards, ~9--12 by passed hand](#1H--3S)
+  3N = [splinter !s, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
+  4C = [splinter !c, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
+  4D = [splinter !d, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
   4H = Obstructive bid, classic weak pre-empt, or fast arrival auction e.g. Kxxx/Axx/K/Qxxxx
   4S = pre-empt
-  4N = Blackwood, !hs not agreed. Bid 2N first to use RKB for !hs.
+  4N = Blackwood, !hs not agreed. Bid 2N first to use [RKB](#RKB 4N) for !hs.
 
 ** 1H--1S
 
@@ -75,8 +75,8 @@
     3H = artificial, GF, solid !s AKQJxx+
     3S = natural, GF, slam-invitational (use 2!d if only game looking) good suit
     3N = to play
-    4C = !c auto-splinter for !s, control bids or RKB follow
-    4D = !d auto-splinter for !s, control bids or RKB follow
+    4C = !c auto-splinter for !s, control bids or [RKB](#RKB 4N) follow
+    4D = !d auto-splinter for !s, control bids or [RKB](#RKB 4N) follow
     4H = to play, probably 3 card support, testing !s suit
     4S = to play
     4N = NO, not used. Start with 2!d first for more info.
@@ -196,7 +196,7 @@
             4CDH = control bids
         3N = 5--3--3--2, any range
             4CDH = control bids for !s
-            4N = natural (control first to use RKB)
+            4N = natural (control first to use [RKB](#RKB 4N))
         4C = splinter, 4 card !s support, 11--13 (14--15 would have bid 3!s)
         4D = splinter, 4 card !s support, 11--13 (14--15 would have bid 3!s)
         4H = picture raise of !s, e.g. KQxx/AKJ10x/xx/xx, values concentrated
@@ -268,7 +268,7 @@
             4CD = natural, forcing
         4CD = control bid for !s
     4CD = forcing, control bids for !h slam try
-    5CD = EKB Voidwood for !h
+    5CD = [EKB Voidwood](#EKB Voidwood) for !h
 
 *** 1H--1S--3S
 
@@ -656,17 +656,17 @@ remaining below 4!h:
         4C = !c singleton
             4D = strength ask
                 4H = lesser "maximum"
-                4S+ = RKB step responses
+                4S+ = [RKB](#RKB 4N) step responses
         4D = !d singleton maximum
         4H = !s singleton maximum
-    4S = Kickback RKB
+    4S = Kickback [RKB](#RKB 4N)
 3N = any maximum 5--3--3--2/6--3--3--2, all suits stopped
-    4S = Kickback RKB
+    4S = Kickback [RKB](#RKB 4N)
 4CD = maximum, 5--5+ (4!h showing !ss which would be 5--6 shape or 7--4--1--1), responder should only care about the Ace in other suits
 4H = maximum, 5!s--6!h / 7!h--4!s--1--1 OR versus passed hand fast arrival game bid
-4S = Kickback RKB
-4N = EKB !s void
-5CD = EKB
+4S = Kickback [RKB](#RKB 4N)
+4N = [EKB Voidwood](#EKB Voidwood) !s void
+5CD = [EKB Voidwood](#EKB Voidwood)
 
 ** 1H--3CD
 
@@ -734,7 +734,7 @@ to five level.
 
 XX = Ace showing by opener after opponents lead directing double
 
-4S = Kickback RKB, maybe important to bid if 4!c/4!d was doubled and 5!c/!d raise impending
+4S = Kickback [RKB](#RKB 4N), maybe important to bid if 4!c/4!d was doubled and 5!c/!d raise impending
 
 ** 1H interference
 
@@ -866,30 +866,23 @@ at the 3 level.
 
 - by judgement a minimum 5!s and 6!h may show a 5--5 hand bidding !s first
 
-** 1S--2S
-
-Invite ~10--12 (9 with singleton), 3 card support (a Drury raise in all positions).
-
-- use forcing NT for the "normal", weak 6--9 raise use
-- a traditional forcing NT has to jump to 3M often risking one off
-- frequently passed
-
-2N = relay to long suit game try
-    3C = puppet
-        3D = long !c
-        3H = long !d
-        3S = long !h
-3C = special two-way bid, short !c game try
-    3D = responders normal puppet, though can just bid 4!s directly
-        3H = wants responder to bid 3N if balanced, e.g. AK10xxx/AQJ/xx/xx
-        3S = short !c game try
-3D = short !d game try
-3H = short !h game try
-3S = game try, no shortness, usually no second 4 card suit, often 5--3--3--2/6--3--3--2
-3N = 5--3--3--2/6--3--3--2 maximum, likely spread out values
-4CDH = natural, 5 cards, slam try, want partner to try [RKB](#RKB 4N) and go slam with 2 aces.
-4S = any game hand, hiding information
-4N = [RKB](#RKB 4N), maybe e.g. AKxxxx/AKxxx/x/x
+1S = (10)11--16, 5 card Major
+  (any) = [interference](#1S interference)
+  1N = [100% forcing, 0+ hcp, often standard single raise](#1S--1N)
+  2C = [GF (passed hand 10--12), usually 5 cards, maybe 2–-3-–4-–4 / 2-–4-–3-–4](#1S--2C)
+  2D = [GF (passed hand 10--12), usually 5 cards, maybe 2--4--4--3](#1S--2D)
+  2H = [GF (passed hand 10--12), always 5+ cards](#1S--2H)
+  2S = [invite ~(9)10--12, 3 card support](#1S--2S)
+  2N = [limit+ raise](#1S--2N)
+  3C = [6+ !cs, invitational ~10--12, no major support](#1S--3C)
+  3D = [6+ !ds, invitational ~10--12, no major support](#1S--3D)
+  3H = [6+ !hs, invitational ~10--12, no major support](#1S--3H)
+  3S = [mixed raise (weak limit), ~7--9 4 (5) card support, distributional](#1S--3S)
+  3N = [unknown singleton splinter, 10--13 hcp 3 cover cards, ~9--12 by passed hand](#1S--3N)
+  4C = [splinter !c or !h, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1S--4C)
+  4D = [splinter !d, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1S--4D)
+  4HS = [to play](#1S--4H/4S)
+  4N = [Blackwood, !ss not agreed. Bid 2N first to use RKB for !ss.](#1S--4N)
 
 ** 1S--1N
 
@@ -1120,6 +1113,31 @@ Game-forcing. Usually five cards. Could be 2--4--4--3.
 4H = picture raise, 5--4--2--2 with good controls
 4S = long !ss, but weaker than 3!s bid, no !h fit
 
+** 1S--2S
+
+Invite ~10--12 (9 with singleton), 3 card support (a Drury raise in all positions).
+
+- use forcing NT for the "normal", weak 6--9 raise use
+- a traditional forcing NT has to jump to 3M often risking one off
+- frequently passed
+
+2N = relay to long suit game try
+    3C = puppet
+        3D = long !c
+        3H = long !d
+        3S = long !h
+3C = special two-way bid, short !c game try
+    3D = responders normal puppet, though can just bid 4!s directly
+        3H = wants responder to bid 3N if balanced, e.g. AK10xxx/AQJ/xx/xx
+        3S = short !c game try
+3D = short !d game try
+3H = short !h game try
+3S = game try, no shortness, usually no second 4 card suit, often 5--3--3--2/6--3--3--2
+3N = 5--3--3--2/6--3--3--2 maximum, likely spread out values
+4CDH = natural, 5 cards, slam try, want partner to try [RKB](#RKB 4N) and go slam with 2 aces.
+4S = any game hand, hiding information
+4N = [RKB](#RKB 4N), maybe e.g. AKxxxx/AKxxx/x/x
+
 ** 1S--2N
 
 Invitational+ raise 4 card support.
@@ -1171,13 +1189,13 @@ Invitational+ raise 4 card support.
         4D = !d singleton maximum
         4H = !s singleton maximum
     4S = to play, no slam interest
-    4N = RKB
+    4N = [RKB](#RKB 4N)
 3N = any maximum 5--3--3--2/6--3--3--2, all suits stopped
-    4N = RKB
+    4N = [RKB](#RKB 4N)
 4CDH = maximum, 5--5+, responder should only care about the Ace in other suits
 4S = only used v.s. passed hand, fast arrival
-4N = RKB
-5CDH = EKB
+4N = [RKB](#RKB 4N)
+5CDH = [EKB Voidwood](#EKB Voidwood)
 
 ** 1S--3CD
 
@@ -1213,6 +1231,16 @@ Similar to 1!h--3!c:
 4S = to play
 4N = substitute short !c splinter, with 2 aces as cannot use RKB
 
+*** 1S--3H
+
+Not as much suit quality required as the minor bids as directed to a major game instead of NT
+
+3S = natural, long suit, NF invitational, responder can raise with Hx
+3N = to play, stopped
+4C = control bid, !hs agreed
+4D = Kickback [RKB](#RKB 4N) for !hs
+4HS = to play
+
 ** 1S--3S
 
 Mixed raise (weak limit raise), ~7--9 4 (5) card support, distributional. Maybe no singleton.
@@ -1239,7 +1267,7 @@ XX = Ace showing by opener after opponents lead directing double
 4D = ask
     4H = !h
     4S = !c
-    4N+ = RKB response (1430...) with !c shortage
+    4N+ = [RKB](#RKB 4N) response (1430...) with !c shortage
 
 ** 1S--4D
 
