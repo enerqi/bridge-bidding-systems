@@ -607,7 +607,7 @@ X is majors takeout.
 
 ** Opponents open 3CDHS
 
-Normal takeout doubles.
+Normal takeout doubles, conservative opening bid values 12+, assumes ~7–9 hcp from partner
 
 (3CD)
     4CD = both majors
@@ -617,6 +617,11 @@ Normal takeout doubles.
 (3S)
     4S = extreme strong 2 suiter
         4N = both minors, choose your suit
+
+(3H)--P--(3!s)
+    X = penalty, maybe psyche exposing
+(3x)--X--(4x)
+    X = takeout with decent values, inviting penalty pass
 
 ** Opponents open 3N
 
@@ -685,7 +690,17 @@ Same in 4th.
     5CD = natural, maybe sacrifice at good vulnerability
     5H = !s + minor 2 suiter, very strong
 
+(4H)--P--(4!s)
+    X = penalty, maybe psyche exposing
+
 (4S)
     P = usually weak, maybe good defensively
     X = takeout
     4N = takeout, 2 suiter emphasis
+
+** Opponents open 5CD
+
+(5CD)
+    X = takeout  (contrary to some playing general values, penalty)
+    5x = natural
+    5N = lower suits takeout

@@ -4,11 +4,11 @@
 #INCLUDE 1c-opening.bml
 #INCLUDE uncontested-bidding.bml
 #INCLUDE nt-bidding.bml
-#INCLUDE competitive-bidding.bml
-#INCLUDE slam-bidding.bml
 #INCLUDE 2club-opening.bml
 #INCLUDE 2level-preempts.bml
 #INCLUDE high-openings.bml
+#INCLUDE competitive-bidding.bml
+#INCLUDE slam-bidding.bml
 
 ** Terminology
 

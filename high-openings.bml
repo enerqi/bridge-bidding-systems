@@ -92,30 +92,6 @@ P/T integrity required (in 1st/2nd), max 1 outside A/K, no 4 card side Major.
     XX = two suit escape (e.g. 6--5 or 6--6)
     NewSuit = escape
 
-** 3 Level Pre-empt Defences
-
-(3CDHS)
-    X = takeout, conservative opening bid values 12+, assumes ~7--9 hcp from partner
-    (3DHS) = natural, NF
-    Cue = strong, big two-suiter or mega 3 suiter
-
-(3H)--(3S)
-    X = penalty, maybe psyche exposing
-
-(3x)--X--(4x)
-    X = takeout with decent values, inviting penalty pass
-
-(3N) 4 level minor pre-empt
-    X = strong, balanced
-    P--X = pass then double is takeout
-    4x = natural
-
-(3N) Gambling
-    X = good values
-    4C = both majors, limited
-    4D = both majors, strong
-    4HS = natural
-
 * 3N Opening as Solid Major
 
 Solid AKQ+ 7/8 card major, max one outside *King* (open 1!h/1!s or 1!c with better).
@@ -195,35 +171,6 @@ Specific suit asks:
 - 3steps = Ace
 - 4steps = void
 
-
-** 4 and 5 Level Pre-empt Defences
-
-(4CDH)
-    X = takeout
-    4S = natural
-    4N = minors
-    5CD = natural
-(4S)
-    X = penalty/values
-    4N = takeout
-    5CDH = natural
-(4H)--(4S)
-    X = penalty, maybe psyche exposing
-(5CD)
-    X = takeout  (contrary to some playing general values, penalty)
-    5x = natural
-    5N = lower suits takeout
-
-
-(4CD) South African Texas
-    X = takeout with major + upper suit
-    Cue = takeout with major + lower suit
-    4N = minors
-    Jump = extra strong
-(4C) South African Texas
-    4D = aggressive values
-(4D) South African Texas
-    4H = aggressive values
 
 * 4N Opening Specific Ace Ask
 
