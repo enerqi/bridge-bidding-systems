@@ -3,7 +3,9 @@
 
 * Contested Overcalls Summary
 
-- [Strong 1C Defence](#Strong 1C Defence)
+Opponents open:
+
+- [1C Strong](#Strong 1C Defence)
 - [1C Natural / Prepared / Swedish / Polish](#Opponents open 1C Natural / Prepared / Swedish / Polish)
 - [1D](#Opponents open 1D)
 - [1H](#Opponents open 1H)
@@ -37,10 +39,10 @@
 
 
 1C  [Weak or Strong Club](#1C Weak Strong):
-      - (12)--15 balanced / semi-balanced (5-4-2-2) or (1-4)-3!d-5!c, 5--3--3--2 bad 5cM
-      - Good 12 implies 4+ !s or both majors, not just no wasted honours, maybe 5cM
-      - 17+ unbalanced
+      - (13)--15 balanced / semi-balanced (5-4-2-2), 5--3--3--2 maybe 5 card !h/!s
+      - 16+ unbalanced
       - 21+ balanced
+  (any) = [1!c interference](#1C Interference)
   [1D](#1C--1D) Negative 0--7 HCP or 15+ GF no 4cM, if balanced 19+
   [1HS](#1C--1HS) natural positive 4+ suit before longer minor, F1
   [1N](#1C--1N)  no major, balanced minimal positive
@@ -53,37 +55,20 @@
   4CD  AKQ/AKJ to seven in the Major, no outside controls, cue bids to follow
   4HS  Gambling
 
-1D  Natural !d:
-      - 12--15, 4--4--4--1 with 4!d
-      - 11--16, unbalanced, maybe longer 5 card !c (canapé)
-      - 11--19, unbalanced, single diamond suit
-      - 11--21, unbalanced < GF, longer diamonds two or three suiter
-  1M  4+ cards, 6+ hcp, maybe !d fit or canapé long !c with weaker hands
-    1N = 4+!c, forcing
-    2C = usually 6+!d, forcing
-    2D = 3 card Major support, 11--14, NF
-    2M = 4-card support, 11--14
-    2oM = natural, 18+ GF
-    2N = strong, single !d suiter
-    3C = strong, 5--5 minors
-    3D = intermediate, single !d suiter
-    3M = 4 card invite, 16+
-    3oM = Splinter, 16+
-  1N  ~7--11 flat or 7--9 !c hand, NF
-  2C  !d support 7--10 OR GF 5+!c OR balanced
-  2D  multi major weak 6 card sound ~4--8 in !h or !s
-    2M = paradox pass/correct responses
-  2H  5!s + 4 or 5!h, max 9 hcp, reverse flannery
-  2S  !d raise 11+
-  2N  invite, 3--3 majors, 4/5!cs
-  3C  invite ~10-11 hcp, 6+!cs
-  3D/4D < 7 hcp, Obstructive, 4+ !d, e.g (31)45 or better
-  3HS/4C Splinter 16+ HCP
-  3NT 13--15 balanced, 3--3 Majors
-  4HS to play
-  4NT RKB
+1D = [11--(13) balanced/semi-balanced nebulous 2+ !d cards OR 11--15 natural unbalanced, maybe longer !cs](#1D Opening)
+    (any) = [1!d interference](#1D interference)
+    1H = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF](#1D--1H)
+    1S = natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF
+    1N = natural, up to 10 hcp
+    2C = 10+ invitational limited, usually 5 card suit
+    2D = 10+ forcing (unless passed hand), inverted raise, usually 5 card support
+    2HS = weak jump shift, 6+ !h/!ss, 0--9 hcp, rarely 5 card suit that dreads passing 1!d
+    2N = natural invitational ~(10)--12, no 4 card major, usually very flat 4--4--3--2/4--3--3--3
+    3C = weak jump shift, 6+ !cs, 0--9 hcp, NF
+    3D = pre-empt 0--9 hcp, 5+ !ds, not worried about missing 3N
+    3N = natural, good 12--16
 
-1H = (10)11--16, 5 card Major
+1H = [(10)11--15, 5 card Major](#1H Opening)
   (any) = [interference](#1H interference)
   1S = [natural, 4+ cards or 5+ cards without 3 card !h support](#1H--1S)
   1N = [100% forcing, 0+ hcp, often concealing standard single raise or 4!s and invite values](#1H--1N)
@@ -103,7 +88,7 @@
   4S = pre-empt
   4N = Blackwood, !hs not agreed. Bid 2N first to use [RKB](#RKB 4N) for !hs.
 
-1S = [(10)11--16, 5 card Major](#1S Opening)
+1S = [(10)11--15, 5 card Major](#1S Opening)
   (any) = [interference](#1S interference)
   1N = [100% forcing, 0+ hcp, often standard single raise](#1S--1N)
   2C = [GF (passed hand 10--12), usually 5 cards, maybe 2–-3-–4-–4 / 2-–4-–3-–4](#1S--2C)
@@ -144,7 +129,7 @@
   4N = [quantitative, 4--4--3--2 both minors, 5--3--3--2 minor or any 4--3--3--3](#1N--2N+)
   5CD = [slam tries with 1--1--4!d--7!c or 1--1--7!d--4!c exactly](#1N--2N+)
 
-2C  [11--16 hcp, 6+ card suit](#2C Opener)
+2C  [11--15 hcp, 6+ card suit](#2C Opener)
   (any) = [interference defence](#2C Interference)
   2D = [enquiry](#2D enquiry)
   2HS = natural, NF, 5+ (usually 6) suit, ~7--11 hcp, unlikely both majors (use 2!d)
