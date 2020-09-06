@@ -2,11 +2,11 @@
 
 * 2D Precision Style 3 Suiter
 
-(11)12--16 hcp, short !d 3 suiter, 4--4--1--4, 4--4--0--5, 4--3--1--5, or 3--4--1--5
+(11)12--15(16) hcp, short !d 3 suiter, 4--4--1--4, 4--4--0--5, 4--3--1--5, or 3--4--1--5
 
-With a !d void we may upgrade 16 hcp to a 1!c opener etc.
-11 hcp and 4--4--1--4 should pass.
-Responses show strength first, then shape.
+- 11 hcp 4--4--1--4 should pass
+- 16 hcp 4--4--1--4 can downgrade from a 1!c opening
+- Responses show strength first, then shape
 
 2D
     Pass = to play, long 6+ !d

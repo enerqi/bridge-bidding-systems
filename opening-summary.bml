@@ -56,7 +56,7 @@ Opponents open:
   4CD  AKQ/AKJ to seven in the Major, no outside controls, cue bids to follow
   4HS  Gambling
 
-1D = [11--(13) balanced/semi-balanced nebulous 2+ !d cards OR 11--15 natural unbalanced, maybe longer !cs](#1D Opening)
+1D = [11--(13) balanced/semi-balanced nebulous 2+ !d cards OR 11--15 unbalanced, maybe longer !cs](#1D Opening)
     (any) = [1!d interference](#1D interference)
     1H = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF](#1D--1H)
     1S = natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF
@@ -67,7 +67,12 @@ Opponents open:
     2N = natural invitational ~(10)--12, no 4 card major, usually very flat 4--4--3--2/4--3--3--3
     3C = weak jump shift, 6+ !cs, 0--9 hcp, NF
     3D = pre-empt 0--9 hcp, 5+ !ds, not worried about missing 3N
-    3N = natural, good 12--16
+    3HS = splinter !d raise, 6+ card support
+    3N = natural, good 12--17, no 4 card major, stops
+    4C = splinter !d raise, 6+ card support
+    4D = pre-empt
+    4HS = natural, to play, obstructive, sets suit as trumps (passed hand fit jump e.g. 6--6 shape!)
+    5CD = natural, to play, obstructive
 
 1H = [(10)11--15, 5 card Major](#1H Opening)
   (any) = [interference](#1H interference)
@@ -145,7 +150,7 @@ Opponents open:
   4HS = to play (passed hand = fit jump), opener can bid on super fit and controls
   4N = Blackwood
   5C = to play
-2D  [2D Precision Style 3 Suiter](#2D Precision Style 3 Suiter), (11)12--16 hcp, 4--4--1--4, 4--4--0--5, 4--3--1--5, or 3--4--1--5
+2D  [2D Precision Style 3 Suiter](#2D Precision Style 3 Suiter), (11)12--15(16) hcp, 4--4--1--4, 4--4--0--5, 4--3--1--5, or 3--4--1--5
   Pass = to play, long 6+ !d
   2H = to play, could be 3 cards (e.g. 5!d and 2/3!c)
   2S = to play, could be 3 cards if 3--2--5--3
