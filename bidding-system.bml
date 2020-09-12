@@ -10,6 +10,10 @@
 #INCLUDE competitive-bidding.bml
 #INCLUDE slam-bidding.bml
 
+** System Philosophy
+
+TODO
+
 ** Terminology
 
 - Responder is the partner of the opening bidder.

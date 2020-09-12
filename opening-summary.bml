@@ -1,33 +1,6 @@
 #+TITLE: Uncontested Openings Summary
 #+DESCRIPTION: This initial section provides a guide to the basics responses without going into much detail about following auctions.
 
-* Contested Overcalls Summary
-
-Opponents open:
-
-- [1C Strong](#Strong 1C Defence)
-- [1C Natural / Prepared / Swedish / Polish](#Opponents open 1C Natural / Prepared / Swedish / Polish)
-- [1D](#Opponents open 1D)
-- [1H](#Opponents open 1H)
-- [1S](#Opponents open 1S)
-- [1N](#NT Defence)
-- [Intermediate 2C](#Opponents open Intermediate 2C)
-- [Strong 2C](#Opponents open Strong 2C)
-- [Precision 2D](#Opponents open Precision 2D)
-- [Multi 2D](#Opponents open Multi 2D)
-- [Weak 2D 2H 2S](#Opponents open Weak 2D 2H 2S)
-- [2D or 2H Flannery](#Opponents open 2D or 2H Flannery)
-- [2D or 2H both Majors](#Opponents open 2D or 2H both Majors)
-- [2N Minors](#Opponents open 2N Minors)
-- [2N Natural](#Opponents open 2N Natural)
-- [3CDHS](#Opponents open 3CDHS)
-- [3N](#Opponents open 3N)
-- [4CD preempt](#Opponents open 4CD preempt)
-- [4C SAT](#Opponents open 4C SAT)
-- [4D SAT](#Opponents open 4D SAT)
-- [4HS](#Opponents open 4HS)
-- [5CD](#Opponents open 5CD)
-
 * Uncontested Openings Summary
 
 #CUT jacoby
@@ -59,7 +32,7 @@ Opponents open:
 1D = [11--(13) balanced/semi-balanced nebulous 2+ !d cards OR 11--15 unbalanced, maybe longer !cs](#1D Opening)
     (any) = [1!d interference](#1D interference)
     1H = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF](#1D--1H)
-    1S = natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF
+    1S = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF](#1D--1S)
     1N = natural, up to 10 hcp
     2C = 10+ invitational limited, usually 5 card suit
     2D = 10+ forcing (unless passed hand), inverted raise, usually 5 card support
@@ -194,3 +167,31 @@ Opponents open:
 4HS [pre-empt, not solid, max 1 outside A/K](#4H 4S 5C 5D Openings)
 4N  [specific ace ask](#4N Opening Specific Ace Ask)
 5CD [pre-empt](#4H 4S 5C 5D Openings)
+
+* Contested Overcalls Summary
+
+Opponents open:
+
+- [1C Strong](#Strong 1C Defence)
+- [1C Natural / Prepared / Swedish / Polish](#Opponents open 1C Natural / Prepared / Swedish / Polish)
+- [1D](#Opponents open 1D)
+- [1H](#Opponents open 1H)
+- [1S](#Opponents open 1S)
+- [1N](#NT Defence)
+- [Intermediate 2C](#Opponents open Intermediate 2C)
+- [Strong 2C](#Opponents open Strong 2C)
+- [Precision 2D](#Opponents open Precision 2D)
+- [Multi 2D](#Opponents open Multi 2D)
+- [Weak 2D 2H 2S](#Opponents open Weak 2D 2H 2S)
+- [2D or 2H Flannery](#Opponents open 2D or 2H Flannery)
+- [2D or 2H both Majors](#Opponents open 2D or 2H both Majors)
+- [2N Minors](#Opponents open 2N Minors)
+- [2N Natural](#Opponents open 2N Natural)
+- [3CDHS](#Opponents open 3CDHS)
+- [3N](#Opponents open 3N)
+- [4CD preempt](#Opponents open 4CD preempt)
+- [4C SAT](#Opponents open 4C SAT)
+- [4D SAT](#Opponents open 4D SAT)
+- [4HS](#Opponents open 4HS)
+- [5CD](#Opponents open 5CD)
+
