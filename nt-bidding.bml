@@ -30,7 +30,7 @@ Do *not* use blanket NT scheme when:
 
 - NTs are *rebid* after natural suit opening
 
-** 1NT
+* 1NT Opening
 
 Opening:
 
@@ -39,7 +39,7 @@ Opening:
 - 5--4--2--2 with a long minor can be opened with 1N
 - 6--3--2--2 with a long minor can also by judgement open 1N
 
-[Defence](#NT Defence)
+[Defence](#1NT Defence)
 
 Responding:
 
@@ -519,7 +519,7 @@ Transfer to !c
     5CD = slam tries with 1--1--4!d--7!c or 1--1--7!d--4!c exactly
 
 
-** 2NT
+* 2NT Opening
 
 For 2N there are more tools to find 4--4 or 5--3 major fits before 3N, more so than over 1N
 as entries tend to be a problem with the small hand.
@@ -746,7 +746,7 @@ Mixed 4/5 card stayman, 3+ card major only.
         3M = to play
     XX = to play interest
 
-* NT Defence
+* 1NT Defence
 
 Competing over 1NT. More aggressive when opponents are NonVulnerable.
 
@@ -812,7 +812,7 @@ Playing a strong NT, X is usually takeout or specific suit(s) showing
 
 1N--(X)
     XX = penalty interest, GF if not doubling opponents
-    Others = [1N system on](#1NT)
+    Others = [1N system on](#1NT Opening)
 
 - Partner and Opener's delayed X at 2 level of opponents' bids is takeout (of the suit(s) shown)
 - Partner and Opener's delayed X at 3 level of opponents' bids is penalty (strength to play 1NTX has been shown by passing first)
@@ -829,7 +829,7 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
 
 1N--(2!c)
     X = stand in for 2!c
-    Others = [1N system on](#1NT)
+    Others = [1N system on](#1NT Opening)
 
 1N--(2!d!h!s)
     X = takeout iff suit natural, staymanic, normally a doubleton (unlike cue)

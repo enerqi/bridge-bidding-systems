@@ -109,7 +109,7 @@ Works with jump overcalls aswell:
     4S = weaker !s support
 
 
-** Strong 1C Defence
+* Opponents open Strong 1C
 
 Show majors, especially !s and bid to limit. Pass then later bid unusual NT if really want
 to show !c+!d.
@@ -163,7 +163,7 @@ to show !c+!d.
     NT = takeout, lower suits, 4 in a suit that can be bid at 1 level, 5 card suit if must be bid at 2level
     Others = natural
 
-** Opponents open 1C Natural / Prepared / Swedish / Polish
+* Opponents open 1C Natural / Prepared / Multi
 
 TODO - 1M overcall responses - [Rubens advances](#Rubens Transfer Advances) or other. Rubens maybe usable in
 various auctions, so maybe more attractive from a memory point.
@@ -224,7 +224,7 @@ Note, just overcall 1!h with a "weak" jump !h overcall.
     2C = normal michaels both majors
     2H = !hs, natural (no natural 1!h available)
 
-** Opponents open 1D
+* Opponents open 1D
 
 Note, just overcall 1!h/1!s with a "weak" jump overcall.
 
@@ -289,7 +289,7 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
     2D = normal michaels both majors
     2HS = natural
 
-** Opponents open 1H
+* Opponents open 1H
 
 1S = natural, light
     1N = 9--12
@@ -369,7 +369,7 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
     X = general takeout including !s, 4th or 6th
         4N = choose a minor
 
-** Opponents open 1S
+* Opponents open 1S
 
 (1S)
     1N = passed hand 5--5+ !h + minor, weaker than 2!s overcall
@@ -424,7 +424,7 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
     4N = true 2 suiter, maybe !hs
 
 
-** Opponents open Intermediate 2C
+* Opponents open Intermediate 2C
 
 See Weak two defence - X as takeout + Lebensohl.
 
@@ -464,7 +464,7 @@ The (2!c)--P--(2!d)--X is lead directing.
     X = takeout
     4C = michaels both majors
 
-** Opponents open Strong 2C
+* Opponents open Strong 2C
 
 (2C)
     X = majors
@@ -473,14 +473,14 @@ The (2!c)--P--(2!d)--X is lead directing.
         X = majors
         NT = minors
 
-** Opponents open Precision 2D
+* Opponents open Precision 2D
 
 (2D)
     X = ~13--16 balanced
     2N = 16--19 balanced  (passed hand NT is takeout/unusual)
     3C = stronger !d overcall  (passed hand natural)
 
-** Opponents open Multi 2D
+* Opponents open Multi 2D
 
 Bid naturally with decent 5--6 card suits or Strong NT hands.
 Unlike common X showing weak NT defences this has more chance of penalising opponents.
@@ -499,7 +499,7 @@ Unlike common X showing weak NT defences this has more chance of penalising oppo
 (2D)--2!h!s--P
     2N = Lebensohl
 
-** Opponents open Weak 2D 2H 2S
+* Opponents open Weak 2D 2H 2S
 
 (or jump overcalled)
 Bid naturally with decent 5--6 card suits or Strong NT hands.
@@ -540,7 +540,7 @@ Bid naturally with decent 5--6 card suits or Strong NT hands.
         that opponents can pass with
 
 
-** Opponents open 2D or 2H both Majors
+* Opponents open 2D or 2H both Majors
 
 Two or three choices for Ekren (chrisryall.net/bridge/weak.two/generic-defence.htm),
 even possible to play the Multi 2!d defence.
@@ -559,7 +559,7 @@ OR
     3CD = good single suited (maybe 4 card major)
 
 
-** Opponents open 2D or 2H Flannery
+* Opponents open 2D or 2H Flannery
 
 5!h--4!s hands, intermediate. As stronger and more defined than Ekren style bids,
 there is less penalty opportunity.
@@ -585,7 +585,7 @@ there is less penalty opportunity.
     X = 15+ balanced
     3CD = natural
 
-** Opponents open 2N Minors
+* Opponents open 2N Minors
 
 (2N)
     X = strong balanced, penalty doubles follow
@@ -601,11 +601,11 @@ Re-open X with a bad hand, major takeout.
 (2N)--P--(3!d)
     X = takeout
 
-** Opponents open 2N Natural
+* Opponents open 2N Natural
 
 X is majors takeout.
 
-** Opponents open 3CDHS
+* Opponents open 3CDHS
 
 Normal takeout doubles, conservative opening bid values 12+, assumes ~7–9 hcp from partner
 
@@ -623,7 +623,7 @@ Normal takeout doubles, conservative opening bid values 12+, assumes ~7–9 hcp 
 (3x)--X--(4x)
     X = takeout with decent values, inviting penalty pass
 
-** Opponents open 3N
+* Opponents open 3N
 
 Whether a gambling solid/broken minor with/without side honour or a similar solid major.
 
@@ -643,14 +643,14 @@ Same in 4th.
     X = takeout
     4D = both majors
 
-** Opponents open 4CD preempt
+* Opponents open 4CD preempt
 
 (4CD)
     X = takeout
     4N = natural
     Cue = 2 suited, unspecified over 4!c and both majors over 4!d
 
-** Opponents open 4C SAT
+* Opponents open 4C SAT
 
 (4C)
     P = usually weak, maybe strong NT+ if re-open double
@@ -665,7 +665,7 @@ Same in 4th.
 (4C)--P--(4!h)
     any = Treat as 4!h opening
 
-** Opponents open 4D SAT
+* Opponents open 4D SAT
 
 (4D)
     P = usually weak, maybe strong NT+ if re-open double
@@ -680,7 +680,7 @@ Same in 4th.
 (4D)--P--(4!s)
     any = Treat as 4!s opening
 
-** Opponents open 4HS
+* Opponents open 4HS
 
 (4H)
     P = usually weak, maybe good defensively
@@ -698,7 +698,7 @@ Same in 4th.
     X = takeout
     4N = takeout, 2 suiter emphasis
 
-** Opponents open 5CD
+* Opponents open 5CD
 
 (5CD)
     X = takeout  (contrary to some playing general values, penalty)
