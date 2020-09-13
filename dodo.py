@@ -33,7 +33,7 @@ def bml_include_dependencies(bml_path: Path) -> List[Path]:
                     included_file = include_directive_tokens[1].strip()
                     yield Path(included_file)
 
-    with open(bml_path) as f:
+    with open(bml_path, encoding='utf-8') as f:
         unique_deps = {include for include in includes(f) if include != bml_path}
         return list(unique_deps)
 
@@ -42,7 +42,7 @@ def read_bml_includes_cache(bml_path: Path) -> Optional[List[Path]]:
     if not exists(bml_includes_cache_file):
         return None
 
-    with open(bml_includes_cache_file) as f:
+    with open(bml_includes_cache_file, encoding='utf-8') as f:
         try:
             existing_deps = json.load(f)
         except Exception:
@@ -58,7 +58,7 @@ def read_bml_includes_cache(bml_path: Path) -> Optional[List[Path]]:
 def update_bml_includes_cache(bml_path: Path, bml_deps: List[Path]):
     existing_deps = {}
     if exists(bml_includes_cache_file):
-        with open(bml_includes_cache_file) as f:
+        with open(bml_includes_cache_file, encoding='utf-8') as f:
             try:
                 existing_deps = json.load(f)
             except Exception:
@@ -66,7 +66,7 @@ def update_bml_includes_cache(bml_path: Path, bml_deps: List[Path]):
 
     existing_deps[bml_path] = bml_deps
 
-    with open(bml_includes_cache_file, "w") as f:
+    with open(bml_includes_cache_file, "w", encoding='utf-8') as f:
         json.dump(existing_deps, f, indent=4)
 
 
