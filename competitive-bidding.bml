@@ -348,7 +348,7 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
     2H = 4--6 !ds/!cs
 
 (1H)--P--(1N)
-    2CD = natural, maybe six with 4 card !s suit hoping to bid !s later
+    2CD = natural, maybe 4 card !s suit with 6 card minor hoping to bid !s later
     2H = michaels !s + minor
     3CD = astro long minor and 4 card !s suit, stronger than 2!c/!d bids
 
@@ -401,9 +401,9 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
     3S = stopper ask, solid minor
 
 (1S)--P--(1N)
-    2CD = natural, maybe six with 4 card !h suit hoping to bid !h later
+    2CD = natural, maybe 4 card !h suit with 6 card minor hoping to bid !h later
     2S = michaels !h + minor, reasonable strength
-    3CD = astro long minor and 4 card !s suit, stronger than 2!c/!d bids
+    3CD = astro long minor and 4 card !h suit, stronger than 2!c/!d bids
 
 (1S)--P--(2CD)
     X = takeout, but implies 5--5+ looking for sacrifice

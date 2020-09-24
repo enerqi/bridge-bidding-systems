@@ -33,9 +33,9 @@
     (any) = [1!d interference](#1D interference)
     1H = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF](#1D--1H)
     1S = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF](#1D--1S)
-    1N = natural, up to 10 hcp
-    2C = 10+ invitational limited, usually 5 card suit
-    2D = 10+ forcing (unless passed hand), inverted raise, usually 5 card support
+    1N = [natural, up to 10 hcp, no 4 card major, no singleton except may !ds](#1D--1N)
+    2C = [10+ invitational+, usually 5 card suit](#1D--2C)
+    2D = [10+ forcing (unless passed hand), no 4 card major, inverted raise, usually 5 card support](#1D--2D)
     2HS = weak jump shift, 6+ !h/!ss, 0--9 hcp, rarely 5 card suit that dreads passing 1!d
     2N = natural invitational ~(10)--12, no 4 card major, usually very flat 4--4--3--2/4--3--3--3
     3C = weak jump shift, 6+ !cs, 0--9 hcp, NF
