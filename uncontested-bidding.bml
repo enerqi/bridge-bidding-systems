@@ -849,6 +849,151 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
 
 ** 1D interference
 
+1D--(X)
+    P = some !d length, later X are penalty suggestion, usually 4 cards in bid suit
+    XX = !h transfer
+        2H = mild invitation
+        3H = true invitation
+    1H = !s transfer
+        2S = mild invitation
+        3S = true invitation
+    1S = NT transfer to rightside contract
+    1N = !c transfer
+    2C = !d raise, good 10+ (but bidding can end here unlike forcing inverted raise)
+    2D = !d raise, 6--9, 5+ !ds
+    2HS = weak jump shift, system on
+    2N = nothing
+    3C = weak jump shift
+    3D = pre-empt, system on
+    3HS = splinter
+    3N = to play
+    4C = splitner
+
+1D--(X)--Pass = some !d length, later X are penalty suggestion, usually 4 cards in bid suit
+    (P) = opponents penalty pass
+        P = by opener, also indicates some !ds, probably 4 cards
+        XX = runout
+        1HS = probably only 4 cards
+        2C = suggests 5 cards
+    (2D) = opponents cue
+        X = decents !ds, lead directing, inviting support
+
+1D--(1H)
+    X = negative, 4!ss, later !c bid just shows 4 card !s and longer !cs, NF canapé. Must X then cue then bid with very strong canapé hand.
+    1S = 5+ card !s suit
+    2C = NF, natural, negative free bid
+    2D = invitational, NF
+        3C = longer !cs, better fit check, NF
+    2H = cue, forcing !d raise (PASSED hand 2N bid wihout stopper, e.g. Axx/xxx/KQxx/Qxx)
+        3C = longer !cs, better fit check
+    2S = weak jump shift
+    2N = natural, invitational
+    3C = GF, natural (PASSED hand invitational)
+    3D = weak limit !d support
+
+1D--(1S)
+    X = negative, 4!hs, allows high power bids in !hs (bidding !h later is forcing, but cannot bid 3!h), e.g. Jxx/AJxxx/KQ/Kxx
+    2CH = NF, natural, negative free bid
+    2N = natural, invitational
+    3CH = GF, natural, usually 6 cards
+
+1D--(1N)
+    X = penalty rarely GF, after escape opener can still use good-bad 2N or cue to GF whilst responder can bid 2N natural, 3x NF or also cue to GF
+    2C = natural, forcing
+    2D = !ds + major
+    2H = both majors
+    2S = !ss + minor
+    2N = NT "cue" showing a strong hand
+    3C = both minors
+
+1D--(1N)--P--P
+    X = 6+ !ds and 4 major, extras
+        2C = natural, long weak suit
+        2H = pass or correct
+
+1D--(2C)
+    X = negative, can be high power and follow with forcing major bid (beware opening may jump 3oM though)
+        (3C)-X = special double, 3--3 majors, extra values (as responder maybe 5--4 in the majors)
+    2D = NF, invitational !d raise
+    2HS = NF, natural, negative free bid
+    2N = natural
+    3C = GF !d raise
+    3D = weak raise
+    3HS = natural, GF (PASSED hand fit jump)
+
+1D--(2D) assuming michaels, both majors
+    X = penalty
+    2H = !cs, invitational+
+    2S = !ds, invitational+
+    2N = natural
+    3CD = weak, natural
+    3HS = splinter, !d support (X then cue to show stoppers)
+
+1D--(2D) natural, rarer
+    X = negative, let major bid is high power forcing
+    2HS = natural, negative free bid
+    2N = natural
+    3C = forcing, natural
+
+1D--(2H)
+    X = negative, later !s bids are forcing
+    2S = NF, natural
+
+1D--(2S)
+    X = negative
+    3S = cue, nominally a !d raise
+        4C = longer !cs, better fit check, always forcing at 4 level
+
+1D--(any)--any--(2C)
+    2N = good hand, !ds and !c stop (similar to a natural 3!d bid)
+
+**** Support doubles and redoubles by opener
+
+- responder shows major at one level
+- 4th hand bids, even NT bids
+- opener can X/XX or do a direct raise
+
+1D--(X)--1H--(1N)
+    X = support double, 3 card support (!ss)
+    raise = 4 card support (2!s in this case as 1!h shows !ss)
+
+Extended to the 3 level, but with more strength:
+
+1D--(1S)--X--(2S)
+    X = support double, long strong !ds and exactly 3 card support for implied !h suit
+    3H = 4 card support, above minimum presumably
+
+
+**** Good-Bad 2N over 2DHS interference by 4th hand
+
+1D--(any)--any--(2DHS)
+    2N = "good-bad 2N" opener's relay to 3!c (e.g. both minors or weak !d)
+    3C = longer !cs, better fit check
+    3x = stronger hand
+
+**** Choice of game cue bids v.s. high overcalls
+
+- After 3 level or above overcalls
+- Iff our side shown values and not found a fit, constructive auction
+- Actual cue bid or bid of suit they've artificially indicated
+- always at least two places to play
+- maybe slam try later, but assumed not
+
+1D--(3!h)--X
+    4H = choice of game, e.g. 4!h cue showing 3 card !s suit OR pick a minor ask
+        4S = at least 5!ss
+            4N = both minors, probably better !ds
+            5C = both minors, better !cs
+
+By responder example:
+
+1D--(3!h)--X--(P)
+    4C = opener's rebid
+        4H = unsure of minor
+            4S = 3 card support for !s
+            5C = 5 good !cs, medium !ds
+            5D = six or 5 very good !ds
+
 
 * 1H Opening
 
