@@ -463,7 +463,8 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF
             2S = natural, 5+ cards (not guarantee 6 cards)
                 2N = all sorts of hands natural, somewhat vague
         2S = 3 card !s support
-        2N+ = natural, extra values as not bidding 2!s
+        2N = natural, vague, could be minimum
+        2N+ = above 2N is natural, extra values as not bidding 2!s
     2H = natural, NF, less than invitational (else 2!c over 1N)
     2S = 6+ !ss (else use weak jump shift), invitational
     2N = natural, invitational, stronger than 2!c bid first
@@ -867,7 +868,7 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
     3D = pre-empt, system on
     3HS = splinter
     3N = to play
-    4C = splitner
+    4C = splinter
 
 1D--(X)--Pass = some !d length, later X are penalty suggestion, usually 4 cards in bid suit
     (P) = opponents penalty pass
@@ -896,10 +897,16 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
     2CH = NF, natural, negative free bid
     2N = natural, invitational
     3CH = GF, natural, usually 6 cards
+    (2S) = opponents raise
+        2N = scrambling, can use to make competitive 3!h bid with 4 card support
+        3H = invitational, natural
+
+1D--(1M)--(2M) passed around to responder
+    X = takeout with both minors (would negative X with other major), suits too weak for NFB e.g. xx/xx/AQxx/Qxxxx
 
 1D--(1N)
     X = penalty rarely GF, after escape opener can still use good-bad 2N or cue to GF whilst responder can bid 2N natural, 3x NF or also cue to GF
-    2C = natural, forcing
+    2C = any one suiter
     2D = !ds + major
     2H = both majors
     2S = !ss + minor
