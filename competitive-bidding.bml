@@ -30,7 +30,7 @@
   to handle the auction based on partner's next bid. Used to start a *stop ask* (Directional Asking Bid) or make a
   flattish 3 card 8--10 hcp raise.
 - Is it a standard *competitive* double situation? Competitive X played to 3!s. Double of opponents' raised suit
-  when partner has overcalled.
+  when partner has opened or overcalled when no other 3x game try bid available: 1H--(2D)--2H--(3D)--X but not 1H--(2C)--2H--(3C)--X where 3!d can be the game try bid.
 - Is it a standard *responsive* double situation? Responsive X played to 3!s. Partner does takeout X of Opener and
   then we X the opponents' raise (whether artificial - e.g. HCR or natural).
 
@@ -91,6 +91,28 @@ When they pass out 1N:
 (1H)--1S--(2S/3S)
     X = "Stolen" bid, double I would have bid that.
 
+*** Extra Length 2 Level Double of Cuebid - Partner not bid
+
+1H--(1S)--P--(2H)
+    X = extra !h length, extra values inviting 3!h bid with Hx+ support
+    3H = very good suit and shape, extras
+
+Other examples:
+
+- 1D--(1HS)--P--(2D)--X
+- 1S--(2CDH)--P--(2S)--X
+
+Pass then later X would allow opener to compete in the minors suits.
+
+*** Lead Undirecting 3 Level Double of Cuebid - Partner not bid
+
+Assuming we have no chance of winning the auction here
+
+1H--(2S)--P--(3H)
+    X = do NOT lead !hs
+    P = happy with !h lead
+    4CDH = extreme shape, extras
+
 *** Double Showing HCR by advancer - Opponents' raise
 
 - (1x) then 1!h/!s overcall by us then the opponents raise to (2x/3x)
@@ -108,8 +130,10 @@ X then shows a HCR.
 
 *** Fit Jump by Opponents' Double - when we overcalled
 
-(1H)--1S--(3C) when showing !cs and !h fit
+(1H)--1S--(3C)
     X = !s fit and 4th suit (artificial fit showing)
+
+When 3!c showing !cs and !h fit
 
 *** Redouble of Negative Double - when we simple overcalled
 
@@ -117,6 +141,37 @@ E.g. (1!c)--1!s--X--XX, (1!d)--1!h--X--XX, (1!s)--2!d--X--XX
 
 - doubleton, typically Hx (may have hand that prefers to bid e.g. 1N)
 - 9+ shows decent values (especially remember 1M overcalls can be light)
+
+*** Extra trump redouble - we stop 2HS they takeout X
+
+Examples:
+
+1D--(P)--1S--(P)--2S--(P)--P--(X)
+    XX = opener shows 4 card support as may have raised with only 3 cards
+
+1D--(P)--1S--(P)--2S--(X)
+    XX = responder now shows 5 cards, inviting opener to compete 3!s
+
+1M--(P)--1N--(P)--2M--(X)
+    XX = responder has 3+ card support opposite 6 cards
+
+1M--(P)--1N--(P)--2CD--(P)--2M--(X)
+    XX = opener has 6 cards
+
+1M--(P)--2M--(X)
+    XX = pointless?, 6 cards, dead minimum presumably as facing a 3 card invite
+
+1N--(P)--2D--(P)--2H--(P)--P--(X)
+    XX = opener has 3 card support
+
+1C--(P)--1S--(P)--2S--(P)--P--(X)
+    XX = 5 card weak NT hand
+
+1C--(P)--1S--(P)--2S--(X)
+    XX = responder now shows 5 cards, inviting opener to compete 3!s
+
+1C--(P)--1H--(P)--1S--(P)--2S--(X)
+    XX = opener has 5 cards
 
 
 *** 3N Contract Lead Directing Double
@@ -165,7 +220,7 @@ E.g. playing transfer advances, (1C)--1!s--(P)--2!h--(X)
 ** Rubens Transfer Advances
 
 Overcall response method aiding showing a wider range of strengths.
-Let's us show a good suit but a bad hand without support (escaping/signoff)
+Lets us show a good suit but a bad hand without support (escaping/signoff)
 or a hand that can bid on (supporting partner would show fewer cards e.g. doubleton, no a valid fit jump).
 
 May use something different e.g. multi-meaning 2!c advancer's response bid from the competitive bids book.
@@ -209,6 +264,44 @@ Works with jump overcalls aswell:
     4D = !h transfer
     4H = !s hcr
     4S = weaker !s support
+
+
+** Opener's Second Round Double - After Partner's 2 Level WJS or NFB
+
+Double shows support and extras in shape or HCP
+
+1D--(P)--2H--(2S)
+    X = extras, support
+    3H = competitive
+
+1D--(1S)--2C--(2S)
+    X = extras, support
+    3C = competitive
+
+** Opener's Renegative Double for Both Majors
+
+1D--(2C)--X--(3C)
+    X = 3 cards both majors, extras
+
+1C--(1D)--X--(2D)
+    X = 4 cards both majors, good weak NT OR prelude to forcing with strong !c hand
+
+** Opener's Good-Bad 2N Rebid in Competition
+
+After (2DHS) in 4th by the opposition (RHS of opener), 2N shows a weaker hand.
+
+1H--(P)--1N--(2S)
+    2N = good-bad, assumed weak !c suit in this case
+    3C = maximum, natural
+
+1H--(P)--1S--(2C)
+    2DH = natural
+    2N = natural, presumably solid-ish !ds and !c stop
+
+1H--(P)--1S--(2D)
+    2N = good-bad
+
+[Example after 1D opening](#Good-Bad 2N over 2DHS interference by 4th hand)
 
 
 * Opponents open Strong 1C
@@ -644,9 +737,9 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 (1S)--any--(cue) HCR typically
     X = "Stolen" bid, double I would have bid that.
 
-(1S)--2CD--(2S) not HCR double when 2CD ovecall of major - other major could still have a fit
+(1S)--2CD--(2S)
     3H = natural, decent 6+ cards
-    X = 5 or bad 6 card !h suit, tolerance for minor suit
+    X = 5 or bad 6 card !h suit, tolerance for minor suit, not HCR double when 2CD overcall of major - other major could still have a fit
 
 (1S)--X--(4S)
     X = value, not necessarily a major

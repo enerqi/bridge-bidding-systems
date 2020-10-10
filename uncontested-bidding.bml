@@ -3,10 +3,12 @@
 * 1D Opening
 
 - 11--(13) balanced/semi-balanced hands with 2+ card !d suit
+- 11--(13) balanced hands in principle do not include any 5 card major hands
 - 11--15 unbalanced, maybe longer 5+ card !c suit (canapé)
 - 11--15 (4!h/!s--1)--3--5 is the only unbalanced non-natural !d opening
 - 12--15 4--4--4--1 with 4 !ds
 - [Open 1!c](#1C Weak Strong) with any good 13--15 weak NT like hand, including many 5--4--2--2 five card !c/!d hands.
+- Open [1!h](#1H Opening) or [1!s](#1S Opening) with an 11--(13) hcp 5--3--3--2 major, unless willing to pretend it is a 4 card suit
 - [Open 2!d](#2D Precision Style 3 Suiter) with a short !d 3 suiter
 
 
@@ -454,7 +456,7 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF
         2D = puppeted
             2H = invitational, 5--4+ in the majors
             2S = invitational, 5!ss (opener should raise with 3 card support and minimum)
-            2N = natural, weaker invitation than direct 2N, probably denies 4!ss
+            2N = natural, weaker invitation than direct 2N, probably denies 4!hs
             3C = natural, invitational, 5+ !cs, usually 6 card
             3D = natural, invitational, 5+ !ds
             3H = strongly invitational, 5--5+ majors
@@ -901,7 +903,7 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
         2N = scrambling, can use to make competitive 3!h bid with 4 card support
         3H = invitational, natural
 
-1D--(1M)--(2M) passed around to responder
+1D--(1M)--P--(2M) passed around to responder
     X = takeout with both minors (would negative X with other major), suits too weak for NFB e.g. xx/xx/AQxx/Qxxxx
 
 1D--(1N)
@@ -954,6 +956,43 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
 1D--(any)--any--(2C)
     2N = good hand, !ds and !c stop (similar to a natural 3!d bid)
 
+**** Opener's cue bid
+
+When partner bids 1!h/!s and the opponent bids (double or overcall) at the 1 level, or
+with less nuance if they bid at the 2 level.
+
+1D--(P)--1H--(1S)
+    2S = invitational !h raise, maximum and shape
+    3H = weak limit (4 card support, shape, probably a singleton)
+
+1D--(1H)--X--(P)
+    1S = nothing special
+    2H = invitational 4 card !s support
+    2S = weak limit (4 card support, shape, probably a singleton)
+
+1D--(1H)--1S--(P)
+    2H = 3 card support, similar to support double
+    2S = 4 card support
+    3H = invitational !s raise, maximum and shape
+    3S = weak limit, shapely, but weaker in HCP
+
+Still on if 2nd position overcalls and advancer only bids 1N/2!c/2!d in 4th.
+
+1D--(1H)--1S--(1N/2C/2D)
+    X = 3 card support double
+    2H = 4 card support, better than 2!s raise
+    2S = 4 card support, often dead minimum
+    3H = invitational !s raise, maximum and shapely
+    3S = weak limit, shapely, but weaker in HCP
+
+When they only overcall 2x then our cue bid is less nuanced at the 3 level. It is NOT a
+stopper ask, as only natural invitational 3!d rebids (e.g. xx/Axx/AKQJxx/xxx) would benefit.
+
+1D--(P)--1S--(2C)
+    3C = good 3!s raise
+    3S = weaker !s raise
+
+
 **** Support doubles and redoubles by opener
 
 - responder shows major at one level
@@ -962,13 +1001,21 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
 
 1D--(X)--1H--(1N)
     X = support double, 3 card support (!ss)
-    raise = 4 card support (2!s in this case as 1!h shows !ss)
+    raise = 4 card support (!s in this case as 1!h shows !ss)
 
 Extended to the 3 level, but with more strength:
 
 1D--(1S)--X--(2S)
     X = support double, long strong !ds and exactly 3 card support for implied !h suit
     3H = 4 card support, above minimum presumably
+
+**** Extra trump redouble after settling in 2HS
+
+1D--(P)--1S--(P)--2S--(P)--P--(X)
+    XX = opener shows 4 card support as may have raised with only 3 cards
+
+1D--(P)--1S--(P)--2S--(X)
+    XX = responder now shows 5 cards, inviting opener to compete 3!s
 
 
 **** Good-Bad 2N over 2DHS interference by 4th hand
@@ -1579,7 +1626,7 @@ Weak jump shift, 0--9 six+ card suit
 
 ** 1H--2N
 
-Invitational+ raise 4 card support.
+Invitational+ raise 3 (GF) or 4 card support.
 
 - Normally invitational or slam try hands - game hands typically should end the auction quickly
 - 4--4--3--2 / 4--3--3--3 hands should show 3 card support immediately
@@ -2142,7 +2189,7 @@ Invite ~10--12 (9 with singleton), 3 card support (a Drury raise in all position
 
 ** 1S--2N
 
-Invitational+ raise 4 card support.
+Invitational+ raise 3 (GF) or 4 card support.
 
 - Normally invitational or slam try hands - game hands typically should end the auction quickly
 - With game values, 3 card support, 5 card side suit and slam interest can bid 2/1 GF first instead of 2N
