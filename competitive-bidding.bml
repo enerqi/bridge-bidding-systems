@@ -818,6 +818,38 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
     X = passed hand would be gamble 0--4--4--5, probably only NV
     4N = true 2 suiter, maybe !hs
 
+* Opponents Open 1NT
+
+Competing over 1NT. More aggressive when opponents are NonVulnerable.
+
+- Whether with/without interference from opener/responder, new suits shows some SUPP. E.G. (1N)--2H--2S = double fit to some extent.
+- Raise mostly competitive, bid game w/ good max.
+- X is *penalty* against *non-strong NT*
+- X is *takeout* against *Strong NT*, some shape with *4--5 spades*, 12+ HCP
+- *4th* sitting under X is *always takeout* with *4--5 spades*, 12+ HCP
+- Note, X as T/O could also be played at Matchpoints, but need a strength bid for IMPs vs weak notrumps so don’t miss game
+
+(1N)
+    2C = playable in three suits including !c, (not !s when X=takeout)
+        2NT = bid again
+    2D = both majors 4--4+
+        2NT = bid again
+    2HS = natural
+        3HS = competitive raise, bid game with good max
+    2N = minors takeout
+    3CD = natural intermediate
+    3HS = pre-empt
+    3N = both majors, GF
+
+** When opponents run from 1N doubled
+
+- Lebensohl is on -- 2 bids are to play
+- X of a natural suit by doubler's partner is 2--3 trumps. Can pass with 4 trumps, or wait for re-opening double.
+- Doubler's partner maybe passing with penalty interest (after a future re-opening X) or weak hand that wants to escape
+  with both majors -- expecting a re-opening double.
+- Another double from the penalty doubler is re-opening.
+- Note, maybe better to play X of a Major by doubler's partner as takeout, but another memory strain.
+
 
 * Opponents open Intermediate 2C
 

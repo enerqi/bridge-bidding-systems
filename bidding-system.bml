@@ -6,6 +6,7 @@
 #INCLUDE nt-bidding.bml
 #INCLUDE 2club-opening.bml
 #INCLUDE 2level-preempts.bml
+#INCLUDE 2n-opening.bml
 #INCLUDE high-openings.bml
 #INCLUDE competitive-bidding.bml
 #INCLUDE slam-bidding.bml
