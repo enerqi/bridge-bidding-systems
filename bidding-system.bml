@@ -13,7 +13,59 @@
 
 * System Philosophy
 
-TODO
+- Optimize for IMPs/Rubbers, that is bidding games and slams rather than yet more ways to compete for part scores
+- Modern bidding is competitive, have agreements to allow fast auctions and competitive bids in addition to constructive bids where possible
+- Optimizing to get into the rights games/slams means fewer aggressive high variance (sometimes more fun) bids, e.g.
+  [2D Precision Style 3 Suiter](#2D Precision Style 3 Suiter) is boring, a bit difficult to construct over, but there
+  to make other 1 level openings more precise. A multi 2!d allows more fun aggressive bids plus a place to put one
+  strong constructive bid but loses the intermediate 3 suiter opening making a 1!d opening very vague. By not playing a
+  multi 2!d we cannot play 5 major + 4 minor weak twos AND 6 card major weak twos (a multi 2!d is arguably slow and easier
+  to defend for an experienced pair though - cannot be fast raised).
+- Fewer high variance bids includes not making crazy bids - e.g. on flat hands that have little lead directing values and
+  are likely to just give away information etc. We don't need to pressure less experienced opponents if it's also going to
+  risk partner putting us in the wrong contract. Stick to the expected ranges for bids. Some places that is a tight range and
+  others it's looser (3rd position bids, P--(1!c)--1!s overcalls etc).
+- Weak 2!h/2!s are 6 card constructive (1 honour, 7--11 hcp) in 1st/2nd. This is the only obvious flex point in the system (could be swapped
+  to 5 card major + 4 card minor), but notably to reduce variance it's not 6 OR 5 card in 1st/2nd. 3rd is undisciplined of course.
+- Wide ranging openings are imprecise and make judging games/slams difficult, especially in competition. Yet we do want
+  to open almost all 11 counts (perhaps not some 4--4--4--1 hands) to compete. Naturally we choose to use an artificial
+  1!c opening to limit the 1D/1H/1S/2C/2D openings. So called natural systems use a prepared club and a slew of later
+  artificial bids to limit themselves
+- The 1!c and 2C opening are the weak points of an artificial club system. It's hard to construct accurately over an
+  intermediate 2C opening, therefore it promises 6 cards unlike many of the older 5 card variants played in Precision/Swedish club systems.
+- A Swedish like artificial 1!c opening (two way weak NT or strong) stops opponents bidding purely destructively, but when
+  they do bid aggressively the auction can be more difficult. The 1!c opening is usually a weak NT, not strong, and having
+  separate bids (1!d for 11--13 NT and 1!c for 13--15) helps define those hands quickly. It's somewhat arbitrary but the
+  weak hand opening 1D arguably competes better. The overlap in the weak NT ranges gives some flex in guessing if the opening
+  is a good or bad 13 hcp hand - define those ranges even tighter.
+- An unbalanced 1!d opening is nice (natural competition in !ds), but not nice enough to require playing a wide range weak
+  NT (12--15 1!c opening) or passing various 12 hcp hands. We want to bid those highly frequent 11--12 hcp balanced hands.
+- 10--15 is just too wide ranging. Opening 10 hcp balanced (with 1!d) would be fun, but unlikely to test as it seems to
+  optimize matchpoints instead of constructive accuracy for IMPs/Rubbers. Unbalanced 16 hcp hands open 1!c strong, as
+  they are unbalanced there's a better chance of game at 24 hcp opposite any positive 8 hcp hand.
+- Precisely bidding strong hands after opponents compete following our artificial 1!c is difficult, but by playing a strong
+  16--18 1NT opening and 2NT right after at 19--20 hcp, all strong 16--20 hcp 1!c opening hands will be unbalanced.
+  Given that we open almost all 5--3--3--2 hands (even with 5 card majors), and some 5--4--2--2 hands notrumps, ~ 55% of all
+  16--20 hcp hands will be classified as balanced. A strong 1!c opening becomes low frequency and when it does occur it's
+  easier to bid out the shape.
+- Bidding and defining shape quickly is good, much like limiting HCP ranges. 5--3--3--2 hands with a 5 card major, except
+  for 11--12 (13) hcp 5 card major hands (1!d opening constructive sequences overloaded otherwise) should show a balanced
+  hand straight away unless judgment strongly suggests otherwise. 5--4--2--2 hands with a long minors may also want to
+  show a balanced hand.
+- We give up a weak NT opening - a pairs optimization. The even stronger 16--18 NT gets a chance to bid in 3rd more
+  often as 1st/2nd will have fewer points. The risk of opening 2N with 19 HCP is low, especially compared to the clarity
+  it gives to strong 1!c club openings and the gains from many faster auctions (1N--3N, 2N--3N etc.)
+- Four vs Five card majors, much like mini v.s. weak v.s. strong notrumps, there are pros and cons. Will believe that
+  five card majors have a slight edge for slam bidding, slightly better for IMPs whereas four card majors are slightly
+  better for matchpoints competitive bidding. There is more five card major literature to draw from when selecting one
+  to use with artifical 1!c openings.
+
+This details of this system are mainly taken from the Revision Club (v4.0 by John Montgomery). The 1!d through 4!s openings
+are mostly taken as is. Swapping the strong only 1!c for a Swedish weak strong club is the point of change.
+Clear agreements, depth and detail - a world class system - are more important than being easy to remember. With practice
+it's easy to flick to the right notes when playing online bridge. Some study will be required to learn the details
+without the notes at hand. All that said, even without the details the overall structure is highly coherent.
+
 
 ** Terminology
 
