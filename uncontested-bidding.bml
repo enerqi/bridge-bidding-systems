@@ -771,7 +771,7 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
         4DH = Redwood [RKB](#RKB 4N)
 2S = artificial, GF, at least one 4 card major, natural continuations, 3 level bids fit finding
     3HS = 5 card major (bid 2N forcing first to show a 4 card major)
-2N = balanced, GF ~14--15, denies 4 card major, at least 4 !ds
+2N = omnibus balanced-ish, GF ~14--15, denies 4 card major, at least 4 !ds
     3CD = stopper showing, NT unsure
     3HS = 5 card major
     4CD = slam try, self-sufficient suit, KQJ10xx+
@@ -953,6 +953,9 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
     3S = cue, nominally a !d raise
         4C = longer !cs, better fit check, always forcing at 4 level
 
+1D--(3HS)
+    X = negative "Thrump", maybe not 4 cards other major, just stop asking
+
 1D--(any)--any--(2C)
     2N = good hand, !ds and !c stop (similar to a natural 3!d bid)
 
@@ -995,7 +998,7 @@ stopper ask, as only natural invitational 3!d rebids (e.g. xx/Axx/AKQJxx/xxx) wo
 
 **** Support doubles and redoubles by opener
 
-- responder shows major at one level
+- responder shows *major* at one level
 - 4th hand bids, even NT bids
 - opener can X/XX or do a direct raise
 
@@ -1008,6 +1011,21 @@ Extended to the 3 level, but with more strength:
 1D--(1S)--X--(2S)
     X = support double, long strong !ds and exactly 3 card support for implied !h suit
     3H = 4 card support, above minimum presumably
+
+Extended through to 4!h, again more strength needed so not doubling does not deny 3 card support:
+
+1D--(X)--1H--(3H)
+    X = support, 3 card support (for the !s transfer suit here), !d length shapely maximum
+        4N = [RKB](#RKB 4N) for Major
+        4thSuit = unspecified slam try
+
+Includes 4th hands bids where 2nd hand does not bid at all:
+
+1D--(P)--1S--(4H)
+    X = support
+
+What about 1C--(P)--1M...? 1H--(P)--1S--(2CD)...maybe only 4 cards though, XX is support 3 card?
+With the flat 1C hand more likely to not have a great hand worth X at high level
 
 **** Extra trump redouble after settling in 2HS
 
