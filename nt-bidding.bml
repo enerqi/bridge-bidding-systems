@@ -62,7 +62,7 @@ Responding:
     2D = [transfer to !h](#1N--2D)
     2H = [transfer to !s](#1N--2H)
     2S = [transfer to !c](#1N--2S)
-    2N = [transfer to !d. Continuations similar to 2!s tranfer to !c.](#1N--2N+)
+    2N = [transfer to !d. Continuations similar to 2!s transfer to !c.](#1N--2N+)
     3C = [invitational+ but not slam interest (transfer and rebid if so), 5--5+ in !h+!s](#1N--2N+)
     3D = [minors invitational, 5--5 exactly !c+!d](#1N--2N+)
     3H = [minors 5--5+, GF !c+!d](#1N--2N+)
@@ -442,7 +442,7 @@ Transfer to !c
 TODO, check continuations over 2N !d transfer detail.
 
 1N
-    2N = transfer to !d. Continuations similar to 2!s tranfer to !c.
+    2N = transfer to !d. Continuations similar to 2!s transfer to !c.
         3C = rejection
             4C = 7411 with long !d and 4 card major
         3D = support 3+ cards
@@ -514,26 +514,104 @@ Lebensohl is played in a number of blanket NT and other places where the idea is
 Most important is its use against weak twos and after we have made natural opening strength
 (or better) 1NT bids.
 
-1. 1NT--(Overcall)
-2. (1X)--1NT Overcall by us including Protective -- (bid over)
-3. (1NT)--X--(Escape/ XX/ P)
-4. (1NT)--X--(transfer) (also considered running from 1N)
-5. (Weak 2)--X.
-6. (2!c/2!d) Precision/ limited two bid then -- X
-7. (1X)--X--(2X).
-8. Weak Strong club interference defence.
-9. (2D)--P--(2HS)--X (pass or correct)
-10. 1NT--(X) when X is for *takeout*
+- 1NT--(Overcall)
+- (1X)--1NT Overcall by us including Protective--(bid over)
+- 1C--(2!d!h!s)
+- 1D--(2!h!s)
+- (Weak 2!d!h!s)--X
+- (1NT weak)--X--(Escape/ XX/ P)
+- (1NT weak)--X--(transfer Escape)
+- (2D multi)--X
+- (2D multi)--2!h!s--(P)
 
-Classic Lebensohl:
+** Lebensohl and Variants
 
-- Going via 2NT shows the *weaker* hand (instead of slow shows strong hand)
-- Cue bid denies a stop and is GF, whether direct or via 2NT
-- Direct cue bid used to show a 4card other major, or even stayman both majors
-- Slow cue bid via 2NT denies a 4card other major
-- Slow 3N via 2NT denies a 4 card other major, and promises a stop
-- 3N direct denies a 4 card other major, and promises a stop
-- If a suit is available at the 2 level, then 2x is competitive, 2N--3x invitational, 3x GF
+There's many ways to play it such as:
+
+- Classic (2N puppet to show weak/competitive hands below opponents suit invitational above, direct 3x GF)
+- Reverse (direct 3x weak/competitive below opponents suit invitational above, 2N puppet to show GF hands)
+- Rubensohl/Rubinsohl (Rubens advances + Lebensohl, where 2N--3!s transfers are weak or GF, transfer to opponents suit is staymanic cue)
+- Transfer/Advanced (similar to Rubensohl but 2N bid is multi-meaning puppet any strength !cs or weak other suit, transfers are invitational plus)
+- Rumpelsohl (transfers weak or GF, 2N multi-meaning used to show invitational hands).
+
+Within those there could be minor variations around whether fast shows (a stop), slow shows (a stop via 2N first if
+2N is multi-meaning puppet and not just showing !cs), slow/fast cue shows a 4 card major or not and stop asks,
+direct 3 level bids are strong or via 2N are strong etc. Transfers to the cue suit or transfer through it. Showing competitive hands faster naturally sounds more
+matchpoint oriented. Focusing on invitational/GF hands better for IMPs. We play a "transfer" variant. The transfer
+allows the stronger player to declare. Given all the names and variations the name doesn't label an exact system.
+If a negative double is available then the Lebensohl bidder has more options/accuracy. (2S)-X takeout is harder and invitational plus only responses certainly do not make sense
+as advancer is forced to bid.
+Our variant, similar but still different to the Revision club variant:
+
+- 2suit bids are natural weak/competitive
+- 2N multi-way puppet to !cs either weak/competitive !c/!d hands or GF !cs
+- 3!c/3!d/3!h transfers to new suits are invitational plus - opener with fit/good hand bids on super accepting
+- transfer around/through the cue suit
+- Cue is GF staymanic, at least 3 other major, and if double also available it shows a singleton/void in opponents' suit
+- X is staymanic and promises doubleton+ in their suit (of a natural suit implied but maybe not bid)
+- X negative then 3N shows the other major and a stopper
+- X negative then cue bid shows the other major and NO stopper
+- X then new suit is invitational, exactly 5 cards (probably poor suit as not transferred)
+- 3!h over opponents 2!s is weak/competitive
+- 3N is to play, fast implies a stop
+
+In terms of artificial overcalls:
+
+- Note if the overcall promised another unknown suit we do not consider it.
+- When the overcall does show two specific suits, X is negative for the other suits
+
+*** Over a takeout double:
+
+(2H)--X
+    2S = weak
+    2N = puppet, weak minor or GF clubs
+    3C = invitational plus !d
+    3D = invitational plus !s (transfer through)
+    3H = GF, staymanic 4!ss  (takeout doubles not always have !ss)
+    3S = GF, 3N transfer, no 4!s, no stopper (could be played as minors)
+    3N = to play, stop implied, no other major
+    4C = !h void, slam interest
+    4D = texas !hs (or play as singleton slam interest)
+    4H = texas !ss
+
+(2S)--X
+    2N = puppet, weak minor or GF clubs
+    3C = invitational plus !d
+    3D = invitational plus !h
+    3H = fast weak/competitive with !hs (given up a generic no major, no stopper transfer as 2N then cue may be taken as stopper asking but implies GF clubs)
+    3S = GF, staymanic 4!hs (takeout doubles not always have !hs)
+    3N = to play, stop implied, no other major
+    4C = !s void, slam interest
+    4D = texas !hs
+    4H = texas !ss (or play as singleton slam interest)
+
+*** Over a balanced hand
+
+1m/1N--(2!h)
+    X = staymanic guarantee 3oM, doubleton+ in !hs, follow on suit bid is poor 5 card invitational, follow on cue stop ask
+    2S = weak
+    2N = puppet, weak minor or GF clubs
+    3C = invitational plus !d
+    3D = invitational plus !s
+    3H = GF, staymanic 4!ss + singleton/void in !hs
+    3S = GF, 3N transfer, no 4!s, no stopper (could be played as minors, often 5--4)
+    3N = to play, stop implied, no other major
+    4C = !h void, slam interest
+    4D = texas !hs (or play as singleton slam interest)
+    4H = texas !ss
+
+1m/1N--(2!s)
+    X = staymanic guarantee 3oM, doubleton+ in !ss, follow on suit bid is poor 5 card invitational, follow on cue stop ask
+    2N = puppet, weak minor or GF clubs
+    3C = invitational plus !d
+    3D = invitational plus !h
+    3H = fast weak/competitive with !hs (could play as minors or generic no stop/no major GF)
+    3S = GF, staymanic 4!hs + singleton/void in !ss
+    3N = to play, stop implied, no other major
+    4C = !s void, slam interest
+    4D = texas !hs
+    4H = texas !ss (or play as singleton slam interest)
+
 
 ** Non-Penalty X Interference of Our NT
 
@@ -556,6 +634,9 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
 
 ** Overcalls of our NT
 
+1N--(X) takeout
+    [1N system on](#1NT Opening)
+
 1N--(2!c)
     X = stand in for 2!c
     Others = [1N system on](#1NT Opening)
@@ -563,36 +644,13 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
 1N--(2!d!h!s)
     X = takeout iff suit natural, staymanic, normally a doubleton (unlike cue)
     2x = NF
-    2N+ = transfer Lebensohl
-    Cue = shortness (Roth-like), staymanic
-    3N = suggests stopper, not guaranteed
-    4DH = texas transfer (even to opponents suit (psyche, strong whatever))
-
-Tranfer Lebensohl examples.
-
-1N--(2!h)
-    2N = !c
-    3C = !d
-    3D = !s
-    3H = short !h and usually 4!ss
-    3S = minors 5--4+, no major interest
-        4CD = NF
-1N--(2!s)
-    2N = !c
-    3C = !d
-    3D = !h
-    3H = minors 5--4+, no major interest
-        4CD = NF
-    3S = short !s and usually 4!hs
-
-- Note if the overcall promised another unknown suit we do not consider it.
-- When the overcall does show two specific suits, X is negative for the other suits
+    2N+ = [Lebensohl System](#1NT Interference and Lebensohl)
 
 1N--(2x two known suits)
     2-newsuit = to play
     Cue = staymanic for major
     2N = transfer to lowest other suit, invite+
-    3C = tranfer to higher other suit, invite+
+    3C = transfer to higher other suit, invite+
     3DH = stopper
     3S = 5--5+ other two suits (regardless if they have !s)
 

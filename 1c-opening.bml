@@ -213,12 +213,10 @@ unless something interesting is done.
     3HS = pre-empt
     3N = both majors, GF
 
-1C--(2x)
+1C--(2DHS)
     P = not good or < GF with penalty pass in opponents suit
-    X = negative double (at least 2 cards?), possibly GF if balanced and no stop. Cue bids after X show that suit natural/psyche expose. New suits by doubler later show invitational values.
-        2N = Weak NT or hand without 5 card suit (does not deny 4 card major)? Unnecessary cue bid when NT already bid implies 4 cards.
-    2N = Lebensohl
-
+    X = negative double, doubleton+ in their suit, as Lebensohl system
+    Others = [Lebensohl system](#1NT Interference and Lebensohl)
 
 1C--(2N+)
     P = not good or < GF with penalty pass in opponents suit

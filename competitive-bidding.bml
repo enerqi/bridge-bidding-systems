@@ -405,8 +405,7 @@ Note, just overcall 1!h with a "weak" jump !h overcall.
         3x = invitational, including opener's suit
         (any)
             X = negative of natural bids
-            2N = transfer lebensohl to clubs etc.
-            3cue = stayman, short in cue - stopper or length starts with X
+            Others = [Lebensohl system](#1NT Interference and Lebensohl)
     2C = 5+ !ds + 4 card !s suit, AJxx/xx/Kxxxxx/x or better
         2D = natural
         2H = natural
@@ -507,8 +506,7 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
       3x = invitational, including opener's suit
       (any)
           X = negative of natural bids
-          2N = transfer lebensohl to clubs etc.
-          3cue = stayman, short in cue - stopper or length starts with X
+          Others = [Lebensohl system](#1NT Interference and Lebensohl)
     2C = natural, pretty much denying a major
     2D = 5+ !cs + !hs usually 4 cards, xx/AJxx/x/Kxxxxx or better
         2H = natural
@@ -635,8 +633,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
       3x = invitational, including opener's suit
       (any)
           X = negative of natural bids
-          2N = transfer lebensohl to clubs etc.
-          3cue = stayman, short in cue - stopper or length starts with X
+          Others = [Lebensohl system](#1NT Interference and Lebensohl)
 2CD = normal overcall, virtually deny !ss
     2H = Cue [Rubens advance](#Rubens Transfer Advances)
     (2H) = opponents raise
@@ -776,8 +773,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
         3x = invitational, including opener's suit
         (any)
             X = negative of natural bids
-            2N = transfer lebensohl to clubs etc.
-            3cue = stayman, short in cue - stopper or length starts with X
+            Others = [Lebensohl system](#1NT Interference and Lebensohl)
     2C = normal overcall, virtually deny !hs
     2D = normal overcall, virtually deny !hs
         2S = [Rubens advance](#Rubens Transfer Advances) !c suit
@@ -852,8 +848,6 @@ Competing over 1NT. More aggressive when opponents are NonVulnerable.
 
 
 * Opponents open Intermediate 2C
-
-See Weak two defence - X as takeout + Lebensohl.
 
 The (2!c)--P--(2!d)--X is lead directing.
 
@@ -933,6 +927,7 @@ Bid naturally with decent 5--6 card suits or Strong NT hands.
 
 (2D)
     X = both majors takeout
+        any = [Lebensohl system](#1NT Interference and Lebensohl)
     2HS = natural, decent 5--6 card suit
         2N = natural
     2N = natural, 16-18 balanced. Could have 4 card !h/!s, NT scheme follows.
@@ -941,8 +936,7 @@ Bid naturally with decent 5--6 card suits or Strong NT hands.
 
 (2H)
     X = takeout
-        2S = weak, natural
-        2N = Lebensohl
+        any = [Lebensohl system](#1NT Interference and Lebensohl)
         (3!h) = interference
             X = responsive, values, !s length unknown
             4H = 4 card !s suit and a minor
@@ -956,7 +950,10 @@ Bid naturally with decent 5--6 card suits or Strong NT hands.
 
 (2S)
     X = takeout
-        2N = Lebensohl
+        any = [Lebensohl system](#1NT Interference and Lebensohl)
+        (3!s) = interference
+            X = responsive, values, !h length unknown
+            4H = competitive
     2N = natural, 16-18 balanced. Could have 4 card !s, NT scheme follows.
     3CD = natural
     3S = stopper ask

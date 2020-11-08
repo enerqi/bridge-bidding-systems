@@ -944,14 +944,9 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
     2N = natural
     3C = forcing, natural
 
-1D--(2H)
+1D--(2HS)
     X = negative, later !s bids are forcing
-    2S = NF, natural
-
-1D--(2S)
-    X = negative
-    3S = cue, nominally a !d raise
-        4C = longer !cs, better fit check, always forcing at 4 level
+    Others = [Lebensohl system](#1NT Interference and Lebensohl)
 
 1D--(3HS)
     X = negative "Thrump", maybe not 4 cards other major, just stop asking
