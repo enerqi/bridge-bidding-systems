@@ -986,8 +986,9 @@ The (2!c)--P--(2!d)--X is lead directing.
 
 * Opponents open Multi 2D
 
-Bid naturally with decent 5--6 card suits or Strong NT hands.
-Unlike common X showing weak NT defences this has more chance of penalising opponents.
+- Bid naturally with decent 5--6 card suits or Strong NT hands.
+- Weaker suits maybe bid on the next round
+- Unlike common X showing weak NT defences this has more chance of penalising opponents.
 
 (2D)
     P = maybe 4 !h and opening values
@@ -995,13 +996,21 @@ Unlike common X showing weak NT defences this has more chance of penalising oppo
         (2!h!s) = further interference
             X = !hs, it's our hand good 8+
         (P) = no interference
-            2N = Lebensohl
+            2N = [Lebensohl](#1NT Interference and Lebensohl)
+    2HS = natural, decent 5--6 cards
+    2N = 16--19 NT
+        3C = stayman, simple version
+    3CD = natural, opening bid or better
+    3HS = natural, stronger
+    3N = natural stronger
+    4CDHS = natural, stronger
+    4N = minors
 
 (2D)--P--(2!h!s)
     X = 4 or 5 poor spades
 
 (2D)--2!h!s--P
-    2N = Lebensohl
+    2N = [Lebensohl](#1NT Interference and Lebensohl)
 
 * Opponents open Weak 2D 2H 2S
 
@@ -1016,13 +1025,11 @@ Bid naturally with decent 5--6 card suits or Strong NT hands.
     2N = natural, 16-18 balanced. Could have 4 card !h/!s, NT scheme follows.
     3D = both majors, 5--5+, intermediate+
     3HS = natural long suit, 7-8 PT
+    4D = super michaels, very strong, both majors
 
 (2H)
     X = takeout
         any = [Lebensohl system](#1NT Interference and Lebensohl)
-        (3!h) = interference
-            X = responsive, values, !s length unknown
-            4H = 4 card !s suit and a minor
     2S = natural
         2N = natural
     2N = natural, 16-18 balanced. Could have 4 card !s, NT scheme follows.
@@ -1031,16 +1038,21 @@ Bid naturally with decent 5--6 card suits or Strong NT hands.
     3S = natural long suit, 7-8 PT
     4CD = !s + !c/!d intermediate+ (just bid 2!s if not strong enough)
 
+(2H)--X--(3!h)
+    X = responsive, values, !s length unknown
+    4H = 4 card !s suit and a minor
+
 (2S)
     X = takeout
         any = [Lebensohl system](#1NT Interference and Lebensohl)
-        (3!s) = interference
-            X = responsive, values, !h length unknown
-            4H = competitive
     2N = natural, 16-18 balanced. Could have 4 card !s, NT scheme follows.
     3CD = natural
     3S = stopper ask
     4CD = !h + !c/!d intermediate+
+
+(2S)--X--(3!s)
+    X = responsive, values, !h length unknown
+    4H = competitive
 
 (2x)--P--(P)
     X = takeout, protective ~10+ hcp for more penalty opportunity, but consider the strength
