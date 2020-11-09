@@ -192,10 +192,6 @@ Standard meanings by the defender sitting under the declarer:
 - lead dummies first bid suit
 - lead shortest major if not suits mentioned
 
-
-...TODO, Fit Jumps, HCR etc.
-
-
 ** OBAR 4th seat bids
 
 "Opponents Bid And Raise – Balance In Direct Seat"
@@ -818,34 +814,121 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 
 Competing over 1NT. More aggressive when opponents are NonVulnerable.
 
-- Whether with/without interference from opener/responder, new suits shows some SUPP. E.G. (1N)--2H--2S = double fit to some extent.
-- Raise mostly competitive, bid game w/ good max.
-- X is *penalty* against *non-strong NT*
-- X is *takeout* against *Strong NT*, some shape with *4--5 spades*, 12+ HCP
-- *4th* sitting under X is *always takeout* with *4--5 spades*, 12+ HCP
-- Note, X as T/O could also be played at Matchpoints, but need a strength bid for IMPs vs weak notrumps so don’t miss game
+- Distributional hands, not balanced over balanced, especially v.s. strong NT
+- Distributional single suiters are more common, hence strong NT defence where not need X for penalty
+- Raise mostly competitive, bid game with good shape + max.
+
+** Strong NT
 
 (1N)
-    2C = playable in three suits including !c, (not !s when X=takeout)
-        2NT = bid again
-    2D = both majors 4--4+
-        2NT = bid again
-    2HS = natural
-        3HS = competitive raise, bid game with good max
-    2N = minors takeout
+    X = 2 suits, NOT !h+!c
+        2CD = lowest minor can play in, pass/correct
+        2HS = natural own one-suiter
+        3CD = natural own one-suiter
+        (XX) = whatever
+            P = asking for lowest suit
+            2x = natural
+        (2x) = interference
+            X = takeout
+            suit = natural
+    2CDHS = natural
+    2N = !h + !c (pass then bid 2N or just overcall with minors)
     3CD = natural intermediate
     3HS = pre-empt
-    3N = both majors, GF
+    3N = to play
+
+
+(1N)--P--(2!c) stayman etc.
+    X = !c suit
+
+(1N)--P--(2!d!h) transfer
+    X = natural suit showing
+    2HS = cue transfer suit, Michaels hand major + minor (pass then X with 3 suiter)
+
+(1N)--P--(2!s) minor, baron etc.
+    X = natural suit showing
+
+** Weak NT
+
+(1N)
+    X = penalty (14)15+ top of their range depending on tricks, usually not very distributional one/two suiter
+        More = [1N System On](#1NT Opening) except transfer breaks to new suits are not super-accepts (long minor or 3 suiter)
+    2C = majors
+        (X) = !c suit
+            P = 4 card can play
+            XX = 5 good cards can play
+            2D = longer major ask
+        2D = longer major ask
+        3CDHS = invitational
+    2D = !h transfer overcall, follow ups include natural NT bid, 3!h extra strength or a second suit
+    2H = !s tranfer overcall, follow ups include natural NT bid, 3!s extra strength or a second suit
+    2S = alertable, 4 card !s suit + longer minor, NF
+        2N = minor ask
+        3x = NF, natural
+    2N = minors
+    3CD = 4 card !h suit + long minor, NF
+    3HS = pre-empt
+    3N = to play
+
+(1N)--X--(XX) when penalty business redouble
+    2C = alertable, maybe unnatural can be a short suit - wait for X then XX as takeout OR bid 2!d to show !d + major
+    2D = alertable, maybe unnatural both majors - wait for X then XX
+    2HS = natural escape
+
+(1N)--P--(2!c) weak whatever
+    X = penalty, tends to be balanced, unlikely 3 suited (can pass then takeout)
+        (any) = whatever
+            X = negative at two level
+            2DHS = invitational, as after (1N)--X
+    2DHS = natural
+    2N = both minors, decent hand
+    3C+ = natural, with above 3!d being too strong to only bid at the two level
+
+(1N)--P--(2!c) invitational plus
+    X = !cs
+    2DHS = natural
+    2N = both minors, decent hand
+    3C+ = preemptive
+
+(1N)--P--(2!d)
+    X = takeout if natural 2!d, good hands some !ds if transfer.
+    X = when GF stayman, suggests !d sacrifice or lead directing
+    2H = Micahels if transfer 2!d, pass then X for takeout
+    Cue = Micahels if natural 2!d
+
+(1N)--P--(2!h!s)
+    More = similar to (1N)--P--(2!d)
+
 
 ** When opponents run from 1N doubled
 
-- Lebensohl is on -- 2 bids are to play
-- X of a natural suit by doubler's partner is 2--3 trumps. Can pass with 4 trumps, or wait for re-opening double.
-- Doubler's partner maybe passing with penalty interest (after a future re-opening X) or weak hand that wants to escape
-  with both majors -- expecting a re-opening double.
-- Another double from the penalty doubler is re-opening.
-- Note, maybe better to play X of a Major by doubler's partner as takeout, but another memory strain.
-
+(1N)--X = weak NT penalty double
+    (XX) = run out
+        More = [1N System On](#1NT Opening) and [Lebensohl](#1NT Interference and Lebensohl)
+        X = negative
+        P = nothing to say
+            X = takeout
+            2N/3N = natural by opener
+            Cue = stop ask or major ask
+    (2!c) = whatever
+        X = invitational+, stayman replacement, passable with good !cs
+        2DHS = NF, natural, 5+ suit and *Invitational*, avoiding 3 level lebensohl invites. Pass then bid with competitive hands.
+        2N = natural, invitational
+        3CDHS = natural, forcing
+        4HS = natural
+    (2!d) = whatever
+        X = negative, penalty if a transfer (pass then X to takeout of transfer)
+        Cue = of transfers presumably, Michaels major + minor
+        P = nothing to say
+            X = takeout
+            2N/3N = natural by opener
+            Cue = stop ask or major ask
+        2HS = NF, natural, 5+ suit and *Invitational*, avoiding 3 level lebensohl invites. Pass then bid with competitive hands.
+        2N = natural, invitational
+        3CDHS = natural, forcing
+        4HS = natural
+    (2!h+) = whatever
+        More = [1N System On](#1NT Opening) and [Lebensohl](#1NT Interference and Lebensohl)
 
 * Opponents open Intermediate 2C
 

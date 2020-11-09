@@ -519,8 +519,8 @@ Most important is its use against weak twos and after we have made natural openi
 - 1C--(2!d!h!s)
 - 1D--(2!h!s)
 - (Weak 2!d!h!s)--X
-- (1NT weak)--X--(Escape/ XX/ P)
-- (1NT weak)--X--(transfer Escape)
+- (1NT weak)--X--(XX Escape)
+- (1NT weak)--X--(2H+ Escape) (but not 2C/2D escape)
 - (2D multi)--X
 - (2D multi)--2!h!s--(P)
 
@@ -635,6 +635,8 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
 ** Overcalls of our NT
 
 1N--(X) takeout
+    P = willing to play if advancer converts to penalty, later 2 level X takeout, 3 level X penalty
+    XX = unspecified GF, suggesting penalty double of opponents
     [1N system on](#1NT Opening)
 
 1N--(2!c)
@@ -746,9 +748,12 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
 
 * 1NT Escape
 
-Escaping from 1N penalty doubled.
+When we are 1N penalty doubled.
 
-- X by opener is always takeout
+- Pass is happy to play
+- Pass then a voluntary new suit is invitational at 2 level, 3CD is F1, 3HS is GF
+- 3 suiters guess two suits to escape to
+- Later X by opener is always takeout
 
 1N--(X)
     P = stronger, happy to play.
@@ -756,14 +761,14 @@ Escaping from 1N penalty doubled.
         2C
             P = clubs escape 5+ suite
             2DH = natural 5+ suit
-    2C = !c + !s
-    2D = !d + !s
+    2C = !c + higher suit
+    2D = !d + higher suit
     2H = !h + !s
     2S = natural
     2N = forcing, fit searching
     3x = forcing, natural offensive hand
 
-1N--(X)--P--(escape)--P
+1N--(X)--(P/escape)--(P/escape)--P
     2x = F1, invitational+ values
     3CD = F1, invitational+ values
     3HS = GF
