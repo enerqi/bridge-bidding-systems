@@ -825,18 +825,19 @@ Competing over 1NT. More aggressive when opponents are NonVulnerable.
         2CD = lowest minor can play in, pass/correct
         2HS = natural own one-suiter
         3CD = natural own one-suiter
-        (XX) = whatever
-            P = asking for lowest suit
-            2x = natural
-        (2x) = interference
-            X = takeout
-            suit = natural
     2CDHS = natural
     2N = !h + !c (pass then bid 2N or just overcall with minors)
     3CD = natural intermediate
     3HS = pre-empt
     3N = to play
 
+(1N)--X--(XX) = whatever
+    P = asking for lowest suit
+    2x = natural
+
+(1N)--X--(2x) = interference
+    X = takeout
+    suit = natural
 
 (1N)--P--(2!c) stayman etc.
     X = !c suit
@@ -875,14 +876,16 @@ Competing over 1NT. More aggressive when opponents are NonVulnerable.
     2D = alertable, maybe unnatural both majors - wait for X then XX
     2HS = natural escape
 
-(1N)--P--(2!c) weak whatever
-    X = penalty, tends to be balanced, unlikely 3 suited (can pass then takeout)
-        (any) = whatever
-            X = negative at two level
-            2DHS = invitational, as after (1N)--X
+(1N)--P--(2!c) stayman, weak or whatever
+    X = penalty, tends to be balanced, unlikely 3 suited as can pass then takeout
     2DHS = natural
     2N = both minors, decent hand
     3C+ = natural, with above 3!d being too strong to only bid at the two level
+
+(1N)--P--(2!c)--X penalty
+    (any) = interference
+        X = negative at two level
+        2DHS = invitational, as after (1N)--X
 
 (1N)--P--(2!c) invitational plus
     X = !cs

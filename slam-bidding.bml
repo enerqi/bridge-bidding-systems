@@ -87,8 +87,8 @@ When first agreed at the 4 level it is *not*(hmm?) Minorwood.
 - 5!c = 1 or 4 kc
 - 5!d = 3 or 0 kc
 - 5!h = 2 kc
-- 5!s = 2kc with Q trumps
-- 5N = 2 or 4 kc + some void
+- 5!s = 2kc with Q trumps (or known 10+ trump cards)
+- 5N = 2 or 4 kc + some useful void
 - 6x = 1 or 3 kc + void in specific suit
 - 6slam = odd kc + void in higher suit
 
@@ -96,19 +96,64 @@ When first agreed at the 4 level it is *not*(hmm?) Minorwood.
     step = first non-trump - Q ask
         5x/6x = side K, have Q trumps
         5N = no side K, have Q trumps
-        6slam = no Q
+        agreed suit = no Q
 4N--5x
-    5N = K ask, keep bidding side Kings in side suits from here
+    5N = (or non-trump, non queen ask) K ask (not show) grand try, keep bidding side Kings in side suits from here
         6x = lowest side K
         6slam = no side K
 
+** Kickback 4S
+
+As a general rule, unless it is utterly illogical for 4!s to be the final contract, it is NATURAL.
+E.g. 1S--2H--4H--4S is responder intending to go back to !s.
+
+- Otherwise 4!s is taken as RKB for !hs
+- 4N is a !s substitute control bid
+
+** Redwood for minors
+
+Again, unless it's illogical for the bid to be the final contract then bids of 4!d or 4!h should be
+taken as NATURAL. E.g. 1H--2D--3D--4C--4D--4H, responder probably has doubleton !h suggesting 4!h contract, no !s control.
+
+- 4!d for !cs agreed
+- 4!h for !ds agreed
+- 4N is a substitute control bid for the Redwood suit
+
+Furthermore:
+
+- 4!s is Redwood for !ds WHEN 4!h would be taken as natural
+
+Still, if a natural 4!s is not illogical, then only 4N can be used as !d RKB.
+E.g. 1S--2H--3D--4H, either 4!h or 4!s suggests an alternative game.
+
+** Competitive Kickback or Redwood as Control Bid
+
+- simple cue bid in competition is a control, not RKB
+- next bid up is RKB if it's not possibly a final contract
+
+E.g. 1S--(P)--2C--(3D)--4C--(P)--4D responder shows a !d control and 4!h is Redwood RKB.
+
+When !hs and opponents bid !s - 1H--(P)--2N--(3S) then later 4!s bid is a control and only
+4N is RKB for !hs.
+
+** Jump Cuebid in Competition
+
+Always a splinter
+
+
 ** Double Fit RKB
+
+Initiate with one above the two agreed suits, e.g. 4!s if agreed !c and !h.
+4N in this example: 1S--2D--3D--3S--4C--4H--4N
 
 - 1/4
 - 3/0
 - 2/5 + zero queens
 - 2/5 + one queen
 - 2/5 + two queens
+
+Beware of counting extra length as Queen with double fits, unless there is extra length in both suits or the
+other Queen can be seen as the tricks must run from those two suits.
 
 ** EKB Voidwood
 
@@ -153,12 +198,30 @@ ask for some other suit, which should also be obvious.
 
 ** GSF 5N
 
-Free 5N bid. Same as detailed in 5N over high level openings.
+- Free 5N bid asking for 2 of top 3 honours.
+- By bidding 7C with two honours the contract can be placed elsewhere, though probably not hurt if forget and bid 7 of the trump suit
 
-5N = asking about honour quality in the agreed trump suit
-    6C = 1 or 2 honours  (unknown if !c trumps)
-    6x = 2 honours
-    7x = 3 honours
+5N = when !c trump
+    6C = no
+    7C = 2 honours
+
+5N = when !d trump
+    6C = A or K
+    6D = weakest
+    7C = 2 honours
+
+5N = when !h trump
+    6C = A or K
+    6D = Q or extra length
+    6H = weakest
+    7C = 2 honours
+
+5N = when !s trump
+    6C = A or K, extra length (10 known trumps)
+    6D = A or K, nothing extra
+    6H = Q or extra length (10 known trumps)
+    6S = weakest trump holding
+    7C = 2 honours
 
 
 ** Double of Opponents' Slam
