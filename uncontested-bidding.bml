@@ -1810,6 +1810,7 @@ XX = Ace showing by opener after opponents lead directing double
     2S = weak jump shift
     2N = invitational+ 4 card raise, 2N system on
     3CDS = fit jump
+    3H = weak limit distributional
 
 Second round bids ignore the T/O X if advancer bids nothing, e.g. 1H--(X)--1S--(P)--1N--(P)
 then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
@@ -2361,6 +2362,7 @@ general forces with negative doubles.
     2S = ~5--9, with less pass then bid later
     2N = invitational+ 4 card raise, 2N system on
     3CDH = fit jump
+    3S = weak limit distributional
 
 1S--(1N)
     X = penalty

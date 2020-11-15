@@ -48,6 +48,17 @@ Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others pla
 7. partner pre-empts
 
 
+*** Takeout Doubles
+
+Modern standard:
+
+- happy to X with minimum when have the other major
+- happy to have a doubleton in an unbid minor if we have the major(s)
+- 1C/1D takeout emphasises the majors, nothing about the minors
+
+Consider a takeout X (and maybe later DAB cue bid) instead of a 1NT bid with 4--4--3--2, the other major and the sort of hand where
+partner should play NT (we have Axx they Qx)
+
 *** Delayed Takeout Doubles
 
 When not doubling on the first round:
@@ -181,6 +192,19 @@ When opponents double an artificial bid for lead direction
 - Pass to play if partner can help in support e.g. Hxx+
 - Cannot play in the contract only doubled, must be redoubled
 - Otherwise bid on as if not doubled
+
+*** Mancoff over doubles of our stopper ask
+
+Helping to right side 3N or not play it.
+
+(1S)--X--(P)--3C--(P)--3S--(X) = lead-directing X of DAB
+    P = either a full or partial stopper (Qx, Jxx)
+    3N = good stopper, e.g. AJx
+    XX = xx, Jx, or xxx in their suit
+    bid = singleton only in their suit
+    4S = void in their suit
+
+3!s cue here could be a proxy for a very strong unbalanced hand, not a DAB with something in !s, but then 3N will be pulled anyway.
 
 
 *** 3N Contract Lead Directing Double
@@ -371,12 +395,16 @@ various auctions, so maybe more attractive from a memory point.
 Note, just overcall 1!h with a "weak" jump !h overcall.
 
 (1C)--X = Takeout
-    1N = natural
+    1N = natural ~8--11
         2D = shape, improving the contract, must GF cue bid or jump (invitational) to show stronger minor hand
         2HS = normal, stronger than 1!h overcall
         (2C) = re-compete
             2D = shape, improving the contract
             2HS = normal, stronger than 1!s overcall
+    2C = strong, forcing, will rebid, not GF
+    2DHS = ~8--11 5+ suit
+    3D = ~12-14
+    3HS = 6+ long suit, 6--8 (give partner space if 17+ without our major)
 
 (1C)--X--(1HS)
     2C = sandwich cue, 4 card other major invitational
@@ -384,6 +412,10 @@ Note, just overcall 1!h with a "weak" jump !h overcall.
     2HS = cue natural
     3C = forcing hand, often !ds
     3HS = invitational raise, 5+ card suit
+
+(1C)--X--(XX)
+    pass = nothing to say, maybe quite strong
+    2DHS = weak
 
 (1C)--X--(1N)
     X = 4--4+ two suiter, including a major
@@ -393,9 +425,9 @@ Note, just overcall 1!h with a "weak" jump !h overcall.
         NewSuit = NF at all levels, jumps stronger though
         2C = forcing, HCR or major force
         3C = jump cue, mixed raise ~6--9, 4 card support + shortage
-    1M = natural, light, responses
+    1M = natural, light ~8--16, responses
         3C = jump cue, mixed raise
-    1N = usual ~15--18, maybe long !d
+    1N = usual ~15--18, maybe long !d, beware downgrade too many honours/length in the opponent's suit
         2x = NF
         2N = invite
         3x = invitational, including opener's suit
@@ -457,6 +489,7 @@ Note, just overcall 1!h with a "weak" jump !h overcall.
     1N = natural, system on (assuming light openings and responses by opponents)
     CueHi = natural of right hand suit
     CueLow = Astro style, 6+ lowest unbid suit and exactly 4 cards other suit
+    2N = unsual, two lowest suits
 
 (1C)--P--(1N)
     2C = normal michaels both majors
@@ -471,12 +504,16 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
 
 
 (1D)--X = Takeout
-    1N = natural
+    1N = natural ~8--11
         2C = shape, improving the contract, must GF cue bid or jump (invitational) to show stronger minor hand
         2HS = normal, stronger than 1!h overcall
         (2D) = re-compete
             3C = shape, improving the contract
             3HS = normal, stronger than 1!s overcall
+    2D = strong, forcing, will rebid, not GF
+    2HS = ~8--11 5+ suit
+    3C = ~12--14
+    3HS = 6+ long suit, 6--8 (give partner space if 17+ without our major)
 
 (1D)--X--(1HS)
     2D = sandwich cue, 4 card other major invitational
@@ -485,6 +522,11 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
     3D = forcing hand, often !cs
     3HS = invitational raise, 5+ card suit
 
+(1D)--X--(XX)
+    pass = nothing to say, maybe quite strong
+    2HS = weak
+    3C = weak
+
 (1D)--X--(1N)
     X = 4--4+ two suiter, at least one major
 
@@ -492,10 +534,10 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
     X = "Stolen" bid, double I would have bid that.
 
 (1D)
-    1M = natural, light, responses
+    1M = natural, light ~8--16, responses
         other = [Rubens advance](#Rubens Transfer Advances)
         3C = jump cue, mixed raise
-    1N = usual ~15--18, maybe long !c
+    1N = usual ~15--18, maybe long !c, beware downgrade too many honours/length in the opponent's suit
       2CHS = NF, natural
       2D = cue bid stayman
       2N = invite
@@ -567,6 +609,7 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
     1N = natural, system on (assuming light openings and responses by opponents)
     CueHi = natural of right hand suit
     CueLow = Astro style, 6+ lowest unbid suit and exactly 4 cards other suit
+    2N = unsual, two lowest suits
 
 (1D)--P--(1N)
     2D = normal michaels both majors
@@ -578,12 +621,21 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
 * Opponents open 1H
 
 (1H)--X = Takeout
-    1N = natural
+    1N = natural ~8--11
         2CD = shape, improving the contract, must GF cue bid or jump (invitational) to show stronger minor hand
         2S = normal, stronger than 1!s overcall
         (2H) = re-compete
             3CD = shape, improving the contract
             3S = normal, stronger than 1!s overcall
+    2H = strong, forcing, will rebid, not GF
+    2S = ~8--11 5+ suit
+    3CD = ~12--14
+    3S = 6+ long suit, 6--8 (give partner space if 17+ without our major)
+
+(1H)--X--(XX)
+    pass = nothing to say, maybe quite strong
+    2S = weak
+    3CD = weak
 
 (1H)--X--(1N)
     X = 4--4+ two suiter, including !ss
@@ -609,7 +661,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 (1H)--X--(2H) takeout double, they bid ONE major suit (pointless over minor or 2 suits):
     2N = scrambling
 
-1S = natural, light
+1S = natural, light ~8--16
     1N = 9--12
     2CD = natural, NF
     2H = HCR !s raise
@@ -622,7 +674,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
     4H = splinter
     4S = obstructive wide range
 1N = passed hand astro 4!s + long minor
-1N = usual ~15--18 otherwise
+1N = usual ~15--18, beware downgrade too many honours/length in the opponent's suit
       2CDS = NF, natural
       2H = cue bid stayman
       2N = invite
@@ -720,12 +772,19 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 * Opponents open 1S
 
 (1S)--X = Takeout
-    1N = natural
+    1N = natural ~8--11
         2CD = shape, improving the contract, must GF cue bid or jump (invitational) to show stronger minor hand
         2H = normal, stronger than 1!h overcall
         (2S) = re-compete
             3CD = shape, improving the contract
             3H = normal, stronger than 1!s overcall
+    2S = strong, forcing, will rebid, not GF
+    3CD = ~12--14
+    3H = 6+ long suit, 6--8 (give partner space if 17+ without our major)
+
+(1S)--X--(XX)
+    pass = nothing to say, maybe quite strong
+    3CDH = weak
 
 (1S)--X--(1N)
     X = 4--4+ two suiter, including !hs
@@ -762,7 +821,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 (1S)
     1N = passed hand 5--5+ !h + minor, weaker than 2!s overcall
         !c/!d = pass/correct, any level
-    1N = usual ~15--18 otherwise
+    1N = usual ~15--18, beware downgrade too many honours/length in the opponent's suit
         2CDS = NF, natural
         2S = cue bid stayman
         2N = invite
