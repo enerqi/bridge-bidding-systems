@@ -201,17 +201,8 @@ unless something interesting is done.
         3x = no stop and not major
         3N = shows 4 card major and stop
 
-1C--(1N) ordinary 1N defence *iff it's a natural NT*
-    2C = playable in three suits including !c, (not !s when X=takeout)
-        2NT = bid again
-    2D = both majors 4--4+
-        2NT = bid again
-    2HS = natural
-        3HS = competitive raise, bid game with good max
-    2N = minors takeout
-    3CD = natural intermediate
-    3HS = pre-empt
-    3N = both majors, GF
+1C--(1N) [ordinary 1N defence *iff it's a natural NT*](#Opponents Open 1NT)
+    2CDHS = natural etc.
 
 1C--(2DHS)
     P = not good or < GF with penalty pass in opponents suit

@@ -854,10 +854,10 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
 
 1D--(X)
     P = some !d length, later X are penalty suggestion, usually 4 cards in bid suit
-    XX = !h transfer
+    XX = !h transfer, 4+ cards
         2H = mild invitation
         3H = true invitation
-    1H = !s transfer
+    1H = !s transfer, 4+ cards
         2S = mild invitation
         3S = true invitation
     1S = NT transfer to rightside contract
@@ -865,7 +865,7 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
     2C = !d raise, good 10+ (but bidding can end here unlike forcing inverted raise)
     2D = !d raise, 6--9, 5+ !ds
     2HS = weak jump shift, system on
-    2N = nothing
+    2N = 5--4+ minors, 10+ hcp
     3C = weak jump shift
     3D = pre-empt, system on
     3HS = splinter
