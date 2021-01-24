@@ -909,6 +909,7 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
 1D--(1N)
     X = penalty rarely GF, after escape opener can still use good-bad 2N or cue to GF whilst responder can bid 2N natural, 3x NF or also cue to GF
     2C = any one suiter
+        2D = relay, NF
     2D = !ds + major
     2H = both majors
     2S = !ss + minor
@@ -2186,9 +2187,9 @@ Invite ~10--12 (9 with singleton), 3 card support (a Drury raise in all position
 
 2N = relay to long suit game try
     3C = puppet
-        3D = long !c
-        3H = long !d
-        3S = long !h
+        3D = long !d
+        3H = long !h
+        3S = long !c
 3C = special two-way bid, short !c game try
     3D = responders normal puppet, though can just bid 4!s directly
         3H = wants responder to bid 3N if balanced, e.g. AK10xxx/AQJ/xx/xx

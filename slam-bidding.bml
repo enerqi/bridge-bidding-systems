@@ -176,13 +176,15 @@ Shows a void in the suit bid and asking for keycard showing step responses.
 Plain *0/4, 1, 2, 3* KC step responses are safer.
 
 4x/5x EKB
-    xstep = 0/4, 1, 2, 3 step responses
+    xstep = 0/4, 1, 2, 3 step responses, 5th step = 2 KC + some void, 6x = 1 KC + that void (or higher suit)
         1step = first non-trump - Q ask
             6side = lowest side K, have Q
             6slam = no Q
         5N = K ask, keep bidding side Kings in side suits from here
             6side = lowest side K
             6slam = no side K
+
+https://tinyurl.com/y6yv5m8r
 
 
 ** 4NT Romex Raise
