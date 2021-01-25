@@ -404,6 +404,7 @@ Artificial GF:
 
 - Natural NF, ~7--10 hcp
 - 2!c can be 5--5 minors
+- Note, semi-balanced and invitational can use a 2!h invite
 
 2D = relay, strong
     2H = 5+ !cs and 4+ !ds, both minors
@@ -426,7 +427,21 @@ Artificial GF:
             4C = !h shortage, 7!c--4!d with a void
             4D = !h shortage, 7!c--4!d with two singletons
             4H = !h shortage, 7!c--5!d
-    2S = 6+ !cs...relay different
+    2S = 6+ !cs, single suited
+        2N = relay, later relays [Slam Try Relay Bidding](#Slam Try Relay Bidding)
+            3C = 7+ suit, no void
+                3D = relay
+                    3H = 7--2--2--2
+                    3S = 7+ suit, !s singleton
+                    3N = 7+ suit, !h singleton
+                    4C = 7+ suit, !d singleton
+            3D = 6--3--3--2
+            3H = 6--3--3--1, !h suit singleton
+            3S = 6--3--3--1, !s suit singleton
+            3N = 6--3--3--1, !d suit singleton
+            4C = 7+ suit, !s void
+            4D = 7+ suit, !d void
+            4H = 7+ suit, !h void
     2N = 5--3--3--2
         3C = doubleton ask, next round [Slam Try Relay Bidding](#Slam Try Relay Bidding)
             3D = !d
@@ -440,9 +455,24 @@ Artificial GF:
 ** 1C--2D
 
 - Natural NF, ~7--10 hcp
+- Note, semi-balanced and invitational can use a 2!h invite
 
 2H = strong relay, [Slam Try Relay Bidding](#Slam Try Relay Bidding) after details
-    2S = 6+ !ds, single suited...relay different
+    2S = 6+ !ds, single suited
+        2N = relay, later relays [Slam Try Relay Bidding](#Slam Try Relay Bidding)
+            3C = 7+ suit, no void
+                3D = relay
+                    3H = 7--2--2--2
+                    3S = 7+ suit, !s singleton
+                    3N = 7+ suit, !h singleton
+                    4C = 7+ suit, !c singleton
+            3D = 6--3--3--2
+            3H = 6--3--3--1, !h suit singleton
+            3S = 6--3--3--1, !s suit singleton
+            3N = 6--3--3--1, !c suit singleton
+            4C = 7+ suit, !c void
+            4D = 7+ suit, !s void
+            4H = 7+ suit, !h void
     2N = 5--3--3--2
         3C = doubleton ask, next round [Slam Try Relay Bidding](#Slam Try Relay Bidding)
             3D = !d
@@ -472,27 +502,31 @@ Artificial GF:
 ** 1C--2H
 
 - 3N invite, no 4 card major
-- Can be semi balanced with a 6 card minor or 5--4 minors
+- Can be semi-balanced with a 6 card minor (alternative to a 2!c/2!d response) or 5--4 minors
 
-2S = asking
+2S = asking, maximum weak NT or strong
     3CD = 6 card minor, invite hand
-    3S = transfer to 3N with balanced shape (5--4)
-2N = Weak NT
+    3S = transfer to 3N, balanced shape
+2N = minimum weak NT
     3CD = invite with that minor, pretty much sign off
 3x = natural, strong
-3N = Weak NT, max - accept invite
+3N = maximum weak NT
 
 ** 1C--2S
 
 - Both minors limited GF and short major, ~12--15 hcp
 
-2N = inquiry
+2N = inquiry, weak or strong
     3CD = 5+ suit
-        3H = singleton ask?
-    3M = singleton/void at least 5-5 minors
+        next = singleton ask
+            3H = !h singleton
+            3S = !s singleton
+            3N = !h singleton (over 3!h ask)
+    3M = singleton/void with 5--5+ minors
 3CD = strong, 4+ support
-3M = natural, strong
-3N = play, weak
+    3HS = singleton
+3HS = natural, strong
+3N = to play, weak
 
 ** 1C--2N
 
@@ -575,10 +609,6 @@ Re-opening doubles can use a herbert negative:
 Where transfers are used after interference, it is complete with 2--3 card support and raised
 one more with 4+ card support. The weak NT hand may also bid 1NT with 2--3 card support and good stops.
 Strong hands may break transfers in more interesting ways...
-
-TODO:
-    2N Stenbergs when 2D is not Odwrotka?
-    2D = Odwrotka? except after 1D overcall then general strong?
 
 Note, 1!s is the most disruptive 1 level (suit) overcall, possibly psychic or a poor 4 card suit, though expect to
 see less pure disruption against a weak-strong club.
@@ -845,6 +875,40 @@ Extra high interference, e.g:
     bid = strong
     X = takeout, as it's not a solo bid at 3 level, presume reasonable fit
 
+
+** 4th interferes after 2H/2S/2N positive response
+
+1C--(P)--2H--(X)  often showing !hs
+    P = weak hand, without !h stop and extras
+    XX = natural, strong
+    others = [system on](#1C--2H)
+
+1C--(P)--2H/2N--(bid) something suit showing
+    P = weak hand, no stop
+    X = takeout
+    2N = weak hand, NF minimum, stop
+    3N = weak or strong, stop
+    suit = natural, strong
+
+1C--(P)--2S--(X)  often showing !ss
+    P = weak hand, no stop
+    XX = 5+ !ss, strong hand
+    others = [system on](#1C--2S), 2N will promise !s stop
+
+1C--(P)--2S--(bid) something suit showing
+    any = natural
+
+
+** 4th interferes after 3CDHS/3N/4CDHS
+
+After 3CDHS bid as if partner opened a pre-empt, e.g.
+
+- X is penalty
+- New suit GF
+
+See [3HS opening interference](#3HS Openings)
+
+For the 3N/4CDHS responses it should be easy to place the contract or slam try or X for penalty.
 
 ** 4th Interferes after Responder Negative
 
