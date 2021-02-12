@@ -150,6 +150,8 @@
         3C = 4 !ss, 5+ !cs, too strong for 2!s, ~19--21
     2CDH = 5+ suit, 5--7 hcp
     2S = 4+ card support, 4--7 hcp
+        2N = puppet to long suit game try
+        3x = short suit game try
 1N [weak NT](#1NT Opening)
     any = NT Scheme
 2C = natural strong, ~16--21 (16--19?), !cs, no spades
@@ -199,7 +201,7 @@
 - 8+ hcp
 - 4+ card suit
 - unbalanced if GF (maybe balanced 4 card major if not GF)
-- maybe minor canapé if not GF
+- maybe minor canapé
 - after a positive major response there is *no canapé bidding from opener* responders 1HS
   is already canapé and only one side of the partnership ever does canapé bidding.
 
@@ -414,7 +416,7 @@ Artificial GF:
                     3S = 7+ suit, !s singleton
                     3N = 7+ suit, !h singleton
                     4C = 7+ suit, !c singleton
-            3D = 6--3--3--2
+            3D = 6--3--2--2
             3H = 6--3--3--1, !h suit singleton
             3S = 6--3--3--1, !s suit singleton
             3N = 6--3--3--1, !c suit singleton
@@ -455,7 +457,7 @@ Artificial GF:
         4HS = stronger !cs/!ds super accept minor raise
         4N = Both Minor RKB [Double Fit RKB](#Double Fit RKB)
     3N = to play
-others = natural strong, 6+ suit
+others = natural strong, distributional
 
 
 ** 1C--2C
@@ -469,7 +471,15 @@ others = natural strong, 6+ suit
         2S = relay, minors enquiry, next [Slam Try Relay Bidding](#Slam Try Relay Bidding)
             2N = 5--5
                 3C = relay
-                    3D = max,
+                    3D = spade shortage
+                        3H = relay
+                            3S = 5--5--2--1 !s singleton
+                            3N = 5--5--3--0 !s void
+                            4C = 6--5--2--0 !s void
+                    3H = 6--5--1--1
+                    3S = 5--5--2--1 !h singleton
+                    3N = 5--5--3--0 !h void
+                    4C = 6--5--2--0 !h void
             3C = !s shortage
                 3D = relay
                     3H = 5!c--4!d with a singleton
@@ -493,7 +503,7 @@ others = natural strong, 6+ suit
                     3S = 7+ suit, !s singleton
                     3N = 7+ suit, !h singleton
                     4C = 7+ suit, !d singleton
-            3D = 6--3--3--2
+            3D = 6--3--2--2
             3H = 6--3--3--1, !h suit singleton
             3S = 6--3--3--1, !s suit singleton
             3N = 6--3--3--1, !d suit singleton
@@ -524,7 +534,7 @@ others = natural strong, 6+ suit
                     3S = 7+ suit, !s singleton
                     3N = 7+ suit, !h singleton
                     4C = 7+ suit, !c singleton
-            3D = 6--3--3--2
+            3D = 6--3--2--2
             3H = 6--3--3--1, !h suit singleton
             3S = 6--3--3--1, !s suit singleton
             3N = 6--3--3--1, !c suit singleton
@@ -819,7 +829,7 @@ Bids below 1!s are not disruptive unless the opponents raise further.
 
 1C--(2N+) general principles this high
     P = not good or < GF with penalty pass in opponents suit
-    X = negative double to 3!s, *possibly GF* if balanced and no stop.
+    X = negative double to 4!hs, *possibly GF* if balanced and no stop.
         new suits by doubler show invitational+ values
         cue bids after X show that suit (natural/psyche expose)
     4x = cue bid, any GF

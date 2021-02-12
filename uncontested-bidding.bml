@@ -1370,7 +1370,7 @@ Invite ~10--12 (9 with singleton), 3 card support (a Drury raise in all position
 3D = short !d game try
 3H = game try lacking shortness or side suit
 3S = natural, 5 cards, slam try, want partner to try [RKB](#RKB 4N) and go slam with 2 aces.
-3N = 5--3--3--2/6--3--3--2 maximum, likely spread out values (use 2!s puppet to make partner play 3N)
+3N = 5--3--3--2/6--3--2--2 maximum, likely spread out values (use 2!s puppet to make partner play 3N)
 4CD = natural, 5 cards, slam try, want partner to try [RKB](#RKB 4N) and go slam with 2 aces.
 4H = any game hand, hiding information
 4S = [Kickback RKB](#RKB 4N)
@@ -1663,7 +1663,7 @@ remaining below 4!h:
       on the way to game because responder may be interested in slam.
 - (6) Shape similar to (2), but with extra values, singleton !d
 - (7) Shape similar to (2), but with extra values, singleton !c
-- (8) Maximum balanced or semibalanced and willingness to drive to game, usually 5--3--3--2/6--3--3--2. With this hand
+- (8) Maximum balanced or semibalanced and willingness to drive to game, usually 5--3--3--2/6--3--2--2. With this hand
       type, opener wants to allow for the possibility of playing 3NT, which can be very right if responder has 4333 shape,
       or 4432 with a strong doubleton
 - (9) A semibalanced hand similar in playing strength to (8), but not willing to stop in 3NT. Opener will typically
@@ -1683,10 +1683,10 @@ remaining below 4!h:
 3C = artificial, multi-meaning.
 (a) minimum (semi)balanced no singleton (5332, 6322, 5422, 7222)
 (b) minimum with singleton !s, note can drive to game later if e.g. mid-range 10 cards in two suits
-(c) maximum, no shortness 5--4--2--2 or 6--3--3--2/7--2--2--2 with strength in main suit
+(c) maximum, no shortness 5--4--2--2 or 6--3--2--2/7--2--2--2 with strength in main suit
 (d) void hand, any strength
   3D = relay, better than 3!h bid (fine in game v.s. minimum with !s singleton)
-      3H = minimum 5--3--3--2/5--4--2--2/6--3--3--2, NF
+      3H = minimum 5--3--3--2/5--4--2--2/6--3--2--2, NF
           3N = to play
       3S = short !s, singleton and relative minimum or void any strength
           3N = relay for shortage details, mild slam interest
@@ -1723,7 +1723,7 @@ remaining below 4!h:
         4D = !d singleton maximum
         4H = !s singleton maximum
     4S = Kickback [RKB](#RKB 4N)
-3N = any maximum 5--3--3--2/6--3--3--2, all suits stopped
+3N = any maximum 5--3--3--2/6--3--2--2, all suits stopped
     4S = Kickback [RKB](#RKB 4N)
 4CD = maximum, 5--5+ (4!h showing !ss which would be 5--6 shape or 7--4--1--1), responder should only care about the Ace in other suits
 4H = maximum, 5!s--6!h / 7!h--4!s--1--1 OR versus passed hand fast arrival game bid
@@ -2196,8 +2196,8 @@ Invite ~10--12 (9 with singleton), 3 card support (a Drury raise in all position
         3S = short !c game try
 3D = short !d game try
 3H = short !h game try
-3S = game try, no shortness, usually no second 4 card suit, often 5--3--3--2/6--3--3--2
-3N = 5--3--3--2/6--3--3--2 maximum, likely spread out values
+3S = game try, no shortness, usually no second 4 card suit, often 5--3--3--2/6--3--2--2
+3N = 5--3--3--2/6--3--2--2 maximum, likely spread out values
 4CDH = natural, 5 cards, slam try, want partner to try [RKB](#RKB 4N) and go slam with 2 aces.
 4S = any game hand, hiding information
 4N = [RKB](#RKB 4N), maybe e.g. AKxxxx/AKxxx/x/x
@@ -2213,7 +2213,7 @@ Invitational+ raise 3 (GF) or 4 card support.
 3C = artificial, multi-meaning.
 (a) minimum (semi)balanced no singleton (5332, 6322, 5422, 7222)
 (b) minimum with singleton !h, note can drive to game later if e.g. mid-range 10 cards in two suits
-(c) maximum, no shortness 5--4--2--2 or 6--3--3--2/7--2--2--2 with strength in main suit
+(c) maximum, no shortness 5--4--2--2 or 6--3--2--2/7--2--2--2 with strength in main suit
 (d) void hand, any strength
   3D = relay, better than 3!s bid (fine in game v.s. minimum with !h singleton)
       3H = short !h, singleton and relative minimum or void any strength
@@ -2225,7 +2225,7 @@ Invitational+ raise 3 (GF) or 4 card support.
               4S = dead minimum, !h singleton
           4CD = control bids, not interested in !h shortage
           4S = to play, no slam interest v.s. short !hs
-      3S = minimum 5--3--3--2/5--4--2--2/6--3--3--2, NF
+      3S = minimum 5--3--3--2/5--4--2--2/6--3--2--2, NF
           3N = to play
       3N = !c/!d void, minimum
           4C = relay
@@ -2251,10 +2251,10 @@ Invitational+ raise 3 (GF) or 4 card support.
     3N = ask, slam interest normally
         4C = !c singleton maximum
         4D = !d singleton maximum
-        4H = !s singleton maximum
+        4H = !h singleton maximum
     4S = to play, no slam interest
     4N = [RKB](#RKB 4N)
-3N = any maximum 5--3--3--2/6--3--3--2, all suits stopped
+3N = any maximum 5--3--3--2/6--3--2--2, all suits stopped
     4N = [RKB](#RKB 4N)
 4CDH = maximum, 5--5+, responder should only care about the Ace in other suits
 4S = only used v.s. passed hand, fast arrival

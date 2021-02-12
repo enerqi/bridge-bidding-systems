@@ -1,3 +1,4 @@
 .doit*
 .include-deps.json
 __pycache__/
+*.html
