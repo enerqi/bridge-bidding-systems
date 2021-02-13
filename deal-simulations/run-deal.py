@@ -24,9 +24,10 @@ north s h d c | east s h d c | south s h d c | west s h d c
 
 Note the extra spaces when a suit is void. The purpose of outputing deals in this plain text format is to process
 them and viewing them in more readable html is one post processing option that is provided here with the
---html-output-path option.
+html-output-path option.
 """
 import os
+import random
 import subprocess
 import sys
 
@@ -96,7 +97,7 @@ def to_html_page(deal_text: str) -> str:
             }
             .content {
                 margin: auto;
-                max-width: 733px;
+                max-width: 900px;
             }
             iframe {
                 margin-top: 4rem;
@@ -112,7 +113,7 @@ def to_html_page(deal_text: str) -> str:
     deal_div_template = r"""
     <div>
         <iframe src="https://www.bridgebase.com/tools/handviewer.html?{handviewer_parameters}"
-        height="733px" width="733px"
+        height="900px" width="900px"
         title="Random hand"
         id="hand_frame"></iframe>
     </div>
@@ -121,8 +122,8 @@ def to_html_page(deal_text: str) -> str:
     # e.g: s=sakqhakqdakqcakqj&n=s432h432d432c5432
     lines = deal_text.split("\n")
     deal_divs = []
-    for line in lines:
-        params = parse_deal_to_handviewer_params(line)
+    for index, line in enumerate(lines):
+        params = parse_deal_to_handviewer_params(line, index)
         if params is not None:
             deal_divs.append(deal_div_template.format(handviewer_parameters=params))
     deal_divs_content = "\n".join(deal_divs)
@@ -131,7 +132,7 @@ def to_html_page(deal_text: str) -> str:
     return page
 
 
-def parse_deal_to_handviewer_params(deal_line: str):
+def parse_deal_to_handviewer_params(deal_line: str, index: int, random_vulnerability=True, random_dealer=True):
     # Turn one line of deal.exe output for a single hand into bridge base handviewer html parameters
     # KQT874 K74  8743|A65 T32 AT96 J62|932 QJ65 Q42 AKQ|J A98 KJ8753 T95
     # becomes
@@ -146,9 +147,19 @@ def parse_deal_to_handviewer_params(deal_line: str):
         return f"{direction_param_name}=s{spades}h{hearts}d{diamonds}c{clubs}"
 
     north, east, south, west = deal_line.split("|")
+    if random_vulnerability:
+        vul_query_value = random.choice(["n", "e", "b", "-"])
+    else:
+        vul_query_value = "-"
+    if random_dealer:
+        dealer_query_value = random.choice(["n", "s", "e", "w"])
+    else:
+        dealer_query_value = "n"
 
     query_params = "&".join([single_seat_param("n", north), single_seat_param("s", south),
-                             single_seat_param("e", east), single_seat_param("w", west)])
+                             single_seat_param("e", east), single_seat_param("w", west),
+                             # board number, seems we need an empty auction to show it though
+                             f"b={index+1}", "a=_", f"v={vul_query_value}", f"d={dealer_query_value}"])
     return query_params
 
 
