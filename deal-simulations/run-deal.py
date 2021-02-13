@@ -138,7 +138,9 @@ def parse_deal_to_handviewer_params(deal_line: str, index: int, random_vulnerabi
     # becomes
     # n=skqt874hk74c8743&e=sa65ht32...etc.
     # see https://www.bridgebase.com/tools/hvdoc.html
-    deal_line = deal_line.strip()
+
+    # Note, no text stripping, can mess up void detection, e.g. spade void "  xxx xxx xxx"|....
+    # or club void "xxx xxx xxx "|...
     if not deal_line:
         return None
 
