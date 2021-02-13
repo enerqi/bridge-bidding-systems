@@ -12,17 +12,19 @@ Options:
     --text-output-path=<output_path>  what file to output the generated deals into, use "-"
                                       for standard out [default: -]
     --deal-dir=<deal_dir>  folder where deal.exe is found [default: F:/bin/deal319]
-    --pretty-text-output  outputs the deals in a human readable text format, but will ignore html generation
-    --html-output-path=<html_file>  html view of generated deals, in addition to the plain text output
+    --pretty-text-output  outputs the deals in a human readable text format
+    --html-output-path=<html_file>  html view of generated deals
 
 Generates hands based on a deal (http://bridge.thomasoandrews.com/deal30/) TCL script
-Each generated hand will take up one line in the output file in the plain format unless using --pretty-text-output:
+Each generated hand will take up one line in the output using the plain format unless using --pretty-text-output:
 
 KQT874 K74  8743|A65 T32 AT96 J62|932 QJ65 Q42 AKQ|J A98 KJ8753 T95
 
 north s h d c | east s h d c | south s h d c | west s h d c
 
-Note the extra spaces when a suit is void.
+Note the extra spaces when a suit is void. The purpose of outputing deals in this plain text format is to process
+them and viewing them in more readable html is one post processing option that is provided here with the
+--html-output-path option.
 """
 import os
 import subprocess
