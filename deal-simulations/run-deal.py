@@ -88,7 +88,7 @@ def to_html_page(deal_text: str) -> str:
     page_template = r"""
     <!DOCTYPE html>
     <head>
-        <title>Practice Deal</title>
+        <title>Practice Deals</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/css?family=Open Sans" rel="stylesheet">
         <style>
@@ -119,20 +119,19 @@ def to_html_page(deal_text: str) -> str:
     </div>
     """
 
-    # e.g: s=sakqhakqdakqcakqj&n=s432h432d432c5432
     lines = deal_text.split("\n")
-    deal_divs = []
-    for index, line in enumerate(lines):
-        params = parse_deal_to_handviewer_params(line, index)
-        if params is not None:
-            deal_divs.append(deal_div_template.format(handviewer_parameters=params))
-    deal_divs_content = "\n".join(deal_divs)
 
-    page = page_template.replace("{CONTENT}", deal_divs_content)
+    all_deals_handviewer_params = (parse_deal_to_handviewer_params(index, line)
+                                   for index, line in enumerate(lines))
+    deal_divs = [deal_div_template.format(handviewer_parameters=handviewer_params)
+                 for handviewer_params in all_deals_handviewer_params if handviewer_params is not None]
+    all_deal_divs_content = "\n".join(deal_divs)
+
+    page = page_template.replace("{CONTENT}", all_deal_divs_content)
     return page
 
 
-def parse_deal_to_handviewer_params(deal_line: str, index: int, random_vulnerability=True, random_dealer=True):
+def parse_deal_to_handviewer_params(index: int, deal_line: str, random_vulnerability=True, random_dealer=True):
     # Turn one line of deal.exe output for a single hand into bridge base handviewer html parameters
     # KQT874 K74  8743|A65 T32 AT96 J62|932 QJ65 Q42 AKQ|J A98 KJ8753 T95
     # becomes
