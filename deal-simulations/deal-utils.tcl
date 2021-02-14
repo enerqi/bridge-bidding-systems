@@ -321,3 +321,14 @@ proc is_4hs_swedish_club_response {hand} {
       [AKQJ $hand hearts] && [hearts $hand]==7} { return 1 }
   return 0
 }
+
+proc is_3x_preempt_swedish_club_response {hand} {
+  if { [hcp $hand] > 7 } { return 0 }
+
+  if {[is_shapely_minor_preempt $hand] ||
+      [is_standard_3cd_7carder $hand] ||
+      [is_likely_3major_preempt $hand] ||
+      [is_likely_4level_preempt $hand]} { return 1 }
+
+  return 0
+}

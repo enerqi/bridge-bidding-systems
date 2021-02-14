@@ -25,6 +25,9 @@ north s h d c | east s h d c | south s h d c | west s h d c
 Note the extra spaces when a suit is void. The purpose of outputing deals in this plain text format is to process
 them and viewing them in more readable html is one post processing option that is provided here with the
 html-output-path option.
+
+Example:
+     python run-deal.py --deal-count 24 --deal-script-path 2c-opener.tcl --html-output-path W:/deals/2c-openers.html
 """
 import os
 import random
