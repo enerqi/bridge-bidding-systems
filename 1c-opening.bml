@@ -11,12 +11,12 @@
 - Negative 0--7 hcp or flat 8--9 hcp semi-positive no 4cM
 - Semi-positive is very limited ~8--9 hcp, less than an unconditional invite
 - Many semi-positive 9 hcp flat hands are worth an invite
-- possibly pass with minimum weak NT and very concentrated values in a 5!ds hand
-- With spades, bid longer !ss (natural) AND shorter !ss (canapé) first with 1!s
+- Possibly pass with minimum weak NT and very concentrated values in a 5!ds hand
+- Bid spades first, always canapé, bid longer !ss (natural) AND shorter !ss (canapé) first with 1!s
 - Every other suit bid in longest suit natural order
 - Extra strength showing bids - 1!h and 2!s/3!c/3!d are longest suit natural ordered
 
-[4th Interference](#1C--1D Interference) Fix link
+[4th Interference](#4th Interferes after Responder Negative)
 
 1H = forcing, multi-meaning
     - weak natural, !hs
@@ -51,8 +51,8 @@
                 3S = 6+ !ds, short !hs
                 3N = 6+ !ds, short !ss
                 4C = 6+ !ds, short !ss, too good for 3N
-            2HS = natural, 6+ cards, 2 top honours, weaker than Acol 2
-            3CD = natural, 6+ cards, 2 top honours, weaker than Acol 2
+            2HS = natural, 6+ cards, 2 top honours
+            3CD = natural, 6+ cards, 2 top honours
         2D = 4 !hs exactly, 1--4--4--4 / 4--4--1--4 / 4--4--4--1
             Pass = very weak, long !ds
             2H = to play
@@ -110,6 +110,7 @@
         2D = see 1S asking bid, could include 4!ss but limited as jump raise ~19/20+
         2H = natural Acol 2 equivalent ~19--21 hcp, ~8--9 playing tricks, 4+ Quick Tricks, F1
         2S = to play, weak NT hand
+        2N = natural, 21--23 NT
         3CD = !c/!d Acol 2 equivalent ~19--21 hcp, ~8--9 playing tricks, 4+ Quick Tricks, F1
         3S = invitational, strong with extras ~19/20+
         4S = to play
@@ -200,9 +201,12 @@
 
 - 8+ hcp
 - 4+ card suit
-- unbalanced if GF (maybe balanced 4 card major if not GF)
-- maybe minor canapé
-- after a positive major response there is *no canapé bidding from opener* responders 1HS
+- Minor canapé
+- Bid 1!h with 4--4 both majors
+- Bid 1!s with 5--5 both majors
+- No major canapé (bid longest major first)
+- Unbalanced if GF (maybe balanced 4 card major if not GF)
+- After a positive major response there is *no canapé bidding from opener* responders 1HS
   is already canapé and only one side of the partnership ever does canapé bidding.
 
 XY-sang
@@ -292,7 +296,7 @@ Opening bid
             3H = slam invite, 5--5 major + !cs
             3S = slam invite, 5--5 major + !ss
         others = strong
-    3CD = canape invite
+    3CD = canapé invite
     3M = natural invite, 6+ card major
 2C = natural 16+ OR balanced 21+ OR 4--4--4--1 singleton in partner's major 19+ hcp, denies 3 card major support
     2D = any 8-11 hand

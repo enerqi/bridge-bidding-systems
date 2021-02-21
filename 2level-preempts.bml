@@ -122,24 +122,21 @@
 
 * 2HS Weak Opening
 
-~7--(11), 6 card suit
-
 ** 1st/2nd
 
+- ~7--(11), 6 card suit
 - relatively constructive, no more than one Ace weaker than opening hand.
 - suit quality 1 top honour, not too concerned
 - extreme shape with long 4/5 card minor possible
+- voids are risky (chance of other fit or bad split for opponents), maybe bid with concentrated values 3 honour suit
 - beware downgrade wasted values e.g. Qx/KQxxxx/xxx/xx
 - blue moon 5 card !s suit KQJ109 + side K
 
-** 3rd
+** 3rd/4th
 
-- ~5--11
-- Undisciplined weak two: 5--4, 5--5, 6 card poor quality, possibly 4 card other major.
+- ~5--11, Undisciplined 5--4, 5--5, 6 card poor quality, possibly 4 card other major in 3rd
+- ~9--11 in 4th
 
-** 4th
-
-- ~9--11
 
 2H = weak two
     2S = NF, natural, either weak 6+ !s short !hs OR invitational strength 5+ !s short !hs

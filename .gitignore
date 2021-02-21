@@ -2,3 +2,5 @@
 .include-deps.json
 __pycache__/
 *.html
+deal-simulations/parse-deal
+.ionide/

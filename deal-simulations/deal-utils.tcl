@@ -105,6 +105,25 @@ proc is_generic_5card_unbal_weak2 {hand} {
   return 0
 }
 
+proc is_weak2_5card_major {hand} {
+  set points [hcp $hand]
+  if {$points<7 || $points>11 } { return 0 }
+
+  set handshape [$hand pattern]
+  if {$handshape == "5 3 3 2"} { return 0}
+  if {$handshape != "5 4 2 2" && $handshape != "5 4 3 1" && $handshape != "5 5 3 0" && $handshape != "5 5 2 1"} { return 0 }
+
+  set ss [spades $hand]
+  set hs [hearts $hand]
+  # no 6 card minor and no 4 card side major
+  if {$ss>=4 && $hs >=4} {return 0}
+  if {[diamonds $hand]>5 || [clubs $hand]>5} {return 0}
+
+  # 6 cards and 1+ honors
+  if {($ss==5 && [Honors $hand spades]>=1) || ($hs==5 && [Honors $hand hearts]>=1)} {return 1}
+  return 0
+}
+
 proc is_weak2_major {hand} {
   set points [hcp $hand]
   if {$points<7 || $points>11 } { return 0 }
@@ -117,6 +136,11 @@ proc is_weak2_major {hand} {
 
   # 6 cards and 1+ honors
   if {($ss==6 && [Honors $hand spades]>=1) || ($hs==6 && [Honors $hand hearts]>=1)} {return 1}
+  return 0
+}
+
+proc is_weak_5_or_6_card_major {hand} {
+  if { [is_weak2_major $hand] || [is_weak2_5card_major $hand] } { return 1 }
   return 0
 }
 
@@ -156,6 +180,9 @@ proc is_standard_3cd_7carder {hand} {
 proc is_3n_opener {hand} {
   if { [hcp $hand] > 13 } { return 0 }
   if {![solid_suit $hand spades] && ![solid_suit $hand hearts]} { return 0 }
+  set ss [spades $hand]
+  set hs [hearts $hand]
+  if {$ss >= 4 && $hs >= 4 } { return 0 }
   if {[controls $hand] > 4} { return 0 }
   if {[spades $hand]>8 || [hearts $hand]>8} { return 0 }
   return 1
