@@ -246,7 +246,9 @@ proc is_potential_4n_opener {hand} {
 }
 
 proc both_minors {hand} {
-  if {[clubs $hand] + [diamonds $hand] >= 9} { return 1 }
+  set cs [clubs $hand]
+  set ds [diamonds $hand]
+  if {(cs + ds >= 9) && cs >= 4 && ds >= 4} { return 1 }
   return 0
 }
 
@@ -295,7 +297,7 @@ proc is_2h_or_2n_swedish_club_resp {hand} {
 
 proc is_2s_swedish_club_resp {hand} {
   set points [hcp $hand]
-  if { [both_minors $hand] && [singleton_or_void_major $hand] && $points >= 11 && $points <= 15} { return 1 }
+  if { [both_minors $hand] && [singleton_or_void_major $hand] && $points >= 12 && $points <= 15} { return 1 }
   return 0
 }
 
