@@ -155,16 +155,18 @@
             3S = to play, worse than 2!s raise, slightly better than pass of 1!s
             4C = awkward escape to play, may just pass 2N instead
         3C = 4 !ss, 5+ !cs, too strong for 2!s, ~19--21
+        3D = ??? 4 !ss, 5+ !ds, too strong for 2!d, ~19--21
+        3H = ??? 4 !ss, 5+ !hs, too strong for 2!h, ~19--21
     2CDH = 5+ suit, 5--7 hcp
     2S = 4+ card support, 4--7 hcp
         2N = puppet to long suit game try
         3x = short suit game try
 1N [weak NT](#1NT Opening)
     any = NT Scheme
-2C = natural strong, ~16--21 (16--19?), !cs, no spades
+2C = natural strong, ~16--19(20), !cs, no spades (use 1!s then canapé rebid with 4+ !ss)
     2D = positive 5+ relay
         2H = natural
-        2S = 4 !ds  (why not 4 spades - canape first? keep lower diamond bid below 3c?)
+        2S = 4 !ds  (why not 4 spades - canapé first? keep lower diamond bid below 3c?)
         2N = 6+ !cs, extras
         3C = 6+ !cs, minimum
         3DHS = natural, forcing (6-5???)
@@ -303,28 +305,55 @@ questions
             3N = 5--3--3--2, limited GF ~12--14 hcp
         3N = to play, maybe 4--4--4--1 singleton in partner's major
         others = natural with clubs
-    2oM = GF natural
+    2oM = GF 12+, natural
     2N = 6 card major, GF
-    3CD = 5+ minor (canape or 5--5), GF
+    3CD = 5+ minor (canapé or 5--5), GF
     3M = 7+ suit, set
 2D = GF, 3+ support, "Odwrotka"
     2H = strong, ~12+, other bids are ~8-11
         2S = relay
             2N = 5 card long suit
+                3C = delayed Jacoby variant
+                    3D = !d shortage
+                    3oM = other major shortage
+                    3M = nothing special
+                    3N = !c shortage
+                    4CD = void splinter
+                    4oM = void splinter
+                    4M = 6+ card suit, no shortage, "extras"
+                others = natural
             3CD = canapé
-            3H = 6 carder
-            3S = ? 7+ carder
-            4x = 5--5
-        others = natural
+                others = WORK IN PROGRESS, see ~8--11 hcp canapé
+            3H = artificial, 6+ carder
+                3S = singleton ask
+                    3N = no
+                    4C = !c singleton
+                    4D = !d singleton
+                    4H = other major singleton
+                    4S = with !hs agreed, !s singleton, suggests extras too good for game
+                        4N = [RKB](#RKB 4N), no room for Kickback
+                3N = serious, control prompt
+                4M = to play
+                others = control bid
+            3S = 5--5 both majors
+                3N = opener agreeing !hs
+                    4CD = shortage
+                        4H = to play, discouraged
+                        4S = [Double Fit RKB Kickback](#Double Fit RKB) as !hs set
+                4H = minimum, to play suggesting, !h 2nd suit preference
+                4S = minimum, to play suggesting
+            4C = 5--5 M + !cs, bid 2N if weak suit
+                4D = [Double Fit RKB Kickback](#Double Fit RKB)
+            4D = 5--5 M + !ds
+                4H = [Double Fit RKB Kickback](#Double Fit RKB), also after 1!h response, assume too strong for 4!hs, bid 2N if weak suit
+        others = natural, sound 6 card suit (use relay then sign off with bad 6 carder and 7 card major fit)
     2S = 4 card major(s) for longest suit, no 5 card minor, so balanced or a 4--4--4--1 hand
         2N = relay
             3C = after 1!h response, some 4--4--4--1 hand with 4 card !h suit
                 3D = shortness relay
-                    3H = singleton !d (stop/RKB relay to follow)
-                    3S = singleton !s (stop/RKB relay to follow)
-                    3N = singleton !c (stop/RKB relay to follow)
-                3H = singleton !h
-                3S = singleton !s
+                    3H = singleton !c (stop/RKB relay to follow)
+                    3S = singleton !d (stop/RKB relay to follow)
+                    3N = singleton !s (stop/RKB relay to follow)
             3C = after 1!s response, 4--4 !ss and !cs
             3D = 4--4 M + !ds balanced
             3H = after 1!h response, 4--4 !hs and !cs balanced
@@ -332,44 +361,85 @@ questions
             3S = after 1!h response, 4--4 !hs and !ss balanced
             3S = after 1!s response, 4--1--4--4  (all 4--4--4--1 hands bid 1!h unless short !hs)
             3N = 4--3--3--3
-        others = natural
+        others = natural, sound 6 card suit (use relay then sign off with bad 6 carder and 7 card major fit)
     2N = 5 card high suit, ~8--11 hcp
         3C = delayed Jacoby variant
             3D = !d shortage
             3oM = other major shortage
-            3M = nothing special
+            3M = nothing special, (semi)balanced
             3N = !c shortage
-            4x = natural, 5--5+, potential trick source 2 top 3 honours
+            4CD = void splinter
+            4oM = void splinter
             4M = 6+ card suit, no shortage, "extras"
-        others = natural
-    3CD = canapé, ~8--11 hcp
+        others = natural, sound 6 card suit
+    3C = canapé, ~8--11 hcp
+        3D = singleton ask
+            3oM = other major singleton
+                4D = [Double Fit RKB](#Double Fit RKB)
+            3M = !d singleton
+                4D = [Double Fit RKB](#Double Fit RKB)
+            3N = no
+                4D = [Double Fit RKB](#Double Fit RKB)
+        4D = [Double Fit RKB](#Double Fit RKB)
+    3D = canapé, ~8--11 hcp
+        3H = singleton ask
+            3S = other major singleton
+                4D = artificial, [Double Fit RKB](#Double Fit RKB)
+            3N = no
+                4D = artificial, [Double Fit RKB](#Double Fit RKB)
+            4C = !c singleton
+                4D = artificial, [Double Fit RKB](#Double Fit RKB)
+        3S = natural, 5+ carder
+        4C = control bid (probably better start with singleton ask though)
+        4D = artificial, [Double Fit RKB](#Double Fit RKB)
+        4H = to play, after 1!h response
+        4H = 6 !hs, 4 card !s support after 1!s response
+        4S = to play, after 1!s response
+        4S = [RKB](#RKB 4N), after 1!h response
+        4N = [RKB](#RKB 4N), after 1!s response
     3H = artificial, 6+ suit, ~8--11 hcp
         3S = singleton ask
             3N = no
             4C = !c singleton
             4D = !d singleton
-            4H = other major
+            4H = other major singleton
             4S = with !hs agreed, !s singleton, suggests extras too good for game
                 4N = [RKB](#RKB 4N), no room for Kickback
         3N = serious, control prompt
         4M = to play
         others = control bid
-    4CDH = 5--5, ~8--11 hcp
+    3S = 5--5 both majors
+    4C = 5--5 M + !cs, ~8--11 hcp
+        4D = [Double Fit RKB Kickback](#Double Fit RKB)
+    4D = 5--5 M + !ds, ~8--11 hcp
+        4H = [Double Fit RKB Kickback](#Double Fit RKB) ??? over 1h what?
 2HS = weak NT raise 4 cards
     2S+ = same short or long suit game (or slam here) try as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
     3N = play suggestion even vs 4 card support
 2H = (over 1S) 5+ !hs strong
     2S = 5 card !s suit, nothing better to say
     2N = 6+ !ss
-    3CD = 5+ cards canape or 5-5, extras
-2S = (over 1H) 6+ !ss and 3H
+    3CD = 5+ cards canapé or 5-5, extras
+2S = (over 1H) 6+ !ss and 3!hs
     3CD = natural, canapé
     3HS = sets the trump suit
         3N = serious, control asking
 2N = !ds + other major, 16+ strong
 3C = 5+ !ds and 4+ !cs, 16+ strong
 3D = 6+ !ds, denies 4 !cs or other major
-3M = artificial, 16--18 hcp, 4--4--4--1 singleton in partner's major
+3M = artificial raise, 16--18 hcp, 4--4--4--1 singleton in partner's major
+3H = (over 1S) 6+ !hs and 3!s
+    3S = agree !ss, any strength
+    3N = natural, e.g. 4--1--4--4 or 4--1--5--3 / 4--1--3--5 / 4--1--6--2 / 4--1--2--6
+        4CD = likely 3--6--0--4 or 3--6--4--0
+        4H = 6+ suit, very good, dislikes 3N
+        4S = rare, [Kickback RKB](#RKB 4N), strong suit happy opposite a singleton
+        4N = quantitative
+        5CD = [EKB](#EKB Voidwood) for !hs
+    4CD = cue, agree !hs - what about the minors e.g. 4--7?
+        4H = nothing special, can be passed
+        4S = [Double Fit RKB Kickback](#Double Fit RKB)
+    4HS = fast arrival, minimal positive
 3N = long running minor, to play, maybe gambling
 4x = splinter or fit jump? or setting minor suit trumps? What fits best with Odwrotka?
 
@@ -377,16 +447,43 @@ questions
 
 Artificial GF:
 
-- balanced maybe with 4 card major
+- Balanced maybe with 4 card major
 - 4--4--4--1, initially unknown singleton
-- unbalanced without 4 card major, usually minor single suiter given 2!s response option
+- Unbalanced without 4 card major, usually minor single suiter
+- Minor two suiters are ~16+ hcp given the 2!s response option
 
 2C = strong hand relay
     2D = 5+ !cs, unbalanced
         2H = relay
             2S = 6+ !cs, single suited
-            2N = 5--5+ hand, too strong for 1!c--2!s
-            3C = 5+ !cs and 4 !ds
+                2N = relay, later relays [Slam Try Relay Bidding](#Slam Try Relay Bidding)
+                    3C = 7+ suit, no void
+                        3D = relay
+                            3H = 7--2--2--2
+                            3S = 7+ suit, !s singleton
+                            3N = 7+ suit, !h singleton
+                            4C = 7+ suit, !d singleton
+                    3D = 6--3--2--2
+                    3H = 6--3--3--1, !h suit singleton
+                    3S = 6--3--3--1, !s suit singleton
+                    3N = 6--3--3--1, !d suit singleton
+                    4C = 7+ suit, !s void
+                    4D = 7+ suit, !d void
+                    4H = 7+ suit, !h void
+            2N = 5--5+ hand, ~16+ hcp, too strong for 1!c--2!s
+                3C = relay, [Slam Try Relay Bidding](#Slam Try Relay Bidding) follows
+                    3D = !s shortage
+                        3H = relay
+                            3S = 5--5--2--1 !s singleton
+                            3N = 5--5--3--0 !s void
+                            4C = 6--5--2--0 !s void
+                    3H = 6--5--1--1
+                    3S = 5--5--2--1 !h singleton
+                    3N = 5--5--3--0 !h void
+                    4C = 6--5--2--0 !h void
+                3HS = natural, inviting xxx or Hx support
+            3C = 5+ !cs and 4 !ds, ~16+ hcp, too strong for 1!c--2!s
+                next = As [after 1!c--2!s--2N--3!c](#1C--2S)
     2H = balanced
         2S = strength query
             2N = 11--14
@@ -398,7 +495,7 @@ Artificial GF:
         2N = ask to bid 4+ suits
         3x = natural, forcing, suit set
         3N = NF, natural
-    2S = 6+ !ds, single suited
+    2S = 6+ !ds, single suited, ~12+ hcp
         2N = relay, later relays [Slam Try Relay Bidding](#Slam Try Relay Bidding)
             3C = 7+ suit, no void
                 3D = relay
@@ -420,21 +517,21 @@ Artificial GF:
             3S = !s singleton
             3N = !c singleton, passable
             4C = !c singleton, too good for 3NT
-    3C = !s shortage, 5+ !ds and 4+ !cs, both minors, not 5--5
+    3C = both minors, ~16+ hcp, !s shortage, 5+ !ds and 4+ !cs, not 5--5
         3D = relay
-            3H = 5!d--4!c with a singleton
-            3S = 6!d--4!c with a singleton
-            3N = 6!d--4!c with a void
-            4C = 7!d--4!c with a void
-            4D = 7!d--4!c with two singletons
-            4H = 7!d--5!c
-    3D = 5!d--4!c semi-balanced (2--2)
-    3H = !h shortage, 5!d--4!c with a singleton
-    3S = !h shortage, 6!d--4!c with a singleton
-    3N = !h shortage, 6!d--4!c with a void
-    4C = !h shortage, 7!d--4!c with a void
-    4D = !h shortage, 7!d--4!c with two singletons
-    4H = !h shortage, 7!d--5!c
+            3H = 5!d--4!c, !s singleton
+            3S = 6!d--4!c, !s singleton
+            3N = 6!d--4!c, !s void
+            4C = 7!d--4!c, !s void
+            4D = 7!d--4!c, two singletons
+            4H = 7!d--5!c, !s void
+    3D = 5!d--4!c, 12+ hcp (as 1!c--2!s requires a shortage), semi-balanced (2--2)
+    3H = 5!d--4!c, ~16+ hcp, !h singleton
+    3S = 6!d--4!c, ~16+ hcp, !h singleton
+    3N = 6!d--4!c, ~16+ hcp, !h void
+    4C = 7!d--4!c, ~14+ hcp, !h void
+    4D = 7!d--4!c, ~14+ hcp, two singletons
+    4H = 7!d--5!c, GF, !h void
 2D = Weak NT
     2HS = 4 card Major, balanced or some 4--4--4--1
     2N = balanced, slam invite, no 4 card major
@@ -449,6 +546,17 @@ Artificial GF:
     3N = to play
 others = natural strong, distributional
 
+**** Interference over 1C--1N
+
+1C--(P)--1N-
+    (X) = whatever
+        P = weak
+        XX = penalty, strong
+    (bid)
+        P = weak, no stop
+            X = takeout by responder up to 3!s
+        NT = stop, no penalty interest
+        X = penalty
 
 ** 1C--2C
 
@@ -459,7 +567,7 @@ others = natural strong, distributional
 2D = relay, strong
     2H = 5+ !cs and 4+ !ds, both minors
         2S = relay, minors enquiry, next [Slam Try Relay Bidding](#Slam Try Relay Bidding)
-            2N = 5--5
+            2N = 5--5/6--5
                 3C = relay
                     3D = spade shortage
                         3H = relay
@@ -500,7 +608,7 @@ others = natural strong, distributional
             4C = 7+ suit, !s void
             4D = 7+ suit, !d void
             4H = 7+ suit, !h void
-    2N = 5--3--3--2
+    2N = 5--3--3--2 (unlikely - usually bid 1!d or NT invite instead)
         3C = doubleton ask, next round [Slam Try Relay Bidding](#Slam Try Relay Bidding)
             3D = !d
             3H = !h
@@ -531,7 +639,7 @@ others = natural strong, distributional
             4C = 7+ suit, !c void
             4D = 7+ suit, !s void
             4H = 7+ suit, !h void
-    2N = 5--3--3--2
+    2N = 5--3--3--2 (unlikely - usually bid 1!d or NT invite instead)
         3C = doubleton ask, next round [Slam Try Relay Bidding](#Slam Try Relay Bidding)
             3D = !d
             3H = !h
@@ -570,30 +678,122 @@ others = natural strong, distributional
 3x = natural, strong
 3N = maximum weak NT
 
+**** Interference over 1C--2H
+
+1C--(P)--2H--(X) !h normally
+    P = weak, no !h stop
+    XX = strong, 5+ !hs
+    2N+ = as before, !h stop implication
+
+1C--(P)--2H--(2S+)
+    P = weak, no stop
+    2N = weak, NF, with stop
+    3N = weak/strong, with stop
+    suit = natural, strong
+    X = "OD", no further direction.
+
+
 ** 1C--2S
 
-- Both minors limited GF and short major, ~12--15 hcp
+- Both minors, ~12--15 hcp limited GF and short major (not semi-balanced nor 3 suited)
+- 5--4
+- 5--5
+- 6--4
+- 6--5
+- 6--6 fewer hcp needed to upgrade to a 1N response
+- 7--4+ fewer hcp needed to upgrade to a 1N response
 
 2N = inquiry, weak or strong
-    3CD = 5+ suit
-        next = singleton ask
-            3H = !h singleton
-            3S = !s singleton
-            3N = !h singleton (over 3!h ask)
-    3M = singleton/void with 5--5+ minors
+    3CD = 5--4/6--4 longest minor
+        next = shortage ask
+            3H = !h singleton/void
+                3S = inviting xxx or Hx support (not available for !hs)
+                3N = to play
+                4C = extras ask relay
+                    4D = minimum
+                        next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+                    4H = extras, good 6 card minor or ~14--15 hcp
+                        next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+                4D = !c [RKB](#RKB 4N)
+                4H = !d [RKB](#RKB 4N)
+                4N = Blackwood, going by 4N rules
+                5CD = to play
+            3S = !s singleton/void
+                3N = to play
+                4C = extras ask relay
+                    4D = minimum
+                        next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+                    4H = extras, good 6 card minor or ~14--15 hcp
+                        next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+                4D = !c [RKB](#RKB 4N)
+                4H = !d [RKB](#RKB 4N)
+                4N = Blackwood, going by 4N rules
+                5CD = to play
+            3N = !h singleton/void (over 3!h ask)
+                4C = extras ask relay
+                    4D = minimum
+                        next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+                    4H = extras, good 6 card minor or ~14--15 hcp
+                        next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+                4D = !c [RKB](#RKB 4N)
+                4H = !d [RKB](#RKB 4N)
+                4N = Blackwood, going by 4N rules
+                5CD = to play
+    3M = singleton/void with 5--5/6--5/(7--5) minors
+        3S = inviting xxx or Hx support (not available for !hs)
+        3N = to play
+        4C = extras ask relay
+            4D = minimum, 5--5 or ~12--13 hcp
+                next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+            4H = extras, 6 card minor or ~14--15 hcp
+                next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+        4D = !c [RKB](#RKB 4N)
+        4H = !d [RKB](#RKB 4N)
+        4N = Blackwood, going by 4N rules
+        5CD = to play
+    3N = 6--6 minors
+        4C = void ask
+            4HS = void
+                4N = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses
+        4D = !c [RKB](#RKB 4N), ignore void responses
+        4H = !d [RKB](#RKB 4N), ignore void responses
+        4N = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses
+        5CD = to play
+    4C = 7!c--4!d
+        4D = strong hand [Kickback RKB](#RKB 4N)
+        4N = weak hand [Double Fit RKB Kickback](#Double Fit RKB)
+        5D = weak NT, !d fit
+    4D = 7!d--4!c
+        4H = strong hand [Kickback RKB](#RKB 4N)
+        4N = weak hand [Double Fit RKB Kickback](#Double Fit RKB)
+        5C = weak NT, !c fit
 3CD = strong, 4+ support
-    3HS = singleton
+    3HS = singleton/void
 3HS = natural, strong
 3N = to play, weak
+
+**** Interference over 1C--2S
+
+1C--(P)--2S--(X) !s normally
+    P = weak, no stop
+    XX = strong, 5+ !ss
+    2N+ = as before, !s stop implication
+
+1C--(P)--2S--(2N+)
+    bid = natural
 
 ** 1C--2N
 
 - natural invite
 - wants to declare, otherwise use the 2!h response
 
-3x = Control asking bid?
-4C = Gerber
+3x = natural, strong
+4C = [Gerber, with RKB like responses. Except for 5!c follow on ask, all natural.](#1N--2N+)
+4D = unused
+Game = to play
 4N = quantitative
+
+[Inteference as 1C--2S](#Interference over 1C--2S)
 
 ** 1C--3N
 
