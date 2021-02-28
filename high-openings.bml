@@ -2,7 +2,7 @@
 
 * 3CD Openings
 
-Constructive pre-empts in 1st/2nd usually 6 cards, good chance to play 3N.
+Constructive preempts in 1st/2nd usually 6 cards, good chance to play 3N.
 
 - Good suit, happy 3N with some fit and side stoppers
 - Suit expected to run with 0--1 loser opposite Hx (on normal percentage breaks) OR 1--2 losers if have side entry (Ace or King).
@@ -88,37 +88,63 @@ P/T integrity required (in 1st/2nd), max 1 outside A/K, no 4 card side Major.
     XX = two suit escape (e.g. 6--5 or 6--6)
     NewSuit = escape
 
-* 3N Opening as Solid Major
+* 3N Opening
 
-Solid AKQ+ 7/8 card major, max one outside *King* (open 1!h/1!s or 1!c with better).
-AKQJxxx could open 1!h/1!s
+In 1st/2nd:
+
+- Good 4HS opening
+- P/T integrity for the 4 level
+- Semi-solid+ suit
+- Exactly 2 or 3 keycards (1) AK trumps (2) A/K trumps + side Ace (3) AK trumps + side ace
 
 3N
-    4C = shortness ask slam try
-        4D = short !d
-            4N = King ask
-        4H = short !h
-            4N = King ask
-        4S = short !s
-            4N = King ask
-        4N = short !c
-            5C = King ask
-    4D = ask, maybe slam try unsure of opener's suit
-        4H = !h
-            4S = King ask
-                4N = !s King
-        4S = !s
-            4N = King ask
-    4M = to play (can guess their suit and wants to play it)
-
+    4C = slam try ask, further cue bids may fish for a void
+        4D = !h transfer, 2 keycards
+        4H = !s transfer, 2 keycards
+        4S = !h + 3 keycards
+        4N = !s + 3 keycards
+    4D = major ask
+    4H = Pass or Correct
+    4N = unlikely to use instead of 4C, [RKB](#RKB 4N)
 3N
     (any)
         X = penalty
         XX = penalty
 
+In 3rd/4th:
+
+- Generic to play opening
+
+
+*** 3N Alternatives
+
+An alterntive is to play 3N as Solid AKQ+ 7 card major with side feature OR solid AKQ+ 8 card major.
+A solid AKQJxxx 7 carder without side feature is opened 1!h/1!s and a plain AKQxxxx 7 carder with a standard pre-empt.
+Note, this could also be played as a solid minor, it's somewhat arbitrary.
+
+- Either minor or major openings are given better definition
+- A 4HS game is more likely to make than 5CD
+- Solid openings have a gambling aspect where they could be passed, but the 3N bid wrong sides the NT contract
+- Variants without a side feature are even less likely to make 3N
+- Variants with 2 or more side features are too infrequent and conservative, basically a strong club opening
+
+Opening 3N as a specific ace ask is another option.
+
+- This is better than 4N as there's more room to show the !c ace.
+- It is very infrequent though
+
+Opening 3N as a 4 level minor preempt is the other common option.
+
+- direct 4 level minor preempts put much more pressure on the opponents, like all natural preempts
+- having a double then overcall or direct overcall gives defenders more options
+- hard to pass 3N as the suit is not guaranteed solid, especially with the NT contract wrong siding
+- south african texas (namyats) 4CD openings do not gain that much compared to choosing 1x or 1!c opening and
+  again put less pressure on the opponents
+
+
 * 4CD Opening
 
-Normal distributional minor pre-empts, must have a singleton/void
+Normal distributional minor preempts, must have a singleton/void
 
 4C
     4D = shortness ask (FNJ by passed hand)
@@ -140,7 +166,7 @@ Normal distributional minor pre-empts, must have a singleton/void
 
 P/T integrity required (in 1st/2nd), rare distributions, max 1 outside A/K.
 
-4HS = broken, not solid pre-empt
+4HS = broken, not solid preempt
     4S = [control asking bid](#Control Asking Bids over 4H 4S 5C 5D)
     4N = RKB
     5CDH = [control asking bids](#Control Asking Bids over 4H 4S 5C 5D)
@@ -175,3 +201,9 @@ Specific suit asks:
     5DHS = specific ace
     5N = 2 aces
     6C = !c specific ace
+
+Note, an alternative is to play 4N as 6--6 minors pre-empt.
+
+- This is also very rare, ~ 1:1388 for 6--6, one of 6 suit combinations = 1:8333 without considering hcp
+- Bidding slow with an ace ask type hand is probably harder than a 6--6 minor hand, especially with interference
+

@@ -25,7 +25,7 @@
   [2H](#1C--2H) NT invite, no 4 card major, maybe semi-balanced 6 card minor or 5--4 minors
   [2S](#1C--2S) both minors limited GF and short major, ~12--15 hcp
   [2N](#1C--2N) natural NT invite, wants to declare
-  3CDHS Weak, ~3--7 hcp, continue as if opened pre-empt
+  3CDHS Weak, ~3--7 hcp, continue as if opened preempt
   [3N](#1C--3N) 6 card Solid AKQJ suit, no outside A/K, max one extra Q
   [4CD](#1C--4CD) 8 card !h/!s suit, exactly AQJ or KQJ, no outside A/K, max one outside Q
   [4HS](#1C--4HS) 7 card Solid AKQJ suit, no outside A/K, max one extra Q
@@ -40,11 +40,11 @@
     2HS = weak jump shift, 6+ !h/!ss, 0--9 hcp, rarely 5 card suit that dreads passing 1!d
     2N = natural invitational ~(10)--12, no 4 card major, usually very flat 4--4--3--2/4--3--3--3
     3C = weak jump shift, 6+ !cs, 0--9 hcp, NF
-    3D = pre-empt 0--9 hcp, 5+ !ds, not worried about missing 3N
+    3D = preempt 0--9 hcp, 5+ !ds, not worried about missing 3N
     3HS = splinter !d raise, 6+ card support
     3N = natural, good 12--17, no 4 card major, stops
     4C = splinter !d raise, 6+ card support
-    4D = pre-empt
+    4D = preempt
     4HS = natural, to play, obstructive, sets suit as trumps (passed hand fit jump e.g. 6--6 shape!)
     5CD = natural, to play, obstructive
 
@@ -64,8 +64,8 @@
   3N = [splinter !s, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
   4C = [splinter !c, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
   4D = [splinter !d, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
-  4H = Obstructive bid, classic weak pre-empt, or fast arrival auction e.g. Kxxx/Axx/K/Qxxxx
-  4S = pre-empt
+  4H = Obstructive bid, classic weak preempt, or fast arrival auction e.g. Kxxx/Axx/K/Qxxxx
+  4S = preempt
   4N = Blackwood, !hs not agreed. Bid 2N first to use [RKB](#RKB 4N) for !hs.
 
 1S = [(10)11--15, 5 card Major](#1S Opening)
@@ -114,18 +114,18 @@
   2D = [enquiry](#2D enquiry)
   2HS = natural, NF, 5+ (usually 6) suit, ~7--11 hcp, unlikely both majors (use 2!d)
   2N = transfer to !d, any strength with ok, long !d suit. No 4 card major.
-  3C = !c slam try, (pre-emptive if passed). Maybe (bad) 4 card major not wanting to use 2!d relay.
+  3C = !c slam try, (preemptive if passed). Maybe (bad) 4 card major not wanting to use 2!d relay.
   3D = 5--5+ majors, invite+
   3H = 5!h and 6+ !ds, GF, (passed hand = invite 6!h--4!s majors)
   3S = 5!s and 6+ !ds, GF, (passed hand = invite 6!s--4!h majors)
   3N = to play, opener can bid on with lots shape and strength
-  4C = pre-empt
+  4C = preempt
   4D = Redwood for clubs
   4HS = to play (passed hand = fit jump), opener can bid on super fit and controls
   4N = Blackwood
   5C = to play
 
-2D  [2D Precision Style 3 Suiter](#2D Precision Style 3 Suiter), (11)12--15(16) hcp, 4--4--1--4, 4--4--0--5, 4--3--1--5, or 3--4--1--5
+2D  [2D Precision Style 3 Suiter](#2D Precision Style 3 Suiter), (11)12--15(16) hcp, 4--4--1--4, 4--4--0--5, 4--3--1--5 or 3--4--1--5
   Pass = to play, long 6+ !d
   2H = to play, could be 3 cards (e.g. 5!d and 2/3!c)
   2S = to play, could be 3 cards if 3--2--5--3
@@ -165,13 +165,14 @@
   4N = Blackwood (bid 3!h or splinter, then 4N for RKB)
 
 2NT [19--20 NT](#2NT Opening)
-3CD [constructive minor pre-empt](#3CD Openings)
-3HS [normal pre-empt, max 1 outside A/K](#3HS Openings)
-3N  [Solid running 7/8 card major, max 1 outside King](#3N Opening as Solid Major)
-4CD [pre-empt, distributional with side singleton/void](#4CD Opening)
-4HS [pre-empt, not solid, max 1 outside A/K](#4H 4S 5C 5D Openings)
+3CD [constructive minor preempt](#3CD Openings)
+3HS [preempt, max 1 outside A/K](#3HS Openings)
+3N  [good major preempt or to play](#3N Opening) 1st/2nd semi-solid+ 2/3 KC 4HS opening, 3rd/4th to play
+4CD [preempt, distributional with side singleton/void](#4CD Opening)
+4HS [preempt, not 3N strength in 1st/2nd, max 1 outside A/K](#4H 4S 5C 5D Openings)
 4N  [specific ace ask](#4N Opening Specific Ace Ask)
-5CD [pre-empt](#4H 4S 5C 5D Openings)
+5CD [preempt](#4H 4S 5C 5D Openings)
+5HS 11 tricks in hand, missing 2 top honours
 
 * Contested Overcalls Summary
 

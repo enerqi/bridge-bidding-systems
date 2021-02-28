@@ -46,7 +46,7 @@
         4D = big !c raise with great !ds, e.g. 1--1--6--5
         4HS = void splinter, !c support
             next = Redwood [RKB](#RKB 4N) for !c
-    3D = pre-empt 0--9 hcp, 5+ !ds, not worried about missing 3N
+    3D = preempt 0--9 hcp, 5+ !ds, not worried about missing 3N
         3HS = shortness, 5!d game try
         4D = !c shortness, 5!d game try
         4HS = 6--5+
@@ -61,7 +61,7 @@
             5H = 1/4 Aces
             5S = 2 Aces
     4C = splinter !d raise, 6+ card support
-    4D = pre-empt
+    4D = preempt
     4HS = natural, to play, obstructive, sets suit as trumps (passed hand fit jump e.g. 6--6 shape!)
     5CD = natural, to play, obstructive
 
@@ -867,7 +867,7 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
     2HS = weak jump shift, system on
     2N = 5--4+ minors, 10+ hcp
     3C = weak jump shift
-    3D = pre-empt, system on
+    3D = preempt, system on
     3HS = splinter
     3N = to play
     4C = splinter
@@ -1084,8 +1084,8 @@ By responder example:
   3N = [splinter !s, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
   4C = [splinter !c, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
   4D = [splinter !d, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
-  4H = Obstructive bid, classic weak pre-empt, or fast arrival auction e.g. Kxxx/Axx/K/Qxxxx
-  4S = pre-empt
+  4H = Obstructive bid, classic weak preempt, or fast arrival auction e.g. Kxxx/Axx/K/Qxxxx
+  4S = preempt
   4N = Blackwood, !hs not agreed. Bid 2N first to use [RKB](#RKB 4N) for !hs.
 
 ** 1H--1S
@@ -1383,7 +1383,7 @@ Forcing NT, but less standard notes:
 - 100% forcing, even by passed hand
 - zero+ count if some fit exists
 - standard single raise hand (6--9)
-- Can pass with 6--9 and only doubleton support, though may still bid to pre-empt in some way
+- Can pass with 6--9 and only doubleton support, though may still bid to preempt in some way
 - 4!ss and invitational values
 - alertable:  "forcing, but does not promise any
 values, and may be a hand that would have raised to 2H in standard methods; also

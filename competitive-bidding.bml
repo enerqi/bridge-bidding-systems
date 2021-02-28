@@ -45,7 +45,7 @@ Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others pla
 4. our side redoubled
 5. our side made a penalty double or penalty pass
 6. the bid doubled was artificial
-7. partner pre-empts
+7. partner preempts
 
 
 *** Takeout Doubles
@@ -516,7 +516,7 @@ Note, just overcall 1!h with a "weak" jump !h overcall.
         2S = natural
         2N = natural
         3C = iff no jump 3!s available then !s HCR
-        3S = competitive/pre-emptive if jump 3!s available
+        3S = competitive/preemptive if jump 3!s available
         (X) = whatever
             P = happy to play
             XX = really happy to play
@@ -531,10 +531,10 @@ Note, just overcall 1!h with a "weak" jump !h overcall.
         4C = choose a major
     2S = weak jump, response as [6 card weak two](#2HS Weak Opening)
     2N = 5--5 !hs + !ds
-    3C = super michaels both majors, stronger than the NF 2!h bid (passed hand e.g. QJ109xxx pre-empt)
+    3C = super michaels both majors, stronger than the NF 2!h bid (passed hand e.g. QJ109xxx preempt)
         Major = natural, any level
         4C = choose a major
-    3DHS = normal pre-empt
+    3DHS = normal preempt
         Cue = [Rubens advance](#Rubens Transfer Advances)
     3N = to play (extreme !h/!d shape by passed hand, e.g. x/QJ10xxx/KJ10xxx)
     4C = natural
@@ -692,7 +692,7 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
         2S = natural
         2N = natural
         3D = iff no jump 3!h available then !h HCR
-        3H = competitive/pre-emptive if jump 3!h available
+        3H = competitive/preemptive if jump 3!h available
         (X) = whatever
             P = happy to play
             XX = really happy to play
@@ -717,10 +717,10 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
     3C = 6+ !cs, no side major, NV weak similar to 3!c opening, VUL intermediate e.g. Ax/Kx/xxx/AKJ10xx
         3D = stop asking
         3HS = natural, forcing
-    3D = super michaels both majors, stronger than the NF 2!h bid (passed hand e.g. QJ109xxx pre-empt)
+    3D = super michaels both majors, stronger than the NF 2!h bid (passed hand e.g. QJ109xxx preempt)
         Major = natural, any level
         4D = choose a major
-    3HS = normal pre-empt
+    3HS = normal preempt
         4D = Cue [Rubens advance](#Rubens Transfer Advances)
     3N = to play (extreme !h/!c shape by passed hand, e.g. x/QJ10xxx/KJ10xxx)
 
@@ -1105,7 +1105,7 @@ Competing over 1NT. More aggressive when opponents are NonVulnerable.
     2CDHS = natural
     2N = !h + !c (pass then bid 2N or just overcall with minors)
     3CD = natural intermediate
-    3HS = pre-empt
+    3HS = preempt
     3N = to play
 
 (1N)--X--(XX) = whatever
@@ -1145,7 +1145,7 @@ Competing over 1NT. More aggressive when opponents are NonVulnerable.
         3x = NF, natural
     2N = minors
     3CD = 4 card !h suit + long minor, NF
-    3HS = pre-empt
+    3HS = preempt
     3N = to play
 
 (1N)--X--(XX) when penalty business redouble
