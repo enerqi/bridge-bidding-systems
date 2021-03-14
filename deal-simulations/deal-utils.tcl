@@ -17,6 +17,12 @@
 # Imports for other helpers in the deal libraries: 5CM_nt etc.
 source lib/utility.tcl
 
+proc long_semi_solid {hand suit} {
+  # AKQ are worth 2 points jack 10 1 point
+  if { ([Top5Q $hand $suit] >=6) && ([$suit $hand]>=7)} { return 1 }
+  return 0
+}
+
 proc flattish {hand} {
   if { [balanced $hand] || [semibalanced $hand] } { return 1 }
   return 0
@@ -177,15 +183,33 @@ proc is_standard_3cd_7carder {hand} {
     return 0
 }
 
+proc side_ace {hand suit} {
+    # without king
+    if {[Ace $hand $suit]==1 && [AceKing $hand $suit]==1} { return 1 }
+    return 0
+}
+
 proc is_3n_opener {hand} {
-  if { [hcp $hand] > 13 } { return 0 }
-  if {![solid_suit $hand spades] && ![solid_suit $hand hearts]} { return 0 }
-  set ss [spades $hand]
-  set hs [hearts $hand]
-  if {$ss >= 4 && $hs >= 4 } { return 0 }
-  if {[controls $hand] > 4} { return 0 }
-  if {[spades $hand]>8 || [hearts $hand]>8} { return 0 }
-  return 1
+  set points [hcp $hand]
+  if { $points < 8 || $points > 14 } { return 0 }
+
+  set cp [controls $hand]
+  # AK, AK should probably start with 1C, KQJxxxxxx AK... maybe ok
+  if { $cp > 5 } { return 0 }
+
+  if { [$hand pattern] == "7 2 2 2" } { return 0 }
+
+  if {[long_semi_solid $hand spades] && (
+      ([AceKing $hand spades]==1 && ([side_ace $hand hearts] || [side_ace $hand diamonds] || [side_ace $hand clubs])) ||
+      ([AceKing $hand spades]==2)
+     )} { return 1 }
+
+  if {[long_semi_solid $hand hearts] && (
+      ([AceKing $hand hearts]==1 && ([side_ace $hand spades] || [side_ace $hand diamonds] || [side_ace $hand clubs])) ||
+      ([AceKing $hand hearts]==2)
+     )} { return 1 }
+
+  return 0
 }
 
 proc is_shapely_minor_preempt {hand} {
@@ -215,12 +239,14 @@ proc any_offensive_suit {hand offense_tricks} {
   if { [offense $hand clubs] >= $offense_tricks ||
        [offense $hand diamonds] >= $offense_tricks ||
        [offense $hand hearts] >= $offense_tricks ||
-       [offense $hand spades] >= $offense_tricks} { return 1}
+       [offense $hand spades] >= $offense_tricks} { return 1 }
   return 0
+
 }
 
 proc is_likely_4level_preempt {hand} {
-  if { [hcp $hand] > 11 } { return 0 }
+  if { [hcp $hand] > 12 } { return 0 }
+  if { [$hand pattern] == "7 2 2 2" } { return 0 }
   if { [any_offensive_suit $hand 7] } { return 1 } else { return 0 }
 }
 
@@ -248,7 +274,7 @@ proc is_potential_4n_opener {hand} {
 proc both_minors {hand} {
   set cs [clubs $hand]
   set ds [diamonds $hand]
-  if {(cs + ds >= 9) && cs >= 4 && ds >= 4} { return 1 }
+  if {($cs + $ds >= 9) && $cs >= 4 && $ds >= 4} { return 1 }
   return 0
 }
 

@@ -6,6 +6,16 @@
 For 2N there are more tools to find 4--4 or 5--3 major fits before 3N, more so than over 1N
 as entries tend to be a problem with the small hand.
 
+- 3 card major when unbalanced use 3!c to check for 5 card major
+- 5 card major use transfer then bid 3N
+- 6+ card major slam try use transfer then bid game
+- 6+ card major sign off use 4!d/4!h texas transfer
+- 4--4 majors use 3!c
+- 5!s + 4!h use 3!c
+- 4!s + 5!h use !h transfer then bid 3!s
+- 5--5 majors and slam interest use 3!c
+- 5--5 majors and limited game bid use !s transfer then bid 4!h
+
 2N
     (any) = [2N interference defence](#2N interference)
     3C = [Mixed 4/5 card stayman, 3+ card major only.](#2N--3C)
@@ -20,6 +30,7 @@ as entries tend to be a problem with the small hand.
     4N = [semi/balanced slam try, e.g. 5--4 in !c+!d or 4-3-3-3 with minor.](#2N-3S+)
     5C = [super gerber, 1/4, 3/0, 2 responses. No K follow up available.](#2N-3S+)
     5N = [semi/balanced slam force, bid suits to try for seven](#2N-3S+)
+
 
 **** 2N--3C
 
@@ -145,6 +156,7 @@ Mixed 4/5 card stayman, 3+ card major only.
                     5C = natural, 5--4--4--0 three suiter
                 5C = !d slam try
             4H = 5--5 majors, NF  (would start with stayman if 5--5 slam interest)
+            4S = slam try !s
         3N = 2 !ss only, but 5!hs, 2--5--3--3
             4CD = natural, 5 cards knowing of 3 card support
                 4x = cue bid

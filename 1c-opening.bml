@@ -6,6 +6,21 @@
 - 16+ unbalanced
 - 21+ balanced
 
+1C
+    (any) = [1!c interference](#1C Interference)
+    [1D](#1C--1D) Negative 0--7 hcp or 8--9 semi-positive no 4cM
+    [1HS](#1C--1HS) 8+ hcp, 4+ card suit, maybe canapé and always unbalanced if GF
+    [1N](#1C--1N) GF, balanced maybe 4 card major OR 4--4--4--1 OR unbalanced without 4 card major
+    [2C](#1C--2C) natural NF, ~7--10 hcp, maybe 5--5 minors
+    [2D](#1C--2D) natural NF, ~7--10 hcp
+    [2H](#1C--2H) NT invite, no 4 card major, maybe semi-balanced 6 card minor or 5--4 minors
+    [2S](#1C--2S) both minors limited GF and short major, ~12--15 hcp
+    [2N](#1C--2N) natural NT invite, wants to declare
+    3CDHS Weak, ~3--7 hcp, continue as if opened preempt
+    [3N](#1C--3N) 6 card Solid AKQJ suit, no outside A/K, max one extra Q
+    [4CD](#1C--4CD) 8 card !h/!s suit, exactly AQJ or KQJ, no outside A/K, max one outside Q
+    [4HS](#1C--4HS) 7 card Solid AKQJ suit, no outside A/K, max one extra Q
+
 ** 1C--1D
 
 - Negative 0--7 hcp or flat 8--9 hcp semi-positive no 4cM
@@ -115,6 +130,10 @@
         2C = unbalanced, various extras (see 1S asking bid)
         2D = see 1S asking bid, could include 4!ss but limited as jump raise ~19/20+
         2H = natural Acol 2 equivalent ~19--21 hcp, ~8--9 playing tricks, 4+ Quick Tricks, F1
+            2S = Herbert negative ~0--4 hcp
+                any = natural, NF
+                    newSuit = NF, play suggestion
+                    3H = natural forcing suit
         2S = to play, weak NT hand
         2N = natural, 21--23 NT
         3CD = !c/!d Acol 2 equivalent ~19--21 hcp, ~8--9 playing tricks, 4+ Quick Tricks, F1
@@ -294,7 +313,7 @@ questions
             3D = 4+ !hs transfer, complete with support
             3H = 4+ !ss transfer, complete with support
             3S = unbalanced, 4+ clubs
-            3N = balanced, extra length in high colours
+            3N = natural
         3M = artificial major raise bid, 19--21 hcp, 4--4--4--1 singleton in partner's major
         3N = to play, fast arrival
         others = natural with clubs
