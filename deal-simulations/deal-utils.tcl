@@ -64,8 +64,9 @@ proc is_1d_unbal_opener {hand} {
   if { [flattish $hand] } { return 0 }
   set points [hcp $hand]
   if { $points <11 || $points>15 } { return 0 }
-  if { [is_2c_opener $hand] } { return 0 }
-  if { [diamonds $hand]<4 || [spades $hand]>4 || [hearts $hand]>4 } { return 0 }
+  if { [is_2c_opener $hand] || [is_2d_opener $hand]} { return 0 }
+  set ds [diamonds $hand]
+  if { $ds<4 || [spades $hand]>=$ds || [hearts $hand]>=$ds } { return 0 }
   return 1
 }
 
@@ -290,8 +291,8 @@ proc is_likely_4level_preempt {hand} {
 }
 
 proc is_insane_offensive_preempt {hand} {
-    if { [hcp $hand] > 11 } { return 0 }
-    if { [any_offensive_suit $hand 9] } { return 1 } else { return 0 }
+    if { [hcp $hand] > 13 } { return 0 }
+    if { [any_offensive_suit $hand 8] } { return 1 } else { return 0 }
 }
 
 proc is_8_plus_tricks {hand} {
