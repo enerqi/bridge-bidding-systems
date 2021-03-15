@@ -28,6 +28,21 @@ proc flattish {hand} {
   return 0
 }
 
+proc two_suiter {hand} {
+  set handshape [$hand pattern]
+  if {$handshape == "5 5 2 1" || $handshape == "5 5 3 0" ||
+      $handshape == "6 4 2 1" || $handshape == "6 4 3 0" ||
+      $handshape == "6 5 2 0" || $handshape == "6 5 1 1" ||
+      $handshape == "7 4 1 1" || $handshape == "7 4 2 0" ||
+      $handshape == "7 5 1 0"} { return 1 }
+  return 0
+}
+
+proc has_9_plus_majors {hand} {
+  if { ([spades $hand] + [hearts $hand]) >= 9 } { return 1 }
+  return 0
+}
+
 proc is_weak_1c {hand} {
   if {[5CM_nt $hand 13 15]} { return 1 } else { return 0 }
 }
@@ -43,6 +58,30 @@ proc is_strong_1c {hand} {
 proc is_any_1c_opener {hand} {
   if { [is_weak_1c $hand] || [is_strong_1c $hand] } { return 1}
   return 0
+}
+
+proc is_1d_unbal_opener {hand} {
+  if { [flattish $hand] } { return 0 }
+  set points [hcp $hand]
+  if { $points <11 || $points>15 } { return 0 }
+  if { [is_2c_opener $hand] } { return 0 }
+  if { [diamonds $hand]<4 || [spades $hand]>4 || [hearts $hand]>4 } { return 0 }
+  return 1
+}
+
+proc is_1major_opener {hand} {
+  set points [hcp $hand]
+  if { $points <11 || $points>15 } { return 0 }
+  set hs [hearts $hand]
+  set ss [spades $hand]
+  if { $hs<5 && $ss<5 } { return 0 }
+  if { [5CM_nt $hand 13 15] } { return 0 }
+  set ds [diamonds $hand]
+  set cs [clubs $hand]
+  if { $cs>$hs && $cs>$ss} { return 0 }
+  if { $ds>$hs && $ds>$ss} { return 0 }
+  if { [is_3n_opener $hand]} { return 0 }
+  return 1
 }
 
 proc is_1nt_opener {hand} {
