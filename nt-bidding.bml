@@ -82,7 +82,7 @@ Responding:
     3H = [minors GF, 5--5+ !c+!d](#1N--3C+)
     3S = [5--4--2--2 in minors, slam interest](#1N--3C+)
     3N = [to play](#1N--3C+)
-    4C = [Gerber, with RKB like responses. Except for 5!c follow on ask, all natural.](#1N--3C+)
+    4C = [Gerber](#Gerber 4C)
     4D = [texas transfer to !h](#1N--3C+)
     4H = [texas transfer to !s](#1N--3C+)
     4S = [to play](#1N--3C+)
@@ -587,15 +587,7 @@ Transfer to !d
         4HS = good suit 5 card major
         4N = longest minor signoff, no major stops, poor quality or not 5 card major
     3N = to play
-    4C = Gerber, with RKB like responses. Except for 5!c follow on ask, all natural.
-        4D = 1/4 aces
-            4N = to play v.s. 1 ace
-            5C = King ask, also 1430 responses
-        4H = 0/3 aces
-            4N = to play v.s. 0 aces
-            5C = King ask, also 1430 responses
-        4S = 2 aces
-            5C = King ask, also 1430 responses
+    4C = [Gerber](#Gerber 4C)
     4D = texas transfer to !h
         4H = xfer
             4S = Kickback RKB

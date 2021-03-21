@@ -56,10 +56,7 @@
     3N = natural, good 12--17, no 4 card major, stops
         4x = natural, forcing, slam try, major bid showing 5 cards
         4N = natural, with long !ds
-        5C = Super Gerber
-            5D = 0/3 Aces
-            5H = 1/4 Aces
-            5S = 2 Aces
+        5C = [Super Gerber](#Super Gerber 5C)
     4C = splinter !d raise, 6+ card support
     4D = preempt
     4HS = natural, to play, obstructive, sets suit as trumps (passed hand fit jump e.g. 6--6 shape!)

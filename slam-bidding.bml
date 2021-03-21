@@ -70,7 +70,9 @@ Rarely, when (4) happens - XX is to play (e.g. 5!s XX + 1 > 6!s made).
 
 ** Gerber 4C
 
-Only played over the 1N and 2N schemes, so just remember when the NT schemes are played.
+- over 1N
+- over 1C--2N
+- over 1C--(any)--3N
 
 4C
     4D = 0/4 aces
@@ -83,6 +85,19 @@ Only played over the 1N and 2N schemes, so just remember when the NT schemes are
     5H = 1 king
     5S = 2 kings
     5N = 3 kings
+
+** Super Gerber 5C
+
+- over 2N where 4C has other uses (!d slam try)
+- over 1D--3N--5C where 4C is a natural slam try
+- No King follow up available.
+
+5C
+    5D = 0/4 Aces
+    5H = 1 Aces
+    5S = 2 Aces
+    5N = 3 Aces
+
 
 ** 4CD RKB Minorwood
 
