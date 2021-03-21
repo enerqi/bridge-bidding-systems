@@ -128,11 +128,6 @@ Note, this could also be played as a solid minor, it's somewhat arbitrary.
 - Variants without a side feature are even less likely to make 3N
 - Variants with 2 or more side features are too infrequent and conservative, basically a strong club opening
 
-Opening 3N as a specific ace ask is another option.
-
-- This is better than 4N as there's more room to show the !c ace.
-- It is very infrequent though
-
 Opening 3N as a 4 level minor preempt is the other common option.
 
 - direct 4 level minor preempts put much more pressure on the opponents, like all natural preempts
@@ -140,6 +135,11 @@ Opening 3N as a 4 level minor preempt is the other common option.
 - hard to pass 3N as the suit is not guaranteed solid, especially with the NT contract wrong siding
 - south african texas (namyats) 4CD openings do not gain that much compared to choosing 1x or 1!c opening and
   again put less pressure on the opponents
+
+Opening 3N as a specific ace ask is another option.
+
+- This is better than 4N as there's more room to show the !c ace.
+- It is extremely rare though
 
 
 * 4CD Opening
@@ -166,7 +166,7 @@ Normal distributional minor preempts, must have a singleton/void
 
 P/T integrity required (in 1st/2nd), rare distributions, max 1 outside A/K.
 
-4HS = broken, not solid preempt
+4HS = broken preempt (not semi-solid+ or only 1 keycard if semi-solid+, so unsuitable for 3N opening)
     4S = [control asking bid](#Control Asking Bids over 4H 4S 5C 5D)
     4N = RKB
     5CDH = [control asking bids](#Control Asking Bids over 4H 4S 5C 5D)
