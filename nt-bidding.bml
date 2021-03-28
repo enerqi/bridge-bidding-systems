@@ -34,9 +34,8 @@ Responding:
 - Major transfer then 3N is probably 5--4--2--2 with a minor, not balanced
 - There is no balanced invite. Stop in 1N or punt.
 - There is no invite raise after stayman and opener bidding your suit.
-- (Semi)balanced show major with transfer or stayman, then bid NT or Smolen
+- Semi-balanced show major with transfer or stayman, then bid NT or Smolen
 - Single suited use transfers, except 6 !ds and !c shortness, e.g. 3--3--6--1 can use stayman
-- Major transfer then unsupported game bid is a slam try (use texas transfer when weaker)
 - 3 card major hands do not directly look for a 5--3 fit, try stayman with 5 card minor or transfer with 6 card minor
   then show a shortage, later maybe finding a 5--3 fit if opener has no stop for 3N
 - 5--4--3--1 or general three suited can use stayman then show shortage
@@ -306,7 +305,7 @@ Stayman, forcing.
     3D = short !d
     3H = short !h
     3S = (Semi)balanced !s slam try (remember no stayman with 4333)
-        3N = slam try without 3!h control bid, opener has a very good hand.
+        3N = !h control, serious
         4CD = control bid, denies !h control
         4N = RKB
     3N = to play
@@ -530,17 +529,17 @@ Transfer to !d
             5C = 4 card !s, extra strong, NF but very encouraging
     4D = GF+ transfer to !h, five card major, 6+ !d (use stayman with 5--5 or 4--6)
         4H = to play
-        4S = Six KC RKB for !d and !h (1/4, 3/0, 2/5, 2/5+Q, 2/5+two queens)
+        4S = [Double Fit RKB](#Double Fit RKB) for !d and !h
         5C = cue bid, !h support
         5D = to play
     4H = GF+ transfer to !s, five card major, 6+ !d
         4S = to play
-        4N = Six KC RKB for !d and !s (1/4, 3/0, 2/5, 2/5+Q, 2/5+two queens)
+        4N = [Double Fit RKB](#Double Fit RKB) !d and !s
         5CH = cue bid, !s support
         5D = to play
     4S = RKB for !d, forces slam opposite 2 keycards
-    4N = NF, no shortness, big !d, 2--2--2--7 or maybe 6 card 6322, missing !d honour
-    5C = *forcing!, RKB*, no shortness, big !d, 2--2--2--7 or maybe 6 card 6322
+    4N = NF, no shortness, big !d, 2--2--2--7 or maybe 6 card 6--3--2--2, missing !d honour
+    5C = *forcing!, RKB*, no shortness, big !d, 2--2--2--7 or maybe 6 card 6--3--2--2
         stepX = RKB
             stepY = Queen ask or extra trick ask, any cheapest bid except 6!d
 
@@ -576,7 +575,7 @@ Transfer to !d
         4S = RKB for !d, big fit
     3H = minors GF, 5--5+
         3S = both minors agreed
-            4D = [Double Fit RKB](#Double Fit RKB)
+            4H = [Double Fit RKB](#Double Fit RKB)
         3N = strong major stoppers
         4C = !c agreed
             4D = [Double Fit RKB](#Double Fit RKB)
