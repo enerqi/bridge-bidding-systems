@@ -38,6 +38,11 @@ proc two_suiter {hand} {
   return 0
 }
 
+proc majors_4_4 {hand} {
+  if { [spades $hand]==4 && [hearts $hand]==4 } { return 1 }
+  return 0
+}
+
 proc has_9_plus_majors {hand} {
   if { ([spades $hand] + [hearts $hand]) >= 9 } { return 1 }
   return 0

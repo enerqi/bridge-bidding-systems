@@ -6,15 +6,20 @@
 For 2N there are more tools to find 4--4 or 5--3 major fits before 3N, more so than over 1N
 as entries tend to be a problem with the small hand.
 
-- 3 card major when unbalanced use 3!c to check for 5 card major
+- 3 card major when unbalanced use 3!c to check for 5 card major then NT or even 5 !c/!d to play
 - 5 card major use transfer then bid 3N
 - 6+ card major slam try use transfer then bid game
 - 6+ card major sign off use 4!d/4!h texas transfer
 - 4--4 majors use 3!c
 - 5!s + 4!h use 3!c
 - 4!s + 5!h use !h transfer then bid 3!s
+- 6--4 majors use transfer (opener can show 5 card other major with only 2 card major support)
 - 5--5 majors and slam interest use 3!c
 - 5--5 majors and limited game bid use !s transfer then bid 4!h
+- 6--5 hands bid similar to 5--5, no explicit way to distinguish
+- !c hands without major fit interest and unsuitable for NT use 4!s
+- !d hands without major fit interest bid 5!d directly or 4!c slam try
+- 5--5/6--4 minors use 3!s
 
 2N
     (any) = [2N interference defence](#2N interference)
@@ -26,9 +31,10 @@ as entries tend to be a problem with the small hand.
     4C = [!d slam try, 5+ cards](#2N-3S+)
     4D = [texas !h transfer](#2N-3S+)
     4H = [texas !s transfer](#2N-3S+)
-    4S = [substitute bid for !cs, could be 5332.](#2N-3S+)
-    4N = [semi/balanced slam try, e.g. 5--4 in !c+!d or 4-3-3-3 with minor.](#2N-3S+)
+    4S = [substitute bid for !cs, could be 5332](#2N-3S+)
+    4N = [semi/balanced slam try, e.g. 5--4 in !c+!d or 4-3-3-3 with minor](#2N-3S+)
     5C = [Super Gerber](#Super Gerber 5C)
+    5D = to play
     5N = [semi/balanced slam force, bid suits to try for seven](#2N-3S+)
 
 
@@ -37,12 +43,12 @@ as entries tend to be a problem with the small hand.
 Mixed 4/5 card stayman, bid with 3+ card major only.
 
 
-3D = no 5cM, not 4 !hs, maybe 4!ss
+3D = no 5 card major, not !hs, maybe 4!ss,
     3H = 4 !s
         3S = have !s fit
             3N = slam try, never interested in NT!
         3N = no fit
-    3S = 5+ !ss but also had !hs
+    3S = 5+ !ss, also had !hs, unlikely 6--4 as a 6--2 fit is fine over 4--4 fit so can use transfer
         3N = 2 card !s suit only
             4H = 5--5 in !h + !s, slight slam interest (would 2!h !s transfer and bid 4H if weaker)
         4x = 4 card !s support and good hand, trick source or values concentrated
@@ -74,7 +80,7 @@ Mixed 4/5 card stayman, bid with 3+ card major only.
         5D = 3/0 RKB response for !h
         5H = 2 RKB response for !h
         5S = 2 + Queen RKB response for !h etc.
-3H = 4/5 !hs, not !s
+3H = 4!hs / 5!hs, not !s
     3S = !h length ask, maybe with 4 !h
         3N = 4 cards
             4CD = natural, forcing e.g. 1--3--(5--4) hand
@@ -111,7 +117,7 @@ Mixed 4/5 card stayman, bid with 3+ card major only.
 
 2N
     3D = !h transfer, 5+ cards
-        3H = (2 cards !hs and < 5!s) OR 3 card !h support
+        3H = 2 card (without 5!ss) OR 3 card !h support
             3S = natural, 4 card !s suit  (4!s and 5!h)
                 3N = natural
                     4CD = 3 suiter
@@ -142,7 +148,7 @@ Mixed 4/5 card stayman, bid with 3+ card major only.
         4CD = 4 or 5 card !h support + minor trick source, e.g. 5--4--2--2, 4--4--3--2 shape
         4H = 4 or 5 card !h support + doubleton (bid 3N with 3--4--3--3)
     3H = !s transfer, 5+ cards
-        3S = 3 !ss or 2!ss and < 5 !hs
+        3S = 2 card (without 5!hs) OR 3 card !s support
             4C = 5!s--5!c (or 5431) mild slam interest
                 4D = !s slam try
                 4H = !c slam try
@@ -157,7 +163,7 @@ Mixed 4/5 card stayman, bid with 3+ card major only.
                 5C = !d slam try
             4H = 5--5 majors, NF  (would start with stayman if 5--5 slam interest)
             4S = slam try !s
-        3N = 2 !ss only, but 5!hs, 2--5--3--3
+        3N = 5!hs and 2 !ss only, 2--5--3--3
             4CD = natural, 5 cards knowing of 3 card support
                 4x = cue bid
                     step1 = Redwood for minor etc.
@@ -195,7 +201,10 @@ Mixed 4/5 card stayman, bid with 3+ card major only.
             4S = Kickback
     4H = texas !s transfer
     4S = substitute bid for !cs, could be 5--3--3--2.
-        4N = reject !c
+        4N = reject !c, (2 cards or 3 cards max 2 keycards)
+            5C = to play, could be fairly weak distributional
+        5C = encouraging
+            P = to play, could be fairly weak distributional
     4N = semi/balanced slam try, e.g. 5--4 in !c+!d or 4-3-3-3 with minor.
         P = not accepting slam try
         5CD = 4 card minor support, slam accepting

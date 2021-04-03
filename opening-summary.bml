@@ -91,7 +91,7 @@
   2C = [stayman forcing, never weak 4--4 hands, nor weak 5--4/5--5 majors.](#1N--2C)
       2D = [no 4 card major](#1N--2C--2D)
       2H = [4/5 card !h suit, not 4 !ss](#1N--2C--2H)
-      2S = [4/5 card !s suit, not 4!hs. Continuations similar to 2!h rebid.](#1N--2C--2S)
+      2S = [4/5 card !s suit, not 4!hs](#1N--2C--2S)
       2N = [4--4 in !h+!s, forcing](#1N--2C--2N)
   2D = [transfer to !h](#1N--2D)
   2H = [transfer to !s](#1N--2H)
@@ -107,21 +107,22 @@
   4H = [texas transfer to !s](#1N--3C+)
   4S = [to play](#1N--3C+)
   4N = [quantitative, 4--4--3--2 both minors, 5--3--3--2 minor or any 4--3--3--3](#1N--3C+)
-  5CD = [slam tries with 1--1--4!d--7!c or 1--1--7!d--4!c exactly](#1N--3C+)
+  5C = [1--1--4!d--7!c exactly, slam try, 2+ top !c honours, 1+ top !d honour](#1N--3C+)
+  5D = [1--1--7!d--4!c exactly, slam try, 2+ top !d honours, 1+ top !c honour](#1N--3C+)
 
 2C  [11--15 hcp, 6+ card suit](#2C Opener)
   (any) = [interference defence](#2C Interference)
-  2D = [enquiry](#2D enquiry)
-  2HS = natural, NF, 5+ (usually 6) suit, ~7--11 hcp, unlikely both majors (use 2!d)
-  2N = transfer to !d, any strength with ok, long !d suit. No 4 card major.
+  2D = [enquiry, many invite+ or weak !d hands](#2D enquiry)
+  2HS = natural, NF, 5+ (usually 6) suit, ~7--11 hcp, unlikely both majors (both majors invite+ use 2!d)
+  2N = !d transfer and no 4 card major, any strength with ok, long !d suit.
   3C = !c slam try, (preemptive if passed). Maybe (bad) 4 card major not wanting to use 2!d relay.
-  3D = 5--5+ majors, invite+
+  3D = 5--5+ majors, invite+, note option with < GF values + 5--5 majors + 2/3 !cs may bid 2!d
   3H = 5!h and 6+ !ds, GF, (passed hand = invite 6!h--4!s majors)
   3S = 5!s and 6+ !ds, GF, (passed hand = invite 6!s--4!h majors)
   3N = to play, opener can bid on with lots shape and strength
   4C = preempt
   4D = Redwood for clubs
-  4HS = to play (passed hand = fit jump), opener can bid on super fit and controls
+  4HS = to play (passed hand = fit jump), opener can bid on with super fit and controls
   4N = Blackwood
   5C = to play
 

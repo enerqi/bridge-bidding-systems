@@ -9,10 +9,20 @@
 - Open 1NT with 5--4--2--2, 5!c + 4 card major and 16 hcp, possibly with 17--18 aswell.
 - Open 2!d with 5!c longest and short !d (4--4--0--5!c, 4--3--1--5!c, or 3--4--1--5!c)
 
+Responding:
+
+- 2!h/2!s are NF natural bids. Beware opener may rebid their suit with a singleton and take the auction to the 3 level, pass can be safer though looking for a major can score better at match points.
+- Except for 2N (!d transfer without major) and 3N/4!h/4!s (natural), most *invitational+ hands* use the *2!d enquiry*, whether shapely or balanced.
+- Hands with one or both majors and invitational+ values can use 2!d but be willing to go to game despite potential misfits if opener is maximum.
+- The 2!d enquiry is also used with weaker !d hands looking for major fit before signing off.
+- 3!c slam try, 4!c preempt, again invitational !cs go via the 2!d enquiry.
+- 3!d (5--5+ majors invite+) and 3!h/3!s (5 card major and 6+ !ds GF) are all artificial special bids.
+
+
 2C--
     (any) = [interference defence](#2C Interference)
-    2D = [enquiry](#2D enquiry)
-    2HS = natural, NF, 5+ (usually 6) suit, ~7--11 hcp, unlikely both majors (use 2!d)
+    2D = [enquiry, many invite+ or weak !d hands](#2D enquiry)
+    2HS = natural, NF, 5+ (usually 6) suit, ~7--11 hcp, unlikely both majors (both majors invite+ use 2!d)
         P = doubleton major support typically
         2S = natural, NF, 4+ suit, no !h support,
         2N = singleton major support, maximum and stoppers in other suits, NF
@@ -25,7 +35,7 @@
         4C = 4 card support, 7--4
         4x = splinter
         4M = 4 card support, shot at games
-    2N = transfer to !d, any strength with ok, long !d suit. No 4 card major.
+    2N = !d transfer and no 4 card major, any strength with ok, long !d suit.
         3C = no !d fit
             3D = signing off (weak or was invite, but no !d fit)
             3M = stopper, game looking, can end in 3N or 4!c/4!d
@@ -74,7 +84,7 @@
             4D = Redwood
         4DHS = 5 card suit, natural
             4N = RKB for !c (Redwood impossible)
-    3D = 5--5+ majors, invite+
+    3D = 5--5+ majors, invite+, note option with < GF values + 5--5 majors + 2/3 !cs may bid 2!d
         3HS = 2 or 3 card support, not game values
             oM = other major shows 6--5, other game suggestion
             3N = something in !d aswell
@@ -105,7 +115,7 @@
     3N = to play, opener can bid on with lots shape and strength
     4C = preempt
     4D = Redwood for clubs
-    4HS = to play (passed hand = fit jump), opener can bid on super fit and controls
+    4HS = to play (passed hand = fit jump), opener can bid on with super fit and controls
     4N = Blackwood
     5C = to play
 
@@ -114,11 +124,11 @@
 If < invitational without 6+ !d suit, pass.
 
 2H = [any 4 card major](#2C--2D--2H)
-2S = [no 4 card side suit (minimum 6322/7222 OR shortness 6331, 7321, 7330)](#2C--2D--2S)
+2!s = [no 4 card side suit, minimum 6--3--2--2/7--2--2--2 OR shortness 6--3--3--1, 7--3--2--1, 7--3--3--0)](#2C--2D--2S)
 2N = [4 card !d side suit, any strength](#2C--2D--2N)
-3C = [maximum, no 4 card side suit (6322/7222 or any shortness 6331, 7321, 7330)](#2C-2D-3C+)
+3C = [no 4 card side suit, maximum (6--3--2--2/7--2--2--2 or any shortness 6--3--3--1, 7--3--2--1, 7--3--3--0)](#2C-2D-3C+)
 3DHS = [6--5, forcing, natural bids follow.](#2C-2D-3C+)
-3N = [2--2--2--7 or 6322 shape, maximum, solid clubs, no guaranteed side stoppers](#2C-2D-3C+)
+3N = [2--2--2--7 or 6--3--2--2 shape, maximum, solid clubs, no guaranteed side stoppers](#2C-2D-3C+)
 4C = [usually 4--8 in minors, or 1--1--3--8, forcing](#2C-2D-3C+)
 4DHS = [7--5, excellent playing strength, 2 top losers with !c as trumps](#2C-2D-3C+)
 4N = [3--1--1--8](#2C-2D-3C+)
@@ -171,15 +181,15 @@ If < invitational without 6+ !d suit, pass.
 
 **** 2C--2D--2S
 
-2S = no 4 card side suit (minimum 6322/7222 OR shortness 6331, 7321, 7330)
+2S = no 4 card side suit, minimum (6--3--2--2/7--2--2--2 OR shortness 6--3--3--1, 7--3--2--1, 7--3--3--0)
     2N = general GF  (passed hand = natural, invite)
-        3C = minimum 6322/7222
+        3C = minimum 6--3--2--2/7--2--2--2
             3D = natural, forcing, !d contract interest, maybe canapé
                 3HS = stopper
                 3N = stoppers, no !d raise
                 4C = no !d fit, probably long broken !c
                 4D = support, Hxx+
-            3M = natural, forcing, 5+ cards. Continue as over 3!d response.
+            3M = natural, forcing, 5+ cards.
                 3S = stopper, unsure !d
                     4D = natural, e.g. 5--5
                 3N = to play
@@ -394,13 +404,32 @@ If < invitational without 6+ !d suit, pass.
 
 *** 2C-2D-3C+
 
-3C = maximum, no 4 card side suit (6322/7222 or any shortness 6331, 7321, 7330)
-    next = continue as 2!c--2!d--2!s--2N--3!c, except 3!d bid is NF
+3C = no 4 card side suit, maximum (6--3--2--2/7--2--2--2 or any shortness 6--3--3--1, 7--3--2--1, 7--3--3--0)
+    3D = natural, NF, !d contract interest, maybe canapé
+        3HS = stopper
+        3N = stoppers, no !d raise
+        4C = no !d fit, probably long broken !c
+        4D = support, Hxx+
+    3M = natural, forcing, 5+ cards.
+        3S = stopper, unsure !d
+            4D = natural, e.g. 5--5
+        3N = to play
+            4D = natural, e.g. 5--5
+        4C = only xx support, 3N doubt
+            4D = natural, e.g. 5--5
+        4D = cue, slam try major
+        4M = to play
+    3N = to play (bid 4N if very strong hand)
+    4C = natural, forcing
+        4D = Redwood
+        4M = cue bid
+        4N = !d cue bid
+    4N = quantitative
 3DHS = 6--5, forcing, natural bids follow.
     oM = forcing, natural (e.g. 6 or 7 cards)
     4C = forcing
     4D = forcing !d support over 3!d or slam try cue bid over 3!h!s
-3N = 2--2--2--7 or 6322 shape, maximum, solid clubs, no guaranteed side stoppers
+3N = 2--2--2--7 or 6--3--2--2 shape, maximum, solid clubs, no guaranteed side stoppers
     4C = forcing, slam try !c
     4D = natural, forcing
     4M = natural, NF
@@ -437,6 +466,7 @@ If < invitational without 6+ !d suit, pass.
 2C--2D--(X) whether !d or !h/!s
     P = 4!d
     XX = 5!d
+    others = system on
 
 2C--(P)--P--(2x)
     X = takeout

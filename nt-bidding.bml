@@ -29,28 +29,43 @@ Opening:
 
 Responding:
 
+- There is no balanced invite. Stop in 1N or punt.
+- There is no invite raise after stayman and opener bidding your suit.
 - 4--3--3--3 hands with 4 card !h/!s often do better in NT
 - 5--3--3--2 with major can use stayman then bid NT or Smolen, often only bidding 4M with a 9 card fit
 - Major transfer then 3N is probably 5--4--2--2 with a minor, not balanced
-- There is no balanced invite. Stop in 1N or punt.
-- There is no invite raise after stayman and opener bidding your suit.
 - Semi-balanced show major with transfer or stayman, then bid NT or Smolen
-- Single suited use transfers, except 6 !ds and !c shortness, e.g. 3--3--6--1 can use stayman
+- Single suited use transfers (texas to directly play in 4!h!s), except 6 !ds and !c shortness, e.g. 3--3--6--1 can use stayman
 - 3 card major hands do not directly look for a 5--3 fit, try stayman with 5 card minor or transfer with 6 card minor
   then show a shortage, later maybe finding a 5--3 fit if opener has no stop for 3N
 - 5--4--3--1 or general three suited can use stayman then show shortage
-- 5--4 majors weak pass or transfer signoff
-- 5--4 majors invite+ use stayman
-- 4--5 major/minor slam try use stayman
-- 4--6 major/minor use stayman, maybe bid on over 3N after showing shortage
+
+Majors:
+
+- 5--4 majors weak pass or *transfer* signoff
+- 5--4 majors invite+ use *stayman*
 - 5--5+ majors invite plus, not slam try, use 3!c
-- 5--5+ majors slam try use !s transfer then 3!h
-- 5--5 major/minor invitational use major transfer then 3!c/!d
-- 5--5 major/minor GF+ use stayman
-- 5--4 major/minor use transfer
-- 6--4 majors GF+ use stayman
-- 6--5 major/minor slam try use transfer then 4!c/!d
-- 5--6 major/minor use 2!s/2N minor transfer then 4 level secondary transfer
+- 5--5+ majors slam try use !s *transfer* then 3!h
+- 6--4 majors GF+ use *stayman*
+
+Major + Minor:
+
+- 4--5 major/minor slam try use *stayman*
+- 4--6 major/minor use *stayman*, maybe bid on over 3N after showing shortage
+- 5--5 major/minor invitational use major *transfer* then 3!c/!d
+- 5--5 major/minor GF+ use *stayman*
+- 5--4 major/minor use *transfer*
+- 6--5 major/minor slam try use *transfer* then 4!c/!d
+- 5--6 major/minor use 2!s/2N minor *transfer* then 4 level *secondary transfer*
+- 4--7 use minor transfer then artificial 4!c bid
+
+Minors:
+
+- often look for 3N when unexceptional
+- 5--5 invite, use 3!d
+- 5--5+ GF, use 3!h
+- 5--4--2--2 slam try use 3!s
+- 5--4--3--1 slam try use stayman, show shortage
 
 
 #CUT nt_responses_65_transfer
@@ -58,7 +73,7 @@ Responding:
     4D = slam try in !c
     4H = no slam interest
     4S = slam try in !h
-    4N = 6KC 2 suit RKB
+    4N = [Double RKB](#Double Fit RKB)
     5m = raise, no slam interest
     5C = slam try in !d (over 4!d bid)
 #ENDCUT
@@ -83,7 +98,7 @@ Responding:
     4D = [texas transfer to !h](#1N--3C+)
     4H = [texas transfer to !s](#1N--3C+)
     4S = [to play](#1N--3C+)
-    4N = [quantitative, 4--4--3--2 both minors, 5--3--3--2 minor or any 4--3--3--3](#1N--3C+)
+    4N = [quantitative, any 4--3--3--3, 4--4--3--2 both minors or 5--3--3--2 minor](#1N--3C+)
     5CD = [slam tries with 1--1--4!d--7!c or 1--1--7!d--4!c exactly](#1N--3C+)
 
 **** 1N--2C
@@ -101,7 +116,7 @@ Stayman, forcing.
 - Not 5--5 majors invite+ (use 3!c)
 - Not 6--5 major/minor slam try (transfer the 4!c/4!d is 6--5)
 - Not invite raises of major showing responses
-- Not weak 4--4 hand. With weak 5--4 or 5--5 majors just transfer.
+- Not weak 4--4 / 5--4 / 5--5 hand. With weak 5--4 or 5--5 majors just transfer.
 
 **** 1N--2C--2D
 
@@ -598,7 +613,8 @@ Transfer to !d
     4S = to play
     4N = quantitative, when 4 card major only 4--3--3--3, not 5--4--2--2 minors, not 5--3--3--2 major
          So, 4--4--3--2 both minors, 5--3--3--2 minor or any 4--3--3--3.
-    5CD = slam tries with 1--1--4!d--7!c or 1--1--7!d--4!c exactly
+    5CD = slam tries with 1--1--4!d--7!c or 1--1--7!d--4!c exactly, 2+ top honours long suit, 1+ other minor
+        6CD = to play, ~6+ useful control points (King of major suit useless)
 
 * 1NT Interference and Lebensohl
 
