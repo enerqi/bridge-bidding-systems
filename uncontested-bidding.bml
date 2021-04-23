@@ -191,6 +191,7 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF
             2N = natural, weaker invitation than direct 2N, probably denies 4!ss
             3C = natural, invitational, 5+ !cs, usually 6 card
             3D = natural, invitational, 5+ !ds
+            3H = natural, invitational, extra long distributional
     2D = artificial GF, mostly natural continuations, priority show 3 card !h support
         2H = 3 card support, any strength
         2S = artificial (already denied 4!ss), minimum no !h support, (PASSED hand natural invitational)
@@ -258,7 +259,7 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF
     2N = natural, NF, often 5 !hs and 0/1 !ds (prefer 3!d invite with doubleton+)
         3C = natural, NF (e.g. opener 6--4 minors and responder with 4 !cs)
         3D = to play
-    3C = GF artificial, some !c values maybe not length, (PASSED hand invitational 6+ !cs)
+    3C = GF artificial, some !c values but maybe not length, (PASSED hand invitational 6+ !cs)
     3D = natural, NF, often 5 !hs, limits the hand whenever possible even with doubleton. Stopper/natural continuations.
     3H = natural, GF
     3S = natural, game values, 5--6+ majors, note invitational would bid 1!s first or 1!h then 2!h good !hs, (PASSED = splinter raise !d support)
@@ -457,10 +458,12 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF
             3C = natural, invitational, 5+ !cs, usually 6 card
             3D = natural, invitational, 5+ !ds
             3H = strongly invitational, 5--5+ majors
+            3S = natural, invitational, extra long distributional
     2D = artificial, GF, mostly natural continuations, must bid 2!h with 4 cards (PASSED hand natural invitational)
         2H = 4 card !h suit
             2S = natural, 5+ cards (not guarantee 6 cards)
                 2N = all sorts of hands natural, somewhat vague
+                3N = weaker natural
         2S = 3 card !s support
         2N = natural, vague, could be minimum
         2N+ = above 2N is natural, extra values as not bidding 2!s
@@ -678,8 +681,8 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
 
 2C = naturalish, NF, possibly 4--4 in the minors or 3 card !c suit (4--1)--5--3, to play in a minor guess
 2D = to play here, usually 6 cards
-2H = opposite major singleton !s (opponents cannot lead direct X easily), extras
-2S = opposite major singleton !h (opponents cannot lead direct X easily), extras
+2H = singleton !s (not fragment style - opponents would lead direct X easily), extras
+2S = singleton !h (not fragment style - opponents would lead direct X easily), extras
 2N = natural invitation, long !ds
 3C = both minors, invitational ~14--15, 5--5+ (not need 6--5 over 1N)
 3D = natural, invitational
@@ -1104,7 +1107,7 @@ By responder example:
 3D = [6--5+ (rebid 3!d over 2!h preference with 5--5), maximum](#1H--1S--3D)
 3H = [natural, invitational AQJ10xxx+, denying 3 card !s support](#1H--1S--3H)
 3S = [natural, invitational 4 card support](#1H--1S--3S)
-3N = [singleton splinter with !s support, often 6--4--2--1](#1H--1S--3N+)
+3N = [singleton splinter with !s support, maximum, often 6--4--2--1](#1H--1S--3N+)
 4CD = [void splinter with !s support](#1H--1S--3N+)
 4H = [to play, too strong to open 4H (e.g. 8 cards and 10 hcp)](#1H--1S--3N+)
 4S = [to play, probably 5--6 in the majors, or 4 card support an shape (4--7)](#1H--1S--3N+)
@@ -1340,7 +1343,7 @@ By responder example:
 
 *** 1H--1S--3N+
 
-3N = singleton splinter with !s support, often 6--4--2--1
+3N = singleton splinter with !s support, maximum, often 6--4--2--1
     4C = ask [shortness asks](#shortness ask general responses) follow.
         4D = short !d
         4H = short !c
@@ -1782,9 +1785,9 @@ though won't have that hand for a low tier 10--13 hcp splinter. When responder b
 ok with having 6 losers.
 
 3N = ask
-    4C = !s singleton
+    4C = !c singleton
     4D = !d singleton
-    4H = !c singleton
+    4H = !s singleton
 
 ** 1H--3N/4C/4D
 
