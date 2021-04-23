@@ -75,6 +75,12 @@ proc is_1d_unbal_opener {hand} {
   return 1
 }
 
+proc is_1d_opener {hand} {
+  if { [is_1d_unbal_opener $hand] } { return 1 }
+  if { [is_1major_opener $hand] } { return 0 }
+  if { [5CM_nt $hand 11 13] } { return 1 } else { return 0 }
+}
+
 proc is_1major_opener {hand} {
   set points [hcp $hand]
   if { $points <11 || $points>15 } { return 0 }
@@ -430,5 +436,39 @@ proc is_3x_preempt_swedish_club_response {hand} {
       [is_likely_3major_preempt $hand] ||
       [is_likely_4level_preempt $hand]} { return 1 }
 
+  return 0
+}
+
+proc is_possible_inverted_diamond_raise {hand} {
+    if { [hcp $hand] < 10 } { return 0 }
+    if { [has_side_major $hand] } { return 0 }
+    set ds [diamonds $hand]
+    if { $ds <4 } { return 0 }
+    return 1
+}
+
+proc is_possible_wjs_1d_response {hand} {
+    if { [hcp $hand] >= 10 } { return 0 }
+    set cs [clubs $hand]
+    set hs [hearts $hand]
+    set ss [spades $hand]
+    if { $hs >=6 || $ss >= 6 || $cs >= 6 } { return 1 }
+    return 0
+}
+
+proc is_possible_splinter_1d_response {hand} {
+    if { [hcp $hand] < 13 } { return 0 }
+    set ds [diamonds $hand]
+    set cs [clubs $hand]
+    set hs [hearts $hand]
+    set ss [spades $hand]
+    if { $ds >=6 && ($cs == 1 || $hs == 1 || $ss == 1) } { return 1 }
+    return 0
+}
+
+proc is_possible_diamond_preempt_1d_response {hand} {
+  if { [hcp $hand] > 10 } { return 0 }
+  set ds [diamonds $hand]
+  if { $ds >= 6 } { return 1 }
   return 0
 }

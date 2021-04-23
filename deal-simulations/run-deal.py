@@ -70,6 +70,9 @@ def main():
     os.chdir(deal_dir)
     try:
         complete_process = subprocess.run(cmd, shell=True, check=True, capture_output=True)
+    except subprocess.CalledProcessError as e:
+        print(e.stderr.decode())
+        raise
     finally:
         os.chdir(pwd)
 
