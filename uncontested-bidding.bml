@@ -994,15 +994,23 @@ stopper ask, as only natural invitational 3!d rebids (e.g. xx/Axx/AKQJxx/xxx) wo
 
 **** Support doubles and redoubles by opener
 
-- responder shows *major* at one level
+- responder bids 1!h/1!s
 - 4th hand bids, even NT bids
+- 2nd hand's bid is irrelevant
 - opener can X/XX or do a direct raise
+- not required with xxx, especially with good defensive holdings
+- responder's continuations are natural - NF 1N (maybe no stop) or 2 level bid, invitational 2N or 3 level, cue bid only GF
 
 1D--(X)--1H--(1N)
     X = support double, 3 card support (!ss)
     raise = 4 card support (!s in this case as 1!h shows !ss)
 
-Extended to the 3 level, but with more strength:
+1D--(P)--1H--(2C)--X--(P)
+    2D = NF 3+ !ds, considering something better than a 4--3 !h fit
+    2H = NF natural
+    2S = natural 4--4 majors, forcing, invitational+
+
+Extended to the 3 level, (note penalty unlikely with an artificial 1!c system) but with more strength:
 
 1D--(1S)--X--(2S)
     X = support double, long strong !ds and exactly 3 card support for implied !h suit
@@ -1020,8 +1028,6 @@ Includes 4th hands bids where 2nd hand does not bid at all:
 1D--(P)--1S--(4H)
     X = support
 
-What about 1C--(P)--1M...? 1H--(P)--1S--(2CD)...maybe only 4 cards though, XX is support 3 card?
-With the flat 1C hand more likely to not have a great hand worth X at high level
 
 **** Extra trump redouble after settling in 2HS
 
@@ -1079,7 +1085,7 @@ By responder example:
   2N = [limit+ raise](#1H--2N)
   3C = [6+ !cs, invitational ~10--12, no major support](#1H--3C)
   3D = [6+ !ds, invitational ~10--12, no major support](#1H--3D)
-  3H = [mixed raise (weak limit raise), ~7--9 4 (5) card support, distributional.](#1H--3H)
+  3H = [mixed raise (weak limit raise), ~7--9 support points and 4+ cards, distributional.](#1H--3H)
   3S = [unknown singleton splinter, 10--13 hcp 3 cover cards, ~9--12 by passed hand](#1H--3S)
   3N = [splinter !s, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
   4C = [splinter !c, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
@@ -1767,7 +1773,7 @@ Similar to 1!h--3!c:
 
 ** 1H--3H
 
-Mixed raise (weak limit raise), ~7--9 4 (5) card support, distributional. Maybe no singleton.
+Mixed raise (weak limit raise), ~7--9 support points and 4+ cards, distributional. Maybe no singleton.
 
 - New suit by opener is extreme two suiter slam try.
 - Almost always wrong to bid game with 5--3--3--2/5--4--2--2.
@@ -1848,7 +1854,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     2N = natural invitational
     3C = invite+ !hs
     3D = GF, 6+ suit when unpassed, natural invite by passed hand
-    3H = mixed raise (weak limit)
+    3H = mixed raise (weak limit), ~7--9 support points and 4+ cards
     3S = GF, 6+ suit when unpassed, Fit Jump passed hand
 
 1H--(2!d)
@@ -1858,7 +1864,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     2N = natural invitational
     3C = GF natural
     3D = invite+ !hs
-    3H = mixed raise (weak limit)
+    3H = mixed raise (weak limit), ~7--9 support points and 4+ cards
     3S = GF, 6+ suit when unpassed, Fit Jump passed hand
 
 1H--(2!h)
@@ -1941,7 +1947,7 @@ at the 3 level.
   3C = [6+ !cs, invitational ~10--12, no major support](#1S--3C)
   3D = [6+ !ds, invitational ~10--12, no major support](#1S--3D)
   3H = [6+ !hs, invitational ~10--12, no major support](#1S--3H)
-  3S = [mixed raise (weak limit), ~7--9 4 (5) card support, distributional](#1S--3S)
+  3S = [mixed raise (weak limit), ~7--9 support points and 4+ cards, distributional](#1S--3S)
   3N = [unknown singleton splinter, 10--13 hcp 3 cover cards, ~9--12 by passed hand](#1S--3N)
   4C = [splinter !c or !h, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1S--4C)
   4D = [splinter !d, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1S--4D)
@@ -1969,7 +1975,7 @@ at the 3 level.
     4C = forcing, !c slam try, e.g. 1--1--5--6
     4D = giant !c support, void splinter
     4H = giant !c support, void splinter
-2D = natural, could be short 3 card
+2D = natural, could be short 3 card, unlikely 6 card major unless 6--4 very weak suit
     P = best contract guess, usually 5 cards, maybe 1--4--4--4 or even 1--4--3--5
     2H = natural, NF, usually 6 cards
     2S = NF preference, often 3/4 card support like standard 2 level raise
@@ -1983,7 +1989,7 @@ at the 3 level.
     4C = splinter for !d
     4D = unlikely, natural forcing, freak shape
     4H = splinter for !d
-2H = natural, 5--4+ including 5--4--4--0 / 5--4--0--4
+2H = natural, 4+ cards including 6--4 (usually show 4!hs before 6 !ss) / 5--4--4--0 / 5--4--0--4
     2S = NF preference
     2N = natural, invitational
         3CD = forcing
@@ -2043,7 +2049,7 @@ at the 3 level.
     2H = natural, 4 !hs, 5--4--4--0. NOT FSF, bid 2!s with doubleton or raise !d or 3!c with six or 2N forcing.
         3H = 4 card support (do not bid 4!h wasting space)
     2S = usually doubleton !s, (3!s bid with three cards), denies 4!hs
-        3S = set !h trumps, slam interest, 3N bids are "serious" control prompts
+        3S = set !s trumps, slam interest, 3N bids are "serious" control prompts
         4S = 6 cards but not serious slam interest
         any = ...
             3S = weak 3 card support
@@ -2307,7 +2313,7 @@ Not as much suit quality required as the minor bids as directed to a major game 
 
 ** 1S--3S
 
-Mixed raise (weak limit raise), ~7--9 4 (5) card support, distributional. Maybe no singleton.
+Mixed raise (weak limit raise), ~7--9 support points and 4+ cards, distributional. Maybe no singleton.
 
 - New suit by opener is extreme two suiter slam try.
 - Almost always wrong to bid game with 5--3--3--2/5--4--2--2.
@@ -2381,9 +2387,9 @@ general forces with negative doubles.
     3C = invite+ !ss
     3D = GF, 6+ suit when unpassed, natural invite by passed hand (no weak 2 !d opening)
     3H = GF, 6+ suit when unpassed, fit jump passed hand
-    3S = mixed raise (weak limit)
+    3S = mixed raise (weak limit), ~7--9 support points and 4+ cards
 
-1H--(2!d)
+1S--(2!d)
     X = negative or GF bidding a weaker suit next time or stop asking
     2H = negative freebid, 0--10
     2S = natural
@@ -2391,7 +2397,7 @@ general forces with negative doubles.
     3C = forcing, 6+ suit when unpassed, invite passed hand
     3D = invite+ !ss
     3H = GF, 6+ suit when unpassed, Fit Jump passed hand
-    3S = mixed raise (weak limit)
+    3S = mixed raise (weak limit), ~7--9 support points and 4+ cards
 
 1S--(2!h)
     X = negative or GF bidding a weaker suit next time or stop asking
@@ -2399,9 +2405,35 @@ general forces with negative doubles.
     2N = natural invitational
     3CD = natural, forcing
     3H = invite+ !ss
-    3S = mixed raise (weak limit)
+    3S = mixed raise (weak limit), ~7--9 support points and 4+ cards
 
-Higher interference see [1H interference](#1H interference).
+1S--(2!s)
+    X = force, leading to penalty or forcing new suit bid
+    2N = natural
+    3CD = natural, NF invitational. With known minor to cue, shows forcing other minor bid.
+    3H = cue of implied major, limit+ raise
+    3S = NF
+    4CDH = splinter (of their known suit), or fit jump (of unbid suit)
+
+1S--(2N)  presumably minors
+    X = penalty interest, but can also pass then X showing values but not much in their suit
+    3C = other major, invitational+
+    3D = invitational+, !s
+    3S = weaker
+    4CD = splinter
+    4HS = to play (passed hand - fit jump other major)
+
+1S--(3x)
+    X = negative
+    NewSuit = forcing
+    cue = support showing, invitational or GF if below/above 3!ss
+
+1S--(3x) two suiter including suit bid
+    lowCue = below 3!s, invitational in !ss
+    highCue = above 3!s, GF in !ss
+    X = penalty
+
+
 
 *** responder passing, 4th hand reopens
 

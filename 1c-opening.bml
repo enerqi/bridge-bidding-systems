@@ -1106,7 +1106,18 @@ Suit bid where opener can support responder at 2 level, e.g:
     2N = natural, strong
     3D = cue, general strong force
     3S = strong hand, support
-    4m = 4 minor raise is minorwood RKB (in example showing a minor)
+    4m = 4 minor raise is minorwood RKB (in an example showing a minor)
+
+1C--(P)--1S--(2D)
+    P = weak hand, 2 card support
+    X = support weak or strong
+    XX = support, weak or strong
+    2S = weak hand, support
+    2N = natural, strong
+    3D = cue, general strong force
+    3S = strong hand, support
+    4m = 4 minor raise is minorwood RKB (in an example showing a minor)
+
 
 Suit bid where opener can only support responder at 3+ level, e.g:
 

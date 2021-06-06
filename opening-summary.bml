@@ -26,7 +26,7 @@
   [2S](#1C--2S) both minors limited GF and short major, ~12--15 hcp
   [2N](#1C--2N) natural NT invite, wants to declare
   3CDHS Weak, ~3--7 hcp, continue as if opened preempt
-  [3N](#1C--3N) 6 card Solid AKQJ suit, no outside A/K, max one extra Q
+  [3N](#1C--3N) Any 6 card Solid AKQJ suit, no outside A/K, max one extra Q
   [4CD](#1C--4CD) 8 card !h/!s suit, exactly AQJ or KQJ, no outside A/K, max one outside Q
   [4HS](#1C--4HS) 7 card Solid AKQJ suit, no outside A/K, max one extra Q
 
@@ -59,7 +59,7 @@
   2N = [limit+ raise](#1H--2N)
   3C = [6+ !cs, invitational ~10--12, no major support](#1H--3C)
   3D = [6+ !ds, invitational ~10--12, no major support](#1H--3D)
-  3H = [mixed raise (weak limit raise), ~7--9 4 (5) card support, distributional.](#1H--3H)
+  3H = [mixed raise (weak limit raise), ~7--9 support points and 4+ cards, distributional.](#1H--3H)
   3S = [unknown singleton splinter, 10--13 hcp 3 cover cards, ~9--12 by passed hand](#1H--3S)
   3N = [splinter !s, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
   4C = [splinter !c, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
@@ -79,7 +79,7 @@
   3C = [6+ !cs, invitational ~10--12, no major support](#1S--3C)
   3D = [6+ !ds, invitational ~10--12, no major support](#1S--3D)
   3H = [6+ !hs, invitational ~10--12, no major support](#1S--3H)
-  3S = [mixed raise (weak limit), ~7--9 4 (5) card support, distributional](#1S--3S)
+  3S = [mixed raise (weak limit), ~7--9 support points and 4+ cards, distributional](#1S--3S)
   3N = [unknown singleton splinter, 10--13 hcp 3 cover cards, ~9--12 by passed hand](#1S--3N)
   4C = [splinter !c or !h, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1S--4C)
   4D = [splinter !d, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1S--4D)
