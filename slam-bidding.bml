@@ -301,5 +301,75 @@ When opponents have competed and our side has the large majority of values
 - With room the direct 5x bid is an offensive hand, denying serious extras
 
 
-** Splinter/Cue bid losers/cover cards etc.
+** Splinter/Cue bid and Losers/Cover Cards etc.
 
+Cover cards (and maybe losers - losing trick count) is mentioned in some contexts such as splinters over 1!h/1!s opening.
+Mostly useful for game/slam suit contract evaluation, but may still have some relevance for NT, though the tricks
+need to be quicker and not based trumps or shortages.
+
+Responder shows some cover cards and opener looks at their losers to calculate the expected trick count.
+
+*** LTC
+
+Losing trick count is an old method defined as
+
+- 3 losers per suit, 2 partners so 24 losers max
+- 24 minus the combined losers suggests the number of available tricks
+- Aces and Kings are not losers, except the singleton King
+- Queens vary depending on supporting honours
+- Maybe used to limit opener's hand instead of pure hcps for suit contracts, examples such as...
+- 11--15 1 level opener ~7 losers max
+- 16+ hand 6 losers max
+- GF rebids after a response in standard bidding ~5 losers max
+- GF opener ~3 losers max
+- 2 level preempt 6/7 losers
+- 3 level preempt 7/8 losers
+
+LTC honour values:
+- Void = 0
+- A = 0
+- A K = 0
+- A K Q = 0
+- A K x [x x. . .] = 1
+- A Q x [x. . .] = 1 (tripleton or more)
+- A x = 1
+- A x x [x. . .] = 2
+- K = 1
+- K x = 1
+- K x x [x. . .] = 2
+- K Q = 1
+- Q J [x. . .] = 2
+
+Side suit adjustments to LTC include:
+
+- A J 10 [x...] = 1.5 losers
+- Q x x = 2.5 losers
+- Q 10 x = 2 losers (Queen honor support)
+- A Q = .5 losers
+- A Q x = 1 loser
+- J 10 x = 3 losers
+- Q x = 2 losers (but are considered a "plus")
+
+*** Cover Cards
+
+Cover cards are easier to calculate and reason about than LTC, so whilst opener may define themselves in terms of
+losers, responder may quantify their strength in terms of cover cards, essentially playing tricks.
+
+(Opener's LTC - responder's cover cards) = total losers
+
+- Counts winners that "cover" opener's losers, much like quick tricks
+- A/K = 1
+- Singleton = 1 (if there is a trump length)
+- Q = 1 iff in a useful suit, e.g. opener's suit or a bid side suit
+- J = 0.5 iff in a long combined suit
+- 4th trump = 0.5
+- QJ = 0.5, maybe in other suit  (QJXX in trumps is 2 cover cards 1 + 0.5 + 0.5 - Q + 4th trump + J)
+- xx = 0.5, maybe in other suit for ruffing
+
+Naturally, responder may need to re-evaluate cover card usefulness if partner shown to be short in a suit
+
+Suit raises are roughly:
+
+- Single = 1.5 / 2
+- Limit = 2.5 / 3
+- Game = 3.5 / 4

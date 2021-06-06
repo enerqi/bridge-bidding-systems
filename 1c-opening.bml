@@ -17,7 +17,7 @@
     [2S](#1C--2S) both minors limited GF and short major, ~12--15 hcp
     [2N](#1C--2N) natural NT invite, wants to declare
     3CDHS Weak, ~3--7 hcp, continue as if opened preempt
-    [3N](#1C--3N) 6 card Solid AKQJ suit, no outside A/K, max one extra Q
+    [3N](#1C--3N) Any 6 card Solid AKQJ suit, no outside A/K, max one extra Q
     [4CD](#1C--4CD) 8 card !h/!s suit, exactly AQJ or KQJ, no outside A/K, max one outside Q
     [4HS](#1C--4HS) 7 card Solid AKQJ suit, no outside A/K, max one extra Q
 
@@ -27,11 +27,11 @@
 - Semi-positive is very limited ~8--9 hcp, less than an unconditional invite
 - Many semi-positive 9 hcp flat hands are worth an invite
 - Possibly pass with minimum weak NT and very concentrated values in a 5!ds hand
-- Show spades first, always canapé, bid longer !ss (natural) AND shorter !ss (canapé) first with 1!s
-- Acol 2 strength !ss starts with 1!h
-- GF starts with 2!s or 3!s
+- 1!s shape is natural OR canapé: bid longer !ss (natural) AND shorter !ss (canapé) first
+- Acol 2 strength !ss starts with 1!h, natural suit bidding order
+- GF starts with 2!s or 3!s, natural suit bidding order
 - Other spade hands start with 1!s
-- Every other suit bid in longest suit natural order
+- Every other suit always bid in natural longest suit order
 - !h hands bid 2!hs with min strong club, 3!hs with GF long suit, 2 suiters use 3!c/3!d, others 1!h multi
 - Extra strength showing bids - 1!h and 2!s/3!c/3!d are longest suit natural ordered
 - Marmic hands bid 1!h unless short !hs, then bid 1!s
@@ -816,33 +816,46 @@ Game = to play
 
 ** 1C--3N
 
-- 6 card solid AKQJ suit
+- Any 6 card solid AKQJ suit
 - no outside A/K, max one extra Q
+- unlikely 6--5+ shape (maybe ignore xxxxx 5 carder)
+- suit not set
 
 4C = shortness singleton/void ask, slam interest, has identified the solid suit
     any = bid shortness or own suit if none
         next = void ask check
             5x = singleton showing
             6x = void showing
-4D = game escape, unsure of suit
-4HS = to play, identified solid suit
-5CD = to play, identified solid suit
+        other = to play, need not play in opener's suit
+4D = suit ask, usually an escape
+    any = show suit
+game = to play, regardless of suit
 
 ** 1C--4CD
 
 - 8 card major headed by AQJ or KQJ
 - no outside A/K, max one extra Q
+- suit implicitly set
 
-4H = over 4!c, to play
-4S = over 4!d, to play
-next = slam interest, shortness ask (show one if 8--3--1--1)
+4C = 8 card !h suit
+    4D = shortness ask, slam interest, (bid up the line, showing closest shortage with two)
+    4H = to play
+4D = 8 card !s suit
+    4H = shortness ask, slam interest, (bid up the line, showing closest shortage with two)
+    4S = to play
+
 
 ** 1C--4HS
 
 - 7 card full solid major
 - no outside A/K, max one extra Q
+- suit implicitly set
 
-next = shortness ask
+4H = 7 card solid !h suit
+    4S = shortness ask, slam interest, (bid up the line, showing closest shortage with two)
+4S = 7 card solid !s suit
+    4N = shortness ask, slam interest, (bid up the line, showing closest shortage with two)
+
 
 ** Slam Try Relay Bidding
 
