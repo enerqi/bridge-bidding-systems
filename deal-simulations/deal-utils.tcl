@@ -472,3 +472,28 @@ proc is_possible_diamond_preempt_1d_response {hand} {
   if { $ds >= 6 } { return 1 }
   return 0
 }
+
+proc north_south_may_overcall_1N {top_nt_range} {
+  # assuming east opens
+  set s_hcp [hcp south]
+  if {[flattish south] && [flattish north] && ($s_hcp < $top_nt_range) && ([hcp north] < $top_nt_range) } { return 0 }
+
+  set EW_GameGoing [expr ([hcp east] + [hcp west] >= 24)]
+  if {([flattish south] || $s_hcp < 8) && $EW_GameGoing} { return 0 }
+  return 1
+}
+
+proc south_may_overcall_opponents_1N_with_north_invitational {top_nt_range} {
+  set s_hcp [hcp south]
+
+  # ignore penalty double or flattish hands for south
+  if {[flattish south] || ($s_hcp >= $top_nt_range)} { return 0 }
+
+  if {[hcp east] + [hcp west] >= 18} { return 0 }
+  if {$s_hcp < 9} { return 0 }
+
+  set n_hcp [hcp north]
+  if {$n_hcp < 9 || $n_hcp > 13} { return 0 }
+
+  return 1
+}

@@ -6,6 +6,7 @@ set script_path [ file dirname [ file normalize [ info script ] ] ]
 source $script_path/deal-utils.tcl
 
 main {
+    if {![north_south_may_overcall_1N 16]} { reject }
     if {[5CM_nt east 15 17]} { accept }
     reject
 }
