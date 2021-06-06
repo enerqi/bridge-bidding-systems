@@ -1087,66 +1087,156 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
     X = passed hand would be gamble 0--4--4--5, probably only NV
     4N = true 2 suiter, maybe !hs
 
-* Opponents Open 1NT
+* Opponents open 1NT
 
-Competing over 1NT. More aggressive when opponents are NonVulnerable.
+Competing over 1NT.
 
-- Distributional hands, not balanced over balanced, especially v.s. strong NT
-- Distributional single suiters are more common, hence strong NT defence where not need X for penalty
-- Raise mostly competitive, bid game with good shape + max.
+- This defence is suited for IMPs scoring or v.s. any scoring and Weak/Intermediate NT openings where we value a penalty double to
+  show values, either to score better from it, find a game or deal with opponents' off shape / undervalue (psyche) openings
+- Aggression is vulnerability and scoring dependent.
+- A separate strong NT matchpoints defence where X shows something detailed like a 4 card major + 5 card minor is in
+  theory useful, but left out for now.
+- Nothing different in place for the balancing / pass-out position (i.e the transfers are about more options for hand
+  description and not just putting the NT opener on lead)
 
-** Strong NT
+Hand strength guide:
 
-(1N)
-    X = 2 suits, NOT !h+!c
-        2CD = lowest minor can play in, pass/correct
-        2HS = natural own one-suiter
-        3CD = natural own one-suiter
-    2CDHS = natural
-    2N = !h + !c (pass then bid 2N or just overcall with minors)
-    3CD = natural intermediate
-    3HS = preempt
-    3N = to play
-
-(1N)--X--(XX) = whatever
-    P = asking for lowest suit
-    2x = natural
-
-(1N)--X--(2x) = interference
-    X = takeout
-    suit = natural
-
-(1N)--P--(2!c) stayman etc.
-    X = !c suit
-
-(1N)--P--(2!d!h) transfer
-    X = natural suit showing
-    2HS = cue transfer suit, Michaels hand major + minor (pass then X with 3 suiter)
-
-(1N)--P--(2!s) minor, baron etc.
-    X = natural suit showing
-
-** Weak NT
+- Against a weak NT, we must be mostly constructive, and even more so v.s. a weak NT at IMPs (unless already passed)
+- Against a weak NT, there is risk in bidding but also risk in passing, so 13--14 hcp often need to do something
+- 5 card single suiter bids should have some extras in shape/strength, e.g. 5--4--3--1 shape and (12)--15 hcp
+- 6 card single suiters can be a bit lighter but basically an opening bid
+- The balancing position can be slightly lighter, i.e. 10+ hcp for a normal hand
+- Max 7 losers, again, basically an opening hand
+- Consider wasted honours and intermediate spot cards if it's a borderline maybe biddable hand, e.g. AK10xxx K10x xx xx
+- The rule of 8 ( length(longest 2 suits) - LTC >= 2 then bid ) is too aggressive outside strong NT matchpoints defence
+- 5--5 two suiters may stretch to ~ 9 hcp
+- Generally not balanced, including 5--3--3--2, until you have values for penalty double.
+- Balancing 4--4 majors takeout maybe acceptable NV vs NV at matchpoints
 
 (1N)
-    X = penalty (14)15+ top of their range depending on tricks, usually not very distributional one/two suiter
-        More = [1N System On](#1NT Opening) except transfer breaks to new suits are not super-accepts (long minor or 3 suiter)
+    X = penalty (14)15+ top of their range depending on tricks, unlikely very distributional
+        More = [1N System On](#1NT Opening) except new only jump raise breaks (e.g. (1N)--X--2!d--3!h) are super-accepts, other bids are shortness in partner's transfer suit (i.e. a long minor or 3 suiter type hand)
+    X = (passed hand) 5 card minor + 4 card major
+        2CDH = pass/correct to nearest minor/major sequences
+        2S = natural, single suiter
     2C = majors
-        (X) = !c suit
+        (X) = any, !c suit / penalty normally
             P = 4 card can play
             XX = 5 good cards can play
-            2D = longer major ask
-        2D = longer major ask
+            Other = system on
+        (2D) = any, lead directing normally
+            X = stolen bid double
+            Other = system on
+        (2HS) = any, minors with preference normally
+            X = stolen bid double, competitive values
+            cue = stop ask probably, even with 2 cues free
+            Other = system on
+        (2N+) = normally some lebensohl
+            X = penalty, a delayed double can compete to the longest major
+            3HS = invitational, or more competitive if delayed after forcing 2NT or transfer
+        P = very weak, usually 7+ clubs
+        2D = longer major ask, includes NT invite and minor escape
+            2HS = longer major, or 2!h 5--5 minimum
+                2N = naturalish value showing, invitational, may have long side suit
+                3CD = weak, natural
+                3HS = invitational
+            2N = 5--5, extras
+            3C = artificial, 6--5 !h/!s
+            3D = artificial, 5--6 !h/!s
+            3HS = maximum extras, 6--4, as top intermediate jump overcall
+        2S = NF, natural
+        2N = artificial ask, game try plus values ~ 11+ hcp
+            3C = minimum 5--4
+                3D = longest suit ask
+            3D = minimum 5--5
+            3HS = maximum 4--5 / 5--4 longest major
+            3N = maximum 5--5
+            4C = artificial, 6--5 !h/!s
+            4D = artificial, 5--6 !h/!s
         3CDHS = invitational
-    2D = !h transfer overcall, follow ups include natural NT bid, 3!h extra strength or a second suit
-    2H = !s transfer overcall, follow ups include natural NT bid, 3!s extra strength or a second suit
-    2S = alertable, 4 card !s suit + longer minor, NF
-        2N = minor ask
+    2D = !h transfer overcall
+        (X) = normally !d showing, maybe takeout
+            XX = support, 3 cards, limited
+            2H = support, 3 cards, invite values
+            cue = of implied suit, stop ask
+            2S = NF, 6+ good suit or good 5+ and 3 !hs
+            2N = competitive mixed raise, 4+ card support
+            3C = FNJ implication
+            3H = invitational, pass then bid for competitive
+        (2H) = normally takeout interference
+            X = support, 3 cards
+            cue = of implied suit, stop ask
+            2S = NF, 6+ good suit (especially if cue showed 4+ !ss) or good 5+ and 3 !hs
+            2N = competitive mixed raise, 4+ card support
+            3CD = FNJ implication
+            3H = invitational, pass then bid for competitive
+        (2S) = natural interference
+            X = support, 3 cards, values for 3 level
+            2N = competitive mixed raise, 4+ card support
+            3CD = FNJ implication
+            3H = invitational
+            cue = stop ask
+        (2N+) = normally some lebensohl
+            X = penalty
+            3CD = FNJ implication
+            3H = invitational, or more competitive if delayed after forcing 2NT or transfer
+        2H = would pass 2!h overcall
+            2N/3N = natural
+            3CD = natural, extras
+            3H = extra strength, distribution
+        2S = NF, natural
+        2N = naturalish value showing, invitational, may have long side suit
+        3CD = NF, natural
+        3H = invitational
+        3S = natural, forcing, maybe slam try fit jump
+            4CD = cue bid
+            4HS = limited
+        4CD = fit jump, maybe slam try
+        Game = to play
+        4N = RKB
+    2H = !s transfer overcall
+        (X) = normally !h showing, maybe takeout
+            2S = support, 3 cards, limited
+            XX = support, 3 cards, invite values
+            cue = of implied suit, stop ask
+            2N = competitive mixed raise, 4+ card support
+            3C = FNJ implication
+            3S = invitational, pass then bid for competitive
+        (2S) = normally takeout interference
+            X = support, 3 cards
+            2N = competitive mixed raise, 4+ card support
+            cue = of implied suit, stop ask
+            3CD = FNJ implication
+            3S = invitational, pass then bid for competitive
+        (2N+) = normally some lebensohl
+            X = penalty
+            3CDH = FNJ implication
+            3S = invitational, or more competitive if delayed after forcing 2NT or transfer
+        2S = would pass 2!s overcall
+            2N/3N = natural
+            3CD = natural, extras
+            3S = extra strength, distribution
+        2N = naturalish value showing, invitational, may have long side suit
+        3CDH = NF, natural
+        3S = invitational
+        4CD = fit jump, maybe slam try
+        Game = to play
+        4N = RKB
+    2S = alertable, 4 card !s suit + longer minor, usually 4--6, NF
+        (X) = takeout normally
+            cue = of implied suit, stop ask
+        (2N+) = normally some lebensohl
+            X = penalty
+            3S = invitational, or more competitive if delayed after forcing 2NT or transfer
+        2N = minor ask, could bid stop/cue showing later
         3x = NF, natural
     2N = minors
-    3CD = 4 card !h suit + long minor, NF
+        3HS = NF, good 6+ suit
+        4CD = obstructive
+    3CD = 4 card !h suit + long minor, 4--6, NF
     3HS = preempt
-    3N = to play
+    3N = to play, probably long minor
+    4CD = preempt
 
 (1N)--X--(XX) when penalty business redouble
     2C = alertable, maybe unnatural can be a short suit - wait for X then XX as takeout OR bid 2!d to show !d + major
@@ -1186,8 +1276,9 @@ Competing over 1NT. More aggressive when opponents are NonVulnerable.
     (XX) = run out
         More = [1N System On](#1NT Opening) and [Lebensohl](#1NT Interference and Lebensohl)
         X = negative
-        P = nothing to say
-            X = takeout
+        P = nothing to say, may have penalty interest
+            X = takeout at 2 level, first 2 level double is takeout in general
+                X = later doubles penalty
             2N/3N = natural by opener
             Cue = stop ask or major ask
     (2!c) = whatever
@@ -1273,10 +1364,8 @@ The (2!c)--P--(2!d)--X is lead directing.
 (2D)
     P = maybe 4 !h and opening values
     X = 4 or 5 poor spades
-        (2!h!s) = further interference
-            X = !hs, it's our hand good 8+
-        (P) = no interference
-            2N = [Lebensohl](#1NT Interference and Lebensohl)
+        2N+ = [Lebensohl](#1NT Interference and Lebensohl)
+        X = after (2!h!s) further interference - !hs, it's our hand good 8+
     2HS = natural, decent 5--6 cards
     2N = 16--19 NT
         3C = stayman, simple version
