@@ -2,7 +2,7 @@
 
 * 1D Opening
 
-- 11--(13) balanced/semi-balanced hands with 2+ card !d suit (poor vulunerable 11 hcp flat may pass)
+- 11--(13) balanced/semi-balanced hands with 2+ card !d suit (poor vulnerable 11 hcp flat may pass)
 - 11--(13) balanced hands in principle do not include any 5 card major hands
 - 11--15 unbalanced, maybe longer 5+ card !c suit (canapé)
 - 11--15 (4!h/!s--1)--3--5 is the only unbalanced non-natural !d opening
@@ -1076,7 +1076,7 @@ By responder example:
 
 1H = (10)11--15, 5 card Major
   (any) = [interference](#1H interference)
-  1S = [natural, 4+ cards or 5+ cards without 3 card !h support](#1H--1S)
+  1S = [4/5+ cards, any strength, maybe weak !d canapé](#1H--1S)
   1N = [100% forcing, 0+ hcp, often concealing standard single raise or 4!s and invite values](#1H--1N)
   2C = [GF (passed hand 10--12), usually 5 cards. Never 4--3--3--3 shape. Never 4--4--3--2 and 3 or 4 !hs (use 2N).](#1H--2C)
   2D = [GF (passed hand 10--12), usually 5 cards](#1H--2D)
@@ -1097,11 +1097,13 @@ By responder example:
 ** 1H--1S
 
 - 1-over-1 zero+ points, by judgement, helps obstruct etc. *Alertable*.
-- maybe weak !c canapé
-- normally 5+ !ss if lacking 3 card !h support (maybe 4 !ss with some GF or clear auction)
-- in-between hands uncertain of level likely to show 3 card support immediately
-- hands with ~10--12 4!s and no 3 card !h support start with forcing NT then 2!s invitational NF (use direct 2!h with 10--12 and 3 card support)
-- hands with four !ss, doubleton !h and ~6--9 hcp will normally pass
+- maybe weak !d canapé, as well as any strength
+- in-between hands uncertain of level likely to show 3 card !h support immediately
+- 5+ !ss if also have !h support and limited values, but still need to control the auctions
+- 4 !ss + 3+ card !h support is possible with GF values - it's easier to control the auction
+- special note, hands with ~10--12 4!s and no 3 card !h support start with forcing NT then 2!s invitational NF (use direct 2!h with 10--12 and 3 card support)
+- often pass with four !ss, doubleton !h and ~6--8(9) hcp
+- often bid 1!s with four !ss, singleton !h and ~6--8(9) hcp
 
 1N = [12--15 NT interest, often !s singleton / 5--3--3--2 / semi-balanced with 4 card minor, values spread out](#1H--1S--1N)
 2C = [natural, NF, often 5 cards or values very concentrated (so responder should bid NT instead)](#1H--1S--2C)
@@ -1123,6 +1125,7 @@ By responder example:
 1N = 12--15 NT interest, often !s singleton / 5--3--3--2 / semi-balanced with 4 card minor, values spread out
     2C = *puppet* to 2!d, often for !d escape otherwise invitational values
         2D = complete puppet
+            P = weak !d canapé
             2H = artificial, doubleton !h, NF invitational. 5 card !s suit guarantee.
                 2N = to play, not liking any 5--2 fit in !h or !s
                 3CDH = GF, NT doubt
@@ -1389,17 +1392,21 @@ Forcing NT, but less standard notes:
 - 100% forcing, even by passed hand
 - zero+ count if some fit exists
 - standard single raise hand (6--9)
-- Can pass with 6--9 and only doubleton support, though may still bid to preempt in some way
+- Can pass with 6--(9) and only doubleton support, though may still bid to preempt in some way
 - 4!ss and invitational values
+- 1--4--4--4 GF hands will bid 1N instead of a 2/1 GF
 - alertable:  "forcing, but does not promise any
 values, and may be a hand that would have raised to 2H in standard methods; also
 may be an invitational hand with a four-card spade suit."
+- 2CD 3/4 card rebids can be done even with a maximum 6 card major waiting to see what partner bids (reraise on preference or try 3N with minor support)
+as a jump major rebid should be an self-sufficient max 6 carder, ideally a good 7 carder
 
-2C = could be short 3 card or even 4--5--2--2 (reverse to 2!s requires 4!s + 6!h and maximum)
+2C = could be short 3 card, including (14)/15 6 card major, or even 4--5--2--2 (reverse to 2!s requires max + 4!s + 6!h)
     P = 5+!c, hope for best contract. With 3--1--5--4 pass or 2!d, often pass.
     2D = 6+ !d (maybe 5 good), sign off suggestion
     2H = NF preference, often 3/4 card support like standard 2 level raise
-        2S = Game try any 14+, possibly only 3 cards (3--5--1--4 / 3--5--0--5), could be passed
+        2S = short suit game try
+        3D = short suit game try
     2S = !s 4 card suit, < 3 !hs, NF invitational hand. Very notable improvement of Revision club.
         2N = NF minimum, usual played there, better part score than 2S, maybe 3!ss values in other suits
         3C = NF, at least 5--5
@@ -1426,8 +1433,10 @@ may be an invitational hand with a four-card spade suit."
     4H = no
     4S = giant !c support, void splinter, e.g. -/xx/Kxx/AJxxxxxx
         4N = [EKB](#EKB Voidwood) for !cs
-2D = natural, could be short 3 card
+2D = natural, could be short 3 card, including (14)/15 6 card major
     2H = NF preferences, often 3/4 card support like standard 2 level raise
+        2S = short suit game try
+        3C = short suit game try
     2S = !s 4 card suit, < 3 !hs, invitational
         2N = NF
         3C = GF, no !s fit, only 5!hs, unsure stop for NT, maybe 0--5--5--3 can pull 3N
@@ -1509,12 +1518,9 @@ may be an invitational hand with a four-card spade suit."
 
 ** 1H--2C
 
-2/1 GF (10--12 by passed hand). Note, very little evidence that 2/1 GF vs NF (weak) matters when playing a forcing NT.
-The old-fashioned ~9/10+ NF invitational style is equally unlikely to make much difference.
-The difficulty with standard 2/1 GF is how opener shows extras, but that's easier with club systems
-due to limited openings. In addition to the club system there will always be a bid to show a minimum.
+2/1 GF (10--12 by passed hand).
 
-- Rebid of the major after 2/1 GF shows the minimum or other catchall bids, not a 6th card
+- Rebid of the major after 2/1 GF shows the minimum or other catchall bids (strength, not shape 6th card)
 - usually 5 card !c suit (only likely 4 carder is 3--2--4--4)
 - never 4--3--3--3 / 4--4--3--2 with card support (use 2N raise instead)
 - Versus a passed hand, bids above 2!h are GF
@@ -1651,6 +1657,9 @@ Invitational+ raise 3 (GF) or 4 card support.
 - Normally invitational or slam try hands - game hands typically should end the auction quickly
 - 4--4--3--2 / 4--3--3--3 hands should show 3 card support immediately
 - With game values, 3 card support, 5 card side suit and slam interest can bid 2/1 GF first instead of 2N
+- With 4 card support + 5 card side suit and no other side controls e.g. 5--4--2--2, can also bid 2/1 GF first then a
+  jump raise to 4M shows e.g AJxx support, AKJxx side suit and nothing outside
+- Consider if a 4 card raise is suitable for a splinter, there are two ranges ~10--13 3+ cover cards and 13--16 4.5+ cover cards
 - Roughly like Jacoby, responder basically drives the auction, 3 level bids to show singleton, can stop in 3M
 
 The response structure has just enough room for the 18 different hand types opener could show whilst
@@ -1883,8 +1892,8 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
 
 1H--(2N)  presumably minors
     X = penalty interest, but can also pass then X showing values but not much in their suit
-    3C = other major, invitational+
-    3D = invitational+, !h
+    3C = invitational+, !h
+    3D = other major, invitational+
     3H = weaker
     4CD = splinter
     4HS = to play (passed hand - fit jump other major)
@@ -1960,12 +1969,15 @@ at the 3 level.
 - zero+ count if some fit exists
 - standard single raise hand (6--9)
 - maybe 1--4--4--4 GF, reducing 2/1 GF bids with only 4 card suits, though 17+ hcp still 2/1 GF
+- 2CD 3/4 card rebids can be done even with a maximum 6 card major waiting to see what partner bids (reraise on preference or try 3N with minor support)
+as a jump major rebid should be an self-sufficient max 6 carder, ideally a good 7 carder
 
-2C = could be short 3 card
+
+2C = could be short 3 card, including (14)/15 6 card major
     P = 5+!c usually, hope for best contract. Maybe 1--4--4--4 or worst 1--4--5--3.
     2DH = natural, NF, usually 6 cards
     2S = NF preference, often 3/4 card support like standard 2 level raise
-        3CDH = Game try any 14+, possibly only 3 cards
+        3DH = short suit game try
     2N = natural invite, 1--2 !ss
     3C = 8-11, 5+ !cs natural raise, NF
     3D = special bid, GF 1--4--4--4, suggests stronger !d than !h suit (splinter by passed hand)
@@ -1975,11 +1987,11 @@ at the 3 level.
     4C = forcing, !c slam try, e.g. 1--1--5--6
     4D = giant !c support, void splinter
     4H = giant !c support, void splinter
-2D = natural, could be short 3 card, unlikely 6 card major unless 6--4 very weak suit
+2D = natural, could be short 3 card, including (14)/15 6 card major
     P = best contract guess, usually 5 cards, maybe 1--4--4--4 or even 1--4--3--5
     2H = natural, NF, usually 6 cards
     2S = NF preference, often 3/4 card support like standard 2 level raise
-        3CDH = Game try any 14+, possibly only 3 cards
+        3CH = short suit game try
     2N = natural invite, 1--2 !ss
     3C = natural, NF
     3D = 8-11, 5+ !ds natural raise, NF
@@ -1990,7 +2002,8 @@ at the 3 level.
     4D = unlikely, natural forcing, freak shape
     4H = splinter for !d
 2H = natural, 4+ cards including 6--4 (usually show 4!hs before 6 !ss) / 5--4--4--0 / 5--4--0--4
-    2S = NF preference
+    2S = NF preference (2!s and 3!h normally should prefer 2!s in case 6--4)
+        3CD = short suit game try
     2N = natural, invitational
         3CD = forcing
     3CD = natural, NF
@@ -1999,7 +2012,7 @@ at the 3 level.
     3N = to play
     4CD = slam try !h raise with concentrated values, usually Ace, *not* splinter, passed hand fit jump
     4H = to play
-2S = natural, 6+ !ss
+2S = natural, 6+ !ss,
     2N = invitational, implying singleton !s
         3x = NF, e.g. weak 6--4
         3S = NF
@@ -2039,6 +2052,7 @@ at the 3 level.
 2/1 GF (10--12 by passed hand).
 
 - usually 5 card !c suit
+- Rebid of the major after 2/1 GF shows the minimum or other catchall bids (strength, not shape 6th card)
 - Only likely 4 carder hands are 2--3--4--4 / 2--4--3--4, (use 1N instead with 1--4--4--4)
 - never 4--3--3--3 / 4--4--3--2 with 4 card support (use 2N raise instead)
 - Versus a passed hand, bids above 2!s are GF
@@ -2214,6 +2228,9 @@ Invitational+ raise 3 (GF) or 4 card support.
 
 - Normally invitational or slam try hands - game hands typically should end the auction quickly
 - With game values, 3 card support, 5 card side suit and slam interest can bid 2/1 GF first instead of 2N
+- With 4 card support + 5 card side suit and no other side controls e.g. 5--4--2--2, can also bid 2/1 GF first then a
+  jump raise to 4M shows e.g AJxx support, AKJxx side suit and nothing outside
+- Consider if a 4 card raise is suitable for a splinter, there are two ranges ~10--13 3+ cover cards and 13--16 4.5+ cover cards
 - Roughly like Jacoby, responder basically drives the auction, 3 level bids to show singleton, can stop in 3M
 
 3C = artificial, multi-meaning.

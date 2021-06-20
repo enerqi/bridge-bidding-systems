@@ -96,6 +96,15 @@ proc is_1major_opener {hand} {
   return 1
 }
 
+proc has_major_support {opener_hand responder_hand support_length} {
+  set ss [spades $opener_hand]
+  set hs [hearts $opener_hand]
+  set resp_s [spades $responder_hand]
+  set resp_h [hearts $responder_hand]
+  if { ($ss>=5 && $resp_s>=$support_length) ||
+       ($hs>=5 && $resp_h>=$support_length) } { return 1 } else { return 0 }
+}
+
 proc is_1nt_opener {hand} {
   if {[5CM_nt $hand 16 18]} { return 1 } else { return 0 }
 }
@@ -331,6 +340,11 @@ proc both_minors {hand} {
 
 proc singleton_or_void_major {hand} {
   if {[spades $hand]<=1 || [hearts $hand]<=1} { return 1 }
+  return 0
+}
+
+proc any_singleton_or_void {hand} {
+  if {[spades $hand]<=1 || [hearts $hand]<=1 || [diamonds $hand]<=1 || [clubs $hand]<=1} { return 1 }
   return 0
 }
 

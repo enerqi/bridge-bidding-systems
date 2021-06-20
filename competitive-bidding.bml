@@ -11,12 +11,39 @@
 
 - same strengths
 - same 2 suiter bids
-- slightly more chance of 4 card suit, e.g. AQJ10/Axxx/xxxx/x
-- jumps are good hands, but again special 2 suiter bids are the same shapes
-- 1N is 12--15 over 1!c/!d, 13--16 over 1!h/!s
+- slightly more chance of 4 card suit at the 1 level, e.g. AQJ10/Axxx/xxxx/x or avoiding 1N vulnerable
+- jumps are good hands (intermediate ~12--15), but again special 2 suiter bids are the same shapes
+- 1N is ~11--15 (maybe 16 over 1!h/!s), use instead of a weak 4 card suit, no stopper guaranteed
+- X usual takeout, but lighter ~8+ depending on shape
 - 2N is natural stronger than X then NT bid, not unusual
 - jump cue bid is a stopper ask
 - 4x jumps are natural
+
+Follow up responses are roughly 1 point more conservative
+
+**** responding to 4th balancing takeout X
+
+(1D)--P--(P)--X
+    2HS = ~11--13 major jump with a 4 card suit, 5 card majors a bit weaker
+    2N = natural, ~11--14
+    3CD = ~10--13 minor jumps 5 cards
+
+**** responding to 4th balancing jump bid
+
+- new suits are forcing natural
+- cue strong game try
+- raise weaker limit raise
+- 2N forcing
+
+**** responding to 4th balacing 1NT
+
+(1x)--P--(P)--1N
+    2C = range ask staymanic
+        2D = minimum, no major
+        2HS = minimum, major
+        2N = maximum
+            3C = major ask again
+
 
 *** Passed hand balancing
 
@@ -1095,7 +1122,7 @@ Competing over 1NT.
   show values, either to score better from it, find a game or deal with opponents' off shape / undervalue (psyche) openings
 - Aggression is vulnerability and scoring dependent.
 - A separate strong NT matchpoints defence where X shows something detailed like a 4 card major + 5 card minor is in
-  theory useful, but left out for now.
+  theory useful, but X remains penalty for now.
 - Nothing different in place for the balancing / pass-out position (i.e the transfers are about more options for hand
   description and not just putting the NT opener on lead)
 
@@ -1268,6 +1295,25 @@ Hand strength guide:
 
 (1N)--P--(2!h!s)
     More = similar to (1N)--P--(2!d)
+
+** Strong NT Defence (Matchpoints particularly)
+
+Playing this is optional.
+
+- Keeps X as penalty / strength showing.
+- More aggressive, not constructive, i.e. rule of 8 strength
+- No detailed responses written down, just play 2N (or cue bid) as the only way to start more constructive bids by advancer
+- 2!c is less pressure than 2!h showing both majors, but arguably you don't need to pressure so much with both majors and
+  we can find out relative major lengths
+- 2!d!h!s are basically natural direct pressure bids
+
+(1N) = Strong NT
+    X = penalty / strength
+    2C = majors
+    2D = 5+ !ds and 4+ card major
+    2HS = natural
+    2N = minors two suiter OR strong constructive majors two suiter
+    3CD = natural, offensive
 
 
 ** When opponents run from 1N doubled
@@ -1451,29 +1497,27 @@ OR
 
 * Opponents open 2D or 2H Flannery
 
-5!h--4!s hands, intermediate. As stronger and more defined than Ekren style bids,
-there is less penalty opportunity.
+5!h--4!s *intermediate* (note some play 6!h--4!s or even 5!h--5!s) hands.
 
-(2D)
-    X = 15+ balanced
-        2N = Lebensohl
-    2H = takeout
-        2N = Lebensohl
-    2N = minors
-(2H)
-    X = takeout
-        2N = Lebensohl
-    2N = natural
+- Treat as weak 2!h opener with Lebensohl over takeout X
+- 2N responses do not need stayman / !h transfer so use as natural weak 3!c/3!d
 
-(2DH)
-    2S = natural
-        3x = guard showing, stop finding
-    3CD = natural
-    4CD = too strong for simple overcall
+(2D/2H)
+    P...X = sound !h takeout
+    X = light !h takeout
+        More = [Lebensohl, usual weak two defence](#1NT Interference and Lebensohl)
+    2H/4H = !s + minor, two suiter
+    2S/3S/4S = natural, with 3!s strong inviting
+    2N = natural, ~16--19
+        3CD = weak, natural (stayman or !h transfers inappropriate here)
+        others = [2NT system](#2NT Opening)
+    3CD = natural, decent for vulnerability
+    3H = stop ask, probably long minor
+        4C = no stop, pass/correct
+        4N = pass/correct to minor
+    3N = natural
+    4CD = pre-empt
 
-(2DH)--P--(2!h!s)
-    X = 15+ balanced
-    3CD = natural
 
 * Opponents open 2N Minors
 

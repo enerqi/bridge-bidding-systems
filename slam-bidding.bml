@@ -194,18 +194,16 @@ Step responses:
 
 ** EKB Voidwood
 
-Jumps shifts above game level with an agreed suit.
-Shows a void in the suit bid and asking for keycard showing step responses.
+- Jumps to the 5 level
+- Shows a void in the suit bid and asking for keycard showing step responses.
 
 - !c agreed then 5!d, 5!h, 5!s
 - !d agreed then !h, 5!s
 - !h agreed then 4!s, 5!c, 5!d
 - !s agreed then 5!c, 5!d, 5!h
 
-Plain *0/4, 1, 2, 3* KC step responses are safer.
-
 4x/5x EKB
-    xstep = 0/4, 1, 2, 3 step responses, 5th step = 2 KC + some void, 6x = 1 KC + that void (or higher suit)
+    xstep = 1/4, 3/0, 2, 2 with step responses, 5th step = 2 KC + some void, 6x = 1 KC + that void (or higher suit)
         1step = first non-trump - Q ask
             6side = lowest side K, have Q
             6slam = no Q

@@ -115,32 +115,7 @@ In 3rd/4th:
 
 - Generic to play opening
 
-
-*** 3N Alternatives
-
-An alterntive is to play 3N as Solid AKQ+ 7 card major with side feature OR solid AKQ+ 8 card major.
-A solid AKQJxxx 7 carder without side feature is opened 1!h/1!s and a plain AKQxxxx 7 carder with a standard pre-empt.
-Note, this could also be played as a solid minor, it's somewhat arbitrary.
-
-- Either minor or major openings are given better definition
-- A 4HS game is more likely to make than 5CD
-- Solid openings have a gambling aspect where they could be passed, but the 3N bid wrong sides the NT contract
-- Variants without a side feature are even less likely to make 3N
-- Variants with 2 or more side features are too infrequent and conservative, basically a strong club opening
-
-Opening 3N as a 4 level minor preempt is the other common option.
-
-- direct 4 level minor preempts put much more pressure on the opponents, like all natural preempts
-- having a double then overcall or direct overcall gives defenders more options
-- hard to pass 3N as the suit is not guaranteed solid, especially with the NT contract wrong siding
-- south african texas (namyats) 4CD openings do not gain that much compared to choosing 1x or 1!c opening and
-  again put less pressure on the opponents
-
-Opening 3N as a specific ace ask is another option.
-
-- This is better than 4N as there's more room to show the !c ace.
-- It is extremely rare though
-
+Note [3N Alternatives](#3N Opening Alternatives)
 
 * 4CD Opening
 
@@ -202,8 +177,4 @@ Specific suit asks:
     5N = 2 aces
     6C = !c specific ace
 
-Note, an alternative is to play 4N as 6--6 minors pre-empt.
-
-- This is also very rare, ~ 1:1388 for 6--6, one of 6 suit combinations = 1:8333 without considering hcp
-- Bidding slow with an ace ask type hand is probably harder than a 6--6 minor hand, especially with interference
-
+Note, [4N alternatives](#4N Opening Alternatives)

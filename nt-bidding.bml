@@ -4,12 +4,13 @@
 * NT Ranges and Scheme Situations
 
 1N = 16--18 hcp, maybe 5 card major or 5--4--2--2 long !c/!d.
-(1x)--P--(P)--1NT = 14--16 hcp, protective
-(1x)--P--(P)--2NT = 19--21 hcp
 2N = 19--20 hcp, maybe 5 card major or 5--4--2--2 long !c/!d.
+(1x)--P--(P)--1NT = ~11--15 (maybe 16 over 1!h/!s) hcp, balancing/protective
+(1x)--P--(P)--2NT = 19--21 hcp, balancing/protective
 
 (1x)--1N  = 15--18
 (1x)--X then free NT bid = 18--20 hcp
+(1x)--P--(P)--X balancing then free NT bid = ~16--18 hcp
 (1x)--X then free jump NT bid = 21+ hcp
 (2x)--2N = 16-18
 
@@ -633,30 +634,14 @@ Most important is its use against weak twos and after we have made natural openi
 - (2D multi)--X
 - (2D multi)--2!h!s--(P)
 
-** Lebensohl and Variants
-
-There's many ways to play it such as:
-
-- Classic (2N puppet to show weak/competitive hands below opponents suit invitational above, direct 3x GF)
-- Reverse (direct 3x weak/competitive below opponents suit invitational above, 2N puppet to show GF hands)
-- Rubensohl/Rubinsohl (Rubens advances + Lebensohl, where 2N--3!s transfers are weak or GF, transfer to opponents suit is staymanic cue)
-- Transfer/Advanced (similar to Rubensohl but 2N bid is multi-meaning puppet any strength !cs or weak other suit, transfers are invitational plus)
-- Rumpelsohl (transfers weak or GF, 2N multi-meaning used to show invitational hands).
-
-Within those there could be minor variations around whether fast shows (a stop), slow shows (a stop via 2N first if
-2N is multi-meaning puppet and not just showing !cs), slow/fast cue shows a 4 card major or not and stop asks,
-direct 3 level bids are strong or via 2N are strong etc. Transfers to the cue suit or transfer through it. Showing competitive hands faster naturally sounds more
-matchpoint oriented. Focusing on invitational/GF hands better for IMPs. We play a "transfer" variant. The transfer
-allows the stronger player to declare. Given all the names and variations the name doesn't label an exact system.
-If a negative double is available then the Lebensohl bidder has more options/accuracy. (2S)-X takeout is harder and invitational plus only responses certainly do not make sense
-as advancer is forced to bid.
-Our variant, similar but still different to the Revision club variant:
+Our variant ([note: Lebensohl variants](#Lebensohl Variants)), similar but still different to the Revision club variant:
 
 - 2suit bids are natural weak/competitive
 - 2N multi-way puppet to !cs either weak/competitive !c/!d hands or GF !cs
-- 3!c/3!d/3!h transfers to new suits are invitational plus - opener with fit/good hand bids on super accepting
+- 3!c/3!d/3!h transfers to new suits are invitational plus - opener with fit/good hand bids on
 - transfer around/through the cue suit
 - Cue is GF staymanic, at least 3 other major, and if double also available it shows a singleton/void in opponents' suit
+- Cue implies no stop, i.e. cue showing a singleton, but also after a double
 - X is staymanic and promises doubleton+ in their suit (of a natural suit implied but maybe not bid)
 - X negative then 3N shows the other major and a stopper
 - X negative then cue bid shows the other major and NO stopper
@@ -669,57 +654,182 @@ In terms of artificial overcalls:
 - Note if the overcall promised another unknown suit we do not consider it.
 - When the overcall does show two specific suits, X is negative for the other suits
 
+*** Over a balanced hand
+
+1CD/1N--(2!d)
+    X = staymanic 3+ both majors, doubleton+ in !ds, follow on suit bid is poor 5 card invitational, follow on cue stop ask
+    2HS = weak
+    2N = puppet, weak or GF !cs
+    3C = invitational plus !h
+        3D = no fit, no stop, any strength (not any minimum as no room for cue stop ask)
+        3H = fit, minimum
+        3S = natural, 5 carder (possibly strong 1!c opening), no stop implied
+        3N = no fit, stopper, any strength (not ideal with minimum but helps the GF responder decide)
+    3D = cue, GF staymanic, singleton/void in !ds
+    3H = invitational plus !s
+        3S = minimum
+        3N = no fit, stopper, any strength (not ideal with minimum but helps the GF responder decide)
+        4CDH = natural (possibly strong 1!c opening)
+    3S = artificial, GF, no stopper
+    3N = to play, stop implied, no other major
+    4x = system on
+
+1CD/1N--(2!h)
+    Dbl = staymanic guarantee 3oM, doubleton+ in !hs, follow on suit bid is poor 5 card invitational, follow on cue stop ask
+        2S = natural
+            3x = new suit, invitational weak suit
+            3S = invite
+        2N = stop, without major fit
+        3S = extras, 5 card !s fit
+    2S = weak
+        3H = extras, 5 card !s fit
+        3S = 4 card support
+    2N = puppet, weak minor or GF clubs
+        (X) = usually penalty
+            XX = maximum opener
+        (3!h) = more interference
+            P = opener should pass not knowing what responder has
+                X = penalty
+                3N = natural, stop
+                4CD = competitive
+        (3x) = new suit interference
+            X = penalty
+    3C = invitational plus !d
+        3D = minimum, maybe only 2 card support (still room to cue stop ask)
+            3H = stop ask, stronger hand
+                4D = no stop, NF
+            3S = natural, GF, 4+ card suit, diamonds worth bidding instead of initial cue or X
+            4C = GF, natural
+            4D = GF, slam try
+            4H = Redwood for !ds
+        3H = maximum, no stop
+            3S = natural, GF, 4+ card suit, diamonds worth bidding instead of initial cue or X
+            4C = GF, natural
+            4D = NF, opener could raise with good support
+            4H = Redwood for !ds
+        3S = natural, 5 carder (possibly strong 1!c opening), no stop implied
+            4C = GF, natural, 5+ suit
+            4D = NF
+            4H = Redwood for !ds
+            4N = !s RKB
+        3N = maximum, stopper
+        4H = Redwood for !ds, probably strong 1!c opener
+    3D = invitational plus !s
+        3H = no fit, no stop, any strength (not any minimum as no room for cue stop ask)
+            3S = NF
+            3N = stop, GF hand
+            4CD = GF, natural
+            4H = !s slam try
+        3S = fit, minimum
+            4CDH = !s slam try
+        3N = no fit, stopper, any strength (not ideal with minimum but helps the GF responder decide)
+            4CD = GF, natural
+            4H = !s slam try
+        4S = fit, maximum
+        4N = !s RKB, probably strong 1!c opener
+    3H = GF, staymanic 4!ss + singleton/void in !hs, no stop
+        3S = fit, extras
+        3N = no fit, stopper
+        4CD = no fit, natural minor
+        4S = fit, fast arrival
+    3S = artificial, GF, no stopper
+        3N = to play, stop or pray
+        4CD = no stop, natural
+    3N = to play, stop implied, no other major
+    4x = system on, even transfer to their suit is natural
+
+1CD/1N--(2!s)
+    Dbl = staymanic guarantee 3oM, doubleton+ in !ss, follow on suit bid is poor 5 card invitational, follow on cue stop ask
+        2N = stop, without major fit
+        3H = fit, minimum
+        3S = extras, 5 card !h fit
+        4H = fit, non-minimum
+            4N = natural, 3 card only major
+    2N = puppet, weak minor or GF clubs (maybe only 4!cs if GF balanced no stop - no dedicated bid)
+        (X) = usually penalty
+            XX = maximum opener
+        (3!s) = more interference
+            P = opener should pass not knowing what responder has
+                X = penalty
+                3N = natural, stop
+                4CD = competitive
+        (3x) = new suit interference
+            X = penalty
+    3C = invitational plus !d
+        3D = minimum, maybe only 2 card support (still room to cue stop ask)
+            3H = natural, GF, 4+ card suit, diamonds worth bidding instead of initial cue or X
+            3S = stop ask, stronger hand
+                4D = no stop, NF
+            4C = GF, natural
+            4D = GF, slam try
+            4H = Redwood for !ds
+        3H = natural, 5 carder (possibly strong 1!c opening), no stop implied
+            4C = GF, natural, 5+ suit
+            4D = NF
+            4H = Redwood for !ds
+            4N = !s RKB
+        3S = maximum, no stop
+            4C = GF, natural
+            4D = NF, opener could raise with good support
+            4H = Redwood for !ds
+        3N = maximum, stopper
+    3D = invitational plus !h
+        3H = minimum, maybe only 2 card support (still room to cue stop ask)
+            3S = no stop, GF, only 5 card !h suit
+            3N = stop, GF hand
+            4CD = GF, natural
+            4H = to play
+            4S = !h RKB
+            5CD = !h EKB
+        3S = no fit, no stop, maximum
+            4CD = GF, natural
+            4H = to play
+            4S = !h RKB
+            5CD = !h EKB
+        3N = no fit, stopper, maximum (not any strength as still room to cue stop ask over 3!h response)
+            4CD = GF, natural
+            4H = to play
+            4S = !h RKB
+        4H = fit, maximum
+    3H = fast weak/competitive with !hs
+    3S = GF, staymanic 4!hs + singleton/void in !ss
+        3N = no fit, stopper
+        4CD = no fit, natural minor
+    3N = to play, stop implied, no other major
+    4x = system on, even transfer to their suit is natural
+
+
 *** Over a takeout double:
+
+Similar to as to over a balanced hand, except responder and the takeout doubler can have a wide range.
+Invitational is ~9--11.
+
 
 (2H)--X
     2S = weak
     2N = puppet, weak minor or GF clubs
+        3C = relayed, maybe good extras with !ds
+        3D = can pass 3!ds, game chance opposite !cs and less than 9--11 invite
+        3HS = natural, extra strength ~17+, 5 card major bid
     3C = invitational plus !d
     3D = invitational plus !s (transfer through)
+        4H = fit, slam try
     3H = GF, staymanic 4!ss  (takeout doubles not always have !ss)
-    3S = GF, 3N transfer, no 4!s, no stopper (could be played as minors)
+    3S = artificial, GF, no stopper (could be played as minors or !c GF)
     3N = to play, stop implied, no other major
-    4C = !h void, slam interest
-    4D = texas !hs (or play as singleton slam interest)
-    4H = texas !ss
+    4x = natural
 
 (2S)--X
-    2N = puppet, weak minor or GF clubs
+    2N = puppet, weak minor or GF clubs (+ OR GF, no stopper balanced)
+        3C = relayed, maybe good extras with !ds
+        3D = can pass 3!ds, game chance opposite !cs and less than 9--11 invite
+        3HS = natural, extra strength ~17+, 5 card major bid
     3C = invitational plus !d
     3D = invitational plus !h
     3H = fast weak/competitive with !hs (given up a generic no major, no stopper transfer as 2N then cue may be taken as stopper asking but implies GF clubs)
     3S = GF, staymanic 4!hs (takeout doubles not always have !hs)
     3N = to play, stop implied, no other major
-    4C = !s void, slam interest
-    4D = texas !hs
-    4H = texas !ss (or play as singleton slam interest)
-
-*** Over a balanced hand
-
-1m/1N--(2!h)
-    X = staymanic guarantee 3oM, doubleton+ in !hs, follow on suit bid is poor 5 card invitational, follow on cue stop ask
-    2S = weak
-    2N = puppet, weak minor or GF clubs
-    3C = invitational plus !d
-    3D = invitational plus !s
-    3H = GF, staymanic 4!ss + singleton/void in !hs
-    3S = GF, 3N transfer, no 4!s, no stopper (could be played as minors, often 5--4)
-    3N = to play, stop implied, no other major
-    4C = !h void, slam interest
-    4D = texas !hs (or play as singleton slam interest)
-    4H = texas !ss
-
-1m/1N--(2!s)
-    X = staymanic guarantee 3oM, doubleton+ in !ss, follow on suit bid is poor 5 card invitational, follow on cue stop ask
-    2N = puppet, weak minor or GF clubs
-    3C = invitational plus !d
-    3D = invitational plus !h
-    3H = fast weak/competitive with !hs (could play as minors or generic no stop/no major GF)
-    3S = GF, staymanic 4!hs + singleton/void in !ss
-    3N = to play, stop implied, no other major
-    4C = !s void, slam interest
-    4D = texas !hs
-    4H = texas !ss (or play as singleton slam interest)
+    4x = natural
 
 
 ** Non-Penalty X Interference of Our NT
