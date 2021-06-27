@@ -5,6 +5,37 @@
 
 Notes on variants or alternatives of agreements that have been considered, but we don't actually play.
 
+** Mini NT or Any NT weaker than 16--18
+
+It's somewhat a negative not having a pre-emptive weak NT, specifically NV at matchpoints. Outside of that downside
+16--18 just fits too well with the other system parts where we force all ~16--20 1C opening hands to be unbalanced as
+1N and 2N handle 16--20 (semi)balanced hands. Hands tend be limited very quickly.
+
+Mini NTs are a fun novelty but too hard to construct over. When vulnerable, particularly at IMPs scoring there's too
+much risk of going for a penalty when defenders X to show 13+ points. When NV it's definitely safer, high frequency
+and pre-emptive. It also pre-empts partner though, so really best played NV in 3rd position only. Even having two
+systems for VUL and NV is a chore.
+
+** Unbalanced Diamond Opening
+
+Having a natural 4+ 1!d opening helps define some hand types more quickly and makes competive inverted minor raises easier,
+though we'd often try to find a major fit anyway. Our 1N range of 16--18 would make the weak NT
+variant of the 1!c opening too wide ranging though, and the high 16--18 NT range is a central part of the system design
+that keeps the 1C opening unbalanced in the 16--20 range. The range 12--15 is too wide for the weak NT 1!c opening,
+though some players don't mind a wider NT range. Even if the 12--15 wider range is acceptable we prefer to be
+bidding most 11 hcp balanced hands for the same reasons as a weak NT. That naturally leads to a two tier weak NT scheme
+with 1!d as 11--(13) nebulous (not natural) and 1!c as (13)--15.
+
+Additionally, 1!d cannot be 4+ cards natural unbalanced unless playing a 2!c opening as possibly 5!cs and 4+ major which is
+difficult to construct over, hence we use a 6+ !cs intermediate 2!c opener.
+
+** 1C 11--13 and 1D 13--15
+
+Swapping the weak NT ranges around. This is somewhat arbitrary, two sides of the same coin, so may still be experimented with.
+1!d is more pre-emptive with the weaker hand, but with interference over 1!c it
+could feel safer to pass with a flat 11--13 hand rather than a 13--15 hand that is close in values to the 16--20 unbalanced strong club range.
+The 11--13 hand feels no pressure to re-open and compete, but the 1!c weak NT might want do with 5--3--3--2 and 15 hcp.
+
 ** 2/1 GF vs NF vs invitational
 
 Note, very little evidence that 2/1 GF vs NF (weak) matters when playing a forcing NT.
@@ -15,6 +46,24 @@ due to limited openings. In addition to the club system there will always be a b
 We play 2/1 GF over a major opening. The major rebid is then a catchall strength showing bid (others showing extras).
 The alternative is that the 2M rebid shows shape, 6+ cards instead of being strength defining. This more heavily leans
 on conventions like the serious 3NT and last train to convey extras at a later stage.
+
+** Multi 2!d, Weak 2!d opener, 5--4+ Major/Minor weak opener
+
+We play 2!d as a Precision style 3 suiter so that the nebulous 1!d opening is less messy and constructive bidding is easier.
+So no multi 2!d or weak 2!d. The lack of direct pressure on the opponents with a multi 2!d would make it less desirable as a pre-empt aswell.
+
+5--4/5--5 major/minor two suiters are more frequent than a standard 6 card weak two bid, roughly a 3:2 ratio. Ambiguity in 5 v.s. 6 cards
+makes safe game constructive bidding a challenge, so we should choose one of 5 or 6 cards in a constructive style.
+We prefer to be able to bid with the stronger hand - the 6 card suit. In 3rd position anything is biddable of course - mix of 5 or 6 carders.
+
+A 5--4+ style NV and 6+ card VUL style could be played at the cost of having more responses to learn.
+Whether the NV 5--4+ style should also include 6 card weak twos is an interesting experiment to try.
+
+At the moment the weak two style is reasonably constructive - a 5 hcp 7--11 range. The up to 11 hcp
+(if not 11 hcp + 3 other major) actually makes it more frequent as 4--6 hcp hands are very rare. If the style became
+more aggressive, say tuned for matchpoints scoring, then 5 cards or even mixed 5/6 card weaks twos could be experimented with.
+
+
 
 ** 3N Opening Alternatives
 
@@ -152,6 +201,8 @@ can be passed.
     2N = !c transfer
     3C = minors
     3D = majors, strong
+
+
 
 
 ** 2D Multi Opening

@@ -28,19 +28,20 @@ let the initiator push them.
 
 - Assume 3 level bids are natural, even if possibly cues to start slam probes
 - Jumping to 4 level ambiguously (4 minor or new major after 1st round of bidding) is a cue bid
-- control bid of suit already bid shows 2 top 3 honours (AK, AQ, KQ)
+- control bid of my already naturally bid suit shows 2 top 3 honours (AK, AQ, KQ)
 - control bid of partner's secondary (not trump) suit shows 1 top 3 honours
 - bidding past game implies control of the other remaining suits
-- 5 level cue bids are dangerous, would imply a void
+- 5 level cue bids are dangerous, would imply a void or possibly controls in partner's suit pushing for a different
+  specific cue bid if Lackwood cannot help
 
 *** Serious 3N and Double Fit Showing Replaces Immediate Cue Bid
 
-- In many fit showing auctions we play 3N as serious (Fred) prompting further control bids
+- In many fit showing auctions we play 3N as "Serious" prompting further control bids
 - After a fit is found the next bid should allow double fit showing
 
 1S--2H--3H = raise, non-specific strength, cannot play 3N
     3S = confirms double fit, NOT a cue bid
-    3N = serious control prompt
+    3N = Serious
 
 - With a double fit assume that !s is the "set" trump suit (or the major if a major-minor fit),
   so !h bids are control bids and 4N is double fit RKB
@@ -56,17 +57,21 @@ Your enquiry asking bids (e.g. RKB, Gerber, Free 5M raise) can disturbed by:
 
 For (1) and (3) we have *ROPI DOPI*
 
-- X = 0 steps
-- Pass = 1 step
-- next lowest bid is the 2nd step
+- X = 0 steps  (e.g. 1/4 RKB or 0 Blackwood)
+- XX = 0 steps  (e.g. 1/4 RKB or 0 Blackwood)
+- Pass = 1 step (e.g. 3/0 RKB)
+- Others = 3rd step, 4th step etc.
 
 For (2) we have *ROPE DOPE*
 
 - X = 1
-- Pass = 0 or 2 seps
+- XX = 1
+- Pass = 0 or 2 steps
 - next lowest bid is the 3rd step
 
 Rarely, when (4) happens - XX is to play (e.g. 5!s XX + 1 > 6!s made).
+
+Note, not playing DEPO - that works better with 0314 RKB instead of 1430 RKB.
 
 ** Gerber 4C
 
@@ -99,11 +104,6 @@ Rarely, when (4) happens - XX is to play (e.g. 5!s XX + 1 > 6!s made).
     5N = 3 Aces
 
 
-** 4CD RKB Minorwood
-
-Bidding 4!c!d *after already agreeing* the minor is RKB for that minor.
-When first agreed at the 4 level it is *not*(hmm?) Minorwood.
-
 ** RKB 4N
 
 4 Ace key cards + King trumps. "1430" step responses.
@@ -116,15 +116,42 @@ When first agreed at the 4 level it is *not*(hmm?) Minorwood.
 - 6x = 1 or 3 kc + void in specific suit
 - 6slam = odd kc + void in higher suit
 
+*** Queen Ask
+
+- This includes bidding past the agreed suit, e.g. 4N--5-!d--5!s with !hs agreed, but promises all
+  keycards and is grand slam try.
+- Could be used even with the Q to find extra trumps
+
 4N--5C/5D
     step = first non-trump - Q ask
-        5x/6x = side K, have Q trumps
-        5N = no side K, have Q trumps
+        5x/6x = side K, have Q trumps (or known 10+ card fit)
+            5N = no use, N/A
+            6other = bid 7 if you have this King
+        5N = no side K, have Q trumps (or known 10+ card fit)
         agreed suit = no Q
+
+*** King Ask
+
+- First, 5N asks to bid lowest King
+- Following on, any suit is a King request to bid grand
+
 4N--5x
-    5N = (or non-trump, non queen ask) K ask (not show) grand try, keep bidding side Kings in side suits from here
+    5N = (or non-trump, non queen ask) bid lowest K ask grand try
         6x = lowest side K
+            6other = bid 7 if you have this King
         6slam = no side K
+
+*** New Suit 3rd Round Control Ask for Grand
+
+- Asked to bid 7 if have a 3rd round control - queen or doubleton with 9+ trump fit
+- Mutually exclusive to the King Ask!
+- Free bid suit (often at the 6 level) that is not a sign off
+
+The subletly is when the free bid is a sign off or not. For simplicity, then assume it's a natural sign off even after
+RKB bids involving a different suit if:
+
+- prime first bid suit could be 6+ cards AND it's a 6 level bid
+
 
 ** Kickback 4S
 
@@ -195,33 +222,46 @@ Step responses:
 ** EKB Voidwood
 
 - Jumps to the 5 level
+- Normal RKB/Kickback after void shown should similarly ignore an Ace in the void suit
+- Impossibly natural - agreed a suit already, maybe an opponent's suit, or a forcing natural suit could be bid at a lower level
 - Shows a void in the suit bid and asking for keycard showing step responses.
-
-- !c agreed then 5!d, 5!h, 5!s
-- !d agreed then !h, 5!s
-- !h agreed then 4!s, 5!c, 5!d
-- !s agreed then 5!c, 5!d, 5!h
 
 4x/5x EKB
     xstep = 1/4, 3/0, 2, 2 with step responses, 5th step = 2 KC + some void, 6x = 1 KC + that void (or higher suit)
         1step = first non-trump - Q ask
             6side = lowest side K, have Q
             6slam = no Q
-        5N = K ask, keep bidding side Kings in side suits from here
-            6side = lowest side K
-            6slam = no side K
+        5N = K ask, same as RKB
 
 https://tinyurl.com/y6yv5m8r
 
+*** King Request when no 5N available
 
-** 4NT Romex Raise
+5D--5N = EKB response taking up 5N
+    6C = asks for that specific King, bid 7 with !c King
+    6D = asks for that specific King, bid 7 with !d King
+    6H = asks for that specific King, bid 7 with !h King
 
-- Jump 4NT bid by a KNOWN weak hand that couldn't naturally initiate RKB/Blackwood
-- Support for the strong hand's suit + too strong for a game bid
 
-1C--1D--2S--2N--3H =
-    4N = Romex (not RKB for !h)
-        5C = [RKB](#RKB 4N) IFF trumps is a Major suit
+** Lackwood
+
+- 5x major raise
+- Lacking any control in a KNOWN suit, e.g. pre-empted by opponents 1S--(4H)--5S or bypassed when control bidding
+- Can help with Last Train taking a cue bid, if only trumps and the last train suit are missing treat the last train suit as lacking
+- With multiple potential lacking side suits treat as the Free 5x Major Raise convention
+- Void treated as first round control and a keycard, only a 5N response would lead to NTs
+
+Responses:
+
+5M = Lackwood
+    P = no first or second round control
+    5N = Kx(x...) guarded
+    6C = first round control of lacking suit, odd keycards count - 1/3
+        1below = vague Last Train grand try
+    6D = first round control of lacking suit, even keycards count - 2/4
+        1below = vague Last Train grand try
+    6M = second round control
+
 
 ** Free 5x Major Raise
 
@@ -371,3 +411,69 @@ Suit raises are roughly:
 - Single = 1.5 / 2
 - Limit = 2.5 / 3
 - Game = 3.5 / 4
+
+** 1HS Slam Tries
+
+Splinters or new suit 2/1 GF or Jacoby 2N? In general note:
+
+- After a 2/1 GF new suit Opener's rebids focus on showing strength before shape
+- Jacoby asks about singletons or extras instead of showing anything
+- After a Jacoby 2N opener's minimum no singleton hands will often be 5 cards
+- There's often no easy way to know if partner has 6+ cards, but this maybe helped by the Last Train convention as the extra
+  shape is what should swing a hand to more tricks
+
+*** With 3 card support
+
+- Only 2/1 GF or Jacoby 2N.
+- Do not use a forcing NT - the only slam try bids over that are splinters for opener's second suit if shown. Note GF 4--4--4--1 hands with singleton in partner's suit start with 1N.
+- 2/1 GF is best when (1) 5+ suit suit 2/3 top honours so partner can evaluate honour support (2) 6+ card suit self-sufficient that could become alternative trumps
+- Jacoby 2N is likely more flat (or very strong) and wants to hear if partner has a fitting singleton, or even good 5 card side suit
+
+*** With 4 card support
+
+- We play two-tiered splinters that should often be used, but beware e.g. 1!h--4!d takes up a lot of space
+- 2/1 GF is harder to use if there is also a side singleton as we may not be able to splinter it or assumed only 3 card support splinter
+- 2/1 GF picture raises are safe - 5 card side suit shown then jump to game showing 4 card support without outside Aces/Kings
+- Jacoby 2N is unlikely a singleton, though could be very strong, e.g. 17+. Again, mostly bid to drive the auction by asking and not showing.
+
+*** 1H--1S auctions?
+
+- Possibly used with similar intention to 2/1 GF - there is an artificial GF over the 1N rebid and FSF over second suit rebids.
+- 1H--1S--2H has limited slam try options though, 3C/3D GF quasi-natural then bid beyond 3N or 4N !h RKB
+- Going past 3N after FSF should always be assumed first major suit support as there are other slam try bids for the second bid suit.
+
+** Serious 3NT
+
+- Shows extras in shape or strength beyond what currently indicated, e.g. 1S--2H--2S--3S--3N opener doesn't have a hand
+  good enough for a 3S rebid (1 loser suit), but has extra in shape/strength e.g. AQJxxx x Kxx Axx with top range points
+  and a 6 card suit
+- Only in a GF and major raised/agreed (not simple preference). Examples include 2/1 GF bids then raises, 1C--1H--1S--3S, Odwrotka responses showing
+  6+ cards, agreed major after FSF or 1N Stayman/Smolen and some after a 1!d opening.
+- Most auctions where it's relevant are noted explicitly
+- After Jacoby 2N the 3N bid is not serious - unlike standard systems 2N can be bid with only 3 card support so over
+  minimum responses it's natural to play and over stronger responses it's a relay for details
+- Similarly after Odwrotka not all 3N bids would be serious unless one partner shows beyond minimum length
+- Direct control bids bypassing 3N are now more informative in case partner has significant extras, e.g. 1S--2H--2S--3S--4C
+  with KJxxxx x KQx Axx a minimum but partner may only need a !c control. Bypassed suits deny controls.
+- There are some strong hands that can comfortably just bid RKB immediately, in which case serious 3N or cue bids can be ignored
+
+** Last Train
+
+With parallels to Serious 3NT, more bids to show extras that have not been communicated.
+The 4x Last Train bids show too much to sign off, but too little to bid RKB.
+The main Last Train bid is one step below game with an agreed major:
+
+- 4!d when !hs agreed
+- 4!h when !ss agreed
+- Only in a GF and major raised/agreed (not simple preference)
+- Still useful when serious 3N was possible, e.g. 1H--2D--2H--3H--3S--4C--4D decided to show the !s control instead of
+  bidding 3N serious, so extras are still possible
+- With interference aswell, e.g. 1H--(3C)--4C--(P)--4D shows extras from opener after the HCR
+
+Additional variations used in less obvious auctions include, 3x and 5x Last Train bids:
+
+- The 1M--2M or 1M--1N--2x--2M short/long suit game try follow ons may leave space one under 3M which doesn't have a
+  useful meaning beyond showing slight extras, e.g. 1S--2S--3D--3H
+- Higher pre-empted auctions, e.g. 1S--(2D)--4S--(5D)--5H showing offensive extras and good slam chance if partner has
+  a couple of useful cards/controls.
+
