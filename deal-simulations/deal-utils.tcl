@@ -144,6 +144,23 @@ proc is_tricky_suit {hand suit} {
   if { [offense $hand $suit] > 3 } { return 1 } else { return 0 }
 }
 
+proc has_n_plus_carder {hand n} {
+  if {[spades $hand] >= $n || [hearts $hand] >= $n || [diamonds $hand] >= $n || [clubs $hand] >= $n} { return 1 }
+  return 0
+}
+
+proc is_any_weak_6_plus_carder {hand} {
+  set points [hcp $hand]
+  if {$points < 5 || $points > 11 } { return 0 }
+  return [has_n_plus_carder $hand 6]
+}
+
+proc is_any_weak_or_min_7_plus_carder {hand} {
+  set points [hcp $hand]
+  if {$points < 5 || $points > 14 } { return 0 }
+  return [has_n_plus_carder $hand 7]
+}
+
 proc is_generic_weak2d {hand} {
   set points [hcp $hand]
   if {$points<6 || $points>10 } { return 0 }
