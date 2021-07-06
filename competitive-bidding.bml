@@ -2,12 +2,76 @@
 
 * Competitive Auctions
 
-** Overcalls
+** We Overcall or X/XX Summary
 
 - Generally based more on shape than exact strength
 - 1 level light major suit overcalls, e.g. 8+ hcp 6--3--3--1
+- Responsive doubles to 3!s
+...TODO
 
-*** 4th balancing of 1x openings
+
+*** Cue Bids and Jump Overcalls Summary
+
+**** After minor openings:
+
+- (1!c)--2!c cue shows 5+ !ds (other minor), probably 6 cards if < 11, and 4 !s, cannot T/O X, simple overcall strength as can play 2 level.
+- (1!c)--2!d shows 5+ !ds (other minor), probably 6 cards if < 11, and 4 !h, cannot T/O X, simple overcall strength as can play 2 level.
+- (1!d)--2!d cue also 5+ !cs (other minor) and 4 !hs, usually 6 cards as !cs going to 3 level, cannot T/O X, intermediate strength.
+- (1!d)--2!s is intermediate strength, 4!ss and 6 !cs,
+
+No easy way to show 5!cs and 4!ss over 1!d opening, unless can T/O X. Forcing !cs to 3 level normally needs 6 cards.
+
+- (1!c/1!d)--2!h 5--5+ majors, simple overcall strength ~8--13 as can play 2 level
+- (1!c/1!d)--3!c/3!d jump cue shows 5--5+ majors, stronger hands ~14/15+, super michaels
+- (1!c)--2N 5--5 unusual, !hs + !ds, intermediate strength as going 3 level
+- (1!d)--2N 5--5 unusual, !hs + !cs, intermediate strength as going 3 level
+- (1!c)--2!s is left as WJO, respond as opening weak 2!s. Can Astro without going this high over 1!c.
+
+Note, 5 !ss and 5 minor just bid 1!s and then more to show extra strength/shape.
+
+**** After major openings:
+
+Many intermediate+ hands as bidding often forced to the 3 level. With one major opened it's easy to use
+a takeout X to show a 4 card other major, so no 5--4 Astro type bids required.
+
+- (1!h)--2!h 4!ss and 6 !cs/!ds, intermediate strength  (P/H = weak 5--6 shape)
+- (1!h)--2!s WJO, respond as opening weak 2!s
+- (1!h)--2N minors 5--5+ unsual, intermediate strength
+- (1!h)--3!c/3!d minor + !s, 5--5+, intermediate strength  (P/H = WJO)
+- (1!s)--2!s cue 5--5 !hs + minor, intermediate strength
+- (1!s)--2N minors 5--5+ unsual, intermediate strength
+- (1!s)--3!c/3!d shows 6 card minor + 4 !hs, intermediate strength
+- (1!s)--3!h normal pre-empt, weak(NV) / intermediate(VUL)
+
+**** Responding to Jumps and Cue bids:
+
+- Cue bids by advancer are stop asks OR HCR - if there is a way to distinguish a sign off from a raise (usually there is) then stop ask else HCR
+- Raise the intermediate 5--5+/ 6--4+ hands to game with ~ 2 cover cards and support
+
+** We Open they Interfere Summary
+
+- 2 level simple bids are NFBs, freebids < invite AFTER SUIT
+- 1N/2x simple bids are transfers AFTER TAKEOUT
+- 2 level new suit jumps are weak after suit or takeout
+- 3 level new suit jumps are GF natural AFTER SUIT
+- 3 level new suit fit jumps AFTER TAKEOUT
+- 4 level Fit Jump (unless 3 level fit jump available, then 4!c/4!d are Splinters)
+- Splinters of the overcalled suit
+- Cue bids HCRs
+- 3 level jump raise is Mixed (weak-limit), not trash pre-emptive (maybe bid 4 with a pure pre-empt)
+- 2N .... over suit TODO .... limit+ raise over takeout double system on
+- 1!c/1!d-(2 level jump) use the [Lebensohl scheme](#1NT Interference and Lebensohl)
+- 1any-(1N)-2!c is a one suiter and 2 new suit is that suit + higher one
+- Transfer bids after 1!c opening and suit O/C (not just over takeout X like 1!d!h!s openers)
+- Negative doubles to 4!h
+- Transfer bids after opponent's takeout double
+- XX after opponent's takeout double varies: *doubleton* support 6+ for a *major*, but next suit *transfer* after *minor* opening
+- Support doubles by *opener* for partner's *1x major* response and *weak/NFB 2x major* response
+- X/XX of cue bids of *our suit is extra length*, but *partner's suit is Stolen bid* showing
+- 3 level competitive doubles only where have no space for artificial game try, 1!h–-(2!d)-–2!h–-(3!d)–-X.
+
+** 4th balancing of 1x openings
+
 
 - same strengths
 - same 2 suiter bids
@@ -142,15 +206,6 @@ Other examples:
 
 Pass then later X would allow opener to compete in the minors suits.
 
-*** Lead Undirecting 3 Level Double of Cuebid - Partner not bid
-
-Assuming we have no chance of winning the auction here
-
-1H--(2S)--P--(3H)
-    X = do NOT lead !hs
-    P = happy with !h lead
-    4CDH = extreme shape, extras
-
 *** Double Showing HCR by advancer - Opponents' raise
 
 - (1x) then 1!h/!s overcall by us then the opponents raise to (2x/3x)
@@ -260,7 +315,7 @@ E.g. (1S)--2D--(2S)--(3D)--(3S)
 - 4D in this example is a game try
 - Expecting to make 4 v.s. average hand, and game v.s. good hand
 
-Designed for IMPs, only in matchpoints might it be worth to compete to 4!d - in IMPS 3M is never a great final contract
+Designed for IMPs, only in matchpoints might it be worth to compete to 4!d - in IMPS 3!h!s is never a great final contract
 as it risks going one off or worse making a game.
 
 ** Unforced Rebids Show Extra Length, Not Values
@@ -911,10 +966,10 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
     4C = both minors, e.g. 1--3--4--5
 2S = weak jump, response as [6 card weak two](#2HS Weak Opening)
 2N = both minors
-3C = !cs + !ss, good hand, NF (partners can raise to 4!s with 2 useful cover cards)
+3C = !cs + !ss 5--5+, good hand, NF (partners can raise to 4!s with 2 useful cover cards)
     3D = NF
     3H = HCR
-3D = !ds + !ss, good hand, NF (passed hand is a weak jump overcall)
+3D = !ds + !ss 5--5+, good hand, NF (passed hand is a weak jump overcall)
     4C = NF, natural
 3H = stopper ask, with solid outside minor
 
@@ -1081,6 +1136,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
         2S = [Rubens advance](#Rubens Transfer Advances) !c suit
         3CD = [Rubens advance](#Rubens Transfer Advances) !c suit
     2S = 5--5 !h + minor
+        2N = minor ask
     2N = minors
     3C = astro long !cs and 4 card !h suit, even by passed hand unlike over 1!h opening
         3D = NF
