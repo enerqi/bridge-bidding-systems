@@ -284,6 +284,7 @@ questions
         2D = completed, weak NT
             P = !d canapé, not worth invite
             2HS = invite, probably 5 cards, not worth a 3!h!s bid over 1N
+            2N = natural invite
             3other = invite with 5--5
     2D = artificial GF, natural continuations
         2H = 5 card major, after 1!s
@@ -1042,6 +1043,7 @@ Bids below 1!s are not disruptive unless the opponents raise further.
     Others = [1N system on](#1NT Opening)
     3N = natural
         4C = [Gerber](#1N--3C+)
+    4x = NT system on (Gerber, Texas transfers, natural 4!s)
 
 1C--(2DHS)
     P = not good or < GF with penalty pass in opponents suit
@@ -1053,12 +1055,16 @@ Bids below 1!s are not disruptive unless the opponents raise further.
     Others = [Lebensohl system](#1NT Interference and Lebensohl)
     3N = natural
         4C = [Gerber](#1N--3C+)
+    4x = NT system on (Gerber, Texas transfers, natural 4!s)
 
 1C--(2N+) general principles this high
     P = not good or < GF with penalty pass in opponents suit
-    X = negative double to 4!hs, *possibly GF* if balanced and no stop.
-        new suits by doubler show invitational+ values
-        cue bids after X show that suit (natural/psyche expose)
+    X = negative double to 4!hs, maybe GF if balanced and no stop.
+        new suits by doubler show invitational only values
+        cue bids by doubler show that suit (natural/psyche expose)
+        nonJump = weak NT hand
+        Jump  = strong hand
+    suit = GF, natural
     3N = natural
         4C = [Gerber](#1N--3C+)
     4x = cue bid, any GF
