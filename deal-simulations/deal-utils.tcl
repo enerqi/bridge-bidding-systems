@@ -190,10 +190,11 @@ proc is_generic_5card_unbal_weak2 {hand} {
 
 proc is_weak2_5card_major {hand} {
   set points [hcp $hand]
-  if {$points<7 || $points>11 } { return 0 }
-
   set handshape [$hand pattern]
+  if {$points<6 || $points>11} { return 0 }
   if {$handshape == "5 3 3 2"} { return 0}
+
+  if {$points<7 && $handshape != "5 5 3 0" && $handshape != "5 5 2 1"} { return 0 }
   if {$handshape != "5 4 2 2" && $handshape != "5 4 3 1" && $handshape != "5 5 3 0" && $handshape != "5 5 2 1"} { return 0 }
 
   set ss [spades $hand]
@@ -202,20 +203,26 @@ proc is_weak2_5card_major {hand} {
   if {$ss>=4 && $hs >=4} {return 0}
   if {[diamonds $hand]>5 || [clubs $hand]>5} {return 0}
 
-  # 6 cards and 1+ honors
-  if {($ss==5 && [Honors $hand spades]>=1) || ($hs==5 && [Honors $hand hearts]>=1)} {return 1}
+  # 5 cards and 2+ honors
+  if {($ss==5 && [Honors $hand spades]>=2) || ($hs==5 && [Honors $hand hearts]>=2)} {return 1}
   return 0
 }
 
 proc is_weak2_major {hand} {
   set points [hcp $hand]
-  if {$points<7 || $points>11 } { return 0 }
+  set handshape [$hand pattern]
+  if {$points<6 || $points>11 } { return 0 }
+  # weaker hands need more shape
+  if {$points<7 && $handshape != "6 4 2 1" && $handshape != "6 4 3 0"} { return 0 }
+  # 6--5 hands should be < 10
+  if {$points>9 && ($handshape == "6 5 1 1" || $handshape == "6 5 2 0")} { return 0 }
 
   set ss [spades $hand]
   set hs [hearts $hand]
-  # no 5 card minor and no 4 card side major
+  # no 4 card side major
   if {$ss>=4 && $hs >=4} {return 0}
-  if {[diamonds $hand]>=5 || [clubs $hand] >=5} {return 0}
+  # no 6 card minor
+  if {[diamonds $hand]>5 || [clubs $hand]>5} {return 0}
 
   # 6 cards and 1+ honors
   if {($ss==6 && [Honors $hand spades]>=1) || ($hs==6 && [Honors $hand hearts]>=1)} {return 1}

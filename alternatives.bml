@@ -53,17 +53,15 @@ convey extras in shape with serious 3NT and last train.
 We play 2!d as a Precision style 3 suiter so that the nebulous 1!d opening is less messy and constructive bidding is easier.
 So no multi 2!d or weak 2!d. The lack of direct pressure on the opponents with a multi 2!d would make it less desirable as a pre-empt aswell.
 
-5--4/5--5 major/minor two suiters are more frequent than a standard 6 card weak two bid, roughly a 3:2 ratio. Ambiguity in 5 v.s. 6 cards
-makes safe game constructive bidding a challenge, so we should choose one of 5 or 6 cards in a constructive style.
-We prefer to be able to bid with the stronger hand - the 6 card suit. In 3rd position anything is biddable of course - mix of 5 or 6 carders.
-
-A 5--4+ style NV and 6+ card VUL style could be played at the cost of having more responses to learn.
-Whether the NV 5--4+ style should also include 6 card weak twos is an interesting experiment to try.
+5--4/5--5 major/minor two suiters are more frequent than a standard 6 card weak two bid, roughly a 3:2 ratio. Ambiguity
+in 5 v.s. 6 cards makes safe game constructive bidding a challenge, so we can choose one of 5 or 6 cards in a
+constructive style or be careful of the hcp and suit quality when bidding mixed 5/6 carders non-vulnerable.
+We define the style for the stronger hand (the 6 card suit) first and add 5+ carders non-vulnerable and an optional
+extension with tight quality requirements. In 3rd position anything is biddable of course - mix of 5 or 6 carders.
 
 At the moment the weak two style is reasonably constructive - a 5 hcp 7--11 range. The up to 11 hcp
-(if not 11 hcp and Hxx+ other major) actually makes it more frequent as 4--6 hcp hands are very rare and more suited to
-destructive bidding. If the style became more aggressive, say tuned for matchpoints scoring, then 5 cards or even
-mixed 5/6 card weaks twos could be experimented with.
+(if not 11 hcp and Hxx+ other major etc.) actually makes it more frequent as 4--6 hcp hands are very rare and more suited to
+destructive bidding preventing slams.
 
 The 1st/2nd bid quality is lumped together, but really 2nd position should be the most constructive than 1st.
 
@@ -205,11 +203,13 @@ can be passed.
     3D = majors, strong
 
 
-
-
 ** 2D Multi Opening
 
-Not played anymore - earlier notes on how to play it before we used the Precision 2D opening.
+Not played anymore - earlier notes on how to play it before we used the Precision 2D opening. Given the limited space
+for bidding strong minor hands after a 1!c opening, if a 2D Multi were played in a weak strong club it's more
+useful to play the strong variant as an Acol 2 strength hand in !ds or maybe either minor, and throw out the 4--4--4--1
+strong variant.
+
 
 *** 1st/2nd/3rd
 
@@ -391,30 +391,23 @@ Both majors, longest one unknown.
     4CD = Fit jump
 
 
-** 2S Opening - Dutch or Undisciplined
+** 2S Opening - Dutch
 
-Not played, but could easily experiment with Dutch Two's instead of 6 card weak twos in the future. Should probably have
-some decent quality suit when vulnerable, particularly at IMPs.
+Not played, but these handshapes are covered when playing the 5 or 6 card weak twos style non-vulnerable.
+The Dutch two is specifically only 5 carders, no 6 card weak twos. Nice if can also play something like a multi showing
+specifically a 6 carder, then it's easier to fast raise knowing the length (but also helps the opponents), whilst also
+preempting more frequently with both 5 and 6 carders.
 
 ~7--(11) hcp, 5!s + !c/!d OR generic weak 2!s in 3rd
 
 **** 1st/2nd
 
+Note, usual undisciplined style in 3rd.
+
 - 5--4--x--x shape, !s + minor. 5--5--x--x if weak 7--9 hcp.
 - Lead directing, contract directing, constructive with 1+ top honours in !s.
 - Beware/downgrade potentially wasted honours e.g Qx in 5--4--2--2, max 1 honour in doubletons with 5--4--2--2
 - Never 5--3--3--2, 5--4--4--0
-
-**** 3rd
-
-6--11 hcp
-
-- Undisciplined weak two: 5--4, 5--5, 6 card poor quality, possibly 4 card other major.
-- 5--3--3--2 only if NV and excellent lead directing suit quality
-
-**** 4th
-
-6 card !s ~ 10--13 hcp
 
 2S
     2N = Lebensohl
@@ -446,4 +439,3 @@ some decent quality suit when vulnerable, particularly at IMPs.
     4x = cue, slam try
     4CD = fit jump / fit non jump
     4HS = to play
-

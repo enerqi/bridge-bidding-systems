@@ -123,20 +123,25 @@
 
 * 2HS Weak Opening
 
-** 1st/2nd
+** 1st/2nd style
+
+The style is to use a slightly narrower (more constructive) but frequent hand strength range without the drop in
+frequency of 2/3 top honour requirements.
 
 - ~7--(11), 6 card suit
+- 6 cards when vulnerable, but can [optionally play mixed 5 or 6 cards NV](#NV 1st/2nd 5 or 6 card Extension)
 - relatively constructive, no more than one Ace weaker than opening hand.
+- Unless the suit is mostly self-sufficiently, 11 hcp hands should not have Qxx+ in the side major
+- (10)11 hcp hands do not have 2 aces
+- 11 hcp hands with a singleton consider 1!h!s upgrade
 - suit quality 1 top honour, not too concerned
-- extreme shape with long 4/5 card minor possible
-- voids are risky (chance of other fit or bad split for opponents), maybe bid with concentrated values 3 honour suit
+- extreme shape 6--4/6--5 with long 4/5 card minor possible, max 9 hcp
 - beware downgrade wasted values e.g. Qx/KQxxxx/xxx/xx
-- blue moon 5 card !s suit KQJ109 + side K
 
-** 3rd/4th
+** 3rd/4th style
 
-- ~5--11, Undisciplined 5--4, 5--5, 6 card poor quality, possibly 4 card other major in 3rd
-- ~9--11 in 4th
+- ~5--11, *Undisciplined in 3rd*, 5--4, 5--5, 6 card poor quality, possibly 4 card other major
+- ~10--13 in 4th
 
 
 2H = weak two
@@ -171,6 +176,7 @@
         4H = self-sufficient !h suit, maximum
     3D = !h transfer, invitational+
         3H = less than game accept
+        3S = NF, strongly dislike !hs
     3H = weak limit raise
         4H = extreme shape e.g. 6--5, x/A109xxx/KJxxx/x
     3S = natural, GF, (passed hands fit jump)
@@ -238,3 +244,28 @@
     X = penalty
 2HS--P--(P)--(2!s/3!c!d!h)--P--P
     X = re-opening takeout
+
+** NV 1st/2nd 5 or 6 card Extension
+
+Adjustments to playing mixed 5/6 card major weak two bids in 1st/2nd position non-vulnerable only.
+
+Still ~7--(11), maybe 6 hcp if 5--5 shape. Differences to the standard 6 card only definition:
+
+- 5 card good suit possible and the usual 6 card suit
+- 5 carder should have 2+ honours (top honours unless good spot cards)
+- 5 carder still unbalanced 5--4+
+- 5 carder 2nd position consider requiring a singleton
+
+Keep responses the same except for the 2N ask bid:
+
+2HS--2N = Ogust variant, implicitly agreed the major, can play 3N
+    3C = any 5 carder
+        3D = ask
+            3M = minimum
+            3oM = maximum with some singleton
+            3N = maximum, no singleton
+    3D = maximum 6 carder, bad suit
+    3oM = maximum 6 carder, good suit (2/3 top honours)
+    3M = minimum 6 carder
+    3N = AKQxxx
+    4HS = 7 carder, bad suit (not worth 3!h!s opening)

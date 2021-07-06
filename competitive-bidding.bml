@@ -1120,7 +1120,7 @@ Competing over 1NT.
 
 - This defence is suited for IMPs scoring or v.s. any scoring and Weak/Intermediate NT openings where we value a penalty double to
   show values, either to score better from it, find a game or deal with opponents' off shape / undervalue (psyche) openings
-- Aggression is vulnerability and scoring dependent.
+- Aggression is vulnerability and scoring dependent
 - A separate strong NT matchpoints defence where X shows something detailed like a 4 card major + 5 card minor is in
   theory useful, but X remains penalty for now.
 - Nothing different in place for the balancing / pass-out position (i.e the transfers are about more options for hand
@@ -1300,8 +1300,8 @@ Hand strength guide:
 
 Playing this is optional.
 
-- Keeps X as penalty / strength showing.
-- More aggressive, not constructive, i.e. rule of 8 strength
+- Keeps X as penalty / strength showing (could play as 5+ !cs and 4+ major if really dislike penalty X).
+- More aggressive, not constructive, i.e. rule of 8 strength ( length(longest 2 suits) - LTC >= 2 then bid )
 - No detailed responses written down, just play 2N (or cue bid) as the only way to start more constructive bids by advancer
 - 2!c is less pressure than 2!h showing both majors, but arguably you don't need to pressure so much with both majors and
   we can find out relative major lengths
@@ -1310,6 +1310,7 @@ Playing this is optional.
 (1N) = Strong NT
     X = penalty / strength
     2C = majors
+        2D = longer major ask
     2D = 5+ !ds and 4+ card major
     2HS = natural
     2N = minors two suiter OR strong constructive majors two suiter
