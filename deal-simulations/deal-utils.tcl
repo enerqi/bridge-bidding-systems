@@ -43,6 +43,15 @@ proc majors_4_4 {hand} {
   return 0
 }
 
+proc is_unbalanced_minor {hand} {
+  set ds [diamonds $hand]
+  set cs [clubs $hand]
+  set hs [hearts $hand]
+  set ss [spades $hand]
+  if {![flattish $hand] && (($ds > $hs && $ds > $ss) || ($cs > $hs && $cs > $ss))} { return 1 }
+  return 0
+}
+
 proc has_9_plus_majors {hand} {
   if { ([spades $hand] + [hearts $hand]) >= 9 } { return 1 }
   return 0

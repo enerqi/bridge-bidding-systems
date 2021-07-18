@@ -965,7 +965,7 @@ Bids below 1!s are not disruptive unless the opponents raise further.
     3H = jump cue bid, stopper ask
 
 1C--(1S)
-    X = takeout, maybe off-shape more strength showing, 3 suited short !ss or 5!cs + 4!ds
+    Dbl = takeout, maybe off-shape more strength showing, 3 suited short !ss or 5!cs + 4!ds
         1N = weak, maybe no !s stop, maybe 4 !hs
             2C = weak, 5!cs and 4!ds, NF
             2D = 3 suited with 5!ds, NF
@@ -973,8 +973,8 @@ Bids below 1!s are not disruptive unless the opponents raise further.
             2S = stop ask
                 2N = !s stop
                     3H = natural, 4 cards
-                others = natural, no stop
                 3H = natural, 4 cards
+                others = natural, no stop
             2N = invite, probably 4!hs
         2C = weak, 4--4 minors OR 5!cs
             P = 3+ !cs
@@ -988,13 +988,13 @@ Bids below 1!s are not disruptive unless the opponents raise further.
                 others = invitational, 5! card !d suit and doubleton !h suit
         2H = weak, 4--4 !hs + !cs, NF
         others = strong, natural
-        (2S) = natural interference raise
+        (2!s) = takeout then natural interference raise
             P = weak hand, not 4!hs or 5 card minor
             X = 4 !hs, weak OR strong
             2N = natural, strong
             3CD = natural, weak, 5 cards
             others = strong
-        (3S) = interference, probably less than invite
+        (3!s) = takeout then interference, probably less than invite
             P = weak hand
                 X = takeout again
             others = strong
@@ -1059,7 +1059,7 @@ Bids below 1!s are not disruptive unless the opponents raise further.
 
 1C--(2N+) general principles this high
     P = not good or < GF with penalty pass in opponents suit
-    X = negative double to 4!hs, maybe GF if balanced and no stop.
+    Dbl = negative double to 4!hs, maybe GF if balanced and no stop.
         new suits by doubler show invitational only values
         cue bids by doubler show that suit (natural/psyche expose)
         nonJump = weak NT hand
@@ -1078,7 +1078,7 @@ Bids below 1!s are not disruptive unless the opponents raise further.
 
 1C--(1x)--P
     P = weak NT opening
-    X = strong, opener re-opening
+    Dbl = strong, opener re-opening
         nextSuit = herbert negative, ~0--4 hcp
         2x = ~4--7, natural
         2N+ = natural, forcing

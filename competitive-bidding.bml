@@ -36,10 +36,10 @@ a takeout X to show a 4 card other major, so no 5--4 Astro type bids required.
 
 - (1!h)--2!h 4!ss and 6 !cs/!ds, intermediate strength  (P/H = weak 5--6 shape)
 - (1!h)--2!s WJO, respond as opening weak 2!s
-- (1!h)--2N minors 5--5+ unsual, intermediate strength
+- (1!h)--2N minors 5--5+ unusual, intermediate strength
 - (1!h)--3!c/3!d minor + !s, 5--5+, intermediate strength  (P/H = WJO)
 - (1!s)--2!s cue 5--5 !hs + minor, intermediate strength
-- (1!s)--2N minors 5--5+ unsual, intermediate strength
+- (1!s)--2N minors 5--5+ unusual, intermediate strength
 - (1!s)--3!c/3!d shows 6 card minor + 4 !hs, intermediate strength
 - (1!s)--3!h normal pre-empt, weak(NV) / intermediate(VUL)
 
@@ -55,7 +55,7 @@ a takeout X to show a 4 card other major, so no 5--4 Astro type bids required.
 - 2 level new suit jumps are weak after suit or takeout
 - 3 level new suit jumps are GF natural AFTER SUIT
 - 3 level new suit fit jumps AFTER TAKEOUT
-- 4 level Fit Jump (unless 3 level fit jump available, then 4!c/4!d are Splinters)
+- 4 level Fit Jump (even if 3 level fit jump available, different strength)
 - Splinters of the overcalled suit
 - Cue bids HCRs
 - 3 level jump raise is Mixed (weak-limit), not trash pre-emptive (maybe bid 4 with a pure pre-empt)
@@ -64,7 +64,6 @@ a takeout X to show a 4 card other major, so no 5--4 Astro type bids required.
 - 1any-(1N)-2!c is a one suiter and 2 new suit is that suit + higher one
 - Transfer bids after 1!c opening and suit O/C (not just over takeout X like 1!d!h!s openers)
 - Negative doubles to 4!h
-- Transfer bids after opponent's takeout double
 - XX after opponent's takeout double varies: *doubleton* support 6+ for a *major*, but next suit *transfer* after *minor* opening
 - Support doubles by *opener* for partner's *1x major* response and *weak/NFB 2x major* response
 - X/XX of cue bids of *our suit is extra length*, but *partner's suit is Stolen bid* showing
@@ -686,7 +685,7 @@ Note, just overcall 1!h with a "weak" jump !h overcall.
     1N = natural, system on (assuming light openings and responses by opponents)
     CueHi = natural of right hand suit
     CueLow = Astro style, 6+ lowest unbid suit and exactly 4 cards other suit
-    2N = unsual, two lowest suits
+    2N = unusual, two lowest suits
 
 (1C)--P--(1N)
     2C = normal michaels both majors
@@ -854,7 +853,7 @@ Note, just overcall 1!h/1!s with a "weak" jump overcall.
     1N = natural, system on (assuming light openings and responses by opponents)
     CueHi = natural of right hand suit
     CueLow = Astro style, 6+ lowest unbid suit and exactly 4 cards other suit
-    2N = unsual, two lowest suits
+    2N = unusual, two lowest suits
 
 (1D)--P--(1N)
     2D = normal michaels both majors
