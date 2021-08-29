@@ -67,11 +67,13 @@ a takeout X to show a 4 card other major, so no 5--4 Astro type bids required.
 - 2 level new suit jumps are weak after suit or takeout
 - 3 level new suit jumps are GF natural AFTER SUIT
 - 3 level new suit fit jumps AFTER TAKEOUT
-- 4 level Fit Jump (even if 3 level fit jump available, different strength)
+- 4CD major slam tries AFTER MAJOR OPENING + JUMP PREEMPT
+- 4 level Fit Jump (even if 3 level fit jump available, different strength) AFTER SIMPLE overcall
 - Splinters of the overcalled suit
-- Cue bids HCRs
+- Cue bids exactly invitational HCR, only forcing to 3 level
 - 3 level jump raise is Mixed (weak-limit), not trash pre-emptive (maybe bid 4 with a pure pre-empt)
-- 2N .... over suit TODO .... limit+ raise over takeout double system on
+- 2N limit+ raise AFTER TAKEOUT system on
+- 2N limit+ raise, distributional, implies likely to penalise opponents if we don't play the contract
 - 1!c/1!d-(2 level jump) use the [Lebensohl scheme](#1NT Interference and Lebensohl)
 - 1any-(1N)-2!c is a one suiter and 2 new suit is that suit + higher one
 - Transfer bids after 1!c opening and suit O/C (not just over takeout X like 1!d!h!s openers)
@@ -160,6 +162,31 @@ Modern standard:
 Consider a takeout X (and maybe later DAB cue bid) instead of a 1NT bid with 4--4--3--2, the other major and the sort of hand where
 partner should play NT (we have Axx they Qx)
 
+*** Single Raise then Double
+
+- Some play doubles below 3!s as takeout, but at best this implies an unknown side suit double fit
+- Double shows extra values
+
+1HS--(P)--2HS--(2/3x)
+    Dbl = penalty (see rule - we bid and raised a suit)
+
+1HS--(P)--2HS--(X)
+    XX = extra values and not just length as partner supported, forcing to 3HS or penalties
+    3HS = NF
+
+1HS--(X)--2HS--(3oM)
+    Dbl = extras, penalty suggestion (see rule - we bid and raised a suit)
+    3HS = NF
+
+1HS--(any)--2HS--(3raise)
+    Dbl = extras, penalty suggestion (see rule - we bid and raised a suit)
+    3HS = NF
+
+*** 2N support raise then we Double
+
+1HS--(any)--2N--(any)
+    Dbl = penalty, (see rule - we bid and raised a suit)
+
 *** Delayed Takeout Doubles
 
 When not doubling on the first round:
@@ -222,14 +249,6 @@ Pass then later X would allow opener to compete in the minors suits.
 - Or sandwich position opponents bid two different suits, e.g (1D)--P--(1S)--2H--(2DS)
 
 X then shows a HCR.
-
-*** Tolerance Double by advancer - Opponents bid two suits
-
-(1x) then 1!h/!s overcall by us then a simple new suit responder, e.g. (1D)--1!h--(1S/2C)--X.
-
-- tolerance, doubleton support
-- dislikes 1N bid
-- 9+ hcp, wants to hear a rebid from overcaller with a 6 card suit
 
 *** Fit Jump by Opponents' Double - when we overcalled
 
@@ -317,6 +336,24 @@ on law total tricks theory and caution depending on vulnerability, length in the
 
 E.g. (1H)--(2H) then bid 2!s on KQJxx/xx/J10x/xxx vulnerability dependent.
 
+
+** Major Opening and Responder's 4CD Slam Try
+
+We open 1H/1S and opponents interfere with a single or two suiter jump bid
+
+**** One known opponent's suit  (whether showing one or two suiter)
+
+1M--(jump)
+    4C = good game raise, control in opponent's suit
+        4D = some extras, Last Train like extra strength ask
+    4D = major slam try without control in opponent's suit
+    4M = minimal game values or moderate whilst lacking control
+
+**** Two known opponent's suit  (whether showing one or two suiter)
+
+1M--(jump)
+    4C = major slam try, shortness in lowest suit
+    4D = major slam try, shortness in highest suit
 
 ** Bidding to 4CD over 3HS competition is Invitational
 
@@ -1844,7 +1881,7 @@ Re-open X with a bad hand, major takeout.
 
 X is majors takeout.
 
-* Opponents open 3CDHS
+* Opponents open 3CDH
 
 Normal takeout doubles, conservative opening bid values 12+, assumes ~7–9 hcp from partner
 
@@ -1852,9 +1889,6 @@ Normal takeout doubles, conservative opening bid values 12+, assumes ~7–9 hcp 
     4CD = both majors
 (3H)
     4H = extreme strong 2 suiter
-        4N = both minors, choose your suit
-(3S)
-    4S = extreme strong 2 suiter
         4N = both minors, choose your suit
 
 (3H)--P--(3!s)

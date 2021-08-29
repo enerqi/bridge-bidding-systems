@@ -34,6 +34,19 @@ let the initiator push them.
 - 5 level cue bids are dangerous, would imply a void or possibly controls in partner's suit pushing for a different
   specific cue bid if Lackwood cannot help
 
+*** Opponents Double Our Cue Bid
+
+E.g. 1S--(P)--4D--(X) lead directing
+
+(any) = Cue, A, K, void, singleton
+    Cue = no problem, new cue bid
+    P = usually no control, asking partner to clarify cue bid
+        XX = Ace, in partner's hand
+        NewCue = KQ or singleton/void in first Cue suit
+        SignOff = unprotected King, no shortage, no Ace
+    XX = Queen with no higher honour, supporting a King in partner's hand
+    SignOff = just bad values
+
 *** Serious 3N and Double Fit Showing Replaces Immediate Cue Bid
 
 - In many fit showing auctions we play 3N as "Serious" prompting further control bids

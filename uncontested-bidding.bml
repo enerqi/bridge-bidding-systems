@@ -1778,6 +1778,35 @@ remaining below 4!h:
 4N = [EKB Voidwood](#EKB Voidwood) !s void
 5CD = [EKB Voidwood](#EKB Voidwood)
 
+*** 2N Invite Plus Interference
+
+1H--2N--(3CD)
+    P = minimum, NF
+    3H = minimum, shortage in their suit
+    X = penalty, we raised a suit and only one of them came in late
+    3N = would establish forcing pass if they sacrifice
+    Cue = control - usually shortage, maximum
+
+1H--2N--(3S)
+    P = minimum, but forcing expecting to penalise or bid on
+    X = penalty, we raised a suit and only one of them came in late
+    3N = would establish forcing pass if they sacrifice
+
+1H--(2D)--2N--(3D)
+    P = no shortage, no control
+        X = last train like extra value ask
+    X = extra values, shortage - SPECIAL non-penalty agreement
+    3N = extra values, !d control
+    4D = void
+
+1H--(1S)--2N--(3S)
+    P = no shortage, no control
+        X = last train like extra value ask
+    X = extra values, shortage - SPECIAL non-penalty agreement
+    3N = extra values, !s control
+    4H = minimum WITH !s control
+
+
 ** 1H--3CD
 
 Limit jump shift, 6 card suit invitational, denying major support
@@ -2346,6 +2375,10 @@ Invitational+ raise 3 (GF) or 4 card support.
 4S = only used v.s. passed hand, fast arrival
 4N = [RKB](#RKB 4N)
 5CDH = [EKB Voidwood](#EKB Voidwood)
+
+*** Interference
+
+[See 1H--2N Invite Plus Interference examples](#2N Invite Plus Interference)
 
 ** 1S--3CD
 
