@@ -187,6 +187,8 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
     2C = puppet to 2!d, invitational or weak !d signoff
         2D = puppeted
             2H = invitational, exactly 5!hs, opener probably bids on with any 3 card support
+                2N = decline, e.g. singleton
+                3CD = game try
             2S = invitational, 4--4 majors
             2N = natural, weaker invitation than direct 2N, probably denies 4!ss
             3C = natural, invitational, 5+ !cs, usually 6 card
@@ -951,12 +953,13 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
     X = negative, later !s bids are forcing
     Others = [Lebensohl system](#1NT Interference and Lebensohl)
 
-1D--(3HS)
-    X = Thrump, negative like but looking for 3N, no strong suit biddable below 4 level
+1D--(3DHS) natural preempts
+    Dbl = Thrump, negative like but looking for 3N, no major guarantee
         3S = 4 card major, no stopper
             4CD = maybe slam hunting, often shortish minor(s)
         3N = stopper
             4CD = slam hunting, often shortish minor(s)
+        4N = minors
 
 1D--(any)--any--(2C)
     2N = good hand, !ds and !c stop (similar to a natural 3!d bid)
@@ -1847,21 +1850,23 @@ XX = Ace showing by opener after opponents lead directing double
 
 1H--(X)
     XX = doubleton !h, 6+ hcp, encourage 6 card suit rebid
-    1S = natural, forcing (by unpassed hand), ignores the double
-    1N = !cs
-    2C = !ds
+    1S = natural, forcing (by unpassed hand), ignores the double - later system on if possible e.g:
+        1N = usual omnibus NT
+            2CD = system on puppet bids
+    1N = !cs, 8+ hcp
+    2C = !ds, 8+ hcp
     2D = !hs, invitational, like single (3 card usually) raise in uninterrupted auctions
-    2H = ~5--9, with less pass then bid later
+    2H = ~5--9 support points, with less pass then bid later
     2S = weak jump shift
     2N = invitational+ 4 card raise, 2N system on
     3CDS = fit jump
-    3H = weak limit distributional
+    3H = mixed raise, distributional
 
 Second round bids ignore the T/O X if advancer bids nothing, e.g. 1H--(X)--1S--(P)--1N--(P)
 then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
 
 1H--(1!s)
-    D = negative or game force expecting to bid a suit next
+    Dbl = negative or game force expecting to bid a suit next
         1N = no !s stop guarantee, opener can cue later to check for one
     1N = natural, ~7--10, !s stopper
         (2!c) = opponents compete
@@ -1871,71 +1876,95 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
             2N = strong raise
             3H = weak raise
     2CD = negative freebid, 0--10
+    2H = single raise, ~5--9 support points
+    2S = !h support, invitational exactly, more point based
+    2N = invitational plus, support
     3CD = forcing, too much shape to start with a negative X
+    3H = mixed raise, good single raise
     3S = splinter, opponent's suit
     4CD = fit jump
 
 1H--(1N)
     X = penalty
-    2C = some one suiter hand
-        2D = relay, NF (may pass with !ds)
-    2D = !d + !s
+    2C = 8--10 hcp, good !h raise, promises a top honour
+    2D = competitive, 5--2 !ss + !hs
     2H = natural
-    2S = !s + !c
-    2N = no trump cue bid, too shapely to X
-        3C = relay for responder to bid a forcing suit
+    2S = competitive, natural
+    2N = invitational plus, support
+    3CD = preempt
 
 1H--(2!c)
-    X = negative or GF bidding a weaker suit next time or stop asking
+    X = negative, maybe invitational hand
     2DS = negative freebid, 0--10
     2H = natural
-    2N = natural invitational
-    3C = invite+ !hs
+    2N = invitational plus, support
+    3C = invitational precisely, !h support
     3D = GF, 6+ suit when unpassed, natural invite by passed hand
     3H = mixed raise (weak limit), ~7--9 support points and 4+ cards
     3S = GF, 6+ suit when unpassed, Fit Jump passed hand
 
 1H--(2!d)
-    X = negative or GF bidding a weaker suit next time or stop asking
+    X = negative, maybe invitational hand
     2H = natural
     2S = negative freebid, 0--10
-    2N = natural invitational
+    2N = invitational plus, support
     3C = GF natural
-    3D = invite+ !hs
+    3D = invitational precisely, !h support
     3H = mixed raise (weak limit), ~7--9 support points and 4+ cards
     3S = GF, 6+ suit when unpassed, Fit Jump passed hand
 
 1H--(2!h)
     X = force, leading to penalty or forcing new suit bid
-    2S = cue of implied major, limit+ raise
-    2N = natural
+    2S = cue of implied major, invitational precisely OR if two suits shown, lowest unbid suit
+    2N = invitational plus, support of implied major
     3CD = natural, NF invitational. With known minor to cue, shows forcing other minor bid.
-    3H = NF
+    3H = NF, weaker
     3S = splinter
-    4CD = splinter (of their known suit), or fit jump (of unbid suit)
+    4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
 
 1H--(2!s)
     X = negative
-    2N = natural v.s. weak two, but v.s. intermediate+ overcall shows invitational+ !hs
+    2N = invitational plus, support
     3x = forcing
+    4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
 
 1H--(2N)  presumably minors
     X = penalty interest, but can also pass then X showing values but not much in their suit
     3C = invitational+, !h
     3D = other major, invitational+
     3H = weaker
-    4CD = splinter
+    3S = natural, weaker
+    4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
     4HS = to play (passed hand - fit jump other major)
 
 1H--(3x)
     X = negative
     NewSuit = forcing
-    cue = support showing, invitational or GF if below/above 3!hs
+    Cue = support showing, invitational or GF if below/above 3!hs
+    4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
+
+1H--(3DS) Thrump doubles for !d/!s overcalls
+    Dbl = Thrump, negative like but looking for 3N, no major guarantee
+        3S = 4 card major, no stopper
+            4CD = maybe slam hunting, often shortish minor(s)
+        3N = stopper
+            4CD = slam hunting, often shortish minor(s)
+    NewSuit = forcing
+    Cue = support showing, invitational or GF if below/above 3!ss
 
 1H--(3x) two suiter including suit bid
     lowCue = below 3!h, invitational in !hs
     highCue = above 3!h, GF in !hs
     X = penalty
+    4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
+
+1H--(4C)
+    4D = 15+ good 4!h raise
+
+1H--(4D)
+    X = negative
+    4HS = natural
+    4N = [RKB](#RKB 4N), not quantitative as forced to bid high
 
 *** 4th only overcalls:
 
@@ -2413,78 +2442,103 @@ general forces with negative doubles.
 
 1S--(X)
     XX = doubleton !s, 6+ hcp, encourage 6 card suit rebid
-    1N = !cs
-    2C = !ds
-    2D = !hs
+    1N = !cs, 8+ hcp
+    2C = !ds, 8+ hcp
+    2D = !hs, 8+ hcp
     2H = !ss, invitational, like single (3 card usually) raise in uninterrupted auctions
-    2S = ~5--9, with less pass then bid later
+    2S = ~5--9 support points, with less pass then bid later
     2N = invitational+ 4 card raise, 2N system on
     3CDH = fit jump
-    3S = weak limit distributional
+    3S = mixed raise, distributional
 
 1S--(1N)
     X = penalty
-    2C = some one suiter hand
-        2D = relay, NF (may pass with !ds)
-    2D = !d + !h
-    2H = !h + !c
-    2N = no trump cue bid, too shapely to X
-        3C = relay for responder to bid a forcing suit
+    2C = 8--10 hcp, good !s raise, promises a top honour
+    2D = 8+ hcp, !h transfer
+    2H = competitive, 5--2 !hs + !ss
+    2S = natural
+    2N = invitational plus, support
+    3CD = preempt
 
 1S--(2!c)
-    X = negative or GF bidding a weaker suit next time or stop asking
+    X = negative, maybe invitational hand
     2DH = negative freebid, 0--10
-    2N = natural invitational
-    3C = invite+ !ss
+    2S = natural
+    2N = invitational plus, support
+    3C = invitational precisely, !s support
     3D = GF, 6+ suit when unpassed, natural invite by passed hand (no weak 2 !d opening)
     3H = GF, 6+ suit when unpassed, fit jump passed hand
     3S = mixed raise (weak limit), ~7--9 support points and 4+ cards
 
 1S--(2!d)
-    X = negative or GF bidding a weaker suit next time or stop asking
+    X = negative, maybe invitational hand
     2H = negative freebid, 0--10
     2S = natural
-    2N = natural invitational
+    2N = invitational plus, support
     3C = forcing, 6+ suit when unpassed, invite passed hand
-    3D = invite+ !ss
+    3D = invitational precisely, !s support
     3H = GF, 6+ suit when unpassed, Fit Jump passed hand
     3S = mixed raise (weak limit), ~7--9 support points and 4+ cards
 
 1S--(2!h)
     X = negative or GF bidding a weaker suit next time or stop asking
     2S = normal natural raise
-    2N = natural invitational
+    2N = invitational plus, support
     3CD = natural, forcing
-    3H = invite+ !ss
+    3H = invitational precisely, !s support
     3S = mixed raise (weak limit), ~7--9 support points and 4+ cards
 
 1S--(2!s)
     X = force, leading to penalty or forcing new suit bid
-    2N = natural
+    2N = invitational plus, support of implied major
     3CD = natural, NF invitational. With known minor to cue, shows forcing other minor bid.
-    3H = cue of implied major, limit+ raise
+    3H = cue of implied major, invitational precisely !s support
     3S = NF
-    4CDH = splinter (of their known suit), or fit jump (of unbid suit)
+    4CD = [!s slam tries](#Major Opening and Responder's 4CD Slam Try)
+    4H = splinter (of their known suit), or fit jump (of unbid suit)
+
 
 1S--(2N)  presumably minors
     X = penalty interest, but can also pass then X showing values but not much in their suit
     3C = other major, invitational+
     3D = invitational+, !s
+    3H = natural, weaker
     3S = weaker
-    4CD = splinter
+    4CD = [!s slam tries](#Major Opening and Responder's 4CD Slam Try)
     4HS = to play (passed hand - fit jump other major)
 
 1S--(3x)
     X = negative
     NewSuit = forcing
-    cue = support showing, invitational or GF if below/above 3!ss
+    Cue = support showing, invitational or GF if below/above 3!ss
+    4CD = [!s slam tries](#Major Opening and Responder's 4CD Slam Try)
+    4S = minimal game values or moderate whilst lacking control
+
+1S--(3DH) Thrump doubles for !d/!h overcalls
+    Dbl = Thrump, negative like but looking for 3N, no major guarantee
+        3S = 4 card major, no stopper
+            4CD = maybe slam hunting, often shortish minor(s)
+        3N = stopper
+            4CD = slam hunting, often shortish minor(s)
 
 1S--(3x) two suiter including suit bid
     lowCue = below 3!s, invitational in !ss
     highCue = above 3!s, GF in !ss
     X = penalty
+    4CD = [!s slam tries](#Major Opening and Responder's 4CD Slam Try)
 
+1S--(4C)
+    4D = 15+ good 4!s raise
 
+1S--(4D)
+    X = negative
+    4HS = natural
+    4N = [RKB](#RKB 4N), not quantitative as forced to bid high
+
+1S--(4H)
+    X = penalty (generally negative X to 4!h but here !ss already bid)
+    4S = natural
+    4N = [RKB](#RKB 4N), not quantitative as forced to bid high
 
 *** responder passing, 4th hand reopens
 

@@ -1059,15 +1059,27 @@ Bids below 1!s are not disruptive unless the opponents raise further.
 
 1C--(2N+) general principles this high
     P = not good or < GF with penalty pass in opponents suit
+    suit = GF, natural
+    3N = natural
+        4C = [Gerber](#1N--3C+)
+    4x = cue bid, any GF
+
+1C--(2N/3C)
     Dbl = negative double to 4!hs, maybe GF if balanced and no stop.
         new suits by doubler show invitational only values
         cue bids by doubler show that suit (natural/psyche expose)
         nonJump = weak NT hand
         Jump  = strong hand
-    suit = GF, natural
-    3N = natural
-        4C = [Gerber](#1N--3C+)
-    4x = cue bid, any GF
+
+1C--(3DHS) natural preempts
+    Dbl = Thrump, negative like but looking for 3N, no major guarantee
+        3HS = 4 card major, no stopper
+            3S = 4 card major or maybe weak 5 card major
+            4CD = maybe slam hunting, often shortish minor(s)
+        3N = stopper
+            4CD = slam hunting, often shortish minor(s)
+        Jump = strong hand
+        4N = natural quantitative, extra strong
 
 ** 2nd and 4th interfere, Responder Passes
 
