@@ -14,8 +14,8 @@
 
 1D = 11--(13) balanced/semi-balanced nebulous 2+ !d cards OR 11--15 unbalanced, maybe longer !cs
     (any) = [1!d interference](#1D interference)
-    1H = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF](#1D--1H)
-    1S = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF](#1D--1S)
+    1H = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé](#1D--1H)
+    1S = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé](#1D--1S)
     1N = [natural, up to 10 hcp, no 4 card major, no singleton except may !ds](#1D--1N)
     2C = [10+ invitational+, usually 5 card suit](#1D--2C)
     2D = [10+ forcing (unless passed hand), no 4 card major, inverted raise, usually 5 card support](#1D--2D)
@@ -65,7 +65,7 @@
 
 ** 1D--1H
 
-Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF
+Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
 
 1S = [exactly 4 !ss (always bid with 4 !ss), may have 3 card !h support (note 5!s--6!d open 1!s or open 1!d reverse to 2!s)](#1D--1H--1S)
 1N = [omnibus NT bid 11--15 (not necessarily weak 11--13), 2+ !ds still, denies 4 !ss, could be singleton !h](#1D--1H--1N)
@@ -415,7 +415,7 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF
 
 ** 1D--1S
 
-Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé if < GF
+Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
 
 1N = [omnibus NT bid 11--15, 2+ !ds still, maybe 4!hs, often singleton !s, even 1--3--(4--5) no !h stop or 2--2--(5--4) and something in !h](#1D--1S--1N)
 2C = [both minors 5--5 or 0--4--4--5 / 0--4--5--4, maybe 3 card support and unbalanced maximum, prefer 1N with 1--3--(4--5) but maybe bid 2!c with a maximum 1--3--(4--5) wanting other hand to play NT](#1D--1S--2C)
@@ -829,7 +829,7 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
             4N = to play, natural
     4D = balanced slam try
     4H = Redwood [RKB](#RKB 4N) for !ds  (splinter not needed, would already have splintered)
-3C = balanced/semi-balanced and 3+ !ds, extra values
+3C = semi-balanced and 3+ !ds, extra values
     3D = !c stopper showing, auction can die at 4!d if nobody can bid 3N, , 4!c later bid by anyone natural
     3HS = stopper, 4!c later bid by anyone natural
     3N = to play
@@ -855,13 +855,15 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
 1D--(X)
     P = some !d length, later X are penalty suggestion, usually 4 cards in bid suit
     XX = !h transfer, 4+ cards
+        1H = 3 card or weak 4 card support
         2H = mild invitation
-        3H = true invitation
+        3H = strong invitation
     1H = !s transfer, 4+ cards
+        1S = 3 card or weak 4 card support
         2S = mild invitation
-        3S = true invitation
-    1S = NT transfer to rightside contract
-    1N = !c transfer
+        3S = strong invitation
+    1S = NT transfer to rightside contract, no major
+    1N = !c transfer, 8+ hcp
     2C = !d raise, good 10+ (but bidding can end here unlike forcing inverted raise)
     2D = !d raise, 6--9, 5+ !ds
     2HS = weak jump shift, system on
@@ -950,7 +952,11 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
     Others = [Lebensohl system](#1NT Interference and Lebensohl)
 
 1D--(3HS)
-    X = negative "Thrump", maybe not 4 cards other major, just stop asking
+    X = Thrump, negative like but looking for 3N, no strong suit biddable below 4 level
+        3S = 4 card major, no stopper
+            4CD = maybe slam hunting, often shortish minor(s)
+        3N = stopper
+            4CD = slam hunting, often shortish minor(s)
 
 1D--(any)--any--(2C)
     2N = good hand, !ds and !c stop (similar to a natural 3!d bid)
@@ -1037,6 +1043,17 @@ Includes 4th hands bids where 2nd hand does not bid at all:
 1D--(P)--1S--(P)--2S--(X)
     XX = responder now shows 5 cards, inviting opener to compete 3!s
 
+**** Four-Five hearts 2N response to opener's re-opening double
+
+1D--(1S)--P--(2S)
+    X = re-opening
+        2N = "four-five hearts 2N" 4+ !hs, minimum
+        3H = 4+ !hs, maximum OR some extra values with 5 !hs
+
+1D--(2S)--P--(P)
+    X = re-opening
+        2N = "four-five hearts 2N" 4+ !hs, minimum
+        3H = 4+ !hs, maximum OR some extra values with 5 !hs
 
 **** Good-Bad 2N over 2DHS interference by 4th hand
 

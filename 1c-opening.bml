@@ -1137,6 +1137,17 @@ Suit bid where opener can support responder at 2 level, e.g:
     3S = strong hand, support
     4m = 4 minor raise is minorwood RKB (in an example showing a minor)
 
+Four-Five hearts 2N response to opener's re-opening double:
+
+1C--(1S)--P--(2S)
+    X = re-opening
+        2N = "four-five hearts 2N" 4+ !hs, minimum
+        3H = 4+ !hs, maximum OR some extra values with 5 !hs
+
+1C--(2S)--P--(P)
+    X = re-opening
+        2N = Transfer Lebensohl etc. (here playing as defending 2S opening)
+
 
 Suit bid where opener can only support responder at 3+ level, e.g:
 

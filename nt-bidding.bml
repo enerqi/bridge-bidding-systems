@@ -628,6 +628,8 @@ Most important is its use against weak twos and after we have made natural openi
 - 1C--(2!d!h!s)
 - 1C--1D--(2!d!h!s)--X
 - 1D--(2!h!s)
+- (1H)--X--(2H)
+- (1S)--X--(2S)
 - (Weak 2!d!h!s)--X
 - (1NT weak)--X--(XX Escape)
 - (1NT weak)--X--(2H+ Escape) (but not 2C/2D escape)
@@ -957,10 +959,14 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
     4C = forcing
     4DH = texas transfer
 
-1N--(3HS)
+1N--(3H)
     X = negative
     3S = forcing
     4CD = forcing
+
+1N--(3S)
+    X = negative
+    others = as [Opponents open 3S](#Opponents open 3S)
 
 1N--(4x)
     X = penalty
