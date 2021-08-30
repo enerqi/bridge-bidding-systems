@@ -35,7 +35,7 @@
     1H = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé](#1D--1H)
     1S = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé](#1D--1S)
     1N = [natural, up to 10 hcp, no 4 card major, no singleton except may !ds](#1D--1N)
-    2C = [10+ invitational+, usually 5 card suit](#1D--2C)
+    2C = [10+ invitational plus, usually 5 card suit](#1D--2C)
     2D = [10+ forcing (unless passed hand), no 4 card major, inverted raise, usually 5 card support](#1D--2D)
     2HS = weak jump shift, 6+ !h/!ss, 0--9 hcp, rarely 5 card suit that dreads passing 1!d
     2N = natural invitational ~(10)--12, no 4 card major, usually very flat 4--4--3--2/4--3--3--3
@@ -97,7 +97,7 @@
   2H = [transfer to !s](#1N--2H)
   2S = [transfer to !c](#1N--2S)
   2N = [transfer to !d](#1N--2N)
-  3C = [5--5+ majors, invitational+ but not slam interest (transfer and rebid if so)](#1N--3C+)
+  3C = [5--5+ majors, invitational plus but not slam interest (transfer and rebid if so)](#1N--3C+)
   3D = [minors invitational, 5--5 exactly](#1N--3C+)
   3H = [minors GF, 5--5+](#1N--3C+)
   3S = [5--4--2--2 in minors, slam interest](#1N--3C+)
@@ -144,8 +144,8 @@
 2H [5+ (NV) / 6+ (VUL) card weak two](#2HS Weak Opening) 7--(11) 1st/2nd maybe long minor, Undisciplined 5--11 3rd, 10--13 4th
   2S = NF, natural, either weak 6+ !s short !hs OR invitational strength 5+ !s short !hs
   2N = [ASK (NV)](#NV 1st/2nd 5 or 6 card Extension), or [puppet to 3!c (VUL)](#2H Opening Responses) maybe !h raise OR !c signoff
-  3C = !d transfer, invitational+, 6+ cards or 5 cards and !h support
-  3D = !h transfer, invitational+
+  3C = !d transfer, invitational plus, 6+ cards or 5 cards and !h support
+  3D = !h transfer, invitational plus
   3H = weak limit raise
   3S = natural, GF, (passed hands fit jump)
   3N = to play, non-correctable
@@ -174,33 +174,3 @@
 4N  [specific ace ask](#4N Opening Specific Ace Ask)
 5CD [preempt](#4H 4S 5C 5D Openings)
 5HS 11 tricks in hand, missing 2 top honours
-
-* Contested Overcalls Summary
-
-Opponents open:
-
-- [1C Strong](#Opponents open Strong 1C)
-- [1C Natural / Prepared / Swedish / Polish](#Opponents open 1C Natural / Prepared / Multi)
-- [1D](#Opponents open 1D)
-- [1H](#Opponents open 1H)
-- [1S](#Opponents open 1S)
-- [1N](#Opponents Open 1NT)
-- [Intermediate 2C](#Opponents open Intermediate 2C)
-- [Strong 2C](#Opponents open Strong 2C)
-- [Precision 2D](#Opponents open Precision 2D)
-- [Multi 2D](#Opponents open Multi 2D)
-- [Weak 2D 2H 2S](#Opponents open Weak 2D 2H 2S)
-- [2D or 2H Flannery](#Opponents open 2D or 2H Flannery)
-- [2D or 2H both Majors](#Opponents open 2D or 2H both Majors)
-- [2N Minors](#Opponents open 2N Minors)
-- [2N Natural](#Opponents open 2N Natural)
-- [3CDH](#Opponents open 3CDH)
-- [3S](#Opponents open 3S)
-- [3N](#Opponents open 3N)
-- [4CD preempt](#Opponents open 4CD preempt)
-- [4C SAT](#Opponents open 4C SAT)
-- [4D SAT](#Opponents open 4D SAT)
-- [4HS](#Opponents open 4HS)
-- [5CD](#Opponents open 5CD)
-
-

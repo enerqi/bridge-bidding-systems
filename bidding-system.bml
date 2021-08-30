@@ -29,9 +29,8 @@
   risk partner putting us in the wrong contract. Stick to the expected ranges for bids. Some places that is a tight range and
   others it's looser (3rd position bids, P--(1!c)--1!s overcalls etc).
 - Accept the occasional bad result due to luck in the opponents' high variance or the weaker parts of our system (e.g. construction over 2!c or 2!d openings).
-- Weak 2!h/2!s are 6 card constructive (1 honour, 7--11 hcp) in 1st/2nd. This is the only obvious flex point in the system (could be swapped
-  to 5 card major + 4 card minor or vulnerability dependent 5 or 6 card preempts), but notably to reduce variance it's
-  not 6 OR 5 card in 1st/2nd. 3rd is undisciplined of course.
+- Weak 2!h/2!s are 5+ (NV) 6+ (VUL) card constructive (1 honour, 7--11 hcp) in 1st/2nd when vulnerable. When NV we require high quality
+  5 carders, aswell as the tight point range, to keep the constructive aspect. 3rd is undisciplined of course.
 - Wide ranging openings are imprecise and make judging games/slams difficult, especially in competition. Yet we do want
   to open almost all 11 counts (perhaps not some 4--4--4--1 hands or bad majorless vulnerable hands) to compete - those balanced 11 hcp hands are very frequent.
   Naturally we choose to use an artificial 1!c opening to limit the 1D/1H/1S/2C/2D openings. So called natural systems
@@ -67,7 +66,7 @@
   five card majors have a slight edge for slam bidding, slightly better for IMPs whereas four card majors are slightly
   better for matchpoints competitive bidding. There is more five card major literature to draw from when selecting one
   to use with artifical 1!c openings. Some of the benefits of 4 card majors are lost when all balanced hands are covered
-  by specific bids (1NT, or 1C--1NT rebid, though that leaves 1D as nebulous)
+  by specific bids (1NT, or 1!c--1NT rebid, though that leaves 1!d as nebulous)
 
 This details of this system are mainly taken from the Revision Club (v4.0 by John Montgomery). The 1!d through 4!s openings
 are mostly taken as is. Swapping the strong only 1!c for a Swedish weak strong club is the point of change and in many

@@ -123,7 +123,7 @@
 
 * 2HS Weak Opening
 
-** 1st/2nd style
+*** 1st/2nd style
 
 The style is to use a slightly narrower (more constructive) but frequent hand strength range without the drop in
 frequency of 2/3 top honour requirements.
@@ -138,7 +138,7 @@ frequency of 2/3 top honour requirements.
 - extreme shape 6--4/6--5 with long 4/5 card minor possible, max 9 hcp
 - beware downgrade wasted values e.g. Qx/KQxxxx/xxx/xx
 
-** 3rd/4th style
+*** 3rd/4th style
 
 - ~5--11, *Undisciplined in 3rd*, 5--4, 5--5, 6 card poor quality, possibly 4 card other major
 - ~10--13 in 4th
@@ -165,7 +165,7 @@ frequency of 2/3 top honour requirements.
             4C = natural, forcing, !c slam try
             4D = natural, forcing, !cs and !ds, longer !cs
             4H = delayed splinter !h support, short !s
-    3C = !d transfer, invitational+, 6+ cards or 5 cards and !h support
+    3C = !d transfer, invitational plus, 6+ cards or 5 cards and !h support
         3D = none of the below, often minimal/misfitting
             3H = NF
             others = GF
@@ -175,7 +175,7 @@ frequency of 2/3 top honour requirements.
         4C = !d fit, singleton !c, maximum
         4D = !d fit, nothing in !c/!s, maximum
         4H = self-sufficient !h suit, maximum
-    3D = !h transfer, invitational+
+    3D = !h transfer, invitational plus
         3H = less than game accept
         3S = NF, strongly dislike !hs
     3H = weak limit raise
@@ -229,26 +229,7 @@ frequency of 2/3 top honour requirements.
     4S = to play
     4N = Blackwood (bid 3!h or splinter, then 4N for RKB)
 
-** 2HS interference
-
-2HS--(X)
-    XX = penalty values, we play or they play doubled
-    P/X = pass then later double also penalty
-    2N--3N = system on
-    4CD = fit jumps, where would have been splinters
-    4H = to play, by unpassed hand
-2H--(2S)
-    2N--3H = system on
-    3S = stopper ask
-    4CD = fit jumps
-2HS--(3x)
-    newSuit = natural, forcing by unpassed hand
-2HS--(2!s/3!c!d!h)
-    X = penalty
-2HS--P--(P)--(2!s/3!c!d!h)--P--P
-    X = re-opening takeout
-
-** NV 1st/2nd 5 or 6 card Extension
+**** NV 1st/2nd 5 or 6 card Extension
 
 Adjustments to playing mixed 5/6 card major weak two bids in 1st/2nd position non-vulnerable only.
 
@@ -272,3 +253,23 @@ Keep responses the same except for the 2N ask bid:
     3M = minimum 6 carder
     3N = AKQxxx
     4HS = 7 carder, bad suit (not worth 3!h!s opening)
+
+
+** 2HS interference
+
+2HS--(X)
+    XX = penalty values, we play or they play doubled
+    P/X = pass then later double also penalty
+    2N--3N = system on
+    4CD = fit jumps, where would have been splinters
+    4H = to play, by unpassed hand
+2H--(2S)
+    2N--3H = system on
+    3S = stopper ask
+    4CD = fit jumps
+2HS--(3x)
+    newSuit = natural, forcing by unpassed hand
+2HS--(2!s/3!c!d!h)
+    X = penalty
+2HS--P--(P)--(2!s/3!c!d!h)--P--P
+    X = re-opening takeout

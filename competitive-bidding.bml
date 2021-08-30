@@ -187,6 +187,11 @@ partner should play NT (we have Axx they Qx)
 1HS--(any)--2N--(any)
     Dbl = penalty, (see rule - we bid and raised a suit)
 
+1HS--(2x)--(2N)--(3x)
+    Dbl = extra values, shortage - SPECIAL non-penalty agreement
+    4x = (below game), void
+
+
 *** Delayed Takeout Doubles
 
 When not doubling on the first round:
@@ -349,7 +354,7 @@ We open 1H/1S and opponents interfere with a single or two suiter jump bid
     4D = major slam try without control in opponent's suit
     4M = minimal game values or moderate whilst lacking control
 
-**** Two known opponent's suit  (whether showing one or two suiter)
+**** Two known opponent's suit
 
 1M--(jump)
     4C = major slam try, shortness in lowest suit
@@ -1631,7 +1636,7 @@ Playing this is optional.
             2N/3N = natural by opener
             Cue = stop ask or major ask
     (2!c) = whatever
-        X = invitational+, stayman replacement, passable with good !cs
+        X = invitational plus, stayman replacement, passable with good !cs
         2DHS = NF, natural, 5+ suit and *Invitational*, avoiding 3 level lebensohl invites. Pass then bid with competitive hands.
         2N = natural, invitational
         3CDHS = natural, forcing
@@ -1941,7 +1946,9 @@ Same in 4th.
     4N = natural
     Cue = 2 suited, unspecified over 4!c and both majors over 4!d
 
-* Opponents open 4C SAT
+* Opponents open 4CD SAT/Namyats
+
+Showing good !h/!s major preempt, maybe minimum opening values.
 
 (4C)
     P = usually weak, maybe strong NT+ if re-open double
@@ -1955,8 +1962,6 @@ Same in 4th.
 
 (4C)--P--(4!h)
     any = Treat as 4!h opening
-
-* Opponents open 4D SAT
 
 (4D)
     P = usually weak, maybe strong NT+ if re-open double

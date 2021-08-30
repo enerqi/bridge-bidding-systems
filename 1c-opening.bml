@@ -144,7 +144,7 @@
     1N = passable ask, any 0--9 hcp hand
         P = weak NT hand
         2C = artificial, any hand 5+ !ss
-            2D = relay, invitational+
+            2D = relay, invitational plus
                 2H = 4+ !hs, NF
                 2S = 6+ !ss, NF
                 2N = natural, NF
@@ -565,6 +565,9 @@ Artificial GF:
         4N = Both Minor RKB [Double Fit RKB](#Double Fit RKB)
     3N = to play
 others = natural strong, distributional
+3HS = self-sufficient suit, extras
+4CD = self-sufficient suit, extras
+4HS = self-sufficient suit, minimum strong
 
 **** Interference over 1C--1N
 
@@ -1032,11 +1035,7 @@ Bids below 1!s are not disruptive unless the opponents raise further.
         2N = minors
         3x = strong, good 6+ suit
     X = penalty
-    2C = some one suiter
-        2D = relay, NF
-    2D = !ds + major
-    2H = both majors
-    2S = !ss + minor
+    Bid = [As 1N defence](#Opponents Open 1NT)
 
 1C--(2C) natural
     X = stand in for 2!c

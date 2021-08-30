@@ -3,16 +3,15 @@
 
 * NT Ranges and Scheme Situations
 
-1N = 16--18 hcp, maybe 5 card major or 5--4--2--2 long !c/!d.
-2N = 19--20 hcp, maybe 5 card major or 5--4--2--2 long !c/!d.
-(1x)--P--(P)--1NT = ~11--15 (maybe 16 over 1!h/!s) hcp, balancing/protective
-(1x)--P--(P)--2NT = 19--21 hcp, balancing/protective
-
-(1x)--1N  = 15--18
-(1x)--X then free NT bid = 18--20 hcp
-(1x)--P--(P)--X balancing then free NT bid = ~16--18 hcp
-(1x)--X then free jump NT bid = 21+ hcp
-(2x)--2N = 16-18
+- 1N = 16--18 hcp, maybe 5 card major or 5--4--2--2 long !c/!d.
+- 2N = 19--20 hcp, maybe 5 card major or 5--4--2--2 long !c/!d.
+- (1x)--P--(P)--1NT = ~11--15 (maybe 16 over 1!h/!s) hcp, balancing/protective
+- (1x)--P--(P)--2NT = 19--21 hcp, balancing/protective
+- (1x)--1N  = 15--18
+- (1x)--X then free NT bid = 18--20 hcp
+- (1x)--P--(P)--X balancing then free NT bid = ~16--18 hcp
+- (1x)--X then free jump NT bid = 21+ hcp
+- (2x)--2N = 16-18
 
 Blanket approaches to bidding when natural 1NT and 2NT bids made by our side.
 
@@ -90,7 +89,7 @@ Minors:
     2H = [transfer to !s](#1N--2H)
     2S = [transfer to !c](#1N--2S)
     2N = [transfer to !d](#1N--2N)
-    3C = [5--5+ majors, invitational+ but not slam interest (transfer and rebid if so)](#1N--3C+)
+    3C = [5--5+ majors, invitational plus but not slam interest (transfer and rebid if so)](#1N--3C+)
     3D = [minors invitational, 5--5 exactly !c+!d](#1N--3C+)
     3H = [minors GF, 5--5+ !c+!d](#1N--3C+)
     3S = [5--4--2--2 in minors, slam interest](#1N--3C+)
@@ -217,7 +216,7 @@ Stayman, forcing.
 
 2H = 4/5 card !h suit, not 4 !ss
     P = weak hand with short !cs
-    2S = forcing, 5+ !ss, invitational+. Normal auction !s + invite hand.
+    2S = forcing, 5+ !ss, invitational plus. Normal auction !s + invite hand.
         2N = doubleton !s, minimum NF
             3CD = 5--5 forcing
         3C = natural 4+ cards, doubleton !s, can play 5!c
@@ -563,7 +562,7 @@ Transfer to !d
 **** 1N--3C+
 
 1N
-    3C = 5--5+ majors, invitational+ but not slam interest (transfer and rebid if so)
+    3C = 5--5+ majors, invitational plus but not slam interest (transfer and rebid if so)
         3D = 2--2 in the majors, rejection values
             3M = to play
             4C = pick a major
@@ -926,7 +925,7 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
     (X)
         XX = to play interest
         P = doubleton in transfer suit
-            XX = retransfer ask (with invitational+ values)
+            XX = retransfer ask (with invitational plus values)
             2HS = transfer suit is to play
     (Cue) bidding partners transfer suit with 2!h or 2!s
         P = doubleton
@@ -962,7 +961,6 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
 1N--(3D)
     X = takeout, vague distribution
     3HS = GF in OTHER major
-    3S = !ds
     4C = both majors, slam try
     4D = both majors, game only
 
@@ -1003,8 +1001,8 @@ When we are 1N penalty doubled.
     3x = forcing, natural offensive hand
 
 1N--(X)--(P/escape)--(P/escape)--P
-    2x = F1, invitational+ values
-    3CD = F1, invitational+ values
+    2x = F1, invitational plus values
+    3CD = F1, invitational plus values
     3HS = GF
     2N = invitational
     Cue = stopper ask
