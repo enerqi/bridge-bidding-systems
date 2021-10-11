@@ -4,7 +4,7 @@
 
 - 11--(13) balanced/semi-balanced hands with 2+ card !d suit (poor vulnerable 11 hcp flat may pass)
 - 11--(13) balanced hands in principle do not include any 5 card major hands
-- 11--15 unbalanced, maybe longer 5+ card !c suit (canapé)
+- 11--15 unbalanced, maybe 4!ds with longer 5 card !c suit (canapé)
 - 11--15 (4!h/!s--1)--3--5 is the only unbalanced non-natural !d opening
 - 12--15 4--4--4--1 with 4 !ds
 - [Open 1!c](#1C Weak Strong) with any good 13--15 weak NT like hand, including many 5--4--2--2 five card !c/!d hands.
@@ -14,6 +14,7 @@
 
 1D = 11--(13) balanced/semi-balanced nebulous 2+ !d cards OR 11--15 unbalanced, maybe longer !cs
     (any) = [1!d interference](#1D interference)
+    P = maybe 6--9 no major with singleton outside !ds and 3!d bid not suitable, e.g. x/Kxx/Kxxx/Qxxxx,
     1H = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé](#1D--1H)
     1S = [natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé](#1D--1S)
     1N = [natural, up to 10 hcp, no 4 card major, no singleton except may !ds](#1D--1N)
@@ -812,7 +813,7 @@ Natural, up to 10 hcp, no 4 card major, no singleton except may !ds
     3C = stop showing
     3D = signoff
     3HS = stop showing
-2S = artificial, minimum with singleton/void
+2S = artificial, minimum with !d fit and singleton/void
     2N = shortage ask
         3C = short !c
         3D = short !s

@@ -11,8 +11,8 @@
     [1D](#1C--1D) Negative 0--7 hcp or 8--9 semi-positive no 4cM
     [1HS](#1C--1HS) 8+ hcp, 4+ card suit, maybe canapé and always unbalanced if GF
     [1N](#1C--1N) GF, balanced maybe 4 card major OR 4--4--4--1 OR unbalanced without 4 card major
-    [2C](#1C--2C) natural NF, ~7--10 hcp, maybe 5--5 minors
-    [2D](#1C--2D) natural NF, ~7--10 hcp
+    [2C](#1C--2C) natural NF, ~8--10(11) hcp, maybe 5--5 minors
+    [2D](#1C--2D) natural NF, ~8--10(11) hcp
     [2H](#1C--2H) NT invite, no 4 card major, maybe semi-balanced 6 card minor or 5--4 minors
     [2S](#1C--2S) both minors limited GF and short major, ~12--15 hcp
     [2N](#1C--2N) natural NT invite, wants to declare
@@ -504,16 +504,17 @@ Artificial GF:
                 3HS = natural, inviting xxx or Hx support
             3C = 5+ !cs and 4 !ds, ~16+ hcp, too strong for 1!c--2!s
                 next = As [after 1!c--2!s--2N--3!c](#1C--2S)
-    2H = balanced
-        2S = strength query
+        3x = natural, forcing, 5/6 (poor) card suit, 5 card suit(s) if two suited
+    2H = balanced, rarely 5!d--4!c--2--2 with good stoppers in the majors
+        2S = strength query, usually flattish hands
             2N = 11--14
             3C = 15--16
             3D = 17--18
             3H = 19--20
             3S = 21--22
             3N = 23--24
-        2N = ask to bid 4+ suits
-        3x = natural, forcing, suit set
+        2N = ask to bid 4+ suits, 5--4 or 4--4--4--1 shapes
+        3x = natural, forcing, 5/6 (poor) card suit, 5 card suit(s) if two suited
         3N = NF, natural
     2S = 6+ !ds, single suited, ~12+ hcp
         2N = relay, later relays [Slam Try Relay Bidding](#Slam Try Relay Bidding)
@@ -564,10 +565,14 @@ Artificial GF:
         4HS = stronger !cs/!ds super accept minor raise
         4N = Both Minor RKB [Double Fit RKB](#Double Fit RKB)
     3N = to play
-others = natural strong, distributional
+2HS = good 6+ card suit, unlimited, maybe self-sufficient ~16--18 too strong for 4!h!s
+3CD = good 6+ card suit, unlimited
 3HS = self-sufficient suit, extras
+    3N = serious
 4CD = self-sufficient suit, extras
-4HS = self-sufficient suit, minimum strong
+4HS = self-sufficient suit, (sub)minimum strong, max 2 CP outside main suit
+5CD = not used, don't waste the space opposite a GF
+
 
 **** Interference over 1C--1N
 
@@ -583,7 +588,8 @@ others = natural strong, distributional
 
 ** 1C--2C
 
-- Natural NF, ~7--10 hcp
+- Natural NF, ~8--10(11) hcp
+- GF opposite strong hand
 - 2!c can be 5--5 minors
 - Note, semi-balanced and invitational can use a 2!h invite
 
@@ -616,6 +622,7 @@ others = natural strong, distributional
             4C = !h shortage, 7!c--4!d with a void
             4D = !h shortage, 7!c--4!d with two singletons
             4H = !h shortage, 7!c--5!d
+        3x = natural, forcing, 5/6 (poor) card suit, 5 card suit(s) if two suited
     2S = 6+ !cs, single suited
         2N = relay, later relays [Slam Try Relay Bidding](#Slam Try Relay Bidding)
             3C = 7+ suit, no void
@@ -631,19 +638,30 @@ others = natural strong, distributional
             4C = 7+ suit, !s void
             4D = 7+ suit, !d void
             4H = 7+ suit, !h void
+        3x = natural, forcing, 5/6 (poor) card suit, 5 card suit(s) if two suited
     2N = 5--3--3--2 (unlikely - usually bid 1!d or NT invite instead)
         3C = doubleton ask, next round [Slam Try Relay Bidding](#Slam Try Relay Bidding)
             3D = !d
             3H = !h
             3S = !s
             3N = !c
-2M = natural, strong
+        3x = natural, forcing, 5/6 (poor) card suit, 5 card suit(s) if two suited
+2HS = good 6+ card suit, unlimited, maybe self-sufficient ~16--18 too strong for 4!h!s
 2N = 21+ balanced
-3C = Weak hand with good values/support
+3C = Weak NT with good values/support
+3D = good 6+ card suit, unlimited, maybe self-sufficient ~16--18 too strong for 5!d or has NT chance
+3HS = self-sufficient suit, extras
+    3N = serious
+4D = self-sufficient suit, extras
+    next = cue bid, not Redwood, opener should control the auction v.s. limit flat hand
+    4N = natural, discouraging, no !d fit
+4HS = self-sufficient suit, (sub)minimum strong, max 2 CP outside main suit
+5D = rare self-sufficient suit, (sub)minimum strong, max 2 CP outside main suit
 
 ** 1C--2D
 
-- Natural NF, ~7--10 hcp
+- Natural NF, ~8--10(11) hcp
+- GF opposite strong hand
 - Note, semi-balanced and invitational can use a 2!h invite
 
 2H = strong relay, [Slam Try Relay Bidding](#Slam Try Relay Bidding) after details
@@ -662,12 +680,14 @@ others = natural strong, distributional
             4C = 7+ suit, !c void
             4D = 7+ suit, !s void
             4H = 7+ suit, !h void
+        3x = natural, forcing, 5/6 (poor) card suit, 5 card suit(s) if two suited
     2N = 5--3--3--2 (unlikely - usually bid 1!d or NT invite instead)
         3C = doubleton ask, next round [Slam Try Relay Bidding](#Slam Try Relay Bidding)
             3D = !d
             3H = !h
             3S = !s
             3N = !c
+        3x = natural, forcing, 5/6 (poor) card suit, 5 card suit(s) if two suited
     3C = !s shortage, 5+ !ds and 4+ !cs, both minors, not 5--5
         3D = relay
             3H = 5!d--4!c with a singleton
@@ -676,6 +696,7 @@ others = natural strong, distributional
             4C = 7!d--4!c with a void
             4D = 7!d--4!c with two singletons
             4H = 7!d--5!c
+        3x = natural, forcing, 5/6 (poor) card suit, 5 card suit(s) if two suited
     3D = 5!d--4!c semi-balanced (2--2)
     3H = !h shortage, 5!d--4!c with a singleton
     3S = !h shortage, 6!d--4!c with a singleton
@@ -683,10 +704,17 @@ others = natural strong, distributional
     4C = !h shortage, 7!d--4!c with a void
     4D = !h shortage, 7!d--4!c with two singletons
     4H = !h shortage, 7!d--5!c
-2S = natural, strong
-2N = !hs, strong
-3C = !cs, strong
+2S = good 6+ card suit, unlimited, maybe self-sufficient ~16--18 too strong for 4!s
+2N = !hs, good 6+ card suit, unlimited, maybe self-sufficient ~16--18 too strong for 4!h
+3C = !cs, good 6+ card suit, unlimited, maybe self-sufficient ~16--18 too strong for 5!c or has NT chance
 3D = weak NT with good values/support
+3HS = self-sufficient suit, extras
+    3N = serious
+4C = self-sufficient suit, extras
+    next = cue bid, not Redwood, opener should control the auction v.s. limit hand
+    4N = natural, discouraging, no !c fit
+4HS = self-sufficient suit, (sub)minimum strong, max 2 CP outside main suit
+5C = rare self-sufficient suit, (sub)minimum strong, max 2 CP outside main suit
 
 ** 1C--2H
 
@@ -697,9 +725,15 @@ others = natural strong, distributional
     3CD = 6 card minor, invite hand
     3S = transfer to 3N, balanced shape
 2N = minimum weak NT
-    3CD = invite with that minor, pretty much sign off
-3x = natural, strong
+    3CD = sign off
+3CD = natural, strong
+3HS = natural, strong, maybe slam chance
 3N = maximum weak NT
+4CD = 6+ card suit, extras
+    next = cue bid, not Redwood, opener should control the auction v.s. limit flat hand
+    4N = natural, discouraging, no minor fit
+4HS = 6+ card suit, minimum strong
+4N = quantitative, ~21--22
 
 **** Interference over 1C--2H
 
@@ -1078,6 +1112,7 @@ Bids below 1!s are not disruptive unless the opponents raise further.
         3N = stopper
             4CD = slam hunting, often shortish minor(s)
         Jump = strong hand
+            newSuit = cue bid
         4N = natural quantitative, extra strong
 
 ** 2nd and 4th interfere, Responder Passes

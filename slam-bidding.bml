@@ -129,6 +129,11 @@ Note, not playing DEPO - that works better with 0314 RKB instead of 1430 RKB.
 - 6x = 1 or 3 kc + void in specific suit
 - 6slam = odd kc + void in higher suit
 
+4N--5N/6x
+    next = any K ask if one below slam
+    next = specific K with space
+    others = specific K ask with space
+
 *** Queen Ask
 
 - This includes bidding past the agreed suit, e.g. 4N--5-!d--5!s with !hs agreed, but promises all
@@ -479,6 +484,7 @@ The main Last Train bid is one step below game with an agreed major:
 - 4!d when !hs agreed
 - 4!h when !ss agreed
 - Only in a GF and major raised/agreed (not simple preference)
+- NOT when SERIOUS 3N could be bid on that round
 - Still useful when serious 3N was possible, e.g. 1H--2D--2H--3H--3S--4C--4D decided to show the !s control instead of
   bidding 3N serious, so extras are still possible
 - With interference aswell, e.g. 1H--(3C)--4C--(P)--4D shows extras from opener after the HCR

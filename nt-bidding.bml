@@ -364,11 +364,11 @@ Transfer to !h
 2H = 2 or 3 cards
     2S = *artificial*, GF values
         2N = puppet
-            3C = short spades, 3 suited with 5!h, natural continuations
+            3C = short clubs, 3 suited with 5!h, natural continuations
                 3S = unsure of game
                 3N = good spade stops
             3D = short diamonds, similar continuations
-            3H = short clubs, e.g. 3--5--4--1, maybe 2--6--4--1 !d fit searching
+            3H = short spades, e.g. 1--5--4--3, maybe 1--6--4--2 !d fit searching
             3S = 2--5--2--4 slam try
                 3N = to play, reject slam try
                 4C = !h slam try
