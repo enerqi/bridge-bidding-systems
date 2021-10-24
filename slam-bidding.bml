@@ -300,34 +300,6 @@ ask for some other suit, which should also be obvious.
     6x = cue bid in other suit shows 1st round in the implied asked suit.
     6HS = raise to slam, have 2nd round control in implied suit
 
-** GSF 5N
-
-- Free 5N bid asking for 2 of top 3 honours.
-- By bidding 7C with two honours the contract can be placed elsewhere, though probably not hurt if forget and bid 7 of the trump suit
-
-5N = when !c trump
-    6C = no
-    7C = 2 honours
-
-5N = when !d trump
-    6C = A or K
-    6D = weakest
-    7C = 2 honours
-
-5N = when !h trump
-    6C = A or K
-    6D = Q or extra length
-    6H = weakest
-    7C = 2 honours
-
-5N = when !s trump
-    6C = A or K, extra length (10 known trumps)
-    6D = A or K, nothing extra
-    6H = Q or extra length (10 known trumps)
-    6S = weakest trump holding
-    7C = 2 honours
-
-
 ** Double of Opponents' Slam
 
 As arguably it does not make much difference if a slam goes one off doubled vs not doubled
