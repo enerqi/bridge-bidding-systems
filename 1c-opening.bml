@@ -118,11 +118,11 @@
             4S = support, fast arrival
         2N = GF balanced, ~23/24+
             Others = [2N Scheme](#2NT Opening)
-        3C = !c single suited Acol 2
+        3C = !c single suited Acol 2, NF extras
             3HS = natural, forcing, no Herbert negative
             4C = 3+ support, ~ 2+ control points including singleton/voids
             4DHS = splinter, 4+ card support
-        3D = !d single suited Acol 2
+        3D = !d single suited Acol 2, NF extras
             3HS = natural, forcing, no Herbert negative
             4D = 3+ support, ~ 2+ control points including singleton/voids
             4HS = splinter, 4+ card support
@@ -506,14 +506,14 @@ Artificial GF:
                 next = As [after 1!c--2!s--2N--3!c](#1C--2S)
         3x = natural, forcing, 5/6 (poor) card suit, 5 card suit(s) if two suited
     2H = balanced, rarely 5!d--4!c--2--2 with good stoppers in the majors
-        2S = strength query, usually flattish hands
+        2S = strength query, usually flattish hands, [Slam Try Relay Bidding](#Slam Try Relay Bidding) follows
             2N = 11--14
             3C = 15--16
             3D = 17--18
             3H = 19--20
             3S = 21--22
             3N = 23--24
-        2N = ask to bid 4+ suits, 5--4 or 4--4--4--1 shapes
+        2N = Baron, ask to bid 4+ suits, 5--4 or 4--4--4--1 shapes, [Slam Try Relay Bidding](#Slam Try Relay Bidding) above 3N when shape known
         3x = natural, forcing, 5/6 (poor) card suit, 5 card suit(s) if two suited
         3N = NF, natural
     2S = 6+ !ds, single suited, ~12+ hcp
@@ -531,22 +531,24 @@ Artificial GF:
             4C = 7+ suit, !c void
             4D = 7+ suit, !s void
             4H = 7+ suit, !h void
+        3x = natural, forcing, 5/6 (poor) card suit, 5 card suit(s) if two suited
     2N = some 4--4--4--1
-        3C = relay
+        3C = relay, [Slam Try Relay Bidding](#Slam Try Relay Bidding) follows
             3D = !d singleton
             3H = !h singleton
             3S = !s singleton
             3N = !c singleton, passable
             4C = !c singleton, too good for 3NT
+        3DHS = natural, forcing, 5/6 (poor) card suit, 5 card suit(s) if two suited
     3C = both minors, ~16+ hcp, !s shortage, 5+ !ds and 4+ !cs, not 5--5
-        3D = relay
+        3D = relay, [Slam Try Relay Bidding](#Slam Try Relay Bidding) follows
             3H = 5!d--4!c, !s singleton
             3S = 6!d--4!c, !s singleton
             3N = 6!d--4!c, !s void
             4C = 7!d--4!c, !s void
             4D = 7!d--4!c, two singletons
             4H = 7!d--5!c, !s void
-    3D = 5!d--4!c, 12+ hcp (as 1!c--2!s requires a shortage), semi-balanced (2--2)
+    3D = 5!d--4!c, 12+ hcp (as 1!c--2!s requires a shortage), semi-balanced (2--2), [Slam Try Relay Bidding](#Slam Try Relay Bidding) follows
     3H = 5!d--4!c, ~16+ hcp, !h singleton
     3S = 6!d--4!c, ~16+ hcp, !h singleton
     3N = 6!d--4!c, ~16+ hcp, !h void
@@ -719,21 +721,39 @@ Artificial GF:
 ** 1C--2H
 
 - 3N invite, no 4 card major
-- Can be semi-balanced with a 6 card minor (alternative to a 2!c/2!d response) or 5--4 minors
+- Can be semi-balanced with a 6 card minor (alternative to a 2!c/2!d response) or 5--4--2--2 both minors
 
 2S = asking, maximum weak NT or strong
-    3CD = 6 card minor, invite hand
+    3CD = 6 card minor
     3S = transfer to 3N, balanced shape
 2N = minimum weak NT
     3CD = sign off
-3CD = natural, strong
-3HS = natural, strong, maybe slam chance
+3CD = natural, strong, 5+ cards
+    3D = natural, 5(6) cards (!c tolerance xxx+ expected)
+        3HS = natural 5+ cards
+        4D = !c [RKB](#RKB 4N)
+        4H = !d [RKB](#RKB 4N)
+    3HS = cue, Hxx+ support
+    3N = natural
+        4D = (after 3!c) !c [RKB](#RKB 4N)
+        4H = (after 3!d) !d [RKB](#RKB 4N)
+        4HS = natural, 6--5+
+    4m = natural, Hxx+ support
+        4HS = [RKB](#RKB 4N) or natural, 6--5+
+    4C = (over 3!d) natural, 5(6) cards (!d tolerance xxx+ expected)
+        4D = !c [RKB](#RKB 4N)
+        4H = !d [RKB](#RKB 4N)
+        4S = natural, 6--5+
+3HS = natural, strong, 5+ cards
+    3N = natural
+        4HS = slam try, asking for something extra
+    other = cue
 3N = maximum weak NT
-4CD = 6+ card suit, extras
-    next = cue bid, not Redwood, opener should control the auction v.s. limit flat hand
-    4N = natural, discouraging, no minor fit
+4C = [Gerber](#Gerber 4C)
+4D = unused
 4HS = 6+ card suit, minimum strong
 4N = quantitative, ~21--22
+5CD = 6(7)+ card suit, minimum strong
 
 **** Interference over 1C--2H
 
@@ -747,7 +767,7 @@ Artificial GF:
     2N = weak, NF, with stop
     3N = weak/strong, with stop
     suit = natural, strong
-    X = "OD", no further direction.
+    X = optional/cooperative/defensive
 
 
 ** 1C--2S
@@ -769,8 +789,10 @@ Artificial GF:
                 4C = extras ask relay
                     4D = minimum
                         next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+                        4N = natural
                     4H = extras, good 6 card minor or ~14--15 hcp
                         next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+                        4N = natural
                 4D = !c [RKB](#RKB 4N)
                 4H = !d [RKB](#RKB 4N)
                 4N = Blackwood, going by 4N rules
@@ -780,8 +802,10 @@ Artificial GF:
                 4C = extras ask relay
                     4D = minimum
                         next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+                        4N = natural
                     4H = extras, good 6 card minor or ~14--15 hcp
                         next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+                        4N = natural
                 4D = !c [RKB](#RKB 4N)
                 4H = !d [RKB](#RKB 4N)
                 4N = Blackwood, going by 4N rules
@@ -790,8 +814,10 @@ Artificial GF:
                 4C = extras ask relay
                     4D = minimum
                         next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+                        4N = natural
                     4H = extras, good 6 card minor or ~14--15 hcp
                         next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses(?)
+                        4N = natural
                 4D = !c [RKB](#RKB 4N)
                 4H = !d [RKB](#RKB 4N)
                 4N = Blackwood, going by 4N rules
@@ -844,11 +870,31 @@ Artificial GF:
 - natural invite
 - wants to declare, otherwise use the 2!h response
 
-3x = natural, strong
+3CD = natural, strong, 5+ cards, shapely
+    3D = natural, 5(6) cards (!c tolerance xxx+ expected)
+        3HS = natural 5+ cards
+        4D = !c [RKB](#RKB 4N)
+        4H = !d [RKB](#RKB 4N)
+    3HS = cue, Hxx+ support
+    3N = natural
+        4D = (after 3!c) !c [RKB](#RKB 4N)
+        4H = (after 3!d) !d [RKB](#RKB 4N)
+        4HS = natural, 6--5+
+    4m = natural, Hxx+ support
+        4HS = [RKB](#RKB 4N) or natural, 6--5+
+    4C = (over 3!d) natural, 5(6) cards (!d tolerance xxx+ expected)
+        4D = !c [RKB](#RKB 4N)
+        4H = !d [RKB](#RKB 4N)
+        4S = natural, 6--5+
+3HS = natural, strong, 5+ cards, later 4N always [RKB](#RKB 4N) even over 3N
+    3N = natural
+        4HS = slam try, asking for something extra
+    other = cue
 4C = [Gerber](#Gerber 4C)
 4D = unused
-Game = to play
+4HS = 6+ card suit, minimum strong
 4N = quantitative
+5CD = 6(7)+ card suit, minimum strong
 
 [Inteference as 1C--2S](#Interference over 1C--2S)
 
@@ -906,7 +952,7 @@ specific situations where a 3rd round of relay bidding can occur to make a slam 
 
 Relay bids:
 
-- 4!d is a control ask relay
+- 4!d puppets to 4!h as an end signal before a sign off in game or quantitative 4N/5N (theoretically also suits) bid
 - step1 (skipping 3N and 4!d) is RKB for the longest suit
 - step2 (skipping 3N and 4!d) is RKB for the next longest suit
 - step3 (skipping 3N and 4!d) is RKB for the next shortest suit
