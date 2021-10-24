@@ -38,6 +38,22 @@ proc two_suiter {hand} {
   return 0
 }
 
+proc is_6_plus_other_10_card_two_suiter {hand} {
+  set handshape [$hand pattern]
+  if {$handshape == "6 4 2 1" || $handshape == "6 4 3 0" ||
+      $handshape == "7 3 2 1" || $handshape == "7 3 3 0"} { return 1 }
+  return 0
+}
+
+proc is_6_plus_other_11_or_more_card_two_suiter {hand} {
+  set handshape [$hand pattern]
+  if {$handshape == "6 5 2 0" || $handshape == "6 5 1 1" ||
+      $handshape == "6 6 1 0" ||
+      $handshape == "7 4 1 1" || $handshape == "7 4 2 0" ||
+      $handshape == "7 5 1 0" || $handshape == "8 4 1 0"} { return 1 }
+  return 0
+}
+
 proc majors_4_4 {hand} {
   if { [spades $hand]==4 && [hearts $hand]==4 } { return 1 }
   return 0
@@ -143,6 +159,27 @@ proc is_2d_opener {hand} {
   if {($shdc=="4 4 0 5" || $shdc=="4 3 1 5" || $shdc=="3 4 1 5")
       && $points >= 11 && $points <= 15} { return 1 }
   return 0
+}
+
+proc is_2d_intermediate_opener {hand} {
+  set points [hcp $hand]
+  if {$points < 9 || $points > 15} { return 0 }
+
+  # 6+ diamonds, longest suit (or maybe same length as clubs)
+  set cs [clubs $hand]
+  set ds [diamonds $hand]
+  set hs [hearts $hand]
+  set ss [spades $hand]
+  if {$ds < 6 || $ds < $cs || $ds <= $hs || $ds <= $ss } { return 0 }
+
+  # 6--5 with major should be minimum
+  if {($hs > 4 || $ss > 4) && $points > 13} { return 0 }
+
+  # 9/10 hcp should have extra shape
+  if {$points == 9 && ![is_6_plus_other_11_or_more_card_two_suiter $hand]} { return 0 }
+  if {$points == 10 && ![is_6_plus_other_10_card_two_suiter $hand] } { return 0 }
+
+  return 1
 }
 
 proc has_side_major {hand} {
