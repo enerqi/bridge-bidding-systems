@@ -166,18 +166,16 @@ proc is_2d_intermediate_opener {hand} {
   if {$points < 9 || $points > 15} { return 0 }
 
   # 6+ diamonds, longest suit (or maybe same length as clubs)
+  # Not 6--5 with major
   set cs [clubs $hand]
   set ds [diamonds $hand]
   set hs [hearts $hand]
   set ss [spades $hand]
-  if {$ds < 6 || $ds < $cs || $ds <= $hs || $ds <= $ss } { return 0 }
-
-  # 6--5 with major should be minimum
-  if {($hs > 4 || $ss > 4) && $points > 13} { return 0 }
+  if {$ds < 6 || $ds < $cs || $hs > 4 || $ss > 4 } { return 0 }
 
   # 9/10 hcp should have extra shape
   if {$points == 9 && ![is_6_plus_other_11_or_more_card_two_suiter $hand]} { return 0 }
-  if {$points == 10 && ![is_6_plus_other_10_card_two_suiter $hand] } { return 0 }
+  if {$points == 10 && ![is_6_plus_other_10_card_two_suiter $hand] && ![is_6_plus_other_11_or_more_card_two_suiter $hand] } { return 0 }
 
   return 1
 }
