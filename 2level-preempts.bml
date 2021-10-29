@@ -119,12 +119,12 @@ There are space limitations compared to the [2!c Opener](#2C Opener) and so fewe
         4H = minimum, !h splinter, 4 card !s support
         4S = minimum, !c splinter, 4 card !s support
     2N = !d support or tolerance, constructive invite plus, no major interest
-        3C = sub-minimum, no game versus invite
+        3C = sub-minimum, up to bad 11hcp, no game versus invite
             3D = sign off
             any = stopper showing
             4D = GF, last train like slam try
             4H = Redwood [RKB](#RKB 4N) for !ds
-        3D = minimum, no game versus invite
+        3D = minimum, 11--12 hcp (maybe flattish / bad 13 hcp), no game versus invite
             any = stopper showing
             4D = GF, last train like slam try
             4H = Redwood [RKB](#RKB 4N) for !ds
@@ -263,126 +263,6 @@ There are space limitations compared to the [2!c Opener](#2C Opener) and so fewe
 2D--(P)--P--(3x)
     X = penalty, by either partner
 
-* 2D Precision Style 3 Suiter
-
-(11)12--15(16) hcp, short !d 3 suiter, 4--4--1--4, 4--4--0--5, 4--3--1--5, or 3--4--1--5
-
-- 11 hcp 4--4--1--4 should pass
-- 16 hcp 4--4--1--4 can downgrade from a 1!c opening
-- Responses show strength first, then shape
-
-2D
-    Pass = to play, long 6+ !d
-    2H = to play, could be 3 cards (e.g. 5!d and 2/3!c)
-        2S = maximum, game try, 4--4--0--5
-            3C = to play
-            3H = to play
-        2N = maximum, game try, 3--4--1--5
-            3C = to play
-            3H = to play
-    2S = to play, could be 3 cards if 3--2--5--3
-        2N = maximum, game try, 4--3--1--5
-            3C = to play
-            3S = to play
-        3C = maximum, game try, 4--4--0--5
-            3S = to play
-    2N = relay, invite+
-        3C = minimum, any shape
-            3D = 2nd relay, at least one 4 card major
-                3H = 3--4--1--5, NF
-                    4D = !h slam try
-                3S = 4--3--1--5, NF
-                    4D = !s slam try
-                3N = 4--4--0--5
-                    4CD = slam interest in !h/!s
-                        4DH = in-between suit showing slam interest
-                        4HS = to play
-                    4HS = to play
-                4C = 4--4--1--4  (responder must have a Major, so safe)
-                    4DH = transfer (carry on after if slam interest)
-            3H = !h invite, normally pass with 3 cards, judge with 4 cards
-            3S = !s invite
-            3N = to play, probably !c fit, !d stoppers, no slam opposite minimum
-            4C = !c invite
-            4N = quantitative, probably 3--3--5--2
-        3D = maximum, 4--4--1--4, Maximum, GF v.s. unpassed hand
-            3HS = !h/!s slam try
-            4C = !c slam try
-        3H = maximum, 4--4--0--5, Maximum, GF v.s. unpassed hand
-            3S = !s slam try
-            4C = !c slam try
-            4D = !h slam try
-            game = to play
-        3S = maximum, 4--3--1--5, Maximum, GF v.s. unpassed hand
-            4C = !c slam try
-            4D = !s slam try
-            game = to play
-        3N = maximum, 3--4--1--5, Maximum, GF v.s. unpassed hand
-            4C = !c slam try
-            4D = !h slam try
-            game = to play
-    3C = to play
-    3D = natural, invite, rare
-    3H = !h slam try, (invite by passed hand, !h game only)
-        3S = only 3 card !h suit
-            3N = to play
-            4C = change to set !c trump suit
-            4H = to play
-        3N = maximum, only 3 card !h suit
-            4C = change to set !c trump suit
-            4H = to play
-        4CD = cue bids, 4 card support. Must show !d void first. Do not cue bid !s.
-        4H = 4 card support, not !c/!d cue.
-    3S = !s slam try, (invite by passed hand, !s game only)
-        3N = only 3 card !s suit
-            4C = change to set !c trump suit
-            4DH = cue for !s
-        4CDH = cue bid, 4 card !s support. Must show !d void first.
-        4S = 4 card support, no cue
-    3N = to play
-    4C = !c slam try  (even by passed hand, e.g. 9 hcp and 6!cs)
-        4D = void cue
-            4H = Redwood
-        4H = cue, A/K
-            4S = Redwood
-        4S = cue, A/K
-            4N = Redwood
-        5C = weakest bid
-    4D = !d slam try, asking for singleton honour
-        4H = have honour
-        4S = extras !s, no honour in !d
-        4N = extras !cs or !hs, no honour in !d
-            4N/5C = next step, *Redwood*
-        5D = weakest bid
-    4HS = to play
-    5CD = to play
-
-2D--(any)
-    X = penalty
-    !h/!s = simple major bid, competitive, ok with opener bidding again with maximum
-    3C = obstructive
-
-2D--(X)
-    P = happy to play
-    XX = escape ask, e.g. same length in both majors
-
-2D--(P)--2N/3HS/4CD--(any)
-    P = partner has shown strength, but nothing to say
-    raise = support
-    cue = support + control etc.
-    X = decent defensive values
-
-2D--(P)--4HS--(5D)
-    P = common bid
-    X = good values
-
-2D--(P)--2N--(3D)
-    P = minimum opener, rejects game trys OR penalty pass attempt with !d honour
-        3HS = NF
-        4C = NF
-        4D = choose a major
-    3HS = maximum opener
-    4D = maximum opener, both majors
 
 * 2HS Weak Opening
 

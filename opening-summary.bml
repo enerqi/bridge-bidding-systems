@@ -127,20 +127,21 @@
   4N = Blackwood
   5C = to play
 
-2D  [2D Precision Style 3 Suiter](#2D Precision Style 3 Suiter), (11)12--15(16) hcp, 4--4--1--4, 4--4--0--5, 4--3--1--5 or 3--4--1--5
-  Pass = to play, long 6+ !d
-  2H = to play, could be 3 cards (e.g. 5!d and 2/3!c)
-  2S = to play, could be 3 cards if 3--2--5--3
-  2N = relay, invite+
-  3C = to play
-  3D = natural, invite, rare
-  3H = !h slam try, (invite by passed hand, !h game only)
-  3S = !s slam try, (invite by passed hand, !s game only)
+2D  [11--15 hcp, 6+ card !d suit](#2D Intermediate Opener), not with 5!h/!s
+  2H = natural, F1, 4+ !hs
+  2S = natural, F1, 4+ !ss, shorter !hs
+  2N = !d support or tolerance, constructive invite plus, no major interest
+  3C = natural, GF, 6+ suit
+  3D = !d slam try (or play as preemptive)
+  3H = natural major, GF, 6+ suit
+  3S = natural major, GF, 6+ suit
   3N = to play
-  4C = !c slam try  (even by passed hand, e.g. 9 hcp and 6!cs)
-  4D = !d slam try, asking for singleton honour
-  4HS = to play
-  5CD = to play
+  4C = fit jump, slam try
+  4D = preemptive
+  4H = Redwood [RKB](#RKB 4N) for !ds
+  4S = to play
+  4N = Blackwood
+  5D = to play
 
 2H [5+ (NV) / 6+ (VUL) card weak two](#2HS Weak Opening) 7--(11) 1st/2nd maybe long minor, Undisciplined 5--11 3rd, 10--13 4th
   2S = NF, natural, either weak 6+ !s short !hs OR invitational strength 5+ !s short !hs
