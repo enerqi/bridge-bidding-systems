@@ -23,6 +23,17 @@ proc long_semi_solid {hand suit} {
   return 0
 }
 
+proc good_6_plus_suit {hand suit} {
+  # 2 top 3 honours type hand
+  if { ([Top5Q $hand $suit] >=4) && ([$suit $hand]>=6)} { return 1 }
+  return 0
+}
+
+proc any_good_6_plus_carder {hand} {
+  if {[good_6_plus_suit $hand spades] || [good_6_plus_suit $hand hearts] || [good_6_plus_suit $hand diamonds] || [good_6_plus_suit $hand clubs]} { return 1 }
+  return 0
+}
+
 proc flattish {hand} {
   if { [balanced $hand] || [semibalanced $hand] } { return 1 }
   return 0
