@@ -1,0 +1,266 @@
+#+TITLE: Natural intermediate 2D Opening
+
+* 2D Intermediate Opening
+
+- 11--15 hcp, 6+ card !d suit
+- 3rd rarely a point lighter, weigh against a [3!d opening](#3CD Openings) and constructive bidding
+- Not 6!d + 5!h/!s, open 1!d (with extras) or 1!h/!s (with minimum) instead
+- By extension not freaky 7--5/8--4 side major hands
+- 7!d--4!c or 8!d--3!c/4!c are fine, though may use preempts in 3rd
+- 6--6 minors usually [open 2!c](#2C Intermediate Opening) -- more space to explore
+
+Responding:
+
+There are space limitations compared to the [2!c Opener](#2C Intermediate Opening) and so fewer constructive options.
+
+- 2!h/2!s responses are forcing, invite plus, so there is no NF signoff at the 2 level
+- 2!h/2!s can be used to look for a 4--4 fit
+- Bid 2!h with 4--4 majors or 5--5 majors
+- 3!d raise can be played as slam try or preemptive, a slam try is consistent with the [2!c Opener](#2C Intermediate Opening)
+- 2N !d support covers various hands from miminal !d support looking for 3N, to good !d support or even slam try if playing a preemptive 3!d raise
+- 2N can quantify opener's strength befor stopper/control bids, whilst a 3!d slam try asks for shortages specifically before RKB
+- No weak !cs sign off bid available
+- No special bids for 6+!cs + 5!h/!ss nor a dedicated 5--5 majors invite, so GF hands bid 3x naturally instead of going by an enquiry
+
+2D
+    (any) = [interference defence](#2D Intermediate Interference)
+    2H = natural, F1, 4+ !hs
+        2S = 4!s, natural, expect 0--2 !h support
+            3D = NF
+            3H = NF, 6+ suit, invitational
+            3S = invitational
+            4C = splinter, !s slam try
+            4D = vague, last train like !d slam try
+            4HS = to play
+            4N = [RKB](#RKB 4N) for !ss
+        2N = minimum, 0--2 !h support, not 4!ss
+            3C = GF relay, same responses but minimum hands
+                3D = !c stopper, 0--2 !h support, not 4!ss
+                3H = Hx !h support, NO !c stopper, not 4!ss
+                3N = !s stopper, NO !c stopper, xx !h support or worse, not 4!ss
+            3D = NF
+            3H = NF, 6+ !hs
+            3S = GF, 5--5 majors (should give up with an invite v.s. minimum)
+            4C = splinter, !d slam try
+            4D = vague, last train like !d slam try
+            4H = to play
+            4S = rare, Kickback [RKB](#RKB 4N) for !hs
+            4N = Blackwood, as 4!s must be Kickback and already quantified (use GF relay for quant 4N)
+        3C = artificial, 3 card !h support, maybe 4!ss
+            3D = NF, invitational, 4!hs only
+                3S = natural 4--3--6--0, unlikely maximum if opening 1!d with 6--4 max
+            3H = NF, invitational, 5+ !hs
+            3S = cue bid for !hs
+            3N = to play
+            4C = cue bid for !hs
+            4D = !d slam try, last train like
+            4H = to play
+            4S = Kickback [RKB](#RKB 4N) for !hs
+            4N = quantitative (not already quantified and have no GF relay path)
+        3D = maximum, !c stopper, 0--2 !h support, not 4!ss
+            3H = 6!hs, forcing, asks for doubleton support
+                3S = no support, stop ask
+                3N = no support, !s stop
+            3S = stop ask (possibly 5--5 majors)
+                3N = natural
+                    4S = unlikely, 5--5 majors, gambling on 3 card support or good 5--2 fit
+            3N = to play
+            4D = !d slam try, last train like
+            4H = Redwood [RKB](#RKB 4N) for !ds (bid 3!h forcing to play in !hs)
+            4N = quantitative
+        3H = maximum, Hx !h support, NO !c stopper, not 4!ss
+            3S = GF, 5--5 majors (would assume !s stop if looking for 3N)
+            4N = quantitative
+        3S = maximum, splinter, 4 card !h support
+        3N = maximum, !s stopper, NO !c stopper, xx !h support or worse, not 4!ss
+            4S = 5--5 majors, gambling on 3 card support or good 5--2 fit
+        4C = maximum, splinter, 4 card !h support
+        4D = minimum, !c splinter, 4 card !h support
+        4H = minimum, !s splinter, 4 card !h support
+    2S = natural, F1, 4+ !ss, shorter !hs
+        2N = minimum, 0--2 !s support
+            3C = GF relay, same responses but minimum hands
+                3D = !c stopper, 0--2 !s support
+                3H = natural, 4!hs
+                3S = Hx !s support, NO !c stopper
+                3N = !h stopper, NO !c stopper, xx !s support or worse
+            3D = NF
+            3H = NF, 6--5 majors (start with 2!h when 5--5)
+            3S = NF, 6+ !ss
+            4C = splinter, !d slam try
+            4D = vague, last train like !d slam try
+            4H = Redwood [RKB](#RKB 4N) for !ds
+            4S = to play
+            4N = Kickback [RKB](#RKB 4N) for !ss (use GF relay for a last ditch quantitative 4N)
+        3C = artificial, 3 card !s support
+            3D = NF, invitational, 4!ss only
+            3H = cue bid for !ss
+            3S = NF, invitational, 5+ !ss
+            3N = to play
+            4C = cue bid for !ss
+            4D = !d slam try, last train like
+            4H = Redwood [RKB](#RKB 4N) for !ds
+            4S = to play
+            4N = quantitative (not already quantified and have no GF relay path)
+        3D = maximum, !c stopper, 0--2 !s support
+            3H = stop ask
+            3S = 6!ss, forcing, asks for doubleton support
+                3N = no support, unknown !h stop
+            3N = to play
+            4D = !d slam try, last train like
+            4H = Redwood [RKB](#RKB 4N) for !ds
+            4S = to play
+            4N = quantitative
+        3H = natural, maximum, 4!hs
+        3S = maximum, Hx !s support, NO !c stopper
+        3N = maximum, !h stopper, NO !c stopper, xx !s support or worse
+        4C = maximum, !c splinter, 4 card !s support
+        4D = maximum, !h splinter, 4 card !s support
+        4H = minimum, !h splinter, 4 card !s support
+        4S = minimum, !c splinter, 4 card !s support
+    2N = !d support or tolerance, constructive invite plus, no major interest
+        3C = sub-minimum, up to bad 11hcp, no game versus invite
+            3D = sign off
+            any = stopper showing
+            4D = GF, last train like slam try
+            4H = Redwood [RKB](#RKB 4N) for !ds
+        3D = minimum, 11--12 hcp (maybe flattish / bad 13 hcp), no game versus invite
+            any = stopper showing
+            4D = GF, last train like slam try
+            4H = Redwood [RKB](#RKB 4N) for !ds
+            4N = quantitative
+        3HS = stopper showing, game interest, includes 7!d--4!h/!s shape
+            3N = natural
+                4D = extreme shape, e.g. 8--2--2--1
+            4C = cue, !d slam try
+            4HS = raise natural, no other major stop
+                5CD = natural, no 4 card major support
+            4N = quantitative
+        3N = maximum, natural, something in both majors
+        4C = 7!d--4!c, extras
+            4D = [Double Fit RKB Kickback](#Double Fit RKB)
+            4H = Redwood [RKB](#RKB 4N) for !ds
+            4S = cue, likely missing !h control
+                4N = [RKB](#RKB 4N) for !ds, has !h control
+        4D = 1--1--8!d--3!c, ~3--4 Control Points, too weak for 1!c, unsuitable for 4!d/5!d
+            4H = Redwood [RKB](#RKB 4N) for !ds
+            4S = cue, likely missing !h control
+                4N = [RKB](#RKB 4N) for !ds, has !h control
+        4H = fragment, 1--3--8!d--1, ~3--4 Control Points, too weak for 1!c, unsuitable for 4!d/5!d
+            4S = cue, likely missing !h control
+                4N = [RKB](#RKB 4N) for !ds, has !h control
+        4S = fragment, 3--1--8!d--1, ~3--4 Control Points, too weak for 1!c, unsuitable for 4!d/5!d
+            4N = Redwood [RKB](#RKB 4N) for !ds
+    3C = natural, GF, 6+ suit
+        3D = natural, waiting
+        3HS = stopper showing
+        3N = natural
+        4C = good !c support, likely lacking major controls
+        4D = [RKB](#RKB 4N) for !cs
+        4HS = void splinter, extras, 3+ Control Points, no other major control, e.g. xx/-/AKxxxx/KQ10xx
+    3D = !d slam try
+        3HS = singleton
+            3N = NF, opener can bid more with extras
+            4C = cue
+            4D = encouraging slam with !c control, likely missing !c control
+            4H = Redwood [RKB](#RKB 4N)
+            4S = cue, likely missing !h control
+                4N = [RKB](#RKB 4N), has !h control
+            4N = quantitative
+        3N = no shortage, decline slam
+            4C = cue
+            4D = encouraging slam with !c control, likely missing !c control
+            4H = Redwood [RKB](#RKB 4N)
+            4S = cue, likely missing !h control
+                4N = [RKB](#RKB 4N), has !h control
+            4N = quantitative
+        4C = !c shortage
+            4D = vague bid, looking for extras, last train like
+            4H = Redwood [RKB](#RKB 4N)
+            4S = cue, likely missing !h control
+                4N = [RKB](#RKB 4N), has !h control
+        4D = no shortage, good hand
+            4H = Redwood [RKB](#RKB 4N)
+            4S = cue
+            4N = substitute !h cue
+        4HS = void (5 card major not possible)
+            4N = substitute [RKB](#RKB 4N) for !ds
+    3H = natural major, GF, 6+ suit
+        3S = stopper showing
+        3N = natural
+        4C = natural, 5 carder likely
+        4D = natural, nothing better to bid
+        4H = natural, some support
+        4S = void splinter, extras, 4+ Control Points, no other major control, e.g. -/xxx/AKxxxx/AQxx
+            4N = [RKB](#RKB 4N) for !hs
+        4N = [RKB](#RKB 4N) for !hs
+        5C = void splinter, 4+ Control Points, no other major control, e.g. xxx/AQxx/AKxxxx/-
+        5D = long strong suit
+    3S = natural major, GF, 6+ suit
+        3N = natural
+        4C = natural, 5 carder
+        4D = natural, nothing better to bid
+        4H = cue bid for !s, note 6!s--5!h responder hands can start with a 2!s bid
+        4N = [RKB](#RKB 4N) for !ss
+        5C = void splinter, 4+ Control Points, no other major control, e.g. AQxx/xxx/AKxxxx/-
+        5D = long strong suit
+    3N = to play
+        4x = extreme shape, e.g. 6!d--5!c--2--0
+    4C = fit jump, slam try
+        4D = [Double Fit RKB Kickback](#Double Fit RKB)
+        4H = [RKB](#RKB 4N) for !ds
+        4S = cue, unlikely both majors controlled
+            4N = [RKB](#RKB 4N) for !ds
+        4N = substitute !h cue, concern for !s control
+        5C = extras, !c control, good !ds, no major controls
+        5D = decline slam try
+    (3!d)/4D = preemptive
+    4H = Redwood [RKB](#RKB 4N) for !ds
+    4S = to play
+    4N = Blackwood
+    5D = to play, strength vague
+
+** 2D Intermediate Interference
+
+2D--(X)
+    XX = penalty interest
+    3D = competitive
+    others = system on, ignore double
+
+2D--(2x)
+    P = nothing special
+    X = negative
+    3D = competitive
+    new-suit = 2 level NF, 3 level forcing
+    cue = forcing, !d support
+    jump-cue = splinter, !d support
+
+2D--(2N)
+    X = penalty
+    others = NF
+
+2D--(3x/4x)
+    X = negative
+    new-suit = natural, forcing
+
+2D--2H+--(2N+)
+    X = penalty, of 4th position free bid
+
+2D--2HS--(X)
+    XX = penalty interest (e.g. 4 card other major)
+    P = as 2N, without stop
+    2N = as system, but stop implication
+    others = system on
+
+2D--2H--(2S)
+    X = penalty interest
+    others = system on
+
+2D--2N+--(X)
+    XX = penalty interest
+
+2D--(P)--P--(2x)
+    X = takeout, by either partner
+
+2D--(P)--P--(3x)
+    X = penalty, by either partner
