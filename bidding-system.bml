@@ -23,13 +23,12 @@
   [2D Intermediate Opening](#2D Intermediate Opening) is a bit difficult to construct over (though still usefully competitive), but there
   to make other 1 level openings more precise. A multi 2!d allows more fun aggressive bids plus a place to put one
   strong constructive bid but loses the intermediate opening thus making a 1!d opening very vague. By not playing a
-  multi 2!d we cannot (accurately) play 5 major + 4 minor weak twos AND 6 card major weak twos (a multi 2!d is arguably slow and easier
-  to defend for an experienced pair though - cannot be fast raised).
+  multi 2!d we cannot (accurately) play 5 major + 4 minor weak twos AND 6 card major weak twos. We also cannot play a fun weak only 2!d, 5 or 6 card.
 - Fewer high variance bids includes not making crazy bids - e.g. on flat hands that have little lead directing values and
   are likely to just give away information etc. We don't need to pressure less experienced opponents if it's also going to
   risk partner putting us in the wrong contract. Stick to the expected ranges for bids. Some places that is a tight range and
   others it's looser (3rd position bids, P--(1!c)--1!s overcalls etc).
-- Accept the occasional bad result due to luck in the opponents' high variance or the weaker parts of our system (e.g. construction over 2!c or 2!d openings).
+- Accept the occasional bad result due to luck in the opponents' high variance or the weaker parts of our system
 - Weak 2!h/2!s are 5+ (NV) 6+ (VUL) card constructive (1 honour, 7--11 hcp) in 1st/2nd when vulnerable. When NV we require high quality
   5 carders, aswell as the tight point range, to keep the constructive aspect. 3rd is undisciplined of course.
 - Wide ranging openings are imprecise and make judging games/slams difficult, especially in competition. Yet we do want
@@ -39,8 +38,9 @@
 - Bidding shapely hands quickly and clearly without promising many hcp is very important, whether showing 5--5/6--5 hands with jump
   rebids, weak jump shift responses, bidding with less than the standard 6 hcp over 1 level openings or competing with
   negative free bids. Limited openings really help here.
-- The 1!c and 2C opening are the weak points of an artificial club system. It's hard to construct accurately over an
-  intermediate 2C opening, therefore it promises 6 cards unlike many of the older 5 card variants played in Precision/Swedish club systems.
+- The 1!c and often 2C openings are the weak points of an artificial club system. It's hard to construct accurately over an
+  intermediate 5 card 2C opening, therefore it promises 6 cards unlike many of the older 5 card variants played in
+  Precision/Swedish club systems. The competitive/preemptive benefits of 2!c with 5 cards are limited.
 - A Swedish like artificial 1!c opening (two way weak NT or strong) stops opponents bidding purely destructively, but when
   they do bid aggressively the auction can be more difficult. The 1!c opening is usually a weak NT, not strong, and having
   separate bids (1!d for 11--13 NT and 1!c for 13--15) helps define those hands quickly. It's somewhat arbitrary but the
@@ -59,7 +59,7 @@
 - Bidding flat hands quickly is important, much like limiting HCP ranges and bidding shapely hands hands clearly.
   5--3--3--2 hands with a 5 card major, except for 11--12 (13) hcp 5 card major hands (1!d opening constructive sequences
   overloaded otherwise) should show a balanced hand straight away unless judgment strongly suggests otherwise.
-  5--4--2--2 hands with a long minor may also want to show a balanced hand.
+  5--4--2--2 hands with a long minor, and rarely 6--3--2--2, may also want to show a balanced hand.
 - We give up a weak NT opening - a pairs optimization. The even stronger 16--18 NT gets a chance to bid in 3rd more
   often as 1st/2nd will have fewer points. The risk of opening 2N with 19 HCP is low, especially compared to the clarity
   it gives to strong 1!c club openings and the gains from many faster auctions (1N--3N, 2N--3N etc.)
@@ -70,15 +70,13 @@
   responses and a forcing NT, which could make slam bidding harder. 4 card majors would allow a natural 1!d opening and
   free up the 2!d opening bid as a weak two.
 
-This details of this system are mainly taken from the Revision Club (v4.0 by John Montgomery). The 1!d through 4!s openings
-are mostly taken as is. Swapping the strong only 1!c for a Swedish weak strong club is the point of change and in many
+This details of this system are mainly taken from the *Revision Club* (v4.0 by John Montgomery) system. The 1!d and
+especially 2!d intermediate openings are influenced by *IMPrecision* (Meyerson) with the rest of the 1!h through 4!s openings
+mostly taken as is from Revision Club.
+Swapping Revision's strong only 1!c for a *Swedish* weak strong *club* is the point of change and in many
 ways easy enough to swap back to a strong only 1!c opening, again at the cost of having opponents bid more destructively over
-1!c and making the 1!d opening more overloaded required to handle 11--15 (competitive) or good 12--15 (more constructive)
-balanced hands.
-
-Clear agreements, depth and detail - a world class system - are more important than being easy to remember. With practice
-it's easy to flick to the right notes when playing online bridge. Some study will be required to learn the details
-without the notes at hand. All that said, even without the details the overall structure is highly coherent.
+1!c and making the 1!d opening more overloaded and required to handle 11--15 (competitive) or good 12--15 (more constructive)
+balanced hands if we want to open most 11--12 balanced hands.
 
 
 ** Terminology
@@ -86,8 +84,6 @@ without the notes at hand. All that said, even without the details the overall s
 - Responder is the partner of the opening bidder.
 
 - Advancer is the partner of the first overcaller (of the opening side)
-
-- DNEBAPH (does not exist by a passed hand)
 
 - Quick Trick A = 1; AK = 2; K = 0.5; KQ = 1; AQ = 1.5
 
@@ -97,3 +93,4 @@ without the notes at hand. All that said, even without the details the overall s
 
 
 #INCLUDE alternatives.bml
+#INCLUDE announcing.bml

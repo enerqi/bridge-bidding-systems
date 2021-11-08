@@ -1,0 +1,47 @@
+#+TITLE: Alerting / Announcing
+
+* Alerting & Announcing
+
+** 1C: *ALERT*
+
+- 1!c--1!h/1!s: *alert* (major minor canapé)
+- 1!c--2!c/2!d: *alert* (NF new suit)
+
+** 1D: "may be zero with five clubs"
+
+- 1!d--1!h/1!s: *alert* (any strength, major minor canapé)
+- 1!d--2!c: *alert* (maybe longer !ds)
+- 1!d--2!d: *alert* (inverted like)
+- 1!d--2!h/2!s/3!c/3!d/3!h/3!s/4!c/4!d: *alert* (NF new suit)
+
+** 1H/1S: ""
+
+- 1!h/1!s--1N: *alert* (forcing)
+- 1!h--2!s: *alert* (NF new suit)
+- 1!h/1!s--3new: *alert* (NF invitational new suit)
+
+** 1N: "16 to 18"
+
+- 1N--2!c: "Stayman"
+- 1N--2!c--2!d: not alerted
+- 1N--2!c--2!h: *alert* (denys !ss)
+- 1N--2!d: "Hearts" (2 level red suit transfers)
+- 1N--2!h: "Spades"
+
+** 2C: "Intermediate"
+
+- 2!c--2!h/2!s: *alert* (NF new suit)
+
+** 2D: "Intermediate"
+
+** 2H: "Weak"
+
+** 2S: "Weak"
+
+** 2N: "19 to 20"
+
+- 2N--3!c: *alert* (mixed lengths Stayman - 3!s response shows 5 cards)
+- 2N--3!d: "Hearts"
+- 2N--3!h: "Spades"
+
+** Any Sequence 3N+: alerted only before opener's 2nd bid

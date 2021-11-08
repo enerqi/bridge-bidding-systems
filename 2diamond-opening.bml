@@ -2,12 +2,12 @@
 
 * 2D Intermediate Opening
 
-- 11--15 hcp, 6+ card !d suit
+- (10)11--15 hcp, 6+ card !d suit
 - 3rd rarely a point lighter, weigh against a [3!d opening](#3CD Openings) and constructive bidding
 - Not 6!d + 5!h/!s, open 1!d (with extras) or 1!h/!s (with minimum) instead
 - By extension not freaky 7--5/8--4 side major hands
 - 7!d--4!c or 8!d--3!c/4!c are fine, though may use preempts in 3rd
-- 6--6 minors usually [open 2!c](#2C Intermediate Opening) -- more space to explore
+- 6--6 minors are very infrequent, open as seems best
 
 Responding:
 
@@ -18,7 +18,7 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
 - Bid 2!h with 4--4 majors or 5--5 majors
 - 3!d raise can be played as slam try or preemptive, a slam try is consistent with the [2!c Opener](#2C Intermediate Opening)
 - 2N !d support covers various hands from miminal !d support looking for 3N, to good !d support or even slam try if playing a preemptive 3!d raise
-- 2N can quantify opener's strength befor stopper/control bids, whilst a 3!d slam try asks for shortages specifically before RKB
+- 2N can quantify opener's strength before stopper/control bids, whilst a 3!d slam try asks for shortages specifically before RKB
 - No weak !cs sign off bid available
 - No special bids for 6+!cs + 5!h/!ss nor a dedicated 5--5 majors invite, so GF hands bid 3x naturally instead of going by an enquiry
 
@@ -205,20 +205,14 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
         5C = void splinter, 4+ Control Points, no other major control, e.g. AQxx/xxx/AKxxxx/-
         5D = long strong suit
     3N = to play
-        4x = extreme shape, e.g. 6!d--5!c--2--0
-    4C = fit jump, slam try
-        4D = [Double Fit RKB Kickback](#Double Fit RKB)
-        4H = [RKB](#RKB 4N) for !ds
-        4S = cue, unlikely both majors controlled
-            4N = [RKB](#RKB 4N) for !ds
-        4N = substitute !h cue, concern for !s control
-        5C = extras, !c control, good !ds, no major controls
-        5D = decline slam try
+        4C = extreme shape, e.g. 6!d--5!c--2--0
+        4D = extreme shape, e.g. 8!d--3--1--1
+        4HS = extreme shape, e.g. 7!d--4!h/!s--2--0
+    4C = [RKB](#RKB 4N) for !ds
     (3!d)/4D = preemptive
-    4H = Redwood [RKB](#RKB 4N) for !ds
-    4S = to play
+    4HS = to play
     4N = Blackwood
-    5D = to play, strength vague
+    5CD = to play
 
 ** 2D Intermediate Interference
 

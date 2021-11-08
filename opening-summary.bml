@@ -111,7 +111,7 @@
   5C = [1--1--4!d--7!c exactly, slam try, 2+ top !c honours, 1+ top !d honour](#1N--3C+)
   5D = [1--1--7!d--4!c exactly, slam try, 2+ top !d honours, 1+ top !c honour](#1N--3C+)
 
-2C  [11--15 hcp, 6+ card suit](#2C Intermediate Opening)
+2C  [(10)11--15 hcp, 6+ card !c suit](#2C Intermediate Opening)
   (any) = [interference defence](#2C Interference)
   2D = [enquiry, many invite+ or weak !d hands](#2D enquiry)
   2HS = natural, NF, 5+ (usually 6) suit, ~7--11 hcp, unlikely both majors (both majors invite+ use 2!d)
@@ -122,12 +122,12 @@
   3S = 5!s and 6+ !ds, GF, (passed hand = invite 6!s--4!h majors)
   3N = to play, opener can bid on with lots shape and strength
   4C = preempt
-  4D = Redwood for clubs
+  4D = Redwood [RKB](#RKB 4N) for !cs
   4HS = to play (passed hand = fit jump), opener can bid on with super fit and controls
   4N = Blackwood
   5C = to play
 
-2D  [11--15 hcp, 6+ card !d suit](#2D Intermediate Opening), not with 5!h/!s
+2D  [(10)11--15 hcp, 6+ card !d suit](#2D Intermediate Opening), not with 5!h/!s
   2H = natural, F1, 4+ !hs
   2S = natural, F1, 4+ !ss, shorter !hs
   2N = !d support or tolerance, constructive invite plus, no major interest
@@ -136,12 +136,11 @@
   3H = natural major, GF, 6+ suit
   3S = natural major, GF, 6+ suit
   3N = to play
-  4C = fit jump, slam try
+  4C = [RKB](#RKB 4N) for !ds
   4D = preemptive
-  4H = Redwood [RKB](#RKB 4N) for !ds
-  4S = to play
+  4HS = to play
   4N = Blackwood
-  5D = to play
+  5CD = to play
 
 2H [5+ (NV) / 6+ (VUL) card weak two](#2HS Weak Opening) 7--(11) 1st/2nd maybe long minor, Undisciplined 5--11 3rd, 10--13 4th
   2S = NF, natural, either weak 6+ !s short !hs OR invitational strength 5+ !s short !hs
@@ -170,9 +169,9 @@
 2NT [19--20 NT](#2NT Opening)
 3CD [constructive minor preempt](#3CD Openings)
 3HS [preempt, max 1 outside A/K](#3HS Openings)
-3N  [Good 4HS preempt](#3N Opening) 1st/2nd semi-solid+ with 2 or 3 KC, 3rd/4th to play
+3N  [good 4HS preempt](#3N Opening) 1st/2nd semi-solid+ with 2 or 3 KC, 3rd/4th to play
 4CD [preempt, distributional with side singleton/void](#4CD Opening)
 4HS [preempt, not 3N strength in 1st/2nd, max 1 outside A/K](#4H 4S 5C 5D Openings)
 4N  [specific ace ask](#4N Opening Specific Ace Ask)
 5CD [preempt](#4H 4S 5C 5D Openings)
-5HS 11 tricks in hand, missing 2 top honours
+5HS 11 tricks in hand, missing 2 trump honours
