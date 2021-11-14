@@ -658,7 +658,7 @@ In terms of artificial overcalls:
 *** Over a balanced hand
 
 1CD/1N--(2!d)
-    X = staymanic 3+ both majors, doubleton+ in !ds, follow on suit bid is poor 5 card invitational, follow on cue stop ask
+    X = staymanic 3+ both majors, follow on suit bid is poor 5 card invitational, follow on cue stop ask
     2HS = weak
     2N = puppet, weak or GF !cs
     3C = invitational plus !h
@@ -676,7 +676,7 @@ In terms of artificial overcalls:
     4x = system on
 
 1CD/1N--(2!h)
-    Dbl = staymanic guarantee 3oM, doubleton+ in !hs, follow on suit bid is poor 5 card invitational, follow on cue stop ask
+    Dbl = staymanic guarantee 3oM, follow on suit bid is poor 5 card invitational, follow on cue stop ask
         2S = natural
             3x = new suit, invitational weak suit
             3S = invite
@@ -740,7 +740,7 @@ In terms of artificial overcalls:
     4x = system on, even transfer to their suit is natural
 
 1CD/1N--(2!s)
-    Dbl = staymanic guarantee 3oM, doubleton+ in !ss, follow on suit bid is poor 5 card invitational, follow on cue stop ask
+    Dbl = staymanic guarantee 3oM, follow on suit bid is poor 5 card invitational, follow on cue stop ask
         2N = stop, without major fit
         3H = fit, minimum
         3S = extras, 5 card !h fit
