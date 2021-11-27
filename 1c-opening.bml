@@ -944,7 +944,7 @@ game = to play, regardless of suit
 ** Slam Try Relay Bidding
 
 After responder has shown (1) strength and (2) distribution, with little knowledge of what opener has, there are
-specific situations where a 3rd round of relay bidding can occur to make a slam try.
+specific situations where a 3rd round of (relay) bidding can occur to make a slam try.
 
 - With unknown suit lengths, it's assumed the suits are the same length
 - With 2 equal length suits, the highest ranked suit is "longest"
