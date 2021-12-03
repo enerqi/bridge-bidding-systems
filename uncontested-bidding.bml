@@ -7,13 +7,13 @@ Short / Nebulous !d for flattish or 3 suited or both minors or extreme shape max
 - Zero plus !d cards
 - 11--(13) balanced/semi-balanced hands with 2+ card !d suit (poor vulnerable 11 hcp flat may pass)
 - 11--(13) balanced hands in principle do not include any 5 card major hands
-- 11--15 unbalanced 3 suiter (4--4--4--1 / 5--4--4--0) any short suit and without a 5 card major, so maybe minor canapé
+- 11--15 unbalanced 3 suiter (4--4--4--1 / 5--4--4--0 / 5--4--3--1) any short suit and without a 5 card major, so maybe minor canapé
 - 11--15 both minors 5--4 / 5--5 (6--5 maximum could also use for more space), so maybe minor canapé.
 - Rare extreme shape hands with extras include 6(7)!d--5!h/!s
 
 Other bids:
 
-- Open [2!c](#2C Intermediate Opening)/[2!d](#2D Intermediate Opening) with minimum 6--5 both minors and 2!c with 6--6 minor hands
+- Often open [2!c](#2C Intermediate Opening)/[2!d](#2D Intermediate Opening) with minimum 6--5 both minors and 2!c with 6--6 minor hands
 - A maximum 6--5 minors can be supported by 1!d or the 2!c/2!d openings, experiment
 - Open [2!d](#2D Intermediate Opening) with a 7!d--4!h/!s hand
 - Improvise with 8!d--4!h/!s, probably best to open higher with 2!d expecting competition. It's a very rare 1:2211 frequency anyway.
@@ -260,13 +260,30 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
 2C = natural, NF, 5--4+ either way in !cs + !ds, denies 4 !ss or 3!hs, often 14--15 hcp unless min 5--5 minors
     2D = simple preference, NF, natural continuations
     2H = 6+ !hs, invitational (else use weak jump shift), natural continuations
-    2S = FSF, nearly GF, NF opposite minimum 5--5 minors (or unless passed hand)
-        2N = natural, forcing/waiting, !s stopper
-        3C = minimum, 5--5 minors (NF vs passed hand)
-            3D = sign off
-        3D = maximum, 5--5 minors
-        3H = 3 card support, priority bid
-        3S = catchall, weak !s cannot bid NT, nothing else to bid
+    2S = FSF RELAY, GF, note opener denied 4!ss already
+        2N = 5--4 minors only, (13)(45) or 22(45)
+            3C = shape ask, 4 level is [Slam Try Relay Bidding](#Slam Try Relay Bidding)
+                3D = 1345
+                3H = 1354
+                3S = 3145
+                3N = 3154
+                4C = 2245
+                4D = 2254
+        3C = 5--5 minors, !s singleton
+            3S = stop ask
+        3D = 6--5 minors, 2 singletons
+            3H = shape relay, [Slam Try Relay Bidding](#Slam Try Relay Bidding) next
+                3S = 1--1--5--6
+                3N = 1--1--6--5
+            3S = cue
+        3H = 5--5 minors, !h singleton
+        3S = 5--5 minors, some void
+        3N = 5!d, 6!c, some void
+            4C = void ask
+                4HS = void
+        4C = 6!d, 5!c, some void
+            4D = void ask
+                4HS = void
     2N = natural, invitational
         3C = NF
         3DHS = forcing
@@ -473,29 +490,39 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
 
 *** 1D--1S--2C
 
-Change FSF responses?
-2C = ...
-    2H = FSF
-        2S = 4!hs, 1444 / 1435 / 04(45)
-        2N = 5-4 minors, (13)(45) or 22(45)
-        3C = 5--5 minors, !s singleton
-        3D = 6--5 minors, two singletons
-        3H = 5--5 minors, !h singleton
-        3S = 5--5 minors, !h void
-        3N = 6!c--5!d, !h void
-        4C = 6!d--5!c, !h void
-
 2C = natural, NF, 4--4+ minors either way, denies 3 !ss, often 14--15 hcp unless min 5--5+ minors
     2D = simple preference, NF, natural continuations
-    2H = FSF, nearly GF, NF opposite minimum 5--5 minors (or unless passed hand)
-        2S = natural, 3 card !s support
-        2N = natural, forcing/waiting, !h stopper
-        3C = minimum, 5--5 minors (NF vs passed hand)
-            3D = sign off
-        3D = maximum, 5--5 minors
-        3H = catchall, weak !hs cannot bid NT, nothing else to bid
-            3S = suggest 5--2 !s game
-        3S = ???
+    2H = FSF RELAY, GF
+        2S = 4!hs, 1--4--4--4 / 1--4--3--5 or 0--4--(4--5)
+            2N = shape ask, 4 level is then [Slam Try Relay Bidding](#Slam Try Relay Bidding)
+                3C = 1--4--3--5
+                3D = 1--4--4--4
+                3H = 0--4--4--5
+                3S = 0--4--5--4
+        2N = 5--4 minors only, (13)(45) or 22(45), assumed 14--15 hcp
+            3C = shape ask, 4 level is [Slam Try Relay Bidding](#Slam Try Relay Bidding)
+                3D = 1345
+                3H = 1354
+                3S = 3145
+                3N = 3154
+                4C = 2245
+                4D = 2254
+            3H = stop ask
+        3C = 5--5 minors, !s singleton
+            3H = stop ask
+        3D = 6--5 minors, 2 singletons
+            3H = shape relay, [Slam Try Relay Bidding](#Slam Try Relay Bidding) next
+                3S = 1--1--5--6
+                3N = 1--1--6--5
+            3S = cue
+        3H = 5--5 minors, !h singleton
+        3S = 5--5 minors, some void
+        3N = 5!d, 6!c, some void
+            4C = void ask
+                4HS = void
+        4C = 6!d, 5!c, some void
+            4D = void ask
+                4HS = void
     2S = 6+ !ss, invitational (else use weak jump shift), natural continuations
     2N = natural, invitational
         3C = NF
@@ -1036,8 +1063,7 @@ By responder example:
 
 * 1H Opening
 
-- 5 card Major all positions
-- by judgement a minimum 5!h and 6!c/!d may show a 5--5 hand bidding !h first
+- a minimum 5!h and 6!c/!d may show a 5--5 hand bidding !h first
 
 1H = (10)11--15, 5 card Major
   (any) = [interference](#1H interference)
@@ -2007,7 +2033,7 @@ at the 3 level.
 
 * 1S Opening
 
-- by judgement a minimum 5!s and 6!h may show a 5--5 hand bidding !s first
+- a minimum 5!s and 6!h may show a 5--5 hand bidding !s first
 
 1S = (10)11--15, 5 card Major
   (any) = [interference](#1S interference)
