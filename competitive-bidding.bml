@@ -5,7 +5,7 @@
 ** We Overcall or X/XX Summary
 
 - Generally based more on shape than exact strength
-- 1 level light major suit overcalls, e.g. 8+ hcp 6--3--3--1
+- 1 level light major suit overcalls, ~8+ hcp
 - Minor overcalls more likely 10+ reasonable opening bids
 - 2 level minor overcalls are fine on "bad" 5 carders e.g. AJxxx if partner not passed and have enough values / other suit tolerance
 - Responsive doubles to 3!s
@@ -31,49 +31,36 @@
 - when opponents have 2 suits 4th cue (partner passed) is astro 6m--4M of low suit, again natural of higher suit
 - when opponents bid 1 suit and 1NT cue is just Michaels
 
+*** Minimum Level Conversion after Takeout Doubles
+
+- any level takeout doubles then correcting to the cheapest other suit shows a different 2 suiter and not any extras
+- a jump in the lower suit or forcing to a higher level implies a two suiter 5--5+ that doesn't fit agreed strength ranges of the main two suiter overcalls
+- concept may also apply to high level bids with limited space like 4N, e.g. (4!s)--4N, or a cue bid showing a two suiter when there are 3 unknown suits
+- very strong single suiters are rare, and may need to jump cue bid or double and jump cue bid, or just bid game
+
 *** Cue Bids and Jump Overcalls Summary
 
-- 2!h jump overcall always artificial
-- 2!s jump overcall varies: weak over 1!c or 1!h, but !c/!s astro over 1!d
-- 3!c jump overcall differs each bid: super michaels over 1!c, weak over 1!d, 5--5 !c + !s over 1!h, astro !cs + !hs over 1!s
-- 3!d jump overcall differs each bid: preempt over 1!c, super michaels over 1!d, 5--5 !d + !s over 1!h, astro !ds + !hs over 1!s
-- 3!h jump overcall is a preempt
+- natural single suiter overcalls are 2 level weak, 3 level weak NV, intermediate VUL
+- where two suiter strengths are undefined (directly or by inference) assumed weakish (~7--11) or strong (16+), but
+  consider whether just giving away information about bad breaks, the vulnerability and scoring
+- intermediate two suiter hands can use direct overcalls or takeout doubles with a later jump in the lower suit or conversion to a higher level (not equal level conversion)
 
 **** After minor openings:
 
-- (1!c)--2!c cue shows 5+ !ds (other minor), probably 6 cards if < 11, and 4 !h, cannot T/O X, simple overcall strength as can play 2 level.
-- (1!c)--2!d shows 5+ !ds (other minor), probably 6 cards if < 11, and 4 !s, cannot T/O X, simple overcall strength as can play 2 level.
-- (1!d)--2!d cue also 5+ !cs (other minor) and 4 !hs, usually 6 cards as !cs going to 3 level, cannot T/O X, intermediate strength.
-- (1!d)--2!s is intermediate strength, 4!ss and 6 !cs
-
-No easy way to show 5!cs and 4!ss over 1!d opening, unless can T/O X. Maybe bid 2!cs and T/O X later. Forcing !cs to 3 level normally needs 6 cards.
-
-- (1!c/1!d)--2!h 5--5+ majors, simple overcall strength ~8--13 as can play 2 level
-- (1!c/1!d)--3!c/3!d jump cue shows 5--5+ majors, stronger hands ~14+/15+, super michaels
-- (1!c)--2N 5--5 unusual, !hs + !ds, intermediate strength as going 3 level
-- (1!d)--2N 5--5 unusual, !hs + !cs, intermediate strength as going 3 level
-- (1!c)--2!s is left as WJO, respond as opening weak 2!s. Can Astro without going this high over 1!c.
-
-Note, 5 !ss and 5 minor just bid 1!s and then more to show extra strength/shape.
+- cue of a prepared minor is natural otherwise shows a limited majors hand
+- the jump one above (1!c--2!d / 1!d--2!h) over a prepared minor shows a limited majors hand
+- jump cue is strong majors
+- weak (3 level VUL intermediate) jumps otherwise
+- 2N is unusual
+- simple overcall with !s + other minor
 
 **** After major openings:
 
-Many intermediate+ hands as bidding often forced to the 3 level. With one major opened it's easy to use
-a takeout X to show a 4 card other major, so no 5--4 Astro type bids required.
-
-- (1!h)--2!h 4!ss and 6 !cs/!ds, intermediate strength  (P/H = weak 5--6 shape)
-- (1!h)--2!s WJO, respond as opening weak 2!s
-- (1!h)--2N minors 5--5+ unusual, intermediate strength
-- (1!h)--3!c/3!d minor + !s, 5--5+, intermediate strength  (P/H = WJO)
-- (1!s)--2!s cue 5--5 !hs + minor, intermediate strength
-- (1!s)--2N minors 5--5+ unusual, intermediate strength
-- (1!s)--3!c/3!d shows 6 card minor + 4 !hs, intermediate strength
-- (1!s)--3!h normal pre-empt, weak(NV) / intermediate(VUL)
-
-**** Responding to Jumps and Cue bids:
-
-- Cue bids by advancer are stop asks OR HCR - if there is a way to distinguish a sign off from a raise (usually there is) then stop ask else HCR
-- Raise the intermediate 5--5+/ 6--4+ hands to game with ~ 2 cover cards and support
+- 2N is unusual
+- cue for major + other minor
+- !s cue is more specific about suit strengths and matches with the 3!c special overcall
+- (1S)--3!c is special, a rare 2 suiter showing bid instead of single suiter jump overcall
+- weak (3 level VUL intermediate) jumps otherwise
 
 ** We Open they Interfere Summary
 
@@ -822,36 +809,20 @@ With limited strength may want to hide distribution information and just bid the
         (any)
             X = negative of natural bids
             Others = [Lebensohl system](#1NT Interference and Lebensohl)
-    2C = 5+ !ds + 4 card !s suit, AJxx/xx/Kxxxxx/x or better (usually 6--4 shape if < 11 hcp)
-        2D = natural
-        2H = natural, F1
-        2S = natural
-        2N = F1, invite plus
-            3D = minimum
-            3x = extras
-            3N = solid 6+ minor
-        3C = major support, GF
-        3S = invitational
-        (X) = whatever
-            P = happy to play
-            XX = really happy to play
-    2D = 5+ !ds + 4 card !h suit, responses as 2!c cuebid
-    2H = Michael's jump overcall, 5--5+ majors, NF, ~8--13(14), 5+ losers
-        P = <= 2 cover cards or no support,
-        (3C) = opponent's raise
-            X = invitational values, at least one fit
-        Major = natural, any level
+    2C = over prepared !c: natural
+    2C = over natural !c: majors, not strong
         2N = GF relay
             3CD = longest minor
                 3HS = slam try, sets suit
             3HS = 6--5
-            4CD = void
-        3C = stopper ask, e.g. K/xxx/AKQJxxx/xx
+        3C = stopper ask
         3D = invite plus, both majors, later 4N double fit RKB
         3HS = invitational
-    2S = weak jump, response as [6 card weak two](#2HS Weak Opening)
+    2D = over prepared !c: majors, not strong
+    2D = over natural !c: weak jump overcall
+    2HS = weak, respond as [6 card weak two](#2HS Weak Opening)
     2N = 5--5 !hs + !ds
-    3C = super michaels both majors, stronger than the NF 2!h bid (passed hand e.g. QJ109xxx preempt)
+    3C = majors, strong
         3D = quasi natural, possibly NT stop hunt or early slam try
         Major = natural, any level
         4C = choose a major, later 4N double fit RKB
@@ -1073,45 +1044,23 @@ With limited strength may want to hide distribution information and just bid the
             3C = natural, NF
             3D = splinter, e.g. 4--4--1--4 or longer !cs
             3HS = GF, 5 card major fit jump
-    2D = 5+ !cs + !hs usually 4 cards, xx/AJxx/x/Kxxxxx or better
-        2H = natural
-        2S = natural, F1
-        2N = F1, invite plus
-            3D = minimum
-            3x = extras
-            3N = solid 6+ minor
-        3D = major support, GF
-        3H = invitational
-        (X) = whatever
-            P = happy to play
-            XX = really happy to play
-    2H = Michael's jump overcall, 5--5+ majors, NF, ~8--13(14), 5+ losers
-        P = <= 2 cover cards or no support,
-        (3D) = opponent's raise
-            X = invitational values, at least one fit
-        Major = natural, any level
+    2D = over prepared !d: natural
+    2D = over natural !d: majors, not strong
         2N = GF relay
             3CD = longest minor
                 3HS = slam try, sets suit
             3HS = 6--5
-            4CD = void
-        3C = !d stopper ask, e.g. K/xxx/xx/AKQJxxx
+        3C = stopper ask
         3D = invite plus, both majors, later 4N double fit RKB
         3HS = invitational
-    2S = long !cs and 4 card !s suit, e.g. AKxx/x/Ax/K109xxx
-        (3D) = opponents raise
-            X = !s invite
-        2N = natural
-        3C = to play
-        3D = stopper ask, probable !c fit
-        3H = natural, NF
-        3S = invitational/competitive (if responder passes v.s. if they bid)
-        3N = natural
+    2H = over prepared !d: majors, not strong
+    2H = over natural !d: weak jump overcall, respond as [6 card weak two](#2HS Weak Opening)
+    2S = weak, respond as [6 card weak two](#2HS Weak Opening)
     2N = 5--5 !hs + !cs
-    3C = 6+ !cs, no side major, NV weak similar to 3!c opening, VUL intermediate e.g. Ax/Kx/xxx/AKJ10xx
+    3C = NV weak similar to 3!c opening, VUL intermediate e.g. Ax/Kx/xxx/AKJ10xx
         3D = stop asking
         3HS = natural, forcing
-    3D = super michaels both majors, stronger than the NF 2!h bid (passed hand e.g. QJ109xxx preempt)
+    3D = majors, strong
         Major = natural, any level
         4C = cue, slam try
         4D = choose a major, later 4N double fit RKB
@@ -1281,7 +1230,7 @@ With limited strength may want to hide distribution information and just bid the
     (2H) = opponents raise
         2S = natural, decent 6+ cards
         X = 5 or bad 6 card, tolerance for minor suit
-2H = astro cue 4--6 !s + long minor  (passed hand probably 5--6 shape as 1N astro available)
+2H = !s + minor (passed hand probably 5--6 shape as 1N astro available)
     (X) = whatever
         XX = !s invitational
     (3H) = opponents raise
@@ -1290,25 +1239,19 @@ With limited strength may want to hide distribution information and just bid the
     (2x/3CD) = intervenes
         3H = !s invitational
         3S = competitive
-    2S = NF, to play, maybe only 3 !ss
     2N = minor ask
         3CD = !c/!d
         3HS = !c/!d and extra values
-    3CD = to play independent suit
+    3C = pass/correct
+    3D = !s game try
     3H = major support, GF
     3S = invitational
-    3N = natural
-    4C = both minors, e.g. 1--3--4--5
+    4CD = invitational
 2S = weak jump, response as [6 card weak two](#2HS Weak Opening)
 2N = both minors
-3C = !cs + !ss 5--5+, good hand, NF (partners can raise to 4!s with 2 useful cover cards)
-    3D = NF
-    3H = HCR
-3D = !ds + !ss 5--5+, good hand, NF (passed hand is a weak jump overcall)
-    4C = NF, natural
+3CDS = preempt weak/intermediate
+    3H/4H = HCR
 3H = stopper ask, with solid outside minor
-3S = preempt
-    Cue = HCR
 ...
 
 (1H)--1S--(X)
@@ -1528,19 +1471,13 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
             2S = !c transfer advance
             2N = natural
             3CD = !d/!h transfer advance
-    2S = 5--5 !h + minor
+    2S = 5--5+ (!h + !d limited) OR (!h + !c *strong*)
         2N = minor ask
             3CD = minor
                 3H = invitational
-        3H = to play
     2N = minors
-    3C = astro long !cs and 4 card !h suit, even by passed hand unlike over 1!h opening
-        3D = NF
-        3S = stopper ask
-    3D = astro long !ds and 4 card !h suit, even by passed hand unlike over 1!h opening
-        3S = stopper ask
-        4C = NF
-    3H = NV weak, VUL intermediate better than 2!h overcall
+    3C = 5--5+, !cs + !hs, limited not strong
+    3DH = preempt weak/intermediate
     3S = stopper ask, solid minor
 
 (1S)--2CD--(2S)
@@ -1842,8 +1779,10 @@ The (2!c)--P--(2!d)--X is lead directing.
     2N = 16--19
         3D = NF
         3HS = forcing
-    3C = michaels both majors
-    3D+ = natural, too strong for simple overcall
+    3C = !d + !h two suiter
+    3D = majors two suiter
+    3H = !d + !s two suiter
+    3S = astro canapé, 4!ss + long minor, strong
 
 (2C)--P--(2!d)
     X = both majors
@@ -1896,6 +1835,25 @@ Frequently the Weak 2!d, or a standard strong 2C. Treat as [weak 2D defence](#Op
             4HS = !c/!d suit
         oM = natural
         4D = major support, slam try
+
+* Opponents open Intermediate 2D
+
+(2D)
+    X = takeout
+        2N = natural (no need for any competitive 3x bid)
+        3D = forcing
+    2HS = natural
+        2x = NF
+        3x = forcing
+    2N = 16--19
+        3D = NF
+        3HS = forcing
+    3C = natural
+    3D = majors two suiter
+    3H = !c + !h two suiter, limited
+    3S = !c + !s two suiter, limited
+    4D = majors two suiter, very strong
+
 
 * Opponents open Precision 2D
 
