@@ -391,7 +391,7 @@ proc is_likely_4level_preempt {hand} {
 
 proc is_insane_offensive_preempt {hand} {
     if { [hcp $hand] > 13 } { return 0 }
-    if { [any_offensive_suit $hand 8] } { return 1 } else { return 0 }
+    if { [any_offensive_suit $hand 8] || [any_offensive_suit $hand 9] } { return 1 } else { return 0 }
 }
 
 proc is_8_plus_tricks {hand} {

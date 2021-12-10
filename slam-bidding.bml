@@ -15,7 +15,9 @@ Natural, ace asking, key card asking or takeout? Here's another ordered blanket 
 5. Non-Jump 4N without Major raised or "set" - natural, Quantitative
 6. 1N *opened*, and no major set - natural, Quantitative
 7. NT bid raised - Natural, Quantitative
-8. Otherwise - RKB for last bid OR implied !h!s else Blackwood
+8. RKB for last bid suit
+9. RKB for implied !h!s suit
+10. Blackwood
 
 ** Cue Bids
 
@@ -299,6 +301,15 @@ ask for some other suit, which should also be obvious.
     5N = have guarded 2nd round control, e.g. KQ
     6x = cue bid in other suit shows 1st round in the implied asked suit.
     6HS = raise to slam, have 2nd round control in implied suit
+
+** 5NT Pick a Small Slam
+
+- 5NT asks partner to make a judgement, pick a small slam. Usually where some distributional information is missing.
+- There is no grand slam interest!
+- This maybe a jump (2N--3!h--3!s--5N) or a non-jump (often in competiton e.g. 1!s--(5!d)--5N)
+- In competition it's often similar to an unusual/two-suiter NT
+- Does not apply where 5N is a follow on after RKB/Blackwood etc. that asks for Kings etc.
+- Where there is nothing to judge 5N retains the quantitative to 6N/7N meaning
 
 ** Double of Opponents' Slam
 

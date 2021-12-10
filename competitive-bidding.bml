@@ -31,9 +31,12 @@
 - when opponents have 2 suits 4th cue (partner passed) is astro 6m--4M of low suit, again natural of higher suit
 - when opponents bid 1 suit and 1NT cue is just Michaels
 
-*** Minimum Level Conversion after Takeout Doubles
+*** Minimum Equal Level Conversion after Takeout Doubles
 
 - any level takeout doubles then correcting to the cheapest other suit shows a different 2 suiter and not any extras
+- 6--4 major hands can be bid like 5--4 hands after the takeout double.
+- 6 major and 4 minor will typically ignore the minor.
+- minor X then ELC typically is only both majors, not a minor major
 - a jump in the lower suit or forcing to a higher level implies a two suiter 5--5+ that doesn't fit agreed strength ranges of the main two suiter overcalls
 - concept may also apply to high level bids with limited space like 4N, e.g. (4!s)--4N, or a cue bid showing a two suiter when there are 3 unknown suits
 - very strong single suiters are rare, and may need to jump cue bid or double and jump cue bid, or just bid game
@@ -42,7 +45,7 @@
 
 - natural single suiter overcalls are 2 level weak, 3 level weak NV, intermediate VUL
 - where two suiter strengths are undefined (directly or by inference) assumed weakish (~7--11) or strong (16+), but
-  consider whether just giving away information about bad breaks, the vulnerability and scoring
+  consider whether just giving away information about bad breaks, the vulnerability and scoring (eg. vulnerable IMPs ~9--11 and good value placement)
 - intermediate two suiter hands can use direct overcalls or takeout doubles with a later jump in the lower suit or conversion to a higher level (not equal level conversion)
 
 **** After minor openings:
