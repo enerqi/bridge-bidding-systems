@@ -34,6 +34,7 @@
 *** Minimum Equal Level Conversion after Takeout Doubles
 
 - any level takeout doubles then correcting to the cheapest other suit shows a different 2 suiter and not any extras
+- reasonable defensive values are required for a takeout double, not some very light overcall
 - 6--4 major hands can be bid like 5--4 hands after the takeout double.
 - 6 major and 4 minor will typically ignore the minor.
 - minor X then ELC typically is only both majors, not a minor major
@@ -713,7 +714,7 @@ With limited strength may want to hide distribution information and just bid the
         (2C) = re-compete
             2D = shape, improving the contract
             2HS = normal, stronger than 1!s overcall
-    2C = strong, forcing, will rebid, not GF
+    2C = 4--4 majors or strong, forcing, will rebid, not GF
     2DHS = ~8--11 5+ suit
     3D = ~12-14
     3HS = 6+ long suit, 6--8 (give partner space if 17+ without our major)
@@ -936,7 +937,7 @@ With limited strength may want to hide distribution information and just bid the
         (2D) = re-compete
             3C = shape, improving the contract
             3HS = normal, stronger than 1!s overcall
-    2D = strong, forcing, will rebid, not GF
+    2D = 4--4 majors or strong, forcing, will rebid, not GF
     2HS = ~8--11 5+ suit
     3C = ~12--14
     3HS = 6+ long suit, 6--8 (give partner space if 17+ without our major)
