@@ -2270,10 +2270,7 @@ Single raise, 3+ cards
         3D = long !d
         3H = long !h
         3S = long !c
-3C = special two-way bid, short !c game try
-    3D = responders normal puppet, though can just bid 4!s directly
-        3H = wants responder to bid 3N if balanced, e.g. AK10xxx/AQJ/xx/xx
-        3S = short !c game try
+3C = short !c game try
 3D = short !d game try
 3H = short !h game try
 3S = game try lacking notable shortness or side suit (probably good 7 carder)

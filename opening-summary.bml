@@ -111,13 +111,13 @@
 
 2C  [(10)11--15 hcp, 6+ card !c suit](#2C Intermediate Opening)
   (any) = [interference defence](#2C Interference)
-  2D = [enquiry, many invite+ or weak !d hands](#2D enquiry)
-  2HS = natural, NF, 5+ (usually 6) suit, ~7--11 hcp, unlikely both majors (both majors invite+ use 2!d)
-  2N = !d transfer, 6+ !ds, and no 4 card major, any strength with ok, long !d suit.
-  3C = !c slam try, (preemptive if passed). Maybe (bad) 4 card major not wanting to use 2!d relay.
-  3D = 5--5+ majors, invite+, note option with < GF values + 5--5 majors + 2/3 !cs may bid 2!d
-  3H = 5!h and 6+ !ds, GF, (passed hand = invite 6!h--4!s majors)
-  3S = 5!s and 6+ !ds, GF, (passed hand = invite 6!s--4!h majors)
+  2D = [enquiry, many invite+ hands](#2D enquiry)
+  2HS = natural, NF, ~7--10 hcp, not good invite, unlikely both majors (both majors invite+ use 2!d)
+  2N = puppet, !c preempt OR GF single major OR GF 6--4 majors
+  3C = !d transfer, invite+
+  3D = 5--5+ majors, invite+
+  3H = invitational, good suit
+  3S = invitational, good suit
   3N = to play, opener can bid on with lots shape and strength
   4C = preempt
   4D = Redwood [RKB](#RKB 4N) for !cs
@@ -141,7 +141,7 @@
   4N = Blackwood
   5CD = to play
 
-2H [5+ (NV) / 6+ (VUL) card weak two](#2HS Weak Opening) 7--(11) 1st/2nd maybe long minor, Undisciplined 5--11 3rd, 10--13 4th
+2H [5+ (NV) / 6+ (VUL) card weak two](#2HS Weak Openings) 7--(11) 1st/2nd maybe long minor, Undisciplined 5--11 3rd, 10--13 4th
   2S = NF, natural, either weak 6+ !s short !hs OR invitational strength 5+ !s short !hs
   2N = [ASK (NV)](#NV 1st/2nd 5 or 6 card Extension), or [puppet to 3!c (VUL)](#2H Opening Responses) maybe !h raise OR !c signoff
   3C = !d transfer, invitational plus, 6+ cards or 5 cards and !h support
@@ -153,7 +153,7 @@
   4HS = to play
   4N = Blackwood (bid 3!d or splinter, then 4!s Kickback for RKB)
 
-2S [5+ (NV) / 6+ (VUL) card weak two](#2HS Weak Opening) 7--(11) 1st/2nd maybe long minor, Undisciplined 5--11 3rd, 10--13 4th
+2S [5+ (NV) / 6+ (VUL) card weak two](#2HS Weak Openings) 7--(11) 1st/2nd maybe long minor, Undisciplined 5--11 3rd, 10--13 4th
   2N = [ASK (NV)](#NV 1st/2nd 5 or 6 card Extension), or [puppet to 3!c (VUL)](#2S Opening Responses) maybe !s raise OR !c signoff
   3C = !d transfer, assumed invitational, maybe weak - sign off 4!d over max responses, 6+ cards or 5 cards and !s support
   3D = !h transfer, 6 good or 7 cards, assumed invitational, primarily !h not NT interest
@@ -169,7 +169,7 @@
 3CD [constructive minor preempt](#3CD Openings)
 3HS [preempt, max 1 outside A/K](#3HS Openings)
 3N  [good 4HS preempt](#3N Opening) 1st/2nd semi-solid+ with 2 or 3 KC, 3rd/4th to play
-4CD [preempt, distributional with side singleton/void](#4CD Opening)
+4CD [preempt, distributional with side singleton/void](#4CD Openings)
 4HS [preempt, not 3N strength in 1st/2nd, max 1 outside A/K](#4H 4S 5C 5D Openings)
 4N  [specific ace ask](#4N Opening Specific Ace Ask)
 5CD [preempt](#4H 4S 5C 5D Openings)

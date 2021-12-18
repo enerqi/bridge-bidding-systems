@@ -824,7 +824,7 @@ With limited strength may want to hide distribution information and just bid the
         3HS = invitational
     2D = over prepared !c: majors, not strong
     2D = over natural !c: weak jump overcall
-    2HS = weak, respond as [6 card weak two](#2HS Weak Opening)
+    2HS = weak, respond as [6 card weak two](#2HS Weak Openings)
     2N = 5--5 !hs + !ds
     3C = majors, strong
         3D = quasi natural, possibly NT stop hunt or early slam try
@@ -1058,8 +1058,8 @@ With limited strength may want to hide distribution information and just bid the
         3D = invite plus, both majors, later 4N double fit RKB
         3HS = invitational
     2H = over prepared !d: majors, not strong
-    2H = over natural !d: weak jump overcall, respond as [6 card weak two](#2HS Weak Opening)
-    2S = weak, respond as [6 card weak two](#2HS Weak Opening)
+    2H = over natural !d: weak jump overcall, respond as [6 card weak two](#2HS Weak Openings)
+    2S = weak, respond as [6 card weak two](#2HS Weak Openings)
     2N = 5--5 !hs + !cs
     3C = NV weak similar to 3!c opening, VUL intermediate e.g. Ax/Kx/xxx/AKJ10xx
         3D = stop asking
@@ -1251,7 +1251,7 @@ With limited strength may want to hide distribution information and just bid the
     3H = major support, GF
     3S = invitational
     4CD = invitational
-2S = weak jump, response as [6 card weak two](#2HS Weak Opening)
+2S = weak jump, response as [6 card weak two](#2HS Weak Openings)
 2N = both minors
 3CDS = preempt weak/intermediate
     3H/4H = HCR
