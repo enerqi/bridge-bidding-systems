@@ -980,34 +980,17 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
 
 ** 1NT Escape
 
-When we are 1N penalty doubled.
-
-- Pass is happy to play
-- Pass then a voluntary new suit is invitational at 2 level, 3CD is F1, 3HS is GF
-- 3 suiters guess two suits to escape to
-- Later X by opener is always takeout
+Natural runouts when we are 1N penalty doubled (more likely after a 1N overcall than an opening).
 
 1N--(X)
-    P = stronger, happy to play.
-    XX = relay to 2C
-        2C
-            P = clubs escape 5+ suit
-            2DH = natural 5+ suit
-    2C = !c + higher suit
-    2D = !d + higher suit
-    2H = !h + !s
-    2S = natural
-    2N = forcing, fit searching
-    3x = forcing, natural offensive hand
+    P = happy to play here
+    XX = values, to play or penalise. Sets up a *forcing pass at the 2 level*.
+    2CDHS = natural, weak
+    2N = distributional GF, probably a 2 suiter
+    3x = pre-empt, 6+ cards
+    4x = pre-empt, 7+ cards
 
-1N--(X)--(P/escape)--(P/escape)--P
-    2x = F1, invitational plus values
-    3CD = F1, invitational plus values
-    3HS = GF
-    2N = invitational
-    Cue = stopper ask
-    X = negative
+A *redouble by opener* is a hand interested in running - *minimum* with a *5(6) card suit* for the NT bid.
 
-1N--(P)--P--(X)--P--(any)
-    2N = minors, balancing
-    X = negative
+- 1N--(X)--P--P--XX
+- 1N--(P)--P--(X)--XX
