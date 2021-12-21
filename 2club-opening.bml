@@ -43,7 +43,9 @@ Responding:
         3C = puppet
             P = !c preempt
             3D = !s GF single suiter
+                3H = stop show
             3H = !h GF single suiter
+                3S = stop show
             3S = 6!s + 4!h GF
             3N = 4!s + 6!h GF
     3C = !d transfer, invite plus
@@ -243,6 +245,11 @@ Responding:
 5C = 1--3--1--8, ~3 Control Points, too weak for 1!c, unsuitable for 4!c/5!c
 
 ** 2C Interference
+
+2C--(Dbl)
+    P = nothing special
+    XX = values
+    2D+ = system on
 
 2C--(2x)
     P = nothing special
