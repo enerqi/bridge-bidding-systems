@@ -263,6 +263,16 @@ tinyurl.com/y6yv5m8r
     6H = asks for that specific King, bid 7 with !h King
 
 
+** Weak RKB
+
+Specific situations when responder is known to be weak (opening a preempt). Steps responses limited to 2 keycards:
+
+- 0 keycards
+- 1 keycard
+- 1 keycard + Queen of trumps
+- 2 keycards
+- 2 keycards + Queen of trumps
+
 ** Lackwood
 
 - 5x major raise
@@ -309,7 +319,12 @@ ask for some other suit, which should also be obvious.
 - This maybe a jump (2N--3!h--3!s--5N) or a non-jump (often in competiton e.g. 1!s--(5!d)--5N)
 - In competition it's often similar to an unusual/two-suiter NT
 - Does not apply where 5N is a follow on after RKB/Blackwood etc. that asks for Kings etc.
-- Where there is nothing to judge 5N retains the quantitative to 6N/7N meaning
+
+Sometimes pick a small slam makes zero sense:
+
+- Where there is nothing to judge and no strong trump fit then 5N retains the quantitative to 6N/7N meaning
+- When a good 9+ card fit is known then it *could* be interpreted as GSF asking for 2 of top 3 honours, but this is very
+  unlikely as RKB would probably be used instead, so best not considered
 
 ** Double of Opponents' Slam
 

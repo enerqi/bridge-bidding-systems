@@ -22,6 +22,11 @@ frequency of 2/3 top honour requirements.
 - ~5--11, *Undisciplined in 3rd*, 5--4, 5--5, 6 card poor quality, possibly 4 card other major
 - ~10--13 in 4th
 
+*** Responding
+
+- 3 level forcing bid must be made to play game in the other major as jump new suits are control asking bids
+- Kickback active assumed, so 4N is a substitute control asking bid over 2!h
+
 **** 2H Opening Responses
 
 2H = weak two
@@ -61,9 +66,10 @@ frequency of 2/3 top honour requirements.
         4H = extreme shape e.g. 6--5, x/A109xxx/KJxxx/x
     3S = natural, GF, (passed hands fit jump)
     3N = to play, non-correctable
-    4CD = splinters !h support, (passed hands fit jump)
-    4HS = to play
-    4N = Blackwood (bid 3!d or splinter, then 4!s Kickback for RKB)
+    4CD = [control asking bids](#Control Asking Bids Over Preempts), (passed hands fit jump)
+    4H = to play
+    4S = [Weak !h Kickback](#Weak RKB)
+    4N = [substitute !s control asking bid](#Control Asking Bids Over Preempts)
 
 **** 2S Opening Responses
 
@@ -103,10 +109,9 @@ frequency of 2/3 top honour requirements.
     3S = weak limit raise
         4S = extreme shape
     3N = to play, non-correctable
-    4CD = splinters !s support, (passed hands fit jump)
-    4H = to play, (passed hands fit jump)
+    4CDH = [control asking bids](#Control Asking Bids Over Preempts), (passed hands fit jump)
     4S = to play
-    4N = Blackwood (bid 3!h or splinter, then 4N for RKB)
+    4N = [Weak !s RKB](#Weak RKB)
 
 **** NV 1st/2nd 5 or 6 card Extension
 
