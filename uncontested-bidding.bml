@@ -720,7 +720,7 @@ Natural, up to 10 hcp, no 4 card major
 
 10+ forcing (unless passed hand), 4+ !ds, no longer suit
 
-- no 4 card major
+- no 4 card major unless 6!d--5!h/!s
 - no longer suit, usually single suited
 - maybe rightsiding a NT contract
 
@@ -736,11 +736,13 @@ Natural, up to 10 hcp, no 4 card major
         3S = 4--1--3--5 (!h singleton), minimum
             any = exact shape known, [Slam Try Relay Bidding](#Slam Try Relay Bidding) for !ds then !cs
     others = natural, NF
+    3HS = GF, 6--5
 2S = 4+ !ds, any strength, unbalanced three suited OR 6!d + 5!h/!s without void maximum
     2N = relay, GF, shortage ask
         3C = !c shortage
         3H = !h shortage
         3S = !s shortage
+        3N = no shortage, 5--4--2--2
         4C = 6!d--5!h--1--1, maximum
             4H = top Hxx+ double fit, forcing
                 4S = [Double Fit RKB](#Double Fit RKB)
@@ -750,6 +752,7 @@ Natural, up to 10 hcp, no 4 card major
     3C = strength ask
         3D = minimum
         3HS = stopper showing, maximum
+        3N = no shortage, 5--4--2--2
         4C = 6!d--5!h--1--1, maximum
             4H = top Hxx+ double fit, forcing
                 4S = [Double Fit RKB](#Double Fit RKB)
@@ -2223,7 +2226,7 @@ Game-forcing. Usually five cards. Could be 2--4--4--3.
 
 ** 1S--2H
 
-2/1 GF, always 5+ cards, 10--12 by passed hand
+2/1 GF, always 5+ cards, 9--10 by passed hand
 
 2S = catchall rebid, tends to deny 3 !hs as can raise with 3 cards and a minimum
     2N = natural, something in !c/!d
