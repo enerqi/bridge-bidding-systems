@@ -652,7 +652,7 @@ Assume the minimum. NT and suit rebids NF, new suits forcing.
 Show majors, especially !s and bid to limit. Pass then later bid unusual NT if really want
 to show !c+!d.
 
-With limited strength may want to hide distribution information and just bid the major (1N / 2N overcalls).
+With limited strength may want to hide distribution information and just bid the major (not 1N / 2N overcalls).
 
 (1C)--
     X = !s 4 cards + 5/6 card minor.
@@ -1540,7 +1540,6 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 Competing over 1NT.
 
 - Aggression is vulnerability and scoring dependent, e.g. NV matchpoints with 11+ then 4--4 majors may compete
-- A *3rd position NT* is treated as *weak* even if it's nominally a strong 15+ 1NT opening
 
 Hand strength guide:
 
@@ -1691,7 +1690,6 @@ Hand strength guide:
 
 ** Strong NT Defence
 
-- After 1st/2nd position 1N only. A *3rd position NT* is treated as *weak*.
 - More aggressive, especially NV, i.e. rule of 8 strength ( length(longest 2 suits) - LTC >= 2 then bid )
 - No detailed responses written down, just play 2N (or cue bid) as the only way to start more constructive bids by advancer
 - 2!c!d!h!s are basically natural direct pressure bids
@@ -1833,7 +1831,7 @@ Frequently the Weak 2!d, or a standard strong 2C. Treat as [weak 2D defence](#Op
 
 * Opponents open Precision 2D
 
-Treats as an [intermediate 2C](#Opponents open Intermediate 2C) opening with care for bad major breaks.
+Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening with care for bad major breaks.
 
 * Opponents open Multi 2D
 
