@@ -16,8 +16,7 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
 - 2!h/2!s responses are forcing, invite plus, so there is no NF signoff at the 2 level
 - 2!h/2!s can be used to look for a 4--4 fit
 - Bid 2!h with 4--4 majors or 5--5 majors
-- 3!d raise can be played as slam try or preemptive, a slam try is consistent with the [2!c Opener](#2C Intermediate Opening)
-- 2N !d support covers various hands from miminal !d support looking for 3N, to good !d support or even slam try if playing a preemptive 3!d raise
+- 2N !d support covers various hands from miminal !d support looking for 3N, to good !d support or even a !d slam try
 - 2N can quantify opener's strength before stopper/control bids, whilst a 3!d slam try asks for shortages specifically before RKB
 - No weak !cs sign off bid available
 - No special bids for 6+!cs + 5!h/!ss nor a dedicated 5--5 majors invite, so GF hands bid 3x naturally instead of going by an enquiry
@@ -158,33 +157,7 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
         4C = good !c support, likely lacking major controls
         4D = [RKB](#RKB 4N) for !cs
         4HS = void splinter, extras, 3+ Control Points, no other major control, e.g. xx/-/AKxxxx/KQ10xx
-    3D = !d slam try
-        3HS = singleton
-            3N = NF, opener can bid more with extras
-            4C = cue
-            4D = encouraging slam with !c control, likely missing !c control
-            4H = Redwood [RKB](#RKB 4N)
-            4S = cue, likely missing !h control
-                4N = [RKB](#RKB 4N), has !h control
-            4N = quantitative
-        3N = no shortage, decline slam
-            4C = cue
-            4D = encouraging slam with !c control, likely missing !c control
-            4H = Redwood [RKB](#RKB 4N)
-            4S = cue, likely missing !h control
-                4N = [RKB](#RKB 4N), has !h control
-            4N = quantitative
-        4C = !c shortage
-            4D = vague bid, looking for extras, last train like
-            4H = Redwood [RKB](#RKB 4N)
-            4S = cue, likely missing !h control
-                4N = [RKB](#RKB 4N), has !h control
-        4D = no shortage, good hand
-            4H = Redwood [RKB](#RKB 4N)
-            4S = cue
-            4N = substitute !h cue
-        4HS = void (5 card major not possible)
-            4N = substitute [RKB](#RKB 4N) for !ds
+    3D = preempt
     3H = natural major, GF, 6+ suit
         3S = stopper showing
         3N = natural
@@ -209,7 +182,7 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
         4D = extreme shape, e.g. 8!d--3--1--1
         4HS = extreme shape, e.g. 7!d--4!h/!s--2--0
     4C = [RKB](#RKB 4N) for !ds
-    (3!d)/4D = preemptive
+    4D = preempt
     4HS = to play
     4N = Blackwood
     5CD = to play
