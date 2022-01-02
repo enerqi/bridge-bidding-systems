@@ -18,6 +18,428 @@ Blanket approaches to bidding when natural 1NT and 2NT bids made by our side.
 - 1NT/2NT opened
 - (2x)-2N
 
+* 1NT Opening Scanian
+
+1N
+    (any) [1N interference](#1NT Interference and Lebensohl)
+    2C = [Stayman, not promising a major, maybe weakish 4--4--4--1](#1N--2C)
+        2D = [no major](#1N--2C--2D)
+        2H = [4 or 5 !hs, not !ss](#1N--2C--2H)
+        2S = [4 or 5 !ss, not !hs](#1N--2C--2S)
+        2N = [4--4 majors, minimum](#1N--2C--2N)
+        3C = [4--4 majors, maximum](#1N--2C--3C)
+    2D = [transfer to !h, 5+ cards](#1N--2D)
+    2H = [transfer to !s, 5+ cards](#1N--2H)
+    2S = [transfer to !c, 6+ cards, weak or invite plus](#1N--2S/2N)
+    2N = [transfer to !d, 6+ cards, weak or invite plus](#1N--2S/2N)
+    3C = [minors NF, 5--5 or 5--4/4--5, tactical, ~5--7 hcp](#1N--3C)
+    3D = [either !h slam try transfer, no void OR GF !h shortage with 5--4/4--5 minors](#1N--3D)
+    3H = [either !s slam try transfer, no void OR GF !s shortage with 5--4/4--5 minors](#1N--3H)
+    3S = [minors 5--5, GF and maybe slam try](#1N--3S)
+    3N = to play
+    4CD = [!h/!s transfer](#1N--4CD)
+    4N = quantitative
+
+*** 1N--2C
+
+Stayman, not promising a major, maybe weakish 4--4--4--1!c
+
+- Roughly invitational plus UNLESS weak 3 suiter with short !cs
+- May bid WITHOUT a major to invite a NT game
+- With both majors then the invite can be marginal, e.g. 6+ hcp
+- NOT 5--5 majors precisely invitational - will transfer to !ss and then bid !hs
+- GF and slam try 5--4 (Smolen) / 5--5 major hands do start with Stayman
+
+2D = [no major](#1N--2C--2D)
+2H = [4 or 5 !hs, not !ss](#1N--2C--2H)
+2S = [4 or 5 !ss, not !hs](#1N--2C--2S)
+2N = [4--4 majors, minimum](#1N--2C--2N)
+3C = [4--4 majors, maximum](#1N--2C--3C)
+
+**** 1N--2C--2D
+
+2D = no major
+    2H = invitational, 5 !hs (also 4 !ss)
+        2S = relay, support
+            2N = minimum, most hands
+            3CD = minimum, fragment with honour in 3 card suit, 4--5--(3--1)
+            3H = minimum, 5--5 majors, ~4--5 hcp
+            4H = game accept
+        2N = invitational, natural
+        3CD = 6 card suit, rare
+        3H = natural, invite
+        3N = opener believes can be made
+        4H = natural, to play
+    2S = invitational, 5 !ss
+        P = minimum, often 2 !ss
+        2N = maximum, usually no support
+            3CD = NF, 5--5
+            3H = 5!ss and 4!hs, good spades
+            3S = 6!ss and 4!hs, needs fit, unusual bid
+        3C = maximum, relay asking for shortness
+            3D = some singleton, OR some hands with a !h doubleton
+            3H = no shortage
+                3S = last train, wants to play 3N or 4!s
+                    P = nothing extra
+                    3N = 5--3--3--2, honour in short suit
+                    4S = something extra
+            3S = short !cs (doubleton?)
+            3N = short !ds (doubleton?)
+        3S = natural, invite
+        4S = natural, to play
+    2N = invitational
+    3C = GF relay, minor SLAM interest (one or two minors)
+        3D = 4--4 or 5--4 minors
+            3H = relay, ask
+                3S = 4--4 minors, opener can pass over 3N
+                3N = 5!cs, 4!ds, forcing
+                4C = 5!ds, 4!cs, forcing
+            3S = 4!cs, but weak suit - Qxxx or worse
+            3N = 4!ds, but weak suit - Qxxx or worse, NF
+            4CD = sets trumps, 5 card suit
+        3H = 5!cs (Lissabon)
+            3S = 5!ds
+            3N = limited
+            4om = natural slam try, other minor
+        3S = 5!ds
+            3N = limited
+            4om = natural slam try, other minor
+        3N = often 4--3--3--3, occasionally no minor suit slam interest
+            4CD = 5 card minor
+            4HS = 4--4, better !cs/!ds, (or 5--4 minors to play in openers 4 card minor)
+                4S = 4 !ds
+        4C = 5!cs, 3/4 honours
+        4D = 5!ds, 3/4 honours, no !c fit
+    3D = GF(mostly - can occasionally stop in four of a minor) with a MAJOR SHORTAGE
+        3H = ask
+            3S = short !ss
+                3N = (or pass), suggest to play
+                4CD = NF
+                4HS = !cs/!ds, good fit
+                4N = pick a minor, ok fit
+                5CD = natural, ok fit
+            3N = short !hs, minimum
+            4CD = 5 card !c/!d, shorts !hs, medium/maximum
+            4H = 4--4--4--1, short !hs
+        3S = good for both 3N and minor contract, but NO 5 card minor
+        3N = no interest in minor
+        4CD = 5 card minor, no interest in 3N
+    3H = GF 4 !hs and 5 !ss (Smolen)
+        3S = support
+        3N = natural
+            cue = 6 !ss and slam interest
+        4CDH = super max, cue, !s support
+        4S = fast arrival, i.e. minimum or 4--3--3--3
+    3S = GF 4 !ss and 5 !hs (Smolen)
+        3N = natural
+            cue = 6 !hs and slam interest
+        4C = maximum, !h support
+            4D = transfer
+        4H = normal bid, support, minimum
+    3N = to play
+    4C = majors 5--5 slam try
+        4D = negative
+            4H = pass/correct signoff
+        4HS = accept, set trumps, forcing
+    4D = majors 5--5, GF or slam try depending on suit preferred
+        4HS = preference
+            next = RKB
+    4N = quantitative
+    5S = onway to 6N, asks for any 5 card suit
+
+**** 1N--2C--2H
+
+2H = 4 or 5 !hs, not !ss
+    2S = invitational, 5!ss
+        P = minimum, often 2 !ss
+        2N = maximum, usually without support
+        3C = maximum, relay, shortness ask
+        3H = maximum, 5!hs and Hx in spades
+        3S = natural raise
+        4S = natural raise
+    2N = invitational, either 4!ss or no major
+    3C = GF, 4+ !cs, unbalanced or a slam try
+        3D = (quasi)natural, can have 5!hs
+            3H = quasi-natural, Hx+, often 3 card support
+            3S = stop ask, 4th suit
+            3N = limited, !s stopper
+            4CD = 5!cs or 4--1--4--4, both with !s control
+        3H = 5!hs, some !s values, maybe weak !ds
+        3S = quasi-natural, 4!hs and weak !ds
+        3N = limited, stoppers in unbid suits
+    3D = GF, 4+ !ds, unbalanced or a slam try
+        3H = 5!hs + !c stopper OR 4!hs + weak !ss
+        3S = quasi-natural, weak !cs, 4 or 5 !hs
+        3N = limited, stoppers in unbid suits
+    3H = invitational
+    3S = either slam try with support OR exactly 3 !hs
+        3N = 4!hs
+        4CD = cue bid, 5!hs
+        4H = 5!hs, minimum or occasionally 4 good !hs with a weak side suit
+    4CD = singleton/void + !h support
+
+**** 1N--2C--2S
+
+2S = 4 or 5 !ss, not !hs
+    2N = invitational, either 4!hs or no major
+    3C = GF with 4+ !cs, unbalanced or a slam try
+        3D = either 4!ds OR quasi natural with weakness in !hs
+            3H = 4th suit forcing
+            3S = quasi-natural, Hx+, often 3 card support
+            3N = limited hand, !h stopper
+            4CD = 5!cs OR 1--4--4--4, both cases a !h control
+        3H = quasi-natural with !d weakness
+        3S = 5!ss, no weakness
+        3N = natural, stoppers in unbid suits
+    3D = GF with 4+ !ds, unbalanced or a slam try
+        3H = quasi-natural, either 5!ss or 4!ss + weak !cs
+        3S = quasi-natural, either 5!ss or 4!ss + weak !hs
+        3N = limited, stopper in both unbid suits
+    3H = either a slam try with support OR exactly 3 !ss
+        3S = 5!ss, minimum, or occasionally 4 good !ss
+        3N = normal bid with 4!ss
+        4CDH = cue bid, 5!ss
+        4S = 5!ss, not good for slam
+    3S = invitational
+    4CDH = singleton/void with !s support
+
+**** 1N--2C--2N
+
+2N = 4--4 majors, minimum
+    3C = slam try with 5!cs
+    3DH = transfer, after that 3N is a general slam try, new suit shortage
+    3S = 5!ds, slam try
+
+**** 1N--2C--3C
+
+3C = 4--4 majors, maximum
+    3DH = transfer, after that 3N is a general slam try, new suit shortage
+    3S = 5!ds, slam try
+
+*** 1N--2D
+
+2D = transfer to !h, 5+ cards
+    2H = normal bid
+        2S = artifical, 5!hs invitational
+            2N = minimum, no support, maybe 4--3--3--3 though
+            3C = relay, shortness ask
+                3D = !s singleton, OR some hands with a doubleton, can stop in 4CD
+                3H = no shortage
+                    3S = last train like, 3N or game in !hs
+                3S = !c shortage, can stop in 4CD
+                3N = !ds shortage, can stop in 4CD
+            3DS = natural, maximum, 5 card suit
+            3H = minimum, support
+            3N = maximum, no support
+            4H = maximum, support
+        2N = GF, 5--3--3--2 / 5--4--2--2 / 5--4--3--1 any singleton, can't stop in 4CD
+            3C = relay bid, asking
+                3D = !s singleton, OR some hands with a doubleton
+                    3H = ask, not much 3N interest
+                        3S = doubleton in other major
+                        3N = 4!cs with 3!ds (1--5--3--4)
+                        4C = 4!ds with 3!cs (1--5--4--3)
+                        4H = 5--3--3--2, probably need to play here
+                    3S = request to bid 3N if have doubleton
+                    3N = no special
+                    4CD = 5 card minor with 5--4 minors
+                    4H = prefer major game
+                3H = any 5--3--3--2 or limited 5--4--2--2, possibly weak 6 carder
+                    3S = normal bid with 3 card support OR Ax/Kx support
+                    3N = not much support, Qx at best
+                    4CD = 5 card minor and Ax/Kx support
+                    4H = reasonable support, minimum
+                3S = !c shortage (4!ds)
+                    4C = double fit (other minor)
+                    4D = support
+                    4H = to play
+                3N = !d shortage (4!cs)
+                    4C = support
+                    4D = double fit (other minor)
+                    4H = to play
+            3D = !h support
+                3H = !s singleton
+                    3S = relay, ask
+                        3N = 4!cs
+                        4C = 4!ds
+                        4H = was looking for 5 card minor
+                    3N = play suggestion
+                    4CD = 5 card minor
+                    4H = to play, no slam interest
+                3S = slam try, no shortness, cannot play 3N
+                    3N = normal bid, rarely 4--3--3--3
+                    4CD = good 5 card minor, may have double fit
+                    4H = minimum, OR often most 4--3--3--3 hands
+                3N = slam try, no shortness, NF, needs trump help
+                4CD = singleton
+                4H = to play, no slam interest
+            3H = special hands, 2 honours in !hs
+                3S = relay, ask
+                3N = to play
+                4CD = singleton, mild slam try
+                4H = to play
+            3S = 5!ss
+            3N = natural, no fit, not intereset in a possible singleton
+            4CD = super-fit
+            4H = xxxx support and 4--3--3--3 shape
+        3C = GF at least 5!h--4!c (5--5, 6--4, 6--5 etc.)
+            3D = quasi-natural bid
+            3H = !h support
+                3N = forcing
+                new = shortness
+                4C = 5!h--5!c
+            3S = quasi-natural
+            3N = natural, not good fit for responder's suits
+            4C = !c support, reasonable hand
+            4D = support for both suits, 3+ honours in both suits
+            4H = !h support, not good fit
+        3D = GF at least 5!h--4!d (5--5, 6--4, 6--5 etc.)
+            3H = ambiguous, either !d support minimum OR Hx !h support and 3 card !d fit
+                3S = good !hs
+                    3N = xx in !hs, 4 !ds support
+                    4C = cue, Hx in !hs
+                    4D = Hx in !hs and 4 !ds support
+                    4H = Hx in !hs
+            3S = artifical, !h support
+            3N = natural, not a good fit for responder's suits
+            4C = support for both suits, 3+ honours in both suits
+            4D = !d support, reasonable hand
+            4H = !h support, not good fit
+        3H = invitational, 6!hs
+        3S = void, !h slam try
+        3N = NF, usually 5--3--3--2
+        4CD = void, !h slam try
+        4H = to play
+    2S = good !h support, NOT maximum, not necessary
+    2N = support, maximum, but looking for 3N
+        3D = retransfer
+        4CDS = void
+    3CD = natural, unusual
+    3H = support, maximum
+
+*** 1N--2H
+
+2H = transfer to !s, 5+ cards
+    2S = normal bid
+        2N = GF with 5--3--3--2 / 5--4--2--2 or 5--4--3--1 any singleton
+        3C = GF with at least 5!s--4!c (5--5, 6--4, 6--5 etc.)
+            3D = quasi-natural
+            3H = quasi-natural
+            3S = !s support
+            3N = natural, not a good fit in responder's suits
+            4C = support, reasonable hand
+            4DH = good double fit
+            4S = !s support, not a good fit
+        3D = GF with at least 5!s--4!d (5--5, 6--4, 6--5 etc.)
+            3H = ambiguous, Hx in !ss or 4!ds
+            3S = !s support
+            3N = natural, not a good fit in responder's suits
+            4C = good double fit
+            4D = support, reasonable hand
+            4H = good double fit
+            4S = !s support, not a good fit
+        3H = 5--5 majors, invitational
+        3S = invitational, 6!ss
+        3N = NF, usually 5--3--3--2
+        4CDH = void, !s slam try
+        4S = to play
+    2N = maximum, support but also looking for 3N
+        3H = retransfer (to play 3!s/4!s or make slam try)
+        4CDH = void
+    3CD = natural, but unusual, i.e. 6 card minor
+        3S = natural
+            3N = forcing
+            new = shortage
+    3H = good !s support, NOT maximum
+    3S = !s support, maximum
+
+*** 1N--2S/2N
+
+2S = transfer to !cs, 6+ cards, weak or invite plus
+    2N = decline an invite
+        3C = signoff
+        3DHS = GF or slam try, shortage
+        3N = to play
+        4C = slam try
+            4N = negative
+        4DHS = void
+    3C = accept an invite
+        3DHS = GF or slam try, shortage
+        3N = to play
+        4C = slam try
+            4N = negative
+        4DHS = void
+2N = transfer to !ds, 6+ cards, weak or invite plus
+    3C = decline an invite
+        3D = signoff
+        3HS = GF or slam try, shortage
+        4C = shortage, slam try
+            4N = negative
+        4D = slam try
+            4N = negative
+        4HS = void
+    3D = accept an invite
+        3HS = GF or slam try, shortage
+        4C = shortage, slam try
+            4N = negative
+        4D = slam try
+            4N = negative
+        4HS = void
+
+*** 1N--3C
+
+minors, NF, 5--5 if vulnerable
+
+3C = minors 5--5 or 5--4/4--5, tactical, ~5--7 hcp
+    3D = preference
+    3HS = values, or 5 card suit, forcing
+    other = natural
+
+*** 1N--3D
+
+3D = either !h slam try transfer, no void OR GF !h shortage with 5--4/4--5 minors
+    3H = normal bid
+        3S = !h slam try
+            3N = !s cue bid
+        3N = NF, singleton !h, 3--1--4--5 or 3--1--5--4 (can stop in 4!c/4!d)
+        4CD = !h slam try, can be mild slam try
+        4H =  mild slam try, looking for a good fit
+    3N = slam warning, weak !hs
+    4H = xx in !hs, minors double fit
+
+*** 1N--3H
+
+3H = either !s slam try transfer, no void OR GF !s shortage with 5--4/4--5 minors
+    3S = normal bid
+        3N = NF, singleton, 1--3--4--5 or 1--3--5--4 (can stop in 4!c/4!d)
+        4C = !s slam try, general slam try
+        4DH = !s slam try, can be mild slam try
+        4S =  mild slam try, looking for a good fit
+    3N = slam warning, weak !ss
+    4S = xx in !ss, minors double fit
+
+*** 1N--3S
+
+3S = minors 5--5, GF and maybe slam try
+    3N = no special fit
+        4C = slam try, 5--5
+            4D = shortness ask, can stop in 4N
+            4HS = support, !c/!d preference (Lissabon)
+        4D = slam try, 6--5, no void
+        4HS = void
+        4N = pick a minor ask
+    4CD = good for minor contract
+    4HS = !c/!d only 3--2/2--3 fit, but good honours fit
+    4N = only 3--3 minors fit, but good honours fit
+
+*** 1N--4CD
+
+4C = !h transfer
+    4D = !h super fit, slam interest
+4D = !s transfer
+    4H = !s super fit, slam interest
+
+
 * 1NT Opening
 
 Opening:

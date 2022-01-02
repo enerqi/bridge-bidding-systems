@@ -1,6 +1,165 @@
 #+TITLE: 2NT Opening
 #+DESCRIPTION: Everything about 2NT
 
+* 2NT Opening Scanian
+
+2N
+    (any) = [2N interference defence](#2N interference)
+    3C = [Muppet Stayman](#2N--3C)
+    3D = [!h transfer, 5+ cards, maybe 4!ss](#2N--3D)
+    3H = [!s transfer, 5+ cards, not 4!hs](#2N--3H)
+    3S = [minors, 5--4+, often slam try](#2N--3S)
+    3N = to play
+    4C = [!hs, Lissabon slam try](#2N--4C)
+    4D = [!ss, Lissabon slam try](#2N--4C)
+    4H = [!cs, Lissabon slam try](#2N-3S+)
+    4S = [!ds, Lissabon slam try](#2N-3S+)
+    4N = quantitative
+    5S = invitation to 6N, asks for any 5 card suit
+
+
+**** 2N--3C
+
+Muppet Stayman
+
+3D = one or two 4 card majors
+    3H = relay, ask for either 4!ss or minor slam try module
+        3S = 4 !ss
+            3N = slam try with 4--4, or 5--4, in the minors forcing to at least 4N
+                4CD = 4 card minor
+                4HS = 5 card minor, Lissabon
+                4N = 4--3--3--3 or very bad slam cards
+            4CD = slam try, 5 card minor
+            4H = !s slam try
+            4S = to play
+        3N = not 4 !ss
+    3S = 4!hs, can have longer minor
+        3N = not 4!hs, responder can use the minor slam try module
+        4C = normal bid with !h support
+            4D = transfer to 4!h
+                4H = complete
+                    new = void
+        4D = excellent hand
+        4H = slam unsure, often poor trump quality
+    3N = natural, to play
+    4CD = both majors module, at least 4--4
+3H = no major
+    3S = transfer to 3N, responder can use the minor slam try module
+    3N = NF, 5!ss (and 4!hs)
+    4CD = 5--5+ majors, both-majors module
+    4H = slam try, 5+!ss
+        4S = !ss set as trumps, not very good fit
+        4N = negative, no support
+        5x = RKB responses
+    4S = to play, 6!ss
+3S = 5 !ss
+    3N = natural, to play
+    4CD = natural 5+ minor, slam try
+    4H = !s slam try
+    4S = to play
+    4N = quantitative
+3N = 5 !hs
+    4C = !h slam try
+    4D = transfer to !hs
+    4H = !c slam try, 5 cards, Lissabon
+    4S = !d slam try, 5 cards, Lissabon
+    4N = quantitative
+
+**** 2N--3D
+
+!h transfer, 5+ cards, maybe 4!ss
+
+3H = no support
+    3S = NT transfer
+        3N = required
+            4C = 5!hs and 4+ !cs, slam try or maybe weaker 5--5
+                4D = waiting, relay
+                    4H = limited, 5--5
+                    4S = !cs set as trumps
+                    4N = slam invite, only 5--4 !hs and !cs
+                4H = semi-positive preference, NF
+                4S = excellent !c fit
+                4N = negative
+            4D = 5!hs and 4+ !ds, slam try
+            4H = 5--5+ !hs and !ds, NF, limited
+    3N = NF 5!hs, 4!ss
+    4C = slam invite, at least 5!hs and 4!ss
+    4D = preference ask to 4!h or 4!s contract (game/slam in major)
+    4H = natural, to play (bid 4CD over 2N for slam try)
+    4N = quantitative
+    4S = void
+    5CD = void
+3S = !h support, usual bid with support
+3N = !h support, suggests NT
+4C = super-accept !h support
+
+**** 2N--3H
+
+!s transfer, 5+ cards, not 4!hs
+
+3S = !s support
+3N = no support
+    4C = 5!ss and 4+ !cs, slam try or maybe weaker 5--5
+        4D = waiting, relay
+            4H = !cs set as trumps
+            4S = limited, 5--5 !ss and !cs
+            4N = slam invitation, only 5--4 !ss and !cs
+        4H = excellent !c fit
+        4S = semi-positive preference, NF
+        4N = negative
+    4D = 5!ss and 4+ !ds, slam try
+    4H = retransfer
+    4S = 5--5+ !ss and !ds, limited, NF
+4CD = super-accept !s support
+
+**** 2N--3S
+
+minors, 5--4+, often slam try
+
+3N = good major stoppers, limited minor interest
+4CD = 4+ cards, reasonable for minor game/slam
+4HS = 3 card minor, Lissabon, good honours for minor suit slam
+4N = 3--3 minors, fitting honours in the minors
+
+**** 2N--4C
+
+!hs, Lissabon slam try
+
+4D = relay, slam try accept, may still pass over 4!h
+4H = negative
+4S = Kickback
+4N = substitute !s cue
+5CD = cue bid
+5H = [quality ask](#Free 5x Major Raise)
+
+**** 2N--4D
+
+!ss, Lissabon slam try
+
+4H = relay, slam try accept, may still pass over 4!s
+4S = negative
+4N = RKB
+5CDH = cue bid
+5S = [quality ask](#Free 5x Major Raise)
+
+**** 2N--4H
+
+!cs, Lissabon slam try, one suited
+
+4S = accept !cs, may still stop in 4N
+4N = negative
+5C = negative
+5x = auto RKB responses
+
+**** 2N--4S
+
+!ds, Lissabon slam try, one suited
+
+4N = negative
+5D = negative
+5x = auto RKB responses
+
+
 * 2NT Opening
 
 For 2N there are more tools to find 4--4 or 5--3 major fits before 3N, more so than over 1N
