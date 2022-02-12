@@ -1073,7 +1073,7 @@ By responder example:
   1S = [4/5+ cards, any strength, maybe weak !d canapé](#1H--1S)
   1N = [non-forcing, ~5--11(12)](#1H--1N)
   2C = [GF natural (passed hand Reverse Drury raise)](#1H--2C)
-  2D = [GF natural (passed hand 9--11), usually 5 cards](#1H--2D)
+  2D = [GF natural (passed hand 9--10), usually 5 cards](#1H--2D)
   2H = [single raise, 3+ card support, maybe light](#1H--2H)
   2S = [6+!s, 0--9 hcp, no !h fit  (note 1!s and 2!s rebid is invitational)](#1H--2S)
   2N = [limit+ raise](#1H--2N)
@@ -1468,8 +1468,8 @@ as a jump major rebid should be an self-sufficient max 6 carder, ideally a good 
 
 Natural 2/1 GF (Reverse Drury by passed hand).
 
-- Rebid of the major after 2/1 GF shows the minimum or other catchall bids (strength, not shape 6th card)
-- usually 5 card !c suit (only likely 4 carder is 3--2--4--4, or 4--1--4--4 when playing non-forcing 1N)
+- Rebid of the major after 2/1 GF is "Bergen" style shape showing 6+ card suit (not catchall minimum)
+- often 5 card !c suit (maybe 4 card with 3--2--4--4)
 - never any 4--3--3--3 nor 4--4--3--2 with 3 or 4 card support (use 2N raise instead)
 - Versus a passed hand, bids above 2!h are GF
 - 2!h rebid versus a passed hand is never a maximum
@@ -1484,8 +1484,8 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
         4H = 6 cards but not serious slam interest
         any = ...
             3H = weak 3 card support
-    2S = natural, 4 card !s suit and 5+ !cs (otherwise would bid 1!s)
-        3S = 4 card support (4--5--4--0).
+    2S = FSF
+        3S = 4 card !s suit (4--5--4--0).
             3N = serious control prompt
     2N = natural, forcing ~12--16/20+ hcp, with !s stopper, maybe doubleton !h
     3C = forcing 6+ !cs
@@ -1498,29 +1498,30 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
     4D = 1--1--5--6 obscurity
     4H = 2--4--2--5, concentrated !h/!c values (no Ace/King in other suits), NF mild slam interest
     4S = void splinter for !cs
-2H = catchall bid, maybe 5 cards or max values, maybe second non !d suit, maybe max (only versus unpassed hand)
+2H = 6+ cards, any strength
     2S = natural, 4 card suit, general natural bids follow
-        3C = 3 or 4 card !c support, not strong enough for initial 3!c raise, maybe 6th !h
+        2N = natural, something in !ds
+        3C = 3 or 4 card !c support
             4D = !s support splinter, e.g. 4--2--1--6
-        3D = catchall FSF (already opener denied !ds), let's responder show doubleton !h support
-        3S = scattered values
-        4S = concentrated values, e.g. KQxx/AQJxx/xx/xx
+        3D = FSF, could be natural if bid !ds again
+        3S = scattered values or general slam finding
+        4S = fast arrival, concentrated values, e.g. KQxx/xx/xx/AQJxx
     2N = natural, forcing with stops, denies 4th !s
-    3C = natural, forcing, normally 6+ !cs, opener normally looks 3N or lets responder should doubleton !h
+    3C = natural, forcing, normally 6+ !cs, opener normally looks 3N
     3D = forcing, something in !ds, only later 4!d bid shows 5--6 in the minors
-    3H = forcing mild+ slam try, 3 (occasionally 4) card support (bid something else then 3!h to show doubleton)
+    3H = forcing, 3 (occasionally 4) card support
         3S = control bid
         3N = serious control prompt (by either player)
-    3S = splinter, delayed, e.g. 1--3--3--6 / 1--3--4--5 (bid 2!s then more !s with 6--5 shape)
+    3S = splinter, only promises 3 card support, e.g. 1--3--3--6 / 1--3--4--5 (bid 2!s then more !s with 6--5 shape)
         3N = serious control prompt (by either player)
     3N = ~17--19
     4C = solid suit
     4D = splinter, delayed !h support, typically 3--3--1--6
     4H = picture concentrated values raise, some slam hope, e.g. xx/AJxx/xx/AKJxx
-2S = natural reverse, 4+ !s and extras, not 4--5--4--0 (use 2!d)
+2S = natural 4+ !s, any strength, not 4--5--4--0 (use 2!d)
     2N = natural, forcing with stops
     3C = natural, forcing normally 6+ !cs
-    3D = forcing, something in !ds, only later 4!d bid shows 5--6 in the minors
+    3D = FSF
     3H = forcing, 3 (occasionally 4) card support, as 2!h--3!h auction
         3N = Serious
     3S = 4 card !s support, any strength, but cannot bid concentrated values 4!s raise
@@ -1528,15 +1529,15 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
     3N = ~17--19
     4C = solid suit
     4D = splinter, with !s support
-    4H = picture raise, concentrated values
-    4S = picture raise, concentrated values
-2N = balanced 14--15 hcp, stops (bid 2!h otherwise), denies 4 !ss, no !c raise interest
+    4H = picture raise, concentrated values, e.g. xx/AJxx/xx/AKJxx
+    4S = picture raise, concentrated values, e.g. AJxx/xx/xx/AKJxx
+2N = catchall, stops not guaranteed, denies 4 !ss, no !c raise interest
     3H = 3+ card support, slam interest (bid 4!h without slam interest)
         3N = Serious
     4N = quantitative, directly or later on...
     5N = quantitative, directly or later on...
 3C = natural 3+ cards, extras in shape or hcp, (best hands will splinter or bid 4!c though)
-    any = 3N contracted directed, unless going past 3N voluntarily
+    any = 3N contract directed, unless going past 3N voluntarily
 3D = splinter for !cs, good hcp (long !ds start with 2!d)
 3H = natural, maximum, versus unpassed hand a good suit max 1 loser e.g. KQJ10xx+
     3S = stop show OR advanced !h slam try
@@ -1550,28 +1551,29 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
 
 ** 1H--2D
 
-Similar to 1H--2C. 2/1 GF.
+Natural 2/1 GF, always 5+ cards.
 
-2H = catchall bid, maybe 5 cards, cannot make a higher bid
+2H = 6+ cards, any strength
     2S = natural, 4 card suit
         2N = natural, something in !cs
-        3C = unable to bid 2N, let's responder show doubleton !h support etc.
-        3D = 3+ !ds, minimum hand, let's responder show doubleton !h support
-        3S = scattered values
-        4S = picture raise concentrated values, e.g. KQxx/AQJxx/xx/xx
+        3C = FSF, could be natural if bid !cs again
+        3C = 3 or 4 card !d support
+        3S = scattered values or general slam finding
+        4S = picture raise concentrated values, e.g. xx/KQxx/AQJxx/xx
     2N = natural, forcing with stops, denies 4th !s
     3C = natural, forcing, usually 5!cs (usually bid 2N with only 4 card)
     3D = natural, almost always 6th !d
     3H = forcing, 3 (occasionally 4) card support
-        3N = Serious
+        3S = control bid
+        3N = Serious (by either player)
     3S = splinter raise of !hs, only promises 3 card support, commonly 1--3--6--3
     3N = ~17--19
     4C = delayed splinter, !h support, commonly 3--3--6--1
     4D = solid suit
-    4H = picture raise, concentrated values
-2S = natural reverse, 4+ !ss and extra values
+    4H = picture raise, concentrated values, some slam hope, e.g. xx/AJxx/AKJxx/xx
+2S = natural 4+ !s, any strength
     2N = natural, forcing with stops
-    3C = natural, forcing, usually 5 !cs
+    3C = FSF, maybe long !cs if bid again
     3D = natural, 6th !d
     3H = forcing, 3 (occasionally 4) card support
         3N = Serious
@@ -1580,11 +1582,12 @@ Similar to 1H--2C. 2/1 GF.
     3N = ~17--19
     4C = splinter raise of !ss
     4D = solid suit
-    4H = picture raise, concentrated values for !hs
-    4S = picture raise, concentrated values for !ss
-2N = balanced (usually) max + stoppers, could be 3--5--1--4 and poor !hs showing side stoppers but probably singleton !d honour,
+    4H = picture raise, concentrated values for !hs, e.g. xx/AJxx/AKJxx/xx
+    4S = picture raise, concentrated values for !ss, e.g. AJxx/xx/AKJxx/xx
+2N = catchall, stops not guaranteed, denies 4 !ss, no !d raise interest
      2--5--2--4 also possible, if have e.g. AQ or AJ in !ss
-3C = high reverse, extra values, 5+ !cs (bid 2!h and !cs later with 4 cards or minimum)
+3C = high reverse, extras in shape or hcp
+    3S = FSF
 3D = natural raise 3+ cards, extras
     any = 3N contracted directed, unless going past 3N voluntarily
 3H = natural maximum, KQJ10xx+ suit
@@ -2001,7 +2004,7 @@ at the 3 level.
   (any) = [interference](#1S interference)
   1N = [non-forcing, ~5--11(12)](#1S--1N)
   2C = [GF natural (passed hand Reverse Drury raise)](#1S--2C)
-  2D = [GF natural (passed hand 9--11), usually 5 cards, maybe 2--4--4--3](#1S--2D)
+  2D = [GF natural (passed hand 9--10), usually 5 cards, maybe 2--4--4--3](#1S--2D)
   2H = [GF natural (passed hand 9--10), always 5+ cards](#1S--2H)
   2S = [single raise, 3+ card support, maybe light](#1S--2S)
   2N = [limit+ raise](#1S--2N)
@@ -2069,7 +2072,7 @@ as a jump major rebid should be an self-sufficient max 6 carder, ideally a good 
         3x = NF, e.g. weak 6--4
         3S = NF
     3CD = natural, to play
-    3H = natural forcing, presumably 4 cards
+    3H = natural forcing, presumably 5 cards
     3S = invite, often doubleton
     3N = natural, e.g. AKQ/xx/Q10xx/Qxxx
     4H = to play
@@ -2102,11 +2105,11 @@ as a jump major rebid should be an self-sufficient max 6 carder, ideally a good 
 
 ** 1S--2C
 
-2/1 GF (10--12 by passed hand).
+2/1 GF (Reverse Drury by passed hand).
 
-- Rebid of the major after 2/1 GF shows the minimum or other catchall bids (strength, not shape 6th card)
+- Rebid of the major after 2/1 GF is "Bergen" style shape showing 6+ card suit (not catchall minimum)
 - Only likely 4 carder hands are 2--3--4--4 / 2--4--3--4 (and 1--4--4--4 playing a non-forcing NT)
-- never 4--3--3--3 / 4--4--3--2 with 4 card support (use 2N raise instead)
+- never 4--3--3--3 / 4--4--3--2 with 3 or 4 card support (use 2N raise instead)
 - Versus a passed hand, bids above 2!s are GF
 - 2!s rebid versus a passed hand is never a maximum
 - 3!s rebid versus a passed hand has lower requirements, just a max and 6 card suit
@@ -2115,7 +2118,7 @@ By a *passed hand* 2!c *Reverse Drury* shows a 9--10 limit raise with 3+ card su
 Opener bids 2!s (fast arrival) with a (sub)minimum hand.
 
 2D = second 4+ suit, any strength, may have 4 !hs 5--4--4--0
-    2H = natural, 4 !hs, 5--4--4--0. NOT FSF, bid 2!s with doubleton or raise !d or 3!c with six or 2N forcing.
+    2H = more likely natural, 4+ !hs, instead of FSF
         3H = 4 card support (do not bid 4!h wasting space)
     2S = usually doubleton !s, (3!s bid with three cards), denies 4!hs
         3S = set !s trumps, slam interest
@@ -2134,13 +2137,13 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
     4D = 1--1--5--6 obscurity
     4H = void splinter for !ds
     4S = picture bid concentrated values in !s/!c suits (no Ace/King in other suits), NF mild slam interest
-2H = natural, 4+ !hs, shown unless terrible quality and 6--4/7--4 in the majors, or 5--4--4--0 or 5--4--0--4 great !c support
+2H = natural, 4+ !hs, any strength, shown unless terrible quality and 6--4/7--4 in the majors, or 5--4--4--0 or 5--4--0--4 great !c support
     2S = natural, forcing, maybe only doubleton
         3S = confirm !s suit
             3N = Serious
     2N = natural, forcing, something in !ds and !cs
     3C = natural, forcing, usually 6+ !cs
-    3D = forcing, something in !d, maybe < 4 cards, later 4!d bid would show 5--6 in minors
+    3D = FSF, maybe natural !d suit shown later
     3H = shows 4!hs, denying a 4!h picture raise
        3N = Serious
     3S = forcing, 3 (occasionally 4) card support
@@ -2150,7 +2153,7 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
     4D = splinter, !h support
     4H = picture raise of !hs, 2--4--2--5 with no A/K in the doubletons
     4S = picture raise of !ss, 4--2--2--5 with no A/K in the doubletons
-2S = catchall bid, maybe 5 cards or max values, denies 4 card !d/!h suit
+2S = 6+ cards, any strength
     2N = natural, forcing, something in !h/!d.
     3C = natural, forcing, 6+ !cs.
         3DH = not real suits, looking 3N or 6--2 !s fit
@@ -2162,13 +2165,13 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
     4C = solid suit
     4D = delayed splinter !s support
     4H = delayed splinter !s support
-    4S = picture raise
-2N = balanced max, stops (bid 2!s otherwise)
+    4S = picture concentrated values raise
+2N = catchall, stops not guaranteed, denies 4!hs, no !c raise interest
     3S = 3 card support, slam interest (bid 4!s without slam interest)
         3N = Serious
     4N = quantitative, directly or later on...
     5N = quantitative, directly or later on...
-3C = natural, extra values. With !c support and minimum rebid 2!s
+3C = natural, extras in shape or hcp
 3D = splinter raise of !cs, extra values (6--5 type just bid 2!d and rebid them again)
 3H = splinter raise of !cs, extra values
 3S = natural, maximum, versus unpassed hand a good suit max 1 loser e.g. KQJ10xx+
@@ -2182,13 +2185,13 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
 
 Game-forcing. Usually five cards. Could be 2--4--4--3.
 
-2H = natural, 4+ !hs, shown unless terrible quality and 6--4/7--4 in the majors, similar to 1!s--2!c--2!h.
+2H = natural, 4+ !hs, any strength, shown unless terrible quality and 6--4/7--4 in the majors, similar to 1!s--2!c--2!h.
     2S = natural, forcing, maybe only doubleton
         3S = confirm !s suit
             3N = serious control prompt
     2N = natural, forcing, something in !ds and !cs
-    3C = natural, forcing, usually 6+ !cs
-    3D = forcing, something in !d, maybe < 4 cards, later 4!d bid would show 5--6 in minors
+    3C = FSF, later 4!c bid would show 6--5 in minors
+    3D = natural, forcing, usually 6+ !ds
     3H = shows 4!hs, denying a 4!h picture raise
        3N = serious control prompt
     3S = forcing, 3 card support
@@ -2198,9 +2201,9 @@ Game-forcing. Usually five cards. Could be 2--4--4--3.
     4D = solid suit
     4H = picture raise of !hs, 2--4--2--5 with no A/K in the doubletons
     4S = picture raise of !ss, 4--2--2--5 with no A/K in the doubletons
-2S = catchall bid, maybe 5 cards or max values, denies 4 card !d/!h suit
+2S = 6+ cards, any strength
     2N = natural, forcing, something in !h/!c.
-    3C = natural, forcing, usually 5 !cs (would bid 2N if possible and only 4 !cs)
+    3C = FSF natural, forcing, usually 5 !cs (would bid 2N if possible and only 4 !cs)
     3D = natural, almost always 6+ !ds
     3H = quasi-natural shape showing, likely 1--4--6--2 / 1--3--6--3. Will bid again if actually 6--5.
     3S = forcing, 3 card support.
@@ -2210,12 +2213,12 @@ Game-forcing. Usually five cards. Could be 2--4--4--3.
     4D = solid suit
     4H = delayed splinter !s support
     4S = picture raise 4--2--5--2
-2N = balanced max, stops (bid 2!s otherwise), can be 5--3--1--4
+2N = catchall, stops not guaranteed, denies 4!hs
     3S = 3 (occasionally 4) card support, slam interest (bid 4!s without slam interest)
         3N = Serious
     4N = quantitative, directly or later on...
-3C = 5+ !cs, extra values
-3D = natural raise, extra values (with !d support and minimum rebid 2!s)
+3C = natural, extras in shape or hcp
+3D = natural raise, extras in shape or hcp
 3H = splinter raise of !ds, extra values
 3S = natural, maximum, versus unpassed hand a good suit max 1 loser e.g. KQJ10xx+
 3N = solid !ss + singleton !d, something in other suits e.g. AKQJxx/Jxx/Qxx/x
@@ -2228,7 +2231,7 @@ Game-forcing. Usually five cards. Could be 2--4--4--3.
 
 2/1 GF, always 5+ cards, 9--10 by passed hand
 
-2S = catchall rebid, tends to deny 3 !hs as can raise with 3 cards and a minimum
+2S = 6+ cards, any strength
     2N = natural, something in !c/!d
     3C = natural, usually 5 !cs (would bid 2N if possible if only 4 cards)
     3D = natural, usually 5 !ds
@@ -2240,12 +2243,12 @@ Game-forcing. Usually five cards. Could be 2--4--4--3.
     4D = delayed splinter for !s
     4H = signoff, no slam interest even v.s. Hx/xxx, barely too strong for 1!s--4!h
     4S = picture raise
-2N = balanced, max, stops (bid 2!s otherwise)
+2N = catchall, stops not guaranteed
     3S = 3 (occasionally 4) card support, slam interest (bid 4!s without slam interest)
         3N = Serious
     4N = quantitative, directly or later on...
-3C = 5+ !cs, extra values
-3D = 5+ !ds, extra values
+3C = natural, extras in shape or hcp
+3D = natural, extras in shape or hcp
 3H = raise, non-specific unknown strength, cannot play 3N anymore
     3S = confirm double fit
     3N = serious control prompt (by either bidder), does not deny a !s control card

@@ -13,8 +13,9 @@ It's somewhat a negative not having a pre-emptive weak NT, specifically NV at ma
 
 Mini NTs are a fun novelty but too hard to construct over. When vulnerable, particularly at IMPs scoring there's too
 much risk of going for a penalty when defenders X to show 13+ points. When NV it's definitely safer, high frequency
-and pre-emptive. It also pre-empts partner though, so really best played NV in 3rd position only. Even having two
-systems for VUL and NV is a chore.
+and pre-emptive. It also pre-empts partner though, so really best played NV in 3rd position only. The opponents will
+declare more often over a mini NT and shape/strength information has been given away.
+Having two systems for VUL and NV is possible but a chore.
 
 ** Unbalanced Diamond Opening
 
@@ -22,9 +23,9 @@ Having a natural 4+ 1!d opening helps define some hand types more quickly and ma
 though we'd often try to find a major fit anyway. Our 1N range of 16--18 would make the weak NT
 variant of the 1!c opening too wide ranging though, and the high 16--18 NT range is a central part of the system design
 that keeps the 1C opening unbalanced in the 16--20 range. The range 12--15 is too wide for the weak NT 1!c opening,
-though some players don't mind a wider NT range. Even if the 12--15 wider range is acceptable we prefer to be
-bidding most 11 hcp balanced hands for the same reasons as a weak NT. That naturally leads to a two tier weak NT scheme
-with 1!d as 11--(13) nebulous (not natural) and 1!c as (13)--15.
+though some players don't mind a wider NT range - it seems suitable against weaker opponents only. Even if the 12--15 wider range
+is acceptable we prefer to be bidding most 11 hcp balanced hands for the same reasons as a weak NT.
+That naturally leads to a two tier weak NT scheme with 1!d as 11--(13) nebulous (not natural) and 1!c as (13)--15.
 
 Additionally, 1!d cannot be 4+ cards natural unbalanced unless playing a 2!c opening as possibly 5!cs and 4+ major which is
 difficult to construct over, hence we use a 6+ !cs intermediate 2!c opener.
@@ -36,18 +37,31 @@ Swapping the weak NT ranges around. This is somewhat arbitrary, two sides of the
 could feel safer to pass with a flat 11--13 hand rather than a 13--15 hand that is close in values to the 16--20 unbalanced strong club range.
 The 11--13 hand feels no pressure to re-open and compete, but the 1!c weak NT might want do with 5--3--3--2 and 15 hcp.
 
+** Four v.s. Five Card Majors
+
+The pros and cons seem fairly balanced, though this hasn't been considered too deeply, mainly because most artificial
+club literature uses 5 card majors. Opening 1!h/!s with a 4 card major will not miss a major fit if you open 4--4 majors with 1!h, but
+responder does play 1N more often instead of the stronger opening hand. It is nicer to open a major instead of using a Precision 2!d
+with 4--4--1--4 or similar.
+Promising a 5 card major is very valuable in competition though, and modern bidding involves
+lighter overcalls. Playing 4 card majors the 1!d opening would still be nebulous, e.g. 3--3--2--5 shape. I guess it's possible to play
+the 2!c opening as possibly 5 cards whilst denying a 4 card major, so 5+!c--4+!d hands can be bid more directly
+(5!c + 4cM bid canapé style starting with 1!h/!s). Some have experimented with this but a 5--4--(3--1/2--2) with both minors
+bypassing 1N and having less room for a 5--3/4--3 major fit finding is perhaps suboptimal, though maybe gains back by preempting
+the opponent's of a cheap 1!h!s overcall.
+
+
 ** 2/1 GF vs NF vs invitational
 
 Note, very little evidence that 2/1 GF vs NF (weak) matters when playing a forcing NT.
-The old-fashioned ~9/10+ NF invitational style is equally unlikely to make much difference. There is some comfort in knowing
-that we don't have to push the bidding high to force to game and can focus on slam finding.
+The old-fashioned ~9/10+ NF invitational style is equally unlikely to make much difference. There is some comfort though in knowing
+that we don't have to push the bidding high to force to game and can focus on slam finding when playing 2/1 GF.
 The difficulty with standard 2/1 GF is how opener shows extras, but that's easier with club systems
-due to limited openings. In addition to the club system there will always be a bid to show a minimum.
+due to limited openings. Conventions like the serious 3NT and last train can convey extras at a later stage.
 
-We play 2/1 GF over a major opening. The major rebid is then a catchall strength showing bid (others showing extras).
-The alternative is that the 2M rebid shows shape, 6+ cards instead of being strength defining. This more heavily leans
-on conventions like the serious 3NT and last train to convey extras at a later stage. Showing strength first we can
-convey extras in shape with serious 3NT and last train.
+We play 2/1 GF over a major opening. The major rebid is then shape showing, 6+ cards "Bergen" style, which deviates from the
+catchall minimum strength showing "Lawrence" rebid style that the Revision club system uses. 3N will be serious after
+agreeing a major following 2/1 GF.
 
 ** Forcing vs "semi"-forcing 1NT over 1HS openings
 
@@ -163,7 +177,8 @@ Good article - www.clairebridge.com/en/defenses-against-1nt/
 *** Woolsey
 
 Nice against Strong NTs getting high frequency 5--4 hands and both majors.
-The ambiguity of the 2D bid makes it vulnerable to further interference though:
+The ambiguity of the 2D bid makes it vulnerable to further interference though, and the ambiguity gives the opening side
+space to play penalty/value doubles and takeout doubles (pass then double):
 
 1N
     X = 4 card major and 5 card minor
@@ -230,6 +245,274 @@ can be passed.
     3C = minors
     3D = majors, strong
 
+*** Meyerson v.s. Strong NT
+
+Easy enough to find some two suiter fit at the 2 level. Ambiguity of lengths over X, but makes the X more frequent.
+Quick to get in and raise single suiters including !ds. Much like the Revision defence but 2C shows majors specifically.
+Against a weak NT double would be values at which point it's the Landy convention (2!c majors) + natural overcalls.
+
+1N
+    X = major + minor, 5-4+ either way
+        2C = pass/correct to longer 5 card suit
+        2D = major ask
+        2HS = natural
+    2C = majors
+    2DHS = natural
+
+** Strong Club Defence Variants
+
+Against an artificial Precision club 16+ or similar, natural overcalling is very reasonable, with an emphasis on bidding obstructively as
+we are unlikely to have a game on. NT advances could still be used as constructive going responses to partner's often weak overcalls.
+
+Bids of double or 1D do not take any room away, (even 1!h takes little space) so they need to useful, where useful corresponds to goals of bidding, which we think
+should be mostly obstructive over a strong club - finding a fit and raising to our maximum level. Given the goals strong hands may choose
+to pass and come in on later rounds if trying to separate out 14+ constructive hands.
+
+Transfer overcalls try to put the 1!c opener on lead or provide a basis for constructive bidding. Transfers give the strong clubbers yet another
+bid to cue, so need to be 1 bid higher to be as destructive.
+
+Hand strengths depend on vulnerability, but generally 1 level bids have some 4/5 card suit and 2 level bids have a 5/6 card suit (NV/VUL).
+As 1 level bids do not take up much space, if showing a specific suit there would ideally be some lead directing value to them and a choice for
+advancer to raise the level without much danger when there is a fit.
+
+Semi-balanced and weaker two suiter hands should be careful about
+bidding, not so much because of penalty doubles (more so when vulnerable), but because the strong club side often win the auction
+and have gained some shape information on the opponents. Disrputive bids in the assumed fit style of preempts seem better if the overcall
+style includes semi-balanced 5--4 and 4--4 two suiters. Having bids show the exact two suits makes it easier for strong club bidders
+(with a prepared defence to interference) to handle higher overcalls, therefore it maybe better when using 4--4/5--4 two suiter showing bids
+to use ambiguous bids without an anchor suit - e.g. an overcall is majors or minors. The downside is that advancer can only raise the preempt
+to a level suitable for both combinations - a lot of multi-way ambiguous bids go no higher than the 2 level. Ambiguous bids may be better
+in that the strong clubbers may not be well prepared for them (but then we also have to remember the defence). Playing a system to beat weaker
+players is a dubious goal.
+
+More natural overcalls allow advancer to raise the preempt quickly, but again if 2 exact suits are shown it will be easier for the strong club
+bidders to handle. With a rarer 5--5+ shape then whether to give away shape information should depend on suit qualities and so how likely the overcalling
+side is to win the auction, as a sacrifice or not. As ever, the majors and the master suit are spades important.
+
+From these principles it's not too hard to invent any defence - you decide the balance of giving away information versus
+hopefully raising the bidding quickly and not being penalty doubled. There's no obvious best defence, but on balance natural high pressure bids and
+something to show the majors (maybe 2 bids for different strengths) are compelling.
+
+*** Mathe
+
+Probably the most common defence that is not all natural. The natural 1D overcall takes little space but if advancer can raise then it's a win.
+Any style for the X showing majors minimum strength can be agreed, from 7+ hcp and 4--4+ shape to better, but how well 4--4 works with limited
+points is debatable as no space is taken and information is given away to the strong clubbers who are often the declaring side.
+
+1C
+    X = majors
+    NT = minors
+    Others = natural
+
+*** Majors focus
+
+Lacks a way to show just 4 cards in the master !s suit but otherwise lots of high pressure options.
+2!h is thrown in as an amusing high variance destructive single suiter major overcall example - difficult because it can be passed. May not be legal.
+
+1C
+    X = majors
+    1N = 5--5+ majors
+    Others = natural
+    2H = !hs OR !ss
+
+*** Truscott
+
+Specific two suiters style, ambiguous relative lengths so hard to raise that much.
+
+1C
+    X = !c + !d
+    1D = !d + !h
+    1H = !d + !s
+    1S = !s + !c
+    1N = !d + !s
+    2C = !c + !d
+    others = natural
+
+*** Modified Truscott
+
+Natural 1x bids, but higher two suiter bids, so less frequent two suiters. Two suiters are natural and clear
+about the suits, so can be passed or fast raised, but if 5--4 shape then hard to know how high.
+
+1C
+    1x = natural
+    1N = !c + !h
+    2C = !c + !d
+    2D = !d + !h
+    2H = !h + !s
+    2S = !s + !c
+    2N = !s + !d
+
+*** Myxo
+
+More ambiguous destructive bids. The canapé like Raptor bids of 1!s and 1N are reasonable at taking space though maybe
+giving away too much shape information.
+
+1C
+    X = !c
+    1D = !h
+    1H = !s
+    1S = 4!s + longer minor
+    1N = 4!h + longer minor
+    2CDH = Myxomatosis Two bids - 6 cards or 5--5 in the next higher pair
+    2S = !ss + !ds
+    2N = !hs + minor
+
+*** Crash
+
+A common two suiter defence - Color, Rank, Shape. Ambiguous two suiter overcalls.
+The 2DHS bids are not part of crash, just another example destructive overcall, that cause some confusion but are harder to raise.
+
+1C
+    X = same Color (!ds + !hs / !cs + !ss)
+    1D = same Rank (majors or minors)
+    1HS = natural
+    1N = same Shape (!cs + !hs / !ds + !ss)
+    2DHS = suit above or natural
+
+1C--1D
+    X = same Color (!ds + !hs / !cs + !ss)
+    1HS = natural
+    1N = same Rank (majors or minors)
+    2C = same Shape (!cs + !hs / !ds + !ss)
+
+*** YAC
+
+Yet another crash. The ambiguous bids start a bit higher, which may mean they need to be a bit stronger.
+Showing !hs and !ss with X and 1!d lets advancer indicate if they like the suit, for a lead from broken suit,
+at the 1 level by bidding it or they can bid something else at the 1 level.
+
+1C
+    X = !hs
+    1D = !ss
+    1H = same Color (!ds + !hs / !cs + !ss)
+    1S = same Rank (majors or minors)
+    1N = same Shape (!cs + !hs / !ds + !ss)
+
+*** another variant
+
+The X and 1D bids which take little space are used for constructive strong hands with a minor.
+The majors showing bid is more preemptive than other defences, but needs some quality to it as it goes to the 2 level.
+
+1C
+    X = !cs, strong
+    1D = natural, strong, rare
+    1HS = natural
+    1N = some minor
+    2C = 5--4+ majors
+        2D = longer major ask
+    2D = Wilkosz, 5--5+ with at least one major
+    2HS = natural preempt
+    2N = minors
+
+*** Martian standard
+
+The 2CD bids are revealing of shape information, but do at least show the specific minor so it can be fast raised. Whether a
+4 card !h suit can the win the auction is debatable - probably tells the opponents that they have !ss. Otherwise a likeable defence structure.
+
+1C
+    X = 5--4+ majors, 4+ hcp
+    1x = natural
+    1N = 4!ss + longer minor, 7+ hcp
+    2CD = 5 card minor + 4!hs
+    2HS = 6 carder or 5--4 with a minor
+    2N = minors
+
+*** Psyco Suction
+
+Confusing the less prepared, probably not much else to say. Will not be easily raised by partner.
+
+1C
+    suit = that single suiter OR next two higher suits
+    NT = non-touching suits
+
+*** some canapé
+
+1C
+    X = majors
+    1D = leading directing 3+ cards honour concentration, usually long side suit
+    1H = leading directing 3+ cards honour concentration, usually long side suit
+    1S = natural
+    1N = !ss + a minor
+    2CD = minor + !hs
+    2HS = natural
+
+*** Bugatti
+
+1C
+    1D = !hs
+    1H = !ss
+    1S = 1444
+    1N = 5 card minor or both majors 5--5
+    2C = !c + higher suit
+    2D = !d + higher suit
+    2HS = natural
+    2N = unusual
+
+1C--1D then Mathe
+    1HS = natural
+    1N = minors
+    X = majors
+
+*** Ambiguous Overcalls
+
+Fun, but hard for advancer to raise.
+
+1C
+    X = values, constructive
+    1DHS = 1 suiter natural OR 3 suiter with the other suits
+    2C = 1 suiter natural OR 3 suiter with the other suits
+    2DHS = 2 suiter
+
+
+** Polish / Swedish Club Defence
+
+A two or three way club that maybe strong 16/17+ but is more often a weak NT.
+
+Using the standard prepared club defence is fine - the overcalling side can easily have game on over the
+common weak NT type hand.
+Two level bids should be fairly disciplined and constructive, at least if partner has not passed.
+They work better than over a strong only club as responder must assume
+opener has the common weak NT, but obviously that's not always true. Two level bids have similar choices as opening those
+same bids - natural, Michaels, Ekren, Multi 2!d, 5 v.s. 6 card overcalls etc.
+
+As the 1C bid is forcing, you can give up a natural NT overcall (which maybe bad in matchpoints if the opening side
+settle in a 1N contract that we could have stolen) and pass with strong balanced. A strong shapely hand may need to
+start with a takeout double as a simple overcall could be passed out. Passing and bidding later with a strong shapely
+hand risks losing a chance to show your hand, though takeout doubles for strong single suiters can suffer this as well.
+
+Variation with 1N 4!h + minor, otherwise standard stuff:
+
+1C
+    X = takeout, majors or !ss and a minor
+    1DHS = natural
+    1N = 4!hs + long minor
+    2C = natural
+    2D = majors 5--5+, as over prepared club
+    2HS = natural, disciplined weak two
+    2N = minors, unusual (not assuming they have a weak NT)
+
+Variation that gets in both major + some minor combinations, but loses a natural 1x overcall:
+
+1C
+    X = takeout
+    1D = majors
+    1H = !h + minor
+    1S = !s + minor
+    1N = minors (or play as !ds)
+    2x = natural
+
+1C--1D--1M
+    X = strong balanced, 3+ trumps
+
+1C
+    X = majors (pass with a general takeout)
+    1D = !h + minor
+    1H = !s + minor
+    1S = natural (or play as !ds)
+    1N = minors
+    2x = natural
+    2N = minors
+
 
 ** 2D Precision Style 3 Suiter
 
@@ -244,7 +527,8 @@ Both bids are for intermediate constructive hands, they just put different const
   easier or playing 1NT with 6!ds even possible. When the opponents are quiet we have more room to explore basically
 - The 3 suiter allows opponents to overcall their major suits after a 1!d opening easily though, opponents are often not quiet
 - The intermediate 2!d opening means 1!d is not for single suiters. So, with competition over 1!d an often defensive
-  3 suiter (with no 5 card major) or at best a 5--5 minors hand are the mostly shapely hands opener is known to have
+  3 suiter (with no 5 card major) or rarely a 5--5 minors hand are often shapely hands opener is known to have, except for a maximum 6!d + 5!h/!s
+  assuming that combination goes into a 1!d opening (it's easy to bid with).
 
 (11)12--15(16) hcp, short !d 3 suiter, 4--4--1--4, 4--4--0--5, 4--3--1--5, or 3--4--1--5
 

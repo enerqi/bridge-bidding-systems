@@ -2,10 +2,16 @@
 
 * Alerting & Announcing
 
+The basics and some less obvious alerts:
+
 ** 1C: *ALERT*
 
 - 1!c--1!h/1!s: *alert* (major minor canapé)
+- 1!c--1!d/1N/2!h/2!s: *alert* (totally artificial)
 - 1!c--2!c/2!d: *alert* (NF new suit)
+- 1!c--3!c/3!d/3!h/3!s: *alert* (NF new suit)
+- 1!c--3N: *alert* (some solid suit, nothing else)
+- 1!c--4!c/4!d/4!h/4!s: *alert* (specific good single major holdings)
 
 ** 1D: "may be zero with five clubs"
 
@@ -18,20 +24,31 @@
 
 - 1!h--2!s: *alert* (NF new suit)
 - 1!h/1!s--3new: *alert* (NF invitational new suit)
+- 1M--3M: *alert* (mixed raise)
+- 1!h--3!s: *alert* (some weaker splinter)
+- 1!h--3N: *alert* (!s splinter)
+- 1!s--3N: *alert* (some weaker splinter)
+- 1!s--4!c: *alert* (!c OR !h splinter)
 
 ** 1N: "16 to 18"
 
 - 1N--2!c: "Stayman"
 - 1N--2!c--2!d: not alerted
 - 1N--2!c--2!h: *alert* (denys !ss)
+- 1N--2!c--2!s: *alert* (denys !hs)
 - 1N--2!d: "Hearts" (2 level red suit transfers)
 - 1N--2!h: "Spades"
+- 1N--2!s: "Clubs"
+- 1N--2N: "Diamonds"
 
 ** 2C: "Intermediate"
 
 - 2!c--2!h/2!s: *alert* (NF new suit)
+- 2!c--4!c: *alert* (preemptive, not invitational)
 
 ** 2D: "Intermediate"
+
+- 2!d--3!d/4!d: *alert* (preemptive, not invitational)
 
 ** 2H: "Weak"
 
@@ -39,7 +56,7 @@
 
 ** 2N: "19 to 20"
 
-- 2N--3!c: *alert* (mixed lengths Stayman - 3!s response shows 5 cards)
+- 2N--3!c--3!d: *alert* (1 or 2 four card majors, not five)
 - 2N--3!d: "Hearts"
 - 2N--3!h: "Spades"
 
