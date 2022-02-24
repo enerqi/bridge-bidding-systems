@@ -105,7 +105,7 @@ proc is_1d_unbal_opener {hand} {
   if { [flattish $hand] } { return 0 }
   set points [hcp $hand]
   if { $points <11 || $points>15 } { return 0 }
-  if { [is_2c_opener $hand] || [is_2d_opener $hand]} { return 0 }
+  if { [is_2c_opener $hand] || [is_2d_intermediate_opener $hand]} { return 0 }
   set ds [diamonds $hand]
   if { $ds<4 || [spades $hand]>=$ds || [hearts $hand]>=$ds } { return 0 }
   return 1

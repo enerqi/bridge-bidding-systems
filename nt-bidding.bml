@@ -707,6 +707,8 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
 1N--(X) takeout
     P = willing to play if advancer converts to penalty, later 2 level X takeout, 3 level X penalty
     XX = unspecified GF, suggesting penalty double of opponents
+        ...2xDbl = negative, *regardless of natural/artificial* (easy rule), either opener or responder
+        ...3xDbl = penalty
     [1N system on](#1NT Opening)
 
 1N--(2!c)
@@ -718,7 +720,7 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
     2x = NF
     2N+ = [Lebensohl System](#1NT Interference and Lebensohl)
 
-1N--(2x two known suits)
+1N--(2x two known suits, e.g. !ds + !hs)
     2-newsuit = to play
     Cue = staymanic for major
     2N = transfer to lowest other suit, invite+
@@ -830,17 +832,31 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
 
 ** 1NT Escape
 
-Natural runouts when we are 1N penalty doubled (more likely after a 1N overcall than an opening).
+- Natural runouts when we are *open* 1N and penalty doubled (16--18 is rather strong)
+- Responder's XX is a 2 suiter escape after we *overcall* 1N and penalty doubled
+- A *redouble by opener* is a hand interested in running - *minimum* with a *5(6) card suit* for the NT bid
 
-1N--(X)
+1N--(Dbl)
     P = happy to play here
-    XX = values, to play or penalise. Sets up a *forcing pass at the 2 level*.
+        ...Suit = invitational plus, 3CD F1, 3HS GF
+        ...2xDbl = negative, *regardless of natural/artificial* (easy rule), either opener or responder
+        ...3xDbl = penalty
+        ...2N = natural
+        ...Cue = stop ask, either opener or responder
+    XX = values, to play or penalise or GF. Sets up a *forcing pass at the 2 level*.
+        ...2xDbl = negative, *regardless of natural/artificial* (easy rule), either opener or responder
+        ...3xDbl = penalty
     2CDHS = natural, weak
-    2N = distributional GF, probably a 2 suiter
-    3x = pre-empt, 6+ cards
-    4x = pre-empt, 7+ cards
+    2N = GF, 2 or 3 suiter, worried about their running long suit with own game on
+        3x = baron like, bid suits up the line
+    3x = forcing, 6+ cards, worried about their running long suit with own game on
 
-A *redouble by opener* is a hand interested in running - *minimum* with a *5(6) card suit* for the NT bid.
+(1x)--1N--(Dbl)
+    P = happy to play here
+    XX = 2 suiter escape
+    2CDHS = natural, weak
+    2N = GF, 2 or 3 suiter, worried about their running long suit with own game on
+    3x = forcing, 6+ cards, worried about their running long suit with own game on
 
-- 1N--(X)--P--P--XX
-- 1N--(P)--P--(X)--XX
+- (pass/bid)--1N--(X)--P--P--XX opener's escape suggestion
+- 1N--(P)--P--(X)--XX opener's escape suggestion

@@ -790,12 +790,12 @@ Natural, up to 10 hcp, no 4 card major
     1S = NT transfer, no major
         1N = limited, often balanced
         others = [system on](#1D--1N)
-    1N = !c transfer, 8+ hcp
+    1N = !c transfer, good 8+ hcp
         break = short !cs
             cue/jump = only forcing bids
         jump = fit jump
         2N = !c super-accept, (e.g. balanced hand that would accept suit invite)
-    2C = !d transfer
+    2C = !d transfer, good 8+ hcp
         break = short !ds
             cue/jump = only forcing bids
         jump = fit jump
@@ -818,40 +818,44 @@ Natural, up to 10 hcp, no 4 card major
         X = decents !ds, lead directing, inviting support
 
 1D--(1H)
-    X = negative, 4!ss, later !c bid just shows 4 card !s and longer !cs, NF canapé. Must X then cue then bid with very strong canapé hand.
-    1S = 5+ card !s suit, not weak/GF 6+ cards (no !c NFB available)
+    X = 4--5 !ss ~6+ hcp or 6+ !ss invitational precisely, *system on* without further interference
+        2D = [good !s raise](#1D--1S--2D)
+        2S = [normal !s raise](#1D--1S--2S)
+    1S = 4+ !cs, yes clubs, good 8+ hcp, not 4 !ss unless GF and bidding natural suit order
     1N = natural
-    2C = !d transfer, NFB plus strength
+    2C = !d transfer, good 8+ hcp
         break = short !ds
             cue/jump = only forcing bids
         jump = fit jump
         2N = !d super-accept
-    2D = !cs, 5+ cards(unless GF), 10+ hcp
+    2D = 3 card !s suit, ~6--9, 3--1--(5--4) or good 3--2--4--4
         2N = NF, minimum with stopper
         3D = NF, minimum no stopper
-    2H = !s transfer, weak or GF
+    2H = !s transfer, 6+ !ss, weak/GF
         break = short !ss, probably not minimum
             cue/jump = only forcing bids
         jump = fit jump
-    2S = !h stop ask
-    2N = minors, unusual
-    3CD = preempt
-    3H = !s + minor, invitational
+    2S = stop ask, invite plus
+    2N = natural
+    3CD = weak, natural
+    3H = !s + minor, mild GF 2 suiter
     3S = preempt
     3N = to play
-    4x = preempt
-    4H = !s + minor, very strong
+    4CD = !s + minor, strong 2 suiter - max 5 losers, !h control (not 2 losers), e.g. AJxxx Ax AKxxx x or better
+    4S = to play, obstructive
     4N = minors, unusual
 
 1D--(1S)
-    X = negative, 4+ !hs (not always 4 exactly, maybe 5 and invite plus)
+    X = 4--5 !hs ~(8)9+ hcp or 6!h invitational precisely, *system on* without further interference
+        2D = [good !h raise](#1D--1H--2D)
+        2H = [normal !h raise](#1D--1H--2H)
     1N = natural
-    2C = !d transfer, NFB plus
+    2C = !d transfer, 5+ !ds, good 8+
         break = short !ds
             cue/jump = only forcing bids
         jump = fit jump
         2N = !d super-accept
-    2D = !h transfer, NFB plus
+    2D = !h transfer, 6+ !hs, weak/GF
         break = short !hs, probably not minimum 3 suiter
             cue/jump = only forcing bids
         jump = fit jump
@@ -861,19 +865,19 @@ Natural, up to 10 hcp, no 4 card major
         3C = NF, no stopper
         jump = fit jump
     2S = !s stop ask
-    2N = minors, unusual
-    3C = semi-constructive, like good 3!c preempt
-    3DH = preempt
-    3S = !hs + minor, strong
+    2N = natural
+    3CDH = weak, natural
+    3S = !hs + minor, mild GF 2 suiter
     3N = to play
-    4x = preempt
+    4CD = !h + minor, strong 2 suiter - max 5 losers, !h control (not 2 losers), e.g. AJxxx Ax AKxxx x or better
+    4H = to play, obstructive
     4N = minors, unusual
     (2S) = opponents raise
         2N = scrambling, can use to make competitive 3!h bid with 4 card support
         3H = invitational, natural
 
-1D--(1M)--P--(2M) passed around to responder
-    X = takeout with both minors (would negative X with other major), suits too weak for NFB e.g. xx/xx/AQxx/Qxxxx
+1D--(1M)--P--(2M) then passed around to responder
+    X = takeout with both minors (would negative X with other major), suits too weak for transfer e.g. xx/xx/AQxx/Qxxxx
 
 1D--(1N)
     X = penalty rarely GF, after escape opener can still use good-bad 2N or cue to GF whilst responder can bid 2N natural, 3x NF or also cue to GF
@@ -881,32 +885,15 @@ Natural, up to 10 hcp, no 4 card major
     3CD = preempt
 
 1D--(1N)--P--P
-    X = 6+ !ds and 4 major, extras
-        2C = natural, long weak suit
-        2H = pass or correct
+    X = takeout
+    2CD = natural, 5--4/5--5 probably
+    2HS = 6!d--5!h/!s maximum
+    2N = 5--5 minors, max
+    3CD = extreme 6m--5om constructive maximum, avoided opening 2!c/!d
 
 1D--(2C)
-    Dbl = both majors
-        (3C)
-            X = special double, 3--3 majors, extra values (as responder maybe 5--4 in the majors)
-    2D = !h transfer, NFB plus
-        break = short !hs, probably not minimum 3 suiter
-            cue/jump = only forcing bids
-        jump = fit jump
-    2H = !s transfer, NFB plus
-        break = short !ss, probably not minimum 3 suiter
-            cue/jump = only forcing bids
-        jump = fit jump
-    2S = !ds, 5+ cards(unless GF), 10+ invite plus
-        2N = NF, minimum with stopper
-        3D = NF, minimum no stopper
-        jump = fit jump
-    2N = natural, ~11--12
-    3C = !c stop ask
-    3D = semi-constructive
-    3HS = preempt
-    3N = to play
-    4x = preempt
+    Dbl = stand in for 2!c
+    Others = [1N system on](#1NT Opening)
 
 1D--(2D) assuming michaels, both majors
     X = penalty
@@ -915,14 +902,14 @@ Natural, up to 10 hcp, no 4 card major
     2N = natural
     3CD = weak, natural
 
-1D--(2D) natural, rarer
-    X = both majors
-    2H = !s transfer, NFB plus
-    2S = 5+ !hs, invite plus
+1D--(2D) natural
+    X = both majors (or equal level conversion)
+    2H = natural
+    2S = natural
     2N = natural
     3C = natural, GF
     3D = !d stop ask
-    3H = semi-constructive (good NFB)
+    3HS = GF 6+ suit
 
 1D--(2HS)
     X = negative, later !s bids are forcing
@@ -932,6 +919,7 @@ Natural, up to 10 hcp, no 4 card major
     Dbl = Thrump, negative like but looking for 3N, no major guarantee
         3S = 4 card major, no stopper
             4CD = maybe slam hunting, often shortish minor(s)
+        Cue = choice of game
         3N = stopper
             4CD = slam hunting, often shortish minor(s)
         4N = minors
@@ -954,19 +942,17 @@ with less nuance if they bid at the 2 level.
     2S = weak limit (4 card support, shape, probably a singleton)
 
 1D--(1H)--1S--(P)
-    2H = 3 card support, similar to support double
-    2S = 4 card support
-    3H = invitational !s raise, maximum and shape
-    3S = weak limit, shapely, but weaker in HCP
+    2C = nothing special
+    2H = invitational 4 card !c support
+    3C = invitational !c raise, maximum and shape
 
 Still on if 2nd position overcalls and advancer only bids 1N/2!c/2!d in 4th.
 
 1D--(1H)--1S--(1N/2C/2D)
-    X = 3 card support double
-    2H = 4 card support, better than 2!s raise
-    2S = 4 card support, often dead minimum
-    3H = invitational !s raise, maximum and shapely
-    3S = weak limit, shapely, but weaker in HCP
+    X = 3 card support double, not rubbish if forced 3 level
+    2C = 4 card support, often dead minimum
+    2H = invitational 4 card !c support
+    3C = invitational !c raise, maximum and shape
 
 When they only overcall 2x then our cue bid is less nuanced at the 3 level. It is NOT a
 stopper ask, as only natural invitational 3!d rebids (e.g. xx/Axx/AKQJxx/xxx) would benefit.
@@ -974,6 +960,7 @@ stopper ask, as only natural invitational 3!d rebids (e.g. xx/Axx/AKQJxx/xxx) wo
 1D--(P)--1S--(2C)
     3C = good 3!s raise
     3S = weaker !s raise
+    X = support, not rubbish VUL
 
 
 **** Support doubles and redoubles by opener
@@ -994,7 +981,7 @@ stopper ask, as only natural invitational 3!d rebids (e.g. xx/Axx/AKQJxx/xxx) wo
     2H = NF natural
     2S = natural 4--4 majors, forcing, invitational plus
 
-Extended to the 3 level, (note penalty unlikely with an artificial 1!c system) but with more strength:
+Extended to the 3 level, (note penalty unlikely with an artificial 1!c system) but with more strength/shape:
 
 1D--(1S)--X--(2S)
     X = support double, long strong !ds and exactly 3 card support for implied !h suit
@@ -1003,7 +990,7 @@ Extended to the 3 level, (note penalty unlikely with an artificial 1!c system) b
 Extended through to 4!h, again more strength needed so not doubling does not deny 3 card support:
 
 1D--(X)--1H--(3H)
-    X = support, 3 card support (for the !s transfer suit here), !d length shapely maximum
+    X = support, 3 card support (for the !s transfer suit here), shapely maximum
         4N = [RKB](#RKB 4N) for Major
         4thSuit = unspecified slam try
 
@@ -1021,18 +1008,6 @@ Includes 4th hands bids where 2nd hand does not bid at all:
 1D--(P)--1S--(P)--2S--(X)
     XX = responder now shows 5 cards, inviting opener to compete 3!s
 
-**** Four-Five hearts 2N response to opener's re-opening double
-
-1D--(1S)--P--(2S)
-    X = re-opening
-        2N = "four-five hearts 2N" 4+ !hs, minimum
-        3H = 4+ !hs, maximum OR some extra values with 5 !hs
-
-1D--(2S)--P--(P)
-    X = re-opening
-        2N = "four-five hearts 2N" 4+ !hs, minimum
-        3H = 4+ !hs, maximum OR some extra values with 5 !hs
-
 **** Good-Bad 2N over 2DHS interference by 4th hand
 
 1D--(any)--any--(2DHS)
@@ -1040,13 +1015,15 @@ Includes 4th hands bids where 2nd hand does not bid at all:
     3C = longer !cs, better fit check
     3x = stronger hand
 
-**** Choice of game cue bids v.s. high overcalls
+**** Choice of game 4x cue bids after Thrump double
 
-- After 3 level or above overcalls
 - Iff our side shown values and not found a fit, constructive auction
 - Actual cue bid or bid of suit they've artificially indicated
 - always at least two places to play
 - maybe slam try later, but assumed not
+
+1D--(3!d)--X
+    4D = choice of game, likely 3--3 majors
 
 1D--(3!h)--X
     4H = choice of game, e.g. 4!h cue showing 3 card !s suit OR pick a minor ask
