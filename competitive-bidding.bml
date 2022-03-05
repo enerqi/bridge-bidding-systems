@@ -69,13 +69,11 @@
 
 ** We Open they Interfere Summary
 
-- 2 level simple bids are NFBs, freebids < invite AFTER SUIT
+- 2 level simple bids are natural, F1 freebids, 8+ good suit or typical 9/10+ < invite AFTER SUIT
 - 1N/2x simple bids are transfers AFTER TAKEOUT
 - 2 level new suit jumps are weak after suit or takeout
-- 3 level new suit jumps are GF natural AFTER SUIT
-- 3 level new suit fit jumps AFTER TAKEOUT
+- 3/4 level new suit jumps are fit jumps
 - 4CD major slam tries AFTER MAJOR OPENING + JUMP PREEMPT
-- 4 level Fit Jump (even if 3 level fit jump available, different strength) AFTER SIMPLE overcall
 - Splinters of the overcalled suit
 - Cue bids exactly invitational HCR OR minimum game hand / limited defensive values / marginal balanced game hands, AFTER MAJOR OPENING...opponents can play undoubled, we may prefer 3N and struggle to make more than 4M
 - Major cue bids general HCR AFTER MINOR OPENING
@@ -91,7 +89,7 @@
 - Transfer bids after 1!c opening and suit O/C (not just over takeout X like 1!d!h!s openers)
 - Negative doubles to 4!h
 - XX after opponent's takeout double varies: *doubleton* support 6+ for a *major*, but next suit *transfer* after *minor* opening
-- Support doubles by *opener* for partner's *1x major* response and *weak/NFB 2x major* response
+- Support doubles by *opener* for partner's *1x major* response and *wea 2x major* response
 - X/XX of cue bids of *our suit is extra length*, but *partner's suit is Stolen bid* showing
 - 3 level competitive doubles only where have no space for artificial game try, 1!h–-(2!d)-–2!h–-(3!d)–-X.
 
@@ -147,7 +145,6 @@ Follow up responses are roughly 1 point more conservative
 
 The primary situation is 1HS--2N, but there's other situations. In summary:
 
-- 1D--3HS/4CD--(3S/4x) !d splinter slam try
 - 1HS--2N--(3x/4x) known major fit and game try plus
 - 1HS--Splinter--(4x) major support splinter slam try
 - 2C--3C--(3x/4x) !c slam try

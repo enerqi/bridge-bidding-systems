@@ -961,7 +961,7 @@ Relay bids:
 ** 1C Interference
 
 - In general assume that opener has the weak balanced hand.
-- Second position interference assumes opener has the weak NT hand and uses Lebensohl.
+- 2nd position 2 level interference assumes opener has the weak NT hand and uses Lebensohl.
 
 When responder shows a weak hand such as the following and the opponents interfere...
 
@@ -972,21 +972,23 @@ When responder shows a weak hand such as the following and the opponents interfe
 ...opener essentially bids as if the opponents opened the bidding, so our same defences to their opening bids,
 except we know that the opener will be strong 16+.
 
-Re-opening doubles can use a herbert negative:
-
-1C--(1H)--P--P
-    X = strong, opener re-opening
-        1S = herbert negative, ~0--4 hcp
-        2CDS = ~4--7, natural
-        2N+ = natural, forcing
-
-Where transfers are used after interference, it is complete with 2--3 card support and raised
+Where transfers are used after interference, it is completed with 2--3 card support and raised
 one more with 4+ card support. The weak NT hand may also bid 1NT with 2--3 card support and good stops.
 Strong hands may break transfers in more interesting ways...
 
 Note, 1!s is the most disruptive 1 level (suit) overcall, possibly psychic or a poor 4 card suit, though expect to
 see less pure disruption against a weak-strong club.
 Bids below 1!s are not disruptive unless the opponents raise further.
+
+**** Differences with 1D interference
+
+Compared to the [1D opening interference](#1D interference):
+
+- The 1D opening is limited, so opener's Good-Bad 2N is more extreme shape extras
+- 1C can be strong unlimited so 2N by opener is used for some 16+ hands
+- In competition the 1 level major response to 1C are 6+, so system is off
+- System remains on over 1D as the values don't really change and opener is limited
+
 
 1C--(X)
     P = weak
@@ -1001,33 +1003,27 @@ Bids below 1!s are not disruptive unless the opponents raise further.
         1N = 2--3 card support, weak NT with good stop
         2D = 4+ !ds, weak hand
         others = natural, strong hand
-    1D = transfer, 4+ !hs, 8+ hcp, *system on* without further interference
+    1D = transfer, 4+ !hs, 6+ hcp, *system off*
         1H = 2--3 card support, weak NT
         1N = 2--3 card support, weak NT with good stop
         2H = 4+ card support, weak NT
-    1H = transfer, 4+ !ss, 8+ hcp, *system on* without further interference
+    1H = transfer, 4+ !ss, 6+ hcp, *system off*
         1S = 2--3 card support, weak NT
         1N = 2--3 card support, weak NT with good stop
         2S = 4+ card support, weak NT
-    1S = transfer to NT, no 4 card major, ~7--9, *system on* without further interference
-    1N = transfer, 5+ !cs, GF v.s. strong hand
+    1S = transfer to NT, no 4 card major, ~6--9, *system on* without further interference
+    1N = transfer, 5+ !cs, 8+ hcp, GF v.s. strong hand
     2CDHS = weak, ~5--7, sound weak two
     2N = 5--5 minors, GF versus strong hand
     3CDHS = preempt
 
 1C--(1D)
-    X = transfer, 4+ !hs, 8+ hcp, *system on* without further interference
-        1H = 2--3 card support, weak NT
-        1N = 2--3 card support, weak NT with good stop
-        2H = 4+ card support, weak NT
-    1H = transfer, 4+ !ss, 8+ hcp, *system on* without further interference
-        1S = 2--3 card support, weak NT
-        1N = 2--3 card support, weak NT with good stop
-        2S = 4+ card support, weak NT
-    1S = transfer to NT, no 4 card major, ~7--9
-    1N = transfer, 5+ !cs, GF v.s. strong hand
-    2CHS = ~5--7 hcp, sound weak two
+    X = negative
+    1HS = natural, 6+ hcp, *system off*
+    1N = natural ~6--9
+    2C = natural, F1
     2D = majors 5--5 (as opponents open 1!d defence)
+    2HS = ~5--7 hcp, sound weak two
     2N = !hs + !cs 5--5 (as opponents open 1!d defence)
     3D = majors GF stronger (as opponents open 1!d defence)
     3CHS = preempt
@@ -1048,13 +1044,12 @@ Bids below 1!s are not disruptive unless the opponents raise further.
     1N = natural, ~6--9
     2C = !d transfer, 5+ !ds, GF v.s. strong hand
         3D = weak NT, support
-    2D = 3 card !s suit, ~6--9, 3--2--4--4 or 3--1--(5--4)
+    2D = 3 card !s suit, ~8--11 hcp, 3--2--4--4 or 3--1--(5--4)
         2H = artifical, stop ask game interest OR strong
         2S = natural, minimum weak NT
         2N = natural, minimum weak NT
-        3C = preference, weak NT
-        3S = natural, maximum weak NT
-        3N = natural, minimum weak NT
+        3CD = preference, weak NT
+        3S = natural, 5 card maximum weak NT
     2H = !s transfer, 6+ !ss, weak/GF
     2S = stop ask, invite plus   (0--3!s, no !h stop maybe 4 though, 3--3+ minors)
         3CD = minimum weak NT, no stop
@@ -1069,37 +1064,19 @@ Bids below 1!s are not disruptive unless the opponents raise further.
 
 1C--(1S)
     Dbl = 4--5 !hs or 6!h invitational precisely
-        1N = weak, maybe no !s stop, maybe 4 !hs
-            2C = weak, 5!cs and 4!ds, NF
-            2D = 3 suited with 5!ds, NF
-            2H = 3 suited, bad 5 card !h suit, NF
-            2S = stop ask
-                2N = !s stop
-                    3H = natural, 4 cards
-                3H = natural, 4 cards
-                others = natural, no stop
-            2N = invite, probably 4!hs
-        2C = weak, 4--4 minors OR 5!cs
-            P = 3+ !cs
-            2D = 4+ !ds, NF
-                2H = 3--3--2--5
-            2H = weak 5 card !h suit, doubleton !c suit
-            2N = invite with stop, probably 4 !hs
-        2D = weak, 4--4 !hs + !ds OR 5!ds, NF
-            P = 3+ !ds
-            2H = preference
-                others = invitational, 5! card !d suit and doubleton !h suit
-        2H = weak, 4--4 !hs + !cs, NF
+        1N = weak, maybe no !s stop
+        2H = weak, 4 card support
+        3H = likely weak, 5 card support
         others = strong, natural
-        (2!s) = takeout then natural interference raise
-            P = weak hand, not 4!hs or 5 card minor
+        (2!s) = natural interference raise
+            P = weak hand, not 4!hs
             X = 4 !hs, weak OR strong
             2N = natural, strong
-            3CD = natural, weak, 5 cards
             others = strong
-        (3!s) = takeout then interference, probably less than invite
+        (3!s) = interference, probably less than invite
             P = weak hand
                 X = takeout again
+            4H = weak or strong, 5 card support likely
             others = strong
     1N = natural
     2C = !d transfer, 5+ !ds, 8+
@@ -1111,18 +1088,10 @@ Bids below 1!s are not disruptive unless the opponents raise further.
         3H = weak hand, 4+ card support
         others = strong, natural
     2H = !c showing, 10+
-        2N = ask (also over 2!s raise by advancer when only have 3 card support)
-            3H = weak
-            others = strong
+        2N = NF minimum, stopper
+        3C = NF weak NT
     2S = !s stop ask
-        2N = !s stop
-            3C = NF
-            3DH = forcing, natural
-            3S = !c slam invite
-            3N = play suggestion
-            4C = invitational
-        3C = weak hand, no !s stop
-        others = strong
+        3CD = minimum weak NT, no stop
     2N = natural invite
     3CDH = preempt
     3S = !hs + minor, mild GF 2 suiter
@@ -1140,8 +1109,14 @@ Bids below 1!s are not disruptive unless the opponents raise further.
     Bid = [As 1N defence](#Opponents open 1NT)
 
 1C--(2C) natural
-    X = stand in for 2!c
+    X = stand in for 2!c Stayman
     Others = [1N system on](#1NT Opening)
+
+1C--(2C) Michaels - Majors
+    X = penalty interest
+    2HS = !c/!d invite plus
+    2N = natural
+    3CD = weak, natural
 
 1C--(2DHS)
     P = not good or < GF with penalty pass in opponents suit
@@ -1193,12 +1168,13 @@ Bids below 1!s are not disruptive unless the opponents raise further.
         nextSuit = herbert negative, ~0--4 hcp
         2x = ~4--7, natural
         2N+ = natural, forcing
-    any = strong hand, bid as if they opened
+    1HS = maybe weak NT
+    others = strong hand, bid as if they opened
 
 
 ** 4th interferes, maybe 2nd, Responder positive
 
-X by 4th after some 1 level transfer bid, e.g:
+**** X by 4th after some 1 level transfer bid, e.g:
 
 1C--(X)--1H--(X)
     P = weak, 2 card support
@@ -1206,117 +1182,163 @@ X by 4th after some 1 level transfer bid, e.g:
     1S = accept transfer example, weak hand, 3 card support
     1N = weak hand, NT friendly, 2--3 card support
     2S = raise, accept, weak hand, 4 card support
-    3S = double raise, strong hand, 4 card support
+    2N = jump 2N limit plus raise system as over 1M
+    3CDH = acol 2 type
+    3S = weak 5 card max support
     others = natural, strong
 
-X by 4th after some 2 level transfer bid, e.g:
+**** X by 4th after some 2 level transfer bid, e.g:
 
 1C--(1S)--2C--(X)
     P = weak, 2 card support
-    XX = strong hand, tolerance for playing in the doubled suit
+    XX = strong hand, 3 card support
     2D = accept transfer example, weak hand, 3+ support
-    3D = strong hand, 3+ support
+    2H = strong, natural
+    2S = general force
+    2N = strong, naturalish
+    3D = strong hand, 4+ support
+    3H = acol 2 type
+    3S = splinter
+    4C = acol 2 type
     others = natural, strong
 
-X by 4th of NT transfer:
+**** 1 level takeout by 4th:
 
-1C--(1D)--1S--(X)
-    P = weak, no !s stop
-    XX = strong, natural, !s holding
+1C--(1D)--1H--(X)
+    P = weak, no stop
+    XX = strong, 3 card support
     1N = weak natural, !s stop
+    2D = general force
+    2H = weak 4+ card
+    2N = jump 2NT limit plus raise system as over 1M
+    3H = weak 5 card max support
     others = strong
 
-Suit bid where opener can support responder at 2 level, e.g:
+**** 1 level overcall by 4th:
 
-1C--(1D)--1H--(2D)  !s transfer, 2!s bid available
+1C--(1D)--1H--(1S)
+    P = weak, no stop
+    X = strong, 3 card support
+    1N = weak natural, !s stop
+    2D = general force
+    2H = weak 4+ card
+    2N = jump 2NT limit plus raise system as over 1M
+    3H = weak 5 card max support
+    others = strong
+
+**** Suit bid where opener can support responder at 2 level after interference:
+
+1C--(1D)--1S--(2D)
     P = weak hand, 2 card support
-    X = support, weak or strong
-    XX = support, weak or strong (if some other bid showing a suit)
+    X = support, strong
+    2H = strong, natural
     2S = weak hand, support
-    2N = natural, strong
+    2N = Good-Bad, usually GF strong support, else ~16--18 !cs
+    3C = strong, ~19+ natural
     3D = cue, general strong force
-    3S = strong hand, support
-    4m = 4 minor raise is minorwood RKB (in an example showing a minor)
+    3H = acol 2
+    3S = invitational, support ~16--18
 
 1C--(P)--1S--(2D)
     P = weak hand, 2 card support
-    X = support weak or strong
-    XX = support, weak or strong
+    X = support strong
+    2H = strong natural
     2S = weak hand, support
-    2N = natural, strong
+    2N = Good-Bad, usually GF strong support, else ~16--18 !cs
+    3C = strong, ~19+ natural
     3D = cue, general strong force
-    3S = strong hand, support
-    4m = 4 minor raise is minorwood RKB (in an example showing a minor)
+    3H = acol 2
+    3S = invitational, support ~16--18
 
-Four-Five hearts 2N response to opener's re-opening double:
+**** Good-Bad 2N response to opener's re-opening double:
+
+- Not scrambling with multiple places to play, but distinguishing strength.
+- good major and a weaker minor goes by 2N
+- direct minor is good, direct major is competitive
 
 1C--(1S)--P--(2S)
-    X = re-opening
-        2N = "four-five hearts 2N" 4+ !hs, minimum
-        3H = 4+ !hs, maximum OR some extra values with 5 !hs
+    Dbl = re-opening
+        2N = good !hs max (or extras with 5 !hs) bid OR a weak minor
+        3CD = good minor
+        3H = competitive !hs bid
 
 1C--(2S)--P--(P)
-    X = re-opening
+    Dbl = takeout
         2N = Transfer Lebensohl etc. (here playing as defending 2S opening)
 
 
-Good-Bad 2N over 2DHS interference by 4th hand:
+**** 2N over 2DHS interference by 4th hand:
 
-1C--(any)--any--(2DHS)
-    2N = "good-bad 2N" opener's relay to 3!c (e.g. both minors or weak !d)
-    3new = strong
+Treated as weak two opening, so natural ~16--19
 
 
-Suit bid where opener can only support responder at 3+ level, e.g:
+**** Suit bid where opener can only support responder at 3+ level, e.g:
 
 1C--(1H)--2C--(2H)  !d transfer, natural 2 level raise not available
     P = weak
-    X = strong hand, takeout
-    2D = weak hand, support
-    2N = natural, strong  (not good bad????????????)
-    3D = strong hand, support
-    3H = splinter, jump opponent's suit
+    X = strong hand, takeout (not support double for a minor suit)
+    2S = natural, strong
+    2N = Good-Bad, usually strong support, OR ~16--18 !cs
+    3C = natural, ~19+
+    3D = 4+ support, competitive weak NT
+    3H = general force
+    3S = acol 2
+    4C = acol 2
     4D = 4 minor raise is minorwood RKB
 
-1C--(P)--2C--(X)
-    P = weak hand, 2--3 !cs
-    XX = strong
-    3C = weak hand, 3+ !cs
-    4C = minorwood
-    others = strong
+1C--(1S)--X--(2S) 4--5 !h or (6!h invitational precisely)
+    X = 4!hs, strong ~16--18
+    2N = Good-Bad, usually ~19+ strong support, OR ~16--18 !cs/!ds
+    3CD = natural, ~19+
+    3H = competitive, weak
+    3S = general force
+    4CD = acol 2
+    4H = winging it
 
-1C--(P)--2C--(2S)
-    P = weak hand, 2--3 !cs
-    X = takeout, strong
-    3C = weak hand, 3+ !cs
-    3S = forcing, strong
-    4C = minorwood
-    4S = splinter
-    others = strong
+1C--(1H)--X--(3H) 4--5 !s or 6!s invitational precisely
+    X = strong, support
+    3S = weak
+    4CD = natural
+    4H = cue, slam try
+    4S = winging it
 
-Jump interference, e.g:
+**** Jump interference:
 
 1C--(X)--1D--(2S)  takeout then jump to 2!s, partner shows !h transfer
     P = 2--3 support, weak
     X = takeout, strong
-    3H = weak, 4 card support
-    3S = general strong force
-    4S = slam invite, splinter, !h support
-    others = strong
+    2N = Good-Bad, usually ~19+ strong support, OR ~16--18 !cs/!ds
+    3CD = natural, ~19+
+    3H = competitive, weak
+    3S = general force
+    4CD = acol 2
+    4H = winging it
+    4S = RKB
 
 1C--(1H)--1N--(3H)
     P = weak
-    X = takeout, strong
-    4C = weak, 4+ !cs support
-    4H = slam try, splinter
+    X = penalty, following natural NT
 
+1C--(1S)--X--(3S)
+    P = weak
+    X = takeout/responsive
 
-Extra high interference, e.g:
+**** Double jump plus interference:
+
+1C--(P)--1D--(3S)
+    P = weak
+    bid = strong, as partner is weak bid as if they opened
+    X = takeout
 
 1C--(X)--1D--(3S)
     P = weak
     bid = strong
-    X = takeout, as it's not a solo bid at 3 level, presume reasonable fit
+    X = penalty/values
+
+1C--(P)--1H--(3S)
+    P = weak
+    bid = strong
+    X = penalty/values
 
 
 ** 4th interferes after 2H/2S/2N positive response
@@ -1354,6 +1376,8 @@ See [3HS opening interference](#3HS Openings)
 For the 3N/4CDHS responses it should be easy to place the contract or slam try or X for penalty.
 
 ** 4th Interferes after Responder Negative
+
+Bid as if they opened.
 
 1C--(P)--1D = negative response
     (X) = whatever, likely not much
