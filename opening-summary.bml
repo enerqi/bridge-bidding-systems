@@ -60,7 +60,7 @@
   2N = [limit+ raise](#1H--2N)
   3C = [6+ !cs, invitational ~10--12, no major support](#1H--3C)
   3D = [6+ !ds, invitational ~10--12, no major support](#1H--3D)
-  3H = [mixed raise (weak limit raise), ~7--9 support points and 4+ cards, distributional.](#1H--3H)
+  3H = [mixed raise ~7--9(10) support points, 7.5--9 losers, 4+ cards, distributional unless 5+ cards](#1H--3H)
   3S = [unknown singleton splinter, 10--13 hcp 3--4 cover cards, ~9--12 by passed hand](#1H--3S)
   3N = [splinter !s, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
   4C = [splinter !c, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
@@ -80,7 +80,7 @@
   3C = [6+ !cs, invitational ~10--12, no major support](#1S--3C)
   3D = [6+ !ds, invitational ~10--12, no major support](#1S--3D)
   3H = [6+ !hs, invitational ~10--12, no major support](#1S--3H)
-  3S = [mixed raise (weak limit), ~7--9 support points and 4+ cards, distributional](#1S--3S)
+  3S = [mixed raise ~7--9(10) support points, 7.5--9 losers, 4+ cards, distributional unless 5+ cards](#1S--3S)
   3N = [unknown singleton splinter, 10--13 hcp 3--4 cover cards, ~9--12 by passed hand](#1S--3N)
   4C = [splinter !c or !h, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1S--4C)
   4D = [splinter !d, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1S--4D)
@@ -89,27 +89,23 @@
 
 1NT [16--18 balanced](#1NT Opening), maybe 5 card major or 5--4--2--2 long !c/!d.
   (any) [interference](#Overcalls of our NT)
-  2C = [stayman forcing, never weak 4--4 hands, nor weak 5--4/5--5 majors.](#1N--2C)
-      2D = [no 4 card major](#1N--2C--2D)
-      2H = [4/5 card !h suit, not 4 !ss](#1N--2C--2H)
-      2S = [4/5 card !s suit, not 4!hs](#1N--2C--2S)
-      2N = [4--4 in !h+!s, forcing](#1N--2C--2N)
-  2D = [transfer to !h](#1N--2D)
-  2H = [transfer to !s](#1N--2H)
-  2S = [transfer to !c](#1N--2S)
-  2N = [transfer to !d](#1N--2N)
-  3C = [5--5+ majors, invitational plus but not slam interest (transfer and rebid if so)](#1N--3C+)
-  3D = [minors invitational, 5--5 exactly](#1N--3C+)
-  3H = [minors GF, 5--5+](#1N--3C+)
-  3S = [5--4--2--2 in minors, slam interest](#1N--3C+)
-  3N = [to play](#1N--3C+)
-  4C = [Gerber](#Gerber 4C)
-  4D = [texas transfer to !h](#1N--3C+)
-  4H = [texas transfer to !s](#1N--3C+)
-  4S = [to play](#1N--3C+)
-  4N = [quantitative, 4--4--3--2 both minors, 5--3--3--2 minor or any 4--3--3--3](#1N--3C+)
-  5C = [1--1--4!d--7!c exactly, slam try, 2+ top !c honours, 1+ top !d honour](#1N--3C+)
-  5D = [1--1--7!d--4!c exactly, slam try, 2+ top !d honours, 1+ top !c honour](#1N--3C+)
+  2C = [Stayman, not promising a major, maybe weakish 4--4--4--1](#1N--2C)
+        2D = [no major](#1N--2C--2D)
+        2H = [4 or 5 !hs, not !ss](#1N--2C--2H)
+        2S = [4 or 5 !ss, not !hs](#1N--2C--2S)
+        2N = [4--4 majors, minimum](#1N--2C--2N)
+        3C = [4--4 majors, maximum](#1N--2C--3C)
+  2D = [transfer to !h, 5+ cards](#1N--2D)
+  2H = [transfer to !s, 5+ cards](#1N--2H)
+  2S = [transfer to !c, 6+ cards, weak or invite plus](#1N--2S/2N)
+  2N = [transfer to !d, 6+ cards, weak or invite plus](#1N--2S/2N)
+  3C = [minors NF, 5--5 or 5--4/4--5, tactical, ~5--7 hcp](#1N--3C)
+  3D = [either !h slam try transfer, no void OR GF !h shortage with 5--4/4--5 minors](#1N--3D)
+  3H = [either !s slam try transfer, no void OR GF !s shortage with 5--4/4--5 minors](#1N--3H)
+  3S = [minors 5--5, GF and maybe slam try](#1N--3S)
+  3N = to play
+  4CD = [!h/!s transfer](#1N--4CD)
+  4N = quantitative
 
 2C  [(10)11--15 hcp, 6+ card !c suit](#2C Intermediate Opening)
   (any) = [interference defence](#2C Interference)
@@ -133,7 +129,7 @@
   2S = natural, F1, 4+ !ss, shorter !hs
   2N = !d support or tolerance, constructive invite plus, no major interest
   3C = natural, GF, 6+ suit
-  3D = !d slam try (or play as preemptive)
+  3D = preempt
   3H = natural major, GF, 6+ suit
   3S = natural major, GF, 6+ suit
   3N = to play
@@ -151,9 +147,10 @@
   3H = weak limit raise
   3S = natural, GF, (passed hands fit jump)
   3N = to play, non-correctable
-  4CD = splinters !h support, (passed hands fit jump)
-  4HS = to play
-  4N = Blackwood (bid 3!d or splinter, then 4!s Kickback for RKB)
+  4CD = [control asking bids](#Control Asking Bids Over Preempts), (passed hands fit jump)
+  4H = to play
+  4S = [Weak !h Kickback](#Weak RKB)
+  4N = [substitute !s control asking bid](#Control Asking Bids Over Preempts)
 
 2S [5+ (NV) / 6+ (VUL) card weak two](#2HS Weak Openings) 7--(11) 1st/2nd maybe long minor, Undisciplined 5--11 3rd, 10--13 4th
   2N = [ASK (NV)](#NV 1st/2nd 5 or 6 card Extension), or [puppet to 3!c (VUL)](#2S Opening Responses) maybe !s raise OR !c signoff
@@ -162,10 +159,9 @@
   3H = !s transfer, invitational raise
   3S = weak limit raise
   3N = to play, non-correctable
-  4CD = splinters !s support, (passed hands fit jump)
-  4H = to play, (passed hands fit jump)
+  4CDH = [control asking bids](#Control Asking Bids Over Preempts), (passed hands fit jump)
   4S = to play
-  4N = Blackwood (bid 3!h or splinter, then 4N for RKB)
+  4N = [Weak !s RKB](#Weak RKB)
 
 2NT [19--20 NT](#2NT Opening)
 3CD [constructive minor preempt](#3CD Openings)

@@ -1058,7 +1058,7 @@ By responder example:
   2N = [limit+ raise](#1H--2N)
   3C = [6+ !cs, invitational ~10--12, no major support](#1H--3C)
   3D = [6+ !ds, invitational ~10--12, no major support](#1H--3D)
-  3H = [mixed raise (weak limit raise), ~7--9 support points and 4+ cards, distributional.](#1H--3H)
+  3H = [Mixed raise ~7--9(10) support points, 7.5--9 losers, 4+ cards, distributional unless 5+ cards](#1H--3H)
   3S = [unknown singleton splinter, 10--13 hcp 3 cover cards, ~9--12 by passed hand](#1H--3S)
   3N = [splinter !s, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
   4C = [splinter !c, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
@@ -1764,7 +1764,7 @@ Similar to 1!h--3!c:
 
 ** 1H--3H
 
-Mixed raise (weak limit raise), ~7--9 support points and 4+ cards, distributional. Maybe no singleton.
+Mixed raise (weak limit raise) -- ~7--9(10) support points, 7.5--9 losers, 4+ cards, distributional unless 5+ cards
 
 - New suit by opener is extreme two suiter slam try.
 - Almost always wrong to bid game with 5--3--3--2/5--4--2--2.
@@ -1772,6 +1772,9 @@ Mixed raise (weak limit raise), ~7--9 support points and 4+ cards, distributiona
 ** 1H--3S
 
 Unknown singleton splinter, 10--13 hcp.
+
+Splinter bids typically have fairly evenly distributed strength amongst the side suits as otherwise a 2/1 GF bid
+of the strong suit is often better (unless the strong suit is mostly self-sufficient).
 
 Splinter bidder promises 3--4 cover cards
 outside of the shortness, e.g. Kxxx/Axxx/x/Axxx. After asking for the shortage opener counts
@@ -1903,6 +1906,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
 1H--(2!s)
     X = negative
     2N = invitational plus, support, 2N system on
+    3H = NF, weaker
     3x = forcing
     4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
 
@@ -1993,7 +1997,7 @@ at the 3 level.
   3C = [6+ !cs, invitational ~10--12, no major support](#1S--3C)
   3D = [6+ !ds, invitational ~10--12, no major support](#1S--3D)
   3H = [6+ !hs, invitational ~10--12, no major support](#1S--3H)
-  3S = [mixed raise (weak limit), ~7--9 support points and 4+ cards, distributional](#1S--3S)
+  3S = [Mixed raise ~7--9(10) support points, 7.5--9 losers, 4+ cards, distributional unless 5+ cards](#1S--3S)
   3N = [unknown singleton splinter, 10--13 hcp 3 cover cards, ~9--12 by passed hand](#1S--3N)
   4C = [splinter !c or !h, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1S--4C)
   4D = [splinter !d, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1S--4D)
@@ -2374,7 +2378,7 @@ Not as much suit quality required as the minor bids as directed to a major game 
 
 ** 1S--3S
 
-Mixed raise (weak limit raise), ~7--9 support points and 4+ cards, distributional. Maybe no singleton.
+Mixed raise (weak limit raise) -- ~7--9(10) support points, 7.5--9 losers, 4+ cards, distributional unless 5+ cards
 
 - New suit by opener is extreme two suiter slam try.
 - Almost always wrong to bid game with 5--3--3--2/5--4--2--2.
@@ -2382,6 +2386,9 @@ Mixed raise (weak limit raise), ~7--9 support points and 4+ cards, distributiona
 ** 1S--3N
 
 Unknown singleton splinter, 10--13 hcp, 3--4 cover cards outside of shortage
+
+Splinter bids typically have fairly evenly distributed strength amongst the side suits as otherwise a 2/1 GF bid
+of the strong suit is often better (unless the strong suit is mostly self-sufficient).
 
 4C = ask
     4D = !d shortage

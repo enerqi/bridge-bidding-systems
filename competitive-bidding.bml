@@ -147,7 +147,6 @@ The primary situation is 1HS--2N, but there's other situations. In summary:
 
 - 1HS--2N--(3x/4x) known major fit and game try plus
 - 1HS--Splinter--(4x) major support splinter slam try
-- 2C--3C--(3x/4x) !c slam try
 - 2D--3HS/4CD--(3S/4x) slam try suit set
 
 When 4th hand come in high unsupported, then always *double* = *penalty*.
@@ -509,13 +508,13 @@ Double shows support and extras in shape or HCP
 
 ** Opener's Good-Bad 2N Rebid in Competition
 
-After (2DHS) in 4th by the opposition (RHS of opener), 2N shows a weaker hand.
+After (2DHS) in 4th by the opposition (RHS of opener), 2N shows strong support or a weaker other suit.
 
 1H--(P)--1N--(2S)
-    2N = good-bad, assumed weak !c suit in this case
-    3C = maximum, natural
+    2N = good-bad, assumed weak !c or !d suit in this case
+    3CD = maximum, natural
 
-1H--(P)--1S--(2C)
+1H--(P)--1S--(2C) have room at 2 level here
     2DH = natural
     2N = natural, presumably solid-ish !ds and !c stop
 
@@ -524,7 +523,7 @@ After (2DHS) in 4th by the opposition (RHS of opener), 2N shows a weaker hand.
 
 [Example after 1D opening](#Good-Bad 2N over 2DHS interference by 4th hand)
 
-** Opener's Good-Bad 2N Rebid After Major NFB
+** Opener's Good-Bad 2N Rebid After Major NF
 
 - 4th hand may or may not bid, e.g. 1D--(1S)--2H--(2S).
 - Note double has purer takeout minors implication when X and 2N are available.
@@ -532,14 +531,14 @@ After (2DHS) in 4th by the opposition (RHS of opener), 2N shows a weaker hand.
 Main examples:
 
 - 1C--(X)--2HS weak 5--7
-- 1C--(1D/1H)--2HS weak 5--7
-- 1DHS--(overcall/X)--2HS when negative free bid or weak jump shift
+- 1C--(1D)--2HS weak 5--7
+- 1DHS--(overcall/X)--when weak jump shift
 - 2C--(any)--2HS NF freebid
 - 2D--(any)--2HS NF freebid
 
-
-2N = competitive major support (or maybe minors competitive T/O scramble)
-3HS = invitational, better hand
+2N = strong support or weaker other suit
+3CD = stronger natural bid
+3M = competitive
 
 
 ** Einar Cue Bid
