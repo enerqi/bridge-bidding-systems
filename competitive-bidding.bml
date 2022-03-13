@@ -231,9 +231,10 @@ partner should play NT (we have Axx they Qx)
 - Double shows extra values
 
 1H--(1S)--2H--(2S)
-    Dbl = extra values (competitive, invite, no good trial bid)
-    2N = natural, maximum, stop
-    3CD = natural trial bid
+    Dbl = extra values, lacking extra length
+    2S = extra trump length game try
+    2N = general game try, not exposing opener
+    3CD = natural trial bid, exposing opener
     3H = weaker not invitational, reasonable suit/shape
     3S = GF, !s shortage, offensive hand
 

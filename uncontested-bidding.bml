@@ -1108,7 +1108,7 @@ By responder example:
     2D = NMF artificial GF with mostly natural continuations. Priority show 3 card !s support.
         2H = any minimum except 3 card !s support
     2D = by PASSED hand, natural invitational, 4/5!s and 5!d
-    2H = natural, NF, *weak* hand, 3 card support with 5--3 or 6--3 in the majors (weak 4!s + 3!h use forcing NT)
+    2H = natural, NF, *weak* hand, 3 card support
     2S = natural, *invitational* (use immmediate 2!s response with less), six cards
         2N = 14--15 invitational, singleton or void !s, just wants !s as a stopper
     2N = natural, NF, 11--12 HCP invitational, weakish 5 card !s, not 5--2 !h/!s contract interest
@@ -1141,6 +1141,7 @@ By responder example:
         3N = *artificial*, 0--5--4--4, accepting values.
             4CD = GF, slam try
     2H = natural, doubleton, preference. Opener only bids on with good 6--4 / 5--5 hands.
+        2N+ = game try structure as [1!h--2!h raise](#1H--2H)
     2S = 6+ !ss invitational, ~9--12 (bid 2!s over 1!h opening with less)
         3C = escaping opposite minimum to !c or !h, slightly invitational (otherwise pass)
             3S = really good !s (maybe facing a void)
@@ -1169,6 +1170,7 @@ By responder example:
 
 2D = natural, NF, often 5 cards or values very concentrated, never 0--5--4--4 (bid 2!c instead)
     2H = natural, NF, preference, hoped for !s raise. Opener may continue with 6--4 / 5--5
+        2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
     2S = 6+ !ss, invitational, 9--12, (bid 2!s over 1!h opening with less)
         3C = grope asking for !c stopper, or back to 5--2 !h fit
         3D = NF, slight game hope
@@ -1337,18 +1339,15 @@ Single raise, 3+ cards
 - could be light semi-preemptive
 - not worth a mixed raise, so 4 card support hands probably flat or ~4--6 hcp
 - use the "semi" forcing 1NT for the 3 card game invite
-- frequently passed, opener needs a good distributional hand to continue
+- opener needs a good hand to continue, usually 6 losers or better (note a 5 loser single suiter often opens 1!c)
 
-2S = puppet for long suit game try, or maybe just to make them play 3N
-    2N = waiting for long suit
-        3C = long !c
-        3D = long !d
-        3H = long !s
-    3x = concentrated values in side suit, ignoring puppet
-2N = short !s game try
-3C = short !c game try
-3D = short !d game try
-3H = game try lacking notable shortness or side suit (probably good 7 carder)
+2N = general game try, not exposing opener
+    3CD = natural trial bid, e.g. xx Qxxx KQxx xx, cooperating - unsure of game
+        3D = more trial bids if necessary
+    3H = sign off
+    4H = accept
+3H = extra trump length game try, ~6 losers, e.g. x Qxxxxx KQx AQx
+    4H = acceptance values or trump support e.g. xx AJxx J10x J10xx
 
 ** 1H--1N
 
@@ -1363,8 +1362,7 @@ as a jump major rebid should be an self-sufficient max 6 carder, ideally a good 
     P = 5+!c, hope for best contract. With 3--1--5--4 pass or 2!d, often pass.
     2D = 6+ !d (maybe 5 good), sign off suggestion
     2H = NF preference
-        2S = short suit game try
-        3D = short suit game try
+        2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
     2S = artificial, strong !c raise < GF, something in !d, e.g. Jx/xx/AJx/KJxxxx (too broken for 1!h--3!c)
     2N = natural, invitational
         any = GF
@@ -1380,8 +1378,7 @@ as a jump major rebid should be an self-sufficient max 6 carder, ideally a good 
         4N = [EKB](#EKB Voidwood) for !cs
 2D = natural, could be short 3 card, including (14)/15 6 card major
     2H = NF preference
-        2S = short suit game try
-        3C = short suit game try
+        2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
     2S = artifical, strong !d raise < GF
     2N = natural, invite, often stiff !h
         any = GF
@@ -1814,6 +1811,7 @@ XX = Ace showing by opener after opponents lead directing double
     2N = invitational plus 4 card raise, 2N system on
     3CDS = fit jump
     3H = preemptive (use transfer for mixed raise)
+    4CD = fit jump
 
 Second round bids ignore the T/O X if advancer bids nothing, e.g. 1H--(X)--1S--(P)--1N--(P)
 then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
@@ -1837,15 +1835,15 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     2CD = natural, F1
     2H = single raise, ~5--9 support points
         (P) = no compete
-            2S = invite, value based, no good trial bid
-            2N = natural, maximum, stop
-            3CD = natural trial bid
-            3H = invite, reasonable suit/shape
+            2N = [general game try as single raise](#1H--2H)
+            3CD = trial bid, exposing opener
+            3H = extra trump length game try
             3S = GF, !s shortage, offensive hand
         (2!s) = compete
-            Dbl = extra values (competitive, invite, no good trial bid)
-            2N = natural, maximum, stop
-            3CD = natural trial bid
+            Dbl = extra values, lacking shape
+            2S = extra trump length game try
+            2N = [general game try as single raise](#1H--2H)
+            3CD = trial bid, exposing opener
             3H = weaker not invitational, reasonable suit/shape
             3S = GF, !s shortage, offensive hand
             4CD = GF, shapely 2 suiter
@@ -1904,9 +1902,9 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
 
 1H--(2!s)
-    X = negative
+    X = negative, maybe invite with 3 card support
     2N = invitational plus, support, 2N system on
-    3H = NF, weaker
+    3H = NF, weaker roughly mixed raise
     3x = forcing
     4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
 
@@ -1921,6 +1919,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
 
 1H--(3x)
     X = negative
+    3H = ~7--11 8--9 losers, 4 card support (maybe 3 plus strong trumps)
     NewSuit = forcing
     Cue = support showing, invitational or GF if below/above 3!hs
     4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
@@ -2018,7 +2017,7 @@ as a jump major rebid should be an self-sufficient max 6 carder, ideally a good 
     P = 5+!c usually, hope for best contract. Maybe 1--4--4--4 or worst 1--4--5--3.
     2DH = natural, NF, usually 6 cards
     2S = NF preference
-        3DH = short suit game try
+        2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
     2N = natural invite, 1--2 !ss
     3C = 8-11, 5+ !cs natural raise, NF
     3D = invitational, improved by !c suit, 3 card !s support, !d shortage
@@ -2032,7 +2031,7 @@ as a jump major rebid should be an self-sufficient max 6 carder, ideally a good 
     P = best contract guess, usually 5 cards, maybe 1--4--4--4 or even 1--4--3--5
     2H = natural, NF, usually 6 cards
     2S = NF preference, often 3/4 card support like standard 2 level raise
-        3CH = short suit game try
+        2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
     2N = natural invite, 1--2 !ss
     3C = natural, NF
     3D = 8-11, 5+ !ds natural raise, NF
@@ -2044,7 +2043,7 @@ as a jump major rebid should be an self-sufficient max 6 carder, ideally a good 
     4H = splinter for !d
 2H = natural, 4+ cards including 6--4 (usually show 4!hs before 6 !ss) / 5--4--4--0 / 5--4--0--4
     2S = NF preference (2!s and 3!h normally should prefer 2!s in case 6--4)
-        3CD = short suit game try
+        2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
     2N = natural, invitational
         3CD = forcing
     3CD = natural, NF
@@ -2253,17 +2252,15 @@ Single raise, 3+ cards
 - could be light semi-preemptive
 - not worth a mixed raise, so 4 card support hands probably flat or ~4--6 hcp
 - use the "semi" forcing 1NT for the 3 card game invite
-- frequently passed, opener needs a good distributional hand to continue
+- opener needs a good hand to continue, usually 6 losers or better (note a 5 loser single suiter often opens 1!c)
 
-2N = relay to long suit game try
-    3C = puppet
-        3D = long !d
-        3H = long !h
-        3S = long !c
-3C = short !c game try
-3D = short !d game try
-3H = short !h game try
-3S = game try lacking notable shortness or side suit (probably good 7 carder)
+2N = general game try, not exposing opener
+    3CDH = natural trial bid, e.g. Qxxx KQxx xx xxx, cooperating - unsure of game
+        3x = more trial bids if necessary
+    3S = sign off
+    4S = accept
+3S = extra trump length game try, ~6 losers, e.g. Qxxxxx KQx AQx x
+    4S = acceptance values or trump support e.g. AJxx xx J10x J10xx
 
 
 ** 1S--2N
@@ -2435,6 +2432,7 @@ Similar to [1H interference](#1H interference).
     2N = invitational plus 4 card raise, 2N system on
     3CDH = fit jump
     3S = preemptive (use transfer for mixed raise)
+    4CD = fit jump
 
 1S--(1N)
     X = penalty
@@ -2471,10 +2469,8 @@ Similar to [1H interference](#1H interference).
     X = negative
     2S = normal natural raise
         (P) = no compete
-            2N = natural, maximum, stop
-            3CD = natural trial bid
-            3H = invite, value based, no good trial bid
-            3S = invite, reasonable suit/shape
+            2N = [general game try as single raise](#1S--2S)
+            3S = extra trump length game try
         (3H) = compete
             Dbl = extra values (competitive, invite)
             3N = natural, maximum, stop
@@ -2509,6 +2505,7 @@ Similar to [1H interference](#1H interference).
 
 1S--(3x)
     X = negative
+    3S = ~7--11 8--9 losers, 4 card support (maybe 3 plus strong trumps)
     NewSuit = forcing
     Cue = support showing, invitational or GF if below/above 3!ss
     4CD = [!s slam tries](#Major Opening and Responder's 4CD Slam Try)
