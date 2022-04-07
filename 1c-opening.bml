@@ -364,7 +364,10 @@ questions
             4C = 5--5 M + !cs, bid 2N if weak suit
                 4D = [Double Fit RKB Kickback](#Double Fit RKB)
             4D = 5--5 M + !ds
-                4H = [Double Fit RKB Kickback](#Double Fit RKB), also after 1!h response, assume too strong for 4!hs, bid 2N if weak suit
+                4H = (over 1!s) Last Train
+                4S = (over 1!h) Kickback
+                4S = (over 1!s) signoff
+                4N = (over 1!h or 1!s) [Double Fit RKB Kickback](#Double Fit RKB)
         others = natural, sound 6 card suit (use relay then sign off with bad 6 carder and 7 card major fit)
     2S = 4 card major(s) for longest suit, no 5 card minor, so balanced or a 4--4--4--1 hand
         2N = relay
@@ -431,7 +434,11 @@ questions
     4C = 5--5 M + !cs, ~8--11 hcp
         4D = [Double Fit RKB Kickback](#Double Fit RKB)
     4D = 5--5 M + !ds, ~8--11 hcp
-        4H = [Double Fit RKB Kickback](#Double Fit RKB) ??? over 1h what?
+        4H = (over 1!h) signoff
+        4H = (over 1!s) Last Train
+        4S = (over 1!h) Kickback
+        4S = (over 1!s) signoff
+        4N = (over 1!h or 1!s) [Double Fit RKB Kickback](#Double Fit RKB)
 2HS = weak NT raise 4 cards
     2N = force before cue bid or game try structure as e.g. [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
     3M = extra trump length game try

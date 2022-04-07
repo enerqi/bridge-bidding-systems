@@ -1566,6 +1566,8 @@ Natural 2/1 GF, always 5+ cards.
     3S = FSF
 3D = natural raise 3+ cards, extras
     any = 3N contracted directed, unless going past 3N voluntarily
+    3H = support
+        3N = serious
 3H = natural maximum, KQJ10xx+ suit
     3S = stop show OR advanced !h slam try
     4C = !h support, slam try
