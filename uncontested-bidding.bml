@@ -26,18 +26,18 @@ Other bids:
     (any) = [1!d interference](#1D interference)
     1H = [natural, 4+ cards, zero+ points, maybe longer minor canapé](#1D--1H)
     1S = [natural, 4+ cards, zero+ points, maybe longer minor canapé](#1D--1S)
-    1N = [natural, up to 10 hcp, no 4 card major](#1D--1N)
+    1N = [natural, up to 11 hcp, no 4 card major](#1D--1N)
     2C = [10+ invitational plus, 4+ !c cards, no 4 card major, maybe longer !ds](#1D--2C)
     2D = [10+ forcing (unless passed hand), 4+ !ds, no longer suit](#1D--2D)
-    2HS = weak jump shift, 6+ !h/!ss, 0--9 hcp, not invitational, rarely 5 card suit that dreads passing 1!d
+    2HS = weak jump shift, good 6+ !h/!ss, ~3--7 hcp, rarely 5 card suit that dreads passing 1!d
         2S = 6--5 shape
-        2N = solid !ds, asking for 3N/4!hs with something in side suits, otherwise back to 3!hs, e.g. Ax/x/AKQJxxx/xxx
-        3C = 6--5+ NF, long strong !ds and minor
-        3D = NF, signoff
+        2N = 5--5 minors escape
+        3C = 6!c--5!d NF, decided against 2!c opening
+        3D = 6!d--5!c NF, decided against 2!d opening
         3HS = raise invitational (will be max strength with only 3 card support)
-        4CHS = splinter, looking for miracle slam , e.g. Kxxx/x/AKxxxx/Ax
+        4CHS = splinter, looking for miracle slam
         4HS = raised, to play
-    2N = natural invitational ~(10)--12, no 4 card major, usually very flat 4--4--3--2/4--3--3--3, normally no 5 card minor. Can bid 2!d to rightside NT with one major stop. With zero major stops probably look to bid 2!c with a 4 card !c suit or 2!d.
+    2N = natural invitational ~(11)--12(13), no 4 card major, usually very flat 4--4--3--2/4--3--3--3, normally no 5 card minor. Can bid 2!d to rightside NT with one major stop. With zero major stops probably look to bid 2!c with a 4 card !c suit or 2!d.
         3CD = natural, NF
         3HS = other major shortage
         4C = minor two-suiter, GF, unlikely as 6--5 hands can open 2!c/2!d
@@ -142,11 +142,12 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
             2H = invitational, exactly 5!hs, opener probably bids on with any 3 card support
                 2N = decline, e.g. singleton
                 3CD = game try
-            2S = invitational, 4 card !s support, weaker than direct 3!s
+            2S = mild invite, 4 card !s support, flattish unlike direct 3!s
             2N = 1--4--4--4 invitational
             3C = 4!h and 5+!cs, invitational
             3D = 4!h and 5+!ds, invitational
-            3H = natural, invitational, extra long distributional
+            3H = natural, invitational, 6 !hs, ~(10)--12, less distribution than direct 3!h
+            3S = 5+ card, mixed raise like distributional invite
         2H = 4--3--4--2 / 4--3--5--1, !d super-accept, 3 card !h support
     2D = artifical, GF
         2H = 3 card !h support, 4--3--(5--1) / 4--3--(4--2) / 4--3--3--3
@@ -178,16 +179,16 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
                 3N = 4--0--5--4
         3H = 4--2--(4--3), !h doubleton, not Hx support
             4x = [Slam Try Relay Bidding](#Slam Try Relay Bidding)
-    2H = invitational, 9--12
-    2S = 4 card support and two cover cards e.g. Axxx/xxxx/Qx/xxx, normally 7--9 support points
+    2H = 6+ !hs, natural NF, ~8--10, too good for weak jump shift
+    2S = 4 card support flattish 6--9(10), not worth mixed raise via 2!c, two cover cards e.g. Axxx/xxxx/Qx/xxx
     2N = natural, 10--12, !c suit well stopped (compare FSF)
         3CD = likely 4--0--(5--4), 3 suiter with short !hs (pass with min flattish)
         3H = forcing, 4--3--(5--1) or similar, (weak hands would pass)
         3N = natural, game accept
     3C = invitational, normally 6 good !cs and 4/5 !hs (weaker hand may bid 1N with 4--6 shape)
     3D = invitational NF, 6+ !ds canapé
-    3H = natural, forcing, 6+ !hs
-    3S = invitational !s raise
+    3H = invite distributional, extra length (7 cards) or more shape (6--4) than via 2!c
+    3S = invite distributional !s raise, ~10--12 (use 2!c if flatter)
         3N = natural, short !hs and good !c stoppers (not a serious auction, responder limited)
     3N = natural
     4C = splinter for !s
@@ -213,7 +214,7 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
             2N = 1--4--4--4 invitational
             3C = 4!h and 5+!cs, invitational
             3D = 4!h and 5+!ds, invitational
-            3H = natural, invitational, extra long distributional
+            3H = natural, invitational, 6 !hs, ~(10)--12, less distribution than direct 3!h
         2H = 3--3--5--2, !d super-accept, 3!hs, denies 3!cs
     2D = artificial GF, mostly natural continuations, priority show 3 card !h support
         2H = 3 card !h support, 3--3--(3--4) / 2--3--4--4
@@ -240,14 +241,12 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
             4x = [Slam Try Relay Bidding](#Slam Try Relay Bidding)
         3S = 2--3--4--4, !s doubleton
             4x = [Slam Try Relay Bidding](#Slam Try Relay Bidding)
-    2H = natural, invitational
-    2S = 5--6 majors, invitational (most forcing hands bid 2!d)
-    2N = natural, NF, invitational, stronger 11--12 than going via 2!c first
+    2H = 6+ !hs, natural NF, ~8--10, too good for weak jump shift
+    2S = 5--6 majors, invitational (bid 3!s with GF 6--5)
+    2N = natural, NF, invitational, stronger 12--13 than going via 2!c first
     3C = canapé signoff, e.g. xx/AJxx/x/QJ9xxx
     3D = natural, slam invitational, 6!hs + 5!ds (PASSED hand highly invitational)
-    3H = natural, slam invitational, good suit
-        3N = reject !h and slam
-        4H = reject slam but !h support (e.g. xx doubleton is fine)
+    3H = invite distributional, extra length (7 cards) or more shape (6--4) than via 2!c
     3S = natural, GF, 6!hs + 5!ss
         3N = natural, good minor suits
             4H = insist on major game
@@ -259,7 +258,7 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
 
 2C = natural, NF, 5--4+ either way in !cs + !ds, denies 4 !ss or 3!hs, often 14--15 hcp unless min 5--5 minors
     2D = simple preference, NF, natural continuations
-    2H = 6+ !hs, invitational (else use weak jump shift), natural continuations
+    2H = 6+ !hs, natural NF, ~8--10, too good for weak jump shift
     2S = FSF RELAY, GF, note opener denied 4!ss already
         2N = 5--4 minors only, (13)(45) or 22(45)
             3C = shape ask, 4 level is [Slam Try Relay Bidding](#Slam Try Relay Bidding)
@@ -284,11 +283,11 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
         4C = 6!d, 5!c, some void
             4D = void ask
                 4HS = void
-    2N = natural, invitational
+    2N = natural, invitational, expects game v.s. 14--15
         3C = NF
         3DHS = forcing
     3CD = natural, invitational
-    3H = natural, forcing, 6+ !hs
+    3H = natural, 6+ !hs, invitational (use FSF with !h slam try)
     3S = 6!h + 5!s or more, natural, forcing (PASSED hand !s splinter with !c support)
         3N = misfit minor hand
         4CD = !h/!s slam try
@@ -435,7 +434,7 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
             3C = 4!s and 5+!cs, invitational
             3D = 4!s and 5+!ds, invitational
             3H = strongly invitational, 5--5+ majors
-            3S = natural, invitational, extra long distributional
+            3S = natural, invitational, 6 !ss, ~(10)--12, less distribution than direct 3!s
         2H = 2--4--5--2, !d super-accept, 4!hs, denies 3 !cs
         2S = 3--4--4--2 / 3--3--5--2, !d super-accept, 3!ss, denies 3 !cs
     2D = artificial, GF, mostly natural continuations, must bid 2!h with 4 cards (PASSED hand natural invitational)
@@ -473,8 +472,8 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
         3N = 4--4--3--2, !d doubleton
             4x = [Slam Try Relay Bidding](#Slam Try Relay Bidding)
     2H = natural, NF, less than invitational (else 2!c over 1N)
-    2S = 6+ !ss (else use weak jump shift), invitational
-    2N = natural, invitational, stronger than 2!c bid first
+    2S = 6+ !ss, natural NF, ~8--10, too good for weak jump shift
+    2N = natural, NF, invitational, stronger 12--13 than going via 2!c first
     3C = canapé signoff, e.g. AJxx/xx/x/QJ9xxx
     3D = natural, slam invitational (else 2!d then 3!d),  6!ss + 5!ds (PASSED hand invitational)
     3H = natural, forcing, 6!s--5!h+, maybe slam try
@@ -482,9 +481,7 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
         3N = to play
         4CD = cue bid, !hs agreed
         4H = to play
-    3S = natural, GF, maybe slam try (can bid 2!d to find best game) or 6--3--2--2 not liking 6--1 fit
-        3N = reject !s
-        4CDH = cue bid, would accept slam try
+    3S = invite distributional, extra length (7 cards) or more shape (6--4) than via 2!c
     4CDH = self/auto-splinter for !s
     4S = to play, even though opener often has a singleton
 
@@ -523,15 +520,15 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
         4C = 6!d, 5!c, some void
             4D = void ask
                 4HS = void
-    2S = 6+ !ss, invitational (else use weak jump shift), natural continuations
-    2N = natural, invitational
+    2S = 6+ !ss, natural NF, ~8--10, too good for weak jump shift
+    2N = natural, invitational, expects game v.s. 14--15
         3C = NF
         3DHS = forcing
     3CD = natural, invitational
     3H = 6!s + 5!h or more, natural, forcing (PASSED hand !s splinter with !c support)
         3N = misfit minor hand
         4CD = !h/!s slam try
-    3S = natural, forcing, 6+ !ss
+    3S = natural, 6+ !ss, invitational (use FSF with !s slam try)
     3N = natural
     4C = forcing (when 3!c!d invitational 4!c!d is always forcing)
         4D = Redwood [RKB](#RKB 4N)
@@ -614,7 +611,7 @@ Natural, 4+ cards, zero+ points (alertable), maybe longer minor canapé
 
 ** 1D--1N
 
-Natural, up to 10 hcp, no 4 card major
+Natural, up to 11 hcp, no 4 card major
 
 - fairly catchall if not suitable for other bids
 
@@ -1054,7 +1051,7 @@ By responder example:
   2C = [GF natural (passed hand Reverse Drury raise)](#1H--2C)
   2D = [GF natural (passed hand 9--10), usually 5 cards](#1H--2D)
   2H = [single raise, 3+ card support, maybe light](#1H--2H)
-  2S = [6+!s, 0--9 hcp, no !h fit  (note 1!s and 2!s rebid is invitational)](#1H--2S)
+  2S = [6+!ss, ~6--9 hcp, semi-weak, no !h fit](#1H--2S)
   2N = [limit+ raise](#1H--2N)
   3C = [6+ !cs, invitational ~10--12, no major support](#1H--3C)
   3D = [6+ !ds, invitational ~10--12, no major support](#1H--3D)
@@ -1105,17 +1102,17 @@ By responder example:
             2N = natural, 5!s + 10 HCP exactly, unsuitable for 5--2 2!s contract
             3C = natural, 5+ !cs, often 6 cards
             3D = natural, 5+ !ds, often 6 cards
+            3S = natural, invitational, 6 !ss, ~(10)–12, less distribution than direct 3!s
     2D = NMF artificial GF with mostly natural continuations. Priority show 3 card !s support.
         2H = any minimum except 3 card !s support
     2D = by PASSED hand, natural invitational, 4/5!s and 5!d
     2H = natural, NF, *weak* hand, 3 card support
-    2S = natural, *invitational* (use immmediate 2!s response with less), six cards
-        2N = 14--15 invitational, singleton or void !s, just wants !s as a stopper
+    2S = natural, NF, not suitable for immediate 2!s weak jump shift (suit quality or reasonable !h support)
     2N = natural, NF, 11--12 HCP invitational, weakish 5 card !s, not 5--2 !h/!s contract interest
     3C = to play, e.g 4--6 / 4--7, possibly even 5--6 canapé
     3D = natural, GF (use 2!c puppet to sign off), 6--5+
     3H = artificial, GF, solid !s AKQJxx+
-    3S = natural, GF, slam-invitational (use 2!d if only game looking) good suit
+    3S = invite distributional, extra length (7 cards) or more shape (6–4) than via 2!c
     3N = to play
     4C = !c auto-splinter for !s, control bids or [RKB](#RKB 4N) follow
     4D = !d auto-splinter for !s, control bids or [RKB](#RKB 4N) follow
@@ -1129,7 +1126,7 @@ By responder example:
 2C = natural, NF, often 5 cards or values very concentrated (so responder should bid NT instead)
     2D = FSF, invitational plus (could end 2H or 2N, 2S implies more values, 3 level bids are GF)
         2H = NF minimum, usually 5!hs and 4+!cs, maybe 6--4 !h/!c, not 0--5--4--4 minimum.
-            2S = NF, suggests 5 card !s, play 5--2 fit or 2N
+            2S = NF, maybe 5 card !s, play 5--2 fit or 2N
             3H = GF, Hx+ support suggesting 4H or 3N
         2S = 3 card support and extras, GF (3 cards and minimum would raise 1!s to 2!s or bid 1N)
         2N = *artificial*, 0--5--4--4, minimum. Further bids GF.
@@ -1142,7 +1139,7 @@ By responder example:
             4CD = GF, slam try
     2H = natural, doubleton, preference. Opener only bids on with good 6--4 / 5--5 hands.
         2N+ = game try structure as [1!h--2!h raise](#1H--2H)
-    2S = 6+ !ss invitational, ~9--12 (bid 2!s over 1!h opening with less)
+    2S = 6+ !ss invitational, ~9--12 (not NF after a second new suit)
         3C = escaping opposite minimum to !c or !h, slightly invitational (otherwise pass)
             3S = really good !s (maybe facing a void)
         3D = groping for a game, not good enough stop to bid 3N directly
@@ -1171,7 +1168,7 @@ By responder example:
 2D = natural, NF, often 5 cards or values very concentrated, never 0--5--4--4 (bid 2!c instead)
     2H = natural, NF, preference, hoped for !s raise. Opener may continue with 6--4 / 5--5
         2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
-    2S = 6+ !ss, invitational, 9--12, (bid 2!s over 1!h opening with less)
+    2S = 6+ !ss, invitational, ~9--12 (not NF after a second new suit)
         3C = grope asking for !c stopper, or back to 5--2 !h fit
         3D = NF, slight game hope
     2N = natural, NT invitational with 5 card !s suit
@@ -1268,11 +1265,18 @@ By responder example:
 
 *** 1H--1S--2N
 
-2N = 3 card !s support and maximum with AQJ10xx+ (often 7 cards) in !h
-    3C = GF, something in !c (stopper initially), actual suit if go back to 4!h/4!s over 3N showing a slam try
-    3D = GF, something in !d (stopper initially), actual suit if go back to 4!h/4!s over 3N showing a slam try
+Maximum, 6(7)--4 with a minor. The reasonable alternative is a good max 6/7--3 (3 card !s support).
+
+2N = 14--15, 6+ !hs with 4 card minor suit
+    3C = ask
+        3D = 6--4, with !ds
+            3H = to play, preferred !cs
+        3H = 6--4 with !cs
+            4C = sign off
+        4CD = 7--4 shape
+    3D = GF, 5--5+ !ss + !ds
     3H = sign off
-    3S = sign off, 5th !s (remember 1!s can be very light)
+    3S = GF, 6+ good !ss
     3N = to play
     4C = splinter for !s
     4D = splinter for !s
@@ -1413,9 +1417,15 @@ as a jump major rebid should be an self-sufficient max 6 carder, ideally a good 
     3N = to play
     4CD = 3 card splinter, presumably 3--3--(6--1), max NT
     4HS = to play
-2N = semi-natural, 3!h rebid but with solid !hs, NT suited shape
-    3H = to play
-    3x = stoppers
+2N = 14--15, 6+ !hs with 4 card minor suit
+    3C = ask
+        3D = 6--4, with !ds
+            3H = to play, preferred !cs
+        3H = 6--4 with !cs
+            4C = sign off
+        4CD = 7--4 shape
+    3D = long suit, still limited strength
+    3H = sign off
 3CD = NF, 6--5+, maximum
     3new = stop probe at first OR slam try if returns to !hs
     4om = !h slam try
@@ -1580,19 +1590,17 @@ Natural 2/1 GF, always 5+ cards.
 
 ** 1H--2S
 
-Weak jump shift, 0--9 six+ card suit
+6+!ss, ~6--9 hcp, semi-weak, no !h fit
 
-- Not strong enough for 1!s then 2!s invitational rebid.
-- A second long minor is ignored unless it makes the hand distributionally strong enough to use an invitational 1!s then 2!s rebid.
+- Stronger than 1!d--2!h/!s (there is less preemptive value)
 - Opener normally passes without fit.
 
-2N = solid !hs, asking for 3N/4!hs with something in minors, otherwise back to 3!h, e.g. x/AKQJxxx/Ax/xxx
+2N = (semi)solid+ !hs, asking for 3N/4!hs with something in minors, otherwise back to 3!h, e.g. x/AKQJxxx/Ax/xxx
 3CD = 6--5+ NF, long strong !hs and minor
 3H = NF, "better" suit than your !ss
 3S = invite
 4CD = splinter, looking for miracle slam , e.g. Kxxx/AKxxxx/x/Ax
-4H = NF
-4S = to play
+4HS = to play
 
 ** 1H--2N
 
@@ -2063,9 +2071,15 @@ as a jump major rebid should be an self-sufficient max 6 carder, ideally a good 
     3S = invite, often doubleton
     3N = natural, e.g. AKQ/xx/Q10xx/Qxxx
     4H = to play
-2N = semi-natural, 3!s rebid but with solid !ss, NT suited shape
-    3S = to play
-    3x = stoppers
+2N = 14--15, 6+ !ss with 4 card minor suit
+    3C = ask
+        3D = 6--4, with !ds
+            3H = to play, preferred !cs
+        3H = 6--4 with !cs
+            4C = sign off
+        4CD = 7--4 shape
+    3D = long suit, still limited strength
+    3S = sign off
 3CD = NF, 6--5+, maximum
     3om = stop probe at first OR slam try if returns to !ss
     3H = natural, 6 cards, forcing

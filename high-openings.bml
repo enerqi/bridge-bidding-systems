@@ -96,8 +96,6 @@ In 1st/2nd:
 - P/T integrity for the 4 level
 - Semi-solid+ suit
 - Exactly 2 or 3 keycards (1) AK trumps (2) A/K trumps + side Ace (3) AK trumps + side ace
-- Responses use 4!d major ask (preference for opener to play), 4!h pass/correct (preference for responder to play !hs)
-- 4!c slam try responses usually let responder play the contract
 
 3N
     4C = slam try ask, further cue bids may fish for a void
@@ -105,9 +103,11 @@ In 1st/2nd:
         4H = !s + 2 keycards
         4S = !h + 3 keycards
         4N = !s + 3 keycards
-    4D = major ask
+    4D = extra trump length (8 cards) ask, further cue bids may fish for a void
+        4M = nope
+        4N = 2 keycards
+        5C = 3 keycards
     4H = Pass or Correct
-    4S = to play
     4N = unlikely to use instead of 4C, [RKB](#RKB 4N)
 3N
     (any)
@@ -123,8 +123,8 @@ Note [3N Alternatives](#3N Opening Alternatives)
 * 4CD Openings
 
 - Normal distributional minor preempts, must have a singleton/void
-- Major games to play, 4C--4D left as another control asking bid (would be better as shortness ask but that's an exception)
-- Redwood active over 4!c assumed, so 4N response is a substitute control asking bid
+- Major games to play, 4C--4D left as Redwood for consistency (would be better as shortness ask but that's an exception)
+- As 4!c--4!d is Redwood, a 4N response is a substitute control asking bid
 - 5 level new suits are control asking bids if there is not a lower one available
 
 4C
