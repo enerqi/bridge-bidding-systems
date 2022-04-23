@@ -194,7 +194,7 @@ Refer to [1HS--2NT Invite Plus Interference](#2NT Invite Plus Interference)
   to handle the auction based on partner's next bid. Used to start a *stop ask* (Directional Asking Bid) or make a
   flattish 3 card 8--10 hcp raise.
 - Is it a standard *competitive* double situation? Competitive X played to 3!s. Double of opponents' raised suit
-  when partner has opened or overcalled when no other 3x game try bid available: 1H--(2D)--2H--(3D)--X but not 1H--(2C)--2H--(3C)--X where 3!d can be the game try bid.
+  when partner has opened or overcalled: 1H--(2D)--2H--(3D)--X
 - Is it a standard *responsive* double situation? Responsive X played to 3!s. Partner does takeout X of Opener and
   then we X the opponents' raise (whether artificial - e.g. HCR or natural).
 
@@ -1526,7 +1526,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
     2N = 5 !hs + 4 card minor
 
 (1S)--P--(3S)
-    any = as [Opponents open 3S](#Opponents open 3S)
+    any = as [Opponents open 3S](#Opponents open 3CDHS)
 
 (1S)--P--(4CD) (or 3!h) natural short splinter
     X = lead lower unbid suit
@@ -1923,7 +1923,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening with care
     4D = natural, strong GF
 
 (2S)--P--(3!s)
-    any = as [Opponents open 3S](#Opponents open 3S)
+    any = as [Opponents open 3S](#Opponents open 3CDHS)
 
 (2S)--X--(3!s)
     X = responsive, values, !h length unknown
@@ -2008,7 +2008,7 @@ OR
 
 X is majors takeout, NT is minors.
 
-* Opponents open 3CDH
+* Opponents open 3CDHS
 
 - Normal takeout doubles, conservative opening bid values 12+, assumes ~7–9 hcp from partner
 - Only 3!c has space to show different major two suiter strengths
@@ -2024,29 +2024,15 @@ X is majors takeout, NT is minors.
     4H = extreme strong 2 suiter
         4N = both minors, choose your suit
 
+(3S)
+    4S = extreme strong 2 suiter
+        4N = both minors, choose your suit
+    4N = both minors
+
 (3H)--P--(3!s)
     X = penalty, maybe psyche exposing
 (3x)--X--(4x)
     X = takeout with decent values, inviting penalty pass
-
-
-* Opponents open 3S
-
-- Normal takeout doubles, conservative opening bid values 12+, assumes ~7–9 hcp from partner
-- Takeout double normally implies 4 !hs
-
-Also after 1N--(3S), (1S)--(3S), (2S)--(3S).
-
-(3S)
-    4C = 6+ !hs
-    4D = !hs + !ds
-    4H = !hs + !cs, NF
-    4S = !hs + !cs, very strong
-    4N = minors
-
-(3x)--X--(4x)
-    X = takeout with decent values, inviting penalty pass
-
 
 * Opponents open 3N
 

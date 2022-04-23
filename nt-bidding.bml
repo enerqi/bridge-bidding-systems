@@ -65,6 +65,7 @@ Responding:
     3N = to play
     4CD = [!h/!s transfer](#1N--4CD)
     4N = quantitative
+    5S = invitation to 6NT, asks for any 5 card suit
 
 *** 1N--2C
 
@@ -797,11 +798,12 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
         XX = to play interest
         any = system on
 
-1N--(2N)
+1N--(2N) usually minors
     P = weak or competitive if re-open with a X
     X = any GF, penalty interest
     3C = Stayman
     3DH = transfer
+    3S = !ds only if 2N does not promise !ds
 
 1N--(3C)
     X = takeout, vague distribution
@@ -812,7 +814,7 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
 
 1N--(3D)
     X = takeout, vague distribution
-    3HS = GF in OTHER major
+    3HS = GF in OTHER major (transfer benefit)
     4C = both majors, slam try
     4D = both majors, game only
 
@@ -825,7 +827,8 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
 
 1N--(3S)
     X = takeout, vague distribution
-    others = as [Opponents open 3S](#Opponents open 3S)
+    4CDH = GF, natural
+    others = as [Opponents open 3S](#Opponents open 3CDHS)
 
 1N--(4x)
     X = penalty
