@@ -6,18 +6,27 @@ Blanket rules for 4N and cue bids when exploring slams. Plus some slam finding c
 
 ** What is 4N?
 
-Natural, ace asking, key card asking or takeout? Here's another ordered blanket rules list:
+Natural quantitative, to play, ace asking, key card asking or takeout? Here's another ordered blanket rules list:
 
-1. Partner *never* bid - Takeout
-2. Major suit *raised* - RKB
-3. Major suit set - RKB
-4. Jump 4N when Kickback/Redwood Agreed - natural, Quantitative
-5. Non-Jump 4N without Major raised or "set" - natural, Quantitative
-6. 1N *opened*, and no major set - natural, Quantitative
-7. NT bid raised - Natural, Quantitative
-8. RKB for last bid suit
-9. RKB for implied !h!s suit
-10. Blackwood
+- Partner *never* bid - Takeout
+- Jump 4N when Kickback/Redwood Agreed (illogical to bid the suit naturally) - natural, Quantitative
+- Redwood/Kickback for !c/!d/!hs agreed/set and also shown a long side suit (but not supported)  - Double Fit RKB
+- Major suit *raised* - RKB
+- Major suit set - RKB
+- Long good suit implied (eg. 3 level jump overcall) - RKB
+- Jump response to Takeout double without interference - Quantitative
+- Jump 4N with all suits bid and no fit found - Quantitative
+- 1 minor then over jump 4 level interference - Takeout/Unusual
+- Long natural suit (1!h/!s or 2!c/!d) then over jump 4 level interference - RKB
+- substitute control ask bid after pre-empt opening 2!h / 3!c/!d / 3!h / 4!c
+- Jump 4N over 2!s/3!s opening - *WEAK* RKB
+- Non-jump 4N with limited hand - natural, to play
+- Non-Jump 4N without Major raised or "set" (including first takeout response, or over opponents 4!c/!d opening or after our jump 4!c/!d overcall) - natural, to play
+- 1N opened or overcalled, and no major set, and after non-slam try stayman transfers - natural, Quantitative
+- NT bid raised (including "NT" bids by artificial means) - natural, Quantitative
+- RKB for last bid suit
+- RKB for implied !h!s suit
+- Blackwood in response to an initial suit opening bid 1!d/1!h/1!s/2!c/2!d
 
 ** Cue Bids
 
@@ -88,37 +97,6 @@ Rarely, when (4) happens - XX is to play (e.g. 5!s XX + 1 > 6!s made).
 
 Note, not playing DEPO - that works better with 0314 RKB instead of 1430 RKB.
 
-** Gerber 4C
-
-- over 1N
-- over 1C--2N
-- over 1C--(any)--3N
-
-4C
-    4D = 0/4 aces
-    4H = 1 ace
-    4S = 2 aces
-    4N = 3 aces
-
-5C = king ask follow on
-    5D = 0/4 kings
-    5H = 1 king
-    5S = 2 kings
-    5N = 3 kings
-
-** Super Gerber 5C
-
-- over 2N where 4C has other uses (!d slam try)
-- over 1D--3N--5C where 4C is a natural slam try
-- No King follow up available.
-
-5C
-    5D = 0/4 Aces
-    5H = 1 Aces
-    5S = 2 Aces
-    5N = 3 Aces
-
-
 ** RKB 4N
 
 4 Ace key cards + King trumps. "1430" step responses.
@@ -143,7 +121,7 @@ Note, not playing DEPO - that works better with 0314 RKB instead of 1430 RKB.
 - Could be used even with the Q to find extra trumps
 
 4N--5C/5D
-    step = first non-trump - Q ask
+    step = cheapest suit is the Q ask
         5x/6x = side K, have Q trumps (or known 10+ card fit)
             5N = no use, N/A
             6other = bid 7 if you have this King
@@ -152,7 +130,7 @@ Note, not playing DEPO - that works better with 0314 RKB instead of 1430 RKB.
 
 *** King Ask
 
-- First, 5N asks to bid lowest King
+- Cheapest NT bid (often 5N) asks to bid lowest King
 - Following on, any suit is a King request to bid grand
 
 4N--5x
@@ -175,19 +153,23 @@ RKB bids involving a different suit if:
 
 ** Kickback 4S
 
-As a general rule, unless it is utterly illogical for 4!s to be the final contract, it is NATURAL.
-E.g. 1S--2H--4H--4S is responder intending to go back to !s.
+4!s as RKB for !hs  (*Weak* RKB over 2!h/3!h openings)
 
-- Otherwise 4!s is taken as RKB for !hs
-- 4N is a !s substitute control bid
+- If there is a *lower level force* in !ss available, then a *jump* to 4S is *Kickback*
+- Otherwise as a general rule, unless it is utterly illogical for 4!s to be the final contract, it is NATURAL.
+- 4N is often a !s substitute control bid unless double fit RKB is appropriate
+
+E.g. 1S--2H--4H--4S is !h RKB and 4N is double fit RKB.
+
 
 ** Redwood for minors
 
-Again, unless it's illogical for the bid to be the final contract then bids of 4!d or 4!h should be
+4!d/!h as RKB (*Weak* RKB over 3m/4m openings) for !cs/!ds (or 4!s for !ds when !hs is natural)
+
+- If there is *lower level force* in the Redwood suit (e.g. !hs when playing !ds), then a *jump* is Redwood
+- again, unless it's illogical for the bid to be the final contract then bids of 4!d or 4!h should be
 taken as NATURAL. E.g. 1H--2D--3D--4C--4D--4H, responder probably has doubleton !h suggesting 4!h contract, no !s control.
 
-- 4!d for !cs agreed
-- 4!h for !ds agreed
 - 4N is a substitute control bid for the Redwood suit
 
 Furthermore:
@@ -197,7 +179,7 @@ Furthermore:
 Still, if a natural 4!s is not illogical, then only 4N can be used as !d RKB.
 E.g. 1S--2H--3D--4H, either 4!h or 4!s suggests an alternative game.
 
-** Competitive Kickback or Redwood as Control Bid
+** Cue Opponents Suit in Competition is Control Bid not Kickback/Redwood
 
 - simple cue bid in competition is a control, not RKB
 - next bid up is RKB if it's not possibly a final contract
@@ -210,7 +192,6 @@ When !hs and opponents bid !s - 1H--(P)--2N--(3S) then later 4!s bid is a contro
 ** Jump Cuebid in Competition
 
 Always a splinter
-
 
 ** Double Fit RKB
 
@@ -432,18 +413,18 @@ Suit raises are roughly:
 
 Splinters or new suit 2/1 GF or Jacoby 2N? In general note:
 
-- After a 2/1 GF new suit Opener's rebids focus on showing strength before shape
+- After a 2/1 GF new suit Opener's rebids focus on showing shape before strength
 - Jacoby asks about singletons or extras instead of showing anything
 - After a Jacoby 2N opener's minimum no singleton hands will often be 5 cards
-- There's often no easy way to know if partner has 6+ cards, but this maybe helped by the Last Train convention as the extra
-  shape is what should swing a hand to more tricks
+- There's often no easy way to know if partner has 6+ cards, but this maybe helped by the Last Train convention
+  as the extra shape is what should swing a hand to more tricks
 
 *** With 3 card support
 
 - Only 2/1 GF or Jacoby 2N.
-- Do not use a forcing NT - the only slam try bids over that are splinters for opener's second suit if shown. Note GF 4--4--4--1 hands with singleton in partner's suit start with 1N.
 - 2/1 GF is best when (1) 5+ suit suit 2/3 top honours so partner can evaluate honour support (2) 6+ card suit self-sufficient that could become alternative trumps
 - Jacoby 2N is likely more flat (or very strong) and wants to hear if partner has a fitting singleton, or even good 5 card side suit
+- When previously playing a forcing NT it was not appropriate - the only slam try bids over that are splinters for opener's second suit if shown. Note GF 4--4--4--1 hands with singleton in partner's suit started with 1N.
 
 *** With 4 card support
 
