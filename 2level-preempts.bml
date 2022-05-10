@@ -33,7 +33,13 @@ frequency of 2/3 top honour requirements.
     2S = NF, natural, either weak 6+ !s short !hs OR invitational strength 5+ !s short !hs
         3CD = partial fit (Hx) + maximum
         3S = raise with fit (xxx+) mandatory
-    2N = puppet to 3!c, maybe !h raise OR !c signoff
+    2N = puppet to 3!c, various with at least one of !hs or !cs:
+        - !h game try with !cs
+        - !h slam try, shortness ask
+        - !c sign off
+        - !c slam try
+        - !cs + other GF two suiter (!cs + !ss, or !cs + !ds)
+        - !h slam try, splinter with !s shortage
         3C = relayed
             P = !c sign off
             3D = shortness ask, !h support, typically slam try
@@ -74,7 +80,13 @@ frequency of 2/3 top honour requirements.
 **** 2S Opening Responses
 
 2S = weak two
-    2N = puppet to 3!c
+    2N = puppet to 3!c, various with at least one of !ss or !cs:
+        - !s game try with !cs
+        - !s slam try, shortness ask
+        - !c sign off
+        - !c slam try
+        - !cs + other GF two suiter (!cs + !hs, or !cs + !ds)
+        - !s slam try, splinter with !h shortage
         3C = relayed
             P = !c sign off
             3D = shortness ask, !s support, typically slam try
@@ -124,18 +136,35 @@ Still ~7--(11), maybe 6 hcp if 5--5 shape. Differences to the standard 6 card on
 - 5 carder still unbalanced 5--4+
 - 5 carder 2nd position consider requiring a singleton
 
-Keep responses the same except for the 2N ask bid:
+Responding:
 
-2HS--2N = Ogust variant, implicitly agreed the major, can play 3N
+- except for the 2N ask bid, same responses, so no !c signoff and no !c suit slam investigation beyond control asking bids then a punt
+- after 2N the 4CD !h/!s slam tries allow slam bidding in either major after assessing the 5 vs 6 card major situation
+- opening major implicitly agreed unless slam try in other major
+
+2HS--2N = Ogust variant
     3C = any 5 carder
         3D = ask
-            3M = minimum
-            3oM = maximum with some singleton
-            3N = maximum, no singleton
-    3D = maximum 6 carder, bad suit
-    3oM = maximum 6 carder, good suit (2/3 top honours)
-    3M = minimum 6 carder
-    3N = AKQxxx
+            3H = minimum
+            3S = maximum, 0--2 card other major
+            3N = maximum + 3 card other major support
+        3M = sign off
+        4C = !h slam try
+        4D = !s slam try
+    3D = minimum, 6 carder
+        3oM = 5 cards, forcing
+        3M = sign off
+        4C = !h slam try
+        4D = !s slam try
+    3H = medium (hcp or bad suit issues), 6 carder
+        4C = !h slam try
+        4D = !s slam try
+    3S = maximum, 6 carder + 0--2 card other major
+        4C = !h slam try
+        4D = !s slam try
+    3N = maximum, 6 carder + 3 card other major support
+        4C = !h slam try
+        4D = !s slam try
     4HS = 7 carder, bad suit (not worth 3!h!s opening)
 
 
