@@ -1557,10 +1557,14 @@ Natural 2/1 GF, always 5+ cards.
      2--5--2--4 also possible, if have e.g. AQ or AJ in !ss
 3C = high reverse, extras in shape or hcp
     3S = FSF
+    4C = !c RKB, special case
+    4D = !d slam try
 3D = natural raise 3+ cards, extras
     any = 3N contracted directed, unless going past 3N voluntarily
     3H = support
         3N = serious
+    4D = !d RKB, special case
+    4H = mild slam try, natural
 3H = natural maximum, KQJ10xx+ suit
     3S = stop show OR advanced !h slam try
     4C = !h support, slam try
@@ -2186,7 +2190,7 @@ Game-forcing. Usually five cards. Could be 2--4--4--3.
     3S = forcing, 3 card support
         3N = serious control prompt
     3N = natural, ~17--19, stoppers in !hs
-    4C = splinter, delayed !s support
+    4C = splinter, !h support
     4D = solid suit
     4H = picture raise of !hs, 2--4--2--5 with no A/K in the doubletons
     4S = picture raise of !ss, 4--2--2--5 with no A/K in the doubletons
@@ -2207,7 +2211,11 @@ Game-forcing. Usually five cards. Could be 2--4--4--3.
         3N = Serious
     4N = quantitative, directly or later on...
 3C = natural, extras in shape or hcp
+    4C = !c RKB, special case
+    4D = splinter, !c support
 3D = natural raise, extras in shape or hcp
+    4C = !d support, cue bid
+    4D = !d RKB, special case
 3H = splinter raise of !ds, extra values
 3S = natural, maximum, versus unpassed hand a good suit max 1 loser e.g. KQJ10xx+
 3N = solid !ss + singleton !d, something in other suits e.g. AKQJxx/Jxx/Qxx/x
@@ -2237,7 +2245,11 @@ Game-forcing. Usually five cards. Could be 2--4--4--3.
         3N = Serious
     4N = quantitative, directly or later on...
 3C = natural, extras in shape or hcp
+    4C = !c RKB, special case
+    4D = splinter, !c support
 3D = natural, extras in shape or hcp
+    4C = !d slam try, cue bid
+    4D = !d RKB, special case
 3H = raise, non-specific unknown strength, cannot play 3N anymore
     3S = confirm double fit
     3N = serious control prompt (by either bidder), does not deny a !s control card

@@ -44,7 +44,7 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
             4D = vague, last train like !d slam try
             4H = to play
             4S = rare, Kickback [RKB](#RKB 4N) for !hs
-            4N = Blackwood, as 4!s must be Kickback and already quantified (use GF relay for quant 4N)
+            4N = quantitative
         3C = artificial, 3 card !h support, maybe 4!ss
             3D = NF, invitational, 4!hs only
                 3S = natural 4--3--6--0, unlikely maximum if opening 1!d with 6--4 max
@@ -55,7 +55,7 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
             4D = !d slam try, last train like
             4H = to play
             4S = Kickback [RKB](#RKB 4N) for !hs
-            4N = quantitative (not already quantified and have no GF relay path)
+            4N = quantitative
         3D = maximum, !c stopper, 0--2 !h support, not 4!ss
             3H = 6!hs, forcing, asks for doubleton support
                 3S = no support, stop ask
@@ -83,6 +83,7 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
                 3H = natural, 4!hs
                 3S = Hx !s support, NO !c stopper
                 3N = !h stopper, NO !c stopper, xx !s support or worse
+                4N = quantitative
             3D = NF
             3H = NF, 6--5 majors (start with 2!h when 5--5)
             3S = NF, 6+ !ss
@@ -100,7 +101,7 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
             4D = !d slam try, last train like
             4H = Redwood [RKB](#RKB 4N) for !ds
             4S = to play
-            4N = quantitative (not already quantified and have no GF relay path)
+            4N = [RKB](#RKB 4N) for !ss
         3D = maximum, !c stopper, 0--2 !s support
             3H = stop ask
             3S = 6!ss, forcing, asks for doubleton support
@@ -137,10 +138,11 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
             4N = quantitative
         3N = maximum, natural, something in both majors
         4C = 7!d--4!c, extras
-            4D = [Double Fit RKB Kickback](#Double Fit RKB)
+            4D = !d slam try
             4H = Redwood [RKB](#RKB 4N) for !ds
             4S = cue, likely missing !h control
                 4N = [RKB](#RKB 4N) for !ds, has !h control
+            4N = [Double Fit RKB Kickback](#Double Fit RKB)
         4D = 1--1--8!d--3!c, ~3--4 Control Points, too weak for 1!c, unsuitable for 4!d/5!d
             4H = Redwood [RKB](#RKB 4N) for !ds
             4S = cue, likely missing !h control
@@ -164,9 +166,8 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
         4C = natural, 5 carder likely
         4D = natural, nothing better to bid
         4H = natural, some support
-        4S = void splinter, extras, 4+ Control Points, no other major control, e.g. -/xxx/AKxxxx/AQxx
-            4N = [RKB](#RKB 4N) for !hs
-        4N = [RKB](#RKB 4N) for !hs
+        4S = Kickback [RKB](#RKB 4N) for !hs
+        4N = !s void
         5C = void splinter, 4+ Control Points, no other major control, e.g. xxx/AQxx/AKxxxx/-
         5D = long strong suit
     3S = natural major, GF, 6+ suit

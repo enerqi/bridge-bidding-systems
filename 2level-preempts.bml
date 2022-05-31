@@ -151,20 +151,25 @@ Responding:
         3M = sign off
         4C = !h slam try
         4D = !s slam try
+        4N = [Double Fit RKB Kickback](#Double Fit RKB)
     3D = minimum, 6 carder
         3oM = 5 cards, forcing
         3M = sign off
         4C = !h slam try
         4D = !s slam try
+        4N = [Double Fit RKB Kickback](#Double Fit RKB)
     3H = medium (hcp or bad suit issues), 6 carder
         4C = !h slam try
         4D = !s slam try
+        4N = [Double Fit RKB Kickback](#Double Fit RKB)
     3S = maximum, 6 carder + 0--2 card other major
         4C = !h slam try
         4D = !s slam try
+        4N = [Double Fit RKB Kickback](#Double Fit RKB)
     3N = maximum, 6 carder + 3 card other major support
         4C = !h slam try
         4D = !s slam try
+        4N = [Double Fit RKB Kickback](#Double Fit RKB)
     4HS = 7 carder, bad suit (not worth 3!h!s opening)
 
 
