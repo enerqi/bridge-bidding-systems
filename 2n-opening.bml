@@ -3,14 +3,21 @@
 
 * 2NT Opening
 
+- 19--20 NT
+- roughly same shape as [1NT Opening](#1NT Opening)
+- unlikely to open a reasonable 5--4/6 card minor for fear of missing slam
+
 Responding:
 
 - one major: 3 level transfer, unless it's a slam try (Lissabon in that case)
 - major + minor hand: 3 level transfer to major first
-- 5!h + 4!s: transfer then bid 3N (so stronger hand can play 4!s)
-- muppet stayman otherwise with both majors 4--4/5--4
+- 4--4 majors: muppet stayman
+- 3 card major + NO 5 card major: muppet stayman option (NOT 4--3--3--3)
+- 5!h + 4!s: transfer then bid 3N (so stronger hand can play 4!s), or artificial 4!c with a slam try
+- 5!s--4!h: muppet stayman then 4H over 3!d response or artificial 4CD with slam try
 - 5!h--5!s+ both majors: transfer to !h first, then 4CD are special artificial bids
 - both minors: 3S
+- 3 suiter: transfer to a 5 card major otherwise muppet stayman, then prefer show 5 card minor over 4--4 majors if slammish
 - slam try single suiters: 4CDHS Lissabon
 
 
@@ -22,123 +29,336 @@ Responding:
     3S = [minors, 5--4+, often slam try](#2N--3S)
     3N = to play
     4C = [!hs, Lissabon slam try](#2N--4C)
-    4D = [!ss, Lissabon slam try](#2N--4C)
-    4H = [!cs, Lissabon slam try](#2N-3S+)
-    4S = [!ds, Lissabon slam try](#2N-3S+)
+    4D = [!ss, Lissabon slam try](#2N--4D)
+    4H = [!cs, Lissabon slam try](#2N--4H)
+    4S = [!ds, Lissabon slam try](#2N--4S)
     4N = quantitative
+    5CD = to play
     5S = invitation to 6N, asks for any 5 card suit
+    5N = quantitative
 
 
 **** 2N--3C
 
-- Muppet Stayman
+- Muppet Stayman (modified puppet variant), with 3!d response being low information compared to normal puppet variants, similar to 4 card stayman
 - Finds 5--3 or 4--4 major fits
-- Stronger hand plays the contract usually (3!h and 3N are switched compared to Puppet Stayman)
+- Includes responder having 5!ss--4!hs, (otherwise responder transfers with a 5 card major - 4!ss--5!hs or 5--5), with the 3N response helping such hands recognise there is no fit
 
-3D = one or two 4 card majors
-    3H = relay, ask for either 4!ss or minor slam try module
-        3S = 4 !ss
-            3N = slam try with 4--4, or 5--4, in the minors forcing to at least 4N
-                4CD = 4 card minor
-                4HS = 5 card minor, Lissabon
-                4N = 4--3--3--3 or very bad slam cards
-            4CD = slam try, 5 card minor
+3D = no 5 card major, not 2!s--3!h/2!s--2!h (fit exists opposite 5!ss + 4!hs, so 3+!ss or 4+!hs)
+    3H = artificial maybe 4!ss, maybe no 4 card major just wants to play 3N, not !hs, maybe minor slam try module
+        3S = 4!ss (gives away opener's major position)
+            3N = to play
+            4C = slam try, 5 !cs
+                4D = last train like, 3 card support and 3+ keycards, maybe poor trumps
+                    4HS = cue
+                        4N = !c RKB
+                        5C = to play
+                        5x = auto !c RKB responses
+                    4N = !c RKB
+                    5x = auto !c RKB responses
+                4H = cue, !c support, good 3+ card support
+                    4N = !c RKB
+                    5C = to play
+                    5x = auto !c RKB responses
+                4S = cue, !c support, good 3+ card support
+                    4N = !d RKB
+                    5C = to play
+                    5x = auto !d RKB responses
+                4N = negative, 2 card support or 3 cards + 2 keycards
+                    5C = to play
+                    5x = auto !c RKB responses
+                5C = negative, good 4 card support, 2 keycards
+                5DH = auto !c RKB, excellent !c fit (3+ keycards)
+            4D = slam try, 5 !ds
+                4H = last train like, 3 card support and 3+ keycards, maybe poor trumps
+                    4N = !d RKB
+                    5D = to play
+                    5x = auto !d RKB responses
+                4S = cue, unlikely, maybe !h weakness
+                    4N = !d RKB
+                    5D = to play
+                    5x = auto !d RKB responses
+                4N = negative, 2 card support or 3 cards + 2 keycards
+                    5D = to play
+                    5x = auto !d RKB responses
+                5D = negative, good 4 card support, 2 keycards
+                5x = auto !d RKB responses
             4H = !s slam try
             4S = to play
-        3N = not 4 !ss
+            4N = !s RKB
+        3N = natural, no !ss
             any = [minor slam try module](#Minor slam tries module)
-    3S = 4!hs, can have longer minor
-        3N = not 4!hs
+    3S = 4!hs only
+        3N = not 4!hs (unknown whether 4!ss)
             any = [minor slam try module](#Minor slam tries module)
-        4C = normal bid with !h support
-            4D = transfer to 4!h
-                4H = complete
-                    new = void
-        4D = excellent hand
-        4H = slam unsure, often poor trump quality
-    3N = natural, to play
-    4C = precisely slam invitational, both majors 4--4+
+        4C = catchall bid with !h support
+            4D = retransfer
+            4H = to play, declare
+        4H = fast arrival, poor trump quality or 2 keycards
+    3N = 4--4 majors, game values
+    4C = exact slam invite, both majors 5!s--4!hs
         4D = negative, no slam interest
+            4H = pass/correct
         4HS = trumps set, slam try accept
-    4D = game values or slam force, both majors 4--4+
+    4D = slam force, 5!s--4!h
         4HS = preferred major
-3H = no major
-    3S = transfer to 3N
-        3N = complete, normal
-        others = [minor slam try module](#Minor slam tries module)
-    3N = NF, 5!ss (and 4!hs)
-    4C = precisely slam invitational, both majors 5--5+
-        4D = negative, no slam interest
-        4HS = trumps set, slam try accept
-    4D = game values or slam force, both majors 5--5+
-        4HS = preferred major
-    4H = slam try, 5+!ss
-        4S = !ss set as trumps, not very good fit
-        4N = negative, no support
-        5x = RKB responses
-    4S = to play, 6!ss
-3S = 5 !ss
-    3N = natural, to play
-    4CD = natural 5+ minor, slam try
-    4H = !s slam try
+    4H = 5!ss + 4!hs, game values
+    4N = quantitative, maybe major(s)
+        5CD = accept, both majors with slight preference
+        5M = accept, side 4 card major
+        6N = accept
+3H = 5 card major
+    3S = !h slam try
+    3N = to play
+    4C = natural 5+ minor slam try, no major fit
+        4D = last train like, probably poor 3!cs and 2 keycards exactly
+            4HS = cue
+                4N = !c RKB
+                5C = to play
+                5x = auto !c RKB responses
+            4N = !c RKB
+            5x = auto !c RKB responses
+        4H = cue, unlikely, maybe !s weakness
+            4S = cue
+            4N = !c RKB
+            5C = to play
+            5x = auto !c RKB responses
+        4S = cue, !c support
+            4N = !c RKB
+            5C = to play
+            5x = auto !c RKB responses
+        4N = negative, probably 2 card support
+            5C = to play
+            5x = auto !c RKB responses
+        5C = negative, good 3 card support, often 2 keycards
+        5x = auto !c RKB responses
+    4D = natural 5+ minor slam try, no major fit
+        4H = last train like, probably poor 3!ds and 2 keycards exactly
+            4N = !d RKB
+            5D = to play
+            5x = auto !d RKB responses
+        4S = cue, unlikely, maybe !c weakness
+            4N = !d RKB
+            5D = to play
+            5x = auto !d RKB responses
+        4N = negative, probably 2 card support
+            5D = to play
+            5x = auto !d RKB responses
+        5D = negative, good 3 card support, often 2 keycards
+        5x = auto !d RKB responses
+    4H = to play
+    4S = Kickback
+    4N = quantitative
+3S = 5 card major
+    3N = to play
+    4C = natural 5+ minor slam try, no major fit
+        4D = last train like, probably poor 3!cs and 2 keycards exactly
+            4HS = cue
+                4N = !c RKB
+                5C = to play
+                5x = auto !c RKB responses
+            4N = !c RKB
+            5x = auto !c RKB responses
+        4H = cue, !c support
+            4N = !c RKB
+            5C = to play
+            5x = auto !c RKB responses
+        4S = cue, unlikely, maybe !h weakness
+            4N = !d RKB
+            5C = to play
+            5x = auto !d RKB responses
+        4N = negative, probably 2 card support
+            5C = to play
+            5x = auto !c RKB responses
+        5C = negative, good 3 card support, often 2 keycards
+        5x = auto !c RKB responses
+    4D = natural 5+ minor slam try, no major fit
+        4H = last train like, probably poor 3!ds and 2 keycards exactly
+            4N = !d RKB
+            5D = to play
+            5x = auto !d RKB responses
+        4S = cue, unlikely, maybe !h weakness
+            4N = !d RKB
+            5D = to play
+            5x = auto !d RKB responses
+        4N = negative, probably 2 card support
+            5D = to play
+            5x = auto !d RKB responses
+        5D = negative, good 3 card support, often 2 keycards
+        5x = auto !d RKB responses
+    4H = !s slam try, maybe prelude to RKB
+        4S = weaker hand, probably 2 keycards
+        4N = good hand, 3+ KC, !s RKB
     4S = to play
     4N = quantitative
-3N = 5 !hs
-    4C = !h slam try
-    4D = transfer to !hs
-    4H = !c slam try, 5 cards, Lissabon
-    4S = !d slam try, 5 cards, Lissabon
-    4N = quantitative
+3N = 2!ss + 3!hs or 2--2 majors, no major fit possible
+    any = [minor slam try module](#Minor slam tries module)
 
 **** 2N--3D
 
-!h transfer, 5+ cards, maybe 4!ss
+- !h transfer, 5+ cards, maybe 4!ss
+- maybe minor second suit, limited OR slam try+
+- maybe both majors 5!h--4!s/5--5+, limited OR slam try+
+- no break to the other major with 5 cards and no fit, so possible to miss a 5!s--3!s fit when responder has 5 !hs
+- with minor slam tries 4N is usually negative natural with no fit or maybe negative only 2 keycards
+- with minor slam tries and a fit a 5x bid (including !hs) is an auto RKB response for the minor
+- with minor slam tries, given the lack of space, 4C--4D is last train like minor support bids
 
-3H = no support
-    3S = NT transfer
-        3N = required
+3H = normal transfer completion
+    3S = relay, to play 3N or side minor suit
+        3N = forced
+            P = to play 3N
             4C = 5!hs and 4+ !cs, slam try or maybe weaker 5--5
-                4D = waiting, relay
+                4D = !c interest, last train like (maybe 3 card/poor 4 + 3 KC or 4 card + 2 KC), no !h interest
                     4H = limited, 5--5
-                    4S = !cs set as trumps
+                    4S = artificial !cs extra length, set as trumps
+                        4N = negative, 2 KC likely
+                            5x = auto !c RKB responses
+                        5x = auto !c RKB responses
                     4N = slam invite, only 5--4 !hs and !cs
+                        5C = to play
+                        5x = auto !c RKB responses
+                    5C = limited, prefers !c game
                 4H = semi-positive preference, NF
-                4S = excellent !c fit
+                    4S = Kickback !h RKB
+                    5x = cue, rare, probably void
+                    5N = pick a small slam, 5!ds
+                4S = artificial good 4 card !c fit, 3+ keycards
+                    4N = !c RKB
+                    5x = cue, rare, probably void
                 4N = negative
+                    5C = to play, extra length
+                    5x = auto !c RKB responses, extra length
+                5C = negative, fast arrival, two keycards or 3 good trumps
+                    5x = auto !c RKB responses
+                5DH = auto !c RKB, excellent !c fit (3+ keycards)
             4D = 5!hs and 4+ !ds, slam try
+                4H = NF preference, negative
+                    4S = Kickback !h RKB
+                    5x = cue, rare, probably void
+                    5N = pick a small slam, 5!ds
+                4N = negative, NT preference
+                    5D = to play, extra length
+                    5x = auto !d RKB responses, extra length and strength
+                5C = auto !d RKB, 4 keycards (not 1)
+                5D = negative, fast arrival
+                    5x = auto !d RKB responses, extra length and strength
+                5H = auto !d RKB, 3 keycards (not 0)
             4H = 5--5+ !hs and !ds, NF, limited
-    3N = NF 5!hs, 4!ss
-    4C = precisely slam invitational, at least 5!hs and 4!ss
-        4D = negative, no slam interest
-        4HS = trumps set, slam try accept
-    4D = game values or slam force, at least 5!hs and 4!ss
+                4N = natural double stops in other suits, suggests NT
+                5D = to play
+    3N = artificial, 5!hs + 4!ss, NF can stop here in 3N
+    4C = slam try plus, 5!h--4/5!s majors
+        4D = negative, no slam interest, but do have 3!ss
+            4H = catchall no fit
+                4N = escape, to play
+            4S = to play, 5 !ss, but limited slam try
+            4N = !s RKB
+        4H = 3!hs, slam try accept
+        4S = 4!ss, slam try accept
+        4N = 2!hs and 2!ss
+            5N = quantitative (pick a small slam makes no sense given distribution known)
+    4D = game values 5--5 majors
         4HS = preferred major
-    4H = natural, to play (bid 4CD over 2N for slam try)
+    4H = to play
+    4S = not used, would use Lissabon with unilateral slam try
     4N = quantitative
-    4S = void
-    5CD = void
-3S = !h support, usual bid with support
-3N = !h support, suggests NT
-4C = super-accept !h support
+    5N = pick a small slam
+3S = doubleton transfer break, 2 top 3 HHx (rarely 4--3--3--3) or 4 card+ support
+    3N = serious (unlikely to want to play 3N now)
+    4C = cue
+    4D = retransfer
+    4H = to play, responder declares
+    4S = Kickback
+    5x = EKB
+3N = 3--4!h--3--3 transfer break
+    4C = cue
+    4D = retransfer (opener very defined, last train makes no sense)
+    4H = to play, responder declares
+    4S = Kickback
+    5x = EKB
+4CD = doubleton transfer break, 2 top 3 HHx (rarely 4--3--3--3) or 4 card+ support
+    4D = retransfer (hand too limited for last train)
+    4H = to play, responder declares
+    4S = Kickback
 
 **** 2N--3H
 
-!s transfer, 5+ cards, not 4!hs
+- !s transfer, 5+ cards, not 4!hs
+- maybe minor second suit, limited OR slam try+
+- NOT BOTH Majors (5--4/ 4--5 / 5--5), 5!s + 4!h use muppet, 5--5 use !h transfer
+- no break to the other major with 5 cards and no fit, so possible to miss a 5!h--3!h fit when responder has 5 !ss
+- with minor slam tries 4N is usually negative natural with no fit or maybe negative only 2 keycards
+- with minor slam tries and a fit a 5x bid (including !ss) is an auto RKB response for the minor
+- with minor slam tries, given the lack of space, 4C--4D and 4D--4H are last train like minor support bids
 
-3S = !s support
-3N = no support
+3S = normal transfer completion
+    P = weak, to play
+    3N = play suggestion, 5!ss
     4C = 5!ss and 4+ !cs, slam try or maybe weaker 5--5
-        4D = waiting, relay
-            4H = !cs set as trumps
+        4D = !c interest, last train like (maybe 3 card/poor 4 + 3 KC or 4 card + 2 KC), no !s interest
+            4H = artificial !cs extra length, set as trumps
+                4S = cue
+                    5x = auto !c RKB responses
+                4N = negative, 2 KC likely
+                    5x = auto !c RKB responses
+                5x = auto !c RKB responses
             4S = limited, 5--5 !ss and !cs
             4N = slam invitation, only 5--4 !ss and !cs
-        4H = excellent !c fit
-        4S = semi-positive preference, NF
+                5C = to play
+                5x = auto !c RKB responses
+            5C = limited, prefers !c game
+        4H = artificial good 4 card !c fit, 3+ keycards
+            4S = cue (unlikely)
+            4N = !c RKB
+            5x = cue, rare, probably void
+        4S = semi-positive xxx+ preference, NF
+            4N = !s RKB
+            5x = cue, rare, probably void
+            5N = pick a small slam, 5!cs
         4N = negative
-    4D = 5!ss and 4+ !ds, slam try
+            5C = to play, extra length
+            5x = auto !c RKB responses, extra length
+        5C = negative, fast arrival, two keycards bad hand, good !c length
+            5x = auto !c RKB responses
+        5DH = auto !c RKB, excellent !c fit (3+ keycards)
+    4D = 5!ss and 4+ !ds, slam try hand
+        4H = last train like (maybe 3 card/poor 4 + 3 KC or 4 card + 2 KC) !d slam try, not enough for auto RKB, no !s interest
+            4S = artificial !ds extra length, set as trumps
+                4N = negative, 2 KC likely
+                    5x = auto !d RKB responses
+                5x = auto !d RKB responses
+            4N = slam invitation, only 5--4 !ss and !ds
+                5D = to play
+                5x = auto !d RKB responses
+            5D = limited, prefers !d game
+        4S = NF preference, negative
+            4N = !s RKB
+            5x = cue, rare, probably void
+            5N = pick a small slam, 5!cs
+        4N = negative, natural
+            5D = to play, extra length
+            5x = auto !d RKB responses, extra length and strength
+        5C = auto !d RKB, 4 keycards (not 1)
+        5D = negative, fast arrival, two keycards bad hand, good !d length
+            5x = auto !d RKB responses, extra length and strength
+        5H = auto !d RKB, 3 keycards (not 0)
+    4H = artificial, 5--5+ !ss + !ds, limited hand
+        4S = to play
+        4N = natural double stops in other suits, suggests NT
+        5D = to play
+    4S = to play
+    4N = quantitative
+    5N = pick a small slam
+3N = 4!s--3--3--3 transfer break
+    4CD = cue
+    4H = retransfer (opener very defined, last train makes no sense)
+    4S = to play, responder declares
+    5x = EKB
+4CDH = doubleton transfer break, 2 top 3 HHx+ (rarely 4--3--3--3) or 4 card+ support
+    4D = cue
     4H = retransfer
-    4S = 5--5+ !ss and !ds, limited, NF
-4CD = super-accept !s support
+    4S = to play, responder declares
 
 **** 2N--3S
 
@@ -153,7 +373,7 @@ minors, 5--4+, often slam try
 
 !hs, Lissabon slam try
 
-4D = relay, slam try accept, may still pass over 4!h
+4D = relay, slam try accept, last train like (3KC, Kx+), may still pass over 4!h
 4H = negative
 4S = Kickback
 4N = substitute !s cue
@@ -164,7 +384,7 @@ minors, 5--4+, often slam try
 
 !ss, Lissabon slam try
 
-4H = relay, slam try accept, may still pass over 4!s
+4H = relay, slam try accept, last train like, may still pass over 4!s
 4S = negative
 4N = RKB
 5CDH = cue bid
@@ -174,9 +394,13 @@ minors, 5--4+, often slam try
 
 !cs, Lissabon slam try, one suited
 
-4S = accept !cs, may still stop in 4N
+4S = accept !cs, last train like, may still stop in 4N
+    4N = negative
+        5x = auto RKB responses
 4N = negative
+    5x = auto RKB responses
 5C = negative
+    5x = auto RKB responses
 5x = auto RKB responses
 
 **** 2N--4S
@@ -184,7 +408,10 @@ minors, 5--4+, often slam try
 !ds, Lissabon slam try, one suited
 
 4N = negative
+    5D = to play
+    5CHSN = auto !d RKB
 5D = negative
+    5x = auto RKB responses
 5x = auto RKB responses
 
 **** Minor slam tries module
