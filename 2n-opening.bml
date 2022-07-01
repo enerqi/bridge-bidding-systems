@@ -222,7 +222,7 @@ Responding:
                 4H = semi-positive preference, NF
                     4S = Kickback !h RKB
                     5x = cue, rare, probably void
-                    5N = pick a small slam, 5!ds
+                    5N = pick a small slam, 5!cs
                 4S = artificial good 4 card !c fit, 3+ keycards
                     4N = !c RKB
                     5x = cue, rare, probably void
@@ -233,7 +233,7 @@ Responding:
                     5x = auto !c RKB responses
                 5DH = auto !c RKB, excellent !c fit (3+ keycards)
             4D = 5!hs and 4+ !ds, slam try
-                4H = NF preference, negative
+                4H = semi-positive xxx+ preference
                     4S = Kickback !h RKB
                     5x = cue, rare, probably void
                     5N = pick a small slam, 5!ds
@@ -332,10 +332,10 @@ Responding:
                 5D = to play
                 5x = auto !d RKB responses
             5D = limited, prefers !d game
-        4S = NF preference, negative
+        4S = semi-positive xxx+ preference
             4N = !s RKB
             5x = cue, rare, probably void
-            5N = pick a small slam, 5!cs
+            5N = pick a small slam, 5!ds
         4N = negative, natural
             5D = to play, extra length
             5x = auto !d RKB responses, extra length and strength
