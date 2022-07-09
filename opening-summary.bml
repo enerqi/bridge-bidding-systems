@@ -5,15 +5,6 @@
 
 - Swedish Artificial 1!c, 5 Card Majors, Strong NT, Intermediate 2!c/2!d, Weak 2!h/2!s
 
-#CUT jacoby
-2N Jacoby GF NT
-  3\X = shortage
-  3\M = NF minimum
-  3N = balanced, non-minimum
-  4\X = long suit with some trick potential, non-minimum
-#ENDCUT
-
-
 1C  [Weak or Strong Club](#1C Weak Strong):
       - (13)--15 balanced / semi-balanced (5-4-2-2), 5--3--3--2 maybe 5 card !h/!s
       - 16+ unbalanced
@@ -89,7 +80,7 @@
 
 1NT [16--18 balanced](#1NT Opening), maybe 5 card major or 5--4--2--2 long !c/!d.
   (any) [interference](#Overcalls of our NT)
-  2C = [Stayman, not promising a major, maybe weakish 4--4--4--1](#1N--2C)
+  2C = [Stayman, promissory, maybe weakish short !c 3 suiter](#1N--2C)
         2D = [no major](#1N--2C--2D)
         2H = [4 or 5 !hs, not !ss](#1N--2C--2H)
         2S = [4 or 5 !ss, not !hs](#1N--2C--2S)
@@ -97,15 +88,16 @@
         3C = [4--4 majors, maximum](#1N--2C--3C)
   2D = [transfer to !h, 5+ cards](#1N--2D)
   2H = [transfer to !s, 5+ cards](#1N--2H)
-  2S = [transfer to !c, 6+ cards, weak or invite plus](#1N--2S/2N)
+  2S = [range ask OR transfer to !c, 6+ cards, weak or invite plus](#1N--2S/2N)
   2N = [transfer to !d, 6+ cards, weak or invite plus](#1N--2S/2N)
-  3C = [minors NF, 5--5 or 5--4/4--5, tactical, ~5--7 hcp](#1N--3C)
+  3C = [Puppet Stayman, 3+ card major(s), maybe one 4 card major, GF+](#1N--3C)
   3D = [either !h slam try transfer, no void OR GF !h shortage with 5--4/4--5 minors](#1N--3D)
   3H = [either !s slam try transfer, no void OR GF !s shortage with 5--4/4--5 minors](#1N--3H)
   3S = [minors 5--5, GF and maybe slam try](#1N--3S)
   3N = to play
   4CD = [!h/!s transfer](#1N--4CD)
   4N = quantitative
+  5S = invitation to 6NT, asks specifically for any 5 card suit
 
 2C  [(10)11--15 hcp, 6+ card !c suit](#2C Intermediate Opening)
   (any) = [interference defence](#2C Interference)
