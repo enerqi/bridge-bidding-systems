@@ -1689,6 +1689,9 @@ remaining below 4!h:
 
 *** 2N Invite Plus Interference
 
+1H--(any)--2N--(other)
+    X = penalty as they have no fit
+
 1H--2N--(3CD)
     P = minimum, NF
     3H = minimum, shortage in their suit
@@ -1928,8 +1931,6 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
             4CD = maybe slam hunting, often shortish minor(s)
         3N = stopper
             4CD = slam hunting, often shortish minor(s)
-    NewSuit = forcing
-    Cue = support showing, invitational or GF if below/above 3!ss
 
 1H--(3x) two suiter including suit bid
     lowCue = below 3!h, invitational in !hs
