@@ -15,8 +15,8 @@ Constructive preempts in 1st/2nd usually 6 cards, good chance to play 3N.
     3D = forcing, any 5 card major asking for 3 card support. (FNJ by passed hands).
         3HS = short in that suit and 3 card other major support (so stronger hand can play)
         3N = no 3 card major
-        4D = !d void, 3--3 both majors
-        4H = !d singleton, 3--3 both majors
+        4D = !d void, 3--3--0--7
+        4H = !d singleton, 3--3--1--6
     3HS = natural, forcing 6+ card suit. (FNJ by passed hands)
     3N = to play
     4C = obstructive
@@ -37,7 +37,7 @@ Constructive preempts in 1st/2nd usually 6 cards, good chance to play 3N.
 3CD
     (X)
         NewSuit = lead directing FNJ
-        XX = penalty interest 3rd
+        XX = penalty interest
         3N = sacrifice interest, consider 5CD with good shape
         Raise = stronger, may double opponents game
     (any)

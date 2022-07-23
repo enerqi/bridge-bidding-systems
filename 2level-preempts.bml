@@ -67,7 +67,6 @@ frequency of 2/3 top honour requirements.
         4H = self-sufficient !h suit, maximum
     3D = !h transfer, invitational plus
         3H = less than game accept
-        3S = NF, strongly dislike !hs
     3H = weak limit raise
         4H = extreme shape e.g. 6--5, x/A109xxx/KJxxx/x
     3S = natural, GF, (passed hands fit jump)
@@ -76,6 +75,7 @@ frequency of 2/3 top honour requirements.
     4H = to play
     4S = [Weak !h Kickback](#Weak RKB)
     4N = [substitute !s control asking bid](#Control Asking Bids Over Preempts)
+    5CD = to play
 
 **** 2S Opening Responses
 
@@ -124,6 +124,7 @@ frequency of 2/3 top honour requirements.
     4CDH = [control asking bids](#Control Asking Bids Over Preempts), (passed hands fit jump)
     4S = to play
     4N = [Weak !s RKB](#Weak RKB)
+    5CD = to play
 
 **** NV 1st/2nd 5 or 6 card Extension
 
@@ -140,7 +141,7 @@ Responding:
 
 - except for the 2N ask bid, same responses, so no !c signoff and no !c suit slam investigation beyond control asking bids then a punt
 - after 2N the 4CD !h/!s slam tries allow slam bidding in either major after assessing the 5 vs 6 card major situation
-- opening major implicitly agreed unless slam try in other major
+- opening major implicitly agreed unless slam try in other major, except other major sign off is to play
 
 2HS--2N = Ogust variant
     3C = any 5 carder
@@ -151,24 +152,29 @@ Responding:
         3M = sign off
         4C = !h slam try
         4D = !s slam try
+        4HS = to play
         4N = [Double Fit RKB Kickback](#Double Fit RKB)
     3D = minimum, 6 carder
         3oM = 5 cards, forcing
         3M = sign off
         4C = !h slam try
         4D = !s slam try
+        4HS = to play
         4N = [Double Fit RKB Kickback](#Double Fit RKB)
     3H = medium (hcp or bad suit issues), 6 carder
         4C = !h slam try
         4D = !s slam try
+        4HS = to play
         4N = [Double Fit RKB Kickback](#Double Fit RKB)
     3S = maximum, 6 carder + 0--2 card other major
         4C = !h slam try
         4D = !s slam try
+        4HS = to play
         4N = [Double Fit RKB Kickback](#Double Fit RKB)
     3N = maximum, 6 carder + 3 card other major support
         4C = !h slam try
         4D = !s slam try
+        4HS = to play
         4N = [Double Fit RKB Kickback](#Double Fit RKB)
     4HS = 7 carder, bad suit (not worth 3!h!s opening)
 

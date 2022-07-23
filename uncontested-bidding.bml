@@ -1146,8 +1146,8 @@ By responder example:
             4C = GF !c support
             4D = Redwood for !cs
             4HS = to play
-        2S = balanced, 13(14) hcp
-        2N = 14--15, 6+ !hs, 6 losers, semi-natural, !c stop, maybe not !d stop
+        2S = 14--15 3 card !s support
+        2N = semi-natural catchall
         3C = !cs, extras
         3D = 14--15, 6+ !hs, 6 losers, !d stop
         3H = 14--15, 6+ !hs, 6 losers
@@ -1192,7 +1192,7 @@ By responder example:
         3S = Hx in !s and lacking a !d stop, 5--2 fit suggestion
         3N = to play
         4S = extras with 3 card support
-    3C = FSF, but by passed hand stop ask hand like AKxxx/Qx/Qxx/xxx
+    3C = FSF GF, but by passed hand stop ask hand like AKxxx/Qx/Qxx/xxx
     3D = natural, invitational, only 4+ !ss guaranteed
     3H = natural invite, probably 3 cards, trying for !s fit first
     3S = natural, forcing, 6+ !ss, good hand

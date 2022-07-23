@@ -602,7 +602,7 @@ To play a major game, preemptive or good values
 
 Lebensohl is played in a number of blanket NT and other places where the idea is relevant.
 Most important is its use against weak twos and after we have made natural opening strength
-(or better) 1NT bids.
+(or better) 1NT bid.
 
 - 1NT--(Overcall)  (but not 2!c as just ignore, X Stayman)
 - (1X)--1NT Overcall by us including Protective--(bid over)
@@ -624,16 +624,16 @@ Our variant ([note: Lebensohl variants](#Lebensohl Variants)), similar but still
 - transfer around/through the cue suit
 - Cue is GF staymanic, at least 3 other major, and if double also available it shows a singleton/void in opponents' suit
 - Cue implies no stop, i.e. cue showing a singleton, but also after a double
-- X is staymanic and promises doubleton+ in their suit (of a natural suit implied but maybe not bid)
+- X is staymanic not suitable for staymanic cue bid  (of a natural suit implied but maybe not bid)
 - X negative then 3N shows the other major and a stopper
 - X negative then cue bid shows the other major and NO stopper
 - X then new suit is invitational, exactly 5 cards (probably poor suit as not transferred)
 - 3!h over opponents 2!s is weak/competitive
-- 3N is to play, fast implies a stop
+- 3N is to play, stop
 
 In terms of artificial overcalls:
 
-- Note if the overcall promised another unknown suit we do not consider it.
+- Note if the overcall promised another unknown suit we do not consider it
 - When the overcall does show two specific suits, X is negative for the other suits
 
 *** Over a balanced hand
@@ -645,7 +645,7 @@ In terms of artificial overcalls:
     3C = invitational plus !h
         3D = no fit, no stop, any strength (not any minimum as no room for cue stop ask)
         3H = fit, minimum
-        3S = natural, 5 carder (possibly strong 1!c opening), no stop implied
+        3S = natural, 5 carder maximum/strong, no stop implied
         3N = no fit, stopper, any strength (not ideal with minimum but helps the GF responder decide)
     3D = cue, GF staymanic, singleton/void in !ds
     3H = invitational plus !s
@@ -654,21 +654,25 @@ In terms of artificial overcalls:
         4CDH = natural (possibly strong 1!c opening)
     3S = artificial, GF, no stopper
     3N = to play, stop implied, no other major
-    4x = system on
+    4x = natural preempt
 
 1CD/1N--(2!h)
-    Dbl = staymanic guarantee 3oM, follow on suit bid is poor 5 card invitational, follow on cue stop ask
+    Dbl = staymanic 8+ guarantee 3oM, follow on suit bid is poor 5 card invitational, follow on cue stop ask
         2S = natural
             3x = new suit, invitational weak suit
             3S = invite
-        2N = stop, without major fit
+        2N = stop, NF, without major fit
+        3CD = natural, weaker
         3S = extras, 5 card !s fit
+        3N = stop, strong
+        4CD = natural, strong
+        4N = !s RKB
     2S = weak
         3H = extras, 5 card !s fit
         3S = 4 card support
     2N = puppet, weak minor or GF clubs
         (X) = usually penalty
-            XX = maximum opener
+            XX = maximum/strong opener
         (3!h) = more interference
             P = opener should pass not knowing what responder has
                 X = penalty
@@ -684,7 +688,7 @@ In terms of artificial overcalls:
             4C = GF, natural
             4D = GF, slam try
             4H = Redwood for !ds
-        3H = maximum, no stop
+        3H = maximum/strong, no stop
             3S = natural, GF, 4+ card suit, diamonds worth bidding instead of initial cue or X
             4C = GF, natural
             4D = NF, opener could raise with good support
@@ -694,7 +698,9 @@ In terms of artificial overcalls:
             4D = NF
             4H = Redwood for !ds
             4N = !s RKB
-        3N = maximum, stopper
+        3N = maximum/strong, stopper
+        4C = natural, strong
+        4D = !d slam try, last train like
         4H = Redwood for !ds, probably strong 1!c opener
     3D = invitational plus !s
         3H = no fit, no stop, any strength (not any minimum as no room for cue stop ask)
@@ -707,29 +713,40 @@ In terms of artificial overcalls:
         3N = no fit, stopper, any strength (not ideal with minimum but helps the GF responder decide)
             4CD = GF, natural
             4H = !s slam try
-        4S = fit, maximum
+        4CD = natural, strong
+        4H = last train !s fit, strong
+        4S = fit, maximum/strong
         4N = !s RKB, probably strong 1!c opener
     3H = GF, staymanic 4!ss + singleton/void in !hs, no stop
         3S = fit, extras
         3N = no fit, stopper
-        4CD = no fit, natural minor
+        4CD = natural, strong
+            next = Redwood
+        4H = last train !s fit, strong
         4S = fit, fast arrival
+        5CD = 5 cards, to play
     3S = artificial, GF, no stopper
         3N = to play, stop or pray
         4CD = no stop, natural
+            next = Redwood
     3N = to play, stop implied, no other major
-    4x = system on, even transfer to their suit is natural
+    4x = natural preempt
 
 1CD/1N--(2!s)
-    Dbl = staymanic guarantee 3oM, follow on suit bid is poor 5 card invitational, follow on cue stop ask
-        2N = stop, without major fit
+    Dbl = staymanic 8+ guarantee 3oM, follow on suit bid is poor 5 card invitational, follow on cue stop ask
+        2N = stop, NF, without major fit
+        3CD = natural, weaker
         3H = fit, minimum
         3S = extras, 5 card !h fit
+        3N = stop, strong
+        4CD = natural, strong
         4H = fit, non-minimum
             4N = natural, 3 card only major
+        4S = !h RKB
+        4N = quantitative
     2N = puppet, weak minor or GF clubs (maybe only 4!cs if GF balanced no stop - no dedicated bid)
         (X) = usually penalty
-            XX = maximum opener
+            XX = maximum/strong opener
         (3!s) = more interference
             P = opener should pass not knowing what responder has
                 X = penalty
@@ -750,11 +767,14 @@ In terms of artificial overcalls:
             4D = NF
             4H = Redwood for !ds
             4N = !s RKB
-        3S = maximum, no stop
+        3S = maximum/strong, no stop
             4C = GF, natural
             4D = NF, opener could raise with good support
             4H = Redwood for !ds
-        3N = maximum, stopper
+        3N = maximum/strong, stopper
+        4C = natural, strong
+        4D = !d slam try, last train like
+        4H = Redwood !ds
     3D = invitational plus !h
         3H = minimum, maybe only 2 card support (still room to cue stop ask)
             3S = no stop, GF, only 5 card !h suit
@@ -763,22 +783,29 @@ In terms of artificial overcalls:
             4H = to play
             4S = !h RKB
             5CD = !h EKB
-        3S = no fit, no stop, maximum
+        3S = no fit, no stop, maximum/strong
             4CD = GF, natural
             4H = to play
             4S = !h RKB
             5CD = !h EKB
-        3N = no fit, stopper, maximum (not any strength as still room to cue stop ask over 3!h response)
+        3N = no fit, stopper, maximum/strong (not any strength as still room to cue stop ask over 3!h response)
             4CD = GF, natural
             4H = to play
             4S = !h RKB
-        4H = fit, maximum
+        4CD = natural, strong
+        4H = fit, maximum/strong
     3H = fast weak/competitive with !hs
+        any = strong, GF
     3S = GF, staymanic 4!hs + singleton/void in !ss
         3N = no fit, stopper
-        4CD = no fit, natural minor
+        4CD = natural, strong
+            next = Redwood
+        4H = last train
+        4S = !h Kickback
+        4N = quantitative
+        5CD = 5 cards, to play
     3N = to play, stop implied, no other major
-    4x = NT system on, but transfer to their suit is a natural preempt
+    4x = natural preempt
 
 
 *** Over a takeout double:
@@ -847,33 +874,67 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
     Others = [1N system on](#1NT Opening)
 
 1N--(2!d!h!s)
-    X = takeout iff suit natural, staymanic, normally a doubleton (unlike cue)
+    X = takeout iff suit natural, staymanic
     2x = NF
     2N+ = [Lebensohl System](#1NT Interference and Lebensohl)
 
-1N--(2x two known suits, e.g. !ds + !hs)
-    2-newsuit = to play
-    Cue = staymanic for major
-    2N = transfer to lowest other suit, invite+
-    3C = transfer to higher other suit, invite+
-    3DH = stopper
-    3S = 5--5+ other two suits (regardless if they have !s)
-
-1N--(2x two other suits) e.g. 2D both majors
-    double = negative for other suits
-    2-Cue = natural, e.g. taking back !ss
-    2N = transfer Lebensohl
-    3-Cue = stopper
-
-1N--(2!h both majors)
+1N--(2D both majors)
+    X = other suits
     2S = natural (they might have bad !s suit poorly positioned or psyche)
+    2N = [Lebensohl System](#1NT Interference and Lebensohl)
+    3C = [Lebensohl System](#1NT Interference and Lebensohl)
+    3D = competitive !ds
+    3HS = stop ask
+
+1N--(2H both majors)
+    X = other suits
+    2S = natural (they might have bad !s suit poorly positioned or psyche)
+    2N = [Lebensohl System](#1NT Interference and Lebensohl)
+    3C = [Lebensohl System](#1NT Interference and Lebensohl)
+    3D = competitive !ds
+    3HS = stop ask
 
 1N--(2x transfer overcall)
-    X = negative of show suit
-    2-Cue = singleton stayman, NF
+    X = negative of shown suit
+    2-Cue = singleton stayman, limited
     3-Cue = singleton stayman, GF
-    2N = transfer Lebensohl
+    2N = [Lebensohl System](#1NT Interference and Lebensohl)
+    3C = [Lebensohl System](#1NT Interference and Lebensohl)
 
+1N--(2N) usually minors
+    cuelow = invite plus low other suit
+    cuehi = invite plus high other suit
+    suit = natural competitive
+    X = any GF, penalty interest
+
+1N--(3C)
+    X = takeout, vague distribution
+    3DH = transfer mild invite plus ???????
+        break = max HHx+ or 4+ cards
+    3S = !ds  ?????
+    4C = both majors, slam try <- link same as 1M--(3x)?
+    4D = both majors, game only
+
+1N--(3D)
+    X = takeout, vague distribution
+    3HS = GF in OTHER major (transfer benefit) /??? F1
+    4C = both majors, slam try
+    4D = both majors, game only
+
+1N--(3H)
+    X = takeout, vague distribution
+    3S = GF, natural
+        4CD = cue
+    4CD = GF, natural
+    4H = !s transfer
+
+1N--(3S)
+    X = takeout, vague distribution
+    4CDH = GF, natural
+    others = as [Opponents open 3S](#Opponents open 3CDHS)
+
+1N--(4x)
+    X = penalty
 
 1N--(P)--2C
     (X)
@@ -890,18 +951,17 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
         2H+ = system on. System remains on if opponents bid no more, pretend opener bid 2!d.
     (2!h!s)
         P = neutral by opener
-            X = penalty by responder also
+            X = takeout
             2N = minors
             3CD = forcing, natural
             Cue = stop ask
         X = penalty
-        2H = 4/5 !h
         2S = 4/5 !s
         3H = 4/5 !h (over 2!s)
     (3x)
         P = neutral
         X = penalty
-        3HS = 4 card major
+        3HS = 4+ card major
         4H = (over 3!s) 5 card major
 
 1N--(P)--2DH
@@ -927,40 +987,7 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
         XX = to play interest
         any = system on
 
-1N--(2N) usually minors
-    P = weak or competitive if re-open with a X
-    X = any GF, penalty interest
-    3C = Stayman
-    3DH = transfer
-    3S = !ds only if 2N does not promise !ds
 
-1N--(3C)
-    X = takeout, vague distribution
-    3DH = transfer
-    3S = !ds
-    4C = both majors, slam try
-    4D = both majors, game only
-
-1N--(3D)
-    X = takeout, vague distribution
-    3HS = GF in OTHER major (transfer benefit)
-    4C = both majors, slam try
-    4D = both majors, game only
-
-1N--(3H)
-    X = takeout, vague distribution
-    3S = GF, natural
-        4CD = cue
-    4CD = GF, natural
-    4H = !s transfer
-
-1N--(3S)
-    X = takeout, vague distribution
-    4CDH = GF, natural
-    others = as [Opponents open 3S](#Opponents open 3CDHS)
-
-1N--(4x)
-    X = penalty
 
 ** 1NT Escape
 
