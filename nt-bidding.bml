@@ -909,17 +909,20 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
 
 1N--(3C)
     X = takeout, vague distribution
-    3DH = transfer mild invite plus ???????
+        nonJump = weak NT hand
+        new suits by doubler show invitational only values
+    3DH = transfer mild invite plus
         break = max HHx+ or 4+ cards
-    3S = !ds  ?????
-    4C = both majors, slam try <- link same as 1M--(3x)?
-    4D = both majors, game only
+    3S = !ds
+    4C = both majors 5--5+, slam try
+    4D = both majors 5--5+, game only
 
 1N--(3D)
     X = takeout, vague distribution
-    3HS = GF in OTHER major (transfer benefit) /??? F1
-    4C = both majors, slam try
-    4D = both majors, game only
+    3HS = GF in OTHER major (transfer benefit)
+    4C = both majors 5--5+, slam try
+    4D = both majors 5--5+, game only
+    4HS = to play
 
 1N--(3H)
     X = takeout, vague distribution

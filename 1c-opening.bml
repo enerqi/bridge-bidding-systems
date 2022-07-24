@@ -954,6 +954,7 @@ game = to play, regardless of suit
 After responder has shown (1) strength and (2) distribution, with little knowledge of what opener has, there are
 specific situations where a 3rd round of (relay) bidding can occur to make a slam try.
 
+- Does NOT apply when there is a *known fit by both players
 - With unknown suit lengths, it's assumed the suits are the same length
 - With 2 equal length suits, the highest ranked suit is "longest"
 - 3N is always to play, though the other player can bid on with unknown extras
@@ -1138,19 +1139,9 @@ Compared to the [1D opening interference](#1D interference):
         4C = [Gerber](#1N--3C+)
     4x = NT system on (Gerber, Texas transfers, natural 4!s)
 
-1C--(2N+) general principles this high
-    P = not good or < GF with penalty pass in opponents suit
-    suit = GF, natural
-    3N = natural
-        4C = [Gerber](#1N--3C+)
-    4x = cue bid, any GF
-
-1C--(2N/3C)
-    Dbl = negative double to 4!hs, maybe GF if balanced and no stop.
-        new suits by doubler show invitational only values
-        cue bids by doubler show that suit (natural/psyche expose)
-        nonJump = weak NT hand
-        Jump  = strong hand
+1C--(2N/3CDHS/4x)
+    any = as [Overcalls of our NT](#Overcalls of our NT) except Thrump doubles over 3DHS
+    X = maybe (of 4x) still penalty or negative to 4!h???
 
 1C--(3DHS) natural preempts
     Dbl = Thrump, negative like but looking for 3N, no major guarantee

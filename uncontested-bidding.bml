@@ -913,7 +913,10 @@ Natural, up to 11 hcp, no 4 card major
     X = negative, later !s bids are forcing
     Others = [Lebensohl system](#1NT Interference and Lebensohl)
 
-1D--(3DHS) natural preempts
+1D--(2N/3CDHS/4x)
+    any = as [Overcalls of our NT](#Overcalls of our NT) except Thrump doubles over 3DHS
+
+1D--(3DHS)
     Dbl = Thrump, negative like but looking for 3N, no major guarantee
         3S = 4 card major, no stopper
             4CD = maybe slam hunting, often shortish minor(s)
