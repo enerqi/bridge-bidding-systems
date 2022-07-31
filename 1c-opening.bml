@@ -2,7 +2,7 @@
 
 * 1C Weak Strong
 
-- (13)--15 balanced / semi-balanced (5-4-2-2), 5--3--3--2 maybe 5 card !h/!s
+- (13)14--15 balanced / semi-balanced (5-4-2-2), 5--3--3--2 maybe 5 card !h/!s
 - 16+ unbalanced
 - 21+ balanced
 
@@ -1141,18 +1141,6 @@ Compared to the [1D opening interference](#1D interference):
 
 1C--(2N/3CDHS/4x)
     any = as [Overcalls of our NT](#Overcalls of our NT) except Thrump doubles over 3DHS
-    X = maybe (of 4x) still penalty or negative to 4!h???
-
-1C--(3DHS) natural preempts
-    Dbl = Thrump, negative like but looking for 3N, no major guarantee
-        3HS = 4 card major, no stopper
-            3S = 4 card major or maybe weak 5 card major
-            4CD = maybe slam hunting, often shortish minor(s)
-        3N = stopper
-            4CD = slam hunting, often shortish minor(s)
-        Jump = strong hand
-            newSuit = cue bid
-        4N = natural quantitative, extra strong
 
 ** 2nd and 4th interfere, Responder Passes
 

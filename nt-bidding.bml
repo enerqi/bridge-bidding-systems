@@ -862,6 +862,23 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
 
 ** Overcalls of our NT
 
+This also applies to interference after 1!c/1!d openings which are assumed to be NT type hands
+
+What is *responders first double*?
+
+Later doubles judge by context. Certainly 3 level is penalty, whereas 2 level maybe re-opening after e.g. an ambiguous
+call such as 2!d either major.
+
+Priority order consistent across interference including where can/cannot have an opened suit
+and where the opponent has 1 or 2 known/unknown suits. Consistent for *2 or 3 level* overcalls:
+
+1. Two known long suits (5--5+), regardless of us having a known suit -- penalty / values
+2. Two long suits (5--5+), one unknown, regardless of us having a known suit -- penalty / values
+3. Ambiguious, no suit shown -- values in suit bid, stolen bid double
+4. Transfer overcall -- overcall values in suit bid (transfer suit for takeout)
+5. No unclaimed major -- penalty / values
+6. One or two unbid majors -- takeout (3!d+ Thrump)
+
 1N--(X) takeout
     P = willing to play if advancer converts to penalty, later 2 level X takeout, 3 level X penalty
     XX = unspecified GF, suggesting penalty double of opponents
@@ -873,44 +890,63 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
     X = Stolen bid double, stand in for 2!c
     Others = [1N system on](#1NT Opening)
 
+1N--(2!c both majors)
+    X = penalty as no unclaimed major and less point in using promissory stayman, can bid natural major later
+    Others = [1N system on](#1NT Opening)
+
 1N--(2!d!h!s)
-    X = takeout iff suit natural, staymanic
+    X = takeout iff suit natural
     2x = NF
     2N+ = [Lebensohl System](#1NT Interference and Lebensohl)
 
 1N--(2D both majors)
-    X = other suits
-    2S = natural (they might have bad !s suit poorly positioned or psyche)
+    X = penalty / values -- no unclaimed major
+    2HS = low/high cue standard invites
     2N = [Lebensohl System](#1NT Interference and Lebensohl)
-    3C = [Lebensohl System](#1NT Interference and Lebensohl)
-    3D = competitive !ds
-    3HS = stop ask
+    3C = [Lebensohl System](#1NT Interference and Lebensohl) !d transfer
+    3D = competitive !ds -- no !h transfer needed
+    3HS = stop ask cue bid
+
+1N--(2D !s + ?)
+    X = takeout, as can still bid !h at 2 level
+    2S = stop ask (one known suit)
+    Others = [Lebensohl System](#1NT Interference and Lebensohl)
+
+1N--(2D !h + ?)
+    X = takeout, can still bid !s at 2 level
+    2H = stop ask
+    Others = [Lebensohl System](#1NT Interference and Lebensohl)
+
+1N--(2D unknown major)
+    X = !d values -- ambiguous overcall (pass then double for takeout)
+    Others = [Lebensohl System](#1NT Interference and Lebensohl), no cue bid though
 
 1N--(2H both majors)
-    X = other suits
-    2S = natural (they might have bad !s suit poorly positioned or psyche)
+    X = penalty / values -- no unclaimed major
+    2S = lowest biddable cue, !c invite plus
     2N = [Lebensohl System](#1NT Interference and Lebensohl)
-    3C = [Lebensohl System](#1NT Interference and Lebensohl)
-    3D = competitive !ds
-    3HS = stop ask
+    3C = [Lebensohl System](#1NT Interference and Lebensohl) !d transfer invite plus
+    3D = competitive !ds, no need for !h or !s transfer
+    3HS = stop ask cue bid (no room for invite plus !d cue despite two known suits - use 3!c instead)
 
 1N--(2x transfer overcall)
-    X = negative of shown suit
-    2-Cue = singleton stayman, limited
+    X = bid suit values
+    2-Cue = takeout (bid the suit transferred to)
     3-Cue = singleton stayman, GF
     2N = [Lebensohl System](#1NT Interference and Lebensohl)
     3C = [Lebensohl System](#1NT Interference and Lebensohl)
 
 1N--(2N) usually minors
-    cuelow = invite plus low other suit
-    cuehi = invite plus high other suit
+    X = penalty interest
+    cuelow = lowest bid cue (not rank), invite plus low other suit
+    cuehi = highest bid cue (not rank), invite plus high other suit
     suit = natural competitive
-    X = any GF, penalty interest
 
 1N--(3C)
     X = takeout, vague distribution
         nonJump = weak NT hand
         new suits by doubler show invitational only values
+        later cue bids by doubler show that suit (natural/psyche expose)
     3DH = transfer mild invite plus
         break = max HHx+ or 4+ cards
     3S = !ds
@@ -918,23 +954,34 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
     4D = both majors 5--5+, game only
 
 1N--(3D)
-    X = takeout, vague distribution
     3HS = GF in OTHER major (transfer benefit)
     4C = both majors 5--5+, slam try
     4D = both majors 5--5+, game only
     4HS = to play
 
+1N--(3D artifical, both majors)
+    3HS = stop ask
+
 1N--(3H)
-    X = takeout, vague distribution
     3S = GF, natural
         4CD = cue
     4CD = GF, natural
     4H = !s transfer
 
 1N--(3S)
-    X = takeout, vague distribution
     4CDH = GF, natural
     others = as [Opponents open 3S](#Opponents open 3CDHS)
+
+1N--(3DHS)
+    Dbl = Thrump, negative like but looking for 3N, no major guarantee
+        3HS = 4 card major, no stopper
+            3S = 4 card major or maybe weak 5 card major
+            4CD = maybe slam hunting, often shortish minor(s)
+        3N = stopper
+            4CD = slam hunting, often shortish minor(s)
+        Jump = strong hand
+            newSuit = cue bid
+        4N = natural quantitative, extra strong
 
 1N--(4x)
     X = penalty
@@ -989,7 +1036,6 @@ With 1N--P--P--(X) balancing double, partner need not be that strong yet still
     (X)
         XX = to play interest
         any = system on
-
 
 
 ** 1NT Escape
