@@ -10,7 +10,13 @@ Natural quantitative, to play, ace asking, key card asking or takeout? Here's an
 
 - Partner *never* bid - Takeout
 - Jump 4N when Kickback/Redwood Agreed (illogical to bid the suit naturally) - natural, Quantitative
-- Redwood/Kickback for !c/!d/!hs agreed/set and also shown a long side suit (but not supported)  - Double Fit RKB
+- Redwood/Kickback for !c/!d/!hs agreed/set and also shown a long side suit then see following:
+- !ss (primary) + !cs then 4!d double fit, 4N !s RKB
+- !ss + !ds then 4!h double fit, 4N !s RKB
+- !hs + !ss then 4N double fit
+- !cs + !hs, then 4!d double fit, 4S !h RKB
+- !ds + !hs, then 4S !h RKB, 4N double fit
+- Kickback for primary suit is RKB for single suit, Kickback for secondary suit is Double Fit RKB, but 4N is double fit RKB if secondary suit Kickback not available (unless unavailable with !ss as primary)
 - Major suit *raised* - RKB
 - Major suit set - RKB
 - Long good suit implied (eg. 3 level jump overcall) - RKB
