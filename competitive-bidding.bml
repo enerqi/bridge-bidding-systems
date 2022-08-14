@@ -707,7 +707,7 @@ With limited strength may want to hide distribution information and just bid the
             3N = to play
         2C = [multi-meaning](#Advancer's 2C Relay), F1, 9+ hcp limited Hx support OR 13+ catchall
             2D = artificial, extras
-        2x = natural, F1 (8/9+ hcp 6 cards, 10+ hcp 5 cards)
+        2x = natural, NF constructive ~8--12 (8/9+ hcp 6 cards, 10+ hcp 5 cards)
         2M = natural raise < 10 hcp
         2S = (advancing 1!h) NF, ~10--12, good 6 card suit
         2N = (jump) invitational plus, usually distributional good 3 card / 4+ cards
@@ -749,7 +749,7 @@ With limited strength may want to hide distribution information and just bid the
 (1C)--1HS--(X)
     XX = [multi-meaning](#Advancer's 2C Relay), F1, 9+ hcp limited Hx support OR 13+ catchall
         2D = artificial, extras
-    2C = natural, F1
+    2C = natural, NF constructive ~8--12
     others = as without double
 
 (1C)--1D--(1N)
@@ -766,7 +766,7 @@ With limited strength may want to hide distribution information and just bid the
     2C = natural if can be < 3 card OR HCR
     2CueHigh = natural, psyche guard
     2D = natural raise, ~5--8
-    2Y = new suit, F1
+    2Y = new suit, NF constructive ~8--12
     2S = (jump) natural, NF, good 6 carder invitational - as 3x new suit bid
     2N = invitational plus raise
     3C = splinter, long !ds (mixed raise has less value when looking for 5!c/5!d)
@@ -776,7 +776,7 @@ With limited strength may want to hide distribution information and just bid the
 (1C)--1M--(higher)
     X = values 9+, maybe moderate NF support
     2M = natural raise, ~5--8
-    2Y = new suit, F1
+    2Y = new suit, NF constructive ~8--12
     2N = invitational plus raise
     3C = cue, forcing, can be natural if an "unbid" suit (no room for mixed raise)
     3x = invitational, 6+ new suit
@@ -884,7 +884,7 @@ With limited strength may want to hide distribution information and just bid the
         2!c = [multi-meaning](#Advancer's 2C Relay), F1, 9+ hcp limited Hx support OR 13+ catchall
             2D = artificial, extras
         2D = precisely invitational HCR, spare cue bid inbetween 2!c and 2N type bids, ~11--12, so good 3 card possibly very flat 4 card support
-        2x = natural, F1 (8/9+ hcp 6 cards, 10+ hcp 5 cards)
+        2x = natural, NF constructive ~8--12 (8/9+ hcp 6 cards, 10+ hcp 5 cards)
         2M = natural raise < 10 hcp
         2S = (advancing 1!h) NF, ~10--12, good 6 card suit
         2N = (jump) invitational plus, usually distributional good 3 card / 4+ cards
@@ -945,7 +945,7 @@ With limited strength may want to hide distribution information and just bid the
 (1D)--1HS--(X)
     XX = [multi-meaning](#Advancer's 2C Relay), F1, 9+ hcp limited Hx support OR 13+ catchall
         2D = artificial, extras
-    2C = natural, F1
+    2C = natural, NF constructive ~8--12
     others = as without double
 
 (1D)--1M--(1N)
@@ -961,7 +961,7 @@ With limited strength may want to hide distribution information and just bid the
     X = values 9+, maybe moderate NF support
     2D = cue, forcing, even if a short suit, maybe HCR less distributional than 2N
     2M = natural raise, ~5--8
-    2Y = new suit, F1
+    2Y = new suit, NF constructive ~8--12
     2N = invitational plus raise
     3x = invitational, 6+ suit
     3D = mixed raise
@@ -1049,7 +1049,7 @@ With limited strength may want to hide distribution information and just bid the
         2H = cue F1 artificial strength showing, ~13+ hcp (1N is wide ranging as 2N is support)
     2!c = [multi-meaning](#Advancer's 2C Relay),  F1, 9+ hcp limited Hx support OR 13+ catchall
         2D = artificial, extras
-    2D = F1, natural
+    2D = natural, NF constructive ~8--12
         2H = [Einar Cue](#Einar Cue Bid)
     2H = precisely invitational HCR, spare cue bid inbetween 2!c and 2N type bids, ~11--12, so good 3 card possibly very flat 4 card support
     2S = natural raise < 10 hcp
@@ -1126,12 +1126,12 @@ With limited strength may want to hide distribution information and just bid the
 (1H)--1S--(X)
     XX = [multi-meaning](#Advancer's 2C Relay), F1, 9+ hcp limited Hx support OR 13+ catchall
         2D = artificial, extras
-    2C = natural, F1
+    2C = natural, NF constructive ~8--12
     others = as without double
 
 (1H)--1S--(higher) = 2 level+ bids, raise or new suit
     X = values 9+
-    2CD = new suit, F1
+    2CD = new suit, NF constructive ~8--12
     2H = cue, forcing, even if a short suit, maybe HCR less distributional than 2N
     2S = natural raise, ~5--8
     2N = invitational plus raise
@@ -1140,7 +1140,7 @@ With limited strength may want to hide distribution information and just bid the
 
 (1H)--1S--(1N)
     X = 5--5+ other suits
-    2CD = natural, F1
+    2CD = natural, NF constructive ~8--12
     2H = HCR
     2S = natural raise, ~5--8
     2N = invitational plus raise
@@ -1155,7 +1155,7 @@ With limited strength may want to hide distribution information and just bid the
     3H = HCR, precisely invitational weaker than 2N
 
 (1H)--2CD--(2H)
-    2S = natural, F1
+    2S = natural, NF constructive ~8--12
     X = 5 or bad 6 card !s suit, tolerance for minor suit, NOT HCR double
     Cue = force, maybe stop looking or strong HCR
 
@@ -1296,7 +1296,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
             3D = natural, invitational
             3S = splinter
     2D = normal overcall, virtually deny !hs
-        2H = natural, F1 (no transfers too high)
+        2H = natural, NF constructive ~8--12 (no transfers too high)
         2S = HCR / general force
         2N = natural, NF
         3C = natural, invitational
