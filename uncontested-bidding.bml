@@ -1668,7 +1668,8 @@ XX = Ace showing by opener after opponents lead directing double
     2N = invitational plus 4 card raise, 2N system on
     3CDS = fit jump
     3H = preemptive (use transfer for mixed raise)
-    4CD = fit jump
+    4CD = splinter
+    4S = to play (not splinter beyond game)
 
 Second round bids ignore the T/O X if advancer bids nothing, e.g. 1H--(X)--1S--(P)--1N--(P)
 then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
@@ -1715,8 +1716,9 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     3CD = fit jump
     3H = mixed raise, good single raise
     3S = splinter, opponent's suit
-    4CD = fit jump, GF
+    4CD = splinter
     4H = obstructive, undefined
+    4S = confusing, avoid (could be EKB or RKB for !hs)
 
 1H--(1N)
     X = penalty
@@ -1735,8 +1737,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     3C = invitational exactly OR minimum game hand, !h support
     3DS = fit jump
     3H = mixed raise (weak limit), ~7--9 support points and 4+ cards
-    4C = splinter
-    4D = fit jump, GF
+    4CD = splinter
 
 1H--(2!d)
     X = negative
@@ -1746,9 +1747,8 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     3C = fit jump
     3D = invitational exactly OR minimum game hand, !h support
     3H = mixed raise (weak limit), ~7--9 support points and 4+ cards
-    3S = fit jump, GF
-    4C = fit jump, GF
-    4D = splinter
+    3S = splinter
+    4CD = splinter
 
 1H--(2!h)
     X = force, leading to penalty or forcing new suit bid
@@ -2324,7 +2324,7 @@ Similar to [1H interference](#1H interference).
     2N = invitational plus 4 card raise, 2N system on
     3CDH = fit jump
     3S = preemptive (use transfer for mixed raise)
-    4CD = fit jump
+    4CDH = splinter
 
 1S--(1N)
     X = penalty
@@ -2343,19 +2343,19 @@ Similar to [1H interference](#1H interference).
     3C = invitational exactly OR minimum game hand, !s support
     3DH = fit jump
     3S = mixed raise (weak limit), ~7--9 support points and 4+ cards
-    4C = splinter
-    4DH = fit jump, GF
+    4CDH = splinter
 
 1S--(2!d)
     X = negative
     2H = natural, 5+ cards, F1
     2S = natural single raise, ~5--9 support points
     2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
-    3CH = fit jump
+    3C = natural, forcing
     3D = invitational exactly OR minimum game hand, !s support
+    3H = fit jump
     3S = mixed raise (weak limit), ~7--9 support points and 4+ cards
-    4CH = fit jump, GF
-    4D = splinter
+    4C = fit jump
+    4DH = splinter
 
 1S--(2!h)
     X = negative
@@ -2373,7 +2373,7 @@ Similar to [1H interference](#1H interference).
     3CD = natural, forcing
     3H = invitational exactly OR minimum game hand, !s support
     3S = mixed raise (weak limit), ~7--9 support points and 4+ cards
-    4CD = fit jump, GF
+    4CD = fit jump
     4H = splinter
 
 1S--(2!s)

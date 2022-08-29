@@ -70,9 +70,9 @@
 - 2 level simple bids are natural, F1 freebids, 8+ good suit or typical 9/10+ < invite AFTER SUIT
 - 1N/2x simple bids are transfers AFTER TAKEOUT
 - 2 level new suit jumps are weak after suit or takeout
-- 3/4 level new suit jumps are fit jumps
+- jump new suit are fit jumps
 - 4CD major slam tries AFTER MAJOR OPENING + JUMP PREEMPT
-- Splinters of the overcalled suit
+- Splinters of the overcalled suit or when using double jumps
 - Cue bids exactly invitational HCR OR minimum game hand / limited defensive values / marginal balanced game hands, AFTER MAJOR OPENING...opponents can play undoubled, we may prefer 3N and struggle to make more than 4M
 - 1m--(2!c) then Stayman/NT system on AFTER MINOR OPENING
 - 3 level jump raise is Mixed (weak-limit), not trash pre-emptive (maybe bid 4 with a pure uncooperative pre-empt) AFTER SUIT
@@ -1085,9 +1085,10 @@ With limited strength may want to hide distribution information and just bid the
         3H = force, not einar as above 3!d, stop ask implication initially
     2N = natural, NF
     3C = natural, limit raise
+    3D = fit jump
     3H = splinter
     3S = fit jump
-    4CD = fit jump
+    4D = splinter
 2D = normal overcall, virtually deny !ss
     2H = transfer 5+ !ss
         2S = about minimum, often 2/3 cards
