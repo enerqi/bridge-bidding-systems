@@ -236,14 +236,6 @@
   is already canapé and only one side of the partnership ever does canapé bidding.
 
 
-questions
-1) 1c-1h-1s-2d - is it natural and/or forcing, (seems artificial GF)
-2) 1c-1h-1s-2c-2d 2M (2S only?) - otherwise how differs from 3H jump
-3) 1c-1h-1s what are the GF bids, 2D? everything looks taken, e.g. 5!hs--2!s--4--2 13 count
-3) krav (forcing) vs okrav (NF)
-4) 1c-1s-2h-2s     Tempererande, tempering
-
-
 1S = natural weak/strong, F1, 5+ suit if strong (NOT canapé), not 3+ !hs if strong (use 2!d)
     1N = to play v.s. weak NT
     2C = puppet to 2!d v.s. weak NT, mostly weak !ds or invitational hands
@@ -305,29 +297,29 @@ questions
         others = strong
     3CD = canapé invite
     3M = natural invite, 6+ card major
-2C = natural 16+ OR balanced 21+ OR 4--4--4--1 singleton in partner's major 19+ hcp, denies 3 card major support
+2C = natural 16+ OR balanced 21+ OR 4--4--4--1 singleton in partner's major 22+ hcp, denies 3 card major support
     2D = any 8-11 hand
         2M = !cs and also with 2 card support
-        2N = NT strong, 21+, maybe also 22+ 4--4--4--1 singleton in partner's major
+        2N = NT strong, 21+
             3C = 4+ !ds, transfer, complete with support
             3D = 4+ !hs transfer, complete with support
             3H = 4+ !ss transfer, complete with support
             3S = unbalanced, 4+ clubs
             3N = natural
-        3M = artificial major raise bid, 19--21 hcp, 4--4--4--1 singleton in partner's major
+        3C = !cs, natural, 0--1 major support
+        3M = artificial major raise bid, 22+ hcp, 4--4--4--1 singleton in partner's major
         3N = to play, fast arrival
         others = natural with clubs
-    2HS = 12+ catch all major rebid, exactly 5 card major
+    2HS = 12+ catch all major rebid, exactly 5 card major -- SWAP or NOT put 1c--1M--2!h-2!s back to 5 carder
         2N = ask
             3CD = 4 cards
             3M = forcing, 5--3--3--2, 15+ hcp
             3N = 5--3--3--2, limited GF ~12--14 hcp
-        3N = to play, maybe 4--4--4--1 singleton in partner's major
-        others = natural with clubs
+        others = natural, 16--18 with !cs
     2oM = GF 12+, natural
-    2N = 6 card major, GF
-    3CD = 5+ minor (canapé or 5--5), GF
-    3M = 7+ suit, set
+    2N = GF ~12+, 6 card major, GF
+    3CD = GF ~12+, 5+ minor (canapé or 5--5), GF
+    3M = GF ~12+, 7+ suit, set
 2D = GF, 3+ support, "Odwrotka"
     2H = strong, ~12+, other bids are ~8-11
         2S = relay
@@ -369,6 +361,8 @@ questions
                 4S = (over 1!s) signoff
                 4N = (over 1!h or 1!s) [Double Fit RKB Kickback](#Double Fit RKB)
         others = natural, sound 6 card suit (use relay then sign off with bad 6 carder and 7 card major fit)
+            3S = 5+ cards
+                3N = serious
     2S = 4 card major(s) for longest suit, no 5 card minor, so balanced or a 4--4--4--1 hand
         2N = relay
             3C = after 1!h response, some 4--4--4--1 hand with 4 card !h suit
@@ -414,6 +408,9 @@ questions
         3S = natural, 5+ carder
         4C = control bid (probably better start with singleton ask though)
         4D = artificial, [Double Fit RKB](#Double Fit RKB)
+        4D = agreeing !ds
+        4H = double fit rkb...for spades + !ds
+        4N = ...
         4H = to play, after 1!h response
         4H = 6 !hs, 4 card !s support after 1!s response
         4S = to play, after 1!s response
@@ -444,33 +441,46 @@ questions
     3M = extra trump length game try
     3x = forcing
     3N = play suggestion even vs 4 card support
-2H = (over 1S) 5+ !hs strong
-    2S = 6 !ss
-    2N = 5 !ss
+2H = (over 1!s) 5+ !hs strong
+    2S = 5 !ss
+        2N = ask
+            3CD = 4+ cards, 8+ hcp
+                3N = natural
+                    4m = natural, extras
+                        next = Redwood
+            3H = 15+ hcp, 5--3--3--2 doubleton !h support
+            3S = 12--14 hcp, 5--3--3--2 doubleton !h support
+            3N = 8--11 hcp, 5--3--3--2 doubleton !h support
+    2N = 6+ !ss, not worth 3!s, maybe wants to play 4!s
     3CD = 5+ cards canapé OR 5-5, extras
     3N = natural, ~8--11 fast arrival
     3S = self-sufficient suit, slam try interest
-2S = (over 1H) 6+ !ss and 3!hs
+    4H = to play
+    4S = !h Kickback
+2S = (over 1!h) 6+ !ss and 3!hs
     3CD = natural, canapé
     3HS = sets the trump suit
         3N = serious, control asking
 2N = !ds + other major, 16+ strong
+    3D = waiting
+    3H = ~12+ !h support
+    4H = fast arrival, !h support
 3C = 5+ !ds and 4+ !cs, 16+ strong
+    4C = !c RKB, special case
+    4D = !d RKB, special case
 3D = 6+ !ds, denies 4 !cs or other major
-3M = artificial raise, 16--18 hcp, 4--4--4--1 singleton in partner's major
-3H = (over 1S) 6+ !hs and 3!s
-    3S = agree !ss, any strength
-    3N = natural, e.g. 4--1--4--4 or 4--1--5--3 / 4--1--3--5 / 4--1--6--2 / 4--1--2--6
-        4CD = likely 3--6--0--4 or 3--6--4--0
-        4H = 6+ suit, very good, dislikes 3N
-        4S = rare, [Kickback RKB](#RKB 4N), strong suit happy opposite a singleton
-        4N = quantitative
-        5CD = [EKB](#EKB Voidwood) for !hs
-    4CD = cue, agree !hs - what about the minors e.g. 4--7?
-        4H = nothing special, can be passed
-        4S = [Double Fit RKB Kickback](#Double Fit RKB)
-    4HS = fast arrival, minimal positive
-3N = long running minor, to play, maybe gambling
+    3H = quasi natural, !h stop
+        3S = no !c control, 2 card !s support
+    3S = no stops, waiting, maybe !s slam interest
+    3N = !c stop, no !h stop
+    4C = natural, probably canapé, NOT implied cue bid
+    4D = !d RKB, special case
+    4oM = 5--5+ majors
+    4M = fast arrival, to play
+    5CHS = EKB
+3M = artificial raise, 19--21 hcp, 4--4--4--1 singleton in partner's major
+3H = self-sufficient, extras
+3N = 4--4--4--1 singleton in partner's major, 16--18 hcp
 4x = extra long suit, ~8--9 PT, distributional, weaker than Acol two
 
 ** 1C--1N
