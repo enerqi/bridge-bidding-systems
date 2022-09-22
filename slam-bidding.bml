@@ -132,6 +132,7 @@ Note, not playing DEPO - that works better with 0314 RKB instead of 1430 RKB.
             5N = no use, N/A
             6other = bid 7 if you have this King
         5N = no side K, have Q trumps (or known 10+ card fit)
+            6other = 3rd round control ask
         agreed suit = no Q
 
 *** King Ask
