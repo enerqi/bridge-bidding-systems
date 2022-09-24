@@ -26,15 +26,14 @@
 - Negative 0--7 hcp or flat 8--9 hcp semi-positive no 4cM
 - Semi-positive is very limited ~8--9 hcp, less than an unconditional invite
 - Many semi-positive 9 hcp flat hands are worth an invite
-- Possibly pass with minimum weak NT and very concentrated values in a 5!ds hand
-- 1!s shape is natural OR canapé exactly 4!ss (unless GF or limited 6x--5!ss then bid natural order): bid longer !ss (natural) AND shorter 4!ss (canapé) first
+- 1!s shape is natural unbalanced strong/14--15 NT OR strong non-GF 4!ss canapé. NOT marmic 4!hs hand
 - Acol 2 strength !ss starts with 1!h, natural suit bidding order
 - GF starts with 2!s or 3!s, natural suit bidding order
-- Other spade hands start with 1!s
-- Every other suit always bid in natural longest suit order
-- !h hands bid 2!hs with min strong club, 3!hs with GF long suit, 2 suiters use 3!c/3!d, others 1!h multi
+- 6!c/!d/!h--5!s bid natural order
+- !c/!d/!h strong suits always bid in natural longest suit order
+- !h hands bid 2!hs with min strong club, 3!hs with GF long suit, limited 2 suiters without !ds use 3!c/3!d, 5--5 !hs + !ds limited use 2!hs, others 1!h multi
 - Extra strength showing bids - 1!h and 2!s/3!c/3!d are longest suit natural ordered
-- Marmic hands bid 1!h unless short !hs, then bid 1!s
+- Marmic (4--4--4--1) hands bid 1!h unless short !hs, otherwise bid 1!s
 - Minor hands bid 2!c/2!d with min strong club or 1!h with extras ~Acol 2 strength, or even 4!c/4!d with a monster
 
 [4th Interference](#4th Interferes after Responder Negative)
@@ -93,7 +92,7 @@
                 3D = singleton !d, extras ~19+ hcp
                 3H = singleton !s, extras ~19+ hcp
             3CD = NF decent suit, invitational
-            3H = game try, only needs a bit extra help ~17--18 hcp
+            3H = !h game try, only needs a bit extra help (~17--18 hcp)
             3S = NT transfer, no !s fit should exist
             3N = to play, wants to declare
             4HS = to play
@@ -126,18 +125,35 @@
             3HS = natural, forcing, no Herbert negative
             4D = 3+ support, ~ 2+ control points including singleton/voids
             4HS = splinter, 4+ card support
-    1N = artificial, 0--7 hcp 4 !ss, not 4!hs (steals NT with weaker hand if not !s fit)
+    1N = artificial, 0--7 hcp 4 !ss, not 4!hs (steals NT with weaker hand if no !s fit)
         2C = unbalanced, various extras (see 1S asking bid)
-        2D = see 1S asking bid, could include 4!ss but limited as jump raise ~19/20+
+        2D = 4 !hs exactly, 1--4--4--4 / 4--4--1--4 / 4--4--4--1, limited 16--18 if 4!ss
+            Pass = very weak, long !ds (and 4!ss)
+            2H = to play
+                2S = 4 card !s support, limited
+                3C = singleton !c, extras game try
+                3D = singleton !d, extras game try
+                3H = singleton !s, extras game try
+            2S = strength/shape ask
+                2N = 16--18 hcp, !s singleton
+                3C = singleton !c, extras ~19+ hcp
+                    P = very weak, long !cs
+                3D = singleton !d, extras ~19+ hcp
+                3H = singleton !s, extras ~19+ hcp
+                3S = 4 card !s support, 16--18 hcp
+            3CD = NF decent suit, invitational
+            3H = !h game try, only needs a bit extra help (~17--18 hcp)
+            3N = to play, wants to declare
+            4HS = to play
         2H = natural Acol 2 equivalent ~19--21 hcp, ~8--9 playing tricks, 4+ Quick Tricks, F1
             2S = Herbert negative ~0--4 hcp
                 any = natural, NF
                     newSuit = NF, play suggestion
                     3H = natural forcing suit
         2S = to play, weak NT hand
-        2N = natural, 21--23 NT
-        3CD = !c/!d Acol 2 equivalent ~19--21 hcp, ~8--9 playing tricks, 4+ Quick Tricks, F1
-        3S = invitational, strong with extras ~19/20+
+        2N = semi-natural, 21--23 NT
+        3CD = single suited !c/!d Acol 2 equivalent ~19--21 hcp, ~8--9 playing tricks, 4+ Quick Tricks, F1
+        3S = invitational, strong with extras ~19+
         4S = to play
 1S = natural, weak/strong with 4+ !ss, maybe 4--1--4--4 or canapé exactly 4!ss, not 4!hs if weak, not acol 2 / GF !ss (start with 1!h)
     P = very weak, usually 3+ !ss
@@ -255,7 +271,6 @@
         2N = weak NT, nothing special, may have 5 card !s suit
         3CD = natural, strong, 5--4+
         3H = !ss self-sufficient, strong, extras, Ax/Kx !hs
-
         3S = self-sufficient, strong, extras
         4other = self/auto-splinter, slam try
     2H = to play v.s. weak hand
@@ -329,79 +344,7 @@
 2D = GF, 3+ support but 6!hs + 3!ss bids 2!h, "Odwrotka",
     2H = strong, ~12+, other bids are ~8-11
         2S = relay
-            2N = 5 card high suit, ~8--11 hcp
-                3C = delayed Jacoby variant
-                    3D = !d shortage
-                    3oM = other major shortage
-                    3M = !c shortage
-                    3N = nothing special, (semi)balanced
-                    4CD = void splinter
-                    4H = void splinter, other major
-                others = natural, sound 6 card suit
-        3C = canapé
-            3D = singleton ask
-                3oM = other major singleton
-                    4C = !c RKB
-                    4S = (over !h fit) double fit RKB
-                    4N = (over !s fit) double fit RKB
-                3M = !d singleton
-                    4C = !c RKB
-                    4S = (over !h fit) double fit RKB
-                    4N = (over !s fit) double fit RKB
-                3N = no
-                    4C = !c RKB
-                    4S = (over !h fit) double fit RKB
-                    4N = (over !s fit) double fit RKB
-            4C = !c RKB
-            4D = [Double Fit RKB](#Double Fit RKB)
-        3D = canapé
-            3oM = natural, 5+ carder
-            3M = singleton ask
-                oM = other major singleton
-                    4D = !d RKB, special case
-                    4S = (over !h fit) double fit RKB
-                    4N = (over !s fit) double fit RKB
-                3N = no
-                    4D = !d RKB, special case
-                    4S = (over !h fit) double fit RKB
-                    4N = (over !s fit) double fit RKB
-                4C = !c singleton
-                    4D = !d RKB, special case
-                    4S = (over !h fit) double fit RKB
-                    4N = (over !s fit) double fit RKB
-            4C = control bid (probably better start with singleton ask though)
-            4D = !d RKB
-            4H = (over 1!h) sign off
-            4H = (over 1!s) last train
-            4S = (over 1!h) double fit RKB
-            4S = (over 1!s) to play
-            4N = (over 1!s) double fit RKB
-        3H = artificial, 6+ suit
-            3S = singleton ask
-                3N = no
-                4C = !c singleton
-                4D = !d singleton
-                4H = other major singleton
-                4S = with !hs agreed, !s singleton, suggests extras too good for game
-                    4N = [RKB](#RKB 4N), no room for Kickback
-            3N = serious, control prompt
-            4M = to play
-            others = cue bid
-        3S = 5--5 both majors
-            3N = serious
-            4CD = cue
-            4H = last train
-            4S = to play
-            4N = double fit RKB
-        4C = 5--5 M + !cs
-            4D = [Double Fit RKB Kickback](#Double Fit RKB)
-        4D = 5--5 M + !ds
-            4H = (over 1!h) signoff
-            4H = (over 1!s) double fit RKB
-            4S = (over 1!h) Kickback
-            4S = (over 1!s) signoff
-            4N = (over 1!h) [Double Fit RKB Kickback](#Double Fit RKB)
-            4N = (over 1!s) Kickback
+            any = as immediate responses over "Odwrotka", but 12+ hcp
         others = natural, sound 6 card suit (use relay then sign off with bad 6 carder and 7 card major fit)
             3S = 5+ cards
                 3N = serious
