@@ -1831,10 +1831,20 @@ X is majors takeout, NT is minors.
     4D = both majors
 
 (3H)
+    Dbl = takeout
+        4H = two suiter
+            4S = natural
+                4N = !s RKB
+                5C = minors escape
+        4S = to play
+        4N = !s RKB
     4H = extreme strong 2 suiter
         4N = both minors, choose your suit
 
 (3S)
+    Dbl = takeout
+        4S = Kickback
+        4N = minors
     4S = extreme strong 2 suiter
         4N = both minors, choose your suit
     4N = both minors
