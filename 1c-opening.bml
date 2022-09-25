@@ -318,17 +318,17 @@
     3H = (after 1!s response) natural, GF, 6!ss + 5!hs
     3S = (after 1!h response) natural, GF, 6!hs + 5!ss
     4other = self/auto-splinter, slam try
-2C = natural 16+ OR balanced 21+ OR 4--4--4--1 singleton in partner's major 22+ hcp, denies 3 card major support
+2C = natural 16+ OR balanced 21+ OR 4--4--4--1 singleton in partner's major 19+ hcp, denies 3 card major support
     2D = any 8-11 hand
         2M = !cs and also with 2 card support
-        2N = NT strong, 21+
-            3C = 4+ !ds, transfer, complete with support
-            3D = 4+ !hs transfer, complete with support
-            3H = 4+ !ss transfer, complete with support
+        2N = NT strong, 21+ or 22+ 4--4--4--1 singleton in partner's major
+            3C = 4+ !ds, transfer, complete with 4 card support
+            3D = 4+ !hs transfer, complete with 4 card support
+            3H = 4+ !ss transfer, complete with 4 card support
             3S = unbalanced, 4+ clubs
             3N = natural
         3C = !cs, natural, 0--1 major support
-        3M = artificial major raise bid, 22+ hcp, 4--4--4--1 singleton in partner's major
+        3M = artificial major raise bid, 19--21+ hcp, 4--4--4--1 singleton in partner's major
         3N = to play, fast arrival
         others = natural with clubs
     2HS = 12+ catch all major rebid, exactly 5 card major
@@ -472,8 +472,11 @@
     4oM = 5--5+ majors
     4M = fast arrival, to play
     5CHS = EKB
-3M = artificial raise, 19--21 hcp, 4--4--4--1 singleton in partner's major
 3H = self-sufficient, extras
+3M = 5(+) card support, ~16--18
+    suit = natural, double fit finding
+    3N = serious
+    4M = fast arrival
 3N = 4--4--4--1 singleton in partner's major, 16--18 hcp
 4x = extra long suit, ~8--9 PT, distributional, weaker than Acol two
 
