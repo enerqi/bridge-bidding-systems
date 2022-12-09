@@ -532,14 +532,14 @@ As 5--5, but always show the longest suit first
     3CD = natural, canapé
     3HS = sets the trump suit
         3N = serious, control asking
-2N = !ds + other major, 16+ strong
+2N = !ds + other major, ~16--19 strong
     3D = waiting
     3H = ~12+ !h support
     4H = fast arrival, !h support
-3C = 5+ !ds and 4+ !cs, 16+ strong
+3C = 5+ !ds and 4+ !cs, ~16--19 strong
     4C = !c RKB, special case
     4D = !d RKB, special case
-3D = 6+ !ds, denies 4 !cs or other major
+3D = 6+ !ds, denies 4 !cs or other major, ~16--19
     3H = quasi natural, !h stop
         3S = no !c control, 2 card !s support
     3S = no stops, waiting, maybe !s slam interest
@@ -1203,7 +1203,12 @@ Compared to the [1D opening interference](#1D interference):
     3CDHS = preempt
 
 1C--(1D)
-    X = negative
+    Dbl = negative, ~8+ hcp, 4--4 majors
+        (3D) = jump interference
+            3HS = competitive
+            3N = to play
+            4C = natural, GF
+            4HS = ~16--18, 4+ support
     1HS = natural, 6+ hcp, *system off*
     1N = natural ~6--9
     2C = natural, F1
@@ -1216,10 +1221,31 @@ Compared to the [1D opening interference](#1D interference):
 
 1C--(1H)
     P = natural not game going v.s. strong hand, later bids balancing
-    X = 4--5 !ss ~6+ hcp or 6+ !ss invitational precisely
+    Dbl = 4--5 !ss ~6+ hcp or 6+ !ss invitational precisely, not GF if canapé
         1S = ~3 card support, weak NT
+            cue = force
+            2m = canapé
+            2S = 5 card invite
+            2N = invite
+            3m = invitational canapé
+            3S = 6 card invite
         1N = ~2 card support, weak NT hopefully with stop
+            2m = canapé
+            2N = invite
         2S = 4+ card support, weak NT
+        3S = 5+ support, 16--18
+        (2H) = interference
+            Dbl = support, 3 cards
+            cue = support
+            3S = 5+ support, 16--18
+        (3H) = jump interference
+            Dbl = 3+ card support, strong
+                3S = 4 !ss, bad
+                    4CD = natural, GF
+                3N = stop
+                    4CD = natural, GF
+            3S = competitive
+            4CD = natural, GF
     1S = 4+ !cs, not 4 !ss unless GF and bidding natural suit order
         1N = weak
             2H = stop ask
@@ -1248,10 +1274,13 @@ Compared to the [1D opening interference](#1D interference):
     4N = minors
 
 1C--(1S)
-    Dbl = 4--5 !hs or 6!h invitational precisely
+    Dbl = 4--5 !hs ~8+ hcp or 6!h invitational precisely, not GF if canapé
         1N = weak, maybe no !s stop
-        2H = weak, 4 card support
-        3H = likely weak, 5 card support
+            cue = force
+            2N = invite
+            3H = 6 card invite
+        2H = weak, 4+ card support
+        3H = 5+ support, 16--18
         others = strong, natural
         (2!s) = natural interference raise
             P = weak hand, not 4!hs
@@ -1259,7 +1288,7 @@ Compared to the [1D opening interference](#1D interference):
             2N = natural, strong
             others = strong
         (3!s) = interference, probably less than invite
-            P = weak hand
+            P = weak or bad strong minimum hand
                 X = takeout again
             4H = weak or strong, 5 card support likely
             others = strong
@@ -1291,7 +1320,7 @@ Compared to the [1D opening interference](#1D interference):
         2N = minors
         3x = strong, good 6+ suit
     X = penalty
-    Bid = [As 1N defence](#Opponents open 1NT)
+    Bid = [As weak 1N defence](#Opponents open 1NT)
 
 1C--(2C) natural
     X = stand in for 2!c Stayman
