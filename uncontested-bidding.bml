@@ -1663,18 +1663,19 @@ XX = Ace showing by opener after opponents lead directing double
 ** 1H interference
 
 1H--(X)
-    XX = doubleton !h, 6+ hcp, encourage 6 card suit rebid
+    XX = doubleton !h, 6+ hcp, encourage 6 card suit rebid, often like standard 1N bid
     1S = natural, forcing (by unpassed hand), ignores the double - later system on if possible e.g:
         1N = usual omnibus NT
             2CD = system on puppet bids
-    1N = !cs, 8+ hcp
-    2C = !ds, 8+ hcp
-    2D = !hs, mixed raise, invitational
-    2H = ~5--9 support points, with less pass then bid later
+    1N = !cs, 6+ hcp, sound weak two or better 6+ cards OR 5 cards and will bid again, or lead directing 4+ suit with 3 card support
+    2C = !ds, 6+ hcp
+    2D = !h transfer, ~8--10 support points, worse than mixed raise
+    2H = natural, very weak, ~4--7 useful support points
     2S = weak jump shift
     2N = invitational plus 4 card raise, 2N system on
-    3CDS = fit jump
-    3H = preemptive (use transfer for mixed raise)
+    3CS = fit jump
+    3D = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3H = preemptive
     4CD = splinter
     4S = to play (not splinter beyond game)
 
@@ -1720,8 +1721,9 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
             3N = extra values, !s control
             4H = minimum with !s control
     2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
-    3CD = fit jump
-    3H = mixed raise, good single raise
+    3C = fit jump
+    3D = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3H = preemptive
     3S = splinter, opponent's suit
     4CD = splinter
     4H = obstructive, undefined
@@ -1729,32 +1731,35 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
 
 1H--(1N)
     X = penalty
-    2C = 8--10 hcp, good !h raise, promises a top honour
+    2C = ~8--10 support points, good !h raise, worse than mixed raise
     2D = competitive, 5--2 !ss + !hs
-    2H = natural
+    2H = natural, ~4--7
     2S = competitive, natural
     2N = invitational plus, support, 2N system on
-    3CD = preempt
+    3C = preempt
+    3D = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3H = preemptive
 
 1H--(2!c)
     X = negative
     2DS = natural, 5+ cards, F1
-    2H = natural
+    2H = natural, less than mixed raise
     2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
     3C = invitational exactly OR minimum game hand, !h support
-    3DS = fit jump
-    3H = mixed raise (weak limit), ~7--9 support points and 4+ cards
+    3D = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3H = preemptive
+    3S = fit jump
     4CD = splinter
 
 1H--(2!d)
     X = negative
-    2H = natural
+    2H = natural, less than mixed raise
     2S = natural, 5+ cards, F1
     2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
-    3C = fit jump
+    3C = natural, 5+ cards, forcing
     3D = invitational exactly OR minimum game hand, !h support
-    3H = mixed raise (weak limit), ~7--9 support points and 4+ cards
-    3S = splinter
+    3H = mixed raise (no room for 1-under jump and preempt raise), ~7--9 support points and 4+ cards
+    3S = fit jump
     4CD = splinter
 
 1H--(2!h)
@@ -2322,51 +2327,54 @@ Normal Blackwood. Responder can bid their own suit at 5/6/7 level after opener s
 Similar to [1H interference](#1H interference).
 
 1S--(X)
-    XX = doubleton !s, 6+ hcp, encourage 6 card suit rebid
-    1N = !cs, 8+ hcp
-    2C = !ds, 8+ hcp
-    2D = !hs, 8+ hcp
-    2H = !ss, mixed raise, invitational
-    2S = ~5--9 support points, with less pass then bid later
+    XX = doubleton !s, 6+ hcp, encourage 6 card suit rebid, encourage 6 card suit rebid, often like standard 1N bid
+    1N = !cs, 6+ hcp, sound weak two or better 6+ cards OR 5 cards and will bid again, or lead directing 4+ suit with 3 card support
+    2C = !ds, 6+ hcp
+    2D = !hs, 6+ hcp
+    2H = !s transfer, ~8--10 support points, worse than mixed raise
+    2S = natural, very weak, ~4--7 useful support points
     2N = invitational plus 4 card raise, 2N system on
-    3CDH = fit jump
-    3S = preemptive (use transfer for mixed raise)
+    3CD = fit jump
+    3H = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3S = preemptive
     4CDH = splinter
 
 1S--(1N)
     X = penalty
-    2C = 8--10 hcp, good !s raise, promises a top honour
+    2C = ~8--10 support points, good !s raise, worse than mixed raise
     2D = competitive, 5--2 !hs + !ss
-    2H = natural, competitive
-    2S = natural
+    2H = natural, NF competitive
+    2S = natural, ~4--7
     2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
     3CD = preempt
+    3H = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3S = preemptive
 
 1S--(2!c)
     X = negative
     2DH = natural, 5+ cards, F1
-    2S = natural single raise, ~5--9 support points
+    2S = natural, less than mixed raise
     2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
     3C = invitational exactly OR minimum game hand, !s support
-    3DH = fit jump
-    3S = mixed raise (weak limit), ~7--9 support points and 4+ cards
+    3D = fit jump
+    3H = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3S = preemptive
     4CDH = splinter
 
 1S--(2!d)
     X = negative
     2H = natural, 5+ cards, F1
-    2S = natural single raise, ~5--9 support points
+    2S = natural, less than mixed raise
     2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
     3C = natural, forcing
     3D = invitational exactly OR minimum game hand, !s support
-    3H = fit jump
-    3S = mixed raise (weak limit), ~7--9 support points and 4+ cards
-    4C = fit jump
-    4DH = splinter
+    3H = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3S = preemptive
+    4CDH = splinter
 
 1S--(2!h)
     X = negative
-    2S = normal natural raise
+    2S = natural, less than mixed raise
         (P) = no compete
             2N = [general game try as single raise](#1S--2S)
             3S = extra trump length game try
@@ -2379,9 +2387,8 @@ Similar to [1H interference](#1H interference).
     2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
     3CD = natural, forcing
     3H = invitational exactly OR minimum game hand, !s support
-    3S = mixed raise (weak limit), ~7--9 support points and 4+ cards
-    4CD = fit jump
-    4H = splinter
+    3S = mixed raise (no room for 1-under jump and preempt raise), ~7--9 support points and 4+ cards
+    4CDH = splinter
 
 1S--(2!s)
     X = force, leading to penalty or forcing new suit bid

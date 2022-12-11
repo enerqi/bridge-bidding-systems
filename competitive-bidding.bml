@@ -97,14 +97,14 @@ Hand examples:
 - 2 level simple bids are natural, F1 freebids, 8+ good suit or typical 9/10+ < invite AFTER SUIT
 - 1N/2x simple bids are transfers AFTER TAKEOUT
 - 2 level new suit jumps are weak after suit or takeout
-- higher jump new suit are fit jumps
+- a 1-under (3M--1) jump is mixed for a major
+- other 3 level jumps are fit jumps, unless splinter of the opponent's suit
+- 4 level jumps are splinters
 - 4CD major slam tries AFTER MAJOR OPENING + JUMP PREEMPT
-- Splinters of the overcalled suit or when using double jumps
 - Cue bids exactly invitational HCR OR minimum game hand / limited defensive values / marginal balanced game hands, AFTER MAJOR OPENING...opponents can play undoubled, we may prefer 3N and struggle to make more than 4M
 - 1m--(2!c) then Stayman/NT system on AFTER MINOR OPENING
-- 3 level jump raise is Mixed (weak-limit), not trash pre-emptive (maybe bid 4 with a pure uncooperative pre-empt) AFTER SUIT
-- 3 level jump raise is preemptive AFTER TAKEOUT
-- 2N limit+ raise 3+ trumps, only stop if judge wasted values and minimum, implies likely to penalise opponents if we don't play the contract AFTER MAJOR OPENING, AFTER MAJOR TAKEOUT
+- 3 level jump raise is preemptive ~0--6 if a 1-under jump mixed raise is available AFTER SUIT or TAKEOUT
+- 2N limit+ raise 4(3)+ trumps, only stop if judge wasted values and minimum, implies likely to penalise opponents if we don't play the contract AFTER MAJOR OPENING, AFTER MAJOR TAKEOUT
 - 2N is artificial various, except 1!d--(2!c), AFTER MINOR TAKEOUT or MINOR OVERCALL
 - 1!c/1!d--(2 level jump) use the [Lebensohl scheme](#1NT Interference and Lebensohl)
 - 1!c/1!d--(1N) use normal constructive [weak 1NT defence](#Opponents open 1NT) as we have no well defined suit
@@ -784,6 +784,8 @@ With limited strength may want to hide distribution information and just bid the
         4H = to play
     3C = majors, strong, 8+PT ~17+ hcp
         3D = quasi natural, possibly NT stop hunt or early slam try
+            3M = better major
+                4HS = slam interest, encouraging RKB
         Major = natural, any level
         4C = choose a major, later 4N double fit RKB
     3DHS = normal preempt
@@ -809,7 +811,7 @@ With limited strength may want to hide distribution information and just bid the
 (1C)--1D--(other)
     X = values 9+, maybe moderate NF support
     2C = natural if can be < 3 card OR HCR
-    2CueOther = natural, psyche guard, sitting over
+    2CueOver = natural, psyche guard, sitting over
     2D = natural raise, ~5--8
     2Y = new suit, NF constructive ~8--12
     2S = (jump) natural, NF, good 6 carder invitational - as 3x new suit bid
@@ -1386,9 +1388,12 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
         3C = natural, invitational
     2H = natural, sound
         (P/Dbl) = opponent responds below 2!s
-            2S = !c transfer advance
+            2S = HCR
             2N = natural
-            3CD = !d/!h transfer advance
+            3CD = natural, forcing
+            3H = competitive
+            3S = splinter
+            4CD = splinter
     2S = 5--5+ (!h + !d limited) OR (!h + !c *strong*)
         2N = minor ask, invite plus
             3CD = !c strong / !d weak
@@ -1416,6 +1421,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
         3S = general force
             3N = waiting
                 4CD = slam try
+                4N = double fit RKB
         4CD = good minor raise, either 3 cards + 3 useful features (A, K or short in partner's suits) or 4 cards + 2 useful features
         4H = to play
     3C = 5--5+, !cs + !hs, not strong
@@ -1426,6 +1432,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
         4D = Redwood, !c slam try
         4H = to play
         4S = Kickback, !h slam try
+        4N = double fit RKB
     3DH = preempt weak/intermediate
     3S = stopper ask, solid minor
 
