@@ -802,7 +802,7 @@ Natural, up to 11 hcp, no 4 card major
     Others = [1N system on](#1NT Opening)
 
 1D--(2D) assuming michaels, both majors
-    X = penalty
+    X = values/penalty
     2H = !cs, invitational plus
     2S = !ds, invitational plus
     2N = natural
@@ -955,7 +955,7 @@ By responder example:
   2N = [limit+ raise](#1H--2N)
   3C = [6+ !cs, invitational ~10--12, no major support](#1H--3C)
   3D = [6+ !ds, invitational ~10--12, no major support](#1H--3D)
-  3H = [Mixed raise ~7--9(10) support points, 7.5--9 losers, 4+ cards, distributional unless 5+ cards](#1H--3H)
+  3H = [Mixed raise ~7--9(10) support points, 7.5--9 losers, 4+ cards](#1H--3H)
   3S = [unknown singleton splinter, 10--13 hcp 3 cover cards](#1H--3S)
   3N = [splinter !s, 13--16 hcp 4.5+ cover cards (passed hand - FJ mild slam interest)](#1H--3N/4C/4D)
   4C = [splinter !c, 13--16 hcp 4.5+ cover cards (passed hand - FJ mild slam interest)](#1H--3N/4C/4D)
@@ -1216,7 +1216,7 @@ Maximum, 6 loser, 6(7)--4 with a minor. The reasonable alternative is a good max
 Single raise, 3+ cards
 
 - could be light semi-preemptive
-- not worth a mixed raise, so 4 card support hands probably flat or ~4--6(7) hcp
+- not worth a mixed raise, so 4 card support hands probably flat or ~4--6 hcp
 - use the "semi" forcing 1NT for the 3 card game invite
 - opener needs a good hand to continue, usually 6 losers or better (note a 5 loser single suiter often opens 1!c)
 
@@ -1625,7 +1625,7 @@ Similar to 1!h--3!c:
 
 ** 1H--3H
 
-Mixed raise (weak limit raise) -- ~7--9(10) support points, 7.5--9 losers, 4+ cards, distributional unless 5+ cards
+Mixed raise (weak limit raise) -- ~7--9(10) support points, 7.5--9 losers, 4+ cards
 
 - New suit by opener is extreme two suiter slam try.
 - Almost always wrong to bid game with 5--3--3--2/5--4--2--2.
@@ -1669,14 +1669,15 @@ XX = Ace showing by opener after opponents lead directing double
             2CD = system on puppet bids
     1N = !cs, 6+ hcp, sound weak two or better 6+ cards OR 5 cards and will bid again, or lead directing 4+ suit with 3 card support
     2C = !ds, 6+ hcp
-    2D = !h transfer, ~8--10 support points, worse than mixed raise
-    2H = natural, very weak, ~4--7 useful support points
+    2D = !h transfer, 3 cards ~8--10 support points, worse than mixed raise
+    2H = natural, very weak, 3 cards ~4--7 useful support points
     2S = weak jump shift
-    2N = invitational plus 4 card raise, 2N system on
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition), 2N system on
     3CS = fit jump
     3D = 1-under jump, mixed raise ~7--9 hcp, 4 card support
-    3H = preemptive
-    4CD = splinter
+    3H = preemptive, ~0--6
+    4C = splinter
+    4D = fit jump (no 3D fit jump available)
     4S = to play (not splinter beyond game)
 
 Second round bids ignore the T/O X if advancer bids nothing, e.g. 1H--(X)--1S--(P)--1N--(P)
@@ -1714,58 +1715,62 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
             3H = weaker not invitational, reasonable suit/shape
             3S = GF, !s shortage, offensive hand
             4CD = GF, shapely 2 suiter
-    2S = !h support, invitational exactly OR minimum game hand
+    2S = !h support, [HCR](#Major HCR cue bids and 2N Raise in Competition)
         (3S) = compete, handle as [2NT Invite Plus Interference](#2NT Invite Plus Interference)
             P = no shortage, no control
             X = extra values, singleton/void - SPECIAL non-penalty agreement
             3N = extra values, !s control
             4H = minimum with !s control
-    2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition), 2N system on
     3C = fit jump
     3D = 1-under jump, mixed raise ~7--9 hcp, 4 card support
     3H = preemptive
     3S = splinter, opponent's suit
-    4CD = splinter
+    4C = splinter
+    4D = fit jump (no 3D fit jump available)
     4H = obstructive, undefined
     4S = confusing, avoid (could be EKB or RKB for !hs)
 
 1H--(1N)
     X = penalty
     2C = ~8--10 support points, good !h raise, worse than mixed raise
-    2D = competitive, 5--2 !ss + !hs
+    2D = competitive, 5--3 !ss + !hs typically, maybe 5--2 with Hx
     2H = natural, ~4--7
     2S = competitive, natural
-    2N = invitational plus, support, 2N system on
-    3C = preempt
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition), 2N system on
+    3C = preempt (no natural minor bid available at lower level)
     3D = 1-under jump, mixed raise ~7--9 hcp, 4 card support
     3H = preemptive
+    3S = fit jump
 
 1H--(2!c)
     X = negative
     2DS = natural, 5+ cards, F1
     2H = natural, less than mixed raise
-    2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
-    3C = invitational exactly OR minimum game hand, !h support
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition), 2N system on
+    3C = [HCR](#Major HCR cue bids and 2N Raise in Competition)
     3D = 1-under jump, mixed raise ~7--9 hcp, 4 card support
     3H = preemptive
     3S = fit jump
-    4CD = splinter
+    4C = splinter
+    4D = fit jump (no 3D fit jump available)
 
 1H--(2!d)
     X = negative
     2H = natural, less than mixed raise
     2S = natural, 5+ cards, F1
-    2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition), 2N system on
     3C = natural, 5+ cards, forcing
-    3D = invitational exactly OR minimum game hand, !h support
+    3D = [HCR](#Major HCR cue bids and 2N Raise in Competition)
     3H = mixed raise (no room for 1-under jump and preempt raise), ~7--9 support points and 4+ cards
     3S = fit jump
-    4CD = splinter
+    4C = fit jump (no 3C fit jump available)
+    4D = splinter
 
 1H--(2!h)
-    X = force, leading to penalty or forcing new suit bid
-    2S = cue of implied major, invitational precisely OR if two suits shown, lowest unbid suit
-    2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
+    X = values
+    2S = [cue of implied major HCR](#Major HCR cue bids and 2N Raise in Competition) OR if two suits shown, lowest unbid suit
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition), 2N system on
     3CD = natural, NF invitational. With known minor to cue, shows forcing other minor bid.
     3H = NF, weaker
     3S = splinter
@@ -1773,17 +1778,17 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
 
 1H--(2!s)
     X = negative, maybe invite with 3 card support
-    2N = invitational plus, support, 2N system on
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition), 2N system on
     3H = NF, weaker roughly mixed raise
     3x = forcing
     4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
 
 1H--(2N)  presumably minors
-    X = penalty interest, but can also pass then X showing values but not much in their suit
+    X = vales
     3C = invitational plus, !h
     3D = other major, invitational plus
-    3H = weaker
-    3S = natural, weaker
+    3H = natural, less than invite
+    3S = natural, less than invite
     4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
     4HS = to play (passed hand - fit jump other major)
 
@@ -1854,7 +1859,7 @@ at the 3 level.
   3C = [6+ !cs, invitational ~10--12, no major support](#1S--3C)
   3D = [6+ !ds, invitational ~10--12, no major support](#1S--3D)
   3H = [6+ !hs, invitational ~10--12, no major support](#1S--3H)
-  3S = [Mixed raise ~7--9(10) support points, 7.5--9 losers, 4+ cards, distributional unless 5+ cards](#1S--3S)
+  3S = [Mixed raise ~7--9(10) support points, 7.5--9 losers, 4+ cards](#1S--3S)
   3N = [unknown singleton splinter, 10--13 hcp 3 cover cards, ~9--12 by passed hand](#1S--3N)
   4C = [splinter !c or !h, 13--16 hcp 4.5+ cover cards (passed hand - FJ mild slam interest)](#1S--4C)
   4D = [splinter !d, 13--16 hcp 4.5+ cover cards (passed hand - FJ mild slam interest)](#1S--4D)
@@ -2279,7 +2284,7 @@ Not as much suit quality required as the minor bids - directed to a major game i
 
 ** 1S--3S
 
-Mixed raise (weak limit raise) -- ~7--9(10) support points, 7.5--9 losers, 4+ cards, distributional unless 5+ cards
+Mixed raise (weak limit raise) -- ~7--9(10) support points, 7.5--9 losers, 4+ cards
 
 - New suit by opener is extreme two suiter slam try.
 - Almost always wrong to bid game with 5--3--3--2/5--4--2--2.
@@ -2327,54 +2332,58 @@ Normal Blackwood. Responder can bid their own suit at 5/6/7 level after opener s
 Similar to [1H interference](#1H interference).
 
 1S--(X)
-    XX = doubleton !s, 6+ hcp, encourage 6 card suit rebid, encourage 6 card suit rebid, often like standard 1N bid
+    XX = doubleton !s, 6+ hcp, encourage 6 card suit rebid, often like standard 1N bid
     1N = !cs, 6+ hcp, sound weak two or better 6+ cards OR 5 cards and will bid again, or lead directing 4+ suit with 3 card support
     2C = !ds, 6+ hcp
     2D = !hs, 6+ hcp
-    2H = !s transfer, ~8--10 support points, worse than mixed raise
-    2S = natural, very weak, ~4--7 useful support points
-    2N = invitational plus 4 card raise, 2N system on
+    2H = !s transfer, 3 cards ~8--10 support points, worse than mixed raise
+    2S = natural, very weak, 3 cards ~4--7 useful support points
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition), 2N system on
     3CD = fit jump
     3H = 1-under jump, mixed raise ~7--9 hcp, 4 card support
     3S = preemptive
-    4CDH = splinter
+    4CD = splinter
+    4H = to play (no fit jumps at game level)
 
 1S--(1N)
     X = penalty
-    2C = ~8--10 support points, good !s raise, worse than mixed raise
-    2D = competitive, 5--2 !hs + !ss
+    2C = ~8--10 support points, 3 cards, good !s raise, worse than mixed raise
+    2D = competitive, 5--3 !hs + !ss typically, maybe 5--2 with Hx
     2H = natural, NF competitive
-    2S = natural, ~4--7
-    2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
-    3CD = preempt
+    2S = natural, ~4--7, 3 cards
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition), 2N system on
+    3CD = preempt (no natural minor bid available at lower level)
     3H = 1-under jump, mixed raise ~7--9 hcp, 4 card support
     3S = preemptive
 
 1S--(2!c)
     X = negative
     2DH = natural, 5+ cards, F1
-    2S = natural, less than mixed raise
-    2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
-    3C = invitational exactly OR minimum game hand, !s support
+    2S = natural, ~6--10, 3 cards, less than mixed raise
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition), 2N system on
+    3C = [HCR](#Major HCR cue bids and 2N Raise in Competition)
     3D = fit jump
     3H = 1-under jump, mixed raise ~7--9 hcp, 4 card support
     3S = preemptive
-    4CDH = splinter
+    4CD = splinter
+    4H = to play (no fit jumps at game level)
 
 1S--(2!d)
     X = negative
     2H = natural, 5+ cards, F1
-    2S = natural, less than mixed raise
-    2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
+    2S = natural, ~6--10, 3 cards, less than mixed raise
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition), 2N system on
     3C = natural, forcing
-    3D = invitational exactly OR minimum game hand, !s support
+    3D = [HCR](#Major HCR cue bids and 2N Raise in Competition)
     3H = 1-under jump, mixed raise ~7--9 hcp, 4 card support
     3S = preemptive
-    4CDH = splinter
+    4C = fit jump (no 3C fit jump available)
+    4D = splinter
+    4H = to play (no fit jumps at game level)
 
 1S--(2!h)
     X = negative
-    2S = natural, less than mixed raise
+    2S = natural, ~6--10, 3 cards, less than mixed raise
         (P) = no compete
             2N = [general game try as single raise](#1S--2S)
             3S = extra trump length game try
@@ -2384,15 +2393,16 @@ Similar to [1H interference](#1H interference).
             4CD = natural, maximum, implies offensive shapely hand maybe 5!s suitable
             4H = GF, !h shortage, good suit/shape
             4S = maximum, good suit/shape, no !h shortage
-    2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition), 2N system on
     3CD = natural, forcing
-    3H = invitational exactly OR minimum game hand, !s support
+    3H = [HCR](#Major HCR cue bids and 2N Raise in Competition)
     3S = mixed raise (no room for 1-under jump and preempt raise), ~7--9 support points and 4+ cards
-    4CDH = splinter
+    4CD = fit jump (no 3CD fit jump available)
+    4H = to play (no fit jumps at game level)
 
 1S--(2!s)
-    X = force, leading to penalty or forcing new suit bid
-    2N = invitational plus, support, only stop if judge wasted values and minimum, 2N system on
+    X = values
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition), 2N system on
     3CD = natural, NF invitational. With known minor to cue, shows forcing other minor bid.
     3H = cue of implied major, invitational exactly OR minimum game hand, !s support
     3S = NF
@@ -2401,11 +2411,11 @@ Similar to [1H interference](#1H interference).
 
 
 1S--(2N)  presumably minors
-    X = penalty interest, but can also pass then X showing values but not much in their suit
-    3C = other major, invitational plus
+    X = values
+    3C = !hs, invitational plus
     3D = invitational plus, !s
-    3H = natural, weaker
-    3S = weaker
+    3H = natural, less than invite
+    3S = natural, less than invite
     4CD = [!s slam tries](#Major Opening and Responder's 4CD Slam Try)
     4HS = to play (passed hand - fit jump other major)
 

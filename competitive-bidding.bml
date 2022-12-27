@@ -5,45 +5,50 @@
 ** We Overcall or X/XX Summary
 
 - Generally based more on shape than exact strength
-- 1 level light major suit overcalls, ~8+ hcp and sensible suits with low hcp
-- Minor overcalls more likely 10+ reasonable opening bids
-- 2 level minor overcalls are fine on "bad" 5 carders e.g. AJxxx if partner not passed and have enough values / other suit tolerance
-- 2 level overcalls 10+ hcp
+- 1 level light major suit overcalls, ~(7)8+ hcp and sensible suits or unbalanced with low hcp or VUL
+- 1D overcalls are likely 10+ reasonable opening bids
+- 2 level minor overcalls are fine on "bad" 5 carders e.g. AJxxx+ iff partner not passed and have enough values / other suit tolerance
+- 2 level minor overcalls should not be less than an opening hand, expect partner to look for 3N
 - Responsive doubles to 3!s
 - [2!c Advancer's Relay Strength Ask](#Advancer's 2C Relay) by advancer after 1!h/1!s overcall due to wide range
 - [Einar cue bid](#Einar Cue Bid) by overcaller showing no good rebid or extras
 - XX of major overcall is Hx+ 9+ OR 13+ catchall
-- X by advancer is values 9+, maybe poor support
+- X by advancer is values ~(9)10+, maybe poor support
 - Jump 2HS new suit is ~10–12 and good 6 card suit
 - Jump 3x new suit is invitational and good 6 card suit
-- Simple cue bids are varied in meaning, artificial - strength ask, HCR, even switch-transfer 2CD overcall
-- Overcaller responding to transfers and transfer cues: complete with 2 / bad 3 cards, find another bid with less, exciting bid with more
-- HCR cue is precisely invitational with support of 1x overcall
-- 2N advance of 1x overcall is limit+ raise, often unbalanced
-- 2N advance of 2x overcall is natural
+- Simple cue bids are varied in meaning, artificial - strength ask, HCR, even switch-transfer advancing a 2CD overcall
+- Overcaller responding to transfers and transfer cues: complete with 2 / bad 3 cards, find another bid with less, with
+  exciting hands bid more
+- [HCR cue](#Major HCR cue bids and 2N Raise in Competition) strength depends on other available bids
+- 2N advance of 2x overcall is natural, otherwise [2N is support showing](#Major HCR cue bids and 2N Raise in Competition)
 - Switch transfers over 2CD overcalls
 - Jump cue (3 level) is a mixed raise supporting a major
 - Jump cue (3 level) is a splinter supporting a minor
-- 3 level raise pre-emptive, below mixed raise values, definitely cooperative if responder bids
-- when opponents have 2 suits a 4th position (sandwich): cue sitting OVER is natural, cue sitting UNDER is *Michaels*, 2N better Michaels (6--5 usually)
+- 3 level raise depends is responder bids a balance of [pre-emptive and cooperative](#Major HCR cue bids and 2N Raise in Competition)
+- when opponents have 2 suits a 4th position (sandwich): cue sitting OVER is natural, cue sitting UNDER is *Michaels*,
+  2N better Michaels (6--5 usually) unless there are three unbid suits then unusual
 - when opponents bid (1 Major)--(1NT) cue is *Michaels*
 - when opponents bid (1 minor)--(1NT), special case, 2C is (5--4) majors, 2D is 5--5 majors regardless of minor opened
-- when opponents have 2 suits and partner doubles X: advancer's cue when sitting OVER is natural, advancer's cue sitting UNDER is a general force
+- when opponents have 2 suits and partner doubles X: advancer's cue when sitting OVER is natural, advancer's cue sitting
+  UNDER is a general force
 - when balancing, e.g. (1!d)--P--(P)--2D, a cue bid is *Michaels*, never natural over prepared minor as sitting under
-- when a passed hand reopens over 2!s, (1!s)--P--(2!s)--P--(P)--2N, this special case is 5--4+ minors
-- over opponents bid (1!h)--P--(1!s), special case, 2H cue is !s + minor Michaels (not both minors), 2S is still natural
+- when a passed hand reopens over 2!s, (1!s)--P--(2!s)--P--(P)--2N, this special case is 5--4+ minors (would double with !hs)
+- over opponents bid (1!h)--P--(1!s), special case, 2H cue is !s + minor Michaels (not both minors), 2S is still natural cue sitting over
 - over opponents bid (1!s)--P--(2!s), special case, 2N is 5+!hs with 4+ minor
 
-*** Minimum Equal Level Conversion after Takeout Doubles
+*** Minimum Level Conversion and Takeout Doubles
 
 - any level takeout doubles then correcting to the cheapest other suit shows a different 2 suiter and not any extras
-- reasonable defensive values are required for a takeout double, not some very light overcall
-- 6--4 major hands can be bid like 5--4 hands after the takeout double.
+- reasonable defensive values are required for a takeout double, not some very light overcall - advancer will push to
+  game with 13+ and invite with ~10--12 on their own suit
+- 6--4 major hands can optionally be bid like 5--4 hands after the takeout double.
 - 6 major and 4 minor will typically ignore the minor.
 - minor X then ELC typically is only both majors, not a minor major
 - can include the less common style with !cs and a major, correcting to a major suggesting long minor and 4 card major
-- a jump in the lower suit or forcing to a higher level implies a strong two suiter 5--5+ (that doesn't fit agreed strength ranges of the main two suiter overcalls)
-- concept may also apply to high level bids with limited space like 4N, e.g. (4!s)--4N, or a cue bid showing a two suiter when there are 3 unknown suits
+- a jump in the lower suit or forcing to a higher level implies a strong two suiter 5--5+ (that doesn't fit agreed
+  strength ranges of the main two suiter overcalls)
+- concept may also apply to high level bids with limited space like 4N, e.g. (4!s)--4N, or a cue bid showing a two
+  suiter when there are 3 unknown suits
 - very strong single suiters are rare, and may need to jump cue bid or double and jump cue bid, or just bid game
 
 *** Cue Bids and Jump Overcalls Summary
@@ -60,7 +65,7 @@
 - Playing at the 3 level needs better suit quality, especially VUL
 - The !h + minor 2!s cue and 2N force to the 3 level in both suits so need good quality
 - The 2N extra quality accounts for us having the lowest ranked suits, so less likely to win the auction
-- HCP outside your suits unless Ace or King have very little value - we describe offensive hands that
+- HCP outside your suits unless Ace or King have very little value - we want *offensive hands* that
 can make a game opposite very little
 
 Hand examples:
@@ -94,35 +99,33 @@ Hand examples:
 
 ** We Open they Interfere Summary
 
-- 2 level simple bids are natural, F1 freebids, 8+ good suit or typical 9/10+ < invite AFTER SUIT
+- 2 level simple bids are natural, F1 freebids, 8+ good suit or typical 9/10+, less than invite AFTER SUIT
 - 1N/2x simple bids are transfers AFTER TAKEOUT
 - 2 level new suit jumps are weak after suit or takeout
 - a 1-under (3M--1) jump is mixed for a major
-- other 3 level jumps are fit jumps, unless splinter of the opponent's suit
-- 4 level jumps are splinters
+- other jumps are [priority fit or splinter](#Fit Jumps and Splinters in Competition)
 - 4CD major slam tries AFTER MAJOR OPENING + JUMP PREEMPT
-- Cue bids exactly invitational HCR OR minimum game hand / limited defensive values / marginal balanced game hands, AFTER MAJOR OPENING...opponents can play undoubled, we may prefer 3N and struggle to make more than 4M
+- [Cue bids](#Major HCR cue bids and 2N Raise in Competition) exactly invitational HCR OR minimum game hand / limited defensive values / marginal balanced game hands, AFTER MAJOR OPENING
 - 1m--(2!c) then Stayman/NT system on AFTER MINOR OPENING
-- 3 level jump raise is preemptive ~0--6 if a 1-under jump mixed raise is available AFTER SUIT or TAKEOUT
-- 2N limit+ raise 4(3)+ trumps, only stop if judge wasted values and minimum, implies likely to penalise opponents if we don't play the contract AFTER MAJOR OPENING, AFTER MAJOR TAKEOUT
+- 3 level jump raise is preemptive ~0--6 if a 1-under jump mixed raise is available, else mixed replacement AFTER SUIT or TAKEOUT
+- [2N limit+ raise](#Major HCR cue bids and 2N Raise in Competition), only stop if judge wasted values and minimum, implies likely to penalise opponents if we don't play the contract AFTER MAJOR OPENING, AFTER MAJOR TAKEOUT
 - 2N is artificial various, except 1!d--(2!c), AFTER MINOR TAKEOUT or MINOR OVERCALL
 - 1!c/1!d--(2 level jump) use the [Lebensohl scheme](#1NT Interference and Lebensohl)
 - 1!c/1!d--(1N) use normal constructive [weak 1NT defence](#Opponents open 1NT) as we have no well defined suit
 - 1!h/!s--(1N) 2!c is a good 8--10 raise, 2!d artificial 5--2 other major with 2 card support, 2M natural, 2N usual limit+ raise system
-- Transfer bids after 1!c opening and suit O/C (not just over takeout X like 1!d!h!s openers)
+- Transfer bids after 1!c opening and 1HS O/C (not just over takeout X like 1!d!h!s openers)
 - Negative doubles to 4!h
 - XX after opponent's takeout double varies: *doubleton* support 6+ for a *major*, but next suit *transfer* after *minor* opening
 - Support doubles by *opener* for partner's *1x major* response and *weak 2x major* response
-- X/XX of cue bids of *our suit is extra length*, but *partner's suit is Stolen bid* showing
+- X/XX of cue bids of *our suit is extra length*, but of *partner's suit is Stolen bid* support showing
 
 ** 4th balancing of 1x openings
 
 - same strengths
 - 2N is natural stronger than X then NT bid, not unusual
 - 2 minor cue is always Michaels as sitting under any prepared minor
-- other 2 suiter bids are the same
+- 2HS is a standard minimum opening good 6 carder
 - slightly more chance of 4 card suit at the 1 level, e.g. AQJ10/Axxx/xxxx/x or avoiding 1N vulnerable
-- jumps are good hands (intermediate ~12--15), but again special 2 suiter bids are the same shapes
 - 1N is ~11--15 (maybe 16 over 1!h/!s), use instead of a weak 4 card suit, no stopper guaranteed
 - X usual takeout, but lighter ~8+ depending on shape
 - jump cue bid is a stopper ask
@@ -140,8 +143,8 @@ Follow up responses are roughly 1 point more conservative
 **** responding to 4th balancing jump bid
 
 - new suits are forcing natural
-- cue strong game try
-- raise weaker limit raise
+- cue strong (for passed hand) game try
+- raise mixed weaker
 - 2N forcing
 
 **** responding to 4th balancing 1NT
@@ -157,7 +160,7 @@ Follow up responses are roughly 1 point more conservative
 *** Passed hand balancing
 
 - Over (1!h) 1N is long minor + 4 !ss
-- Over (1!s) 1N is !h + minor 5--5
+- Over (1!s) 1N is long minor + !hs, more likely 5--5 as unlikely to out compete !ss
 - 2N would be 6--5 lower unbid suits
 
 ** We Open with Fit and Slam Potential then 4th Hand High Level Interference
@@ -172,7 +175,11 @@ The primary situation is 1HS--2N, but there's other situations. In summary:
 - 1HS--Splinter--(4x) major support splinter slam try
 - 2D--4C--(3S/4x) slam try suit set
 
-When 4th hand come in high unsupported, then always *double* is *penalty*.
+Continuations in general:
+
+- When 4th hand comes in high unsupported, then always *double* is *penalty*
+- 3N by opener is always artificial when the opponents come in high after we have a fit
+- See examples in [1HS--2NT Invite Plus Interference](#2NT Invite Plus Interference)
 
 **** 3 level rebid available
 
@@ -204,21 +211,97 @@ Pass used to show a control in the overcalled suit.
         X = extra strength ask (last train like), slam try
     4H = minimum, no control, assumes we will always compete to game
 
-*** We Open Potential Game Plus Hands while 2nd and 4th Hand Compete
 
-- we bid a *major* in 1st and 3rd with a fit and game invitational plus values
-- !d opening hands not considered strong enough
+** Major HCR cue bids and 2N Raise in Competition
 
-Refer to [1HS--2NT Invite Plus Interference](#2NT Invite Plus Interference)
+Either when we open and 2nd position overcalls, or when we overcall and later advance the bidding, there is often a
+choice between a HCR cue bid and a 2N support bid.
+
+A 2N bid is natural in very few places - only when we overcall at the 2 level, 3rd hand passes and advancer bids 2N. As 3rd
+hand has passed it can be reasonable to assume we can have the combined values for 3N.
+
+The meanings applied when we open v.s. overcall are different:
+
+*** When We Open
+
+When we open 1HS a 2N bid after competition from 2nd hand is always support showing. What's the difference between
+a HCR and 2N? Contrary to the common style of distinguishing 3 vs 4+ card raising we currently experiment with:
+
+- HCR is invitational or minimum game hand, may stop at 3M. Maybe too defensive or weak to compete above 4M. Maybe
+  interested in 3NT - defensive/balanced.
+- The 2N bid is almost game forcing (only minimum opener with honours sat under overcaller may avoid game), opponent's cannot
+  play undoubled
+
+The differences depend on length in the opponent's suit, strength, offensive/defensive ratio
+
+*** When We Overcall
+
+The bids change in meaning compared to when we open and face an overcall. We may have a lot of tempo (e.g. responder
+passes and partner overcalled 1!h!s giving us space and time), or we may be under pressure in a live auction (e.g. the
+opponents have a fit and have raised or even preempt raised the auction - (1!d)--1S--(3!d)).
+
+**** When Responder Passes
+
+We have maximum tempo, so:
+
+- jump raises are mildly cooperative, e.g. 4--7 and something suitable for level and vulnerability
+
+**** When Responder Bids
+
+- 3 level (jump or not) raises are cooperative, which allows partner to bid with the right hand (they do have a wide
+  ranging overcall). Jumps are worth less than any invitational support bids we have, usually the sort of hand
+  that expects to get pushed to the 3 level and so bids early to make the opponenents guess.
+- double is responsive, e.g. (1!d)--1S--(3!d)--X, not support showing, when they bid and raise (OBAR). This becomes
+  mainly value showing from 3S.
+- there maybe limited support tools at the 3 level, though maybe natural game try is possible, e.g (1!d)--1S--(3!d)--3H.
+
+**** Advancers Support Tools
+
+Some may not be available depending on how high responder has pushed the bidding and so you have to blend the meanings
+
+- jump cue bids are mixed raises
+- cue bid of their raised suit or major is a HCR, worse than 2N
+- cue bid of an *unraised* prepared minor is a general force
+- cue bid of a 3rd suit is stop SHOWing, e.g. (1!d)--1S--(2!h)--3H. A cue over is *not* natural when partner has overcalled
+  a suit.
+- 2N is the best invitational raise, therefore usually unbalanced, but still possibly 3 card support and very good
+  values (e.g. 13--15 hcp).
+- cue higher than 3 of our suit should be splinter like, offensive GF
+
+
+** Fit Jumps and Splinters in Competition
+
+- Fit jumps only happen in competition
+- Fit jumps take priority over splinters, making splinters in competition unavailable at times
+- Fit jumps are impossible in the opponent's suit, always a splinter
+
+When is a jump a fit jump? The following must *all* be *true* about the bid:
+
+- we have another way to bid the fit jump suit either naturally or artificially directly at a lower level
+- below 4H game
+- we open 1HS or 2HS (and very rarely open 1CD, bid a suit naturally and then get delayed competition). Not over
+  intermediate 2CD given limited space available to show NF or forcing natural suits. Not over 1CD as they do not show
+  any suit.
+- when we open 1HS or 2HS, only after simple overcalls by the opponent (after 1HS--(jump) 4!c!d are artificial slam tries)
+- we simple overcall anything (1x, 1N, multi, weak two etc.), regardless of whether 3rd hands bids, regardless if advancer is 4th or 6th position
+
+What about a double jump?
+
+Double jumps below 4H are fit jumps iff a fit jump is not available as a single jump, e.g. because a single jump shows a
+natural invitational suit OR a 1-under mixed raise. Otherwise a double jump is a splinter below 4H game (a direct 4!h
+could only be a splinter in a slow constructive auction - 2nd rebid e.g. 1!s--2!d--2!s--4!h).
+
 
 ** Doubles
 
-- Is it a standard *negative* double situation? Negative X played to 4!h (but Thrump over double jump to 3DHS). Promising the unbid major(s) or ability
-  to handle the auction based on partner's next bid. Used to start a *stop ask* (Directional Asking Bid).
+- Is it a standard *negative* double situation? Negative X played to 4!h (but more values showing Thrump style over
+  double jump to 3DHS). Promising the unbid major(s) or ability to handle the auction based on partner's next bid. Used
+  to start a *stop ask* (Directional Asking Bid).
 - Is it a standard *competitive* double situation? Competitive X played to 3!s. Double of opponents' raised suit
   when partner has opened or overcalled: 1H--(2D)--2H--(3D)--X
-- Is it a standard *responsive* double situation? Responsive X played to 3!s. Partner does takeout X of Opener and
-  then we X the opponents' raise (whether artificial - e.g. HCR or natural).
+- Is it a standard *responsive* double situation showing the other two suits? Responsive X played to 3!s. Partner does
+  takeout X or overcalls of opener and then we X the opponents' raise (OBAR). Their raise can be artificial. Note, this
+  is more value showing as it gets high level, especially over 3!s.
 
 If these do not apply then some blanket rules exist.
 
@@ -226,8 +309,8 @@ Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others pla
 *"All doubles of bids through 2!s are takeout UNLESS"*:
 
 1. It's defined above as one of *Negative, Competitive or Responsive*
-2. our side bid 1N
-3. our side bid and raised a suit
+2. our side bid 1N. See [Overcalls of our NT](#Overcalls of our NT) where normally first double is takeout, second penalty.
+3. our side bid and raised a suit. So, 1H--(P)--2H--(2S)--X should be penalty, whereas 1H--(1S)--2H--(2S)--X is competitive.
 4. our side redoubled
 5. our side made a penalty double or penalty pass
 6. the bid doubled was artificial
@@ -250,7 +333,6 @@ partner should play NT (we have Axx they Qx)
 
 *** Single Raise they Compete We Double
 
-- Some play doubles below 3!s as takeout, but at best this implies an unknown side suit double fit
 - Double shows extra values (possibly penalty)
 
 1H--(1S)--2H--(2S)
@@ -322,19 +404,6 @@ Pass then later X would allow opener to compete in the minors suits.
 
 X then shows a HCR.
 
-*** Fit Jump by Opponents' then we Double - when we overcalled
-
-(1H)--1S--(3C)
-    X = !s fit and 4th suit (artificial fit showing)
-
-When 3!c showing !cs and !h fit
-
-*** Redouble of Negative Double - when we simple overcalled
-
-E.g. (1!c)--1!s--(X)--XX, (1!d)--1!h--(X)--XX, (1!s)--2!d--(X)--XX
-
-Is [advancer's 2!c relay](#Advancer's 2C Relay)
-
 *** Extra trump redouble - we stop 2HS they takeout X
 
 Examples:
@@ -388,7 +457,6 @@ Helping to right side 3N or not play it.
 
 3!s cue here could be a proxy for a very strong unbalanced hand, not a DAB with something in !s, but then 3N will be pulled anyway.
 
-
 *** 3N Contract Lead Directing Double
 
 Standard meanings by the defender sitting under the declarer:
@@ -398,19 +466,9 @@ Standard meanings by the defender sitting under the declarer:
 - lead dummies first bid suit
 - lead shortest major if not suits mentioned
 
-** Light 4th seat Balancing bids
-
-(OBAR) "Opponents Bid And Raise – Balance In Direct Seat"
-
-Opponents bid raise a fit below 2!s (1CDH)--(2CDH), then a 4th position bid is based
-on law total tricks theory and caution depending on vulnerability, length in their suit etc.
-
-E.g. (1H)--(2H) then bid 2!s on KQJxx/xx/J10x/xxx vulnerability dependent.
-
-
 ** Major Opening and Responder's 4CD Slam Try
 
-We open 1H/1S and opponents interfere with a single or two suiter jump bid
+We open 1H/1S and opponents interfere with a jump bid (either one or two suiter)
 
 **** One known opponent's suit  (whether showing one or two suiter)
 
@@ -483,7 +541,7 @@ by Responder it follows the slam bidding 4N rules
 E.g. (1C)--1!s--(P)--2!h--(X)
 
 - overcaller can pass with nothing to say
-- XX shows extra values, NOT LIGHT overcall, but not want to go higher if partner is minimum 10--12
+- XX shows extra values, NOT LIGHT overcall, but not want to go higher if partner is minimum
 - 2S extra length
 
 ** Opener's Second Round Double - After Partner's 2 Level WJS
@@ -504,31 +562,51 @@ Double shows support and extras in shape or HCP
 
 ** Opener's Good-Bad 2N Rebid in Competition
 
-After (2DHS) in 4th by the opposition (RHS of opener), 2N shows strong support or a weaker other suit.
+- After (2DHS) in 4th by the opposition (RHS of opener), 2N shows strong support or a weaker other suit.
+- More common after strong 1C opening as a limited opener can often cue bid or jump to show a good raise
 
 1H--(P)--1N--(2S)
-    2N = good-bad, assumed weak !c or !d suit in this case
+    2N = good-bad, assumed weak !c or !d suit in this case as no suit to support
     3CD = maximum, natural
+    3S = weird bid, GF, shortage
 
-1H--(P)--1S--(2C) have room at 2 level here
+1H--(P)--1S--(2C) have room at 2 level here, so cue bid enough
     2DH = natural
-    2N = natural, presumably solid-ish !ds and !c stop
+    3C = max, good !s raise
+    3S = medium, good !s raise
 
-1H--(P)--1S--(2D)
-    2N = good-bad
+1H--(P)--1S--(2D) also just use a cue
+    3D = max, good !s raise
+    3S = medium, good !s raise
+
+1D--(P)--1H--(2S) now benefit from artificial 2N
+    2N = max, good !h raise, OR minors
+    3CD = maximum, natural, 5--5 minors
+    3S = GF, shortage
+
+1C--(P)--1H--(2S)
+    2N = strong !h support without !s shortage, or more minimal 16--19 minor holding
+    3H = invitational, probably weak NT
+    3S = GF, shortage
+
+1C--(P)--2D--(2H)
+    X = penalty
+    2S = strong, natural
+    2N = minimum strong !cs
+    3C = sound strong !cs
+    3H = general force
 
 [Example after 1D opening](#Good-Bad 2N over 2DHS interference by 4th hand)
 
 ** Opener's Good-Bad 2N Rebid After Major NF
 
 - 4th hand may or may not bid, e.g. 1D--(1S)--2H--(2S).
-- Note double has purer takeout minors implication when X and 2N are available.
 
 Main examples:
 
 - 1C--(X)--2HS weak 5--7
 - 1C--(1D)--2HS weak 5--7
-- 1DHS--(overcall/X)--when weak jump shift
+- 1DHS--(overcall/X)--then weak jump shift
 - 2C--(any)--2HS NF
 - 2D--(any)--2HS NF
 
@@ -539,7 +617,7 @@ Main examples:
 
 ** Einar Cue Bid
 
-- catchall cue bid lacking a suitably natural rebid, minimum or maximum hands
+- catchall cue bid lacking a suitably natural rebid -- minimum with 5 carder or maximum hands
 - overcaller cue bids opener's suit at the TWO level after advancer bids (or shows somehow) a new suit e.g.
 (1D)--1S--2C--2D or (1C)--1H--1S--2C.
 - never too high to stop advancer rebidding their major suit at two level or minor at 3 level
@@ -563,8 +641,7 @@ Typically shows:
 ** Advancer's 2C Relay
 
 - we overcall 1M and responder passes
-- shows 9+ hcp, usually Hx+ to bad 3 card, often flattish
-- maybe 13+ hcp catchall (semi)balanced with no support
+- shows either 9+ hcp, usually Hx+ to bad 3 card, often flattish, OR 13+ hcp catchall (semi)balanced with no support
 - strength asking relay to handle the wide ~8--16 hcp overcalls.
 - mostly natural (make it up) except for 2!d to show 12+
 - As a 2N rebid bypasses 2M and is not artificial 12+, it conventionally shows a shapely ~10--11 6 carder, e.g. 6--4
@@ -700,19 +777,21 @@ With limited strength may want to hide distribution information and just bid the
 **** (1C)--Overcall
 
 (1C)
-    1!d = decent values or lead directing, very unlikely to have a major
+    1!d = 10+ decent values or lead directing, very unlikely to have a major
         1HS = F1, usually 5 card suit, 8+ hcp
-            2C = [einar catchall cue bid](#Einar Cue Bid)
+            2C = extra strength [einar catchall cue bid](#Einar Cue Bid)
             3M = natural invitational, ~12--13 4 card support
         1N = natural ~8--13, often with stopper
-            2C = cue, F1 artificial strength showing, ~13+ hcp
-        2C = forcing, HCR or major force
+            2C = extra strength cue, F1 artificial strength showing, ~13+ hcp
+        2C = [HCR](#Major HCR cue bids and 2N Raise in Competition), ~11+ support points
             2D = minimum
-        2HS = NF, ~10--12 and good 6 card suit
-        2N = invitational plus with support, often unbalanced
         NewSuit = NF at all levels, jumps stronger though
+        2HS = NF, ~10--12 and good 6 card suit
+        2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition)
         3C = splinter support
-    1!h!s = natural, light ~8--16, responses
+        3D = natural raise, pre-emptive, less than HCR (no minor mixed raises)
+        3HS = fit jump
+    1!h!s = natural, light ~8--16
         1S = F1, usually 5 cards, 8+ hcp, maybe 4 cards unsuitable for NT e.g. 4--1--4--4
             2C = [einar catchall cue bid](#Einar Cue Bid)
             2D = 8--12 natural
@@ -735,16 +814,19 @@ With limited strength may want to hide distribution information and just bid the
             3N = to play
         2C = [multi-meaning](#Advancer's 2C Relay), F1, 9+ hcp limited Hx support OR 13+ catchall
             2D = artificial, extras
-        2x = natural, NF constructive ~8--12 (8/9+ hcp 6 cards, 10+ hcp 5 cards)
-        2M = natural raise < 10 hcp
+        2x = natural, NF constructive ~8--12
+        2M = natural raise, ~6--10, 3 card support
         2S = (advancing 1!h) NF, ~10--12, good 6 card suit
-        2N = (jump) invitational plus, usually distributional good 3 card / 4+ cards
-        3C = jump cue, mixed raise - distributional, expect singleton, ~8--10 hcp just under invite
-        3M = natural raise, pre-emptive ~4--7 good support
+        2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition)
+        3C = jump cue, mixed raise ~7--10 hcp just under invite
+        3M = natural raise, ~4--7 semi-preemptive/cooperative support
         3Y = unbid suits are invitational 6+ (good) suit
+        3S = (advancing 1!h) fit jump
+        4C = splinter
+        4D = fit jump (no 3D fit jump available)
         4M = non-cooperative vague strength as responder passed
     1N = usual ~15--18, maybe long !d, beware downgrade too many honours/length in the opponent's suit
-        2C = cue Stayman
+        2C = cue majors Stayman
         2DHS = NF (put opener on lead instead of transfers)
         2N = invite
         3x = invitational, including opener's suit
@@ -794,57 +876,73 @@ With limited strength may want to hide distribution information and just bid the
     4C = natural
 
 (1C)--1HS--(X)
-    XX = [multi-meaning](#Advancer's 2C Relay), F1, 9+ hcp limited Hx support OR 13+ catchall
-        2D = artificial, extras
-    2C = natural, NF constructive ~8--12
-    others = as without double
+    P = possibly trap with later doubles for penalty and 0/1 card support for overcaller's major
+    XX = ~10+ values with exactly doubleton support
+    1N = transfer HCR ~11+ support points, 3+ card support
+    2C = !ds, 6+ hcp, sound weak two or better 6+ cards OR 5 cards and will bid again, or lead directing 4+ suit with 3 card support
+    2D = (over 1H overcall) transfer raise, ~8--10 support points, 3 cards, worse than mixed raise
+    2D = (over 1S overcall) !hs, 6+ hcp
+    2H = (over 1S overcall) transfer raise, ~8--10 support points, 3 cards, worse than mixed raise
+    2M = natural, very weak, ~4--7 useful support points
+    2S = (after 1H overcall) NF, ~10--12 and good 6 card suit
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition)
+    3C = mixed raise
+    3x = invitational, 6+ new suit
+    3S = (advancing 1!h) fit jump
+    4CD = fit jump
 
 (1C)--1D--(1N)
     X = 5--5+ other suits
-    2C = natural if can be < 3 card OR HCR
-    2D = natural raise, ~5--8
+    2C = HCR
+    2D = natural raise, ~6--10
     2HS = NF
     2N = invitational plus raise
     3C = mixed raise
-    3D = obstructive raise, distributional trash, worse than mixed raise so ~0--7
+    3D = preempt, ~4--7 good support
+    3HS = invitational, 6+ good new suit
 
 (1C)--1D--(other)
-    X = values 9+, maybe moderate NF support
-    2C = natural if can be < 3 card OR HCR
+    X = values ~9+, maybe moderate NF support
+    2C = HCR, worse than 2N
     2CueOver = natural, psyche guard, sitting over
-    2D = natural raise, ~5--8
+    2D = natural raise, ~6--10
     2Y = new suit, NF constructive ~8--12
     2S = (jump) natural, NF, good 6 carder invitational - as 3x new suit bid
     2N = invitational plus raise
     3C = splinter, long !ds (mixed raise has less value when looking for 5!c/5!d)
-    3x = invitational, 6+ new suit
     3D = preempt, ~4--7 good support (co-operative quality in live auction)
+    3HS = invitational, 6+ new suit
 
-(1C)--1M--(higher)
-    X = values 9+, maybe moderate NF support
-    2M = natural raise, ~5--8
-    2Y = new suit, NF constructive ~8--12
-    2N = invitational plus raise
-    3C = cue, forcing, can be natural if an "unbid" suit (no room for mixed raise)
+(1C)--1HS--(higher)
+    X = values ~9+, maybe moderate NF support
+    2M = natural raise, ~6--10
+    2Y = new suit, NF, often ~8--12 maybe 6--12 but expect a 12+ overcaller to bid on
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition)
+    3C = mixed raise
     3x = invitational, 6+ new suit
     3M = preempt, ~4--7 good support (co-operative quality in live auction)
+    4C = splinter
+    4D = fit jump
 
-(1C)--1M--(1N)
+(1C)--1HS--(1N)
     X = 5--5+ other suits
-    2C = HCR, invitational weaker than 2N
+    2C = [HCR](#Major HCR cue bids and 2N Raise in Competition), weaker than 2N
     2x = NF
-    2M = natural raise, ~5--8
-    2N = invitational plus raise
+    2M = natural raise, ~6--10
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition)
     3C = mixed raise
+    3x = invitational, 6+ new suit
     3M = preempt, ~4--7 good support (co-operative quality in live auction)
+    4C = splinter
+    4D = fit jump
 
-(1C)--1M--(3C)
+(1C)--1HS--(3C)
     X = HCR double, major game invite
     3M = competitive
     4C = strong raise, offensive i.e. !c shortage
     4M = playable, somewhat cooperative vs 5!c sacrifice
 
-(1C)--1M--(4C)
+(1C)--1HS--(4C)
     X = general values
 
 *** (1C)--(Any) Sandwich Position
@@ -858,12 +956,14 @@ With limited strength may want to hide distribution information and just bid the
     2C = Michaels, sitting under
     CueOver = natural, sitting over
     2N = Michaels, better often 6--5
+    3C = Majors, strong (even over 1M response from 3rd hand)
 
 (1C)--P--(1N)
     2C = artifical, (5--4) majors
         2D = longest major ask
     2D = Michaels, both majors
-    2N = Michaels, better often 6--5
+    2N = Unusual (3 unbid suits so not better Michaels), !ds + !hs
+    3C = Majors, *strong*
 
 (1C)--P--(2C)
     2x = [OBAR](#OBAR 4th seat bids) competitive
@@ -909,10 +1009,10 @@ With limited strength may want to hide distribution information and just bid the
 **** (1D)--Overcall
 
 (1D)
-    1!h!s = natural, light ~8--16, responses
+    1!h!s = natural, light ~8--16
         1S = F1, usually 5 cards, 8+ hcp, maybe 4 cards unsuitable for NT e.g. 4--1--4--4
             2C = 8--12 natural
-            2D = [einar catchall cue bid](#Einar Cue Bid)
+            2D = extra strength [einar catchall cue bid](#Einar Cue Bid)
             2H = 8--12, 6 !hs
             2S = 8--11, support
             2N = natural
@@ -922,7 +1022,7 @@ With limited strength may want to hide distribution information and just bid the
             3S = 12--13, 4 card !s support
         1N = ~8--13, usually a stopper over natural bid, consider 2!c without stop - esp. with support
             2C = 8--12, natural
-            2D = cue F1 artificial strength showing, ~13+ hcp (1N is wide ranging as 2N is support)
+            2D = extra strength, cue F1 artificial strength showing, ~13+ hcp
             2M = 8--12, 6+ card major
             2oM = natural, 8--12. F1 if 2!s reverse after bidding !hs, 6(5)--4 shape.
             2N = natural
@@ -932,14 +1032,18 @@ With limited strength may want to hide distribution information and just bid the
             3N = to play
         2!c = [multi-meaning](#Advancer's 2C Relay), F1, 9+ hcp limited Hx support OR 13+ catchall
             2D = artificial, extras
-        2D = precisely invitational HCR, spare cue bid inbetween 2!c and 2N type bids, ~11--12, so good 3 card possibly very flat 4 card support
+        2D = HCR, worse than 2N
         2x = natural, NF constructive ~8--12 (8/9+ hcp 6 cards, 10+ hcp 5 cards)
-        2M = natural raise < 10 hcp
+        2M = natural raise, ~6--10, 3 card support
         2S = (advancing 1!h) NF, ~10--12, good 6 card suit
         2N = (jump) invitational plus, usually distributional good 3 card / 4+ cards
-        3D = jump cue, mixed raise - distributional, expect singleton, just under invite
-        3M = natural raise, pre-emptive ~4--7 good support
-        3Y = unbid suits are invitational 6+ (good) suit
+        3C = invitational 6+ (good) suit
+        3D = jump cue, mixed raise, ~7--10, 4 card support
+        3M = natural raise, pre-emptive ~4--7 cooperative support
+        3H = (over 1!s) invitational 6+ (good) suit
+        3S = (over !h) fit jump
+        4C = fit jump
+        4D = splinter
         4M = non-cooperative vague strength as responder passed
     1N = usual ~15--18, maybe long !c, beware downgrade too many honours/length in the opponent's suit
       2CHS = NF, natural (put opener on lead instead of transfers)
@@ -965,7 +1069,7 @@ With limited strength may want to hide distribution information and just bid the
             2N = natural, NF
             3C = natural, NF
             3D = splinter, e.g. 4--4--1--4 or longer !cs
-            3HS = GF, 5 card major fit jump
+            3HS = GF, fit jump
     2D = over prepared !d: natural
         2HS = NF, natural
         2N+ = [Lebensohl System](#1NT Interference and Lebensohl)
@@ -1006,37 +1110,60 @@ With limited strength may want to hide distribution information and just bid the
     3N = to play (extreme !h/!c shape by passed hand, e.g. x/QJ10xxx/KJ10xxx)
 
 (1D)--1HS--(X)
-    XX = [multi-meaning](#Advancer's 2C Relay), F1, 9+ hcp limited Hx support OR 13+ catchall
-        2D = artificial, extras
-    2C = natural, NF constructive ~8--12
-    others = as without double
+    P = possibly trap with later doubles for penalty, 0/1 card support for overcaller's major
+    XX = ~10+ values with exactly doubleton support
+    1N = !cs, 6+ hcp, sound weak two or better 6+ cards OR 5 cards and will bid again, or lead directing 4+ suit with 3 card support
+    2C = transfer HCR ~11+ support points, 3+ card support
+    2D = (over 1!h overcall) transfer raise, ~8--10 support points, 3 cards, worse than mixed raise
+    2D = (over 1!s overcall) !hs, 6+ hcp
+    2H = (over 1!s overcall) transfer raise, ~8--10 support points, 3 cards, worse than mixed raise
+    2M = natural, very weak, ~4--7 useful support points
+    2S = (after 1!h overcall) NF, ~10--12 and good 6 card suit
+    2N = invitational plus raise
+    3C = invitational, 6+ new suit
+    3D = mixed raise
+    3M = preempt, 4+ cards, ~4--7
+    3H = (over 1!s overcall) invitational, 6+ new suit
+    3S = (over 1!h overcall) fit jump
+    4C = fit jump
+    4D = splinter
 
-(1D)--1M--(1N)
+(1D)--1HS--(1N)
     X = 5--5+ other suits
-    2D = natural if can be < 3 card OR HCR
+    2D = HCR ~11+, 3+ card support, weaker than 2N
     2x = NF constructive
-    2M = natural raise, ~5--8
+    2M = natural raise, ~6--10
     2N = invitational plus raise
+    3C = invitational, 6+ suit
     3D = mixed raise
     3M = preempt, ~4--7 good support (co-operative quality in live auction)
+    3H = (over 1!s overcall) invitational, 6+ new suit
+    3S = (over 1!h overcall) fit jump
+    3oM = fit jump
+    4CD = splinter
 
-(1D)--1M--(higher)
-    X = values 9+, maybe moderate NF support
-    2D = cue, forcing, even if a short suit, maybe HCR less distributional than 2N
-    2M = natural raise, ~5--8
-    2Y = new suit, NF constructive ~8--12
+(1D)--1HS--(higher)
+    X = values ~9+, maybe moderate NF support
+    2D = cue, HCR, not as good as 2N
+    2M = natural raise, ~6--10
+    2Y = new suit, NF, often ~8--12 maybe 6--12 but expect a 12+ overcaller to bid on
+    2S = (after 1H overcall) NF, ~10--12 and good 6 card suit
     2N = invitational plus raise
-    3x = invitational, 6+ suit
-    3D = mixed raise
+    3C = invitational, 6+ suit
+    3D = mixed raise, ~7--10, 4 card support
     3M = preempt, ~4--7 good support (co-operative quality in live auction)
+    3H = (over 1!s overcall) invitational, 6+ new suit
+    3S = (over 1!h overcall) fit jump
+    4C = fit jump
+    4D = splinter
 
-(1D)--1M--(3D)
+(1D)--1HS--(3D)
     X = HCR double, major game invite
     3M = competitive
     4D = strong raise, offensive i.e. !d shortage
     4M = playable, somewhat cooperative vs 5!d sacrifice
 
-(1D)--1M--(4D)
+(1D)--1HS--(4D)
     X = general values
 
 *** (1D)--(Any) Sandwich Position
@@ -1050,12 +1177,14 @@ With limited strength may want to hide distribution information and just bid the
     2D = Michaels, sitting under
     CueOver = natural, sitting over
     2N = Michaels, better often 6--5
+    3D = Majors, *strong* (even over 1M from 3rd hand)
 
 (1D)--P--(1N)
     2C = artificial, (5--4) majors
         2D = longest major ask
     2D = Michaels, both majors
-    2N = Michaels, better often 6--5
+    2N = Unusual (3 unbid suits so not better Michaels), !hs + !cs
+    3D = Majors, *strong* (even over 1M from 3rd hand)
 
 (1D)--P--(2D)
     2HS = [OBAR](#OBAR 4th seat bids) competitive
@@ -1110,21 +1239,21 @@ With limited strength may want to hide distribution information and just bid the
 
 **** (1H)--Overcall
 
-1S = natural, light ~8--16, responses
+1S = natural, light ~8--16
     1N = ~8--13, usually a stopper over natural bid, consider 2!c without stop - especially if can show support
         2H = cue F1 artificial strength showing, ~13+ hcp (1N is wide ranging as 2N is support)
     2!c = [multi-meaning](#Advancer's 2C Relay),  F1, 9+ hcp limited Hx support OR 13+ catchall
         2D = artificial, extras
     2D = natural, NF constructive ~8--12
         2H = [Einar Cue](#Einar Cue Bid)
-    2H = precisely invitational HCR, spare cue bid inbetween 2!c and 2N type bids, ~11--12, so good 3 card possibly very flat 4 card support
-    2S = natural raise < 10 hcp
+    2H = HCR, worse than 2N
+    2S = natural raise, ~6--10 hcp
     2N = (jump) invitational plus, usually distributional good 3 card / 4+ cards
-    3CD = unbid suits are invitational 6+ (good) suit
-    3H = jump cue, mixed raise - distributional, ~8--10, expect singleton, just under invite
+    3CD = invitational 6+ (good) suit
+    3H = jump cue, mixed raise
     3S = pre-emptive ~4--7 good support
     3N = natural
-    4CD = fit jumps, !s support
+    4CD = fit jumps
     4H = splinter
     4S = obstructive wide range, non-cooperative as responder passed
 1N = usual ~15--18, beware downgrade too many honours/length in the opponent's suit
@@ -1141,7 +1270,7 @@ With limited strength may want to hide distribution information and just bid the
         2S = natural, minimum 2 or 3 !ss
         2N = F1, (semi) natural
         3C = NF
-    2H = forcing, HCR some fit
+    2H = HCR
     2S = 5+ !ds
         3H = force, not einar as above 3!d, stop ask implication initially
     2N = natural, NF
@@ -1156,7 +1285,7 @@ With limited strength may want to hide distribution information and just bid the
         3H = forcing
         3S = invitational, non-minimum
         4H = splinter, !s support
-    2S = F1, usually HCR
+    2S = HCR
     2N = natural, NF
     3C = natural, invitational
     3H = splinter
@@ -1209,39 +1338,54 @@ With limited strength may want to hide distribution information and just bid the
 3H = stopper ask, with solid outside minor
 
 (1H)--1S--(X)
-    XX = [multi-meaning](#Advancer's 2C Relay), F1, 9+ hcp limited Hx support OR 13+ catchall
-        2D = artificial, extras
-    2C = natural, NF constructive ~8--12
-    others = as without double
+    P = possibly trap with later doubles for penalty, 0/1 card support for overcaller's major
+    XX = ~10+ values with exactly doubleton support
+    1N = !cs, 6+ hcp, sound weak two or better 6+ cards OR 5 cards and will bid again, or lead directing 4+ suit with 3 card support
+    2C = !ds
+    2D = transfer HCR ~11+ support points, 3+ card support
+    2H = transfer raise, ~8--10 support points, 3 cards, worse than mixed raise
+    2S = natural, very weak, ~4--7 useful support points
+    2S = (after 1H overcall) NF, ~10--12 and good 6 card suit
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition)
+    3CD = fit jump
+    3H = mixed raise
+    3S = preempt, 4+ cards, ~4--7
+    3x = invitational, 6+ new suit
 
 (1H)--1S--(higher) = 2 level+ bids, raise or new suit
     X = values 9+
     2CD = new suit, NF constructive ~8--12
-    2H = cue, forcing, even if a short suit, maybe HCR less distributional than 2N
-    2S = natural raise, ~5--8
-    2N = invitational plus raise
+    2H = cue, HCR, worse than 2N
+    2S = natural raise, ~6--10, 3 card support
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition)
+    3CD = invitational, 6+ suit
     3H = mixed raise
-    3S = preempt, ~4--7 good support (co-operative weaker)
+    3S = preempt, ~4--7 good support
+    4CD = fit jump
 
 (1H)--1S--(1N)
     X = 5--5+ other suits
     2CD = natural, NF constructive ~8--12
-    2H = HCR
-    2S = natural raise, ~5--8
-    2N = invitational plus raise
+    2H = HCR ~11+, 3+ card support, worse than 2N
+    2S = natural raise, ~6--10
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition)
+    3CD = invitational, 6+ suit
     3H = mixed raise
     3S = preempt, ~4--7 good support (co-operative weaker)
+    4CD = fit jump
+    4H = splinter
 
 (1H)--1S--(2H)
     X = values 9+
     2S = normal single raise
-    2N = invitational plus distributional support
-    3CD = NF, invitational, 6+ suit
+    2N = [invitational plus support](#Major HCR cue bids and 2N Raise in Competition)
+    3CD = invitational, 6+ suit
     3H = HCR, precisely invitational weaker than 2N
 
 (1H)--2CD--(2H)
     2S = natural, NF constructive ~8--12
     X = 5 or bad 6 card !s suit, tolerance for minor suit, NOT HCR double
+    2N = invitational plus raise
     Cue = force, maybe stop looking or strong HCR
 
 (1H)--1S--(3H)
@@ -1273,14 +1417,14 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 
 (1H)--P--(1N)
     2CD = natural, maybe 4 card !s suit with 6 card minor hoping to bid !s later
-    2H = michaels !ss + minor
-    2N = Michaels, better often 6--5
+    2H = Michaels !ss + minor
+    2N = Unusual (3 unbid suits so not better Michaels), !cs + !ds
     3CD = normal jump overcall
 
 (1H)--P--(2CD)
     X = takeout, but implies 5--5+ looking for sacrifice
     2H = Michaels !ss + minor
-    2N = Michaels, better often 6--5
+    2N = Michaels, !ss + minor, better often 6--5
     3m = cue responder, natural
 
 (1H)--P--(2H)
@@ -1349,7 +1493,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
     X = "Stolen" bid, double I would have bid that.
 
 (1S)--X--(4S)
-    X = value, not necessarily a major
+    X = values, not necessarily a major
 
 (1S)--P--(2other)--2x--(raise/rebid)
     X = HCR double
@@ -1376,22 +1520,26 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
                 3C = NF
             2H = switch !d replacement, 5+ !ds
                 2S = [Einar Cue](#Einar Cue Bid) (as have room to bid 3!d still)
-            2S = forcing, HCR some fit, mildly invitational
+            2S = HCR
             2N = natural, NF
             3C = natural, limit raise
-            3D = natural, invitational
+            3DH = fit jump
             3S = splinter
     2D = normal overcall, virtually deny !hs
         2H = natural, NF constructive ~8--12 (no transfers too high)
         2S = HCR / general force
         2N = natural, NF
         3C = natural, invitational
+        3D = natural, limit raise
+        3H = fit jump
+        3S = splinter
+        4C = fit jump
     2H = natural, sound
         (P/Dbl) = opponent responds below 2!s
-            2S = HCR
-            2N = natural
-            3CD = natural, forcing
-            3H = competitive
+            2S = HCR, ~11+ support points
+            2N = natural, NF
+            3CD = natural, invitational
+            3H = competitive, ~6--10 support points
             3S = splinter
             4CD = splinter
     2S = 5--5+ (!h + !d limited) OR (!h + !c *strong*)
@@ -1447,10 +1595,10 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 
 (1S)--2H--(2S)
     X = values 9+
-    2N = invitational plus distributional support
+    2N = invitational plus support
     3CD = NF, invitational, 6+ cards
     3H = weaker
-    3S = GF HCR sound values, co-operating
+    3S = GF HCR, offensive e.g !s singleton
     4CD = fit jump
     4H = more offensive/obstructive
 
@@ -1464,14 +1612,14 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 
 (1S)--P--(1N)
     2CD = natural, maybe 4 card !h suit with 6 card minor hoping to bid !h later
-    2S = michaels !h + minor
-    2N = Michaels, better often 6--5
+    2S = Michaels !hs + minor
+    2N = Unusual (3 unbid suits so not better Michaels)
     3CD = normal jump overcall
 
 (1S)--P--(2CD)
     X = takeout, but implies 5--5+ looking for sacrifice
-    2S = cue opener, 6!cs (or !ds over 2!c bid) and 4!hs
-    2N = two suiter, better often 6--5
+    2S = Michaels !hs + minor
+    2N = Michaels, !hs + minor, better often 6--5
     3m = natural, cue responder
 
 (1S)--P--(2S)
@@ -1496,11 +1644,12 @@ Competing over 1NT.
 
 Hand strength guide:
 
-- Against a weak NT, we must be mostly constructive, and even more so v.s. a weak NT at IMPs (unless already passed)
+- Against a weak NT, we must be mostly constructive ~11--14, and even more so v.s. a weak NT at IMPs (unless already passed)
 - Against a weak NT, there is risk in bidding but also risk in passing, so 13--14 hcp often need to do something
-- 5 card single suiter bids should have some extras in shape/strength, e.g. 5--4--3--1 shape and (12)--15 hcp
+- 5 card single suiter bids should have some extras in shape/strength, e.g. 5--4--3--1 shape and 11--14(15) hcp
 - 6 card single suiters can be a bit lighter but basically an opening bid
-- The balancing position can be slightly lighter, i.e. 10+ hcp for a normal hand
+- The balancing position can be lighter, i.e. 10+ hcp for a normal hand against a weak NT and ~14+ for a "penalty"
+  double (at which point partner will probably run with less than 8 hcp)
 - Max 7 losers, again, basically an opening hand
 - Consider wasted honours and intermediate spot cards if it's a borderline maybe biddable hand, e.g. AK10xxx K10x xx xx
 - The rule of 8 ( length(longest 2 suits) - LTC >= 2 then bid ) is too aggressive outside strong NT (mostly matchpoints) defence
@@ -1510,7 +1659,7 @@ Hand strength guide:
 
 (1N)
     X = penalty (14)15+ top of their range depending on tricks, unlikely very distributional
-        More = [1N System On](#1NT Opening)
+        any = [as 1NT Escape](#1NT Escape)
     X = (passed hand) !cs + 4 card major
         2H = pass/correct to major
         2S = natural, single suiter
@@ -1534,14 +1683,24 @@ Hand strength guide:
             2HS = longer major, or 2!h 5--5 minimum
                 2N = naturalish value showing, invitational, may have long side suit
                 3CD = weak, natural
-                3HS = invitational
+                3HS = invitational, 3 cards often, 10+ hcp
             2N = 5--5, extras
             3C = artificial, 6--5 !h/!s
             3D = artificial, 5--6 !h/!s
             3HS = maximum extras, 6--4, as top intermediate jump overcall
         2HS = NF, natural
-        2N = natural, invitational
-        3CDHS = invitational
+        2N = relay, game interest
+            3C = minimum 5--4
+                3D = longer major ask
+            3D = minimum 5--5
+            3H = maximum, 5!h--4!s
+            3S = maximum, 5!s--4!h
+            3N = maximum 5--5
+            4CD = 6--5 long !h/!s
+        3CD = !h/!s invite
+        3HS = invitational, other major shortage
+        4CD = !h/!s transfer (as over 1N opening)
+        4HS = to play, vague values
     2D = !ds + a major
         (X) = maybe !d penalty showing, maybe takeout
             XX = values, may want to penalise
@@ -1559,7 +1718,9 @@ Hand strength guide:
             3D = competitive
         2H = pass/correct
         2S = natural, NF, single suiter
-        2N = F1, naturalish value showing, invitational plus, may have long side suit
+        2N = F1, game interest
+            3CD = minimum with !h/!s
+            3HS = maximum with !h/!s
         3CD = NF, natural, invitational
         3HS = natural, forcing, maybe slam try fit jump
             4CD = cue bid
@@ -1587,7 +1748,11 @@ Hand strength guide:
             3x = FNJ implication
             3M = invitational, or more competitive if delayed after forcing 2NT or transfer
         2S = natural, NF, single suiter
-        2N = F1, naturalish value showing, invitational plus, may have long side suit
+        2N = F1, game interest
+            3x = quasi-natural, extras, often 4 cards as rarely overcall 5--3--3--2
+            3M = weaker
+            3N = flattish/modest suit/stops, extras
+            4M = maximum, 6 carder
         3CDH = NF, natural, invitational
         3M = invitational
         3S = (over 2!h) natural, forcing, maybe slam try fit jump
@@ -1605,18 +1770,16 @@ Hand strength guide:
     4CD = preempt
 
 (1N)--X--(XX) when penalty business redouble
-    2C = alertable, maybe unnatural can be a short suit - wait for X then XX as takeout OR bid 2!d to show !d + major
-    2D = alertable, maybe unnatural both majors - wait for X then XX
-    2HS = natural escape
+    any = [as 1NT Escape](#1NT Escape)
 
-(1N)--P--(2!c) stayman, weak or whatever
-    X = !c showing
+(1N)--P--(2!c) anything
+    X = values, strong NT type hand over weak NT only
     2DHS = natural
     2N = both minors, decent hand
     3C+ = natural, with above 3!d being too strong to only bid at the two level
 
 (1N)--P--(2!d)
-    X = takeout if natural else !d showing if transfer etc.
+    X = values, strong NT type hand over weak NT only
     2H = Michaels if 2!d transfer
     3D = Michaels if 2!d natural
 
@@ -1632,8 +1795,16 @@ Hand strength guide:
 (1N) = Strong NT
     Dbl = majors OR some extra strong overcall
         2CD = (lowest minor available) longer major ask
-    2CD = !c/!ds and a major
+    2C = !cs and a major
+        2D = major ask
+        2HS = natural, NF, single suiter
+        2N = f1, constructive
+    2D = !ds and a major
     2HS = natural
+        2N = f1, constructive
+            3x = quasi-natural, extras
+            3M = weaker
+            4M = maximum, 6 carder
     2N = minors two suiter OR strong constructive majors two suiter
     3CDHS = natural, offensive
 
@@ -1804,7 +1975,10 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, e.g. 3C 
     2HS = natural, decent 5--6 card suit
         2N = natural
         3x = NF, invitational, ~7--11, no support
+        4CD = fit jump
     2N = natural, 16-18 balanced. Could have 4 card !h/!s, NT scheme follows.
+    3C = natural
+        4D = fit jump
     3D = majors two suiter
     3HS = natural, strong
     4C = natural, strong
@@ -1819,8 +1993,10 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, e.g. 3C 
     2S = natural
         2N = natural
         3x = NF, invitational, ~7--11, no support
+        4CD = fit jump
     2N = natural, 16-18 balanced. Could have 4 card !s, NT scheme follows.
     3CD = natural
+        4D = (over 3C) fit jump
     3H = stopper ask
     3S = natural, strong
     4CD = natural, strong
@@ -1837,6 +2013,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, e.g. 3C 
         any = [Lebensohl system](#1NT Interference and Lebensohl)
     2N = natural, 16-18 balanced. Could have 4 card !s, NT scheme follows.
     3CDH = natural
+        4D = (over 3C) fit jump
     3S = stopper ask
     4CD = natural, strong GF
         4D = Redwood

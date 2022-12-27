@@ -102,26 +102,50 @@ The 1st/2nd bid quality is lumped together, but really 2nd position should be mo
 
 ** Two Suiter Overcalls
 
-We mostly play standard Michaels and Unusual 2NT overcalls. The exception is (1!s)--3C shows specifically a non-strong !hs + !cs two suiter.
-Why not two suiter overcalls like Roman or Astro jump overcalls? These alternatives can be used to show 5--4 or 6--4 hands.
+We mostly play standard Michaels and Unusual 2NT overcalls. The exception is (1!s)--3C shows specifically a non-strong
+!hs + !cs two suiter. Why not two suiter overcalls like Roman or Astro jump overcalls? These alternatives can be used to
+show 5--4 or 6--4 hands.
 
-An example Roman jump overcall is 1H--(2!s) showing 4+!ss and 5+!cs. These hands may often have less playing strength than
-a typical 5--5 hand, but the 5--4 shapes are much more frequent. Apart from the memory load, the obvious downside is
-losing a normal (weak) jump overcall, so a constructive/destructive trade off. You need reasonable
-strength to bid like this with a 5--4 hand aswell, so ~5--7 losers. Bids that force to the 3 level would often be 5--5,
-except unlike Michaels etc, you may include a 6--4 hand.
+An example Roman jump overcall is 1H--(2!s) showing 4+!ss and 5+!cs. These hands may often have less playing strength
+than a typical 5--5 hand, but the 5--4 shapes are much more frequent. Apart from the memory load, the obvious downside
+is losing a normal (weak) jump overcall, so a constructive/destructive trade off. You need reasonable strength to bid
+like this with a 5--4 hand aswell, so ~5--7 losers. Bids that force to the 3 level would often be 5--5, except unlike
+Michaels etc, you may include a 6--4 hand.
 
-A downside of the 5--4+ style is that you can never be sure under pressure whether partner has enough offensive strength.
-5--5 two suiters make it more likely to bid a tight game that makes on shape instead of strength. The downside of 5--5
-two suiters is the ability to clearly show a 4 card major. We play minimum level conversion takeout doubles to
+A downside of the 5--4+ style is that you can never be sure under pressure whether partner has enough offensive
+strength. 5--5 two suiters make it more likely to bid a tight game that makes on shape instead of strength. The downside
+of 5--5 two suiters is the ability to clearly show a 4 card major. We play minimum level conversion takeout doubles to
 mostly deal with this downside - we often takeout double to show a major without tolerance for all 3 suits.
 
-Why not play Ghestem or Extended Michaels to always use a 3C overcall to show the remaining 5--5 two suiter?
-It's a close decision. Would a 3C preempt be more useful? It's certainly more frequent. 3C forces us to play at the 3 level, in the case of
-(1!h)--3C a normal Michaels bid would allow us to play at the 2 level, so extra strength is required there.
-Knowing partner's minor after (1!s)--2S--(4!s) is a nice benefit of Ghestem like bids, and after the
-opponents open 1S we are already forcing to the 3 level. Playing (1!s)--3C as the exception to a natural overcall covers this situation.
-Given the finely balanced pros/cons what is best maybe just what is easiest to remember, which will be the more frequent natural bid.
+Why not play Ghestem or Extended Michaels to always use a 3C overcall to show the remaining 5--5 two suiter? It's a
+close decision. Would a 3C preempt be more useful? It's certainly more frequent. 3C forces us to play at the 3 level, in
+the case of (1!h)--3C a normal Michaels bid would allow us to play at the 2 level, so extra strength is required there.
+Knowing partner's minor after (1!s)--2S--(4!s) is a nice benefit of Ghestem like bids, and after the opponents open 1S
+we are already forcing to the 3 level. Playing (1!s)--3C as the exception to a natural overcall covers this situation.
+Given the finely balanced pros/cons what is best maybe just what is easiest to remember, which will be the more frequent
+natural bid.
+
+** Advancing Overcalls
+
+Our overcall style is modern standard, i.e. light 1 level overcalls ~(7)8--17 hcp and 2 level overcalls being opening
+bids. The 2CD overcalls don't have to be sound 6 carders, which may make finding game (often 3N) a bit harder, but lets
+us compete and sacrifice more.
+
+In standard, when responder (3rd hand) passes, advancer's suit range is NF and wide, e.g. 1 level ~7--16, 2 level
+~10--16 and is combined with strong jump shift responses to handle the GF hands. We give up a natural NF 2C response and
+use it as a strength ask. This means the jump shift responses can be natural NF invitational, both direct and more
+common than a strong jump shift. Simple new suits are more defined ~8--12 hcp and 1N can be limited 8--13 without
+playing a natural 2N response. The strength ask also allows us to use 2N as the familiar invitational plus 4+ card limit
+raise, which in standard is only used when responder bids (a natural 2N makes little sense when opener and responder
+both have values). A downside of using 2C as a strength ask specifically after the opponents open 1!c is the lack of a
+simple HCR cue bid at that point, though it's ok to show the 3 card limit raise via the strength ask, at least if opener
+does not preempt the bidding too much.
+
+After our 1HS major overcall a jump raise advance to 3M is preemptive ~4--6(7). This is similar to standard except it
+does not include 0--3 hcp hands. The idea here is that we either bid 4M straight away (maybe 0--3 hcp) or our 3M has a
+cooperative nature to it allowing partner to bid more with better overcall. This is different to when we open 1HS and
+the opponents interfere, at which point 3M is ~0--6 hcp (the 11--15 opening range is tighter than 8--17).
+
 
 ** 3N Opening Alternatives
 

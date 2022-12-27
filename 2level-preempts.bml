@@ -194,5 +194,9 @@ Responding:
     newSuit = natural, forcing by unpassed hand
 2HS--(2!s/3!c!d!h)
     X = penalty
+2HS--any--(3x) when invite plus and 4th hand steps in at 3 level
+    P = minimum
+    X = maximum range preempt, 3+ trumps, penalty interest
+    other = maximum
 2HS--P--(P)--(2!s/3!c!d!h)--P--P
     X = re-opening takeout

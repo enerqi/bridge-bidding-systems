@@ -982,107 +982,126 @@ Invitational is ~9--11.
     3N = to play, stop implied, no other major
     4x = natural
 
-
-** Non-Penalty X Interference of Our NT
-
-Playing a strong NT, X is usually takeout or specific suit(s) showing
-
-1N--(X)
-    XX = penalty interest, GF if not doubling opponents
-    Others = [1N system on](#1NT Opening)
-
-- Partner and Opener's delayed X at 2 level of opponents' bids is takeout (of the suit(s) shown)
-- Partner and Opener's delayed X at 3 level of opponents' bids is penalty (strength to play 1NTX has been shown by passing first)
-
-With 1N--P--P--(X) balancing double, partner need not be that strong yet still
-
-- Partner and Opener's X at 2 level of opponents' bids is takeout (of the suit(s) shown)
-- Partner and Opener's X at 3 level of opponents' bids is penalty
-
-1N--(P)--P--(X)
-    2HS = 5 card major.
-
 ** Overcalls of our NT
 
 This also applies to interference after 1!c/1!d openings which are assumed to be NT type hands
 
-What is *responders first double*?
+*** What is our *first double*?
 
-Later doubles judge by context. Certainly 3 level is penalty, whereas 2 level maybe re-opening after e.g. an ambiguous
-call such as 2!d either major.
+The *default is negative*, meaning any of:
 
-Priority order consistent across interference including where can/cannot have an opened suit
-and where the opponent has 1 or 2 known/unknown suits. Consistent for *2 or 3 level* overcalls:
+- weak competitive hand with perfect takeout shape, 4--4--4--1
+- less than invitational, but can handle partner's responses with minimum level conversion bids. Note, because opener is
+  very defined they never jump the bidding and minimum level conversion fits unlike other negative double scenarios
+- invitational plus hands, possibly very off shape, just trying to showing e.g. a 4 card other major
+- even *balancing by opener*, most hands with doubleton in their suit, 15+ hcp outside of the doubleton
 
-1. Two known long suits (5--5+), regardless of us having a known suit -- penalty / values
-2. Two long suits (5--5+), one unknown, regardless of us having a known suit -- penalty / values
-3. Ambiguious, no suit shown -- values in suit bid, stolen bid double
-4. Transfer overcall -- overcall values in suit bid (transfer suit for takeout)
-5. No unclaimed major -- penalty / values
-6. One or two unbid majors -- takeout (3!d+ Thrump)
+Any negative double at the 3 level (especially 4 level!) is basically GF and starts to lack clear shape information,
+mostly being used to show values.
+
+Priority order meta agreement (that works in other situations such as us opening 1HS and opponents bidding 2 suiters)
+for 2 and 3 level interference:
+
+1. two specific suits, e.g. 2C/2D majors, 2N minors -- values, system off even over 2C
+2. over double or 2!c interference -- system on, stolen bid double
+3. artificial, may show some other suit, e.g. transfer overcall, (X) major + minor, or 2C !h + any, or 2C any single suiter, or 2D multi -- biddable natural suit
+3. natural catchall, e.g. 2D !d + any, 2H !h + any -- negative
+
+- values means we want to take ownership of the auction. At that point partner will double for penalty or pass
+  and let us double for penalty, otherwise we bid on having shown invitational plus values with the inability to penalise
+- after a natural (values in suit / stolen) double of an ambiguous bid, e.g. 2!c showing some single suiter and double
+  showing !cs, our side can double again as if they were making their first bid (presumably something more natural)
+- we focus on penalty / value doubles of artificial specific two suiters as they are less like to have a "safe" 6 card
+  suit to play in compared to single suiter overcalls and it's easy to be specific about cue bids
+
+*** What is a redouble?
+
+A *redouble* of a non-penalty double has the same meanings as double. The exception is a redouble of an artificial bid
+cannot show a biddable suit so it is again *values* showing.
+
+When the opposing double is penalty/values we naturally use the [1NT Escape](#1NT Escape) module.
+
+*** What is our *second double*?
+
+- Normally, double is *penalty*
+- After doubling an artificial bid initially, double follows the same rules as our *first double*
+
+*** negative double responses
+
+Natural mainly but
+
+- 2N scrambling over (2!h/2!s)--X, e.g. 4--4, or 4--3 minors and 3 card bad major
+- 2N natural over (2!c/2!d)--X
+
+*** what is a generic cue bid?
+
+Where the cue bid does not have a specific meaning (such as *directly* over 2C showing majors):
+
+- When we have TWO KNOWN suits to stop, then cue bids SHOW a stop
+- With ONE KNOWN suit to stop, then cue bids ASK for a stop
+- With negative doubles there's less need for staymanic cue bids, but a higher cue can be GF staymanic with singleton
+
+*** NT Interference
 
 1N--(X) takeout
-    P = willing to play if advancer converts to penalty, later 2 level X takeout, 3 level X penalty
-    XX = unspecified GF, suggesting penalty double of opponents
-        ...2xDbl = negative, *regardless of natural/artificial* (easy rule), either opener or responder
-        ...3xDbl = penalty
+    P = willing to play if advancer converts to penalty, may double on the next round for takeout
+    XX = as double of what the bid shows
     [1N system on](#1NT Opening)
 
-1N--(2!c)
+1N--(2!c artificial) e.g. cappelletti 1 suiter
+    X = Stolen bid double, stand in for 2!c system on
+    Others = [1N system on](#1NT Opening)
+
+1N--(2!c natural)
     X = Stolen bid double, stand in for 2!c
     Others = [1N system on](#1NT Opening)
 
-1N--(2!c both majors)
-    X = penalty as no unclaimed major and less point in using promissory stayman, can bid natural major later
-    Others = [1N system on](#1NT Opening)
+1N--(2!c!d both majors)
+    X = values / penalty
+    2D = to play
+    2H = competitive plus minors, often (1--3)(5--4) or 5--5 minors, not values doubling interest
+    2S = !cs, invite plus
+    2N = !ds, invite plus
+    3CD = to play
+    3HS = GF, auto-splinter, 5--5 minors
 
 1N--(2!d!h!s)
-    X = takeout iff suit natural
+    X = negative of natural
     2x = NF
     2N+ = [Lebensohl System](#1NT Interference and Lebensohl)
 
-1N--(2D both majors)
-    X = penalty / values -- no unclaimed major
-    2HS = low/high cue standard invites
-    2N = [Lebensohl System](#1NT Interference and Lebensohl)
-    3C = [Lebensohl System](#1NT Interference and Lebensohl) !d transfer
-    3D = competitive !ds -- no !h transfer needed
-    3HS = stop ask cue bid
-
-1N--(2D !s + ?)
-    X = takeout, as can still bid !h at 2 level
+1N--(2D !s + ?)  e.g. astro
+    X = !ds
     2S = stop ask (one known suit)
     Others = [Lebensohl System](#1NT Interference and Lebensohl)
 
 1N--(2D !h + ?)
-    X = takeout, can still bid !s at 2 level
+    X = !ds
     2H = stop ask
     Others = [Lebensohl System](#1NT Interference and Lebensohl)
 
 1N--(2D unknown major)
-    X = !d values -- ambiguous overcall (pass then double for takeout)
+    X = !d values
     Others = [Lebensohl System](#1NT Interference and Lebensohl), no cue bid though
 
-1N--(2H both majors)
-    X = penalty / values -- no unclaimed major
-    2S = lowest biddable cue, !c invite plus
-    2N = [Lebensohl System](#1NT Interference and Lebensohl)
-    3C = [Lebensohl System](#1NT Interference and Lebensohl) !d transfer invite plus
-    3D = competitive !ds, no need for !h or !s transfer
-    3HS = stop ask cue bid (no room for invite plus !d cue despite two known suits - use 3!c instead)
+1N--(2H both majors) awkward to defend, but rare
+    X = penalty / values, awkward, partner needs 3+ !hs to pass
+    2S = minors, competitive
+    2N/3CD = REGULAR Lebensohl
+    3HS = stop showing
 
 1N--(2x transfer overcall)
     X = bid suit values
-    2-Cue = takeout (bid the suit transferred to)
+    2-Cue = stop ask
     3-Cue = singleton stayman, GF
-    2N = [Lebensohl System](#1NT Interference and Lebensohl)
-    3C = [Lebensohl System](#1NT Interference and Lebensohl)
+    Others = [Lebensohl System](#1NT Interference and Lebensohl)
 
 1N--(2N) usually minors
-    X = penalty interest
-    cuelow = lowest bid cue (not rank), invite plus low other suit
-    cuehi = highest bid cue (not rank), invite plus high other suit
-    suit = natural competitive
+    P = maybe competitive major hand, balancing next time
+    X = values
+    3C = stayman
+    3D = 5+ !hs, invite plus transfer
+    3H = 5+ !ss, invite plus transfer
 
 1N--(3C)
     X = takeout, vague distribution
@@ -1091,12 +1110,15 @@ and where the opponent has 1 or 2 known/unknown suits. Consistent for *2 or 3 le
         later cue bids by doubler show that suit (natural/psyche expose)
     3DH = transfer mild invite plus
         break = max HHx+ or 4+ cards
-    3S = !ds
+    3S = !ds, GF
     4C = both majors 5--5+, slam try
     4D = both majors 5--5+, game only
 
 1N--(3D)
-    3HS = GF in OTHER major (transfer benefit)
+    3H = 5+ !s transfer, invite plus
+        4D = slam try
+        4N = RKB
+    3S = 5+ !hs, GF
         4D = slam try
         4N = RKB
     4C = both majors 5--5+, slam try
@@ -1104,7 +1126,7 @@ and where the opponent has 1 or 2 known/unknown suits. Consistent for *2 or 3 le
     4HS = to play
 
 1N--(3D artifical, both majors)
-    3HS = stop ask
+    3HS = show stop, looking for 3N
 
 1N--(3H)
     3S = GF, natural
@@ -1127,8 +1149,15 @@ and where the opponent has 1 or 2 known/unknown suits. Consistent for *2 or 3 le
             newSuit = cue bid
         4N = natural quantitative, extra strong
 
-1N--(4x)
-    X = penalty
+1N--(4C)
+    X = negative (values mostly)
+    4D = !h transfer
+    4H = !s transfer
+    4S = !d transfer
+
+1N--(4D)
+    X = negative (values mostly)
+    4HS = natural
 
 1N--(P)--2C
     (X)
@@ -1181,34 +1210,98 @@ and where the opponent has 1 or 2 known/unknown suits. Consistent for *2 or 3 le
         XX = to play interest
         any = system on
 
-
 ** 1NT Escape
 
-- Natural runouts when we are *open* 1N and penalty doubled (16--18 is rather strong)
-- Responder's XX is a 2 suiter escape after we *overcall* 1N and penalty doubled
-- A *redouble by opener* is a hand interested in running - *minimum* with a *5(6) card suit* for the NT bid
+Situations include:
 
-1N--(Dbl)
-    P = happy to play here
-        ...Suit = invitational plus, 3CD F1, 3HS GF
-        ...2xDbl = negative, *regardless of natural/artificial* (easy rule), either opener or responder
-        ...3xDbl = penalty
-        ...2N = natural
-        ...Cue = stop ask, either opener or responder
-    XX = values, to play or penalise or GF. Sets up a *forcing pass at the 2 level*.
-        ...2xDbl = negative, *regardless of natural/artificial* (easy rule), either opener or responder
-        ...3xDbl = penalty
-    2CDHS = natural, weak
-    2N = GF, 2 or 3 suiter, worried about their running long suit with own game on
-        3x = baron like, bid suits up the line
-    3x = forcing, 6+ cards, worried about their running long suit with own game on
+- (1x)--1N--(X)
+- (1N)--X--(P)
+- (1N)--X--(XX)
+- 1N--(X), rarely used though
 
-(1x)--1N--(Dbl)
-    P = happy to play here
-    XX = 2 suiter escape
-    2CDHS = natural, weak
-    2N = GF, 2 or 3 suiter, worried about their running long suit with own game on
-    3x = forcing, 6+ cards, worried about their running long suit with own game on
+- When we overcall 1N, rarely a *redouble by opener* is a hand interested in running - *minimum* with a *5(6) card suit* for the NT bid
 
-- (pass/bid)--1N--(X)--P--P--XX opener's escape suggestion
-- 1N--(P)--P--(X)--XX opener's escape suggestion
+(1N)--X--(P) = we double a weak NT
+    P = ~5+ hcp, creates forcing pass up to 2!h
+    2C = artificial, no 5 carder
+        P = 4+ card !c suit
+        2x = cheapest 5 card or 4 card suit
+    2DHS = ~0--4 hcp, natural escape
+    2N = artificial, 5--5 GF
+        3x = bid 3 card suits up the line
+        3S = natural, long !ss for double
+    3x = GF, too offensive to pass
+
+1N--(X) = our 1N opening is penalty doubled
+    P = ~4+ hcp, creates forcing pass up to 2!h
+    XX = to play / penalise, creates forcing pass up to 2!h
+    2C = artificial, no 5 carder
+        P = 4+ card !c suit
+        2x = cheapest 5 card or 4 card suit
+    2DHS = ~0--4 hcp, natural escape
+    2N = artificial, 5--5 GF
+        3x = bid 3 card suits up the line, baron like
+        3S = natural, long !ss for double
+    3x = GF, too offensive to pass
+
+(1x)--1N--(X)
+    P = happy to play
+    XX = to play / penalise, creates forcing pass up to 2!h
+    2C = artificial, no 5 carder
+        P = 4+ card !c suit
+        2x = cheapest 5 card or 4 card suit
+    2DHS = ~0--4 hcp, natural escape
+    2N = artificial, 5--5 GF
+        3x = bid 3 card suits up the line, baron like
+        3S = natural, long !ss for double
+    3x = GF, too offensive to pass
+
+*** when opponents run after we have showed values
+
+This is when we pass or XX with values and our side is done with the first round of bidding, meaning our side is
+happy to sit in 1N double or redoubled - no need to escape and no GF offensive hand.
+
+- The *1st double* is takeout, not with a void, so 1--2 cards
+- The *2nd+ double* is penalty
+- Sitting over penalty is 4+ cards
+- Sitting under penalty is cooperative 3+ cards
+- Cue (now delayed) is a general force
+- 2N (now delayed) by the weaker hand is natural
+- new suit (now delayed) is forcing
+
+
+*** when opponents run immediately and (semi)naturally to 2DHS
+
+With (1N)--X--(run), or rarely (1N)--P--(P)--X--(run) our combined strength is less defined. Length is promised in the
+suit bid.
+
+This is a *Lebensohl* situation.
+
+- The *1st double* is takeout
+- The *2nd+ double* is penalty
+- unclear, forcing pass up to 2!h
+- 2x competitive
+- 2N+ Lebensohl system, with the penalty doubler possibly breaking the relay with hand too good to overcall
+
+*** when opponents run immediately artificially to 2CDH
+
+For example, 2C scurry with no 5 card major.
+
+- The *1st double* is *values*, then forcing pass up to 2!h, then resets to the "when the bid naturally" rules
+- Then *Resets* to *next double takeout* then *double penalty* (by either partner)
+- Pass is implied weak, not forcing, but could have later values to show
+
+*** when opponents run immediately with transfer escape
+
+- The *1st double* is *values*, then forcing pass up to 2!h, then resets to the "when the bid naturally" rules
+- Then *Resets* to *next double takeout* then *double penalty* (by either partner)
+- Standard double rules apply
+- A *Pass then double of transfer by advancer is 4+ card penalty*
+
+
+*** when opponents run immediately to 2S or higher
+
+- double *values*
+- 2N+ Lebensohl system, if available, with the penalty doubler possibly breaking the relay with hand too good to
+  overcall
+- 3x new suit natural, forcing
