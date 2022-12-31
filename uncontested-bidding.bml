@@ -739,7 +739,7 @@ Natural, up to 11 hcp, no 4 card major
         break = short !ss, probably not minimum
             cue/jump = only forcing bids
         jump = fit jump
-    2S = stop ask, invite plus
+    2S = stop ask, invite plus, or trying NT transfer (may bid !hs again)
     2N = natural
     3CD = weak, natural
     3H = !s + minor, mild GF 2 suiter
@@ -773,7 +773,7 @@ Natural, up to 11 hcp, no 4 card major
         2N = NF minimum, stopper
         3C = NF, no stopper
         jump = fit jump
-    2S = !s stop ask
+    2S = !s stop ask / trying NT transfer (may bid !ss again)
     2N = natural
     3CDH = weak, natural
     3S = !hs + minor, mild GF 2 suiter

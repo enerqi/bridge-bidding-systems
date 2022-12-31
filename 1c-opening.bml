@@ -1264,7 +1264,7 @@ Compared to the [1D opening interference](#1D interference):
         3CD = preference, weak NT
         3S = natural, 5 card maximum weak NT
     2H = !s transfer, 6+ !ss, weak/GF
-    2S = stop ask, invite plus   (0--3!s, no !h stop maybe 4 though, 3--3+ minors)
+    2S = stop ask, invite plus (0--3!s, no !h stop maybe 4 though, 3--3+ minors), or trying NT transfer (may bid !hs again)
         3CD = minimum weak NT, no stop
     2N = natural
         3x = strong
@@ -1306,7 +1306,7 @@ Compared to the [1D opening interference](#1D interference):
     2H = !c showing, 10+
         2N = NF minimum, stopper
         3C = NF weak NT
-    2S = !s stop ask
+    2S = !s stop ask, or trying NT transfer (may bid !ss again)
         3CD = minimum weak NT, no stop
     2N = natural invite
     3CDH = preempt
