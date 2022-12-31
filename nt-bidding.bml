@@ -441,6 +441,7 @@ Responder's 2N vs 3N 5--3--3--2 rebid preferences after transfer:
         3N = NF, usually 5--3--3--2 with an A/K/Q honour in short suit
         4CD = void, !h slam try
         4H = to play
+        4N = quantitative
     2S = good !h support, NOT maximum, not necessary
     2N = support, maximum, but looking for 3N
         3D = retransfer
@@ -490,6 +491,7 @@ Responder's 2N vs 3N 5--3--3--2 rebid preferences after transfer:
         3N = NF, usually 5--3--3--2 with A/K/Q honour in short suit
         4CDH = void, !s slam try
         4S = to play
+        4N = quantitative
     2N = maximum, support but also looking for 3N
         3H = retransfer (to play 3!s/4!s or make slam try)
             3S = complete transfer
@@ -730,12 +732,16 @@ Puppet Stayman
 
 *** 1N--4CD
 
-To play a major game, preemptive or good values
+To play a major game, preemptive or good values.
 
 4C = !h transfer
     4D = !h super fit, 3+ keycards
+    4H = completed, normal bid
+        4S = Kickback
 4D = !s transfer
     4H = !s super fit, 3+ keycards
+    4S = completed, normal bid
+        4N = Kickback
 
 
 * 1NT Interference and Lebensohl
@@ -1161,47 +1167,45 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
 
 1N--(P)--2C
     (X)
-        XX = to play interest, good !c
+        XX = to play interest, good !c (4 very good or 5 reasonable)
+            2D = 3 suiter short in !c (was going to pass a 2!d response)
+            2M = natural, forcing
+            3D = long !d + 4 card major
+        P = !c stopper, Hxx+, responder can cooperate and play 2C doubled
+            XX = re-ask Stayman
             2D = 3 suiter short in !c (was going to pass a 2!d response)
             3D = long !d + 4 card major
-        P = !c tolerance, e.g. 4 cards
-            2D = 3 suiter short in !c (was going to pass a 2!d response)
-            3D = long !d + 4 card major
-        2D+ = no major, no !c contract interest. System on.
+        2D+ = no !c stop, normal Stayman responses.
     (2!d)
-        P = nothing to say (bid 2!h/!s with a major or 2N with both majors).
-        X = penalty
+        P = nothing/penalty pass
+        X = negative
         2H+ = system on. System remains on if opponents bid no more, pretend opener bid 2!d.
     (2!h!s)
-        P = neutral by opener
-            X = takeout
-            2N = minors
-            3CD = forcing, natural
-            Cue = stop ask
-        X = penalty
-        2S = 4/5 !s
-        3H = 4/5 !h (over 2!s)
+        X = negative
+        2S = 5 !ss
+        3H = 5 !hs (over 2!s)
     (3x)
         P = neutral
-        X = penalty
-        3HS = 4+ card major
+        X = negative
+        3HS = 5 card major
         4H = (over 3!s) 5 card major
 
 1N--(P)--2DH
     (X)
-        XX = to play interest
-        P = doubleton in transfer suit
+        XX = to play interest (4 very good or 5 reasonable)
+        P = doubleton support
             XX = retransfer ask
+        complete = 3 cards normally
     (Cue) bidding partners transfer suit with 2!h or 2!s
         P = doubleton
         X = 3 card support
     (higher)
         P = nothing special
-            X = takeout typically with doubleton, can start a force
+            X = negative, typically with doubleton, can start a force
             3-lower = NF, lower ranking new suit
             Cue = shortness, good hand, stop check
             4x = GF
-        X = penalty
+        X = negative
         accept = complete transfer next level, fit + non-minimum
         new-suit = FNJ fit + side suit
 
