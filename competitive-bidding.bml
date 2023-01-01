@@ -309,7 +309,7 @@ Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others pla
 *"All doubles of bids through 2!s are takeout UNLESS"*:
 
 1. It's defined above as one of *Negative, Competitive or Responsive*
-2. our side bid 1N. See [Overcalls of our NT](#Overcalls of our NT) where normally first double is takeout, second penalty.
+2. our side bid responded 1N. Compare when open or overcall -- [Overcalls of our NT](#Overcalls of our NT) first double is takeout, second penalty.
 3. our side bid and raised a suit. So, 1H--(P)--2H--(2S)--X should be penalty, whereas 1H--(1S)--2H--(2S)--X is competitive.
 4. our side redoubled
 5. our side made a penalty double or penalty pass
@@ -318,7 +318,6 @@ Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others pla
 8. our side are in a GF (1!h/!s + 2/1, 1!c--1N/2!s)
 9. our side invites 3N (1!c--2!h)
 10. our side limits hand with no major (1!c--2!c/!d)
-
 
 *** Takeout Doubles
 
@@ -388,6 +387,12 @@ Takeout over a major:
 - (1H)--X--(3H), double is values, fairly loose definition, 3S is competitive, NO invitational bid, as a
   takeout double should sensible values (not so wide ranging as an overcall).
 - (1S)--X--(3S), unsure of !h length, double is values. With 5!hs would probably just bid 4H.
+
+
+*** Activity Doubles and Splinters
+
+When the opponents show a short suit that does not make much sense for us to lead, such as a splinter, then
+despite us apparently lacking strength, double should be for activity, in this case a potential sacrifice
 
 *** Single Raise they Compete We Double
 
@@ -505,12 +510,12 @@ Examples:
 
 When opponents double an artificial bid for lead direction
 
-- XX for strong play suggestion
+- XX for strong play suggestion (e.g. 4 very good / 5+ reasonable suit)
 - Pass to play if partner can help in support e.g. Hxx+
 - Cannot play in the contract only doubled, must be redoubled
 - Otherwise bid on as if not doubled
 
-*** Handling doubles of our stopper ask
+*** Handling doubles of our stopper ask of their suit
 
 Helping to right side 3N or not play it.
 

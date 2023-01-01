@@ -678,15 +678,18 @@ Natural, up to 11 hcp, no 4 card major
     XX = !h transfer, 4+ cards, *system on* without further interference
         1H = 1--3 cards
         1N = inconvenient 3 suiter (short transfer suit, extras)
+            2CD = Two Way NMF continuations
         2D = [good !h raise](#1D--1H--2D)
         2H = [normal !h raise](#1D--1H--2H)
     1H = !s transfer, 4+ cards, *system on* without further interference
         1S = 1–-3 cards
         1N = inconvenient 3 suiter (short transfer suit, extras)
+            2CD = Two Way NMF continuations
         2D = [good !s raise](#1D--1S--2D)
         2S = [normal !s raise](#1D--1S--2S)
     1S = NT transfer, no major
         1N = limited, often balanced
+            new = natural, invitational
         others = [system on](#1D--1N)
     1N = !c transfer, good 8+ hcp
         break = short !cs
@@ -717,6 +720,7 @@ Natural, up to 11 hcp, no 4 card major
 
 1D--(1H)
     Dbl = 4--5 !ss ~6+ hcp or 6+ !ss invitational precisely, *system on* without further interference
+        1N = natural, Two Way NMF continuations
         2D = [good !s raise](#1D--1S--2D)
         2S = [normal !s raise](#1D--1S--2S)
         (3H) = higher interference
@@ -751,6 +755,7 @@ Natural, up to 11 hcp, no 4 card major
 
 1D--(1S)
     Dbl = 4--5 !hs ~(8)9+ hcp or 6!h invitational precisely, *system on* without further interference
+        1N = natural, Two Way NMF continuations
         2D = [good !h raise](#1D--1H--2D)
         2H = [normal !h raise](#1D--1H--2H)
         (2S) = opponents raise
