@@ -1068,7 +1068,7 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
     X = values / penalty
     2D = to play
     2H = competitive plus minors, often (1--3)(5--4) or 5--5 minors, not values doubling interest
-    2S = !cs, invite plus
+    2S = !cs, invite plus (same as normal transfers)
     2N = !ds, invite plus
     3CD = to play
     3HS = GF, auto-splinter, 5--5 minors
@@ -1105,11 +1105,12 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
     Others = [Lebensohl System](#1NT Interference and Lebensohl)
 
 1N--(2N) usually minors
-    P = maybe competitive major hand, balancing next time
+    P = maybe competitive major (most likely !hs) hand, balancing next time
     X = values
     3C = stayman
-    3D = 5+ !hs, invite plus transfer
-    3H = 5+ !ss, invite plus transfer
+    3D = 5+ !hs, GF
+    3H = 5+ !ss, GF
+    3S = NF, 6+ !ss
 
 1N--(3C)
     X = takeout, vague distribution

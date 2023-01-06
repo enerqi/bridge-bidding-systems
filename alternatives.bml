@@ -157,6 +157,16 @@ a *NT transfer*.
 We play it as a mild GF 2 suiter after a minor opening, e.g. 1C/1D--(1M)--3M, and as a splinter after a major opening.
 The NT transfer should be more frequent, but having a bid for awkward two suiters helps game and slam bidding.
 
+** Fit Jumps and Splinters
+
+We have specific rules for [Fit Jumps and Splinters in Competition](#Fit Jumps and Splinters in Competition), basically
+fit jumps take priority over splinters with higher jumps (if available) being splinters. Other styles may only use fit
+jumps, with different strengths of fit jumps. This maybe more useful for correctly judging double fits and competition
+to the 5 level, but must be weighed against it also helping the opponents.
+
+Against light overcalls and raises slam finding can still be important -- splinters have value there. When playing
+splinters it's possible use void only splinters for finding the rarer tight slams.
+
 
 ** 3N Opening Alternatives
 
@@ -316,6 +326,18 @@ Against a weak NT double would be values at which point it's the Landy conventio
         2HS = natural
     2C = majors
     2DHS = natural
+
+
+*** Majors Focussed Defence
+
+Nice to have more competitive v.s. constructive distinctions, perhaps more so against a weak NT where we may have game
+on our way.
+
+1N
+    2C = both majors
+    2D = H or S, competitive
+    2HS = natural, constructive
+    2N = minors OR any GF 2-suiter
 
 ** Strong Club Defence Variants
 

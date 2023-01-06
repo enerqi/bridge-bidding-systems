@@ -807,11 +807,11 @@ Natural, up to 11 hcp, no 4 card major
     Others = [1N system on](#1NT Opening)
 
 1D--(2D) assuming michaels, both majors
-    X = values/penalty
-    2H = !cs, invitational plus
-    2S = !ds, invitational plus
-    2N = natural
-    3CD = weak, natural
+    X = values, forcing to 2NT
+    2H = !cs, GF 5+ suit
+    2S = !ds, GF 5+ suit
+    2N = both minors (double with balanced/semi-balanced values)
+    3CD = competitive, natural
 
 1D--(2D) natural
     X = both majors (or equal level conversion)
@@ -1772,28 +1772,38 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     4C = fit jump (no 3C fit jump available)
     4D = splinter
 
-1H--(2!h)
-    X = values
-    2S = [cue of implied major HCR](#HCR cue bids and 2N Raise in Competition) OR if two suits shown, lowest unbid suit
-    2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
-    3CD = natural, NF invitational. With known minor to cue, shows forcing other minor bid.
-    3H = NF, weaker
+1H--(2!h) !ss + minor
+    X = values, forcing to 3H
+    2S = [HCR, cue of major](#HCR cue bids and 2N Raise in Competition)
+    2N = !c transfer, competitive good weak two, or 5+ cards and can bid again
+    3C = !d transfer
+    3D = mixed !h raise
+    3H = competitive, simple raise
     3S = splinter
     4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
 
+1H--(2!h) !ss + !cs known two suiter example
+    X = values, forcing to 3H
+    2S = [HCR](#HCR cue bids and 2N Raise in Competition), high rank suit cue bid
+    2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
+    3C = !ds unbid minor, GF 5+ suit, low rank cue bid
+    3D = competitive !ds
+    3H = competitive, simple raise
+    3S = splinter
+
 1H--(2!s)
-    X = negative, maybe invite with 3 card support
+    X = negative, maybe invite with 3 card support but risk more interference
     2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
     3H = NF, weaker roughly mixed raise
     3x = forcing
     4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
 
 1H--(2N)  presumably minors
-    X = vales
-    3C = invitational plus, !h
-    3D = other major, invitational plus
-    3H = natural, less than invite
-    3S = natural, less than invite
+    X = values, forcing to 3H
+    3C = invitational plus, !h raise
+    3D = !ss, GF 5+ suit
+    3H = competitive, simple raise
+    3S = NF invitational
     4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
     4HS = to play (passed hand - fit jump other major)
 
@@ -2405,22 +2415,30 @@ Similar to [1H interference](#1H interference).
     4CD = fit jump (no 3CD fit jump available)
     4H = to play (no fit jumps at game level)
 
-1S--(2!s)
-    X = values
-    2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
-    3CD = natural, NF invitational. With known minor to cue, shows forcing other minor bid.
-    3H = cue of implied major, invitational exactly OR minimum game hand, !s support
-    3S = NF
-    4CD = [!s slam tries](#Major Opening and Responder's 4CD Slam Try)
-    4H = splinter (of their known suit), or fit jump (of unbid suit)
+1S--(2!s) !hs + minor
+    X = values, forcing to 3S
+    2N = !c transfer, competitive good weak two, or 5+ cards and can bid again
+    3C = !d transfer
+    3D = [HCR](#HCR cue bids and 2N Raise in Competition)
+    3H = mixed !s raise
+    3S = competitive, simple raise
+    4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
+    4H = splinter (of their known suit)
 
+1S--(2!s) !hs + !cs known two suiter example
+    X = values, forcing to 3S
+    2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
+    3C = !ds unbid minor, GF 5+ suit, low rank cue bid
+    3D = competitive !ds
+    3H = [HCR](#HCR cue bids and 2N Raise in Competition), high rank suit cue bid
+    3S = competitive, simple raise
 
 1S--(2N)  presumably minors
-    X = values
-    3C = !hs, invitational plus
-    3D = invitational plus, !s
-    3H = natural, less than invite
-    3S = natural, less than invite
+    X = values, forcing to 3S
+    3C = !hs, GF 5+ suit
+    3D = invitational plus, !s raise
+    3H = natural, NF
+    3S = competitive, simple raise
     4CD = [!s slam tries](#Major Opening and Responder's 4CD Slam Try)
     4HS = to play (passed hand - fit jump other major)
 
