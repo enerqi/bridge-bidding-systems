@@ -968,6 +968,7 @@ By responder example:
   4H = Obstructive bid, classic weak preempt, or fast arrival auction e.g. Kxxx/Axx/K/Qxxxx
   4S = preempt
   4N = Blackwood, !hs not agreed. Bid 2N first to use [RKB](#RKB 4N) for !hs.
+  5CD = [EKB](#EKB Voidwood)
 
 ** 1H--1S
 
@@ -1057,19 +1058,22 @@ By responder example:
         3H = 14--15, 6+ !hs, 6 losers
         3S = 14--15, 6+ !hs AND 3 card !s support
         3N = solid 6 card suit
+        4CD = 14--15 !s support, mini-splinter
+        4S = 14--15 !s support mini-splinter, hiding shortage, limited honour controls
     2H = NF, ~6--(10), natural preference
         2S = natural, 3 card support
             2N = only 4 !ss, NT suggestion
                 3CD = 5 card minor 3--5--(5--0)
-        3CD = 5--5, extras (maybe minimum 5--6), maybe risky
+        3CD = 14--15 !s support, mini-splinter
         3H = 14--15, 6+ !hs AND 3 card !s support, maybe risky
     2S = 6+ !ss invitational, ~9--12 (not weak when opener could be showing a 2nd suit)
         3CD = escaping opposite minimum to !c/!d or !h, slightly invitational (otherwise pass)
             3S = really good !s (maybe facing a void)
     2N = NF, ~6--(10), 4+ !cs
         3C = sign off
-        3D = FSF, groping for a game, often maximum !c/!d hand
+        3D = 14--15 !s support, mini-splinter
     3CD = NF, ~6--(10), 6+ card minor, canapé
+        3S = 14--15 !s support, mini-splinter hand
     3H = 14+ slam try, 3(+) card !h support
     3S = natural, forcing, 6+ !ss, good hand
     3N = ~12--17, good minor stops
@@ -1880,6 +1884,7 @@ at the 3 level.
   4D = [splinter !d, 13--16 hcp 4.5+ cover cards (passed hand - FJ mild slam interest)](#1S--4D)
   4HS = [to play](#1S--4H/4S)
   4N = [Blackwood, !ss not agreed. Bid 2N first to use RKB for !ss.](#1S--4N)
+  5CDH = [EKB](#EKB Voidwood)
 
 ** 1S--1N
 

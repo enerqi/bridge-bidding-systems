@@ -167,6 +167,135 @@ to the 5 level, but must be weighed against it also helping the opponents.
 Against light overcalls and raises slam finding can still be important -- splinters have value there. When playing
 splinters it's possible use void only splinters for finding the rarer tight slams.
 
+** Mini Splinter Rebids
+
+After a 1D opening and 1HS response we do play mini splinter showing bids for various jumps, the structure supports
+mini splinters and showing 6--5 shapely hands (though not in the most natural intuitive way).
+
+After 1H--1S we keep 2N as 6--4 with a minor and 3CD rebids as 6--5 hands. No space has been left for direct mini
+splinters even though they are more frequent. Having the jump rebids be shapely hands works with a limited opening
+system to show offensive hands with limited points. In a natural wide ranging strength system employing Gazilli covers
+the 16+ hands. We do play Gazilli over 1H--1S so it can be used to show a max 14--15 mini-splinter like raise --
+opposite the NF responses opener going to the 3 level in a new suit often makes little sense.
+
+** 2C Opening Responses
+
+Generally content with the structure -- promising 6 cards makes the constructive bidding much easier than only 5 clubs.
+
+Standard modern precision has similar responses, except 3D (instead of 5--5+ majors) + 3H (instead of natural
+invitational) are invite plus transfers. Transfers have the usual downside of more lead directing doubles and bidding
+space for opponents, but transfers may quickly describe more hands, e.g. one 5 card major and able to go to 3N for which
+we must start with the 2D enquiry.
+
+SMP uses 3S to show 6!ss + 4!hs GF. We have to go via 2N for 6--4 either way in the majors and for single suited GF
+major hands. It's not that likely to suffer from difficult pre-emption though -- we could double !ds for takeout or
+another major overcall for penalty. Unsure if a GF single major would struggle after !d preemption and support.
+Presumably a transfer to !hs then bidding 3S would show 6--4 in SMP.
+
+SMP uses 2N to show the 5--5 GF type hands, including a major + !ds which we start via the 3C !d transfer. Perhaps it's
+more important to show 5--5 majors directly with 3D in case of interference, regardless, our 3D is invite plus instead
+of GF, so perhaps a bit more accurate for major game bidding.
+
+** Weak Two Responses
+
+The most common alternative responses use 2N or the next suit as an ask. Asking for what though? Strength, shortage,
+side feature (A or K) or suit quality perhaps. Strength is recognised as the most important factor, so responses often
+combine strength showing with showing one of shortage, feature or suit quality. It can also combine with showing 5 vs 6
+card preempts if you play 5 carders NV in 1st/2nd seat.
+
+If your suit quality can be really bad then there is definite benifit in working that out. Our quality is moderate,
+neither the "good" 2/3 top honours nor awful suits like J10 or worse. If playing wide ranging strength, e.g. 4/5--10 hcp
+then you may want min, medium and max strength distinctions. Really bad quality and/or wide ranging weak twos make
+constructive bidding a struggle -- it's easy to overreach or underbid. As the suit quality improves and the point range
+becomes tighter it can then be worth considering side features or shortages. Shortages have more utility when there is a
+trump fit, especially when looking for slam. Features help to fit with responder's suit, probably looking for 3N.
+
+When only trying for game showing shortages may give away too much information to the defenders. Responses can show an
+unknown shortage and min or max strength, but there won't be room to find out the shortage without going to game, so it
+won't help you bid a really tight game.
+
+Transfers is an alternative to a general 2N (or similar) asking bid that can be constructive but also allow escaping to
+a side suit. In our case the 2N bid is more of a puppet as it does not always have clubs, but it will be a slam try in
+that case. Even if every transfer is "normal" showing the next up suit then you have the choice of playing it as invite
+plus or strength unknown (weak or GF basically). Our style of assumed invite plus (could rebid a minor transfer to
+escape, which is then in effect a minor preempt if opener showed support) allows opener to consider their strength and
+fit for responder's suit, often useful when 3N is considered. Transfers do not give us a way to query opener's suit
+quality, opener will assume responder is looking for 3N with at most doubleton support and judge from there. Fit for
+responder's suit is something that feature asks help reveal. We can do a shortage ask, but it starts via the 2N puppet
+bid and is more relevant for slam finding.
+
+With transfers we might worry about giving the opponents more ways to compete (though the artificial responses to asking
+bids can also be doubled) and the annoyance of opener potentially playing the contract unnecessarily. Even with natural
+new suit GF responses to a weak two opener it's possible for opener to end up playing 3N anyway. In general we use the
+transfers when being constructive - partner has preempted us and we need tools to say more. Note, we always have a 3
+level obstructive raise available -- perhaps the most important bid.
+
+Some weak two ask examples:
+
+*** simple shortage / strength showing
+
+Presumably decent suit quality and not too wide range.
+
+2S--2N
+    3CDH = shortage, min
+    3S = no shortage, min
+    3N = any max
+        4C = shortage ask, slam try
+
+*** hiding shortage / strength showing
+
+Location of shortage hidden unless explicitly asked for.
+
+2H--2S
+    2N = min, some shortage
+    3C = max, non-club shortage
+    3D = max, club shortage
+    3H = min, no shortage
+    3S = max, no shortage
+
+*** Ogust
+
+2M--2N
+    3C = bad/bad strength/suit
+    3D = bad/good
+    3H = good/bad  upper range strength, but bad suit
+    3S = good/good
+    3N = AKQ
+
+*** Feature Ask
+
+2M--2N
+    3x = side feature, maximum
+    3M = minimum
+
+*** Side suit showing
+
+Can show side 4 card suit, but then means that showing a shortage does not convey strength, which is fine with a tight
+range.
+
+2H--2N
+    3C = 6--4
+        3D = suit ask
+    3D = minor shortage
+    3H = min, no shortage
+    3S = !s shortage
+    3N = max, no shortage
+    4x = void
+
+** 2N "Jacoby" Raise over 1HS
+
+We play this as limit plus, not GF. This works better in a limited opening system where opener is unlikely to want to
+take over and be captain with a powerhouse hand. Playing as limit plus means the opponents are unlikely to make a
+dangerous lead directing double or overcall in 4th, as we may never have had a game on anyway.
+
+There could be further improvements here. The main thing is that there are bids to show a minimum with specific
+singletons. This allows finding some tight games. This has similarities to the weak two responses, you cannot stay below
+3M whilst hiding the singleton location from the opponents whilst giving responder an opportunity to ask about it. This
+information leakage is less of a problem in a limited opening system as we will often just bid game with an
+uninteresting hand that would rarely make slam opposite a shapely maximum from opener.
+
+If less room is given over to showing minimum singletons then it could be easier to distinguish 5--4--2--2 vs 6 card
+openings without shortages or show a side suit below the 4 level.
 
 ** 3N Opening Alternatives
 
@@ -214,7 +343,7 @@ There's many ways to play it such as:
 
 - Classic (2N puppet to show weak/competitive hands below opponents suit invitational above, direct 3x GF)
 - Reverse (direct 3x weak/competitive below opponents suit invitational above, 2N puppet to show GF hands)
-- Rubensohl/Rubinsohl (Rubens advances + Lebensohl, where 2N--3!s transfers are weak or GF, transfer to opponents suit is staymanic cue)
+- Rubensohl/Rubinsohl (Rubens advances + Lebensohl, where 2N--3!s transfers are weak or GF, transfer to opponent's suit is staymanic cue)
 - Transfer/Advanced (similar to Rubensohl but 2N bid is multi-meaning puppet any strength !cs or weak other suit, transfers are invitational plus)
 - Rumpelsohl (transfers weak or GF, 2N multi-meaning used to show invitational hands).
 
@@ -222,7 +351,7 @@ Within those there could be minor variations around whether fast shows (a stop),
 2N is multi-meaning puppet and not just showing !cs), slow/fast cue shows a 4 card major or not and stop asks,
 direct 3 level bids are strong or via 2N are strong etc. Transfers to the cue suit or transfer through it. Showing competitive hands faster naturally sounds more
 matchpoint oriented. Focusing on invitational/GF hands better for IMPs. We play a "transfer" variant. The transfer
-allows the stronger player to declare. Given all the names and variations the name doesn't label an exact system.
+allows the stronger player to declare. Given all the names and variations the name may not label an exact system.
 If a negative double is available then the Lebensohl bidder has more options/accuracy. (2S)-X takeout is harder and invitational plus only responses certainly do not make sense
 as advancer is forced to bid.
 
@@ -328,7 +457,7 @@ Against a weak NT double would be values at which point it's the Landy conventio
     2DHS = natural
 
 
-*** Majors Focussed Defence
+*** Majors Dual Strength
 
 Nice to have more competitive v.s. constructive distinctions, perhaps more so against a weak NT where we may have game
 on our way.
@@ -560,7 +689,7 @@ settle in a 1N contract that we could have stolen) and pass with strong balanced
 start with a takeout double as a simple overcall could be passed out. Passing and bidding later with a strong shapely
 hand risks losing a chance to show your hand, though takeout doubles for strong single suiters can suffer this as well.
 
-Variation with 1N 4!h + minor, otherwise standard stuff:
+Variation with 1N 4!h + minor (which could also be played as any 4 card major + 5 card minor):
 
 1C
     X = takeout, majors or !ss and a minor
@@ -583,6 +712,8 @@ Variation that gets in both major + some minor combinations, but loses a natural
 
 1C--1D--1M
     X = strong balanced, 3+ trumps
+
+More majors focus including two suited transfer overcalls and a natural 1S overcall:
 
 1C
     X = majors (pass with a general takeout)
