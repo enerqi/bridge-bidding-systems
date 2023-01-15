@@ -11,9 +11,9 @@ It's somewhat a negative not having a pre-emptive weak NT, specifically NV at ma
 16--18 just fits too well with the other system parts where we force all ~16--20 1C opening hands to be unbalanced as
 1N and 2N handle 16--20 (semi)balanced hands. Hands tend be limited very quickly.
 
-Mini NTs are a fun novelty but too hard to construct over. When vulnerable, particularly at IMPs scoring there's too
+Mini NTs are a fun novelty but hard to construct over. When vulnerable, particularly at IMPs scoring there's too
 much risk of going for a penalty when defenders X to show 13+ points. When NV it's definitely safer, high frequency
-and pre-emptive. It also pre-empts partner though, so really best played NV in 3rd position only. The opponents will
+and pre-emptive. It also pre-empts partner though, so perhaps better played NV in 3rd position only. The opponents will
 declare more often over a mini NT and shape/strength information has been given away.
 Having two systems for VUL and NV is possible but a chore.
 
@@ -85,9 +85,17 @@ which makes the 2/1 suit bids clearer.
 
 ** Multi 2D, Weak 2D opener, 5--4+ Major/Minor Weak Openers
 
-We play 2!d constructively (intermediate strength) so that the nebulous 1!d opening is less messy and constructive bidding is easier.
-So no multi 2!d, or even better, some weak 2!d variant. The lack of direct pressure on the opponents with a multi 2!d would make it less desirable
-as a pre-empt aswell - it's played more for the constructive additions and the extra preempts that can be fit in.
+We play 2!d constructively (intermediate strength) so that the nebulous 1!d opening is less messy and constructive
+bidding is easier. So no multi 2!d, or even better, some weak 2!d variant. The lack of direct pressure on the opponents
+with a multi 2!d would make it less desirable as a pre-empt aswell - it's played more for the constructive additions and
+the extra preempts that can be fit in.
+
+While it hasn't been tried (unlike a precision 2D opening which we have played), actually a multi is possible if we play
+a Precision 2H opening, that is a 3 suiter with short !ds that opens 2H. As 2H is very passable it does put maximum
+pressure on the opponents. The multi does not apply as much pressure, but it is some what awkward to defend against and
+gives us an extra constructive bid. It also loses the 2H opening preempt, though it has been argued that it is the least
+useful preempt of !ds, !hs and !ss (it's hard to bid and double 2D without both majors and the 2H opening almost points the opponents
+at the higher ranked !s suit). A weak only multi would apply more pressure and perhaps be more fun.
 
 5--4/5--5 major/minor two suiters are more frequent than a standard 6 card weak two bid, roughly a 3:2 ratio. Ambiguity
 in 5 v.s. 6 cards makes safe game constructive bidding a challenge, so we can choose one of 5 or 6 cards in a
@@ -297,6 +305,45 @@ uninteresting hand that would rarely make slam opposite a shapely maximum from o
 If less room is given over to showing minimum singletons then it could be easier to distinguish 5--4--2--2 vs 6 card
 openings without shortages or show a side suit below the 4 level.
 
+*** Cohen Variation
+
+Needs a bit of tweaking to fit in a limit plus instead of GF only structure.
+
+3C = any min (except 4M bid)
+    3D = ask
+        3H = with shortage
+        3S = 5422
+        3N = 6+ trumps, no shortage
+        4x = decent 5 carder
+3D = non-min, with shortage
+    3H = ask
+3H = non-min, 5422
+3S = non-min, 6/7 carder, NO shortage, 6322/7222
+3N = non-min, 5332
+4M = worst 5332
+4x = decent 5 carder
+
+*** Scanian Variation
+
+The length of the side suit is less clear here, but there's room for responder to support a minor at the 4 level and
+even choose an alternative contract.
+Medium strength matters less in a limited opening system, where we can just use min v.s. max.
+
+3C = 11--13 any OR void 14--17
+3D = 15+ game accepting, no void
+3HS = 15+ game accepting, !c/!d side suit (could be 4 or 5 cards)
+3N = 15+ game accepting, other major side suit  (could be 4 or 5 cards)
+4x = void, 11--13 or 18+
+
+*** Natural Extras
+
+3CD = natural, extras
+    next = shortage ask
+3M = minimum
+3oM = natural, extras
+    next = shortage ask
+4x = void, extras
+
 ** 3N Opening Alternatives
 
 An alternative is to play 3N as Solid AKQ+ 7 card major with side feature OR solid AKQ+ 8 card major.
@@ -327,14 +374,20 @@ Opening 3N as a specific ace ask is another option.
 Instead of the specific ace ask:
 
 - 4N as 6--6 minors pre-empt
+- 4N as 6--5+ minors pre-empt
 - 4N as a good 5 level minor pre-empt
 
 The 4N as an ace ask bid has a larger variety of freak hands where it could be useful (basically around 11 or so tricks regardless of points),
 but these are still very rare. 6--6 minors is also very rare, ~ 1:1388 for 6--6, one of 6 suit combinations = 1:8333 without considering hcp.
 Bidding slow with an ace ask type hand is probably harder than a 6--6 minor hand, especially with interference.
 
+The 6--5 minors hand is far more frequent, but is so high level and at some risk of being doubled for penalty that the
+point range will be fairly constrained, e.g. ~8--10 hcp. Clearly it preempts partner and may skip a very viable 3N
+contract, so perhaps makes more sense in 3rd.
+
 A good 5 level preempt would probably be better than 6--6 minors frequency wise. A hand with ~8--8.5 tricks and a solid
-8 carder or semi solid plus side trick. Only pays off if slam was on the cards over the 5!c!d preempt.
+8 carder or semi solid plus side trick, or maybe 4 control points. Only pays off if slam was on the cards over the 5!c!d
+preempt.
 
 
 ** Lebensohl Variants
@@ -354,6 +407,17 @@ matchpoint oriented. Focusing on invitational/GF hands better for IMPs. We play 
 allows the stronger player to declare. Given all the names and variations the name may not label an exact system.
 If a negative double is available then the Lebensohl bidder has more options/accuracy. (2S)-X takeout is harder and invitational plus only responses certainly do not make sense
 as advancer is forced to bid.
+
+** Short Minor Defence
+
+Currently we just play natural bids over a short/prepared minor and have to jump one higher for the Michaels call.
+
+When the minor could be 0--2 cards then similar to the Swedish/Polish club defence variant using a 1N overcall with a 4
+card major and 5 card minor is an option to help competing. Pass then double of their rebid would show a strong NT
+overcall and afford more options for penalising (assuming a NT rebid is weak). Probably better against a strong NT where
+the simple rebid NT is weak.
+
+The potential downside remains the opponents claiming 1NT to play or responder being able to show their major.
 
 ** 1N Defence Variants
 
@@ -727,9 +791,10 @@ More majors focus including two suited transfer overcalls and a natural 1S overc
 
 ** 2D Precision Style 3 Suiter
 
-The main alternative to playing an [intermediate 2!d opening bid](#2D Intermediate Opening) -- main because the intermediate constructive
-bidding would be undesirably difficult playing some weak 2!d or multi 2!d etc with an artificial 1!c opening and 2!c opening that is 6+ !cs.
-Both bids are for intermediate constructive hands, they just put different constructive meanings into the 1!d/2!d openings.
+The main alternative to playing an [intermediate 2!d opening bid](#2D Intermediate Opening) -- main because the
+intermediate constructive bidding would be undesirably difficult playing some weak 2!d or multi 2!d etc with an
+artificial 1!c opening and 2!c opening that is 6+ !cs. Both bids are for intermediate constructive hands, they just put
+different constructive meanings into the 1!d/2!d openings.
 
 - This 3 suiter is less frequent and less competitive/preemptive than the intermediate 2!d opening.
 - The 3 suiter does have the advantage of being very specific and so easy to penalise opponents or quickly get to the final contract

@@ -1230,8 +1230,7 @@ Situations include:
 
 (1N)--X--(P) = we double a weak NT
     P = ~5+ hcp, creates forcing pass up to 2!h
-    2C = artificial, no 5 carder
-        P = 4+ card !c suit
+    2C = artificial, no 5 carder unless clubs
         2x = cheapest 5 card or 4 card suit
     2DHS = ~0--4 hcp, natural escape
     2N = artificial, 5--5 GF
@@ -1242,8 +1241,7 @@ Situations include:
 1N--(X) = our 1N opening is penalty doubled
     P = ~4+ hcp, creates forcing pass up to 2!h
     XX = to play / penalise, creates forcing pass up to 2!h
-    2C = artificial, no 5 carder
-        P = 4+ card !c suit
+    2C = artificial, no 5 carder unless clubs
         2x = cheapest 5 card or 4 card suit
     2DHS = ~0--4 hcp, natural escape
     2N = artificial, 5--5 GF
@@ -1254,8 +1252,7 @@ Situations include:
 (1x)--1N--(X)
     P = happy to play
     XX = to play / penalise, creates forcing pass up to 2!h
-    2C = artificial, no 5 carder
-        P = 4+ card !c suit
+    2C = artificial, no 5 carder unless clubs
         2x = cheapest 5 card or 4 card suit
     2DHS = ~0--4 hcp, natural escape
     2N = artificial, 5--5 GF

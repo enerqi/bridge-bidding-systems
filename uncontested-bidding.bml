@@ -727,7 +727,7 @@ Natural, up to 11 hcp, no 4 card major
             X = 4 !ss, ~14--15 support
             3S = competitive
             4C = both minors
-    1S = 4+ !cs, yes clubs, good 8+ hcp, not 4 !ss unless GF and bidding natural suit order
+    1S = minors takeout, good 8+ hcp
     1N = natural
     2C = !d transfer, good 8+ hcp
         break = short !ds
@@ -977,7 +977,7 @@ By responder example:
 - 4 !ss + 3+ card !h support is possible with GF values - it's easier to control the auction
 
 1N = [11--13(14) NT interest, often !s singleton / 5--3--3--2 / semi-balanced with 4 card minor, values spread out](#1H--1S--1N)
-2C = [Gazilli 14--15 6+ !hs, 6 losers, OR good 14--15 3 card !s raise (NOT 3--5--4--1), OR 14--15 (semi)balanced, OR natural !cs, OR 14--15 !ds](#1H--1S--2C)
+2C = [Gazilli 14--15 6+ !hs, 6 losers, OR good 14--15 6!hs + 3 card !s raise (NOT 3--5--4--1), OR good 14--15 mini-splinter, OR 14--15 (semi)balanced, OR natural !cs, OR 14--15 !ds](#1H--1S--2C)
 2D = [natural, minimum ~11--13, often 5 cards or values very concentrated](#1H--1S--2D)
 2H = [natural, 6+ !hs, minimum ~11--13, could be 3!ss if hearts strong enough v.s. a singleton !h otherwise raise !s](#1H--1S--2H)
 2S = [natural, minimum ~11--13, 3 or 4 cards - will often raise with 3 card support + singleton](#1H--1S--2S)
@@ -1037,6 +1037,7 @@ By responder example:
 2C = Gazilli variant, one of:
     - 14--15 6+ !hs, 6 losers
     - 14--15 3 card !s raise (not 3--5--4--1), 6 losers
+    - 14--15 mini-splinter !s raise, 6 losers
     - 14--15 (semi)balanced catchall or !s singleton likes NT
     - 14--15 with !ds
     - natural with !cs
@@ -1641,18 +1642,16 @@ Mixed raise (weak limit raise) -- ~7--9(10) support points, 7.5--9 losers, 4+ ca
 
 ** 1H--3S
 
-Unknown singleton splinter, 10--13 hcp.
+Unknown singleton splinter, 10--13 hcp, 7 loser hand or better.
 
 Splinter bids typically have fairly evenly distributed strength amongst the side suits as otherwise a 2/1 GF bid
 of the strong suit is often better (unless the strong suit is mostly self-sufficient).
 
-Splinter bidder promises 3--4 cover cards
-outside of the shortness, e.g. Kxxx/Axxx/x/Axxx. After asking for the shortage opener counts
-losers in other suits and with 6+ losers signs off, e.g. Jxx/KQxxx/KQJ/Qx easy to sign off
-v.s. !d singleton. 5 losers is hardest to judge as opener needs to make a slam try and let
-responder bid on with 4 cover cards or a void. Responder can always bid on once with 5+ cover cards,
-though won't have that hand for a low tier 10--13 hcp splinter. When responder bids on opener is
-ok with having 6 losers.
+Splinter bidder promises 3--4 cover cards outside of the shortness, e.g. Kxxx/Axxx/x/Axxx. After asking for the shortage
+opener counts losers in other suits and with 6+ losers signs off, e.g. Jxx/KQxxx/KQJ/Qx easy to sign off v.s. !d
+singleton. 5 losers is hardest to judge as opener needs to make a slam try and let responder bid on with 4 cover cards
+or a void. Responder can always bid on once with 5+ cover cards, though won't have that hand for a low tier 10--13 hcp
+splinter. When responder bids on opener is ok with having 6 losers.
 
 3N = ask
     4C = !c singleton

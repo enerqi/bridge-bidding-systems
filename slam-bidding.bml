@@ -229,7 +229,8 @@ Step responses:
 
 ** EKB Voidwood
 
-- Jumps to the 5 level
+- (a) Jumps to the 5 level OR
+- (b) Above Game *4S jump cue* when can force another way, e.g. 1H--(2S)--4S, 2D--(2H)--4H, 2C--(2D)--4D
 - Normal RKB/Kickback after void shown should similarly ignore an Ace in the void suit
 - Impossibly natural - agreed a suit already, maybe an opponent's suit, or a forcing natural suit could be bid at a lower level
 - Over 1HS an immediate 5CD is EKB, not 1H--4S (4 level and a reasonable game to preempt)
