@@ -280,7 +280,7 @@ When is a jump a fit jump? The following must *all* be *true* about the bid:
 
 - we have another way to bid the fit jump suit either naturally or artificially directly at a lower level
 - below 4H game
-- we open 1HS or 2HS (and very rarely open 1CD, bid a suit naturally and then get delayed competition). Not over
+- we open 1HS or 2HS (and very rarely open 1!c!d, bid a suit naturally and then get delayed competition). Not over
   intermediate 2CD given limited space available to show NF or forcing natural suits. Not over 1CD as they do not show
   any suit.
 - when we open 1HS or 2HS, only after simple overcalls by the opponent (after 1HS--(jump) 4!c!d are artificial slam tries)
@@ -393,6 +393,17 @@ Takeout over a major:
 
 When the opponents show a short suit that does not make much sense for us to lead, such as a splinter, then
 despite us apparently lacking strength, double should be for activity, in this case a potential sacrifice
+
+Note, an alternative is takeout, e.g. !ss if they bid !hs and more general takeout if they have the master !ss
+
+*** Activity Doubles by Weak Often Preempt Hands
+
+A weak hand that has already described some offensive ability, such as a weak two, cannot reasonably have a penalty double
+of any game the opponents bid, UNLESS partner has had space to show GF values and defense.
+
+So, if we open with a preempt, it is possible for the preempter to double with extreme shape (e.g. 6--4/6--5 after 2HS openings)
+and shortage in the opponents' suit, which suggests sacrifice unless partner can pass with a penalty trump stack.
+
 
 *** Single Raise they Compete We Double
 
@@ -535,7 +546,7 @@ Standard meanings by the defender sitting under the declarer:
 - lead my suit
 - lead our suit (we both bid obvious)
 - lead dummies first bid suit
-- lead shortest major if not suits mentioned
+- lead shortest major if no suits mentioned
 
 ** Major Opening and Responder's 4CD Slam Try
 
@@ -1530,7 +1541,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
     X = takeout v.s. weaker mixed/obstructive
 
 (1H)--P--(4CD) (or 3!s) natural short splinter
-    X = sacrifice suggestion
+    X = sacrifice suggestion.
 
 (1H)--P--(4H)
     X = general takeout including !s, 4th or 6th
@@ -1634,7 +1645,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
             3CD = natural, invitational
             3H = competitive, ~6--10 support points
             3S = splinter
-            4CD = splinter
+            4CD = fit jump
     2S = 5--5+ (!h + !d limited) OR (!h + !c *strong*)
         2N = minor ask, invite plus
             3CD = !c strong / !d weak
@@ -2203,6 +2214,9 @@ OR
 (2N)--P--(3!d)
     X = takeout
 
+An alternative would be 3C both majors and 3D multi-like some weaker major overcall. Less majors definition with 3C but
+advancer can ask for the longest with 3D.
+
 * Opponents open 2N Natural
 
 X is majors takeout, NT is minors.
@@ -2315,7 +2329,7 @@ Showing good !h/!s major preempt, maybe minimum opening values.
 
 * Opponents open 4HS
 
-- Double is always officially takeout
+- Double is more nebulous values
 
 (4H)
     P = usually weak, maybe good defensively
@@ -2327,12 +2341,12 @@ Showing good !h/!s major preempt, maybe minimum opening values.
 
 (4S)
     P = usually weak, maybe good defensively
-    X = takeout
+    X = values, expect to defend unless partner extra offense
     4N = takeout, 2 suiter emphasis
 
 * Opponents open 5CD
 
 (5CD)
-    X = takeout  (contrary to some playing general values, penalty)
+    X = values, expect to defend unless partner extra offense
     5x = natural
     5N = lower suits takeout

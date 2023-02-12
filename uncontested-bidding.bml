@@ -264,20 +264,14 @@ Natural, 4+ cards, maybe longer minor canapé
 *** 1D--1H--2H
 
 2H = normal/weaker !h raise, often flat 11--13, maybe 3 !hs if have singleton
-    2S = GF relay
-        2N = !s shortage, 3 card raise
-        3C = !c shortage, 4 card raise
-        3D = !d shortage, 4 card raise
-        3H = !s shortage, 4 card raise
-        3S = !s void, 4 card raise, minimum
-        4CD = !c/!d void, 4 card raise, minimum
+    2S = natural GF, maybe double fit slam hunting
     2N = natural, 4 !hs, NF invitational
         P = minimum, probably 3 card support
         new = maximum, 3 card support
         3H = minimum, 4 card support
         3S/4CD = splinter
         4H = maximum, 4 card support
-    3CD = 4!hs only, natural GF
+    3CD = natural GF, maybe double fit slam hunting
     3H = 5+ !hs, NF invitational
     3S = 5+ !hs, splinter
     3N = natural, 4!hs, choice of game
@@ -319,6 +313,7 @@ Natural, 4+ cards, maybe longer minor canapé
     3N = serious
 3S = 14--15, !h void-splinter, 4 card !s raise
     3N = serious (not obscure length or minor ask)
+    4new = natural slam try (no last train, too limited)
 3N = 6(7)!d--5!s support, some void
     4C = void ask, slam try
         4D = !c void
@@ -329,10 +324,10 @@ Natural, 4+ cards, maybe longer minor canapé
     4S = to play
     4N = [RKB](#RKB 4N) for !ss
 4C = 14--15, !c void-splinter
-    4D = artificial, [Double Fit RKB](#Double Fit RKB)
-    4H = last train
+    4D = natural slam try
+    4H = natural slam try (no last train, too limited)
 4D = 14--15, !d void-splinter
-    4H = [Double Fit RKB](#Double Fit RKB)
+    4H = natural slam try (no last train, too limited)
 4S = big support and shape, 6!d--5!s--1--1 max type hand
     4N = [RKB](#RKB 4N) for !ss
 
@@ -428,19 +423,10 @@ Natural, 4+ cards, maybe longer minor canapé
 - Unsuitable for jump support bids that show maximums with 4 card support
 
 2D = good !s raise, maybe 3 card shapely !s support; OR minimum 4 card void raise
-    2H = natural, 5!s + 4!h game try
+    2H = natural GF, maybe double fit slam hunting
     2S = to play
         3S = minimum 4 card void raise
-    2N = GF relay
-        3C = some 3 card raise
-            3D = shortage ask
-                3H = !h singleton
-                3S = !c singleton
-                3N = !d singleton
-        3D = !d shortage, 4 card raise
-        3H = !h shortage, 4 card raise
-        3S = !c shortage, 4 card raise
-        4CDH = !c/!d/!h void, (5--4--4--0), minimum
+    3H = splinter
     others = [as 1D--1S--2S](#1D--1S--2S)
 
 *** 1D--1S--2H
@@ -468,10 +454,7 @@ Natural, 4+ cards, maybe longer minor canapé
         3S = minimum, 4 card support
         4CDH = splinter
         4S = maximum, 4 card support
-    3CD = 4!ss only, natural GF
-    3H = natural GF, 5--5+
-        4H = natural
-            4N = [Double Fit RKB](#Double Fit RKB)
+    3CDH = natural GF, maybe double fit slam hunting
     3S = 5+ !ss, NF invitational
     3N = natural, 4!ss
     4CDH = 5+ !ss, splinter
@@ -727,7 +710,7 @@ Natural, up to 11 hcp, no 4 card major
             X = 4 !ss, ~14--15 support
             3S = competitive
             4C = both minors
-    1S = minors takeout, good 8+ hcp
+    1S = 4+ !cs
     1N = natural
     2C = !d transfer, good 8+ hcp
         break = short !ds
@@ -1365,6 +1348,7 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
     3D = natural, forcing raise, !d minor contract interest
     3H = 3 (occasionally 4) card !h support, was checking for double fit slam possibility.
         3N = serious control prompt by either
+        4C = control, fragment
     3S = splinter for !d (with 6--5 !c/!s, bid 2!s then more !ss instead)
     3N = natural, ~12--15, stoppers in !ss
     4C = !c RKB, special case, solid suit

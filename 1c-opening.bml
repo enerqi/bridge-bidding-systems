@@ -233,7 +233,7 @@ As 5--5, but always show the longest suit first
         3S = invitational, strong with extras ~19+
         4S = to play
 1S = natural, weak/strong with 4+ !ss (not single suiter Acol 2 or GF), maybe 4--1--4--4 or canapé exactly 4!ss, not 4!hs if weak
-    P = very weak, usually 3+ !ss
+    P = very weak, often !s tolerance
     1N = passable ask, any 0--9 hcp hand
         P = weak NT hand
         2C = artificial, any hand 5+ !ss
@@ -532,14 +532,14 @@ As 5--5, but always show the longest suit first
     3CD = natural, canapé
     3HS = sets the trump suit
         3N = serious, control asking
-2N = !ds + other major, ~16--19 strong
+2N = !ds + other major, unlimited
     3D = waiting
     3H = ~12+ !h support
     4H = fast arrival, !h support
-3C = 5+ !ds and 4+ !cs, ~16--19 strong
+3C = 5+ !ds and 4+ !cs, unlimited
     4C = !c RKB, special case
     4D = !d RKB, special case
-3D = 6+ !ds, denies 4 !cs or other major, ~16--19
+3D = 6+ !ds, denies 4 !cs or other major, unlimited
     3H = quasi natural, !h stop
         3S = no !c control, 2 card !s support
     3S = no stops, waiting, maybe !s slam interest
@@ -555,7 +555,8 @@ As 5--5, but always show the longest suit first
     3N = serious
     4M = fast arrival
 3N = 4--4--4--1 singleton in partner's major, 16--18 hcp
-4x = extra long suit, ~8--9 PT, distributional, weaker than Acol two
+4D = self-sufficient, extras
+4CHS = extra long suit, ~8--9 PT, distributional, weaker than Acol two
 
 ** 1C--1N
 
@@ -1344,7 +1345,7 @@ Compared to the [1D opening interference](#1D interference):
         (P) = nothing further by advancer
             X = takeout, strong, again Lebensohl continuations
             others = natural, strong, defend as if opened weak two
-    X = takeout double, doubleton+ in their suit, as Lebensohl system
+    X = takeout double, as Lebensohl system
     Cue = staymanic
     Others = [Lebensohl system](#1NT Interference and Lebensohl)
     3N = natural
