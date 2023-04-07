@@ -231,6 +231,7 @@ As 5--5, but always show the longest suit first
         2N = semi-natural, 21--23 NT
         3CD = single suited !c/!d Acol 2 equivalent ~19--21 hcp, ~8--9 playing tricks, 4+ Quick Tricks, F1
         3S = invitational, strong with extras ~19+
+        3N = punt ~23/24+
         4S = to play
 1S = natural, weak/strong with 4+ !ss (not single suiter Acol 2 or GF), maybe 4--1--4--4 or canapé exactly 4!ss, not 4!hs if weak
     P = very weak, often !s tolerance
@@ -438,6 +439,7 @@ As 5--5, but always show the longest suit first
             3N = nothing special, (semi)balanced
             4CD = void splinter
             4H = void splinter, other major
+        4new = splinter
         others = natural, sound 6 card suit
     3C = canapé, ~8--11 hcp
         3D = singleton ask
@@ -707,7 +709,7 @@ Artificial GF:
     2N = balanced, slam invite, no 4 card major
         3CD = 5 card minor
     3CD = natural, normally 6+ minor
-    3HS = 5--4+ minors, major fragment, better !cs/!ds, slam invite
+    3HS = 5--4+ minors, major fragment, slam invite
         3N = play suggestion, major stops, can have minor support
             4CD = [RKB](#RKB 4N), special case (probably 6--4)
         4CD = slam try accept, minor set
@@ -1217,6 +1219,8 @@ Compared to the [1D opening interference](#1D interference):
             4HS = ~16--18, 4+ support
     1HS = natural, 6+ hcp, *system off*
     1N = natural ~6--9
+        2x = F1
+        cue = two-suiter
     2C = natural, F1
     2D = majors 5--5 (as opponents open 1!d defence)
     2HS = ~5--7 hcp, sound weak two
@@ -1259,6 +1263,8 @@ Compared to the [1D opening interference](#1D interference):
             2H = stop ask
         2H = strong, no stopper
     1N = natural, ~6--9
+        2x = F1
+        cue = two-suiter
     2C = !d transfer, 5+ !ds, GF v.s. strong hand
         3D = weak NT, support
     2D = 3 card !s suit, ~8--11 hcp, 3--2--4--4 or 3--1--(5--4)
@@ -1298,7 +1304,9 @@ Compared to the [1D opening interference](#1D interference):
                 X = takeout again
             4H = weak or strong, 5 card support likely
             others = strong
-    1N = natural
+    1N = natural, ~6--9
+        2x = F1
+        cue = two-suiter
     2C = !d transfer, 5+ !ds, 8+
         2D = complete transfer, weak hand
         3D = weak hand, 4+ support

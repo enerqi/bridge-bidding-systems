@@ -81,5 +81,6 @@ influenced by Mat Nilsland's "Competitive Bids The Scanian Way" book and the 1N/
 notrump bidding books.
 
 
+#INCLUDE carding.bml
 #INCLUDE alternatives.bml
 #INCLUDE announcing.bml
