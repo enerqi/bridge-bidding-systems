@@ -764,7 +764,8 @@ Most important is its use against weak twos and after we have made natural openi
 - (1NT weak)--X--(2D+ Escape) (but not 2!c escape as just ignore, X Stayman)
 - (2D multi)--X
 
-Our variant ([note: Lebensohl variants](#Lebensohl Variants)), similar but still different to the Revision club variant:
+Our variant ([note: Lebensohl variants](#Lebensohl Variants)), when not forced to bid over a major preempt, similar but
+still different to the Revision club variant:
 
 - 2suit bids are natural weak/competitive
 - 2N multi-way puppet to !cs either weak/competitive !c/!d hands or GF !cs
@@ -784,7 +785,10 @@ In terms of artificial overcalls:
 - Note if the overcall promised another unknown suit we do not consider it
 - When the overcall does show two specific suits, X is negative for the other suits
 
-*** Over a balanced hand
+When we are FORCED to bid OVER a MAJOR preempt, then there is Better Minor Lebensohl. Though it's possible to play just
+one Lebensohl variant, it's less optimal.
+
+*** Over a balanced hand or weak 2D
 
 1CD/1N--(2!d)
     X = staymanic 3+ both majors, follow on suit bid is poor 5 card invitational, follow on cue stop ask
@@ -957,37 +961,50 @@ In terms of artificial overcalls:
     4x = natural preempt
 
 
-*** Over a takeout double:
+*** Better Minor Lebensohl over a major preempt takeout double:
 
-Similar to bidding over a balanced hand, except responder and the takeout doubler can have a wide range.
-Invitational is ~9--11.
+- Responder and the takeout doubler can have a wide range, responder is FORCED to bid OVER a MAJOR preempt.
+- We have no bid to to show an invitational !c hand, but can escape to our best minor fit.
 
+Better minor makes no sense over a weak two !d preempt, and there's no space for better major, which is why 2!d can be
+such an effective preempt
 
 (2H)--X
     2S = weak
-    2N = puppet, weak minor or GF clubs
-        3C = relayed, maybe good extras with !ds
-        3D = can pass 3!ds, game chance opposite !cs and less than 9--11 invite
-        3HS = natural, extra strength ~17+, 5 card major bid
-    3C = invitational plus !d
-    3D = invitational plus !s (transfer through)
-        4H = fit, slam try
-    3H = GF, staymanic 4!ss  (takeout doubles not always have !ss)
-    3S = artificial, GF, no stopper (could be played as minors or !c GF)
+    2N = ask for better minor
+        3CD = better minor
+            P = to play, opposite "normal" takeout double
+            3D = to play, weak !ds
+            3H = cue, GF with STOP and 4!ss
+            3S = natural, invitational
+            3N = NO stop, maybe 3!ss + 5/6 minor or both minors
+        3H = power double type strong hand, e.g. 5--4+
+        3S = natural, extra strength ~17+, 5+ card major bid
+        3N = power double with stop
+    3C = ~0--10 hcp
+    3D = natural, invitational
+    3H = no stop, 4!ss
+    3S = natural, GF
     3N = to play, stop implied, no other major
-    4x = natural
+    4CD = natural, GF, unsuitable for 3N
 
 (2S)--X
-    2N = puppet, weak minor or GF clubs (+ OR GF, no stopper balanced)
-        3C = relayed, maybe good extras with !ds
-        3D = can pass 3!ds, game chance opposite !cs and less than 9--11 invite
-        3HS = natural, extra strength ~17+, 5 card major bid
-    3C = invitational plus !d
-    3D = invitational plus !h
-    3H = fast weak/competitive with !hs (given up a generic no major, no stopper transfer as 2N then cue may be taken as stopper asking but implies GF clubs)
-    3S = GF, staymanic 4!hs (takeout doubles not always have !hs)
+    2N = ask for better minor
+        3CD = better minor
+            P = to play, opposite "normal" takeout double
+            3DH = to play, weak hand
+            3S = cue, GF with STOP and 4!hs
+            3N = NO stop, maybe 3!hs + 5/6 minor or both minors
+        3H = natural, extra strength ~17+, 5+ card major bid
+        3S = power double type strong hand, e.g. 5--4+
+        3N = power double with stop
+    3C = ~0--10 hcp
+    3DH = natural, invitational
+    3S = no stop, 4!hs
     3N = to play, stop implied, no other major
-    4x = natural
+    4CD = natural, GF, unsuitable for 3N
+    4H = game values
+
 
 ** Overcalls of our NT
 
