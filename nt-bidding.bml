@@ -1,8 +1,6 @@
 #+TITLE: NT Bidding
 #+DESCRIPTION: One Notrump openings, responses, defences, escapes etc.
 
-1d-2c then 6-5 hand how to bid....
-
 * NT Ranges and Scheme Situations
 
 - 1N = 16--18 hcp, maybe 5 card major or 5--4--2--2 long !c/!d.
@@ -785,8 +783,8 @@ In terms of artificial overcalls:
 - Note if the overcall promised another unknown suit we do not consider it
 - When the overcall does show two specific suits, X is negative for the other suits
 
-When we are FORCED to bid OVER a MAJOR preempt, then there is Better Minor Lebensohl. Though it's possible to play just
-one Lebensohl variant, it's less optimal.
+When we are FORCED to bid OVER a MAJOR preempt, then there is [Better Minor Lebensohl](#Better Minor Lebensohl over a major preempt takeout double).
+Though it's possible to play just one Lebensohl variant, it's less optimal.
 
 *** Over a balanced hand or weak 2D
 
@@ -961,7 +959,7 @@ one Lebensohl variant, it's less optimal.
     4x = natural preempt
 
 
-*** Better Minor Lebensohl over a major preempt takeout double:
+*** Better Minor Lebensohl over a major preempt takeout double
 
 - Responder and the takeout doubler can have a wide range, responder is FORCED to bid OVER a MAJOR preempt.
 - We have no bid to to show an invitational !c hand, but can escape to our best minor fit.
@@ -976,7 +974,7 @@ such an effective preempt
             P = to play, opposite "normal" takeout double
             3D = to play, weak !ds
             3H = cue, GF with STOP and 4!ss
-            3S = natural, invitational
+            3S = 4 card invitational
             3N = NO stop, maybe 3!ss + 5/6 minor or both minors
         3H = power double type strong hand, e.g. 5--4+
         3S = natural, extra strength ~17+, 5+ card major bid
@@ -984,7 +982,7 @@ such an effective preempt
     3C = ~0--10 hcp
     3D = natural, invitational
     3H = no stop, 4!ss
-    3S = natural, GF
+    3S = 5 card invitational
     3N = to play, stop implied, no other major
     4CD = natural, GF, unsuitable for 3N
 

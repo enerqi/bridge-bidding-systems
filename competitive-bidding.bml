@@ -1065,6 +1065,9 @@ With limited strength may want to hide distribution information and just bid the
 (1C)--P--(2C)
     2x = [OBAR](#OBAR 4th seat bids) competitive
 
+(1C)--P--(3C)
+    others = as [Opponents open 3C](#Opponents open 3CDHS)
+
 * Opponents open 1D
 
 **** (1D)--X
@@ -1292,6 +1295,9 @@ With limited strength may want to hide distribution information and just bid the
 (1D)--P--(2D)
     2HS = [OBAR](#OBAR 4th seat bids) competitive
 
+(1D)--P--(3D)
+    any = as [Opponents open 3D](#Opponents open 3CDHS)
+
 * Opponents open 1H
 
 **** (1H)--X
@@ -1411,6 +1417,12 @@ With limited strength may want to hide distribution information and just bid the
         4H = N/A forgot that 4D is conventionally a good !s raise
         4S = to play
         4N = minor ask, slam interest
+    (4H) = competition
+        4S = to play
+        4N = minor ask, slam interest
+            5HS = good !c/!d extras
+        5C = pass/correct
+        5D = good 5S bid
     (2x/3CD) = intervenes
         3DH = !s invitational
         3S = competitive
@@ -1532,13 +1544,15 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
     3m = cue responder, natural
 
 (1H)--P--(2H)
-    2N = minors
     X = takeout
-        2N = !d preference
+    2N = minors
+    others = as [Opponents open 2H](#Opponents open Weak 2D 2H 2S)
+
 
 (1H)--P--(3H) or artificial bergen 3!c/!d etc. limit
     X = 5 !ss + long minor when opponents have a 10+ limit raise
     X = takeout v.s. weaker mixed/obstructive
+    others = as [Opponents open 3H](#Opponents open 3CDHS)
 
 (1H)--P--(4CD) (or 3!s) natural short splinter
     X = sacrifice suggestion.
@@ -1728,6 +1742,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 
 (1S)--P--(2S)
     2N = 5 !hs and 4+ card minor
+    others = as [Opponents open 2S](#Opponents open Weak 2D 2H 2S)
 
 (1S)--P--(3S)
     any = as [Opponents open 3S](#Opponents open 3CDHS)
@@ -1933,30 +1948,35 @@ As [1NT Interference and Lebensohl](#1NT Interference and Lebensohl)
     2N = 16--19
         3D = NF
         3HS = forcing
-    3C = majors two suiter
+    3C = majors, any strength
     3DHS = natural, strong
-    4C = majors two suiter, strong
-    4D = preempt
-
+    4C = !ds + !hs, GF
+        4DH = to play
+        4S =
+        5C = EKB
+        5S = natural jump new suit, self-sufficient, slam interest
+    4D = !ds + !ss, GF
+        4H = !s slam try, first step 1+ KC
+        4S = to play
+        5C = EKB
+        5D = to play
+        5H = natural jump new suit, self-sufficient, slam interest
 
 (2C)--P--(2!d)
     X = !d lead directing
-    3C = michaels both majors, better hand
-    4C = majors two suiter, strong
+    others = as over their 2!c
 
 (2C)--P--(2!h!s)
     X = other two suits
-    3C = extreme shape
     CueResp = psyche expose
+    others = as over their 2!c
 
 (2C)--P--(2N)
     X = majors
-    3C = michaels both majors, better hand
-    4C = majors two suiter, strong
+    others = as over their 2!c
 
 (2C)--P--(3!c)
-    X = takeout
-    4C = michaels both majors
+    any = as [Opponents open 3C](#Opponents open 3CDHS)
 
 * Opponents open Strong 2C
 
@@ -1986,42 +2006,15 @@ Frequently the Weak 2!d, or a standard strong 2C. Treat as [weak 2D defence](#Op
         3x = NF, invitational, ~7--11, no support
     2N = natural, 16-18 balanced. Could have 4 card !h/!s, NT scheme follows.
     3C = natural
-    3D = majors two suiter
-    3HS = natural, strong
-    4C = natural, strong
-        4D = Redwood
-        4HS = natural
-        4N = natural
-    4D = majors two suiter, strong
 
 * Opponents open Intermediate 2D
 
-- Minor cue is majors, jump cue strong majors.
-- Strong single jump overcalls
-
-(2D)
-    X = takeout
-        2N = natural (no need for any competitive 3x bid)
-        3D = forcing
-    2HS = natural
-        2x = NF
-        3x = forcing
-    2N = 16--19
-        3D = NF
-        3HS = forcing
-    3C = natural
-    3D = majors two suiter
-    3HS = natural, strong
-    4C = natural, strong
-        4D = Redwood
-        4HS = natural
-        4N = natural
-    4D = majors two suiter, strong
+As [Opponents open Weak 2D](#Opponents open Weak 2D 2H 2S), strength adjusted
 
 
 * Opponents open Precision 2D
 
-Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, e.g. 3C is majors, with care for bad major breaks.
+Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with care for bad major breaks.
 
 * Opponents open Multi 2D
 
@@ -2045,10 +2038,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, e.g. 3C 
     3CD = natural, opening bid or better
     3HS = natural, strong
     3N = natural
-    4CD = natural, stronger
-        4D = Redwood
-        4HS = (over both 4!c/4!d) natural
-        4N = RKB over !d, natural over !c
+    4CD = minor + major, GF
     4N = minors, stronger
 
 (2D)--P--(2!h!s)
@@ -2071,7 +2061,8 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, e.g. 3C 
 (or jump overcalled)
 
 - Bid naturally with decent 5--6 card suits or Strong NT hands.
-- Balance overcall strength with vulnerability, length in their suit (3 cards is particularly bad) and overall shape
+- Balance overcall strength with vulnerability, length in their suit and overall shape
+- Shortage in their suit can be more aggressive, as partner may struggle to bid
 - Strong jump overcalls with 2!s--4!d as special strong !h overcall
 
 (2D)
@@ -2084,13 +2075,26 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, e.g. 3C 
     2N = natural, 16-18 balanced. Could have 4 card !h/!s, NT scheme follows.
     3C = natural
         4D = fit jump
-    3D = majors two suiter
-    3HS = natural, strong
-    4C = natural, strong
-        4D = Redwood
-        4HS = natural
-        4N = natural
-    4D = majors two suiter, strong
+    3D = majors, any strength
+    3HS = natural, strong, ~16--18
+    4C = !cs + !hs, GF
+        4D = !h slam try, first step 1+ KC
+        4H = to play
+        4S = !c slam try, second step 1+ KC
+        5C = to play
+        5D = EKB
+        5HS = natural jump new suit, self-sufficient, slam interest
+    4D = !cs + !ss, GF
+        4H = !s slam try, first step 1+ KC
+        4S = to play
+        5C = to play
+        5D = EKB
+    4HS = to play, distributional
+    4N = minors
+    5C = natural, roughly 4 level strong jump overcall values
+
+(2D)--P--(3!d)
+    any = as [Opponents open 3D](#Opponents open 3CDHS)
 
 (2H)
     X = takeout
@@ -2102,16 +2106,43 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, e.g. 3C 
     2N = natural, 16-18 balanced. Could have 4 card !s, NT scheme follows.
     3CD = natural
         4D = (over 3C) fit jump
-    3H = stopper ask
-    3S = natural, strong
-    4CD = natural, strong
-        4D = Redwood
-        4HS = (over both 4!c/4!d) natural
-        4N = RKB over !d, natural over !c
+    3H = michaels !s + minor, limited wide range
+        3S = to play
+        3N = to play
+        4C = pass/correct
+        4D = good 4!s bid
+        4H = N/A forgot that 4D is conventionally a good !s raise
+        4S = to play
+        4N = strong, minor ask
+            5HS = good !c/!d extras
+    3S = natural, strong, ~16--18
+    4C = !cs + !ss, GF
+        4D = !s slam try, first step 1+ KC
+        4H = !c slam try, second step 1+ KC
+        4S = to play
+        5C = to play
+        5D = natural jump new suit, self-sufficient, slam interest
+        5H = EKB
+    4D = !ds + !ss, GF
+        4H = !s slam try, first step 1+ KC
+        4S = to play
+        5C = !d slam try, second step 1+ KC
+        5D = to play
+        5H = EKB
+    4H = EKB (or minors?)
+    4S = to play, distributional
+    4N = minors
+    5CD = natural, roughly 4 level strong jump overcall values
 
 (2H)--X--(3!h)
     X = responsive, values, !s length unknown
     4H = 4 card !s suit and a minor
+
+(2H)--P--(3!h)
+    any = as [Opponents open 3H](#Opponents open 3CDHS)
+
+(2H)--X--(4!h)
+    X = values
 
 (2S)
     X = takeout
@@ -2119,11 +2150,36 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, e.g. 3C 
     2N = natural, 16-18 balanced. Could have 4 card !s, NT scheme follows.
     3CDH = natural
         4D = (over 3C) fit jump
-    3S = stopper ask
-    4CD = natural, strong GF
-        4D = Redwood
-        4H = (over both 4!c/4!d) natural
-        4N = RKB over !d, natural over !c
+    3S = michaels !hs + minor, limited wide range
+        3N = to play
+        4C = pass/correct
+        4D = good 4!h bid
+        4H = to play
+        4N = strong, minor ask
+            5HS = good !c/!d extras
+        (4S) = competition
+            4N = minor ask, slam interest
+                5HS = good !c/!d extras
+            5C = pass/correct
+            5D = good 5H bid, offensive e.g. !s singleton
+            5H = competitive
+    4C = !cs + !hs, GF
+        4D = !h slam try, first step 1+ KC
+        4H = to play
+        4S = !c slam try, second step 1+ KC
+        5C = to play
+        5D = natural jump new suit, self-sufficient, slam interest
+        5S = EKB
+    4D = !ds + !hs, GF
+        4H = to play
+        4S = !h slam try, first step 1+ KC
+        5C = !d slam try, second step 1+ KC
+        5D = to play
+        5S = EKB
+    4H = to play, distributional
+    4S = EKB, strong !hs (or minors?)
+    4N = minors
+    5CD = natural, roughly 4 level strong jump overcall values
 
 (2S)--P--(3!s)
     any = as [Opponents open 3S](#Opponents open 3CDHS)
@@ -2132,10 +2188,20 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, e.g. 3C 
     X = responsive, values, !h length unknown
     4H = competitive
 
+(2S)--X--(4!s)
+    X = values
+    4N = artificial, two suiter OR game going !hs
+    5CD = to play
+    5H = slam try, natural
+
 (2x)--P--(P)
     X = takeout, protective ~10+ hcp for more penalty opportunity, but consider the strength
         that opponents can pass with
 
+
+* Opponents open Intermediate 2H 2S
+
+As [Opponents open Weak 2H 2S](#Opponents open Weak 2D 2H 2S), strength adjusted
 
 * Opponents open 2D or 2H both Majors
 
@@ -2182,12 +2248,6 @@ OR
         3CD = weak, natural (stayman or !h transfers inappropriate here)
         others = [2NT system](#2NT Opening)
     3CD = natural, decent for vulnerability
-    3H = stop ask, probably long minor
-    3N = natural
-    4CD = natural, strong
-        4D = Redwood
-        4H = (over both 4!c/4!d) natural
-        4N = RKB over !d, natural over !c
 
 
 * Opponents open 2N Minors
@@ -2207,13 +2267,18 @@ OR
     3D = 5+!ss, 4+!hs, sound values
     3HS = sound overcall
     4C = majors two suiter, strong
+        4D = slam try
+        4HS = to play
+        5CD = EKB
 
 (2N)--P--(3!c)
     X = strong balanced
     3D = takeout for majors
+    4C = majors two suiter, strong
 
 (2N)--P--(3!d)
     X = takeout
+    4C = majors two suiter, strong
 
 An alternative would be 3C both majors and 3D multi-like some weaker major overcall. Less majors definition with 3C but
 advancer can ask for the longest with 3D.
@@ -2227,11 +2292,37 @@ X is majors takeout, NT is minors.
 - Normal takeout doubles, conservative opening bid values 12+, assumes ~7–9 hcp from partner
 
 (3C)
-    4C = majors two suiter
-    4D = natural, strong
+    4C = majors two suiter, strong, max 4(5) losers
+        4D = slam try
+        4HS = to play
+        5C = EKB
+        5DHS = natural jump new suit, self-sufficient, slam interest
+    4D = !ds + major, strong, max 4(5) losers
+        4HS = pass/correct
+        5C = slam try
+        5D = to play
+        5HS = natural jump new suit, self-sufficient, slam interest
+    4HS = to play
+    4N = !hs + !ds, ~3 losers
+    4N = [specific ace ask](#4N Opening Specific Ace Ask), as if opened
+    5D = natural, roughly 4 level strong jump overcall values
 
 (3D)
-    4D = both majors
+    4C = !cs + major, NF non-leaping
+        4D = slam try
+        4H = pass/correct
+        4S = pass/correct to 5C
+        5C = to play
+        5D = EKB
+        5HS = natural jump new suit, self-sufficient, slam interest
+    4D = majors two suiter, strong, max 4(5) losers
+        4HS = to play
+        5C = to play
+        5D = EKB
+    4HS = to play
+    4N = !hs + !cs, ~3 losers
+    4N = [specific ace ask](#4N Opening Specific Ace Ask), as if opened
+    5C = natural, roughly 4 level strong jump overcall values
 
 (3H)
     Dbl = takeout
@@ -2241,16 +2332,48 @@ X is majors takeout, NT is minors.
                 5C = minors escape
         4S = to play
         4N = !s RKB
-    4H = extreme strong 2 suiter
-        4N = both minors, choose your suit
+    4C = !cs + !ss, NF non-leaping
+        4DH = slam try
+        4S = to play
+        5C = to play
+        5D = natural jump new suit, self-sufficient, slam interest
+        5H = EKB
+    4D = !ds + !ss, NF non-leaping
+        4H = slam try
+        4S = to play
+        5C = slam try
+        5D = to play
+        5H = EKB
+    4H = GF, !ss + minor
+        4S = slam try
+        5CD = to play
+        5S = natural jump new suit, self-sufficient, slam interest
+    4S = to play
+    4N = minors
+    5CD = natural, roughly 4 level strong jump overcall values
 
 (3S)
     Dbl = takeout
         4S = Kickback
         4N = minors
-    4S = extreme strong 2 suiter
-        4N = both minors, choose your suit
-    4N = both minors
+    4C = !cs + !hs, NF non-leaping
+        4D = slam try
+        4H = to play
+        4S = slam try
+        5C = to play
+        5D = natural jump new suit, self-sufficient, slam interest
+        5S = EKB
+    4D = !ds + !hs, NF non-leaping
+        4H = to play
+        4S = slam try
+        5C = slam try
+        5D = to play
+        5S = EKB
+    4H = to play
+    4S = !hs + minor, ~3 losers
+        5CD = to play
+    4N = minors
+    5CD = natural, roughly 4 level strong jump overcall values
 
 (3x)--X--(4x)
     X = takeout with decent values, inviting penalty pass
