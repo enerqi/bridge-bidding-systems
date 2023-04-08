@@ -786,7 +786,7 @@ In terms of artificial overcalls:
 When we are FORCED to bid OVER a MAJOR preempt, then there is [Better Minor Lebensohl](#Better Minor Lebensohl over a major preempt takeout double).
 Though it's possible to play just one Lebensohl variant, it's less optimal.
 
-*** Over a balanced hand or weak 2D
+*** Over a balanced hand
 
 1CD/1N--(2!d)
     X = staymanic 3+ both majors, follow on suit bid is poor 5 card invitational, follow on cue stop ask
@@ -958,6 +958,33 @@ Though it's possible to play just one Lebensohl variant, it's less optimal.
     3N = to play, stop implied, no other major
     4x = natural preempt
 
+*** Over a Weak 2D takeout double
+
+(2D)--X
+    2HS = weak
+    2N = puppet, weak or GF !cs OR one 4 card major invite plus
+        3C = puppet, normal takeout double
+            3D = staymanic, one 4 card major
+                3HS = pass/correct
+                4H = pass/correct
+        3D = power takeout double, usually 5--4+ majors
+        3HS = power double
+    3C = invitational plus !h
+        3D = no fit, no stop, any strength (not any minimum as no room for cue stop ask)
+        3H = fit, minimum
+        3S = natural, 5 carder maximum/strong, no stop implied
+        3N = no fit, stopper, any strength (not ideal with minimum but helps the GF responder decide)
+    3D = cue, GF staymanic 4--3/4--4/5--4 majors
+        3M = 4 cards
+        4D = 4--4 doubler
+        4M = 5 cards
+    3H = invitational plus !s
+        3S = minimum
+        3N = no fit, stopper, any strength (not ideal with minimum but helps the GF responder decide)
+        4CDH = natural (possibly strong 1!c opening)
+    3S = artificial, GF, no stopper
+    3N = to play, stop implied, no other major
+    4x = natural preempt
 
 *** Better Minor Lebensohl over a major preempt takeout double
 
