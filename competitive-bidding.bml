@@ -1453,6 +1453,8 @@ With limited strength may want to hide distribution information and just bid the
     3H/4H = HCR
 3H = stopper ask, with solid outside minor
 
+...
+
 (1H)--1S--(X)
     P = possibly trap with later doubles for penalty, 0/1 card support for overcaller's major
     XX = ~10+ values with exactly doubleton support
@@ -1952,14 +1954,15 @@ As [1NT Interference and Lebensohl](#1NT Interference and Lebensohl)
     3C = majors, any strength
     3DHS = natural, strong
     4C = !ds + !hs, GF
-        4DH = to play
-        4S =
+        4D = !d slam try
+        4HS = to play
+        4N = !h RKB
         5C = EKB
         5S = natural jump new suit, self-sufficient, slam interest
     4D = !ds + !ss, GF
-        4H = !s slam try, first step 1+ KC
-        4S = to play
-        5C = EKB
+        4HS = to play
+        4N = !s RKB
+        5C = !d slam try
         5D = to play
         5H = natural jump new suit, self-sufficient, slam interest
 
@@ -2081,16 +2084,18 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
     3HS = natural, strong, ~16--18
     4C = !cs + !hs, GF
         4D = !h slam try, first step 1+ KC
-        4H = to play
-        4S = !c slam try, second step 1+ KC
+        4HS = to play
+        4N = !c slam try
         5C = to play
         5D = EKB
-        5HS = natural jump new suit, self-sufficient, slam interest
+        5S = natural jump new suit, self-sufficient, slam interest
     4D = !cs + !ss, GF
-        4H = !s slam try, first step 1+ KC
-        4S = to play
+        4HS = to play
+        4N = !c slam try
         5C = to play
         5D = EKB
+        5H = natural jump new suit, self-sufficient, slam interest
+        5S = !s slam try
     4HS = to play, distributional
     4N = minors
     5C = natural, roughly 4 level strong jump overcall values
@@ -2120,18 +2125,21 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
     3S = natural, strong, ~16--18
     4C = !cs + !ss, GF
         4D = !s slam try, first step 1+ KC
-        4H = !c slam try, second step 1+ KC
+        4H = !c slam try
         4S = to play
+        4N = RKB double fit
         5C = to play
         5D = natural jump new suit, self-sufficient, slam interest
         5H = EKB
     4D = !ds + !ss, GF
-        4H = !s slam try, first step 1+ KC
+        4H = !s slam try
         4S = to play
+        4N = RKB double fit
         5C = !d slam try, second step 1+ KC
         5D = to play
         5H = EKB
-    4H = EKB (or minors?)
+    4H = minors, slam interest 3 losers or better
+        4N = RKB double fit
     4S = to play, distributional
     4N = minors
     5CD = natural, roughly 4 level strong jump overcall values
@@ -2179,7 +2187,8 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
         5D = to play
         5S = EKB
     4H = to play, distributional
-    4S = EKB, strong !hs (or minors?)
+    4S = minors, slam interest 3 losers or better
+        4N = RKB double fit
     4N = minors
     5CD = natural, roughly 4 level strong jump overcall values
 
@@ -2294,19 +2303,18 @@ X is majors takeout, NT is minors.
 - Normal takeout doubles, conservative opening bid values 12+, assumes ~7–9 hcp from partner
 
 (3C)
-    4C = majors two suiter, strong, max 4(5) losers
+    4C = majors two suiter, GF ~4 losers
         4D = slam try
         4HS = to play
         5C = EKB
         5DHS = natural jump new suit, self-sufficient, slam interest
-    4D = !ds + major, strong, max 4(5) losers
+    4D = !ds + major, GF ~ 4 losers
         4HS = pass/correct
         5C = slam try
         5D = to play
         5HS = natural jump new suit, self-sufficient, slam interest
     4HS = to play
     4N = !hs + !ds, ~3 losers
-    4N = [specific ace ask](#4N Opening Specific Ace Ask), as if opened
     5D = natural, roughly 4 level strong jump overcall values
 
 (3D)
@@ -2317,13 +2325,12 @@ X is majors takeout, NT is minors.
         5C = to play
         5D = EKB
         5HS = natural jump new suit, self-sufficient, slam interest
-    4D = majors two suiter, strong, max 4(5) losers
+    4D = majors two suiter, GF ~ 4 losers
         4HS = to play
-        5C = to play
+        5C = slam try
         5D = EKB
     4HS = to play
     4N = !hs + !cs, ~3 losers
-    4N = [specific ace ask](#4N Opening Specific Ace Ask), as if opened
     5C = natural, roughly 4 level strong jump overcall values
 
 (3H)
@@ -2335,21 +2342,24 @@ X is majors takeout, NT is minors.
         4S = to play
         4N = !s RKB
     4C = !cs + !ss, NF non-leaping
-        4DH = slam try
+        4DH = !s/!c slam try
         4S = to play
         5C = to play
         5D = natural jump new suit, self-sufficient, slam interest
         5H = EKB
     4D = !ds + !ss, NF non-leaping
-        4H = slam try
+        4H = !s slam try
         4S = to play
-        5C = slam try
+        5C = !d slam try
         5D = to play
         5H = EKB
     4H = GF, !ss + minor
-        4S = slam try
+        4S = to play
+        4N = minor ask
+            5HS = good !c/!d
         5CD = to play
-        5S = natural jump new suit, self-sufficient, slam interest
+        5H = EKB
+        5S = !s slam try
     4S = to play
     4N = minors
     5CD = natural, roughly 4 level strong jump overcall values
@@ -2359,16 +2369,16 @@ X is majors takeout, NT is minors.
         4S = Kickback
         4N = minors
     4C = !cs + !hs, NF non-leaping
-        4D = slam try
+        4D = !h slam try
         4H = to play
-        4S = slam try
+        4S = !c slam try
         5C = to play
         5D = natural jump new suit, self-sufficient, slam interest
         5S = EKB
     4D = !ds + !hs, NF non-leaping
         4H = to play
-        4S = slam try
-        5C = slam try
+        4S = !h slam try
+        5C = !d slam try
         5D = to play
         5S = EKB
     4H = to play
