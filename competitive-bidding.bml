@@ -318,6 +318,7 @@ Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others pla
 8. our side are in a GF (1!h/!s + 2/1, 1!c--1N/2!s)
 9. our side invites 3N (1!c--2!h)
 10. our side limits hand with no major (1!c--2!c/!d)
+11. a passed hand doubles their solo rebid, (1H)--P--(P)--X--(2H)--X
 
 *** Takeout Doubles
 
@@ -1517,7 +1518,8 @@ With limited strength may want to hide distribution information and just bid the
 
 (1H)--(2H)--X balancing takeout double, they bid ONE major suit (pointless over minor or 2 suits):
     2S = [OBAR](#OBAR 4th seat bids) competitive
-    2N = scrambling (takeout)
+    2N = scrambling (takeout) OR 4 !ss invite
+    3S = 5 !ss invite
 
 When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also scrambling:
 (1H)--(any), X then 2N is scrambling
@@ -1725,7 +1727,8 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 **** (1S)--(Any) Sandwich Position
 
 (1S)--(2S)--X balancing takeout double, they bid ONE major suit (pointless over minor or 2 suits):
-    2N = scrambling (takeout)
+    2N = scrambling (takeout) or 4 !hs
+    3H = 5 !hs invitational
 
 When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also scrambling:
 (1S)--(any), X then 2N is scrambling
@@ -1984,7 +1987,7 @@ As [1NT Interference and Lebensohl](#1NT Interference and Lebensohl)
 
 * Opponents open Strong 2C
 
-Double always majors and NT minors.
+Double always majors and NT minors. Really should be 5--5+.
 
 (2C)
     X = majors
@@ -2009,6 +2012,16 @@ Frequently the Weak 2!d, or a standard strong 2C. Treat as [weak 2D defence](#Op
         3x = NF, invitational, ~7--11, no support
     2N = natural, 16-18 balanced. Could have 4 card !h/!s, NT scheme follows.
     3C = natural
+
+* Opponents open Artificial Strong 2C 2D
+
+This is a catchall for bids such as
+
+- 2C balanced 18--21 hcp, or similar 18+ range
+- Mexican 2D balanced 18--19 hcp, or similar 18+ range, may or may not allow 5 card majors
+- Optional strong, Acol 2 strength or GF, unknown suit (until opener describes hand further)
+
+Pass then double could in theory be used as takeout. Mainly just treat similar to [Strong 2C defence](#Opponents open Strong 2C).
 
 * Opponents open Intermediate 2D
 
@@ -2043,6 +2056,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
     3HS = natural, strong
     3N = natural
     4CD = minor + major, GF
+        next = major ask
     4N = minors, stronger
 
 (2D)--P--(2!h!s)

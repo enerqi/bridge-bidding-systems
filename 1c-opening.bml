@@ -91,7 +91,7 @@ Limited 5--5 two suiter:
 
 Acol two strength 5--5 two suiter:
 
-- minors or !ds + major: 1H then 2C relay -> 2D ask -> 2N
+- minors or !ds + major: 1H then 2C relay -> 2D ask -> 3C
 - !cs + major: 1H then 2H/2S (try show !cs later)
 - majors: 1H then 2S
 
@@ -131,19 +131,27 @@ As 5--5, but always show the longest suit first
                         3N = 6+ !cs, short !ds, F1
                             4C = NF
                         4C = 6+ !cs, short !ds, GF, too good for 3N
-                2N = 5+ !ds and 5+ other suit
-                    3C = relay
-                        3D = !cs
-                        3HS = natural
-                3C = 5+ !ds and 4 card side suit
-                    3D = ask
+                2N = 5+ !ds and 4 card side suit
+                    3C = NF ask
+                        P = !cs, ~19--21
                         3H = natural, ~19--21
                             4D = NF
-                        3S = natural, GF
-                        3N = !cs
+                        3S = natural, GF (canapé 1S with ~19--23 limited)
+                        3N = !cs, almost GF values ~22--23
                             4CD = NF
-                        4C = !cs, too good for 3N
-                        4H = 5!d--4!h, GF
+                        4C = 5!d--4!h, ~22--23
+                        4D = 5!d--4!s, ~22--23
+                3C = 5+ !ds and 5+ other suit
+                    3D = NF relay, ~0--3
+                        3HS = natural
+                        3N = !cs
+                    3H = GF paradox
+                        3S = have !ss
+                    3S = GF paradox
+                        3N = !ss or !cs
+                            4S = prefer !ss
+                                4N = no !cs
+                        4H = have !hs
                 3D = 6+ !ds, no shortage, GF single suiter
                 3H = 6+ !ds, short !cs, F1
                     4D = NF
@@ -437,8 +445,8 @@ As 5--5, but always show the longest suit first
             3oM = other major shortage
             3M = !c shortage
             3N = nothing special, (semi)balanced
-            4CD = void splinter
-            4H = void splinter, other major
+            4CD = 5+ side suit
+            4H = 5+ side major
         4new = splinter
         others = natural, sound 6 card suit
     3C = canapé, ~8--11 hcp
@@ -1221,6 +1229,14 @@ Compared to the [1D opening interference](#1D interference):
     1N = natural ~6--9
         2x = F1
         cue = two-suiter
+        (2D) = interference
+            2HS = weak, decent 5 cards
+            Dbl = strong, takeout
+                2HS = 3 card scramble
+                2N = scrambling
+                3CD = 5 carders
+                3HS = maximum, 3 cards
+                    3S = 5 cards strong
     2C = natural, F1
     2D = majors 5--5 (as opponents open 1!d defence)
     2HS = ~5--7 hcp, sound weak two
@@ -1245,6 +1261,10 @@ Compared to the [1D opening interference](#1D interference):
         2S = 4+ card support, weak NT
         3S = 5+ support, 16--18
         (2H) = interference
+            P = weak
+                2S = competitive 5 cards for double
+                2N = natural with stop
+                3S = 6 card invite for double
             Dbl = support, 3 cards
             cue = support
             3S = 5+ support, 16--18
@@ -1262,9 +1282,22 @@ Compared to the [1D opening interference](#1D interference):
         2CD = weak
             2H = stop ask
         2H = strong, no stopper
+        (2H) = interference
+            2S = weak, decent 5 cards
+            Dbl = strong, takeout
+                2S = 3 cards
+                3C = 6 carder
+            2N = good !c raise
+            3C = competitive !c raise
     1N = natural, ~6--9
         2x = F1
         cue = two-suiter
+        (2H) = interference
+            2S = weak, decent 5 cards
+            Dbl = strong, takeout
+                2S = 3 cards
+                2N = scrambling
+                3CD = minimal 5 carder
     2C = !d transfer, 5+ !ds, GF v.s. strong hand
         3D = weak NT, support
     2D = 3 card !s suit, ~8--11 hcp, 3--2--4--4 or 3--1--(5--4)

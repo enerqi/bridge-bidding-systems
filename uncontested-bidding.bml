@@ -672,7 +672,8 @@ Natural, up to 11 hcp, no 4 card major
         2S = [normal !s raise](#1D--1S--2S)
     1S = NT transfer, no major
         1N = limited, often balanced
-            new = natural, invitational
+            2CD = NF
+            other = natural, invitational
         others = [system on](#1D--1N)
     1N = !c transfer, good 8+ hcp
         break = short !cs
@@ -711,7 +712,14 @@ Natural, up to 11 hcp, no 4 card major
             3S = competitive
             4C = both minors
     1S = 4+ !cs
+        1N = 0--2 support
+        (2H) = interference
+            Dbl = support
+            2N = good !c raise
+            3C = competitive !c raise
     1N = natural
+        2S = 6--5 hand
+        3C = 5--5+ minors, maximum
     2C = !d transfer, good 8+ hcp
         break = short !ds
             cue/jump = only forcing bids
@@ -747,6 +755,8 @@ Natural, up to 11 hcp, no 4 card major
             3CD = minors 5--5+, maximum
             3H = competitive, 4!hs, 11--13 hcp
     1N = natural
+        2H = 6--5 hand
+        3C = 5--5+ minors, maximum
     2C = !d transfer, 5+ !ds, good 8+
         break = short !ds
             cue/jump = only forcing bids
@@ -855,6 +865,7 @@ stopper ask, as only natural invitational 3!d rebids (e.g. xx/Axx/AKQJxx/xxx) wo
 - opener can X/XX or do a direct raise
 - not required with xxx, especially with good defensive holdings
 - responder's continuations are natural - NF 1N (maybe no stop) or 2 level bid, invitational 2N or 3 level, cue bid only GF
+- normal raises are usually 4 cards, though may want to bid with 3 cards to protect an honour, e.g. 1!d--(1!h)--X--(2!h)--2!s
 
 1D--(X)--1H--(1N)
     X = support double, 3 card support (!ss)
