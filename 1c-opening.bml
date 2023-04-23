@@ -13,7 +13,7 @@
     [1N](#1C--1N) GF, balanced maybe 4 card major OR 4--4--4--1 OR unbalanced without 4 card major
     [2C](#1C--2C) natural NF, ~8--10 hcp, maybe 5--5 minors
     [2D](#1C--2D) natural NF, ~8--10 hcp
-    [2H](#1C--2H) NT invite, no 4 card major, maybe semi-balanced 6 card minor or 5--4 minors
+    [2H](#1C--2H) 5--5+ majors limited, ~4--7 hcp
     [2S](#1C--2S) both minors limited GF and short major, ~12--15 hcp
     [2N](#1C--2N) natural NT invite, wants to declare
     3CDHS Weak, ~3--7 hcp, continue as if opened preempt
@@ -435,18 +435,15 @@ As 5--5, but always show the longest suit first
             3S = 5+ cards
                 3N = serious
     2S = 4 card major(s) for longest suit, no 5 card minor, so balanced or a 4--4--4--1 hand
-        2N = baron, bid new 4 card suits
+        2N = waiting, baron like
+            3CD = natural, 4+ suit (5+ suit if 7--8 hcp)
             3N = 4--3--3--3
         minors = natural, sound 6 card suit
         oM = natural, 5 carder
-    2N = 5 card high suit, ~8--11 hcp
-        3C = delayed Jacoby variant
-            3D = !d shortage
-            3oM = other major shortage
-            3M = !c shortage
-            3N = nothing special, (semi)balanced
-            4CD = 5+ side suit
-            4H = 5+ side major
+    2N = 5 card high suit, with side 4+ card suit, ~8--11 hcp
+        3C = ask
+            3M = 4 !cs
+            3x = natural
         4new = splinter
         others = natural, sound 6 card suit
     3C = canapé, ~8--11 hcp
@@ -497,9 +494,8 @@ As 5--5, but always show the longest suit first
                 4N = [RKB](#RKB 4N), no room for Kickback
         3N = serious, control prompt
         4M = to play
-        others = cue bid
-    3S = 5--5 both majors, ~8--11 hcp
-        3N = serious
+    3S = artificial, 5--3--3--2, ~8--11 hcp
+    3N = 5--5 both majors, ~8--11 hcp
         4CD = cue
         4H = last train
         4S = to play
@@ -925,56 +921,29 @@ Artificial GF:
 
 ** 1C--2H
 
-- 3N invite, no 4 card major
-- Can be semi-balanced with a 6 card minor (alternative to a 2!c/2!d response) or 5--4--2--2 both minors
+- both majors, ~4--7 hcp, rarely weaker with 6--5
+- invitational v.s. GF hand
+- NF v.s. weak NT hand, signoff unless good fit
 
-2S = asking, maximum weak NT or strong
-    3CD = 6 card minor
-    3H = 5--4 minors
-    3S = nothing special, transfer to 3N, balanced shape
-2N = minimum weak NT
-    3CD = sign off
-3CD = natural, strong, 5+ cards
-    3D = natural, 5(6) cards (!c tolerance xxx+ expected)
-        3HS = natural 5+ cards
-        4C = !c [RKB](#RKB 4N)
-        4D = double fit [RKB](#RKB 4N)
-    3HS = cue, Hxx+ support
-    3N = natural
-        4m = minor [RKB](#RKB 4N)
-        4HS = natural, 6--5+
-    4m = natural, Hxxx+ 4 card support
-        4HS = [RKB](#RKB 4N) or natural, 6--5+
-    4C = (over 3!d) natural, 5(6) cards (!d tolerance xxx+ expected)
-        4D = !d [RKB](#RKB 4N)
-        4HS = natural, 6--5+
-        4N = double fit RKB
-    4N = 5 card support, 2 KC
-    5m = 5 card support, 1 KC
-3HS = natural, strong, 5+ cards
-    3N = natural
-        4HS = slam try, asking for something extra
-    other = cue
-3N = maximum weak NT
-4C = [Gerber](#Gerber 4C)
-4D = 5--5 majors ~16--18
-4HS = 6+ card suit, minimum strong
-4N = quantitative, ~21--22
-5CD = 6(7)+ card suit, minimum strong
+2S = to play
+2N = natural invite, no major support
+3CD = natural, NF, usually passed
+3HS = invitational raise
+3N = to play
+4C = artificial, !h general slam try
+    4D = general accept
+4D = artificial, !s general slam try
+    4H = general accept
+4HS = to play
+5CD = natural, to play
+    6m = maximum, Hx+ support, 2 CPs
 
 **** Interference over 1C--2H
 
-1C--(P)--2H--(X) !h normally
-    P = weak, no !h stop
-    XX = strong, 5+ !hs
-    2N+ = as before, !h stop implication
-
-1C--(P)--2H--(2S+)
-    P = weak, no stop
-    2N = weak, NF, with stop
-    3N = weak/strong, with stop
-    suit = natural, strong
-    X = penalty
+1C--(P)--2H--(any)
+    X = strong values, penalty interest
+    XX = strong values, penalty interest
+    4CD = system on, !h or !s general slam try
 
 
 ** 1C--2S

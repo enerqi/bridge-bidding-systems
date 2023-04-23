@@ -289,6 +289,77 @@ proc is_weak_5_or_6_card_major {hand} {
   return 0
 }
 
+proc is_semi_positive_weak_two_hearts {hand} {
+  set points [hcp $hand]
+  set handshape [$hand pattern]
+  if {$points<4 || $points>7 } { return 0 }
+  # weaker hands need more shape
+  if {$points<5 && $handshape != "6 4 2 1" && $handshape != "6 4 3 0"} { return 0 }
+  # 6--5 hands should be < 8
+  if {$points>6 && ($handshape == "6 5 1 1" || $handshape == "6 5 2 0")} { return 0 }
+
+  set ss [spades $hand]
+  set hs [hearts $hand]
+  # no 4 card side major
+  if {$ss>=4 && $hs >=4} {return 0}
+
+  # no 6 card minor
+  if {[diamonds $hand]>5 || [clubs $hand]>5} {return 0}
+
+  # 6 cards and 1+ honors
+  if {$hs==6 && [Honors $hand hearts]>=1} {return 1}
+  return 0
+}
+
+proc is_semi_positive_majors_two_suiter {hand} {
+  if {![two_suiter $hand]} { return 0 }
+
+  set hs [hearts $hand]
+  set ss [spades $hand]
+  if { $hs < 5 || $ss < 5 } { return 0 }
+
+  set points [hcp $hand]
+  if {$points<3 || $points>7 } { return 0 }
+
+  set handshape [$hand pattern]
+  if {$points<5 && $handshape != "6 5 1 1" && $handshape != "6 5 2 0"} { return 0 }
+
+  return 1
+}
+
+proc is_gf_majors_two_suiter {hand} {
+  if {![two_suiter $hand]} { return 0 }
+
+  set hs [hearts $hand]
+  set ss [spades $hand]
+  if { $hs < 5 || $ss < 5 } { return 0 }
+
+  set points [hcp $hand]
+  if {$points<6} { return 0 }
+
+  set handshape [$hand pattern]
+  if {$points<7 && $handshape != "6 5 1 1" && $handshape != "6 5 2 0"} { return 0 }
+
+  return 1
+}
+
+proc is_gf_hearts_minor_two_suiter {hand} {
+  if {![two_suiter $hand]} { return 0 }
+
+  set hs [hearts $hand]
+  set cs [clubs $hand]
+  set ds [diamonds $hand]
+  if { $hs < 5 || ($cs < 5 && $ds < 5)} { return 0 }
+
+  set points [hcp $hand]
+  if {$points<7} { return 0 }
+
+  set handshape [$hand pattern]
+  if {$points<9 && $handshape != "6 5 1 1" && $handshape != "6 5 2 0"} { return 0 }
+
+  return 1
+}
+
 proc is_minors_2n_preempt {hand} {
   set points [hcp $hand]
   if {$points<6 || $points>11 } { return 0 }

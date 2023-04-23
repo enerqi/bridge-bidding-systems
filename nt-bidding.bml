@@ -757,6 +757,7 @@ Most important is its use against weak twos and after we have made natural openi
 - (1D prepared)--2D natural
 - (1H)--X--(2H)
 - (1S)--X--(2S)
+- balancing or reopening doubles forcing partner to bid
 - (Weak 2!d!h!s)--X
 - (1NT weak)--X--(XX Escape)
 - (1NT weak)--X--(2D+ Escape) (but not 2!c escape as just ignore, X Stayman)
@@ -804,7 +805,7 @@ Though it's possible to play just one Lebensohl variant, it's less optimal.
         4CDH = natural (possibly strong 1!c opening)
     3S = artificial, GF, no stopper
     3N = to play, stop implied, no other major
-    4x = natural preempt
+    4x = [as weak two defence](#Opponents open Weak 2D 2H 2S) -- leaping michaels
 
 1CD/1N--(2!h)
     Dbl = staymanic 8+ guarantee 3oM, follow on suit bid is poor 5 card invitational, follow on cue stop ask

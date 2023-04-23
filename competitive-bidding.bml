@@ -292,6 +292,49 @@ Double jumps below 4H are fit jumps iff a fit jump is not available as a single 
 natural invitational suit OR a 1-under mixed raise. Otherwise a double jump is a splinter below 4H game (a direct 4!h
 could only be a splinter in a slow constructive auction - 2nd rebid e.g. 1!s--2!d--2!s--4!h).
 
+** 2N Artificial Scrambling
+
+There's a list of situations where 2N is used for [Lebensohl](#1NT Interference and Lebensohl). Other times it maybe
+used for [raising our partner's suit in competition](#HCR cue bids and 2N Raise in Competition) whether we open or
+overcall. Additionally after opening 1C/1D/1H opener may use [Good-Bad 2N](#Opener's Good-Bad 2N Rebid in Competition)
+to allow competing in new suits or good raising. Other times 2N maybe natural.
+
+A scrambling 2N shows:
+
+- no easy game possible, competing
+- 2+ places to play, usually the minors as they are the suits usually forced to the 3 level
+- not forced to bid by a double (it's Lebensohl if double forces partner to bid)
+
+Overall it is rare as 2N is usually forced after a double (so a better minor Lebensohl 2N) or it is by a hand that can
+reasonably have a natural 2N bid (when the opponents have opened first we often pass with 11--14 balanced)
+
+(1D)--P--(1S)--X
+(2S)
+    2N = natural
+    3D = heart invite
+    3H = competitive
+    X = minors
+
+(1D)--P--(1S)--X
+(2S)--X--(P)
+    2N = better minor Lebensohl, forcing partner to bid
+
+(1S)--P--(2S)--X
+    2N = better minor Lebensohl, forcing partner to bid
+
+(1S)--2C--(2S)--X--(P)
+    2N = Lebensohl, forcing partner to bid, likely 5--4 minors
+    3C = minimum, no side minor
+
+1D--(2S)--P--(P)--X--(P) limited in principle though could have 8/9 no bid or penalty pass
+    2N = better minor Lebensohl, forcing partner to bid
+
+1D--(1S)--P--(2S)--X--(P) limited after passing the opponent's overcall
+    2N = better minor Lebensohl, forcing partner to bid
+
+P--(1H)--X--(2H)--
+    2N = scrambling, not forced, passed originally so limited strength
+
 
 ** Doubles
 
