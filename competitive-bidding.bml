@@ -83,11 +83,11 @@ Hand examples:
 **** After minor openings:
 
 - cue of a prepared minor is natural otherwise shows a non-strong majors hand
-- the jump one above (1!c--2!d / 1!d--2!h) over a prepared minor shows a non-strong majors hand
+- over a prepared/short minor bid 1S with both majors (unless strong majors)
 - jump cue is strong majors
+- simple overcall with !s + other minor (or both majors against a prepared/short minor)
 - weak (3 level VUL intermediate) jumps otherwise
 - 2N is unusual
-- simple overcall with !s + other minor
 
 **** After major openings:
 
@@ -814,6 +814,11 @@ Examples:
     3x = 8--11, 5--5
     3S = 8--11, excellent 6+ cards main suit (not mandatory with minimum)
 
+*** Advancers 2C Relay Interference
+
+- pass with nothing to say
+- over double or 2D *system on*, e.g. bid or double 2D with artificial, 12+ hcp
+
 
 * Opponents open Strong 1C
 
@@ -986,16 +991,7 @@ With limited strength may want to hide distribution information and just bid the
         3N = to play
         4C = choose a major jump cue, later 4N double fit RKB
         4HS = ambiguous, fast arrival
-    2D = over prepared !c: majors, not strong
-        2HS = simple preference, prefer !hs with equal length
-        2N = natural invitational, very rare, very strong minor stops
-        3C = !h limit+ raise, 3+ card support, 3 useful features (A, K or short in partner's suits)
-        3D = !s limit+ raise, 3+ card support, 3 useful features (A, K or short in partner's suits)
-        3HS = mixed raise, 4 trumps, 2 useful features (A, K or short in partner's suits), ~7--9 support points
-        3N = to play
-        4C = choose a major jump cue, later 4N double fit RKB
-        4HS = ambiguous, fast arrival
-    2D = over natural !c: weak jump overcall
+    2D = weak jump overcall
     2HS = weak, respond as [6 card weak two](#2HS Weak Openings)
     2N = 5--5 !hs + !ds
         3C = good !h raise, 2 useful features
@@ -1231,17 +1227,7 @@ With limited strength may want to hide distribution information and just bid the
         3N = to play
         4D = choose a major jump cue, later 4N double fit RKB
         4HS = ambiguous, fast arrival
-    2H = over prepared !d: majors, not strong
-        2S = simple preference, prefer !hs with equal length
-        2N = natural invitational, very rare, very strong minor stops
-        3C = !h limit+ raise, 3+ card support, 3 useful features (A, K or short in partner's suits)
-        3D = !s limit+ raise, 3+ card support, 3 useful features (A, K or short in partner's suits)
-        3HS = mixed raise, 4 trumps, 2 useful features (A, K or short in partner's suits), ~7--9 support points
-        3N = to play
-        4D = choose a major jump cue, later 4N double fit RKB
-        4HS = ambiguous, fast arrival
-    2H = over natural !d: weak jump overcall, respond as [6 card weak two](#2HS Weak Openings)
-    2S = weak, respond as [6 card weak two](#2HS Weak Openings)
+    2HS = weak, respond as [6 card weak two](#2HS Weak Openings)
     2N = 5--5 !hs + !cs
         3CH = to play
         3D = good 3H raise, 2 useful features
