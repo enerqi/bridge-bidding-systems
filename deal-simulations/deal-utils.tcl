@@ -661,3 +661,41 @@ proc south_may_overcall_opponents_1N_with_north_invitational {top_nt_range} {
 
   return 1
 }
+
+proc opens_std_1minor_prepared {hand} {
+  set points [hcp $hand]
+  if { $points < 11 || $points > 21 } { return 0 }
+
+  set cs [clubs $hand]
+  set ds [diamonds $hand]
+  set hs [hearts $hand]
+  set ss [spades $hand]
+
+  if {[5CM_nt $hand 15 17]} { return 0 }
+  if {[flattish $hand] && $points >= 20 } { return 0 }
+
+  if {($cs > $hs && $cs > $ss) || ($ds > $hs && $ds > $ss)} {return 1}
+  if { $hs >= 5 || $ss >= 5} {return 0}
+
+  return 1
+}
+
+proc has_both_majors_michaels {hand} {
+  set points [hcp $hand]
+  if {$points < 5 || $points > 15} { return 0 }
+
+  set hs [hearts $hand]
+  set ss [spades $hand]
+  if { $hs < 5 || $ss < 5 } { return 0 }
+
+  return 1
+}
+
+proc is_weak_2DH {hand} {
+  set points [hcp $hand]
+  if {$points < 5 || $points > 11 } { return 0 }
+
+  if { [hearts $hand] >= 6 || [diamonds $hand] >= 6 } { return 1 }
+
+  return 0
+}
