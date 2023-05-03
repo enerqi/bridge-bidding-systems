@@ -385,8 +385,8 @@ As 5--5, but always show the longest suit first
             3H = (after 1!s response) invite with 5--5
             3S = (after 1!h response) invite with 6--5
     2D = artificial GF, natural continuations
-        2M = 3 card !h support
-        2oM = Hx !h support
+        2M = 3 card major support
+        2oM = Hx major support
         2N = singleton support
         3C = 5 !cs
         3D = 5 !ds
@@ -1031,7 +1031,6 @@ Artificial GF:
 ** 1C--2N
 
 - natural invite
-- wants to declare, otherwise use the 2!h response
 
 3CD = natural, strong, 5+ cards
     3D = natural, 5(6) cards (!c tolerance xxx+ expected)
@@ -1055,7 +1054,7 @@ Artificial GF:
         4HS = slam try, asking for something extra
     other = cue
 4C = [Gerber](#Gerber 4C)
-4D = 5--5 majors ~16--18
+4D = 5--5 majors ~16--18  (start with 3!s with 19+ both majors)
 4HS = 6+ card suit, minimum strong
 4N = quantitative, ~21--22
 5CD = 6(7)+ card suit, minimum strong
@@ -1186,8 +1185,9 @@ Compared to the [1D opening interference](#1D interference):
     3CDHS = preempt
 
 1C--(1D)
-    Dbl = negative, ~8+ hcp, 4--4 majors
+    Dbl = negative, ~8+ hcp, 4--4+ majors
         2S = GF, strong
+        2N = 21+ balanced
         3S = GF, extras good suit
         (3D) = jump interference
             3HS = competitive

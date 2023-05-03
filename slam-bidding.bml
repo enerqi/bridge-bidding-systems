@@ -56,9 +56,9 @@ let the initiator push them.
 E.g. 1S--2N...4D cue then (X) lead directing
 
 4D-(X) = example Cue, A, K, void, singleton
-    Cue = no problem, new cue bid
+    NewCue = no problem, new cue bid
     P = usually no control, asking partner to clarify cue bid
-        XX = Ace
+        XX = Ace (or void if splintered)
         NewCue = KQ or singleton in first Cue suit
         SignOff = unprotected King, no shortage, no Ace
     XX = Queen with no higher honour, supporting a King in partner's hand

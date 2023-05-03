@@ -204,6 +204,7 @@ Responding:
 - with minor slam tries and a fit a 5x bid (including !hs) is an auto RKB response for the minor
 - with minor slam tries, given the lack of space, 4C--4D is last train like minor support bids
 
+
 3H = normal transfer completion
     3S = relay, to play 3N or side minor suit
         3N = forced
@@ -264,7 +265,7 @@ Responding:
     4S = not used, would use Lissabon with unilateral slam try
     4N = quantitative
     5N = pick a small slam
-3S = doubleton transfer break, 2 top 3 HHx (rarely 4--3--3--3) or 4 card+ support
+3S = doubleton transfer break, 2 top 3 HHx (careful with only 19-20 NT) or 4 card+ support
     3N = serious (unlikely to want to play 3N now)
     4C = cue
     4D = retransfer
@@ -277,7 +278,7 @@ Responding:
     4H = to play, responder declares
     4S = Kickback
     5x = EKB
-4CD = doubleton transfer break, 2 top 3 HHx (rarely 4--3--3--3) or 4 card+ support
+4CD = doubleton transfer break, 2 top 3 HHx (careful with only 19-20 NT) or 4 card+ support
     4D = retransfer (hand too limited for last train)
     4H = to play, responder declares
     4S = Kickback
@@ -355,7 +356,7 @@ Responding:
     4H = retransfer (opener very defined, last train makes no sense)
     4S = to play, responder declares
     5x = EKB
-4CDH = doubleton transfer break, 2 top 3 HHx+ (rarely 4--3--3--3) or 4 card+ support
+4CDH = doubleton transfer break, 2 top 3 HHx+ (careful with only 19-20 NT) or 4 card+ support
     4D = cue
     4H = retransfer
     4S = to play, responder declares

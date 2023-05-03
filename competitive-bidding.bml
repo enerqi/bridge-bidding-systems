@@ -353,7 +353,7 @@ Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others pla
 *"All doubles of bids through 2!s are takeout UNLESS"*:
 
 1. It's defined above as one of *Negative, Competitive or Responsive*
-2. our side bid responded 1N. Compare when open or overcall -- [Overcalls of our NT](#Overcalls of our NT) first double is takeout, second penalty.
+2. partner responded 1N, doubler sitting over. Compare when open or overcall -- [Overcalls of our NT](#Overcalls of our NT) first double is takeout, second penalty.
 3. our side bid and raised a suit. So, 1H--(P)--2H--(2S)--X should be penalty, whereas 1H--(1S)--2H--(2S)--X is competitive.
 4. our side redoubled
 5. our side made a penalty double or penalty pass
@@ -1942,6 +1942,7 @@ Hand strength guide:
 
 ** Strong NT Defence
 
+- Minimum 15 hcp
 - More aggressive, especially NV, i.e. rule of 8 strength ( length(longest 2 suits) - LTC >= 2 then bid )
 - No detailed responses written down, just play 2N (or cue bid) as the only way to start more constructive bids by advancer
 - 2!c!d!h!s are basically natural direct pressure bids
