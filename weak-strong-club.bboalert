@@ -1,0 +1,965 @@
+BBOalert
+
+,1C,(13)14-15 bal OR 16+ unbal OR 21+ bal,
+,1D,nebulous 0+ !Ds; 11 to 15 hcp,
+,1H,5+ !Hs; (10)11 to 15 hcp,
+,1S,5+ !Ss; (10)11 to 15 hcp,
+,1N,16 to 18; maybe 5 card major,
+,2C,6+ !Cs; (10)11 to 15 hcp,
+,2D,6+ !Ds; (10)11 to 15 hcp,
+,2N,19 to 20; maybe 5 card major,
+,4N,specific ace ask,
+Option,Opening_@v@1@2
+,2H,6+ !Hs; 1+ top honour; 7 to 10 hcp,
+,2S,6+ !Ss; 1+ top honour; 7 to 10 hcp,
+Option
+Option,Opening_@nv@1@2
+,2H,5+ !Hs; constructive 7 to 10 hcp,
+,2S,5+ !Ss; constructive 7 to 10 hcp,
+Option
+Option,Opening_@1@2
+,3C,6+ !Cs; constructive preempt,
+,3D,6+ !Ds; constructive preempt,
+,3H,6+ !Hs; preempt; 1+ top honour; max 1 outside A/K,
+,3S,6+ !Ss; preempt; 1+ top honour; max 1 outside A/K,
+,3N,good 4!H or 4!S preempt; semi-solid+; 2 or 3 keycards,
+,4H,7+ !Hs; broken not semi-solid preempt; max 1 outside A/K,
+,4S,7+ !Ss; broken not semi-solid preempt; max 1 outside A/K,
+Option
+Option,Opening_@3
+,2H,5+ !Hs; undisciplined 5 to 11 hcp,
+,2S,5+ !Ss; undisciplined 5 to 11 hcp,
+,3C,6+ !Cs; undisciplined preempt,
+,3D,6+ !Ds; undisciplined preempt,
+,3N,ambiguous;to play,
+Option
+
+1C--,1D,0 to 7 hcp or 8-9 no 4cM,
++,1H,8+ natural; maybe longer minor,
++,1S,8+ natural; maybe longer minor,
++,1N,GF balanced maybe 4 card major; OR 4441; OR unbalanced no major,
++,2C,NF 8-10 natural; maybe 5-5 minors,
++,2D,NF 8-10 natural,
++,2H,5-5+ majors limited; ~4-7 hcp,
++,2S,both minors limited GF; ~12-15 hcp,
++,2N,natural invite,
++,3C,!C preempt; ~3-7 hcp,
++,3D,!D preempt; ~3-7 hcp,
++,3H,!H preempt; ~3-7 hcp,
++,3S,!S preempt; ~3-7 hcp,
++,3N,Any 6 card Solid AKQJ suit; no outside A/K; max one extra Q,
++,4C,8 card !H suit; exactly AQJ or KQJ; no outside A/K; max one outside Q,
++,4D,8 card !S suit; exactly AQJ or KQJ; no outside A/K; max one outside Q,
++,4H,7 card solid AKQJ suit; no outside A/K; max one outside Q,
++,4S,7 card solid AKQJ suit; no outside A/K; max one outside Q,
+
+1CDb,Rd,!D transfer;8+ hcp
++,1D,!H transfer; 4+ cards; 6+ hcp
++,1H,!S transfer; 4+ cards; 6+ hcp
++,1S,NT transfer
++,1N,!C transfer; 8+ hcp
++,2C,weak; 5-7 hcp
++,2D,weak; 5-7 hcp
++,2H,weak; 5-7 hcp
++,2S,weak; 5-7 hcp
++,2N,5-5+ minors; GF v.s. strong hand
++,3C,preempt
++,3D,preempt
++,3H,preempt
++,3S,preempt
+
+1C1D,Db,both majors; 8+ hcp
++,2D,both majors; 5-5+
++,2H,weak; good 5-7 hcp
++,2S,weak; good 5-7 hcp
++,2N,!Hs + !Cs; 5-5+
++,3D,both majors; 5-5+ strong
++,3C,preempt
++,3D,stop ask
++,3H,preempt
++,3S,preempt
+
+1C1H,Db,4-5 !Ss 6+ hcp OR 6!Ss invitational
++,1S,4+ !Cs; not 4!Ss unless GF
++,2C,!D transfer; GF v.s. strong hand
++,2D,3 !Ss; ~8-11 hcp; 3-2-4-4 or 3-1-(5-4)
++,2H,!S transfer; 6+ cards weak or GF
++,2S,stop ask; invite plus
++,3C,preempt
++,3D,preempt
++,3H,!Ss + minor; mild GF two suiter
++,3S,preempt
++,4C,!Ss + minor; strong two suiter; max 5 losers
++,4D,!Ss + minor; strong two suiter; max 5 losers
++,4N,minors
+
+1C1S,Db,4-5 !Hs 6+ hcp OR 6!Hs invitational
++,2C,!D transfer; GF v.s. strong hand
++,2D,!H transfer; 6+ cards weak or GF
++,2H,!Cs; 10+ hcp
++,2S,stop ask; invite plus
++,3C,preempt
++,3D,preempt
++,3H,preempt
++,3S,!Hs + minor; mild GF two suiter
++,4C,!Hs + minor; strong two suiter; max 5 losers
++,4D,!Hs + minor; strong two suiter; max 5 losers
++,4N,minors
+
+1C1N,2C,both majors
++,2D,!Ds + a major
++,2N,minors OR strong majors
++,4C,preempt
++,4D,preempt
+
+Option,natural_opponents_minor_cue
+1C2C,Db,stayman
++,2D,!H transfer
++,2H,!S transfer
++,2S,range ask or !C transfer
++,2N,!D transfer
++,3C,5 card puppet stayman; maybe one 4 card major GF
++,3D,!H slam try no void; OR GF !H shortage 5-4+ minors
++,3H,!S slam try no void; OR GF !S shortage 5-4+ minors
++,3S,minors 5-5+ GF
++,4C,!H transfer
++,4D,!S transfer
+Option
+Option,michaels_opponents_minor_cue
+1C2C,2D,to play
++,2H,!C GF
++,2S,!D GF
++,2N,both minors; 5-5+
++,3C,competitive natural
++,3D,invitational
+Option
+
+1C2D,Db,3+ cards both majors staymanic
++,2H,competitive
++,2S,competitive
++,2N,Lebensohl weak minor or GF !C
++,3C,!H transfer invite plus
++,3D,GF staymanic; short !Ds
++,3H,!S transfer invite plus
++,3S,artificial GF; no stop
++,4C,!C + !H GF 5-5+
++,4D,!C + !S GF 5-5+
++,4N,minors
++,5C,strong jump overcall; maybe only 4 level values
+
+1C2H,Db,3+ cards other major staymanic
++,2S,competitive
++,2N,Lebensohl weak minor or GF !C
++,3C,!D transfer invite plus
++,3D,!S transfer invite plus
++,3H,GF staymanic; short !Hs
++,3S,artificial GF; no stop
++,4C,!C + !S GF 5-5+
++,4D,!D + !S GF 5-5+
++,4H,minors slam interest; max 3 losers
++,4N,minors
++,5C,strong jump overcall; maybe only 4 level values
++,5D,strong jump overcall; maybe only 4 level values
+
+1C2S,Db,3+ cards other major staymanic
++,2N,Lebensohl weak minor or GF !C
++,3C,!D transfer invite plus
++,3D,!H transfer invite plus
++,3H,competitive
++,3S,GF staymanic; short !Ss
++,4C,!C + !H GF 5-5+
++,4D,!D + !H GF 5-5+
++,4S,minors slam interest; max 3 losers
++,4N,minors
++,5C,strong jump overcall; maybe only 4 level values
++,5D,strong jump overcall; maybe only 4 level values
+
+
+1D--,1H,natural; maybe longer minor canapé,
++,1S,natural; maybe longer minor canapé,
++,1N,natural up to 11 hcp; no 4 card major,
++,2C,10+ hcp; no 4 card major unless 6-5; maybe better !Ds
++,2D,10+ hcp; no 4 card major unless 6-5; no longer suit
++,2H,weak NF; ~3-7 hcp
++,2S,weak NF; ~3-7 hcp
++,2N,natural invite; ~11-12 hcp; no 4 card major
++,3C,!C preempt
++,3D,!D preempt
++,3H,!H preempt
++,3S,!S preempt
++,3N,natural good ~12-17; no 4 card major
++,4C,!C preempt
++,4D,!D preempt
+
+1DDb,Rd,!H transfer; 4+ cards
++,1H,!S transfer; 4+ cards
++,1S,NT transfer
++,1N,!C transfer
++,2C,!D transfer
++,2D,weak
++,2H,weak
++,2S,weak
++,2N,5-5+ minors; GF v.s. strong hand
++,3C,preempt
++,3D,preempt
++,3H,preempt
++,3S,preempt
+
+1D1H,Db,4-5 !Ss 6+ hcp OR 6!Ss invitational
++,1S,4+ !Cs; not 4!Ss unless GF
++,2C,!D transfer
++,2D,3 !Ss; ~6-9 hcp; 3-2-4-4 or 3-1-(5-4)
++,2H,!S transfer; 6+ cards weak or GF
++,2S,stop ask; invite plus
++,3C,preempt
++,3D,preempt
++,3H,!Ss + minor; mild GF two suiter
++,3S,preempt
++,4C,!Ss + minor; strong two suiter; max 5 losers
++,4D,!Ss + minor; strong two suiter; max 5 losers
++,4N,minors
+
+1D1S,Db,4-5 !Hs 6+ hcp OR 6!Hs invitational
++,2C,!D transfer
++,2D,!H transfer; 6+ cards weak or GF
++,2H,!Cs; 10+ hcp
++,2S,stop ask; invite plus
++,3C,preempt
++,3D,preempt
++,3H,preempt
++,3S,!Hs + minor; mild GF two suiter
++,4C,!Hs + minor; strong two suiter; max 5 losers
++,4D,!Hs + minor; strong two suiter; max 5 losers
++,4N,minors
+
+1D1N,2C,both majors
++,2D,!Ds + a major
++,2N,minors OR strong majors
++,4C,preempt
++,4D,preempt
+
+1D2C,Db,stayman
++,2D,!H transfer
++,2H,!S transfer
++,2S,range ask or !C transfer
++,2N,!D transfer
++,3C,5 card puppet stayman; maybe one 4 card major GF
++,3D,!H slam try no void; OR GF !H shortage 5-4+ minors
++,3H,!S slam try no void; OR GF !S shortage 5-4+ minors
++,3S,minors 5-5+ GF
++,4C,!H transfer
++,4D,!S transfer
+
+Option,natural_opponents_minor_cue
+1D2D,Db,takeout
++,3D,stop asks
++,3H,GF 6+ suit
++,3S,GF 6+ suit
+Option
+Option,michaels_opponents_minor_cue
+1D2D,2D,to play
++,2H,!C GF
++,2S,!D GF
++,2N,both minors; 5-5+
++,3C,competitive natural
++,3D,competitive natural
+Option
+
+1D2H,Db,3+ cards other major staymanic
++,2S,competitive
++,2N,Lebensohl weak minor or GF !C
++,3C,!D transfer invite plus
++,3D,!S transfer invite plus
++,3H,GF staymanic; short !Hs
++,3S,artificial GF; no stop
++,4C,!C + !S GF 5-5+
++,4D,!D + !S GF 5-5+
++,4H,minors slam interest; max 3 losers
++,4N,minors
++,5C,strong jump overcall; maybe only 4 level values
++,5D,strong jump overcall; maybe only 4 level values
+
+1D2S,Db,3+ cards other major staymanic
++,2N,Lebensohl weak minor or GF !C
++,3C,!D transfer invite plus
++,3D,!H transfer invite plus
++,3H,competitive
++,3S,GF staymanic; short !Ss
++,4C,!C + !H GF 5-5+
++,4D,!D + !H GF 5-5+
++,4S,minors slam interest; max 3 losers
++,4N,minors
++,5C,strong jump overcall; maybe only 4 level values
++,5D,strong jump overcall; maybe only 4 level values
+
+
+1H--,1S,natural; maybe weak !D canapé,
++,1N,NF ~5-11 hcp
++,2C,GF natural
++,2D,GF natural
++,2H,3+ card single raise
++,2S,weak NF; ~6-9 hcp; no !H fit
++,2N,limit plus raise; 3+ cards GF; 4+ cards invite
++,3C,invitational 6+ !Cs; ~10-12 hcp
++,3D,invitational 6+ !Ds; ~10-12 hcp
++,3H,!H mixed raise; 4+ cards; ~7-9 support points
++,3S,some weak splinter; ~10-13 hcp; 3-4 cover cards
++,3N,splinter !S shortage; ~13-16 hcp; 4.5+ cover cards
++,4C,splinter !C shortage; ~13-16 hcp; 4.5+ cover cards
++,4D,splinter !D shortage; ~13-16 hcp; 4.5+ cover cards
++,4N,blackwood
++,5C,exclusion keycard blackwood
++,5D,exclusion keycard blackwood
+
+1HDb,Rd,doubleton support
++,1S,natural forcing
++,1N,!Cs weak two; OR 5 cards more to bid; OR lead directing 3 card support
++,2C,!Ds weak two; OR 5 cards more to bid; OR lead directing 3 card support
++,2D,!H transfer; 3 cards ~8-10 hcp
++,2H,minimum support ~4-7 hcp
++,2S,weak jump
++,2N,limit plus raise
++,3C,fit jump
++,3D,!H mixed raise; ~7–9 hcp 4 card support
++,3H,preempt; ~0-6 hcp
++,3S,fit jump
++,4C,splinter
++,4D,fit jump
+
+1H1S,Db,negative
++,2S,!H support limit plus raise; often 3 card support or defensive shape
++,2N,!H support almost GF;offensive shape
++,3C,fit jump
++,3D,!H support mixed raise ~7-9 hcp 4+ card support
++,3S,splinter
++,4C,splinter
+
+1H1N,Db,negative
++,2C,!H raise ~8-10 support points
++,2D,competitive 5-3 !S + !H; maybe 5-2 with Hx
++,2H,!H raise ~4-7
++,2S,competitive
++,2N,invitational plus support
++,3C,preempt
++,3D,!H mixed raise ~7-9 hcp 4+ card support
++,3H,preempt
++,3S,fit jump
+
+1H2C,Db,negative
++,2H,!H raise; less than mixed raise
++,2N,invitational plus support
++,3C,!H support limit plus raise; often 3 card support or defensive shape
++,3D,!H mixed raise ~7-9 hcp 4+ card support
++,3H,preempt
++,3S,fit jump
++,4C,splinter
+
+1H2D,Db,negative
++,2H,!H raise; less than mixed raise
++,2N,invitational plus support
++,3D,!H support limit plus raise; often 3 card support or defensive shape
++,3H,!H mixed raise ~7-9 hcp 4+ card support
++,3S,fit jump
++,4C,fit jump
++,4D,splinter
+
+1H2H,Db,values
++,2S,!H support limit plus raise
++,2N,!C transfer
++,3C,!D transfer
++,3D,!H mixed raise ~7-9 hcp 4+ card support
++,3S,splinter
++,4C,good !H raise with !S control
++,4D,good !H raise without !S control
+
+1H2S,Db,negative
++,2N,invitational plus support
++,3H,NF raise roughly mixed raise strength
++,4C,good !H raise with !S control
++,4D,good !H raise without !S control
+
+1H2N,Db,values
++,3C,invitational plus !H raise
++,3D,GF 5+ card !S suit
++,3H,competitive
++,3S,NF invitational
++,4C,good !H raise short !Cs
++,4D,good !H raise short !Ds
+
+1H3C,4C,good !H raise with !C control
+1H3C,4D,good !H raise without !C control
+
+1H3D,4C,good !H raise with !D control
+1H3D,4D,good !H raise without !D control
+
+1H3H,4C,good !H raise with !H control
+1H3H,4D,good !H raise without !H control
+
+1H3S,4C,good !H raise with !S control
+1H3S,4D,good !H raise without !S control
+
+1H4C,4D,good !H raise ~15+ hcp
+
+1S--,1N,NF ~5-11 hcp
++,2C,GF natural
++,2D,GF natural
++,2H,GF natural; 5+ !Hs
++,2S,3+ card single raise
++,2N,limit plus raise; 3+ cards GF; 4+ cards invite
++,3C,invitational 6+ !Cs; ~10-12 hcp
++,3D,invitational 6+ !Ds; ~10-12 hcp
++,3H,invitational 6+ !Hs; ~10-12 hcp
++,3S,!S mixed raise; 4+ cards; ~7-9 support points
++,3N,some weak splinter; ~10-13 hcp; 3-4 cover cards
++,4C,splinter !C or !H shortage; ~13-16 hcp; 4.5+ cover cards
++,4D,splinter !D shortage; ~13-16 hcp; 4.5+ cover cards
++,4N,blackwood
++,5C,exclusion keycard blackwood
++,5D,exclusion keycard blackwood
+
+1SDb,Rd,doubleton support
++,1N,!Cs weak two; OR 5 cards more to bid; OR lead directing 3 card support
++,2C,!Ds weak two; OR 5 cards more to bid; OR lead directing 3 card support
++,2D,!Hs weak two; OR 5 cards more to bid; OR lead directing 3 card support
++,2H,!S transfer; 3 cards ~8-10 hcp
++,2S,minimum support ~4-7 hcp
++,2N,limit plus raise
++,3C,fit jump
++,3D,fit jump
++,3H,!S mixed raise; ~7–9 hcp 4 card support
++,3S,preempt; ~0-6 hcp
++,4C,splinter
++,4D,splinter
+
+1S1N,Db,negative
++,2C,!S raise ~8-10 support points
++,2D,competitive 5-3 !H + !S; maybe 5-2 with Hx
++,2H,competitive
++,2S,!S raise ~4-7
++,2N,invitational plus support
++,3C,preempt
++,3D,preempt
++,3H,!S mixed raise ~7-9 hcp 4+ card support
++,3S,preempt
+
+1S2C,Db,negative
++,2S,!S raise; less than mixed raise
++,2N,invitational plus support
++,3C,!S support limit plus raise; often 3 card support or defensive shape
++,3D,fit jump
++,3H,!S mixed raise ~7-9 hcp 4+ card support
++,3S,preempt
++,4C,splinter
++,4D,splinter
+
+1S2D,Db,negative
++,2S,!S raise; less than mixed raise
++,2N,invitational plus support
++,3D,!S support limit plus raise; often 3 card support or defensive shape
++,3H,!S mixed raise ~7-9 hcp 4+ card support
++,3S,preempt
++,4C,fit jump
++,4D,splinter
+
+1S2H,Db,negative
++,2N,invitational plus support
++,!S support limit plus raise; often 3 card support or defensive shape
++,3S,!S mixed raise ~7-9 hcp 4+ card support
++,4C,fit jump
++,4D,fit jump
+
+1S2S,Db,values
++,2N,!C transfer
++,3C,!D transfer
++,3D,!S support limit plus raise
++,3H,!S mixed raise ~7-9 hcp 4+ card support
++,3S,competitive
++,4C,good !S raise with !H control
++,4D,good !S raise without !H control
++,4H,splinter
+
+1S2N,Db,values
++,3C,GF 5+ card !H suit
++,3D,invitational plus !S raise
++,3H,NF invitational
++,3S,competitive
++,4C,good !S raise short !Cs
++,4D,good !S raise short !Ds
+
+1N--,2C,stayman; promissory
++,2D,!H transfer
++,2H,!S transfer
++,2S,range ask or !C transfer
++,2N,!D transfer
++,3C,5 card puppet stayman; maybe one 4 card major GF
++,3D,!H slam try no void; OR GF !H shortage 5-4+ minors
++,3H,!S slam try no void; OR GF !S shortage 5-4+ minors
++,3S,minors 5-5+ GF
++,4C,!H transfer
++,4D,!S transfer
++,5S,6NT invite asking for any 5 card suit
+
+1N2D,Db,3+ cards both majors staymanic
++,2H,competitive
++,2S,competitive
++,2N,Lebensohl weak minor or GF !C
++,3C,!H transfer invite plus
++,3D,GF staymanic; short !Ds
++,3H,!S transfer invite plus
++,3S,artificial GF; no stop
++,4C,!C + !H GF 5-5+
++,4D,!C + !S GF 5-5+
++,4N,minors
++,5C,strong jump overcall; maybe only 4 level values
+
+1N2H,Db,3+ cards other major staymanic
++,2S,competitive
++,2N,Lebensohl weak minor or GF !C
++,3C,!D transfer invite plus
++,3D,!S transfer invite plus
++,3H,GF staymanic; short !Hs
++,3S,artificial GF; no stop
++,4C,!C + !S GF 5-5+
++,4D,!D + !S GF 5-5+
++,4H,minors slam interest; max 3 losers
++,4N,minors
++,5C,strong jump overcall; maybe only 4 level values
++,5D,strong jump overcall; maybe only 4 level values
+
+1N2S,Db,3+ cards other major staymanic
++,2N,Lebensohl weak minor or GF !C
++,3C,!D transfer invite plus
++,3D,!H transfer invite plus
++,3H,competitive
++,3S,GF staymanic; short !Ss
++,4C,!C + !H GF 5-5+
++,4D,!D + !H GF 5-5+
++,4S,minors slam interest; max 3 losers
++,4N,minors
++,5C,strong jump overcall; maybe only 4 level values
++,5D,strong jump overcall; maybe only 4 level values
+
+
+2C--,2D,enquiry artificial; invitate plus
++,2H,NF ~7-10 hcp; no good invite; unlikely both majors
++,2S,NF ~7-10 hcp; no good invite; unlikely both majors
++,2N,puppet; !C preempt OR GF single major OR GF 6–4 majors
++,3C,!D transfer; invite plus
++,3D,majors 5-5+; invite plus
++,3H,invitational; good suit
++,3S,invitational; good suit
++,4C,preempt
++,4D,roman keycard blackwood for !Cs
++,4N,blackwood
+
+2CDb,Rd,values
++,2D,enquiry artificial; invitate plus
++,2H,NF ~7-10 hcp; no good invite; unlikely both majors
++,2S,NF ~7-10 hcp; no good invite; unlikely both majors
++,2N,puppet; !C preempt OR GF single major OR GF 6–4 majors
++,3C,!D transfer; invite plus
++,3D,majors 5-5+; invite plus
++,3H,invitational; good suit
++,3S,invitational; good suit
++,4C,preempt
++,4D,roman keycard blackwood for !Cs
++,4N,blackwood
+
+2C2H,Db,negative
+2C2S,Db,negative
+
+2D--,2H,natural F1; 4+ !Hs
++,2S,natural F1; 4+ !Ss
++,2N,!D support or tolerance, constructive invite plus
++,3C,GF natural
++,3D,preempt
++,3H,GF natural
++,3S,GF natural
++,4C,roman keycard blackwood for !Ds
++,4D,preempt
++,4N,blackwood
+
+2DDb,Rd,values
++,2H,natural F1; 4+ !Hs
++,2S,natural F1; 4+ !Ss
++,2N,!D support or tolerance, constructive invite plus
++,3C,GF natural
++,3D,preempt
++,3H,GF natural
++,3S,GF natural
++,4C,roman keycard blackwood for !Ds
++,4D,preempt
++,4N,blackwood
+
+2D2H,Db,negative
+2D2S,Db,negative
+
+2H--,2S,NF natural; weak short !Hs OR invitational 5 !Ss and short !Hs
+Option,Opening_@v@1@2
+2H--,2N,puppet to 3!C; maybe !H raise or !C signoff
+2HDb,2N,puppet to 3!C; maybe !H raise or !C signoff
+2H2S,2N,puppet to 3!C; maybe !H raise or !C signoff
+Option
+Option,Opening_@nv@1@2
+2H--,2N,length strength ask
+2HDb,2N,length strength ask
+2H2S,2N,length strength ask
+Option
+2H--,3C,!D transfer; invite plus
+2H--,3D,!H transfer; invite plus
+2H--,3H,preempt limit raise
+2H--,3S,GF natural
+2H--,4C,control asking bid
+2H--,4D,control asking bid
+2H--,4S,weak !S keycard blackwood
+
+2HDb,Rd,values penalty interest
+2HDb,3C,!D transfer; invite plus
+2HDb,3D,!H transfer; invite plus
+2HDb,3H,preempt limit raise
+2HDb,3S,GF natural
+2HDb,4C,fit jump
+2HDb,4D,fit jump
+2HDb,4S,weak !S keycard blackwood
+
+2H2S,Db,penalty
+2H2S,3C,!D transfer; invite plus
+2H2S,3D,!H transfer; invite plus
+2H2S,3H,preempt limit raise
+2H2S,3S,stop ask
+2H2S,4C,fit jump
+2H2S,4D,fit jump
+2H3C,Db,penalty
+2H3D,Db,penalty
+
+Option,Opening_@v@1@2
+2S--,2N,puppet to 3!C; maybe !S raise or !C signoff
+2SDb,2N,puppet to 3!C; maybe !H raise or !C signoff
+Option
+Option,Opening_@nv@1@2
+2S--,2N,length strength ask
+2SDb,2N,length strength ask
+Option
+2S--,3C,!D transfer; invite plus
+2S--,3D,!H transfer; good suit limited NT interest; invite plus
+2S--,3H,!S transfer; invite plus
+2S--,3S,preempt limit raise
+2S--,4C,control asking bid
+2S--,4D,control asking bid
+2S--,4H,control asking bid
+2S--,4N,weak !S keycard blackwood
+
+2SDb,Rd,values penalty interest
+2SDb,3C,!D transfer; invite plus
+2SDb,3D,!H transfer; good suit limited NT interest; invite plus
+2SDb,3H,!S transfer; invite plus
+2SDb,3S,preempt
+2SDb,4C,fit jump
+2SDb,4D,fit jump
+2S3C,Db,penalty
+2S3D,Db,penalty
+2S3H,Db,penalty
+
+2N--,3C,5 card muppet stayman
+2N--,3D,!H transfer; maybe 4 !Ss
+2N--,3H,!S transfer; not 4 !Hs
+2N--,3S,minors 5-4+; often slam try
+2N--,4C,!H slam try
+2N--,4D,!S slam try
+2N--,4H,!C slam try
+2N--,4S,!D slam try
+2N--,5S,6NT invite asking for any 5 card suit
+
+
+3C--,3D,any 5 card major
+3C--,4D,weak !C keycard blackwood
+3C--,4H,control asking bid
+3C--,4S,control asking bid
+3C--,4N,!D control asking bid
+
+3D--,4C,control asking bid
+3D--,4H,weak !D keycard blackwood
+3D--,4S,control asking bid
+3D--,4N,!H control asking bid
+
+3H--,4C,control asking bid
+3H--,4D,control asking bid
+3H--,4S,weak !H keycard blackwood
+3H--,4N,!s control asking bid
+
+3S--,4C,control asking bid
+3S--,4D,control asking bid
+3S--,4N,weak !S keycard blackwood
+
+3N--,4C,slam try ask
+3N--,4D,extra trump length ask
+3N--,4H,pass or correct
+
+4C--,4D,weak !C keycard blackwood
+4C--,4N,!D control asking bid
+4C--,5D,exclusion keycard blackwood
+4C--,5H,control asking bid
+4C--,5S,control asking bid
+
+4D--,4N,weak !D keycard blackwood
+4D--,5C,control asking bid
+4D--,5H,control asking bid
+4D--,5S,control asking bid
+
+4H--,4S,weak !H keycard blackwood
+4H--,4N,!s control asking bid
+4H--,5C,control asking bid
+4H--,5D,control asking bid
+4H--,5S,exclusion keycard blackwood
+
+4S--,4N,weak !S keycard blackwood
+4S--,5C,control asking bid
+4S--,5D,control asking bid
+4S--,5H,control asking bid
+
+4N--,5C,no ace
+4N--,5D,!D ace
+4N--,5H,!H ace
+4N--,5S,!S ace
+4N--,5N,2 aces
+4N--,6C,!C ace
+
+5C--,5D,control asking bid
+5C--,5H,control asking bid
+5C--,5S,control asking bid
+
+5D--,5H,control asking bid
+5D--,5S,control asking bid
+
+
+1D--1H--1S--,2C,artificial puppet; weak diamonds or invite hand
+1D--1H--1S--,2D,artificial puppet; GF
+1D--1H--1N--,2C,artificial puppet; weak diamonds or invite hand
+1D--1H--1N--,2D,artificial puppet; GF
+1D--1H--1N--,3C,signoff longer !Cs
+
+1D--1S--1N--,2C,artificial puppet; weak diamonds or invite hand
+1D--1S--1N--,2D,artificial puppet; GF
+1D--1S--1N--,3C,signoff longer !Cs
+
+1H--1S--1N--,2C,artificial puppet; weak diamonds or invite hand
+1H--1S--1N--,2D,artificial puppet; GF
+1H--1S--1N--,3C,signoff longer !Cs
+
+1C--1H--1S--,2C,artificial puppet; weak diamonds or invite hand
+1C--1H--1S--,2D,artificial puppet; GF
+1C--1H--1N--,2C,artificial puppet; weak diamonds or invite hand
+1C--1H--1N--,2D,artificial puppet; GF
+
+1H--1N--,2C,artificial extras 14-15 hcp ~6 losers
+1H--1N--2C,2D,artificial maximum GF
+1H--1N--2C,2N,NF 4+ !Cs
+1H--1N--2C,3C,NF 6+ !Cs
+1H--1N--2C,3D,NF 6+ !Ds
+1H--1N--,2H,6+ !Hs limited ~11-13/14
+1H--1N--,2N,maximum 6-4+ with 4 card minor
+
+1S--1N--,2C,artificial extras 14-15 hcp ~6 losers
+1S--1N--2C,2D,artificial maximum GF
+1S--1N--2C,2N,NF 4+ !Cs
+1S--1N--2C,3C,NF 6+ !Cs
+1S--1N--2C,3D,NF 6+ !Ds
+1S--1N--,2S,6+ !Hs limited ~11-13/14
+1S--1N--,2N,maximum 6-4+ with 4 card minor
+
+1H--1S--,2C,artificial extras 14-15 hcp ~6 losers
+1H--1S--2C,2D,artificial maximum GF
+1H--1S--2C,2N,NF 4+ !Cs
+1H--1S--2C,3C,NF 6+ !Cs
+1H--1S--2C,3D,NF 6+ !Ds
+1H--1S--,2H,6+ !Hs limited ~11-13/14
+1H--1S--,2N,maximum 6-4+ with 4 card minor
+
+
+1C2C,natural over prepared minor;both majors not strong over natural
+1C2N,!H + !D
+1C3C,both majors strong
+1C1H--,2C,artificial ~9+ hcp limited Hx+/xxx support OR 13+ catchall
++,2S,invitational
++,2N,invitational plus support
++,3C,mixed raise
++,3D,invitational
++,3H,cooperative ~4-7 good support
++,3S,fit jump
++,4C,splinter
++,4D,fit jump
+1C1S--,2C,artificial ~9+ hcp limited Hx+/xxx support OR 13+ catchall
++,2N,invitational plus support
++,3C,mixed raise
++,3D,invitational
++,3H,invitational
++,3S,cooperative ~4-7 good support
++,4C,splinter
++,4D,fit jump
+
+1C--1N,2C,artificial 5-4+ majors
++,2D,both majors
++,3C,both majors strong
+1C--1N2C,2D,longest major ask
+
+1D2D,natural over prepared minor;both majors not strong over natural
++,3C,!H limit plus raise
++,3D,!S limit plus raise
++,3H,!H mixed raise
++,3S,!S mixed raise
+1D,2N,!H + !C
+1D,3D,both majors strong
+1D1H--,2C,artificial ~9+ hcp limited Hx+/xxx support OR 13+ catchall
++,2D,value limit raise usually 3 card support or defensive
++,2S,invitational
++,2N,invitational plus support
++,3C,invitational
++,3D,mixed raise
++,3H,cooperative ~4-7 good support
++,3S,fit jump
++,4C,fit jump
++,4D,splinter
+1D1S--,2C,artificial ~9+ hcp limited Hx+/xxx support OR 13+ catchall
++,2D,value limit raise usually 3 card support or defensive
++,2N,invitational plus support
++,3C,invitational
++,3D,mixed raise
++,3H,invitational
++,3S,cooperative ~4-7 good support
++,4C,splinter
++,4D,fit jump
+1D2C--,2D,!H transfer
++,2H,!S transfer
++,2S,artificial force usually support
+
+1D--1N,2C,artificial 5-4+ majors
++,2D,both majors
++,3D,both majors strong
+1D--1N2C,2D,longest major ask
+
+1H1S--,2C,artificial ~9+ hcp limited Hx+/xxx support OR 13+ catchall
++,2H,value limit raise usually 3 card support or defensive
++,2N,invitational plus support
++,3C,invitational
++,3D,invitational
++,3H,mixed raise
++,3S,cooperative ~4-7 good support
++,4C,fit jump
++,4D,fit jump
++,4H,splinter
+
+1H2C--,2D,!S transfer
++,2H,!C limit raise
++,2S,artificial !Ds
++,3D,fit jump
++,3H,splinter
++,3S,fit jump
++,4D,splinter
+1H2D--,2H,!S transfer
++,2S,!D limit raise
++,3H,splinter
++,3S,fit jump
++,4C,fit jump
++,4D,fit jump
+
+1H,2H,!S + minor
+1H2H,2N,minor ask
++,3C,pass or correct
++,3D,!S game try
++,3S,!S mixed raise
+1H,2N,minors
+1H--1S,2H,!S + minor
++,2S,natural
+
+
+1S2C--,2D,!H transfer
++,2H,artificial !Ds
++,2S,!C limit raise
++,3D,fit jump
++,3H,fit jump
++,3S,splinter
+1S2D--,2H,!S transfer
++,2S,!D limit raise
++,3H,fit jump
++,3S,splinter
++,4C,fit jump
+
+1S,2S,5-5+ !H + !D limited OR !H + !C strong
+1S2S,2N,minor ask invite plus
++,3C,pass or correct
++,3D,!H game try
+1S,2N,minors
+1S,3C,!H + !C not strong
+1S3C,3D,!H game try
+
+1N,Db,penalty vs weak NT; majors or any extra strong vs strong NT
++,2C,!C + major vs weak NT;majors vs strong NT
++,2D,!D + major
++,2N,minors OR strong majors
++,3C,natural intermediate
++,3D,natural intermediate
++,3H,natural intermediate
++,3S,natural intermediate
++,4C,preempt
++,4D,preempt
+
+2D,3D,majors strong
++,3H,strong
++,3S,strong
++,4C,!C + !H GF
++,4D,!C + !S GF
++,4N,minors
+
+2H,3H,!S + minor, limited
++,3S,strong
++,4C,!C + !S GF
++,4D,!D + !S GF
++,4H,minors slam interest; max 3 losers
++,4N,minors
+
+2S,3S,!H + minor, limited
++,4C,!C + !H GF
++,4D,!D + !H GF
++,4S,minors slam interest; max 3 losers
++,4N,minors
+
+2DDb--,3C,!H invitational plus
++,2N,Lebensohl relay; !Cs weak or GF; or one 4 card major invitational plus
++,3D,GF staymanic cue bid; 43/44/54 majors
++,3H,!S invitational plus
++,3S,artificial GF; no stopper
+
+2HDb--,3C,natural ~0-10 hcp
++,2N,better minor Lebensohl relay
++,3D,natural invitational
++,3H,no stop; 4!Ss
++,3S,5 cards invitational
++,4C,natural GF
++,4D,natural GF
+
+2SDb--,3C,natural ~0-10 hcp
++,2N,better minor Lebensohl relay
++,3D,natural invitational
++,3H,natural invitational
++,3S,no stop; 4!Hs
++,3S,5 cards invitational
++,4C,natural GF
++,4D,natural GF
+
+3C,4C,both majors ~4 losers
++,4D,!Ds + major ~4 losers
++,4N,!H + !D ~3 losers
+
+3D,4C,!Cs + major NF
++,4D,both majors ~4 losers
++,4N,!H + !C ~3 losers
+
+3H,4C,!C + !S NF
++,4D,!D + !S NF
++,4H,!S + minor GF
++,4N,minors
+
+3S,4C,!C + !H NF
++,4D,!D + !H NF
++,4S,!H + minor ~3 losers
++,4N,minors

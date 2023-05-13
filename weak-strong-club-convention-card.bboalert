@@ -1,0 +1,135 @@
+CC,summary
+Swedish weak strong 1!C, short zero+ 1!D
+5 card majors, Strong notrump, 
+Intermediate 2!C/2!D, weak 2!H/2!S, 
+3!C!D good 6+ card preempts
+CC,ntopen
+1NT = 16-18, 2N = 19-20
+Notrump openings maybe 5 card major, 
+no singleton, very rarely 6332 minor
+1NT 
+    2!C stayman promissory
+    2!S range ask or !C
+    2!D/!H/2N transfers 
+    3!C puppet stayman
+    3!D !H slam try or short with minors
+    3!H !S slam try or short with minors
+    3!S 5-5+ minors GF
+    4!C!D major transfers, not slammish
+    4!H!S to play, no transfer
+2NT
+    3!C puppet stayman
+    3!D transfer, maybe 4!Ss
+    3!H transfer, not 4!Hs
+    3!S minors 
+    4!C !H slam try
+    4!D !S slam try
+    4!H !C slam try
+    4!S !D slam try
+    5!S 6N invite, ask for 5 card suit
+CC,majoropen
+5 cards, (10)11-15
+    1N ~5-11(12)
+    2/1 GF
+    2 raise 3+ cards 5-9
+    1!H-2!S weak
+    2N limit plus raise
+    3 raise mixed raise
+    3 jump new invitational natural
+CC,minoropen
+1!C = (13)14-15 (semi)balanced OR 
+      16+ unbalanced OR 21+ balanced
+    1!D negative 0-7/8-9 no 4cM
+    1!H!S 8+ maybe longer minor
+    1N GF bal or unbal no major
+    2!C/!D NF 8-10
+    2!H 4-7 5--5 majors
+    2!S ~12-15 minors + short major
+    3x preempt
+1!D = 11-15, short - maybe zero cards. 
+    Flat 11-13 or 11-15 3 suited or 
+    11-15 both minors or 
+    extreme shape 13-15 6!D + 5!H/!S
+    1!H/!S maybe longer minor
+    2!C/!D 10+ and no 4cM
+    higher bids weak
+CC,level2open
+2!C = 6+!Cs (10)11-15
+    2!D ask invite plus
+    2!H/!S NF
+    2N puppet, weak !C or GF major(s)
+    3!C !D transfer
+    3!D 5-5+ majors invite plus
+    3!H!S natural invite
+    4!C preempt
+    4!D RKCB
+2!D = 6+!Ds (10)11-15
+    2!H!S 4+ natural suit forcing
+    2N !D tolerance/support invite plus
+    3!D/4!D preempt
+    3!C!H!S GF
+2!H/2!S = weak 5(NV)/6(VUL)cards 7-10
+    2!S NF
+    2N = relay
+    Transfers
+    3raise = preempt
+    4!C/!D splinter
+CC,other
+Artificial 2!C Gazilli variant with 
+    good 14-15 after 1!H/!S - 1!S/1N
+Responder's rebid of 2!C/!D often 
+    artificial invite plus / GF (NMF)
+Minimum level conversions after takeout
+    doubles do not show extras    
+Good Bad 2N by opener after 1!C/!D
+CC,doubles
+Negative to 4!H, (4!D over 1!S)
+Responsive to 4!D (4 level values)
+Support X/XX to 4!H
+Lightner
+CC,ntocalls
+1N 15-18, system on
+2N 16-18
+Jump 2N unusual 5-5+ lower two suits
+CC,socalls
+Usually 5 cards
+1 level ~8-16
+2 level ~10-16
+CC,over1nt
+X = majors (strong NT) or penalty (weak NT)
+2!C = !C + major (strong NT) or majors (weak NT)
+2!D = !D + major
+2!H!S = natural
+2N = minors or strong 2 suiter
+3!C!D = natural offensive
+CC,jocalls
+2 level weak 
+3 level weak NV, intermediate VUL
+(1!S)-3!C shows !C + !H, not strong
+CC,overtox
+After 1!C/!D opening
+    XX transfer 
+    New suit transfer
+    Jump new weak
+    Jump raise weak
+    1N !C transfer
+    2N 5-5+ minors
+After 1!H/!S opening
+    XX doubleton support
+    New suit + 1NT transfer except 1!H-1!S
+    Jump new 2S weak, 3x fit jump
+    Jump raise preempt
+    Jump 1-under mixed raise
+    2N limit plus raise
+CC,directq
+natural of prepared minor
+both majors of natural minor
+(1!H)-2!H = !S + minor
+(1!S)-2!S = limited !H + !D OR
+            strong !H + !C
+CC,slam
+RKCB 14/30, Kickback
+Last Train, Serious 3N
+5NT usually pick a slam
+Splinters
+CC
