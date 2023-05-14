@@ -565,12 +565,16 @@ Option
 +,4D,roman keycard blackwood for !Cs
 +,4N,blackwood
 
+2C--2D--,2H,no 4 card major medium/maximum strength
++,2N,4 card !H suit any strength
++,3C,no major minimum
+
 2C2H,Db,negative
 2C2S,Db,negative
 
 2D--,2H,natural F1; 4+ !Hs
 +,2S,natural F1; 4+ !Ss
-+,2N,!D support or tolerance, constructive invite plus
++,2N,!D support or tolerance; constructive invite plus
 +,3C,GF natural
 +,3D,preempt
 +,3H,GF natural
@@ -582,7 +586,7 @@ Option
 2DDb,Rd,values
 +,2H,natural F1; 4+ !Hs
 +,2S,natural F1; 4+ !Ss
-+,2N,!D support or tolerance, constructive invite plus
++,2N,!D support or tolerance; constructive invite plus
 +,3C,GF natural
 +,3D,preempt
 +,3H,GF natural
@@ -732,23 +736,23 @@ Option
 5D--,5S,control asking bid
 
 
-1D--1H--1S--,2C,artificial puppet; weak diamonds or invite hand
+1D--1H--1S--,2C,artificial puppet; !D signoff or invite hand
 1D--1H--1S--,2D,artificial puppet; GF
-1D--1H--1N--,2C,artificial puppet; weak diamonds or invite hand
+1D--1H--1N--,2C,artificial puppet; !D signoff or invite hand
 1D--1H--1N--,2D,artificial puppet; GF
 1D--1H--1N--,3C,signoff longer !Cs
 
-1D--1S--1N--,2C,artificial puppet; weak diamonds or invite hand
+1D--1S--1N--,2C,artificial puppet; !D signoff or invite hand
 1D--1S--1N--,2D,artificial puppet; GF
 1D--1S--1N--,3C,signoff longer !Cs
 
-1H--1S--1N--,2C,artificial puppet; weak diamonds or invite hand
+1H--1S--1N--,2C,artificial puppet; !D signoff or invite hand
 1H--1S--1N--,2D,artificial puppet; GF
 1H--1S--1N--,3C,signoff longer !Cs
 
-1C--1H--1S--,2C,artificial puppet; weak diamonds or invite hand
+1C--1H--1S--,2C,artificial puppet; !D signoff or invite hand
 1C--1H--1S--,2D,artificial puppet; GF
-1C--1H--1N--,2C,artificial puppet; weak diamonds or invite hand
+1C--1H--1N--,2C,artificial puppet; !D signoff or invite hand
 1C--1H--1N--,2D,artificial puppet; GF
 
 1H--1N--,2C,artificial extras 14-15 hcp ~6 losers
@@ -800,7 +804,7 @@ Option
 1C--1N,2C,artificial 5-4+ majors
 +,2D,both majors
 +,3C,both majors strong
-1C--1N2C,2D,longest major ask
+1C--1N2C--,2D,longest major ask
 
 1D2D,natural over prepared minor;both majors not strong over natural
 +,3C,!H limit plus raise
@@ -835,7 +839,7 @@ Option
 1D--1N,2C,artificial 5-4+ majors
 +,2D,both majors
 +,3D,both majors strong
-1D--1N2C,2D,longest major ask
+1D--1N2C--,2D,longest major ask
 
 1H1S--,2C,artificial ~9+ hcp limited Hx+/xxx support OR 13+ catchall
 +,2H,value limit raise usually 3 card support or defensive
@@ -878,8 +882,7 @@ Option
 +,3D,fit jump
 +,3H,fit jump
 +,3S,splinter
-1S2D--,2H,!S transfer
-+,2S,!D limit raise
+1S2D--,2S,!D limit raise
 +,3H,fit jump
 +,3S,splinter
 +,4C,fit jump
@@ -910,14 +913,14 @@ Option
 +,4D,!C + !S GF
 +,4N,minors
 
-2H,3H,!S + minor, limited
+2H,3H,!S + minor; limited
 +,3S,strong
 +,4C,!C + !S GF
 +,4D,!D + !S GF
 +,4H,minors slam interest; max 3 losers
 +,4N,minors
 
-2S,3S,!H + minor, limited
+2S,3S,!H + minor; limited
 +,4C,!C + !H GF
 +,4D,!D + !H GF
 +,4S,minors slam interest; max 3 losers
