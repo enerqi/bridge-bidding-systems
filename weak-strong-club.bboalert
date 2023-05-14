@@ -53,6 +53,123 @@ Option
 +,4H,7 card solid AKQJ suit; no outside A/K; max one outside Q,
 +,4S,7 card solid AKQJ suit; no outside A/K; max one outside Q,
 
+1C--1D--,1H,weak NT natural OR various strong often ~20+ hcp 8+ trick hands
+1C--1D--1H--,1S,relay
+1C--1D--1H--1S--,2C,various extra strong hands
++,2D,4!H 4441
++,2N,23-24 hcp NT
+1C--1D--1H--,1N,4!S exactly not 4!H
+1C--1D--1H--1N,2C,various extra strong hands
++,2D,4!H 4441
+1C--1D--,1S,weak or strong; maybe canapé longer other suits
++,2C,natural not with exactly 4!Ss
++,2D,natural not with exactly 4!Ss
++,2H,natural ~16-18 hcp 5+ !Hs; denies exactly 4!S
++,2N,21-22 hcp NT
++,3C,5-5 !C + major ~16-18 hcp
++,3D,5-5 both majors ~16-18 hcp
+
+1C--1H--,2C,natural strong or 21 balanced or 4441 !H singleton 19+; denies 3!Hs
+1C--1H--2C,2D,any 8-11 hcp
++,2H,12+ hcp 5 card major
++,2S,natural 12+ hcp
++,2N,12+ hcp 6 card major
++,3C,12+ hcp 5+ !C
++,3D,12+ hcp 5+ !D
++,3H,12+ hcp 7+ card major
+1C--1H--2D,strong 3+ card support
+1C--1H--2D--,2H,any 12+
++,2S,4 card major only 8-11 hcp
++,2N,5 card major + 4 card side suit 8-11 hcp
++,3C,longer !Cs 8-11 hcp
++,3D,longer !Ds 8-11 hcp
++,3H,6+!Hs 8-11 hcp
++,3S,5332 8-11 hcp
++,3N,5-5 both majors 8-11 hcp
++,4C,5-5 !H + !C 8-11 hcp
++,4D,5-5 !H + !D 8-11 hcp
+1C--1H--2D--2H--,2S,relay
+1C--1H--2D--2H--2S--,2N,5 card major + 4 card side suit
++,3C,longer !Cs
++,3D,longer !Ds
++,3H,6+!Hs
++,3S,5332
++,3N,5-5 both majors
++,4C,5-5 !H + !C
++,4D,5-5 !H + !D
+1C--1H--,2S,6!S + 3!H
+1C--1H--,2N,!D + other major
+1C--1H--,3C,!D + 4+!C
+1C--1H--,3D,6+!D single suited
+1C--1H--,3H,5+ card support ~16-18 hcp
+1C--1H--,3N,singleton in partners major ~16-18 hcp
+
+
+1C--1S--,2C,natural strong or 21 balanced or 4441 !H singleton 19+; denies 3!Ss
+1C--1S--2C,2D,any 8-11 hcp
++,2H,natural 12+ hcp
++,2S,12+ hcp 5 card major
++,2N,12+ hcp 6 card major
++,3C,12+ hcp 5+ !C
++,3D,12+ hcp 5+ !D
++,3S,12+ hcp 7+ card major
+1C--1S--2D,strong 3+ card support
+1C--1S--2D--,2H,any 12+
++,2S,4 card major only 8-11 hcp
++,2N,5 card major + 4 card side suit 8-11 hcp
++,3C,longer !Cs 8-11 hcp
++,3D,longer !Ds 8-11 hcp
++,3H,artificial 6+!Ss 8-11 hcp
++,3S,5332 8-11 hcp
++,3N,5-5 both majors 8-11 hcp
++,4C,5-5 !H + !C 8-11 hcp
++,4D,5-5 !H + !D 8-11 hcp
+1C--1S--2D--2H--,2S,relay
+1C--1S--2D--2H--2S--,2N,5 card major + 4 card side suit
++,3C,longer !Cs
++,3D,longer !Ds
++,3H,artificial 6+!Ss
++,3S,5332
++,3N,5-5 both majors
++,4C,5-5 !H + !C
++,4D,5-5 !H + !D
+1C--1S--,2N,!D + other major
+1C--1S--,3C,!D + 4+!C
+1C--1S--,3D,6+!D single suited
+1C--1S--,3S,5+ card support ~16-18 hcp
+1C--1S--,3N,singleton in partners major ~16-18 hcp
+
+
+1C--1N--,2C,strong hand artificial relay
+1C--1N--2C,2D,5+!Cs unbalanced
++,2H,balanced
++,2S,6+!Ds single suited
++,2N,some 4441
++,3C,16+ hcp 5+!D 4+!C not 5-5 !H shortage
++,3D,16+ hcp 5+!D 4+!C not 5-5 !S shortage
++,3H,5!D 4!C semi-balanced
+1C--1N--,2D,weak NT hand
+
+1C--2C--,2D,strong hand artificial relay
+1C--2C--2D,2H,6+ !Cs single suited
++,3C,6!C 4!D
++,3D,5!C 4!D
++,3H,singleton 5-5+ minors
++,3S,singleton 5-5+ minors
+
+1C--2D--,2H,strong hand artificial relay
+1C--2D--2H--,2S,6+ !Ds single suited
++,3C,5!D 4!C
++,3D,6!D 4!C
++,3H,singleton 6-5+ minors
++,3S,singleton 6-5+ minors
+
+1C--2S--,2N,enquiry weak or strong opening
+1C--2S--2N--,3C,5/6!C 4!D
++,3D,5/6!D 4!C
++,3H,singleton 5-5+ minors
++,3S,singleton 5-5+ minors
+
 1CDb,Rd,!D transfer;8+ hcp
 +,1D,!H transfer; 4+ cards; 6+ hcp
 +,1H,!S transfer; 4+ cards; 6+ hcp
@@ -191,6 +308,40 @@ Option
 +,4C,!C preempt
 +,4D,!D preempt
 
+1D--1H--,2N,!S mini splinter !H raise; maximum
++,3C,5-5+ both minors; maximum
++,3D,mini splinter !S raise; maximum
++,3H,!C mini splinter !H raise;maximum
++,3S,!S void splinter
++,3N,6!D 5!H some void
++,4C,!C void splinter
++,4D,!D void splinter
++,4H,6!D 5!H no void
+
+1D--1S--,2N,!C mini splinter !S raise; maximum
++,3C,5-5+ both minors; maximum
++,3D,mini splinter !S raise; maximum
++,3H,mini splinter !S raise; maximum
++,3S,!H void splinter
++,3N,6!D 5!S some void
++,4C,!C void splinter
++,4D,!D void splinter
++,4S,6!D 5!S no void
+
+1D--1N--,3C,both minors 5-5+ maximum
+
+1D--2C--,3D,fit jump maximum
++,2H,quasi-natural;mostly feature showing
++,2S,quasi-natural;mostly feature showing
++,3H,splinter
++,3S,splinter
+
+1D--2D--,3D,fit jump maximum
++,2H,quasi-natural;feature showing or catchall maximum
++,2S,quasi-natural;feature showing or catchall maximum
++,3H,splinter
++,3S,splinter
+
 1DDb,Rd,!H transfer; 4+ cards
 +,1H,!S transfer; 4+ cards
 +,1S,NT transfer
@@ -311,6 +462,28 @@ Option
 +,5C,exclusion keycard blackwood
 +,5D,exclusion keycard blackwood
 
+1H--2H--,2N,general game try; usually 5 trumps
+1H--2H--,3H,extra trump length game try
+1H--2N--,3C,artificial various
++,3D,minimum !D singleton
++,3H,minimum !C singleton
++,3S,maximum unknown singleton
++,3N,maximum 5332/6322 values spread out
++,4C,natural 5 cards maximum
++,4D,natural 5 cards maximum
++,4H,6!H 5!S or 7!H 4!S; or fast arrival opposite passed hand
+1H--2N--3C--,3D,relay game interest even v.s some minimums
+1H--2N--3C--3D--,3H,minimum flat
++,3H,minimum flat
++,3S,minimum !S singleton or void any strength
++,3N,!C or !D void minimum
++,4C,!C void maximum
++,4D,!D void maximum
++,4H,(semi)balanced maximum; strength in main suit
+1H--2N--3C--,3H,to play v.s. any minimum
+1H--2N--3C--3H,4H,maximum or minimum with void
+
+
 1HDb,Rd,doubleton support
 +,1S,natural forcing
 +,1N,!Cs weak two; OR 5 cards more to bid; OR lead directing 3 card support
@@ -416,6 +589,27 @@ Option
 +,4N,blackwood
 +,5C,exclusion keycard blackwood
 +,5D,exclusion keycard blackwood
+
+1S--2S--,2N,general game try; usually 5 trumps
+1S--2S--,3H,extra trump length game try
+1S--2N--,3C,artificial various
++,3D,minimum !D singleton
++,3H,minimum !C singleton
++,3S,maximum unknown singleton
++,3N,maximum 5332/6322 values spread out
++,4C,natural 5 cards maximum
++,4D,natural 5 cards maximum
++,4H,natural 5 cards maximum
++,4S,fast arrival opposite passed hand
+1S--2N--3C--,3D,relay game interest even v.s some minimums
+1S--2N--3C--3D--,3S,minimum flat
++,3H,minimum !H singleton or void any strength
++,3N,!C or !D void minimum
++,4C,!C void maximum
++,4D,!D void maximum
++,4S,(semi)balanced maximum; strength in main suit
+1S--2N--3C--,3H,to play v.s. any minimum
+1S--2N--3C--3H,4H,maximum or minimum with void
 
 1SDb,Rd,doubleton support
 +,1N,!Cs weak two; OR 5 cards more to bid; OR lead directing 3 card support
