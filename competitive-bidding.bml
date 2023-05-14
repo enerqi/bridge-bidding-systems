@@ -971,10 +971,8 @@ With limited strength may want to hide distribution information and just bid the
         4D = fit jump (no 3D fit jump available)
         4M = non-cooperative vague strength as responder passed
     1N = usual ~15--18, maybe long !d, beware downgrade too many honours/length in the opponent's suit
-        2C = cue majors Stayman
-        2DHS = NF (put opener on lead instead of transfers)
-        2N = invite
-        3x = invitational, including opener's suit
+        bid = system on
+        2S = range ask or !c transfer, note !c transfer is shortage showing over natural 1!c
         (any)
             X = negative of natural bids
             Others = [Lebensohl system](#1NT Interference and Lebensohl)
@@ -1192,10 +1190,8 @@ With limited strength may want to hide distribution information and just bid the
         4D = splinter
         4M = non-cooperative vague strength as responder passed
     1N = usual ~15--18, maybe long !c, beware downgrade too many honours/length in the opponent's suit
-      2CHS = NF, natural (put opener on lead instead of transfers)
-      2D = cue bid Stayman
-      2N = invite
-      3x = invitational, including opener's suit
+      bid = system on
+      2N = !d transfer, note over natural !d shows shortage
       (any)
           X = negative of natural bids
           Others = [Lebensohl system](#1NT Interference and Lebensohl)
@@ -1398,10 +1394,8 @@ With limited strength may want to hide distribution information and just bid the
     4H = splinter
     4S = obstructive wide range, non-cooperative as responder passed
 1N = usual ~15--18, beware downgrade too many honours/length in the opponent's suit
-      2CDS = NF, natural (put opener on lead instead of transfers)
-      2H = cue bid Stayman
-      2N = invite
-      3x = invitational, including opener's suit
+      bid = system on
+      2D = !h shortage (transfer to their suit)
       (any)
           X = negative of natural bids
           Others = [Lebensohl system](#1NT Interference and Lebensohl)
@@ -1656,10 +1650,8 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
     1N = passed hand 5--5+ !h + minor, weaker than 2!s overcall
         !c/!d = pass/correct, any level
     1N = usual ~15--18, beware downgrade too many honours/length in the opponent's suit
-        2CDS = NF, natural (put opener on lead instead of transfers)
-        2S = cue bid Stayman
-        2N = invite
-        3x = invitational, including opener's suit
+        bid = system on
+        2H = !s shortage (transfer to their suit)
         (any)
             X = negative of natural bids
             Others = [Lebensohl system](#1NT Interference and Lebensohl)

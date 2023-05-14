@@ -994,6 +994,17 @@ Option
 +,3S,cooperative ~4-7 good support
 +,4C,splinter
 +,4D,fit jump
+1C1N--,2C,stayman
++,2D,!H transfer
++,2H,!S transfer
++,2S,range ask or !C transfer (shortage over natural !C opening)
++,2N,!D transfer
++,3C,5 card puppet stayman; maybe one 4 card major GF
++,3D,!H slam try no void; OR GF !H shortage 5-4+ minors
++,3H,!S slam try no void; OR GF !S shortage 5-4+ minors
++,3S,minors 5-5+ GF
++,4C,!H transfer
++,4D,!S transfer
 
 1C--1N,2C,artificial 5-4+ majors
 +,2D,both majors
@@ -1026,6 +1037,17 @@ Option
 +,3S,cooperative ~4-7 good support
 +,4C,splinter
 +,4D,fit jump
+1D1N--,2C,stayman
++,2D,!H transfer
++,2H,!S transfer
++,2S,range ask or !C transfer
++,2N,!D transfer (shortage over natural !D opening)
++,3C,5 card puppet stayman; maybe one 4 card major GF
++,3D,!H slam try no void; OR GF !H shortage 5-4+ minors
++,3H,!S slam try no void; OR GF !S shortage 5-4+ minors
++,3S,minors 5-5+ GF
++,4C,!H transfer
++,4D,!S transfer
 1D2C--,2D,!H transfer
 +,2H,!S transfer
 +,2S,artificial force usually support
@@ -1045,6 +1067,18 @@ Option
 +,4C,fit jump
 +,4D,fit jump
 +,4H,splinter
+
+1H1N--,2C,stayman
++,2D,!H shortage
++,2H,!S transfer
++,2S,range ask or !C transfer
++,2N,!D transfer
++,3C,5 card puppet stayman; maybe one 4 card major GF
++,3D,!H slam try no void; OR GF !H shortage 5-4+ minors
++,3H,!S slam try no void; OR GF !S shortage 5-4+ minors
++,3S,minors 5-5+ GF
++,4C,!H transfer
++,4D,!S transfer
 
 1H2C--,2D,!S transfer
 +,2H,!C limit raise
@@ -1068,6 +1102,19 @@ Option
 1H,2N,minors
 1H--1S,2H,!S + minor
 +,2S,natural
+
+
+1S1N--,2C,stayman
++,2D,!H transfer
++,2H,!S shortage
++,2S,range ask or !C transfer
++,2N,!D transfer
++,3C,5 card puppet stayman; maybe one 4 card major GF
++,3D,!H slam try no void; OR GF !H shortage 5-4+ minors
++,3H,!S slam try no void; OR GF !S shortage 5-4+ minors
++,3S,minors 5-5+ GF
++,4C,!H transfer
++,4D,!S transfer
 
 
 1S2C--,2D,!H transfer
