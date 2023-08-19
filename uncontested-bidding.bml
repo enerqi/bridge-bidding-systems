@@ -78,7 +78,7 @@ Natural, 4+ cards, maybe longer minor canapé
 2D = [good !h raise, maybe 3 card shapely !h support; OR minimum 4 card void raise](#1D--1H--2D)
 2H = [normal/weaker !h raise, maybe 3 !hs if have singleton](#1D--1H--2H)
 2S = [natural, NF, 6--5, extras](#1D--1H--2S)
-2N = 14--15, !s mini-splinter 4 card !h raise
+2N = 14--15, !c mini-splinter 4 card !h raise
 3C = 14--15, 5--5+ both minors
     3D = NF
     3H = forcing, 6+ cards
@@ -86,7 +86,7 @@ Natural, 4+ cards, maybe longer minor canapé
     4CD = forcing, encouraging a cue or Redwood
         4DH = Redwood [RKB](#RKB 4N)
 3D = 14--15, !d mini-splinter 4 card !h raise
-3H = 14--15, !c mini-splinter 4 card !h raise
+3H = 14--15, !s mini-splinter 4 card !h raise
 3S = 14--15, !s void-splinter,4 card !h raise
     3N = serious (not obscure length or minor ask)
 3N = 6(7)!d--5!h support, some void
@@ -1451,7 +1451,7 @@ remaining below 4!h:
               4H = void !c
       4C = !c void, maximum
       4D = !d void, maximum
-      4H = (semi)balanced maximum but unsuitable for 3N (strength in main suit)
+      4H = (semi)balanced maximum but unsuitable for 3N (e.g. strength in main suit)
   3H = to play v.s. *any* minimum, e.g. no good opposite min singleton !s or min (semi)balanced
       4H = maximum any OR void minimum
 3D = minimum, singleton !d
@@ -1707,7 +1707,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
 
 1H--(2N)  presumably minors
-    X = values, forcing to 3H  (note takeout as other alternative style)
+    X = values, forcing to 3H  (note takeout is an alternative style)
     3C = invitational plus, !h raise
     3D = !ss, GF 5+ suit
     3H = competitive, simple raise
@@ -1715,20 +1715,47 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
     4HS = to play (passed hand - fit jump other major)
 
-1H--(3x)
-    X = negative (over 3!c)
-    3H = ~7--11 8--9 losers, 4 card support (maybe 3 plus strong trumps)
-    NewSuit = forcing
-    Cue = support showing, invitational or GF if below/above 3!hs
-    4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
-    4H = sound, not pre-emptive
+1H--(3C)
+    Dbl = [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
+        3D = puppet
+            P = competitive !ds
+            3H = competitive !hs, less than invite
+            3S = competitive !ss
+            3N = 4!ss + stop
+            4C = "normal" negative double, skipped 3N though
+            4H = possibly a slam try
+    3D = natural, forcing, later 4D rebid is invitational
+    3H = natural invite
+    3S = natural, forcing
+    4C = cue, slam try
+    4D = GF, excellent suit
+    4H = natural, slam try no !c control
 
-1H--(3DS) Thrump doubles for !d/!s overcalls
-    Dbl = Thrump, negative like but looking for 3N, no major guarantee
-        3S = 4 card major, no stopper
-            4CD = maybe slam hunting, often shortish minor(s)
-        3N = stopper
-            4CD = slam hunting, often shortish minor(s)
+1H--(3D)
+    Dbl = [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
+        3H = puppet
+            P = competitive !hs
+            3S = competitive !ss
+            3N = 4!ss + stop
+            4C = competitive !cs
+            4D = "normal" negative double, skipped 3N though
+            4H = possibly a slam try
+    3H = forcing
+    3S = natural invite
+    4C = GF, natural
+    4D = cue, slam try
+    4H = natural, slam try no !d control
+
+1H--(3H)
+    X = invite
+
+1H--(3S)
+    Dbl = primarily stop interested (Thrump), but maybe [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
+        3N = stop
+            4CD = competitive, to play
+            4H = competitive
+    4CD = GF, natural
+    4H = slam try (over a preempt)
 
 1H--(3x) two suiter including suit bid
     lowCue = below 3!h, invitational in !hs
@@ -2138,7 +2165,7 @@ invitational plus raise 3 (GF) or 4 card support.
               4H = void !c
       4C = !c void, maximum
       4D = !d void, maximum
-      4S = (semi)balanced maximum but unsuitable for 3N (strength in main suit)
+      4S = (semi)balanced maximum but unsuitable for 3N (e.g. strength in main suit)
   3S = to play v.s. *any* minimum, e.g. no good opposite min singleton !h or min (semi)balanced
       4S = maximum any OR void minimum
 3D = minimum, singleton !d
@@ -2349,20 +2376,53 @@ Similar to [1H interference](#1H interference).
     4CD = [!s slam tries](#Major Opening and Responder's 4CD Slam Try)
     4HS = to play (passed hand - fit jump other major)
 
-1S--(3x)
-    X = negative (over 3!c)
-    3S = ~7--11 8--9 losers, 4 card support (maybe 3 plus strong trumps)
-    NewSuit = forcing
-    Cue = support showing, invitational or GF if below/above 3!ss
-    4CD = [!s slam tries](#Major Opening and Responder's 4CD Slam Try)
-    4S = minimal game values or moderate whilst lacking control
+1S--(3C)
+    Dbl = [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
+        3D = puppet
+            P = competitive !ds
+            3H = competitive !hs
+            3S = competitive raise, less than invite
+            3N = 4!hs + stop
+            4C = "normal" negative double, skipped 3N though
+            4S = possibly a slam try
+    3D = natural, forcing, later 4D rebid is invitational
+    3H = natural, forcing
+    3S = natural invite
+    4C = cue, slam try
+    4D = GF, excellent suit
+    4S = natural, slam try no !c control
 
-1S--(3DH) Thrump doubles for !d/!h overcalls
-    Dbl = Thrump, negative like but looking for 3N, no major guarantee
-        3S = 4 card major, no stopper
-            4CD = maybe slam hunting, often shortish minor(s)
-        3N = stopper
-            4CD = slam hunting, often shortish minor(s)
+1S--(3D)
+    Dbl = [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
+        3H = puppet
+            P = competitive !hs
+            3S = competitive !ss
+            3N = 4!ss + stop
+            4C = competitive !cs
+            4D = "normal" negative double, skipped 3N though
+            4S = possibly a slam try
+    3H = natural, forcing
+    3S = natural invite
+    4C = GF, natural
+    4D = cue, slam try
+    4S = natural, slam try no !d control
+
+1S--(3H)
+    Dbl = [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
+        3H = puppet
+            P = competitive !hs
+            3S = competitive !ss
+            3N = 4!ss + stop
+            4C = competitive !cs
+            4D = "normal" negative double, skipped 3N though
+            4S = possibly a slam try
+    3S = natural invite
+    4CD = GF, natural
+    4H = cue, slam try
+    4S = natural, slam try no !h control
+
+1S--(3S)
+    X = invite
 
 1S--(3x) two suiter including suit bid
     lowCue = below 3!s, invitational in !ss

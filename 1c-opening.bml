@@ -281,6 +281,7 @@ As 5--5, but always show the longest suit first
     2CDH = 5+ suit, 5--7 hcp
     2S = 4+ card support, 4--7 hcp
         2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
+    3x = mini-splinter
 1N [weak NT](#1NT Opening)
     any = NT Scheme
 2C = natural strong, ~16--19, !cs, not exactly 4!ss (use 1!s then canapé rebid with 4!ss non-GF)
@@ -315,6 +316,7 @@ As 5--5, but always show the longest suit first
         4H = Redwood
 2H = natural, ~16--18 hcp, 5+ !hs, denies exactly 4 !ss (use 1!s then 2!h canapé rebid)
     2S = natural
+        3N = 6 card !h suit, maximum
     3CD = natural
     4H = 8--9 semi-positive with 3 card support
 2S = natural, GF, 5+ !ss, not as long as 3!s rebid over 1!d, stronger than Acol 2
@@ -538,14 +540,14 @@ As 5--5, but always show the longest suit first
     3CD = natural, canapé
     3HS = sets the trump suit
         3N = serious, control asking
-2N = !ds + other major, unlimited
+2N = !ds + other major, 20+ (?)
     3D = waiting
     3H = ~12+ !h support
     4H = fast arrival, !h support
-3C = 5+ !ds and 4+ !cs, unlimited
+3C = 5+ !ds and 4+ !cs, 20+ (?)
     4C = !c RKB, special case
     4D = !d RKB, special case
-3D = 6+ !ds, denies 4 !cs or other major, unlimited
+3D = 6+ !ds, denies 4 !cs or other major, 20+ (?)
     3H = quasi natural, !h stop
         3S = no !c control, 2 card !s support
     3S = no stops, waiting, maybe !s slam interest

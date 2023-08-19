@@ -460,7 +460,10 @@ minors, 5--4+, often slam try
 
 **** 2N interference
 
-2N--(3x)
+2N--(3C)
+    X = stolen
+
+2N--(3DHS)
     X = negative
 
 2N--(X)  showing Majors

@@ -2,7 +2,39 @@
 
 * Slam Bidding
 
-Blanket rules for 4N and cue bids when exploring slams. Plus some slam finding conventions.
+Meta agreements and some slam finding conventions
+
+** General Strategy
+
+- when one knows that we lack the assets for slam (regardless if controls are good), or controls are known to be missing
+  then sign off - a basic principle!
+- slam trys opposite a very limited hand are serious, that is not highly speculative, so when slam is possible opposite
+  a perfect minimum range hand
+- serious slam trys opposite very limited hands imply that we have the assets for slam and that only controls matter
+- very limited hands should therefore show controls below the trump suit and not worry about extra values
+- somewhat limited hands (e.g. 11--15) can e.g. bypass 4M with some extras and a missing control
+- somewhat limited hands (e.g. 11--15?) may skip control showing if minimum and bad fitting
+- neither cue bids nor last train show better hands than the other, flexibility is needed to get the most useful
+  information
+- skipping cue bids up the line to use last train would usually imply someone has a wide range, perhaps the last train
+  bidder has something but a weak hand
+- after both partners cue bid, should we last train at all? perhaps only if both are ambiguous wide ranging? how wide?
+- splinters usually imply a hand that won't go to slam without a fitting hand from partner - consider if bidding on
+  regardless that maybe it's best to find a way to control bid without revealing your shape, however, maybe the fitting
+  hand was required for the grand slam and not the small slam
+- statistically do not expect a splinter to line up well against a strong 20+ balanced hand - it is likely they have
+  some wasted values, though you maybe ok opposite a shapely hand (e.g. Acol 2) that is more based on tricks
+- the responder to a splinter can go on with enough extras despite not fitting
+- the cue bidding style means we do not show shortage in partner's suit, even though with a big trump fit it can make sense
+- supporting partner's suit after agreeing a different trump suit is natural double fit finding if we have only shown 2 suits
+- with only the trump suit shown, the first slam try is a natural suit, (v.s. 1c--1M--3M with singleton ask)?
+- ?? distinguishing serious v.s. non-serious (fitting and max required) slam trys is more a concern for natural wide
+  ranging systems. Is 11--15 wide enough for the distinction to matter, e.g. 1S--2H--2N--3S, 1H--2D--2S--3S? Is 3N more
+  a wait/punt the same as old school cue bidding without serious 3N?
+- 3N is natural, not serious in specific situations where a limited semi-balanced hand is expected, i.e. 1HS--2N--3CDH--3N
+- minor contracts distinguish serious/non-serious via 4N optional RKB (when have fit), auto RKB, a negative/natural 4N
+  (without a fit), finally leaving a freebid of the unbid suit as a general waiting last train like bid. 3N is natural,
+  not serious
 
 ** What is 4N?
 

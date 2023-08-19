@@ -1157,7 +1157,7 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
     3S = NF, 6+ !ss
 
 1N--(3C)
-    X = takeout, vague distribution
+    Dbl = takeout, vague distribution
         nonJump = weak NT hand
         new suits by doubler show invitational only values
         later cue bids by doubler show that suit (natural/psyche expose)
@@ -1174,7 +1174,7 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
     3S = 5+ !hs, GF
         4D = slam try
         4N = RKB
-    4C = both majors 5--5+, slam try
+    4C = both majors 5--5+, slam try (note double then bid !cs with !c slam try)
     4D = both majors 5--5+, game only
     4HS = to play
 
@@ -1185,7 +1185,7 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
     3S = GF, natural
         4CD = cue
     4CD = GF, natural
-    4H = !s transfer
+    4H = !s transfer, no slam interest or can bid RKB by self
 
 1N--(3S)
     4CDH = GF, natural

@@ -1,5 +1,7 @@
 BBOalert
 
+# Opening Summary
+
 ,1C,(13)14-15 bal OR 16+ unbal OR 21+ bal,
 ,1D,nebulous 0+ !Ds; 11 to 15 hcp,
 ,1H,5+ !Hs; (10)11 to 15 hcp,
@@ -34,10 +36,12 @@ Option,Opening_@3
 ,3N,ambiguous;to play,
 Option
 
+# 1C initial responses
+
 1C--,1D,0 to 7 hcp or 8-9 no 4cM,
 +,1H,8+ natural; maybe longer minor,
 +,1S,8+ natural; maybe longer minor,
-+,1N,GF balanced maybe 4 card major; OR 4441; OR unbalanced no major,
++,1N,GF bal maybe 4cM; OR 4441; OR unbalanced no major
 +,2C,NF 8-10 natural; maybe 5-5 minors,
 +,2D,NF 8-10 natural,
 +,2H,5-5+ majors limited; ~4-7 hcp,
@@ -52,6 +56,8 @@ Option
 +,4D,8 card !S suit; exactly AQJ or KQJ; no outside A/K; max one outside Q,
 +,4H,7 card solid AKQJ suit; no outside A/K; max one outside Q,
 +,4S,7 card solid AKQJ suit; no outside A/K; max one outside Q,
+
+# 1C--1D continuations
 
 1C--1D--,1H,weak NT natural OR various strong often ~20+ hcp 8+ trick hands
 1C--1D--1H--,1S,relay
@@ -68,6 +74,8 @@ Option
 +,2N,21-22 hcp NT
 +,3C,5-5 !C + major ~16-18 hcp
 +,3D,5-5 both majors ~16-18 hcp
+
+# 1C--1H continuations
 
 1C--1H--,2C,natural strong or 21 balanced or 4441 !H singleton 19+; denies 3!Hs
 1C--1H--2C,2D,any 8-11 hcp
@@ -104,6 +112,7 @@ Option
 1C--1H--,3H,5+ card support ~16-18 hcp
 1C--1H--,3N,singleton in partners major ~16-18 hcp
 
+# 1C--1S continuations
 
 1C--1S--,2C,natural strong or 21 balanced or 4441 !H singleton 19+; denies 3!Ss
 1C--1S--2C,2D,any 8-11 hcp
@@ -139,9 +148,10 @@ Option
 1C--1S--,3S,5+ card support ~16-18 hcp
 1C--1S--,3N,singleton in partners major ~16-18 hcp
 
+# 1C--1N continuations
 
 1C--1N--,2C,strong hand artificial relay
-1C--1N--2C,2D,5+!Cs unbalanced
+1C--1N--2C--,2D,5+!Cs unbalanced
 +,2H,balanced
 +,2S,6+!Ds single suited
 +,2N,some 4441
@@ -149,6 +159,8 @@ Option
 +,3D,16+ hcp 5+!D 4+!C not 5-5 !S shortage
 +,3H,5!D 4!C semi-balanced
 1C--1N--,2D,weak NT hand
+
+# 1C--2m continuations
 
 1C--2C--,2D,strong hand artificial relay
 1C--2C--2D,2H,6+ !Cs single suited
@@ -164,11 +176,15 @@ Option
 +,3H,singleton 6-5+ minors
 +,3S,singleton 6-5+ minors
 
+# 1C--2S continuations
+
 1C--2S--,2N,enquiry weak or strong opening
 1C--2S--2N--,3C,5/6!C 4!D
 +,3D,5/6!D 4!C
 +,3H,singleton 5-5+ minors
 +,3S,singleton 5-5+ minors
+
+# 1C overcalled interference
 
 1CDb,Rd,!D transfer;8+ hcp
 +,1D,!H transfer; 4+ cards; 6+ hcp
@@ -292,6 +308,8 @@ Option
 +,5D,strong jump overcall; maybe only 4 level values
 
 
+# 1D initial responses
+
 1D--,1H,natural; maybe longer minor canapé,
 +,1S,natural; maybe longer minor canapé,
 +,1N,natural up to 11 hcp; no 4 card major,
@@ -308,6 +326,8 @@ Option
 +,4C,!C preempt
 +,4D,!D preempt
 
+# 1D--1H continuations
+
 1D--1H--,2N,!S mini splinter !H raise; maximum
 +,3C,5-5+ both minors; maximum
 +,3D,mini splinter !S raise; maximum
@@ -317,6 +337,8 @@ Option
 +,4C,!C void splinter
 +,4D,!D void splinter
 +,4H,6!D 5!H no void
+
+# 1D--1S continuations
 
 1D--1S--,2N,!C mini splinter !S raise; maximum
 +,3C,5-5+ both minors; maximum
@@ -328,7 +350,11 @@ Option
 +,4D,!D void splinter
 +,4S,6!D 5!S no void
 
+# 1D--1N continuations
+
 1D--1N--,3C,both minors 5-5+ maximum
+
+# 1D--2C continuations
 
 1D--2C--,3D,fit jump maximum
 +,2H,quasi-natural;mostly feature showing
@@ -336,11 +362,15 @@ Option
 +,3H,splinter
 +,3S,splinter
 
+# 1D--2D continuations
+
 1D--2D--,3D,fit jump maximum
 +,2H,quasi-natural;feature showing or catchall maximum
 +,2S,quasi-natural;feature showing or catchall maximum
 +,3H,splinter
 +,3S,splinter
+
+# 1D overcalled interference
 
 1DDb,Rd,!H transfer; 4+ cards
 +,1H,!S transfer; 4+ cards
@@ -443,6 +473,7 @@ Option
 +,5C,strong jump overcall; maybe only 4 level values
 +,5D,strong jump overcall; maybe only 4 level values
 
+# 1H initial responses
 
 1H--,1S,natural; maybe weak !D canapé,
 +,1N,NF ~5-11 hcp
@@ -461,6 +492,8 @@ Option
 +,4N,blackwood
 +,5C,exclusion keycard blackwood
 +,5D,exclusion keycard blackwood
+
+# 1H Support Bids
 
 1H--2H--,2N,general game try; usually 5 trumps
 1H--2H--,3H,extra trump length game try
@@ -483,6 +516,7 @@ Option
 1H--2N--3C--,3H,to play v.s. any minimum
 1H--2N--3C--3H,4H,maximum or minimum with void
 
+# 1H overcalled interference
 
 1HDb,Rd,doubleton support
 +,1S,natural forcing
@@ -559,19 +593,26 @@ Option
 +,4C,good !H raise short !Cs
 +,4D,good !H raise short !Ds
 
-1H3C,4C,good !H raise with !C control
-1H3C,4D,good !H raise without !C control
+1H3C,Db,relay competitive hands
+1H3C,4C,slam try
+1H3C,4D,GF natural
+1H3C,4H,slam try no !c control
 
-1H3D,4C,good !H raise with !D control
-1H3D,4D,good !H raise without !D control
+1H3D,Db,relay competitive hands
+1H3D,4C,GF natural
+1H3D,4D,slam try
+1H3D,4H,slam try no !d control
 
-1H3H,4C,good !H raise with !H control
-1H3H,4D,good !H raise without !H control
+1H3H,Db,invite
 
-1H3S,4C,good !H raise with !S control
-1H3S,4D,good !H raise without !S control
+1H3S,Db,stop interest or competitive hands
+1H3S,4C,GF natural
+1H3S,4D,GF natural
+1H3S,4H,slam try
 
 1H4C,4D,good !H raise ~15+ hcp
+
+# 1S initial responses
 
 1S--,1N,NF ~5-11 hcp
 +,2C,GF natural
@@ -589,6 +630,8 @@ Option
 +,4N,blackwood
 +,5C,exclusion keycard blackwood
 +,5D,exclusion keycard blackwood
+
+# 1S Support Bids
 
 1S--2S--,2N,general game try; usually 5 trumps
 1S--2S--,3H,extra trump length game try
@@ -610,6 +653,8 @@ Option
 +,4S,(semi)balanced maximum; strength in main suit
 1S--2N--3C--,3H,to play v.s. any minimum
 1S--2N--3C--3H,4H,maximum or minimum with void
+
+# 1S overcalled interference
 
 1SDb,Rd,doubleton support
 +,1N,!Cs weak two; OR 5 cards more to bid; OR lead directing 3 card support
@@ -680,6 +725,26 @@ Option
 +,4C,good !S raise short !Cs
 +,4D,good !S raise short !Ds
 
+1S3C,Db,relay competitive hands
+1S3C,4C,slam try
+1S3C,4D,GF natural
+1S3C,4S,slam try no !c control
+
+1S3D,Db,relay competitive hands
+1S3D,4C,GF natural
+1S3D,4D,slam try
+1S3D,4S,slam try no !d control
+
+1S3H,Db,relay competitive hands
+1S3H,4C,GF natural
+1S3H,4D,GF natural
+1S3H,4H,slam try
+1S3H,4S,slam try no !h control
+
+1S3S,Db,invite
+
+# 1N initial responses
+
 1N--,2C,stayman; promissory
 +,2D,!H transfer
 +,2H,!S transfer
@@ -692,6 +757,8 @@ Option
 +,4C,!H transfer
 +,4D,!S transfer
 +,5S,6NT invite asking for any 5 card suit
+
+# 1N continuations
 
 1N2D,Db,3+ cards both majors staymanic
 +,2H,competitive
@@ -733,8 +800,9 @@ Option
 +,5C,strong jump overcall; maybe only 4 level values
 +,5D,strong jump overcall; maybe only 4 level values
 
+# 2C initial responses
 
-2C--,2D,enquiry artificial; invitate plus
+2C--,2D,enquiry artificial; invite plus
 +,2H,NF ~7-10 hcp; no good invite; unlikely both majors
 +,2S,NF ~7-10 hcp; no good invite; unlikely both majors
 +,2N,puppet; !C preempt OR GF single major OR GF 6–4 majors
@@ -745,9 +813,11 @@ Option
 +,4C,preempt
 +,4D,roman keycard blackwood for !Cs
 +,4N,blackwood
+
+# 2C interference
 
 2CDb,Rd,values
-+,2D,enquiry artificial; invitate plus
++,2D,enquiry artificial; invite plus
 +,2H,NF ~7-10 hcp; no good invite; unlikely both majors
 +,2S,NF ~7-10 hcp; no good invite; unlikely both majors
 +,2N,puppet; !C preempt OR GF single major OR GF 6–4 majors
@@ -758,13 +828,17 @@ Option
 +,4C,preempt
 +,4D,roman keycard blackwood for !Cs
 +,4N,blackwood
-
-2C--2D--,2H,no 4 card major medium/maximum strength
-+,2N,4 card !H suit any strength
-+,3C,no major minimum
 
 2C2H,Db,negative
 2C2S,Db,negative
+
+# 2C 2D relay
+
+2C--2D--,2H,no 4 card major medium/max strength
++,2N,4 card !H suit any strength
++,3C,no major minimum
+
+# 2D initial responses
 
 2D--,2H,natural F1; 4+ !Hs
 +,2S,natural F1; 4+ !Ss
@@ -776,6 +850,8 @@ Option
 +,4C,roman keycard blackwood for !Ds
 +,4D,preempt
 +,4N,blackwood
+
+# 2D interference
 
 2DDb,Rd,values
 +,2H,natural F1; 4+ !Hs
@@ -791,6 +867,8 @@ Option
 
 2D2H,Db,negative
 2D2S,Db,negative
+
+# 2H initial responses
 
 2H--,2S,NF natural; weak short !Hs OR invitational 5 !Ss and short !Hs
 Option,Opening_@v@1@2
@@ -811,6 +889,8 @@ Option
 2H--,4D,control asking bid
 2H--,4S,weak !S keycard blackwood
 
+# 2H interference
+
 2HDb,Rd,values penalty interest
 2HDb,3C,!D transfer; invite plus
 2HDb,3D,!H transfer; invite plus
@@ -830,6 +910,8 @@ Option
 2H3C,Db,penalty
 2H3D,Db,penalty
 
+# 2S initial responses
+
 Option,Opening_@v@1@2
 2S--,2N,puppet to 3!C; maybe !S raise or !C signoff
 2SDb,2N,puppet to 3!C; maybe !H raise or !C signoff
@@ -847,6 +929,8 @@ Option
 2S--,4H,control asking bid
 2S--,4N,weak !S keycard blackwood
 
+# 2S interference
+
 2SDb,Rd,values penalty interest
 2SDb,3C,!D transfer; invite plus
 2SDb,3D,!H transfer; good suit limited NT interest; invite plus
@@ -858,6 +942,8 @@ Option
 2S3D,Db,penalty
 2S3H,Db,penalty
 
+# 2N initial responses
+
 2N--,3C,5 card muppet stayman
 2N--,3D,!H transfer; maybe 4 !Ss
 2N--,3H,!S transfer; not 4 !Hs
@@ -868,6 +954,8 @@ Option
 2N--,4S,!D slam try
 2N--,5S,6NT invite asking for any 5 card suit
 
+
+# 3 level initial responses
 
 3C--,3D,any 5 card major
 3C--,4D,weak !C keycard blackwood
@@ -892,6 +980,8 @@ Option
 3N--,4C,slam try ask
 3N--,4D,extra trump length ask
 3N--,4H,pass or correct
+
+# 4/5 level initial responses
 
 4C--,4D,weak !C keycard blackwood
 4C--,4N,!D control asking bid
@@ -929,6 +1019,7 @@ Option
 5D--,5H,control asking bid
 5D--,5S,control asking bid
 
+# New Minor Forcing + Gazilli
 
 1D--1H--1S--,2C,artificial puppet; !D signoff or invite hand
 1D--1H--1S--,2D,artificial puppet; GF
@@ -962,7 +1053,7 @@ Option
 1S--1N--2C,2N,NF 4+ !Cs
 1S--1N--2C,3C,NF 6+ !Cs
 1S--1N--2C,3D,NF 6+ !Ds
-1S--1N--,2S,6+ !Hs limited ~11-13/14
+1S--1N--,2S,6+ !Ss limited ~11-13/14
 1S--1N--,2N,maximum 6-4+ with 4 card minor
 
 1H--1S--,2C,artificial extras 14-15 hcp ~6 losers
@@ -973,6 +1064,7 @@ Option
 1H--1S--,2H,6+ !Hs limited ~11-13/14
 1H--1S--,2N,maximum 6-4+ with 4 card minor
 
+# Opponents Open 1C Overcalling + Initial Advances
 
 1C2C,natural over prepared minor;both majors not strong over natural
 1C2N,!H + !D
@@ -1010,6 +1102,8 @@ Option
 +,2D,both majors
 +,3C,both majors strong
 1C--1N2C--,2D,longest major ask
+
+# Opponents Open 1D Overcalling + Initial Advances
 
 1D2D,natural over prepared minor;both majors not strong over natural
 +,3C,!H limit plus raise
@@ -1057,6 +1151,8 @@ Option
 +,3D,both majors strong
 1D--1N2C--,2D,longest major ask
 
+# Opponents Open 1H Overcalling + Initial Advances
+
 1H1S--,2C,artificial ~9+ hcp limited Hx+/xxx support OR 13+ catchall
 +,2H,value limit raise usually 3 card support or defensive
 +,2N,invitational plus support
@@ -1103,6 +1199,7 @@ Option
 1H--1S,2H,!S + minor
 +,2S,natural
 
+# Opponents Open 1S Overcalling + Initial Advances
 
 1S1N--,2C,stayman
 +,2D,!H transfer
@@ -1134,10 +1231,23 @@ Option
 +,3D,!H game try
 1S,2N,minors
 1S,3C,!H + !C not strong
-1S3C,3D,!H game try
+
+1S3C,Db,relay competitive hands
+1S3C,4C,slam try
+1S3C,4D,GF natural
+1S3C,4S,slam try no !c control
+1S3D,Db,relay competitive hands
+1S3D,4C,GF natural
+1S3D,4D,slam try
+1S3D,4S,slam try no !d control
+1S3H,Db,relay competitive hands
+1S3H,4H,slam try
+1S3H,4S,slam try no !h control
+
+# 1N defence
 
 1N,Db,penalty vs weak NT; majors or any extra strong vs strong NT
-+,2C,!C + major vs weak NT;majors vs strong NT
++,2C,!C + major vs strong NT;majors vs weak NT
 +,2D,!D + major
 +,2N,minors OR strong majors
 +,3C,natural intermediate
@@ -1147,7 +1257,9 @@ Option
 +,4C,preempt
 +,4D,preempt
 
-2D,3D,majors strong
+# Weak two defence
+
+2D,3D,majors intermediate plus
 +,3H,strong
 +,3S,strong
 +,4C,!C + !H GF
@@ -1190,6 +1302,8 @@ Option
 +,4C,natural GF
 +,4D,natural GF
 
+# 3 level preempt defence
+
 3C,4C,both majors ~4 losers
 +,4D,!Ds + major ~4 losers
 +,4N,!H + !D ~3 losers
@@ -1207,3 +1321,30 @@ Option
 +,4D,!D + !H NF
 +,4S,!H + minor ~3 losers
 +,4N,minors
+
+
+# Competitive Auctions
+
+1CDb3C,Db,relay competitive hands
+1C1D3C,Db,relay competitive hands
+1C1H3C,Db,relay competitive hands
+1C1S3C,Db,relay competitive hands
+
+1DDb3D,Db,relay competitive hands
+1D1H3D,Db,relay competitive hands
+1D1S3D,Db,relay competitive hands
+1D2C3D,Db,relay competitive hands
+
+1HDb3H,Db,relay competitive hands
+1H1S3H,Db,relay competitive hands
+1H2C3H,Db,relay competitive hands
+1H2D3H,Db,relay competitive hands
+
+1SDb3S,Db,stop ask or competitive hands
+1S2C3S,Db,stop ask or competitive hands
+1S2D3S,Db,stop ask or competitive hands
+1S2H3S,Db,stop ask or competitive hands
+
+2DDb3D,Db,relay competitive hands
+2HDb3H,Db,relay competitive hands
+2SDb3S,Db,stop ask or competitive hands
