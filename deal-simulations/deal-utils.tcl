@@ -512,14 +512,14 @@ proc is_1n_unbal_minor_swedish_club_resp {hand} {
   return 1
 }
 
-proc is_1n_bal_swedish_club_response {hand} {
+proc is_old_1n_bal_swedish_club_response {hand} {
   if { [hcp $hand] < 12 } { return 0 }
   if { [balanced $hand] } { return 1 }
   return 0
 }
 
 proc is_any_1n_swedish_club_response {hand} {
-  return [expr {[is_1n_bal_swedish_club_response $hand] ||
+  return [expr {[is_old_1n_bal_swedish_club_response $hand] ||
                 [is_1n_unbal_minor_swedish_club_resp $hand] ||
                 [is_1n_marmic_swedish_club_resp $hand]}]
 }
