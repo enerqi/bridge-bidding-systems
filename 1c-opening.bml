@@ -56,13 +56,13 @@ Limited strong one suiter:
 Acol two strength one suiter:
 
 - minor: 1H then 3C/3D
-- major: 1H then 2H/2S
+- !h: 1H then 2H
+- !s: 2S immediate
 
 GF moderate one suiter, 5+ suit:
 
 - minor: 1H then 2C relay -> 2D ask -> ...
-- !hs: 1H then 2C relay -> 2D ask -> 2H
-- !ss: 2S
+- majors: 1H then 2C relay -> 2D ask -> 2H/2S
 
 GF self-sufficient one suiter:
 
@@ -197,15 +197,7 @@ As 5--5, but always show the longest suit first
             3S = splinter, 4+ card support
             4CD = splinter, 4+ card support
             4H = support, fast arrival
-        2S = !s Acol 2 one/two suited ~19--21 hcp, ~8--9 playing tricks, 4+ Quick Tricks, F1
-            2N = Herbert negative ~0--4 hcp OR natural forcing
-                3x = natural, NF
-                    newSuit = NF, play suggestion
-                    3S = natural forcing suit
-            3CDH = natural, forcing, 5+ hcp
-            3S = 3+ support, ~ 2+ control points including singleton/voids
-            4CDH = splinter, 4+ card support
-            4S = support, fast arrival
+        2S = natural, GF, 5+ !ss, not as long as 3!s rebid over 1!d, stronger than Acol 2
         2N = GF balanced, ~23/24+
             Others = [2N Scheme](#2NT Opening)
         3C = !c single suited Acol 2, NF extras
@@ -216,7 +208,7 @@ As 5--5, but always show the longest suit first
             3HS = natural, forcing, no Herbert negative
             4D = 3+ support, ~ 2+ control points including singleton/voids
             4HS = splinter, 4+ card support
-    1N = artificial, 0--7 hcp exactly 4 !ss, not 4!hs (steals NT with weaker hand if no !s fit)
+    1N = artificial, 0--7 hcp exactly 4 !ss, denies 4+ !hs (steals NT with weaker hand if no !s fit)
         2C = unbalanced, various extras (see 1S asking bid)
         2D = 4 !hs exactly, 1--4--4--4 / 4--4--1--4 / 4--4--4--1, limited 16--18 if 4!ss
             Pass = very weak, long !ds (and 4!ss)
@@ -243,7 +235,7 @@ As 5--5, but always show the longest suit first
         3S = invitational, strong with extras ~19+
         3N = punt ~23/24+
         4S = to play
-1S = natural, weak/strong with 4+ !ss (not single suiter Acol 2 or GF), maybe 4--1--4--4 or canapé exactly 4!ss, not 4!hs if weak
+1S = natural, ~14--19 with 4+ !ss, maybe 4--1--4--4 or canapé exactly 4!ss, when weak denies 4!hs
     P = very weak, often !s tolerance
     1N = passable ask, any 0--9 hcp hand
         P = weak NT hand
@@ -283,7 +275,10 @@ As 5--5, but always show the longest suit first
     2CDH = 5+ suit, 5--7 hcp
     2S = 4+ card support, 4--7 hcp
         2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
-    3x = mini-splinter
+    2N = rare, 9 hcp invite, Hxx+ !s support
+        3S = to play
+    3CDH = mini-splinter
+    3S = 5(+) card support, NF
 1N [weak NT](#1NT Opening)
     any = NT Scheme
 2C = natural strong, ~16--19, !cs, not exactly 4!ss (use 1!s then canapé rebid with 4!ss non-GF)
@@ -294,9 +289,9 @@ As 5--5, but always show the longest suit first
         3C = 6+ !cs, minimum
         3DHS = natural, forcing 6--5
     2M = natural, constructive ~5--7 hcp
-    2N = artificial 6+ !cs, ~5--7
+    2N = artificial stronger flattish 4+ card !c support, ~7--9
     3C = natural raise, 3+ support, ~5--7
-    3DHS = mini-splinter !c support (would play natural 6 carder without multi 2D response)
+    3DHS = mini-splinter !c support
     3N = natural, to play, ~7--9
     4C = rare, distributional happy to bypass 3N, considered too strong for just 3!d
         4D = Redwood
@@ -309,9 +304,9 @@ As 5--5, but always show the longest suit first
         3D = 6+ !ds, minimum
         3HS = natural, forcing, 6--5
     2S = natural, constructive ~5--7 hcp
-    2N = artificial 5+ !hs, constructive ~5--7 hcp, replaces natural 2!h bid
+    2N = artificial 5+ !hs, constructive ~5--7 hcp, replaces natural 2!h bid (not minor raise as over 2!c)
     3C = natural, 6 carder, ~5--7 hcp
-    3D = natural raise, 3+ support, ~5--9 hcp
+    3D = natural raise wide range, 3+ support, ~5--9 hcp
     3HS = mini-splinter !d support, ~5--9 hcp
     3N = natural, to play, ~7--9
     4D = rare, distributional happy to bypass 3N, considered too strong for just 3!d
@@ -321,7 +316,15 @@ As 5--5, but always show the longest suit first
         3N = 6 card !h suit, maximum
     3CD = natural
     4H = 8--9 semi-positive with 3 card support
-2S = natural, GF, 5+ !ss, not as long as 3!s rebid over 1!d, stronger than Acol 2
+2S = !s Acol 2 one/two suited ~19--21 hcp, ~8--9 playing tricks, 4+ Quick Tricks, F1
+    2N = Herbert negative ~0--4 hcp OR natural forcing
+        3x = natural, NF
+            newSuit = NF, play suggestion
+            3S = natural forcing suit
+    3CDH = natural, forcing, 5+ hcp
+    3S = 3+ support, ~ 2+ control points including singleton/voids
+    4CDH = splinter, 4+ card support
+    4S = support, fast arrival
 2N = [21--22 balanced NT](#2NT Opening)
     any = [NT Scheme](#2NT Opening)
 3C = 2 suiter 5--5+, !c + !h/!s major, ~16--18 hcp less than Acol 2
@@ -732,25 +735,13 @@ As 5--5, but always show the longest suit first
 - 14+ hcp with a minor when balanced 5--3--3--2
 
 
-2M canapé as 1c-1d-1s-1n-2c+ but at 3 level, !s only canapé, including !s before !h??
-e.g. 1c-2d--2s- 2n- 3c, showing 5 carder
+Responding:
 
-raise opener's minor 2nd suit to 4 level, can stop in 4N
-
-2H,3H,4H repeat 16--18 upper, decent upper range
-2H then 4H rebid, (poor) 16--18 normal
-3H = 8PT or 19+, 6+ suit
-4H = sub minimum
-
-6--4 opener hands bid the long suit first even with a short major long minor, as partner can show 4 card major at 3 level
-
-canape 2HS when no 6 card suit, 4-4 majors hearts first, !s before !hs
-maybe keep only if keep playing after 1c-1d-...maybe natural only bidding
-major before minor seems sensible at least
+- repeating a major at each level, e.g. 2H,3H,4H, something extra just below Acol two
+- fast arrival rebid, e.g. 2H then 4H, is a normal ~16--18 hand
+- natural bidding longest suit first
 
 2HS = natural 4+ suit
-    2N = ...
-        3S = 4s 5c
     3CD = 5 cards
     3oM = 4 cards
 2N = staymanic range ask, usually flattish hands
