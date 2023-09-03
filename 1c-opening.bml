@@ -198,7 +198,7 @@ As 5--5, but always show the longest suit first
             4CD = splinter, 4+ card support
             4H = support, fast arrival
         2S = natural, GF, 5+ !ss, not as long as 3!s rebid over 1!d, stronger than Acol 2
-        2N = GF balanced, ~23/24+
+        2N = GF balanced, 23--24
             Others = [2N Scheme](#2NT Opening)
         3C = !c single suited Acol 2, NF extras
             3HS = natural, forcing, no Herbert negative
@@ -208,6 +208,12 @@ As 5--5, but always show the longest suit first
             3HS = natural, forcing, no Herbert negative
             4D = 3+ support, ~ 2+ control points including singleton/voids
             4HS = splinter, 4+ card support
+        3N = 27--28 balanced
+            4C = Stayman + later 4N quantitative
+            4DH = Transfer + later 4N RKB (not pick a game)
+            4S = 5--5+ minors
+            5CD = to play, probably weak 7+ cards
+        4N = 31--32 balanced
     1N = artificial, 0--7 hcp exactly 4 !ss, denies 4+ !hs (steals NT with weaker hand if no !s fit)
         2C = unbalanced, various extras (see 1S asking bid)
         2D = 4 !hs exactly, 1--4--4--4 / 4--4--1--4 / 4--4--4--1, limited 16--18 if 4!ss
@@ -331,7 +337,14 @@ As 5--5, but always show the longest suit first
     3D = major suit ask
 3D = 2 suiter 5--5+, both majors !h + !s, ~16--18 hcp less than Acol 2
 3HS = GF setting suit as trumps
+3N = 25--26 balanced NT
+    4C = Stayman + later 4N quantitative
+    4DH = Transfer + later 4N RKB (not pick a game)
+    4S = 5--5+ minors
+    5CD = to play, probably weak 7+ cards
 4CD = GF, Minorwood
+4N = 29--30 balanced
+
 
 
 ** 1C--1HS
