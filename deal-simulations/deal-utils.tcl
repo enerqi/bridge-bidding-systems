@@ -56,6 +56,16 @@ proc is_6_plus_other_10_card_two_suiter {hand} {
   return 0
 }
 
+proc is_asymmetric_10_plus_two_suiter {hand} {
+  set handshape [$hand pattern]
+  if {
+      $handshape == "6 4 2 1" || $handshape == "6 4 3 0" ||
+      $handshape == "6 5 2 0" || $handshape == "6 5 1 1" ||
+      $handshape == "7 4 1 1" || $handshape == "7 4 2 0" ||
+      $handshape == "7 5 1 0" || $handshape == "8 4 1 0" } { return 1 }
+  return 0
+}
+
 proc is_6_plus_other_11_or_more_card_two_suiter {hand} {
   set handshape [$hand pattern]
   if {$handshape == "6 5 2 0" || $handshape == "6 5 1 1" ||
