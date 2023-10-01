@@ -40,12 +40,19 @@ Weak/Intermediate 14--15 NT:
 Strong balanced:
 
 - 21--22: 2N
-- 23+: 1!h then 2N/3N
+- 23--24: 1!h then 2N
+- 25--26: 3N
+- 27--28: 1!h then 3N
 
 Strong 4--4--4--1 hand:
 
 - 4 card !h suit: 1H
 - 4--1!h--4--4: 1S
+
+Very Strong ~22+ 4--4--4--1 hand:
+
+- in theory, the same as a normal strong 4--4--4--1 hand
+- may decide to bid NT to show exact strength, especially with a singleton honour
 
 Limited strong one suiter:
 
@@ -62,7 +69,8 @@ Acol two strength one suiter:
 GF moderate one suiter, 5+ suit:
 
 - minor: 1H then 2C relay -> 2D ask -> ...
-- majors: 1H then 2C relay -> 2D ask -> 2H/2S
+- !hs: 1H then 2C relay -> 2D ask -> 2H
+- !ss: 1H then 2S
 
 GF self-sufficient one suiter:
 
@@ -78,10 +86,13 @@ Limited strong 5--4/6--4 moderate two suiter or 5--4--4--0:
 Acol two strengh 5--4/6--4 moderate two suiter or 5--4--4--0:
 
 - 4 !ss exactly: canapé 1S then 3CDH longer suit
-- !cs not 4!ss: 1H then 2C relay -> 2D ask -> 2S ...
-- !ds not 4!ss: 1H then 2C relay -> 2D ask -> 3C or higher ...
+- !cs not 4!ss: 1H then 2C relay -> 2D ask -> 2S (showing !cs + side suit or GF single suiter)
+- !ds not 4!ss: 1H then 2C relay -> 2D ask -> 2N (showing 5+!ds + 4 card side suit)
 - !hs not 4!ss: 1H then 2H
 - !ss: 1H then 2S
+
+Note, system expects 6!hs + 4!ss Acol two to canapé 1S first
+
 
 Limited 5--5 two suiter:
 
@@ -93,29 +104,32 @@ Limited 5--5 two suiter:
 
 Acol two strength 5--5 two suiter:
 
-- minors or !ds + major: 1H then 2C relay -> 2D ask -> 3C
-- !cs + major: 1H then 2H/2S (try show !cs later)
-- majors: 1H then 2S
+- minors: 1H then 2C relay -> 2D ask -> 3C
+- major + minor: 1H then 2H (!hs) or 2S (!s) - show major Acol two first
+- majors: 2S - show !s Acol two first
 
-Any 6--5 two suiter:
+Acol two strength 6--5 two suiter:
 
-As 5--5, but always show the longest suit first
+- Generally as 5--5, but always show the longest suit first.
+- 6!cs + 5 other: 1H then 2C relay -> 2D ask -> 2S (showing !cs + side suit or GF single suiter)
+- 6!ds + 5 other: 1H then 2C relay -> 2D ask -> 3C (showing 5+ !ds and 5+ other)
+- 6 major + 5 other: show major Acol two first
 
 
 [4th Interference](#4th Interferes after Responder Negative)
 
 1H = forcing, multi-meaning
     - weak natural, !hs
-    - 16+, marmic 1--4--4--4 / 4--4--1--4 / 4--4--4--1, not short hearts (use 1!s for short !hs)
-    - many unbalanced extra strong, ~20+ hands (Acol 2 strength or GF)
-    - GF 5+ !hs
-    - GF balanced ~23/24+
+    - 16+, marmic 1--4--4--4 / 4--4--1--4 / 4--4--4--1, with 4!hs (use 1!s for short !hs)
+    - many unbalanced extra strong, ~20+ hands (Acol 2 strength)
+    - GF hands (without self-sufficient single suiter)
+    - balanced 23--24 or 27--28 (and 31--32)
     1S = asking bid, unsuitable for artificial 1N response
         1N = weak NT with 4!hs, further bids are natural, to play
         2C = unbalanced, multiple extra strong (!c, !d, !c+?, !d+?) or GF !h hand
             2D = ask
                 2H = natural 5+ !hs, GF, not as long as 3!h rebid over 1!d, stronger than Acol 2
-                2S = 5+ !cs, GF single suited OR 5--4/6--4 20+
+                2S = 5+ !cs, GF single suited OR 5--4/6--4/(6--5) 20+
                     2N = ask
                         3C = 5+ !cs and 4 card side suit, F1 (~20+)
                             3D = ask
@@ -134,8 +148,9 @@ As 5--5, but always show the longest suit first
                             4C = NF
                         4C = 6+ !cs, short !ds, GF, too good for 3N
                 2N = 5+ !ds and 4 card side suit
-                    3C = NF ask
+                    3C = NF ask, ~0--3, 0--2 !ds
                         P = !cs, ~19--21
+                        3D = artificial GF
                         3H = natural, ~19--21
                             4D = NF
                         3S = natural, GF (canapé 1S with ~19--23 limited)
@@ -143,7 +158,10 @@ As 5--5, but always show the longest suit first
                             4CD = NF
                         4C = 5!d--4!h, ~22--23
                         4D = 5!d--4!s, ~22--23
-                3C = 5+ !ds and 5+ other suit
+                        4HS = GF
+                    3D = NF, ~0--3
+                    3HS = 5+ hcp natural
+                3C = 5+ !ds and 5+ other suit, usually minors ~20+ or GF with major, but 6--5 maybe ~20+
                     3D = NF relay, ~0--3
                         3HS = natural
                         3N = !cs
@@ -187,7 +205,7 @@ As 5--5, but always show the longest suit first
             3S = NT transfer, no !s fit should exist
             3N = to play, wants to declare
             4HS = to play
-        2H = !h Acol 2 one/two suited ~19--21 hcp, ~8--9 playing tricks, 4+ Quick Tricks, F1
+        2H = !h Acol 2 one/two suited ~19--21 hcp, ~8--9 playing tricks, 4+ Quick Tricks, F1, denies exactly 4!ss
             2S = Herbert negative ~0--4 hcp OR natural forcing
                 any = natural, NF
                     newSuit = NF, play suggestion
@@ -241,7 +259,7 @@ As 5--5, but always show the longest suit first
         3S = invitational, strong with extras ~19+
         3N = punt ~23/24+
         4S = to play
-1S = natural, ~14--19 with 4+ !ss, maybe 4--1--4--4 or canapé exactly 4!ss, when weak denies 4!hs
+1S = natural, ~14--21 with 4+ !ss, maybe 4--1--4--4 or canapé exactly 4!ss, when weak denies 4!hs
     P = very weak, often !s tolerance
     1N = passable ask, any 0--9 hcp hand
         P = weak NT hand
@@ -257,9 +275,9 @@ As 5--5, but always show the longest suit first
             2S = 2+ !ss, weak
             2N = natural invitational, not interested in other suit
             3S = invitational, 3!ss
-        2D = 4 !ss, 5+ !ds
-        2H = 4 !ss, 5+ !hs
-        2S = 4 !ss, 5+ !cs (primary clubs!)
+        2D = 4 !ss, 5+ !ds, ~16--18
+        2H = 4 !ss, 5+ !hs, ~16--18
+        2S = 4 !ss, 5+ !cs (primary clubs!), ~16--18
         2N = 4--1--4--4 (bid 1!h with 1--4--4--4 / 4--4--1--4 / 4--4--4--1)
             3C = strength ask
                 3D = 16--17
@@ -344,7 +362,6 @@ As 5--5, but always show the longest suit first
     5CD = to play, probably weak 7+ cards
 4CD = GF, Minorwood
 4N = 29--30 balanced
-
 
 
 ** 1C--1HS
@@ -432,18 +449,21 @@ As 5--5, but always show the longest suit first
             2N = long minor ask
             3CD = natural 4+ card support
             other = natural, no 3 card minor
-        2oM = natural 16+ hcp
+        2oM = natural, with longer minor, 16+ hcp
             2N = ask
                 3CD = natural, 5/6 cards minimum
-                3H = artificial !cs 5--4, 20+ hcp
-                3S = artificial !ds 5--4, 20+ hcp
+                3H = artificial !cs + oM 5--4, 20+ hcp
+                3S = artificial !ds + oM 5--4, 20+ hcp
                 4CD = 6--4, extras
             3oM = natural raise, minimum ~8--11 hcp
             jump = splinter, major support
             other = cue, major support with extras ~12+ hcp
-        2N = 5--5 minors, ~16--19 hcp
-        3CD = 5--4 minors, ~16--19 hcp
-        3HS = auto-splinter 5--5 minors, 20+ hcp
+        2N = 5--4 / 5--5 (6--5) minors, ~16--19 hcp
+            3CD = natural 4+ card support
+            other = quasi-natural
+            3N = stops
+        3CD = 6 carder, ~16--19, denies a major, maybe 4 card other minor
+        3HS = auto-splinter 5--5 minors, ~(19)20+ hcp
     2HS = natural 6+ suit
     2oM = natural 5--5 majors
     2N = artificial, 3+ both minor, at least mild slam interest
@@ -758,8 +778,10 @@ Responding:
 - natural bidding longest suit first
 
 2HS = natural 4+ suit
+    2N = waiting, maybe 3 card major
     3CD = 5 cards
     3oM = 4 cards
+    3N = usually no 3 card major, fast arrival
 2N = staymanic range ask, usually flattish hands
     3C = (10)11--13, some 4--4--3--2/4--3--3--3
         3D = artificial stayman
@@ -773,8 +795,10 @@ Responding:
                 4N = RKB
     4CD = 5 card minor (5--3--3--2), 14--15
 3CD = natural 5+ cards, strong
+    4N = quantitative, ~14--15
 3HS = good 6+ suit, extras ~8+ PT
-3N = fast arrival, no 4 card major
+    3N = serious, 14+
+3N = weak NT, fast arrival, no 4 card major
 4CD = self-sufficient, extras
 4HS = self-sufficient suit, (sub)minimum strong, max 2 CP outside main suit
 5CD = rare likely 8 card suit, (sub)minimum strong, expect 3 keycards

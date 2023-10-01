@@ -1290,7 +1290,7 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
     2N = natural, forcing ~16+ hcp
     3C = natural, forcing, normally 6+ !cs, opener normally looks 3N
     3D = forcing, something in !ds, only later 4!d bid shows 5--6 in the minors
-    3H = forcing, 3 (occasionally 4) card support
+    3H = forcing
         3S = control bid
         3N = serious control prompt (by either player)
     3S = splinter, only promises 3 card support, e.g. 1--3--3--6 / 1--3--4--5 (bid 2!s then more !s with 6--5 shape)
@@ -1353,7 +1353,7 @@ Natural 2/1 GF, always 5+ cards.
     3C = natural, forcing, usually 5!cs (usually bid 2N with only 4 card)
         4C = !c RKB, special case
     3D = natural, almost always 6th !d
-    3H = forcing, 3 (occasionally 4) card support
+    3H = forcing
         3S = control bid
         3N = Serious (by either player)
     3S = splinter raise of !hs, only promises 3 card support, commonly 1--3--6--3
@@ -1365,7 +1365,7 @@ Natural 2/1 GF, always 5+ cards.
     2N = natural, forcing ~16+ hcp
     3C = FSF, maybe long !cs if bid again
     3D = natural, 6th !d
-    3H = forcing, 3 (occasionally 4) card support
+    3H = forcing
         3N = Serious
     3S = 4 card !s support, any strength, but cannot bid concentrated values 4!s raise
         3N = Serious
@@ -1980,7 +1980,7 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
         4C = !c RKB, special case
     3D = quasi-natural shape showing, likely 1--2--4--6 / 1--3--3--6 better !ds. Will bid again if actually 6--5.
     3H = quasi-natural shape showing, likely 1--4--2--6 / 1--3--3--6 better !hs. Will bid again if actually 6--5.
-    3S = forcing, 3 (occasionally 4) card support.
+    3S = forcing
         3N = Serious
     3N = 12--15 natural
     4C = !c RKB, special case
@@ -2034,7 +2034,7 @@ Game-forcing. Usually five cards. Could be 2--4--4--3.
         4C = !c RKB, special case
     3D = natural, almost always 6+ !ds
     3H = quasi-natural shape showing, likely 1--4--6--2 / 1--3--6--3. Will bid again if actually 6--5.
-    3S = forcing, 3 card support.
+    3S = forcing
         3N = serious control prompt
     3N = 12--15 natural
     4C = delayed splinter !s support
@@ -2080,7 +2080,7 @@ Game-forcing. Usually five cards. Could be 2--4--4--3.
             4CD = cue, !ss agreed
             4N = !h RKB
         4S = !h RKB
-    3S = forcing, 3 card support
+    3S = forcing
         3N = serious control prompt
     3N = 12--15 natural
     4C = delayed splinter for !s
