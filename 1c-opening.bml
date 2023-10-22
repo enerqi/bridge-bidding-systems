@@ -216,7 +216,7 @@ Acol two strength 6--5 two suiter:
             4CD = splinter, 4+ card support
             4H = support, fast arrival
         2S = natural, GF, 5+ !ss, not as long as 3!s rebid over 1!d, stronger than Acol 2
-        2N = GF balanced, 23--24
+        2N = balanced, 23--24
             Others = [2N Scheme](#2NT Opening)
         3C = !c single suited Acol 2, NF extras
             3HS = natural, forcing, no Herbert negative
@@ -557,7 +557,7 @@ Acol two strength 6--5 two suiter:
     3x = forcing
     3N = play suggestion even vs 4 card support
 2H = (over 1!s) 5+ !hs strong, maybe 6!h--3!s support
-    2S = 5 !ss
+    2S = 5 !ss, opposite ordering to usual 6+!ss bid to limit strength with less shape
         2N = ask, lacks extras !hs or limited
             3CD = 4+ cards, 8+ hcp
                 3N = natural
@@ -573,7 +573,7 @@ Acol two strength 6--5 two suiter:
         3S = 3 card support and 6 !hs, bid something else with 2 card support
     3CD = 5+ cards canapé OR 5-5, extras
         3S = 3 card support and 6 !hs
-    3N = natural, ~8--11 fast arrival
+    3N = natural, ~8--11 fast arrival including 5!ss with outside stops
     3S = self-sufficient suit, slam try interest
     4H = to play
     4S = !h Kickback
@@ -601,7 +601,7 @@ Acol two strength 6--5 two suiter:
 - usually 5 cards
 - when NF limited ~8--10 hcp denies a 4 card major
 - when GF we may have a 4 card major
-- when GF maybe 4!cs and longer !ds
+- when 12+ hcp maybe 4!cs and longer !ds
 - possibly 5--3--3--2 balanced, but can bid 1D (~8--9 hcp), 2D (14+ hcp 5--3--3--2) or 2N (~9--10 hcp)
 
 2C = Weak NT, transfer accept
@@ -655,7 +655,7 @@ Acol two strength 6--5 two suiter:
         3D = shortage ask
             3HS = major shortage
             3N = !d shortage
-    3D = limited ~8--9 hcp, 5+ !cs and 4+ !ds
+    3D = limited ~8--11 hcp, 5+ !cs and 4+ !ds
     3H = ~8--10, 5--3--3--2
     3S = ~11--13, 5--3--3--2
     3N = ~8--11, 6--3--3--2
@@ -727,7 +727,7 @@ Acol two strength 6--5 two suiter:
         3D = shortage ask
             3HS = major shortage
             3N = !c shortage
-    3D = limited ~8--9 hcp, 5+ !ds and 4+ !cs
+    3D = limited ~8--11 hcp, 5+ !ds and 4+ !cs
     3H = ~8--10, 5--3--3--2
     3S = ~11--13, 5--3--3--2
     3N = ~8--11, 6--3--3--2

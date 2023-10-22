@@ -804,9 +804,9 @@ To play a major game, preemptive or good values.
 
 * 1NT Interference and Lebensohl
 
-Lebensohl is played in a number of blanket NT and other places where the idea is relevant.
+Lebensohl variations are played in a number of blanket NT and other places where the idea is relevant.
 Most important is its use against weak twos and after we have made natural opening strength
-(or better) 1NT bid.
+(or better) 1NT bid / overcall.
 
 - 1NT--(Overcall)  (but not 2!c as just ignore)
 - (1X)--1NT Overcall by us including Protective--(bid over)
@@ -823,15 +823,18 @@ Most important is its use against weak twos and after we have made natural openi
 - (1NT weak)--X--(2D+ Escape) (but not 2!c escape as just ignore)
 - (2D multi)--X
 
-Our variant ([note: Lebensohl variants](#Lebensohl Variants)), when not forced to bid over a major preempt, similar but
-still different to the Revision club variant:
+Our (1) main variant ([note: Lebensohl variants](#Lebensohl Variants)) is a form of transfer Lebensohl.
+There are other variants that are used in specific situations - (2) when FORCED to bid over a major preempt and
+(3) partner is likely unbalanced and we may pass or double, so NOT forced to bid
+
+The custom structure to the (1) main transfer Lebensohl variant is:
 
 - 2suit bids are natural weak/competitive
 - 2N multi-way puppet to !cs either weak/competitive !c/!d hands or GF !cs
 - 3!c/3!d/3!h transfers to new suits are invitational plus - opener with fit/good hand bids on
 - transfer around/through the cue suit
 - Cue is GF staymanic, at least 3 other major, and if double also available it shows a singleton/void in opponents' suit
-- Cue implies no stop, i.e. cue showing a singleton, but also after a double
+- Cue implies NO stop, i.e. cue showing a singleton, but also after a double
 - X is staymanic not suitable for staymanic cue bid  (of a natural suit implied but maybe not bid)
 - X negative then 3N shows the other major and a stopper
 - X negative then cue bid shows the other major and NO stopper
@@ -839,13 +842,12 @@ still different to the Revision club variant:
 - 3!h over opponents 2!s is weak/competitive
 - 3N is to play, stop
 
-In terms of artificial overcalls:
+For variant (2) when we are FORCED to bid OVER a MAJOR preempt, then there is [Better Minor Lebensohl](#Better Minor Lebensohl over a major preempt takeout double).
 
-- Note if the overcall promised another unknown suit we do not consider it
-- When the overcall does show two specific suits, X is negative for the other suits
-
-When we are FORCED to bid OVER a MAJOR preempt, then there is [Better Minor Lebensohl](#Better Minor Lebensohl over a major preempt takeout double).
-Though it's possible to play just one Lebensohl variant, it's less optimal.
+The variant (3) [RLEB](#Reversed Lebensohl RLEB) is typically (1M)--X--(2M), but could be (2D multi)--X--(2M), where we
+can pass, double (responsive / flattish), show NT interest plus stop with invite plus values immediately or the final
+option is to bid a suit without any invitational nuance before opener gets in the way again (decide to punt game or just
+compete immediately)
 
 *** Over a balanced hand
 
@@ -1049,8 +1051,9 @@ Though it's possible to play just one Lebensohl variant, it's less optimal.
 
 *** Better Minor Lebensohl over a major preempt takeout double
 
-- Responder and the takeout doubler can have a wide range, responder is FORCED to bid OVER a MAJOR preempt.
-- We have no bid to to show an invitational !c hand, but can escape to our best minor fit.
+- a.k.a "Gucci Lebensohl"
+- Responder and the takeout doubler can have a wide range, responder is FORCED to bid OVER a MAJOR preempt
+- We have no bid to to show an invitational !c hand, but can escape to our best minor fit
 
 Better minor makes no sense over a weak two !d preempt, and there's no space for better major, which is why 2!d can be
 such an effective preempt
@@ -1091,6 +1094,92 @@ such an effective preempt
     4CD = natural, GF, unsuitable for 3N
     4H = game values
 
+*** Reversed Lebensohl RLEB
+
+- Only when we can PASS and partner is expected to be UNBALANCED, i.e (1M)--X--(2M), but could be (2D multi)--X--(2M)
+- In these auctions where partner is unbalanced and often has their own suit to show then transfer Lebensohl makes less sense
+- Unlike Better Minor "Gucci" Lebensohl, we can just pass if we have nothing helpful to say
+- The auction is already live with two bids from the opposition, we need to show shape or NT feature immediately
+- 2N puts focus on finding a NT contract, promises some sort of stop(s) and is at least invitational. This 2N is
+  "Reversed" compared to standard Lebensohl in that it does not focus on splitting up strength ranges weak/invite/GF. It
+  focuses on do we have a *stop* and game try values. This is reasonable because we can always pass with a bad hand and
+  with a very weak hand opposite a very strong partner we maybe pushed towards game anyway - we often don't have enough
+  space to discourage them if they are doing power takeout doubles
+- 3x new suits are weak / competitive with no way to show invitational strength, i.e ~0--9(10) hcp. You must choose
+  between game punt or competing (which is similar to the Better Minor Gucci Lebensohl 3!c bid). The motivation is to
+  get into the auction before opener shuts us out. We might compete and reopen double with a max 9/10 hcp
+- Double is the usual [responsive double style](#Responsive Doubles Style) which can include flattish / no stop hands
+  including a 5 card !h invite after (1S)--X--(2S)
+- the name doesn't really help, as other variations of Lebensohl might be called "Reverse" Lebensohl (without the 'd')
+
+Having said all the above, there is more invitational nuance when the opponents bid the lower suits, !ds and !hs.
+
+Strangely, a cue bid when the opponents' suit is hearts asks for 4!ss rather than showing.
+
+(1D)--X--(2D)
+    2HS = competitive ~0--9(10) hcp
+    2N = F1, invite plus with suitable NT stop
+        3C = minimum ~11--13(14)
+            3D = staymanic
+            3HS = forcing, 5 cards
+        3D = GF staymanic
+        3HS = GF, 5+ suit
+        3N = ~14--19 to play
+        4C = GF, 5+ suit
+        4N = quantitative ~20 hcp
+    3C = competitive, natural ~0--9(10) hcp
+    3D = GF both majors
+    X = [responsive](#Responsive Doubles Style), at least one major
+
+(1H)--X--(2H)
+    2S = competitive ~0--9(10) hcp
+    2N = F1, invite plus with suitable NT stop
+        3CD = better minor, minimum ~11--13(14)
+            3D = invitational, natural
+            3H = ASKS for 4!ss
+            3S = show 4!ss ??? unnecessarily slow risking competition, penalty interest in theory
+            3N = natural, was waiting before with 2N
+            4CD = forcing, natural
+        3S = 5+ !ss 17+ GF
+            3N = no !s fit
+        3N = ~14--19 to play
+        4CD = ~17+ natural 5+ card suit
+        4H = both minors slam try
+        4N = quantitative ~20 hcp
+    3CD = competitive, natural ~0--9(10) hcp
+    3H = cue available, GF ASKS for 4!ss, NO stop
+    3S = jump available, invitational 5+ cards
+    X = [responsive](#Responsive Doubles Style), denies 4!ss
+
+(1S)--X--(2S)
+    2N = F1, invite plus with suitable NT stop
+        3CD = better minor, minimum ~11--13(14)
+            3D = invitational, natural
+            3H = NF, invitational, 4 !hs
+            3S = cue, 4!hs GF (or 5 cards slam try)
+            3N = natural, was waiting before with 2N
+            4CD = forcing, natural
+        3H = 5+ !hs 17+ GF
+        3S = 4!hs GF
+            3N = no !h fit
+        3N = ~14--19 to play
+        4CD = ~17+ natural 5+ card suit
+        4S = both minors slam try
+        4N = quantitative ~20 hcp
+    3CDH = competitive, natural ~0--9(10) hcp
+    3S = cue, GF with 4!hs and NO stop
+    4H = 5+ !h suit (possibly 4 card e.g. AKJ9)
+    Dbl = [responsive](#Responsive Doubles Style), maybe include 4!hs without stop or 5!hs card invite
+        2N = artificial, 4!hs
+            3H = invitational, usualy 4!hs not 5!hs
+        3CD = NF natural, denies 4!hs
+            3H = invitational, often 5!hs
+        3H = GF 5!hs
+        3S = GF without !hs, usually both minors
+        3N = ~18--20 NT with stopper
+        4CD = GF single suiter
+        (3S) = competition
+            Dbl = 4!hs
 
 ** Overcalls of our NT
 

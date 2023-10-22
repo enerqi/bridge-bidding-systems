@@ -1441,9 +1441,9 @@ With limited strength may want to hide distribution information and just bid the
     3N = sacrifice suggestion, good 4+ card support
 
 (1H)--X--(2/3H) opponents open and major raise to two/three level
-    X = [responsive](#Responsive Doubles Style) exactly 4!ss or [Relay over 3!H](#Relay Lebensohl Doubles)
+    X = [responsive](#Responsive Doubles Style) denies !ss or [Relay over 3!H](#Relay Lebensohl Doubles)
     2S = 5+ !s suit (possibly 4 card e.g. AKJ9)
-    Others = [Lebensohl system over 2H](#1NT Interference and Lebensohl)
+    Others = [RLEB over 2H](#Reversed Lebensohl RLEB)
     3S = co-operative over (3!h)
 
 (1H)--X--(3x)
@@ -1709,16 +1709,20 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
     3N = sacrifice suggestion, good 4+ card support
 
 (1S)--X--(2S/3S) opponents open and major raise to two/three level
-    Dbl = [responsive](#Responsive Doubles Style) exactly 4 !hs or Thrump over 3!s
+    Dbl = [responsive](#Responsive Doubles Style) maybe include 4!hs without stop or 5!hs card invite or Thrump over 3!s
         2N = artificial F1, 4!hs exactly, any strength
+            3H = invitational, usualy 4!hs not 5!hs
         3C = NF, natural, without 4!hs
         3D = roughly 2--3--5--3 or 1--3--5--4 (strong without normal takeout double)
         3H = GF, 17+, 5+ !hs (fast arrival)
         3S = GF artificial, balanced OR both minors
         3N = natural, ~18--20
         4CD = GF, 5(6)+ minor power double
-    Others = [Lebensohl system over 2S](#1NT Interference and Lebensohl)
+        (3S) = competition
+            Dbl = 4!hs
+    Others = [RLEB over 2S](#Reversed Lebensohl RLEB)
     4H = 5+ !h suit (possibly 4 card e.g. AKJ9)
+    5H = Lackwood
 
 (1S)--X--(3CDH)
     Dbl = [relay, Lebensohl like](#Relay Lebensohl Doubles)
