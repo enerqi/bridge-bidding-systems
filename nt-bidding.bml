@@ -1106,38 +1106,62 @@ such an effective preempt
   with a very weak hand opposite a very strong partner we maybe pushed towards game anyway - we often don't have enough
   space to discourage them if they are doing power takeout doubles
 - 3x new suits are weak / competitive with no way to show invitational strength, i.e ~0--9(10) hcp. You must choose
-  between game punt or competing (which is similar to the Better Minor Gucci Lebensohl 3!c bid). The motivation is to
+  between a game punt or competing (which is similar to the Better Minor Gucci Lebensohl 3!c bid). The motivation is to
   get into the auction before opener shuts us out. We might compete and reopen double with a max 9/10 hcp
 - Double is the usual [responsive double style](#Responsive Doubles Style) which can include flattish / no stop hands
   including a 5 card !h invite after (1S)--X--(2S)
 - the name doesn't really help, as other variations of Lebensohl might be called "Reverse" Lebensohl (without the 'd')
 
-Having said all the above, there is more invitational nuance when the opponents bid the lower suits, !ds and !hs.
+Having said all the above, there is more invitational nuance when the opponents bid the lower suits, !cs, !ds and !hs.
+It might be better to play these jump 3x bids as GF with possible slam interest instead of invitational, but that would
+be rarer. A GF 5+ card hand with stop can bid 2N first, and without a stop start with a cue bid and hope to resolve e.g.
+both majors vs one major slam try later
 
-Strangely, a cue bid when the opponents' suit is hearts asks for 4!ss rather than showing.
+
+(1C)--X--(2C)
+    2DHS = competitive ~0--9(10) hcp
+    2N = F1, invite plus with suitable NT stop, rarely exact invite both majors
+        3C = artificial, minimum ~11--13(14)
+            3D = staymanic
+            3HS = forcing, 5(+) cards, might be slam try
+        3D = artificial, GF staymanic, ~14+
+        3HS = GF, 5+ suit
+        3N = ~14--19 to play
+        4D = GF, 5+ suit
+        4N = quantitative ~20 hcp
+    3C = GF both majors (or possibly one major and slam try with shortage)
+    3DHS = jump available, invitational 5+ cards
+    3N = natural, no major
+    4C = slam try both majors, 4N special case double fit RKB
+    4D = natural, GF, unsuitable for 3N
+    Dbl = [responsive](#Responsive Doubles Style), at least one major
 
 (1D)--X--(2D)
     2HS = competitive ~0--9(10) hcp
-    2N = F1, invite plus with suitable NT stop
-        3C = minimum ~11--13(14)
+    2N = F1, invite plus with suitable NT stop, rarely exact invite both majors
+        3C = artificial, minimum ~11--13(14)
             3D = staymanic
-            3HS = forcing, 5 cards
-        3D = GF staymanic
+            3HS = forcing, 5(+) cards, might be slam try
+        3D = artificial, GF staymanic, ~14+
         3HS = GF, 5+ suit
         3N = ~14--19 to play
         4C = GF, 5+ suit
         4N = quantitative ~20 hcp
     3C = competitive, natural ~0--9(10) hcp
-    3D = GF both majors
-    X = [responsive](#Responsive Doubles Style), at least one major
+    3D = GF both majors (or possibly one major and slam try with shortage)
+    3HS = jump available, invitational 5+ cards
+    3N = natural, no major
+    4C = natural, GF, unsuitable for 3N
+    4D = slam try both majors, 4N special case double fit RKB
+    Dbl = [responsive](#Responsive Doubles Style), at least one major
 
 (1H)--X--(2H)
     2S = competitive ~0--9(10) hcp
-    2N = F1, invite plus with suitable NT stop
+    2N = F1, invite plus with suitable NT stop, possibly one major with exact invite
         3CD = better minor, minimum ~11--13(14)
             3D = invitational, natural
-            3H = ASKS for 4!ss
-            3S = show 4!ss ??? unnecessarily slow risking competition, penalty interest in theory
+            3H = stop and 4!ss, choice of game
+            3S = forcing, 5(+) cards, might be slam try
             3N = natural, was waiting before with 2N
             4CD = forcing, natural
         3S = 5+ !ss 17+ GF
@@ -1147,16 +1171,19 @@ Strangely, a cue bid when the opponents' suit is hearts asks for 4!ss rather tha
         4H = both minors slam try
         4N = quantitative ~20 hcp
     3CD = competitive, natural ~0--9(10) hcp
-    3H = cue available, GF ASKS for 4!ss, NO stop
+    3H = cue NO stop, GF 4(+)!ss (possibly stronger 5+ card slam try)
     3S = jump available, invitational 5+ cards
-    X = [responsive](#Responsive Doubles Style), denies 4!ss
+    3N = natural, no other major
+    4CD = natural, GF, unsuitable for 3N
+    4H = splinter, !s slam try
+    Dbl = [responsive](#Responsive Doubles Style), denies 4!ss
 
 (1S)--X--(2S)
-    2N = F1, invite plus with suitable NT stop
+    2N = F1, invite plus with suitable NT stop, possibly 4!hs exact invite
         3CD = better minor, minimum ~11--13(14)
             3D = invitational, natural
-            3H = NF, invitational, 4 !hs
-            3S = cue, 4!hs GF (or 5 cards slam try)
+            3H = NF, invitational, 4 !hs (not forcing as over 1H--X--2H)
+            3S = cue, 4!hs GF (possibly stronger 5+ card slam try)
             3N = natural, was waiting before with 2N
             4CD = forcing, natural
         3H = 5+ !hs 17+ GF
@@ -1167,9 +1194,11 @@ Strangely, a cue bid when the opponents' suit is hearts asks for 4!ss rather tha
         4S = both minors slam try
         4N = quantitative ~20 hcp
     3CDH = competitive, natural ~0--9(10) hcp
-    3S = cue, GF with 4!hs and NO stop
+    3S = cue NO stop, GF 4(+)!hs (possibly stronger 5+ card slam try)
+    3N = natural, no major
     4H = 5+ !h suit (possibly 4 card e.g. AKJ9)
-    Dbl = [responsive](#Responsive Doubles Style), maybe include 4!hs without stop or 5!hs card invite
+    4S = [EKB](#EKB Voidwood), 5+ !h suit
+    Dbl = [responsive](#Responsive Doubles Style), maybe 4!hs competitive or 5!hs invite
         2N = artificial, 4!hs
             3H = invitational, usualy 4!hs not 5!hs
         3CD = NF natural, denies 4!hs

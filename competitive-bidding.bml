@@ -478,16 +478,18 @@ When we bid a minor?
 When we start with a takeout double:
 
 - (1D)--X--(2D), we cannot expect partner to have 5 cards in a particular major, rarely not even 4 cards. We cue bid 3D
-  with GF both majors 4--4 or double with values and one 4 card major (or less than an invite both majors)
+  with GF both majors 4--4+ (or possibly one major and slam try with shortage) or double with values and one 4 card
+  major (or less than an invite both majors), so 2N [RLEB](#Reversed Lebensohl RLEB) with both majors + stop and an
+  exact invite is possible, though maybe clearer to punt the 3D GF cue
 - (1D)--X--(3D), similar but more pressure. [Relay Lebensohl Doubles](#Relay Lebensohl Doubles) + 3HS invitational.
   Subject to further refinement, given that doubler may not have both majors. Perhaps double 3+ both majors + 3HS with 5
   cards invitational is better.
 
 Takeout over a major:
 
-- (1M)--X--(2M), no promise of a 5 card other major by doubler. Lebensohl is on here. Double can show values with 4 card
-  major support instead of maybe values and minors (similar to doubles after interference over 1NT). Bidding the other
-  major directly or via Lebensohl should indicate 5 cards
+- (1M)--X--(2M), no promise of a 5 card other major by doubler. [RLEB](#Reversed Lebensohl RLEB) is on here. Double can
+  show values with 4 card major support instead of maybe values and minors (similar to doubles after interference over
+  1NT). Bidding the other major directly or via Lebensohl at the 3 level should indicate 5 cards
 - (1H)--X--(3H), [Relay Lebensohl Doubles](#Relay Lebensohl Doubles) + 3S invitational. Given that a takeout double is
   not as wide ranging as an overcall the standard alternative with double as "values", a competitive 3S and
   no invitational bid is reasonable
@@ -990,6 +992,7 @@ With limited strength may want to hide distribution information and just bid the
 
 (1C)--X--(2C)
     X = [responsive](#Responsive Doubles Style) maybe one major
+    others = [RLEB over 2C](#Reversed Lebensohl RLEB)
 
 (1C)--X--(3x)
     X = [Relay competitive double](#Relay Lebensohl Doubles)
@@ -1224,6 +1227,7 @@ With limited strength may want to hide distribution information and just bid the
 
 (1D)--X--(2D)
     X = [responsive](#Responsive Doubles Style) maybe one major
+    others = [RLEB over 2D](#Reversed Lebensohl RLEB)
 
 (1D)--X--(3x)
     X = [Relay competitive double](#Relay Lebensohl Doubles)
