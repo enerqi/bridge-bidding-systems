@@ -45,6 +45,7 @@
     3N = natural, good 12--17, no 4 card major, stops
     4CD = preempt
     4HS = natural, to play, obstructive, sets suit as trumps (passed hand fit jump e.g. 6--6 shape!)
+    4N = quantitative
     5CD = natural, to play, obstructive
 
 1H = [(10)11--15, 5 card Major](#1H Opening)
@@ -53,7 +54,7 @@
   1N = [non-forcing, ~5--11 hcp](#1H--1N)
   2C = [GF natural (passed hand Reverse Drury raise)](#1H--2C)
   2D = [GF natural (passed hand 9--11), usually 5 cards](#1H--2D)
-  2H = [single raise, 3+ card support, maybe light](#1H--2H)
+  2H = [single raise, 3+ card support, ~(7)8--10 support points](#1H--2H)
   2S = [6+!ss, ~6--9 hcp, semi-weak, no !h fit](#1H--2S)
   2N = [limit+ raise](#1H--2N)
   3C = [6+ !cs, invitational ~10--12, no major support](#1H--3C)
