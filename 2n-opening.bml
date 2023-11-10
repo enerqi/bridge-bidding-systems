@@ -283,6 +283,7 @@ Responding:
     4D = retransfer (hand too limited for last train)
     4H = to play, responder declares
     4S = Kickback
+    5x = EKB
 
 **** 2N--3H
 
@@ -367,6 +368,7 @@ Responding:
 minors, 5--4+, often slam try
 
 3N = good major stoppers, limited minor interest
+    4CD = set suit
 4CD = 4+ cards, reasonable for minor game/slam
 4HS = 3 card minor, Lissabon, good honours for minor suit slam
 4N = 3--3 minors, fitting honours in the minors

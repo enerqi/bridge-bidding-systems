@@ -844,10 +844,10 @@ The custom structure to the (1) main transfer Lebensohl variant is:
 
 For variant (2) when we are FORCED to bid OVER a MAJOR preempt, then there is [Better Minor Lebensohl](#Better Minor Lebensohl over a major preempt takeout double).
 
-The variant (3) [RLEB](#Reversed Lebensohl RLEB) is typically (1M)--X--(2M), but could be (2D multi)--X--(2M), where we
-can pass, double (responsive / flattish), show NT interest plus stop with invite plus values immediately or the final
-option is to bid a suit without any invitational nuance before opener gets in the way again (decide to punt game or just
-compete immediately)
+The variant (3) [RLEB](#Reversed Lebensohl RLEB) is typically (1M)--X--(2M), but could be (2D multi)--X--(2M) or
+(1m)--2m, where we can pass, maybe double (responsive / flattish), show NT interest plus stop with invite plus values
+immediately or the final option is to bid a suit without any invitational nuance before opener gets in the way again
+(decide to punt game or just compete immediately)
 
 *** Over a balanced hand
 
@@ -1096,7 +1096,8 @@ such an effective preempt
 
 *** Reversed Lebensohl RLEB
 
-- Only when we can PASS and partner is expected to be UNBALANCED, i.e (1M)--X--(2M), but could be (2D multi)--X--(2M)
+- Only when we can PASS and partner is expected to be UNBALANCED, i.e (1M)--X--(2M), but could be (2D multi)--X--(2M) or
+  (1m)--2m
 - In these auctions where partner is unbalanced and often has their own suit to show then transfer Lebensohl makes less sense
 - Unlike Better Minor "Gucci" Lebensohl, we can just pass if we have nothing helpful to say
 - The auction is already live with two bids from the opposition, we need to show shape or NT feature immediately
@@ -1123,7 +1124,7 @@ both majors vs one major slam try later
     2N = F1, invite plus with suitable NT stop, rarely exact invite both majors
         3C = artificial, minimum ~11--13(14)
             3D = staymanic
-            3HS = forcing, 5(+) cards, might be slam try
+            3HS = NF, usually play there
         3D = artificial, GF staymanic, ~14+
         3HS = GF, 5+ suit
         3N = ~14--19 to play
@@ -1132,7 +1133,7 @@ both majors vs one major slam try later
     3C = GF both majors (or possibly one major and slam try with shortage)
     3DHS = jump available, invitational 5+ cards
     3N = natural, no major
-    4C = slam try both majors, 4N special case double fit RKB
+    4C = slam try both majors, !c shortage
     4D = natural, GF, unsuitable for 3N
     Dbl = [responsive](#Responsive Doubles Style), at least one major
 
@@ -1141,7 +1142,7 @@ both majors vs one major slam try later
     2N = F1, invite plus with suitable NT stop, rarely exact invite both majors
         3C = artificial, minimum ~11--13(14)
             3D = staymanic
-            3HS = forcing, 5(+) cards, might be slam try
+            3HS = NF, usually play there
         3D = artificial, GF staymanic, ~14+
         3HS = GF, 5+ suit
         3N = ~14--19 to play
@@ -1152,7 +1153,7 @@ both majors vs one major slam try later
     3HS = jump available, invitational 5+ cards
     3N = natural, no major
     4C = natural, GF, unsuitable for 3N
-    4D = slam try both majors, 4N special case double fit RKB
+    4D = slam try both majors, !d shortage
     Dbl = [responsive](#Responsive Doubles Style), at least one major
 
 (1H)--X--(2H)
@@ -1161,7 +1162,7 @@ both majors vs one major slam try later
         3CD = better minor, minimum ~11--13(14)
             3D = invitational, natural
             3H = stop and 4!ss, choice of game
-            3S = forcing, 5(+) cards, might be slam try
+            3S = NF, usually play there
             3N = natural, was waiting before with 2N
             4CD = forcing, natural
         3S = 5+ !ss 17+ GF
