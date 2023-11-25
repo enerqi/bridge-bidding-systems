@@ -66,7 +66,7 @@
   4D = [splinter !d, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
   4H = to play
   4S = preempt
-  4N = Blackwood, !hs not agreed. Bid 2N first to use [RKB](#RKB 4N) for !hs.
+  4N = [RKB](#RKB 4N)
   5CD = [EKB](#EKB Voidwood)
 
 1S = [(10)11--15, 5 card Major](#1S Opening)
@@ -75,7 +75,7 @@
   2C = [GF natural (passed hand Reverse Drury raise)](#1S--2C)
   2D = [GF natural (passed hand 9--11), usually 5 cards, maybe 2--4--4--3](#1S--2D)
   2H = [GF natural (passed hand 9--10), always 5+ cards](#1S--2H)
-  2S = [single raise, 3+ card support, maybe light](#1S--2S)
+  2S = [single raise, 3+ card support, ~(7)8--10 support points](#1S--2S)
   2N = [limit+ raise](#1S--2N)
   3C = [6+ !cs, invitational ~10--12, no major support](#1S--3C)
   3D = [6+ !ds, invitational ~10--12, no major support](#1S--3D)
@@ -85,7 +85,7 @@
   4C = [splinter !c or !h, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1S--4C)
   4D = [splinter !d, 13--16 hcp 4.5+ cover cards, Passed hand - FJ mild slam interest](#1S--4D)
   4HS = [to play](#1S--4H/4S)
-  4N = [Blackwood, !ss not agreed. Bid 2N first to use RKB for !ss.](#1S--4N)
+  4N = [RKB](#RKB 4N)
   5CDH = [EKB](#EKB Voidwood)
 
 1NT [16--18 balanced](#1NT Opening), maybe 5 card major or 5--4--2--2 long !c/!d.
@@ -122,7 +122,7 @@
   4C = preempt
   4D = Redwood [RKB](#RKB 4N) for !cs
   4HS = to play (passed hand = fit jump), opener can bid on with super fit and controls
-  4N = Blackwood
+  4N = quantitative
   5C = to play
 
 2D  [(10)11--15 hcp, 6+ card !d suit](#2D Intermediate Opening), not with 5!h/!s
@@ -138,7 +138,7 @@
   4C = [RKB](#RKB 4N) for !ds
   4D = preemptive
   4HS = to play
-  4N = Blackwood
+  4N = quantitative
   5CD = to play
 
 2H [5+ good (NV) / 6+ (VUL) card weak two](#2HS Weak Openings) 7--10 1st/2nd maybe long minor, Undisciplined 5--11 3rd, 10--13 4th
@@ -151,8 +151,8 @@
   3N = to play, non-correctable
   4CD = [control asking bids](#Control Asking Bids Over Preempts), (passed hands fit jump)
   4H = to play
-  4S = [Weak !h Kickback](#Weak RKB)
-  4N = [substitute !s control asking bid](#Control Asking Bids Over Preempts)
+  4S = [control asking bid](#Control Asking Bids Over Preempts), (passed hands fit jump)
+  4N = [RKB](#RKB 4N)
   5CD = to play
 
 2S [5+ good (NV) / 6+ (VUL) card weak two](#2HS Weak Openings) 7--10 1st/2nd maybe long minor, Undisciplined 5--11 3rd, 10--13 4th
@@ -164,7 +164,7 @@
   3N = to play, non-correctable
   4CDH = [control asking bids](#Control Asking Bids Over Preempts), (passed hands fit jump)
   4S = to play
-  4N = [Weak !s RKB](#Weak RKB)
+  4N = [RKB](#RKB 4N)
   5CD = to play
 
 2N [19--20 NT](#2NT Opening)

@@ -458,7 +458,7 @@ Splinters or new suit 2/1 GF or Jacoby 2N? In general note:
 - After a 2/1 GF new suit Opener's rebids focus on showing shape before strength
 - Jacoby asks about singletons or extras instead of showing anything
 - After a Jacoby 2N opener's minimum no singleton hands will often be 5 cards
-- There's often no easy way to know if partner has 6+ cards, but this maybe helped by the Last Train convention
+- There's often no easy way to know if partner has 6+ cards, but this can be helped by the Last Train convention
   as the extra shape is what should swing a hand to more tricks
 
 *** With 3 card support
@@ -471,15 +471,35 @@ Splinters or new suit 2/1 GF or Jacoby 2N? In general note:
 *** With 4 card support
 
 - We play two-tiered splinters that should often be used, but beware e.g. 1!h--4!d takes up a lot of space
-- 2/1 GF is harder to use if there is also a side singleton as we may not be able to splinter it or assumed only 3 card support splinter
-- 2/1 GF picture raises are safe - 5 card side suit shown then jump to game showing 4 card support without outside Aces/Kings
+- 2/1 GF is harder to use if there is also a side singleton as we may not be able to splinter it or assumed only 3 card
+  support splinter, however if the side suit is the main potential source of tricks then it is more important to show it
+  than to splinter
 - Jacoby 2N is unlikely a singleton, though could be very strong, e.g. 17+. Again, mostly bid to drive the auction by asking and not showing.
+
+*** Picture Raises
+
+Jump bidding partner's suit after showing a side suit
+
+- shows good trumps and good side suit source of tricks
+- styles vary, 3 card support and 3 top 5 or 2 top 3 honours is our minimum standard
+- 4 card support raise trump quality is less of a concern
+
+**** Picture Raise Jump level
+
+- Jumps below game shows a some outside controls (outside of trumps or our side suit) - 1S--2D--2H--3S
+- Jumps to game show good trumps and side suit, but no outside controls
+
+**** Single Raises Ambiguous with Picture Bids
+
+An auction like 1S--2C--2S--3S is more ambiguous as the only jump is to game, denying outside controls. Therefore the 3S
+bid example could be a good hand with side suit and outside controls interested in slam, or it could just be waiting on
+the way to game
 
 *** 1H--1S auctions?
 
-- Possibly used with similar intention to 2/1 GF - there is an artificial GF over the 1N rebid and FSF over second suit rebids.
+- Possibly used with similar intention to 2/1 GF - there is an artificial GF over the 1N rebid and FSF over second suit rebids
 - 1H--1S--2H has limited slam try options though, 3C/3D GF quasi-natural then bid beyond 3N or 4N !h RKB
-- Going past 3N after FSF should always be assumed first major suit support as there are other slam try bids for the second bid suit.
+- Going past 3N after FSF should always be assumed first major suit support as there are other slam try bids for the second bid suit
 
 ** Serious 3NT
 
