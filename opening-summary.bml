@@ -149,10 +149,11 @@
   3H = weak limit raise
   3S = natural, GF, (passed hands fit jump)
   3N = to play, non-correctable
-  4CD = [control asking bids](#Control Asking Bids Over Preempts), (passed hands fit jump)
+  4C = [Preempt RKB](#Preempt RKB)
+  4D = [control asking bid](#Control Asking Bids Over Preempts), (passed hands fit jump)
   4H = to play
   4S = [control asking bid](#Control Asking Bids Over Preempts), (passed hands fit jump)
-  4N = [RKB](#RKB 4N)
+  4N = [!c substitute control asking bid](#Control Asking Bids Over Preempts)
   5CD = to play
 
 2S [5+ good (NV) / 6+ (VUL) card weak two](#2HS Weak Openings) 7--10 1st/2nd maybe long minor, Undisciplined 5--11 3rd, 10--13 4th
@@ -162,9 +163,10 @@
   3H = !s transfer, invitational raise
   3S = weak limit raise
   3N = to play, non-correctable
-  4CDH = [control asking bids](#Control Asking Bids Over Preempts), (passed hands fit jump)
+  4C = [Preempt RKB](#Preempt RKB)
+  4DH = [control asking bids](#Control Asking Bids Over Preempts), (passed hands fit jump)
   4S = to play
-  4N = [RKB](#RKB 4N)
+  4N = [!c substitute control asking bid](#Control Asking Bids Over Preempts)
   5CD = to play
 
 2N [19--20 NT](#2NT Opening)
