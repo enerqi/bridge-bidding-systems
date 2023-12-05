@@ -434,9 +434,9 @@ we can treat opener as having not bid.
 
 *** Responsive Doubles Style
 
-A standard responsive double is a form of takeout with focus on the unbid major(s). When partner makes a takeout it is a
-form of re-takeout. Sometimes it is more values, perhaps with a single minor suit, tolerance for partner but lacking a
-stop for NT.
+A standard responsive double is a form of takeout with focus on the unbid major(s). When partner makes a takeout double
+advancer's double is a form of re-takeout. Sometimes it is more values, perhaps with a single minor suit, tolerance for partner but
+lacking a stop for NT.
 
 What about when there is no unbid/implied major? For example, (1H)--1S--(2H) or (1S)--X--(2S). Should our responsive
 double be used to cater for minor hands with values?
@@ -449,12 +449,12 @@ double be used to cater for minor hands with values?
   the typical responsive values with the minor(s)
 
 Pushed to the 3 level, things are different. Here we choose to play [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
-to allow competing in a partner's suit or a different suit.
+to allow competing in partner's suit or a different suit.
 
 - (1H)--1S--(3H), with limited bidding space, a standard 3S becomes cooperative to game and double a typical takeout,
   but played with [Relay Lebensohl Doubles](#Relay Lebensohl Doubles) 3S is invitational. A hand without a stop and
   limited !s may struggle with this style.
-- (1S)--2H--(3S), in standard style as forced to the 4 level this is a mainly values showing responsive double, but the
+- (1S)--2H--(3S), in standard style as forced to the 4 level this is a mainly values showing responsive double, but
   we interpret it as Thrump OR [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
 
 The double is always more value showing as it gets high level, especially over 3!s. At the 4 level we just call our
@@ -1789,7 +1789,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
                     4H = competitive
             4CD = GF, natural
             4H = to play (slam unlikely over their opening bid)
-    2S = 5--5+ (!h + !d limited) OR (!h + !c *strong*)
+    2S = 5--5+ (!h + !d unlimited) OR (!h + !c *strong*)
         2N = minor ask, invite plus
             3CD = !c strong / !d weak
             3HS = !c mega strong / !d extras (Lissabon like)
