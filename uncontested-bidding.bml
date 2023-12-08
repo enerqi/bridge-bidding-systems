@@ -566,17 +566,15 @@ Natural, up to 11 hcp, no 4 card major
 1D--(X)
     P = some !d length, later X are penalty suggestion, usually 4 cards in bid suit
     XX = !h transfer, 4+ cards, *system on* without further interference
-        1H = 1--3 cards
-        1N = inconvenient 3 suiter (short transfer suit, extras)
-            2CD = Two Way NMF continuations
+        1H = 3 cards typically, puts doubler on lead
         2D = [good !h raise](#1D--1H--2D)
         2H = [normal !h raise](#1D--1H--2H)
+        Others = system on
     1H = !s transfer, 4+ cards, *system on* without further interference
-        1S = 1–-3 cards
-        1N = inconvenient 3 suiter (short transfer suit, extras)
-            2CD = Two Way NMF continuations
+        1S = 3 cards typically, puts doubler on lead
         2D = [good !s raise](#1D--1S--2D)
         2S = [normal !s raise](#1D--1S--2S)
+        Others = system on
     1S = NT transfer, no major
         1N = limited, often balanced
             2CD = NF
@@ -1408,12 +1406,14 @@ Natural 2/1 GF, always 5+ cards.
 
 ** 1H--2S
 
-6+!ss, ~6--9 hcp, semi-weak, no !h fit
+6+!ss, ~(5)6--9 hcp, semi-weak, no !h fit
 
 - Stronger than 1!d--2!h/!s (there is less preemptive value)
 - Opener normally passes without fit.
 
-2N = (semi)solid+ !hs, asking for 3N/4!hs with something in minors, otherwise back to 3!h, e.g. x/AKQJxxx/Ax/xxx
+2N = artificial shortage ask, invite plus
+    3CDH = shortage
+    3S = flat
 3CD = 6--5+ NF, long strong !hs and minor
 3H = NF, "better" suit than your !ss
 3S = invite
@@ -1529,7 +1529,7 @@ Limit jump shift, 6 card suit invitational, denying major support
 3H = natural, long suit, NF invitational, responder can raise with Hx
 3S = stopper, but 5--6/5--7 majors if pulls to 4!h over from 3N contract
 3N = to play, stopped
-4C = Redwood for !cs, special case (4!c is always Redwood/Kickback after a limit jump shift)
+4C = forcing, !c slam try
 4D = splinter for !cs
 4H = to play
 4S = splinter for !cs
@@ -1542,10 +1542,9 @@ Similar to 1!h--3!c:
 3S = stopper, but 5--6/5--7 majors if pulls to 4!h over from 3N contract
 3N = to play, stopped
 4C = implied cue bid
-4D = Redwood for !ds, special case
+4D = forcing, !d slam try
 4H = to play
 4S = splinter for !ds
-4N = substitute !c splinter, with 2 aces as cannot use RKB
 
 ** 1H--3H
 
