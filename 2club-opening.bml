@@ -108,6 +108,7 @@ Responding:
 2H = any major, any strength
     2S = NF ASK
         2N = !h minimum
+            3C = signoff
             3D = stop, probing
         3C = !s minimum
             3DH = stop, probing

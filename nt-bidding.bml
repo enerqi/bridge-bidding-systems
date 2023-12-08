@@ -821,6 +821,7 @@ Most important is its use against weak twos and after we have made natural openi
 - (Weak 2!d!h!s)--X
 - (1NT weak)--X--(XX Escape)
 - (1NT weak)--X--(2D+ Escape) (but not 2!c escape as just ignore)
+- (1NT weak)--P--(2x)--X
 - (2D multi)--X
 
 Our (1) main variant ([note: Lebensohl variants](#Lebensohl Variants)) is a form of transfer Lebensohl.
@@ -1452,7 +1453,7 @@ Situations include:
 - When we overcall 1N, rarely a *redouble by opener* is a hand interested in running - *minimum* with a *5(6) card suit* for the NT bid
 
 (1N)--X--(P) = we double a weak NT
-    P = ~5+ hcp, creates forcing pass up to 2!h
+    P = ~6+ hcp, creates forcing pass up to 2!h
     2C = artificial, no 5 carder unless clubs
         2x = cheapest 5 card or 4 card suit
     2DHS = ~0--4 hcp, natural escape

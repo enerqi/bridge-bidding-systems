@@ -2016,8 +2016,7 @@ Hand strength guide:
     2N = minors OR strong majors
         3HS = NF, good 6+ suit
         4CD = obstructive
-    3CD = natural, intermediate
-    3HS = natural, intermediate, likely good trick taking 7 carder
+    3CDHS = natural, intermediate, constructive - extra shape/length or 16+ unsuitable for penalty double
     3N = to play, probably long minor
     4CD = preempt
 
@@ -2040,8 +2039,10 @@ Hand strength guide:
 
 ** Strong NT Defence
 
-- Minimum 15 hcp
-- More aggressive, especially NV, i.e. rule of 8 strength ( length(longest 2 suits) - LTC >= 2 then bid )
+- Minimum 14 hcp
+- More aggressive, especially NV with offensive hands
+- 5--5/6--4 carders ~8 losers or better
+- 5--4/6 carders ~7 losers or better
 - No detailed responses written down, just play 2N (or cue bid) as the only way to start more constructive bids by advancer
 - 2!c!d!h!s are basically natural direct pressure bids
 
@@ -2052,12 +2053,16 @@ Hand strength guide:
         2D = major ask
         2HS = natural, NF, single suiter
         2N = f1, constructive
+        3C = obstructive
+        3D = natural, NF, single suiter
     2D = !ds and a major
+        2H = pass/correct
     2HS = natural
         2N = f1, constructive
             3x = quasi-natural, extras
             3M = weaker
             4M = maximum, 6 carder
+        other = natural, NF, single suiter
     2N = minors two suiter OR strong constructive majors two suiter
     3CDHS = natural, offensive
 
