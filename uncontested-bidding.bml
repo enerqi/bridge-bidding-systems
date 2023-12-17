@@ -912,7 +912,7 @@ By responder example:
         2S = 3 card !s support
     2D = by PASSED hand, natural invitational, 4/5!s and 5!d
     2H = natural, NF, *weak* hand, 3 card support
-    2S = natural, NF, not suitable for immediate 2!s weak jump shift (suit quality or ~Hx !h support)
+    2S = natural, NF, not suitable for immediate 2!s weak jump shift (suit quality or ~Hx+ !h support)
     2N = puppet, !c signoff or 4--4--4--1 GF
         3C = complete
             P = signoff
