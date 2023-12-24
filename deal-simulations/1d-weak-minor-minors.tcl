@@ -6,6 +6,6 @@ set script_path [ file dirname [ file normalize [ info script ] ] ]
 source $script_path/deal-utils.tcl
 
 main {
-  if {[is_1d_opener north] && [hcp south]<10 && ![has_side_major south] && ![flattish south]} { accept }
+  if {[is_1d_opener north] && [hcp south]<10 && [hcp south]>4 && ![has_side_major south] && ![flattish south] && ([hcp east]<8 || ([hearts east]<5 && [spades east]<5))} { accept }
   reject
 }

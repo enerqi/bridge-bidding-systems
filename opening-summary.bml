@@ -37,13 +37,14 @@
     1N = [natural, up to 11 hcp, no 4 card major](#1D--1N)
     2C = [10+ invitational plus, no 4 card major, maybe longer !ds](#1D--2C)
     2D = [10+ forcing (unless passed hand), 4+ !ds, no longer suit](#1D--2D)
-    2HS = weak jump shift, good 6+ !h/!ss, ~3--7 hcp, rarely 5 card suit that dreads passing 1!d
+    2HS = 5!ss + 4--5!hs, weak (~5--9)/invitational (~10--12)
     2N = natural invitational ~(11)--12(13), no 4 card major, usually very flat 4--4--3--2/4--3--3--3
-    3C = weak jump shift, 6+ !cs, 0--9 hcp, NF
+    3C = 5--4(+) minors, either minor longer, 5--9 hcp, usually a singleton major
     3D = weak jump shift, 6+ !ds, 0--9 hcp, NF
     3HS = preempt
     3N = natural, good 12--17, no 4 card major, stops
-    4CD = preempt
+    4C = 5--5 minors, 5--9 hcp
+    4D = preempt
     4HS = natural, to play, obstructive, sets suit as trumps (passed hand fit jump e.g. 6--6 shape!)
     4N = quantitative
     5CD = natural, to play, obstructive
@@ -88,7 +89,7 @@
   4N = [RKB](#RKB 4N)
   5CDH = [EKB](#EKB Voidwood)
 
-1NT [16--18 balanced](#1NT Opening), maybe 5 card major or 5--4--2--2 long !c/!d.
+1NT [16--18 balanced](#1NT Opening), maybe 5 card major or 5--4--2--2 long !c/!d, or 4--4--4--1 singleton A/K.
   (any) [interference](#Overcalls of our NT)
   2C = [Stayman, promissory, maybe weakish short !c 3 suiter](#1N--2C)
         2D = [no major](#1N--2C--2D)
