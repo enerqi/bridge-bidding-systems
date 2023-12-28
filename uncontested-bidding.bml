@@ -1427,10 +1427,12 @@ invitational plus raise 3 (GF) or 4 card support.
 - 4--4--3--2 / 4--3--3--3 hands should show 3 card support immediately
 - With game values, 3 card support, 5 card side suit and slam interest can bid 2/1 GF first instead of 2N
 - With 4 card support + 5 card side suit and no other side controls e.g. 5--4--2--2, can also bid 2/1 GF first then a
-  jump raise to 4M shows e.g AJxx support, AKJxx side suit and nothing outside
+  jump raise to 4M shows e.g AJxx support, AKJxx side suit and nothing outside - a picture raise
 - Consider if a 4 card raise is suitable for a splinter, there are two ranges ~10--13 3+ cover cards and 13--16 4.5+ cover cards
 - With game values and almost no chance of slam consider bidding game directly
 - Roughly like Jacoby, responder basically drives the auction, 3 level bids to show singleton, can stop in 3M
+- Control bids by responder, the 2N bidder, will follow the agreed style, e.g. natural (perhaps fit finding) v.s honour
+  or shortage control
 
 The response structure has just enough room for the 18 different hand types opener could show whilst
 remaining below 4!h:
@@ -1441,8 +1443,9 @@ remaining below 4!h:
 (c) maximum, no shortness 5--4--2--2 or 6--3--2--2/7--2--2--2 with strength in main suit
 (d) void hand, any strength
   3D = relay, better than 3!h bid (fine in game v.s. minimum with !s singleton)
-      3H = minimum 5--3--3--2/5--4--2--2/6--3--2--2, NF
-          3N = to play
+      3H = minimum 5--3--3--2/5--4--2--2/6--3--2--2/7--2--2--2, NF
+          3N = to play, often 4--3--3--3 or 4--4--3--2 with strong doubleton
+          4CD = control
       3S = !s singleton minimum OR !s void any strength
           3N = relay for shortage details, mild slam interest
               4C = void !s, maximum, e.g. -/AKxxx/Axxx/Kxxx
@@ -1468,8 +1471,9 @@ remaining below 4!h:
         4C = !c singleton
         4D = !d singleton
         4H = !s singleton
+    4CD = control
     4S = Kickback [RKB](#RKB 4N)
-3N = any maximum 5--3--3--2/6--3--2--2, all suits stopped
+3N = maximum 6--3--2--2 / 5--4--2--2 (with good doubleton control), stops
     4S = Kickback [RKB](#RKB 4N)
 4CD = maximum, 5--5+ (4!h showing !ss which would be 5--6 shape or 7--4--1--1), responder should only care about the Ace in other suits
 4H = maximum, 5!s--6!h / 7!h--4!s--1--1 (bid !s first with equal length) OR versus passed hand fast arrival game bid
@@ -2155,6 +2159,8 @@ invitational plus raise 3 (GF) or 4 card support.
   jump raise to 4M shows e.g AJxx support, AKJxx side suit and nothing outside
 - Consider if a 4 card raise is suitable for a splinter, there are two ranges ~10--13 3--4 cover cards and 13--16 4.5+ cover cards
 - Roughly like Jacoby, responder basically drives the auction, 3 level bids to show singleton, can stop in 3M
+- Control bids by responder, the 2N bidder, will follow the agreed style, e.g. natural (perhaps fit finding) v.s honour
+  or shortage control
 
 3C = artificial, multi-meaning.
 (a) minimum (semi)balanced no singleton (5332, 6322, 5422, 7222)
@@ -2171,15 +2177,16 @@ invitational plus raise 3 (GF) or 4 card support.
               4S = dead minimum, !h singleton
           4CD = control bids, not interested in !h shortage
           4S = to play, no slam interest v.s. short !hs
-      3S = minimum 5--3--3--2/5--4--2--2/6--3--2--2, NF
-          3N = to play
+      3S = minimum 5--3--3--2/5--4--2--2/6--3--2--2/7--2--2--2, NF
+          3N = to play, often 4--3--3--3 or 4--4--3--2 with strong doubleton
+          4CDH = control
       3N = !c/!d void, minimum
           4C = relay
               4D = void !d
               4H = void !c
       4C = !c void, maximum
       4D = !d void, maximum
-      4S = (semi)balanced maximum but unsuitable for 3N (e.g. strength in main suit)
+      4S = (semi)balanced maximum but unsuitable for 3N
          = 6 or 7 cards
   3S = to play v.s. *any* minimum, e.g. no good opposite min singleton !h or min (semi)balanced
       4S = maximum any OR void minimum
@@ -2193,12 +2200,14 @@ invitational plus raise 3 (GF) or 4 card support.
         4C = !c singleton maximum
         4D = !d singleton maximum
         4H = !h singleton maximum
+    4CD = control
     4S = to play, no slam interest
     4N = [RKB](#RKB 4N)
-3N = any maximum 5--3--3--2/6--3--2--2, all suits stopped
+3N = maximum 6--3--2--2 / 5--4--2--2 (with good doubleton control), stops
+    4CDH = control
     4N = [RKB](#RKB 4N)
 4CDH = maximum, 5--5+, responder should only care about the Ace in other suits
-4S = only used v.s. passed hand, fast arrival
+
 
 *** Interference
 
