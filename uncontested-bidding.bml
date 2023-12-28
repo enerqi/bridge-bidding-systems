@@ -203,20 +203,8 @@ Remember any maximum 5--5+ minors hand rebids 3C over 1M, so a shapely 5--5+ is 
 
 2C = natural, NF, 5--4+ either way in !cs + !ds, denies 4 !ss or 3!hs, often 14--15 hcp unless min 5--5 minors
     2D = simple preference, NF, natural continuations
-    2H = 6+ !hs, natural NF, ~8--10, too good for weak jump shift
+    2H = 6+ !hs, natural NF, ~8--10
     2S = FSF, GF
-        2N = 5--4 minors
-            3C = shape ask
-                3D = 5 !ds
-                3H = 5 !cs
-            3S = stop ask
-        3C = 5--5 minors
-            3H = natural 5+ cards, asking for Hx support
-            3S = stop ask
-        3D = 6!ds + 5!cs, minimum
-        3H = Hx+ support, 5--4 minors
-        3N = 6!cs + 5!ds, minimum
-        4CD = 6--6 minors + !h/!s void, minimum
     2N = natural, invitational, expects game v.s. 14--15
         3C = NF
         3DHS = forcing
@@ -365,20 +353,7 @@ Natural, 4+ cards, maybe longer minor canapé
 2C = natural, NF, 4--4+ minors either way, denies 3 !ss, often 14--15 hcp unless min 5--5+ minors
     2D = simple preference, NF, natural continuations
     2H = FSF, GF
-        2S = Hx+ support, 5--4 minors
-        2N = 5--4 minors
-            3C = shape ask
-                3D = 5 !ds
-                3H = 5 !cs
-            3H = stop ask
-        3C = 5--5 minors
-            3H = stop ask
-            3S = natural 5+ cards, asking for Hx support
-        3D = 6!ds + 5!cs, minimum
-        3H = natural 4 cards
-        3N = 6!cs + 5!ds, minimum
-        4CD = 6--6 minors + !h/!s void, minimum
-    2S = 6+ !ss, natural NF, ~8--10, too good for weak jump shift
+    2S = 6+ !ss, natural NF, ~8--10
     2N = natural, invitational, expects game v.s. 14--15
         3C = NF
         3DHS = forcing
@@ -2270,7 +2245,6 @@ Not as much suit quality required as the minor bids - directed to a major game i
 4C = implied cue bid
 4D = implied cue bid
 4HS = to play
-4N = double fit RKB
 
 ** 1S--3S
 
