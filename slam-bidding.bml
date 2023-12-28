@@ -258,35 +258,68 @@ Step responses:
 - higher ranking queen
 - both queens
 
-
 ** EKB Voidwood
 
-- (a) Jumps to the 5 level OR
-- (b) Above Game *4S jump cue* when can force another way, e.g. 1H--(2S)--4S, 2D--(2H)--4H, 2C--(2D)--4D
-- Normal RKB/Kickback after void shown should similarly ignore an Ace in the void suit
-- Impossibly natural - agreed a suit already, maybe an opponent's suit, or a forcing natural suit could be bid at a lower level
-- Over 1HS an immediate 5CD is EKB, not 1H--4S (4 level and a reasonable game to preempt)
-- Over other openings an immediate 5CD is natural
-- Shows a void in the suit bid and asking for keycard showing step responses.
+Shows a void in the suit bid and asking for keycard showing step responses using 03/14 keycard, not the usual 1430 style.
+Primarily a *jump* bid, higher than a typical splinter bid, though could be a raise of a shortage bid.
+
+- !cs agreed then 4H+ above Redwood
+- !ds agreed then 4S+ above Redwood
+- !hs agreed then 4S+
+- !ss agreed then 5 level
+
+Other points:
+
+- all jump bids unless you are single raising a shortage showing bid - if it's a natural suit / honour length control
+  then it's showing honour controls for "partner's" suit otherwise it'll be EKB
+- can in principle do EKB in partner's first bid suit after agreeing a different suit, but BEWARE we play 1S--2H--3H--4S
+  as a picture raise!
+- endeavour to explicitly set trumps first where there are potentially ambiguous auctions and ways to force, especially
+  in competition as 5x jump bids may sound like preemption
+- note 1HS--5x is EKB (but not 1H--4S reasonable game to preempt, so set trumps first), also 2CD--4H+ are natural, set trumps first
+- beware that you can handle all the EKB responses and if not, consider something like Jacoby 2N first or possibly an
+  initial splinter
+- jump cue with minor fit still has Redwood as priority, e.g. 2D--(2H)--4H, 2C--(2D)--4D Redwood
+- NOT directly over preempts (2H up to 4D), only possible if set trumps somehow
+
+*** Non jump bid EKB exceptions
+
+Competition from the opponents then cue bidding their suit "above game" (above Redwood for minors):
+
+- (1S)--X--(2S)--4S EKB
+- (1S)--2H--(3S)--4S EKB
+- (1S)--3H--(4S)--5S EKB
+- (2D)--4D--5D
+- (2N)--4C--5C (2N as both minors)
+- (3C)--4C--5C  (4C majors)
+- tinyurl.com/yt569ok4
+
+Transfers over NT hands:
+
+- 1N--4CD--4DH then non-jump *rare* as slam is very speculative for these hands (start with 2x transfer with void otherwise)
+- 2N--3D/3H then transfer break and non-jump
+- 2N--4CD Lissabon slam try in a major
+
+*** EKB Responses
 
 4x/5x EKB
-    xstep = 1/4, 3/0, 2, 2 with step responses, 5th step = 2 KC + some void, 6x = 1 KC + that void (or higher suit)
-        1step = first non-trump - Q ask
-            6side = lowest side K, have Q
-            6slam = no Q
+    xstep = 0/3, 1/4, 2, 2 with step responses, 5th step = 2 KC + some void, 6x = 1 KC + that void (or higher suit)
+        1step = first (non-trump) suit - Q ask
+            6void = ace of void suit, have Q
+            others = normal [Queen Ask](#Queen Ask)
         5N = K ask, same as RKB
+        6x = (no 5N available, queen known) substitute K ask - or leave as 3rd round ask?
 
 tinyurl.com/y6yv5m8r
 
-*** King Request when no 5N available
+*** EKB King Request when no 5N available
 
 5D--5N = EKB response taking up 5N
     6C = asks for that specific King, bid 7 with !c King
     6D = asks for that specific King, bid 7 with !d King
     6H = asks for that specific King, bid 7 with !h King
 
-
-** Weak RKB
+** Preempt RKB
 
 Specific situations when responder is known to be weak (opening a preempt). Steps responses limited to 2 keycards:
 

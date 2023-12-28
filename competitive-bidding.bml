@@ -2099,7 +2099,7 @@ As [1NT Interference and Lebensohl](#1NT Interference and Lebensohl)
     4D = !ds + !ss, GF
         4HS = to play
         4N = !s RKB
-        5C = !d slam try
+        5C = !d slam try (not EKB, no !d slam try available otherwise)
         5D = to play
         5H = natural jump new suit, self-sufficient, slam interest
 
