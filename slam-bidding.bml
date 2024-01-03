@@ -38,33 +38,73 @@ Meta agreements and some slam finding conventions
 
 ** What is 4N?
 
-Natural quantitative, to play, ace asking, key card asking or takeout? Here's another ordered blanket rules list:
+Natural quantitative, to play, ace asking, key card asking, takeout or other?
+
+
+*** Minor Agreed 4N
+
+- both minors supported, two 8+ card fits - [Double Fit RKB](#Double Fit RKB)
+- jump 4N - quantitative
+- non-jump 4N with limited hand - natural, to play
+- after Redwood - natural, to play (not King ask etc.)
+
+**** 2NT Auto RKB Module
+
+Special case - a natural 2N opening or rebid takes a lot of space and is a bit of a slam killer. Often a
+minor suit may not be shown until the 4 level making agreeing and using something like Redwood impractical. After
+showing a new minor at the 4 level:
+
+- next suit "last train" like (NOT Redwood), such as 3 card support, 3 keycards but something bad like xxx trump support
+
+Bidding 4N changes to be minor RKB! This is an exception to the general rule of 4N never being used as RKB/Redwood for a minor -
+it's normally only quantitative. 5x free bids are *auto RKB*, similar to the direct bids.
+
+Beware there's a special case in the [Minor slam tries module](#Minor slam tries module) where the next suit is 5!cs
+instead of last train.
+
+- other spare bids (e.g. ...4C--4H/4S) are control bids: good hand with support
+
+Bidding 4N changes to be minor RKB! 5x free bids are *auto RKB*, similar to the direct bids.
+
+- direct 4N is "negative", bad support and/or just 3 cards with few keycards (i.e. 2 keycards)
+
+PASSABLE. May also escape to the minor (e.g. perhaps they actually had 6 cards) or use Auto RKB.
+
+- direct 5m is fast arrival, 4+ card support, but otherwise bad keycards.
+
+Usually passed or raised to 6m. Presumably 5N King ask or a 3rd round control ask are still on if responder is good
+enough to search for the grand opposite the presumed 2 keycards.
+
+- 5x free bids are *auto RKB*, RKB step responses that cannot use 5m as a step, usually 3+ keycards as often forced to
+  slam
+
+**** Minor Lissabon follow on
+
+Whilst there's even less room in this situation, the 4N negative and auto RKB bids also apply after minor showing
+Lissabon bids (2N--4HS).
+
+Over 2N--4H there is space for a last train bid, but over 2N--4S it's not available
+
+
+*** Major Agreed 4N
+
+- two suits naturally supported, at least one major, two 8+ card fits - [Double Fit RKB](#Double Fit RKB)
+- raised or set suit - [RKB](#RKB 4N)
+- long good 6+ suit implied (eg. 3 level jump overcall) - [RKB](#RKB 4N)
+
+*** Others 4N
 
 - Partner *never* bid - Takeout
-- Jump 4N when Kickback/Redwood Agreed (illogical to bid the suit naturally) - natural, Quantitative
-- Redwood/Kickback for !c/!d/!hs agreed/set and also shown a long side suit then see following:
-- !ss (primary) + !cs then 4!d double fit, 4N !s RKB
-- !ss + !ds then 4!h double fit, 4N !s RKB
-- !hs + !ss then 4N double fit
-- !cs + !hs, then 4!d double fit, 4S !h RKB
-- !ds + !hs, then 4S !h RKB, 4N double fit
-- Kickback for primary suit is RKB for single suit, Kickback for secondary suit is Double Fit RKB, but 4N is double fit RKB if secondary suit Kickback not available (unless unavailable with !ss as primary)
-- Major suit *raised* - RKB
-- Major suit set - RKB
-- Long good suit implied (eg. 3 level jump overcall) - RKB
-- Jump response to Takeout double without interference - Quantitative
-- Jump 4N with all suits bid and no fit found - Quantitative
 - 1 minor then over jump 4 level interference - Takeout/Unusual
-- Long natural suit (1!h/!s or 2!c/!d) then over jump 4 level interference - RKB
-- substitute control ask bid after pre-empt opening 2!h / 3!c/!d / 3!h / 4!c
-- Jump 4N over 2!s/3!s opening - *WEAK* RKB
-- Non-jump 4N with limited hand - natural, to play
-- Non-Jump 4N without Major raised or "set" (including first takeout response, or over opponents 4!c/!d opening or after our jump 4!c/!d overcall) - natural, to play
-- 1N opened or overcalled, and no major set, and after non-slam try stayman transfers - natural, Quantitative
-- NT bid raised (including "NT" bids by artificial means) - natural, Quantitative
-- RKB for last bid suit
-- RKB for implied !h!s suit
-- Blackwood in response to an initial suit opening bid 1!d/1!h/1!s/2!c/2!d
+- jump response to Takeout double without interference - Quantitative
+- jump 4N with all suits bid and no fit found - Quantitative
+- jump 4N when easy way to force and set suit major available - Quantitative
+- 1N opened or overcalled, and no major set, and after non-slam try stayman transfers - Quantitative
+- NT bid raised (including "NT" bids by artificial means) - Quantitative
+- non-jump 4N with limited hand - natural, to play
+- long natural major (1!h/!s) then over jump 4 level interference - [RKB](#RKB 4N)
+- long natural minor (2!c/!d) then over jump 4 level interference - Quantitative
+
 
 ** Cue Bids
 
