@@ -5,8 +5,10 @@
 ** We Overcall or X/XX Summary
 
 - Generally based more on shape than exact strength
+- Usually 5 cards, 4 cards may have leading value occasionally, but normally we only bid if partner passed already and
+  the suit is very good, plus compensating extra values
 - 1 level light major suit overcalls, ~(7)8+ hcp and sensible suits or unbalanced with low hcp or VUL
-- 1D overcalls are likely 10+ reasonable opening bids
+- 1D overcalls are likely 10+ reasonable opening bids (they are not very preemptive after all, even if lead-directing)
 - 2 level minor overcalls are fine on "bad" 5 carders e.g. AJxxx+ iff partner not passed and have enough values / other suit tolerance
 - 2 level minor overcalls should not be less than an opening hand, expect partner to look for 3N
 - Responsive doubles to 3!s
@@ -24,7 +26,7 @@
 - Switch transfers over 2CD overcalls
 - Jump cue (3 level) is a mixed raise supporting a major
 - Jump cue (3 level) is a splinter supporting a minor
-- 3 level raise depends if responder bids a balance of [pre-emptive and cooperative](#HCR cue bids and 2N Raise in Competition)
+- 3 level raise depends if responder bids a balance or [pre-emptive and cooperative](#HCR cue bids and 2N Raise in Competition)
 - when opponents have 2 suits a 4th position (sandwich): cue sitting OVER is natural, cue sitting UNDER is *Michaels*,
   2N better Michaels (6--5 usually) unless there are three unbid suits then unusual
 - when opponents bid (1 Major)--(1NT) cue is *Michaels*
@@ -41,6 +43,8 @@
 - any level takeout doubles then correcting to the cheapest other suit shows a different 2 suiter and not any extras
 - reasonable defensive values are required for a takeout double, not some very light overcall - advancer will push to
   game with 13+ and invite with ~10--12 on their own suit
+- perfect takeout double shapes e.g. 4--4--4--1 maybe light "opening" values, i.e ~10 hcp
+- 11 hcp doubles can be 4--4--3--2 without wasted values
 - 6--4 major hands can optionally be bid like 5--4 hands after the takeout double.
 - 6 major and 4 minor will typically ignore the minor.
 - minor X then ELC typically is only both majors, not a minor major
@@ -164,6 +168,30 @@ Follow up responses are roughly 1 point more conservative
 - Over (1!s) 1N is long minor + !hs, more likely 5--5 as unlikely to out compete !ss
 - 2N would be 6--5 lower unbid suits
 
+** Law of Total Tricks Bidding
+
+Normal advice about bidding to the level indicated by the law of total tricks applies.
+
+However, re-evaluating hands in any competition or after just one bid from the opponents is important.
+
+Adjust / downgrade:
+
+- flat hands (especially 4--3--3--3!)
+- slow values in opponent's suit
+- slow values in short side suits (usually harder to setup)
+- (partial) misfit indications
+- wasted values sat over by opponents
+
+Upgrade influences:
+
+- distributional hands (though you may have added shortness support points already)
+- extra trump length
+- supporting slow values in your main suit(s), queens and jacks mean more there
+- Aces and Kings, these are quick tricks/control cards
+- double fit
+- super fit, extra length
+
+
 ** We Open with Fit and Slam Potential then 4th Hand High Level Interference
 
 - slam is potentially on
@@ -254,9 +282,9 @@ We have maximum tempo, so:
 - 3 level (jump or not) raises are cooperative, which allows partner to bid with the right hand (they do have a wide
   ranging overcall). Jumps are worth less than any invitational support bids we have, usually the sort of hand
   that expects to get pushed to the 3 level and so bids early to make the opponenents guess.
-- double is responsive, e.g. (1!d)--1S--(3!d)--X, not support showing, when they bid and raise (OBAR). This becomes
-  mainly value showing from 3S.
-- there maybe limited support tools at the 3 level, though maybe natural game try is possible, e.g (1!d)--1S--(3!d)--3H.
+- double is variable in meaning, e.g. [responsive](#Responsive Doubles Style), values/cooperative over a 2 level third
+  suit, or [Relay Lebensohl](#Relay Lebensohl Doubles) over jump raise. Doubling a raise from 3S becomes mainly value
+  showing. If somehow the new third suit is bid at the 3 level, it should be penalty interest (less general values/cooperative).
 
 **** Advancers Support Tools
 

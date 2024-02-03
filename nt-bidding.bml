@@ -41,8 +41,9 @@ Responding:
 - 6--4 majors: usually just go for the 6 card suit
 - 4--3--3--3 hands with 4 card !h/!s often do better in NT
 - 5--3--3--2 with major can use stayman then bid NT or Smolen, maybe only bidding 4HS with a 9 card fit
+- 5 card minor + 3 card major 5--3--3--2 slam try: puppet stayman
 - 5--4--(3--1) GF minor hands: 3DH responses allow stop investigation for 3N
-- 5--4--(3--1) slam try minor hands: Puppet Stayman
+- 5--4--(3--1) slam try minor hands: Stayman (NOT puppet stayman!)
 - one 4 card major invitational: Stayman
 - one 4 card major GF OR one/two 3 card major(s) when GF AND NOT 5--4--(3--1) minor hands (see 3DH): Puppet Stayman
 - minor single suiter, any strength: 2!s/2N !c/!d transfers
@@ -253,12 +254,13 @@ Stayman, promissory, maybe weakish 4--4--4--1!c
         3N = limited, stoppers in unbid suits
     3H = invitational
         3N = 4--3--3--3, suggests NT
-    3S = asks for 5 !hs, either slam try or exactly 3 !hs
+    3S = asks for 5 !hs, either slam try or exactly 3 !hs, maybe RKB prelude
         3N = 4!hs
             cue = slam try 4+ !hs
         4CD = cue bid, 5!hs
         4H = 5!hs, minimum or occasionally 4 good !hs with a weak side suit
     4CD = singleton/void + !h support
+    4N = quantitative
 
 **** 1N--2C--2S
 
@@ -291,7 +293,7 @@ Stayman, promissory, maybe weakish 4--4--4--1!c
             4D = 5!ds, natural slam invitational
         4x = cue, extras, good hand with !d support
         4D = normal hand, !d support
-    3H = asks for 5 !ss, either slam try or exactly 3 !ss
+    3H = asks for 5 !ss, either slam try or exactly 3 !ss, maybe RKB prelude
         3S = 4 good !ss, some weak suit often !hs
         3N = normal bid with 4!ss
         4CDH = cue bid, 5!ss
@@ -1213,7 +1215,7 @@ both majors vs one major slam try later
         (3S) = competition
             Dbl = 4!hs
 
-** Overcalls of our NT
+* Overcalls of our NT
 
 - 1NT opening then interference
 - 1NT overcall then interference
@@ -1442,7 +1444,7 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
         XX = to play interest
         any = system on
 
-** 1NT Escape
+* 1NT Escape
 
 Situations include:
 

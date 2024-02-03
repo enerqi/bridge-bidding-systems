@@ -213,17 +213,93 @@ Note, the "when partner needs it" can be extended to opening leads with general 
 difficulties for both declarer and the opening leader's partner.
 
 
+* 5 Lines of Defense Guide
+
+These influence the opening lead, but also what you may switch to on an early trick after evaluating dummy
+
+** Forcing Declarer
+
+Running declarer out of trumps and so they may lose control of the hand, unable to cash all their side suit winners
+and/or the defenders can cash their side suit winners. This requires the defenders to attack a suit that the declarer
+then has to ruff, shortening their trump length (the long trump hand!).
+
+Conditions:
+
+- declarer has a two suiter hand (obvious from bids like Michael's), which often makes them weak in other suits, and
+  dummy may not have the those other suits covered
+- partner suspected of having 4 trumps
+- tight 4--3 fits
+- defenders have fast/quick tricks in a side suit that we believe will force declarer immediately despite their long
+  trump length (they may need tempo to setup other suits)
+
+To force, leads can be aggressive, i.e. from tenace holdings
+
+** Active Defense
+
+Attacking immediately, not with thought of forcing declarer. We believe that declarer will setup or immediately dispose
+of some losers if we do not attack now.
+
+Conditions:
+
+- side suit exists that appears to be breaking for declarer
+- long running suits evident (with suggestion of unknown weak side suit)
+- extra strength implied, e.g. slam interest, so not much work required to setup extra side tricks
+
+To force, leads can be aggressive, i.e. from tenace holdings
+
+** Passive Defense
+
+Opposite approach to active that tries not to give tricks away - lets declarer make the guesses.
+
+Conditions:
+
+- no good side suit for declarer, so nowhere to throw their losers
+- generally bad splitting main suit(s) for declarer
+- weak dummy opposite strong declarer, so let them handle entries and guessing what to finesse with limited entries
+- weak suits in notrumps, e.g. at best poor 4 cards, 1 honour, opposite probably at most 4 cards for partner and often less
+- 6NT and grand slam defence, which rarely have any weak suit worth attacking (6!c!d!h!s may have weak side suits)
+
+** Ruffing Reduction
+
+Giving up a trump trick by leading an honour or away from one may gain or at least be even where it's important to cut
+down on ruffs.
+
+Conditions:
+
+- misfits, particularly where we have some control in the trump suit (often we have a trump stack and have penalty doubled them)
+- dummy likely short in a known suit (from the bidding - explicitly or some implicit flaw for notrumps) and ruffing in
+  dummy must be reduced
+- we control ALL the other suits (often a sacrifice)
+- we control their side suit, even if we do not control all the suits
+- ...NOT when in doubt lead trumps
+
+** Ruffing As Defenders
+
+Easy to understand, though often an overused desparate action. Trumps promotions and uppercuts may be more probable to
+succeed than partner having a miracle singleton (especially if they could have lead it themselves earlier).
+
+Condition:
+
+- shortage in unbid suit (partner actually likely to have some values there) and partner may get in again quickly
+- length in a suit they have bid indicates partner should be short without dummy or declarer being short (e.g. bid and raised side suit)
+- trump promotion/uppercut (uppercut being we ruff with a high card we would have won with anyway, but partner has honour + length)
+- weak hand desparation move!
+
+
 ** Partnership Leading Style
 
+The 5 lines of defense suggest a general direction, but if unsure of what to do then the partnership style may indicate
+what we are more likely to do.
+
 - two card sequences fine in suit contracts, e.g. KQxx then lead K
-- avoid underleading an Ace in suit contracts generally, but when expecting partner to have the King, or setting up
-  suits in NT, it's reasonable
-- ace lead without King sometimes against suit contracts: maybe if they preempted, we need to attack (e.g. side suit
+- avoid underleading an Ace in suit contracts generally, but when expecting partner to have the King, the general caveat
+  about forcing/active defences
+- Ace lead without King sometimes against suit contracts: maybe if they preempted, we need to attack (e.g. side suit
   threats), it's a slam, a singleton Ace, 5 level contract, known strength is there, the suit is 7/8 cards long
-- king underlead possible in trump slams, less likely in NT when they have no long suits to run
+- king underlead possible in trump slams, less likely in NT when they have no long suits to run - passive v.s. active
+  defence at slams is typically 6N/7x passive and 6x trump active
 - doubleton leads often avoid, perhaps if clearly a doubleton to partner, they have a generally good hand or possibly we
   have good trump control so more time to ruff
 - small tripleton leads ok, often passive play
 - singleton leads generally ok, but if we have reasonable trumps consider if we won't gain anything and just help
   declarer pick up a bad suit
-- trump leads generally ok as a passive play or trump shortening play
