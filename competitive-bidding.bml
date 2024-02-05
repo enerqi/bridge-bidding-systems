@@ -364,326 +364,6 @@ reasonably have a natural 2N bid (when the opponents have opened first we often 
 P--(1H)--X--(2H)--
     2N = scrambling, not forced, passed originally so limited strength
 
-
-** Doubles
-
-- Is it a standard *negative* double situation? Negative X played to 4!h (but more values showing Thrump style over
-  double jump to 3DHS). Promising the unbid major(s) or ability to handle the auction based on partner's next bid. Used
-  to start a *stop ask* (Directional Asking Bid).
-- Is it a standard maximal *competitive* double situation? Competitive X played to 3!s. Double of opponents' raised suit
-  when partner has opened or overcalled: 1H--(2D)--2H--(3D)--X
-- Is it a standard [*responsive* double](#Responsive Doubles Style) situation showing the other two suits? Responsive X played to 3!s. Partner does
-  takeout X or overcalls of opener and then we X the opponents' raise (OBAR). Their raise can be artificial.
-
-If these do not apply then some blanket rules exist.
-
-Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others play this to 3!s).
-*"All doubles of bids through 2!s are takeout UNLESS"*:
-
-1. It's defined above as one of *Negative, Competitive or Responsive*
-2. partner responded 1N/2C/2D, doubler sitting over. Compare when open or overcall -- [Overcalls of our NT](#Overcalls of our NT) first double is takeout, second penalty.
-3. our side bid and raised a suit. So, 1H--(P)--2H--(2S)--X should be penalty, whereas 1H--(1S)--2H--(2S)--X is competitive.
-4. our side redoubled
-5. our side made a penalty double or penalty pass
-6. the bid doubled was artificial
-7. partner preempts
-8. our side are in a GF (1!h/!s + 2/1, 1!c--1N/2!s)
-9. our side invites 3N (1!c--2!s, 1!c--2N)
-10. our side limits hand with no major (1!c--1N/2!c is no major or already in a GF)
-11. a passed hand doubles their solo rebid, (1H)--P--(P)--X--(2H)--X
-
-*** Takeout Doubles
-
-Modern standard:
-
-- happy to X with minimum when have the other major
-- happy to have a doubleton in an unbid minor if we have the major(s)
-- 1C/1D takeout emphasises the majors, nothing about the minors
-
-Consider a takeout X (and maybe later DAB cue bid) instead of a 1NT bid with 4--4--3--2, the other major and the sort of hand where
-partner should play NT (we have Axx they Qx)
-
-
-*** Relay Lebensohl Doubles
-
-- After we open or overcall, there are many times the opponents raise the bidding to the 3 level *before partners bids*
-- Played when we have shown a suit, so opened 1HS, overcalled or takeout double
-- Double is a relay to the next suit, instead of being a "responsive" double or negative double, with competitive hands
-- Double of most 3 level bids, anything that's not specifically shortage showing, so fit jumps, new suits,
-  natural raises or artificial raises. Doubling a shortage implies our own double fit or a very good suit with sacrifice interest
-- A later cue bid or 3N by doubler shows a normal negative double
-- Lebensohl like allowing a distinction between competitive bids and genuine GF new suits / support invitational raises
-
-Note, over 3S double can be competitive relay like, but we initially assume it's asking for a stop (Thrump).
-
-It's conceivable to play this after we open 1C/1D/1N, but without a known long suit finding a stop or checking for a
-4 card major should be more frequent and useful than just having the option to compete, certainly for IMPs.
-
-Examples:
-
-- 1HS--(3x)
-- (1H)--1S--(3H)
-- (1H)--1S--(3C) support showing bid
-- (1H)--1S--(3C) anything, not shortage showing
-- (1H)--X--(3H)
-- (1H)--X--(3C) support showing bid
-- (1H)--X--(3C) anything, not shortage showing
-- (1H)--2D--(3H)
-- (1H)--2S--(3H) our weak jump overcall
-- (2D)--X--(3D)
-- (2H)--X--(3H) weak two preempted further
-- (2H)--2S--(3H)
-- (2D)--2S--(3H) multi preempted further
-
-When we open and the opponent jump bids, it's often a preempt (maybe intermediate). Here, it's good to have a way
-to find a slam and not preempt a preempt. E.g.
-
-1H--(3D)
-    3H = natural limit raise
-    4H = slam try without !d control, not obstructive
-
-When they open a slam is very unlikely for our side and a penalty double will rarely be useful. E.g.
-
-(1H)--1S--(3H)
-    3S = natural limit raise
-    4S = obstructive, ambiguous strength
-
-**** Optional Extension After 1C Opening or 1D Opening
-
-Given that a 1C and 1D opening can be ambiguous, the relay double can be extended to auctions such as:
-
-- 1C--(1H)--X--(3H) or any other 3 raise
-- 1C--(1S)--X--(3S)
-- 1C--(2H)--X--(3H)
-
-Responder has shown a suit and the opponents have pushed to the 3 level. Given that 1C (and less so 1D) are quite vague
-we can treat opener as having not bid.
-
-
-*** Responsive Doubles Style
-
-A standard responsive double is a form of takeout with focus on the unbid major(s). When partner makes a takeout double
-advancer's double is a form of re-takeout. Sometimes it is more values, perhaps with a single minor suit, tolerance for partner but
-lacking a stop for NT.
-
-What about when there is no unbid/implied major? For example, (1H)--1S--(2H) or (1S)--X--(2S). Should our responsive
-double be used to cater for minor hands with values?
-
-- (1H)--1S--(2H), we know overcaller has 5 cards and use the usual HCR, or 2N support bids, 2S limited support or
-  3S cooperative -- lots of options, therefore double can be a standard takeout bid showing the minors and relevant
-  values for the level
-- (1S)--2H--(2S), we also know overcaller has 5 cards, 2N is a support bid. The HCR goes beyond 3 of our suit and
-  therefore is GF and shortage/offensive showing. 3H, however, can still be used as competitive, therefore double is
-  the typical responsive values with the minor(s)
-
-Pushed to the 3 level, things are different. Here we choose to play [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
-to allow competing in partner's suit or a different suit.
-
-- (1H)--1S--(3H), with limited bidding space, a standard 3S becomes cooperative to game and double a typical takeout,
-  but played with [Relay Lebensohl Doubles](#Relay Lebensohl Doubles) 3S is invitational. A hand without a stop and
-  limited !s may struggle with this style.
-- (1S)--2H--(3S), in standard style as forced to the 4 level this is a mainly values showing responsive double, but
-  we interpret it as Thrump OR [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
-
-The double is always more value showing as it gets high level, especially over 3!s. At the 4 level we just call our
-double "values" showing instead of responsive.
-
-What about when the opponents raise a minor?
-
-- (1D)--1S--(2D), there's a lot of space and various support showing bids so double is similar to a negative double
-  showing 4 !hs (maybe 5 bad ones). With a good 5!h hand we could just bid 2H, or 3H with a 6 card good invitational
-  hand.
-- (1D)--1S--(3D), again [Relay Lebensohl Doubles](#Relay Lebensohl Doubles) + invitational 3S bid. The alternative
-  standard style could use 3S as cooperative mildly invitational bid.
-
-When we bid a minor?
-
-- (1S)--2C--(2S), the 2C overcall virtually denies !hs, so double can show 5 !hs or 6 bad ones. Standard responsive
-  doubles focus on the two other suits, e.g. 4!hs and 5!ds, which makes it less clear that bidding the other
-  major directly promises 6 reasonable cards. There is no room for a jump invitational 3H bid so the distinction is
-  important.
-
-When we start with a takeout double:
-
-- (1D)--X--(2D), we cannot expect partner to have 5 cards in a particular major, rarely not even 4 cards. We cue bid 3D
-  with GF both majors 4--4+ (or possibly one major and slam try with shortage) or double with values and one 4 card
-  major (or less than an invite both majors), so 2N [RLEB](#Reversed Lebensohl RLEB) with both majors + stop and an
-  exact invite is possible, though maybe clearer to punt the 3D GF cue
-- (1D)--X--(3D), similar but more pressure. [Relay Lebensohl Doubles](#Relay Lebensohl Doubles) + 3HS invitational.
-  Subject to further refinement, given that doubler may not have both majors. Perhaps double 3+ both majors + 3HS with 5
-  cards invitational is better.
-
-Takeout over a major:
-
-- (1M)--X--(2M), no promise of a 5 card other major by doubler. [RLEB](#Reversed Lebensohl RLEB) is on here. Double can
-  show values with 4 card major support instead of maybe values and minors (similar to doubles after interference over
-  1NT). Bidding the other major directly or via Lebensohl at the 3 level should indicate 5 cards
-- (1H)--X--(3H), [Relay Lebensohl Doubles](#Relay Lebensohl Doubles) + 3S invitational. Given that a takeout double is
-  not as wide ranging as an overcall the standard alternative with double as "values", a competitive 3S and
-  no invitational bid is reasonable
-- (1S)--X--(3S), double is Thrump OR [Relay Lebensohl Doubles](#Relay Lebensohl Doubles). Unsure of !h length, the
-  alternative standard double showing values (with 5!hs would probably just bid 4H) is reasonable.
-
-
-*** Activity Doubles and Splinters
-
-When the opponents show a short suit that does not make much sense for us to lead, such as a splinter, then
-despite us apparently lacking strength, double should be for activity, in this case a potential sacrifice
-
-Note, an alternative is takeout, e.g. !ss if they bid !hs and more general takeout if they have the master !ss
-
-*** Activity Doubles by Weak Often Preempt Hands
-
-A weak hand that has already described some offensive ability, such as a weak two, cannot reasonably have a penalty double
-of any game the opponents bid, UNLESS partner has had space to show GF values and defense.
-
-So, if we open with a preempt, it is possible for the preempter to double with extreme shape (e.g. 6--4/6--5 after 2HS openings)
-and shortage in the opponents' suit, which suggests sacrifice unless partner can pass with a penalty trump stack.
-
-
-*** Single Raise they Compete We Double
-
-- Double shows extra values (possibly penalty)
-
-1H--(1S)--2H--(2S)
-    Dbl = extra values, lacking extra length
-    2N = general game try, not exposing opener
-    3CD = natural trial bid, exposing opener
-    3H = weaker not invitational, reasonable suit/shape
-    3S = GF, !s shortage, offensive hand
-
-1HS--(P)--2HS--(2/3x)
-    Dbl = penalty (see rule - we bid and raised a suit)
-
-1HS--(P)--2HS--(X)
-    XX = extra values and not just length as partner supported, forcing to 3HS or penalties
-    3HS = NF
-
-1HS--(X)--2HS--(3oM)
-    Dbl = extras, penalty suggestion (see rule - we bid and raised a suit)
-    3HS = NF
-
-1HS--(any)--2HS--(3raise)
-    Dbl = extras, penalty suggestion (see rule - we bid and raised a suit)
-    3HS = NF
-
-*** 2N support raise then we Double
-
-- More likely have game on, so double is NOT penalty interest if they bid raise a suit
-- Where they have no fit double remains penalty
-
-1HS--(any)--2N--(any)
-    Dbl = penalty, (see rule - we bid and raised a suit)
-
-1HS--(2x)--(2N)--(3x)
-    Dbl = extra values, shortage - SPECIAL non-penalty agreement
-    4x = (below game), void
-
-
-*** Delayed Takeout Doubles
-
-When not doubling on the first round:
-
-- X is typically long in the opponents' first bid suit
-    - short in opener's second bid suit
-    - short in responders bid suit when opener rebids the same suit
-- decent strength, often 4 card suits competing
-
-*** Stolen Double by advancer - Opponents' HCR double
-
-(1H)--1S--(2S/3S)
-    X = "Stolen" bid, double I would have bid that.
-
-*** Anti-Leading Doubles of Raised or Strongly Bid Suits
-
-- strongly bid means shown 6 cards already
-- typically a 3 level anti lead double
-
-The extra length meaning has less value when we have already shown a 6 card suit or our side has raised the suit.
-
-
-*** Extra Length 2 Level Double of Cuebid by Opener - Partner not bid
-
-1H--(1S)--P--(2H)
-    X = extra !h length, extra values inviting 3!h bid with Hx+ support
-    3H = very good suit and shape, extras
-
-Other examples:
-
-- 1D--(1HS)--P--(2D)--X
-- 1S--(2CDH)--P--(2S)--X
-
-Pass then later X would allow opener to compete in the minors suits.
-
-*** Double Showing HCR by advancer - Opponents' 3x raise
-
-- (1x) then overcall by us then the opponents raise to (3x)
-- Note, (1x)--1M--(2x) then X is values 9+ as we have space for 2N invite plus raise
-
-X then shows a HCR.
-
-*** Extra trump redouble - we stop 2HS they takeout X
-
-Examples:
-
-1D--(P)--1S--(P)--2S--(P)--P--(X)
-    XX = opener shows 4 card support as may have raised with only 3 cards
-
-1D--(P)--1S--(P)--2S--(X)
-    XX = responder now shows 5 cards, inviting opener to compete 3!s
-
-1M--(P)--1N--(P)--2M--(X)
-    XX = responder has 3+ card support opposite 6 cards
-
-1M--(P)--1N--(P)--2CD--(P)--2M--(X)
-    XX = opener has 6 cards
-
-1M--(P)--2M--(X)
-    XX = pointless?, 6 cards, dead minimum presumably as facing a 3 card invite
-
-1N--(P)--2D--(P)--2H--(P)--P--(X)
-    XX = opener has 3 card support
-
-1C--(P)--1S--(P)--2S--(P)--P--(X)
-    XX = 5 card weak NT hand
-
-1C--(P)--1S--(P)--2S--(X)
-    XX = responder now shows 5 cards, inviting opener to compete 3!s
-
-1C--(P)--1H--(P)--1S--(P)--2S--(X)
-    XX = opener has 5 cards
-
-*** FSF Redouble or Other Artificial Forcing Bids
-
-When opponents double an artificial bid for lead direction
-
-- XX for strong play suggestion (e.g. 4 very good / 5+ reasonable suit)
-- Pass to play if partner can help in support e.g. Hxx+
-- Cannot play in the contract only doubled, must be redoubled
-- Otherwise bid on as if not doubled
-
-*** Handling doubles of our stopper ask of their suit
-
-Helping to right side 3N or not play it.
-
-(1S)--X--(P)--3C--(P)--3S--(X) = lead-directing X of DAB
-    P = xx, Jx, or xxx in their suit
-    3N = good stopper, e.g. AJx
-    XX = either a full or partial stopper (Qx, Jxx)
-    bid = singleton only in their suit
-    4S = void in their suit
-
-3!s cue here could be a proxy for a very strong unbalanced hand, not a DAB with something in !s, but then 3N will be pulled anyway.
-
-*** 3N Contract Lead Directing Double
-
-Standard meanings by the defender sitting under the declarer:
-
-- lead my suit
-- lead our suit (we both bid obvious)
-- lead dummies first bid suit
-- lead shortest major if no suits mentioned
-
 ** Major Opening and Responder's 4CD Slam Try
 
 We open 1H/1S and opponents interfere with a 2S jump overcall OR specific two suiter bids, e.g.
@@ -922,6 +602,326 @@ Examples:
 
 - pass with nothing to say
 - over double or 2D *system on*, e.g. bid or double 2D with artificial, 12+ hcp
+
+
+* Doubles
+
+- Is it a standard *negative* double situation? Negative X played to 4!h (but more values showing Thrump style over
+  double jump to 3DHS). Promising the unbid major(s) or ability to handle the auction based on partner's next bid. Used
+  to start a *stop ask* (Directional Asking Bid).
+- Is it a standard maximal *competitive* double situation? Competitive X played to 3!s. Double of opponents' raised suit
+  when partner has opened or overcalled: 1H--(2D)--2H--(3D)--X
+- Is it a standard [*responsive* double](#Responsive Doubles Style) situation showing the other two suits? Responsive X played to 3!s. Partner does
+  takeout X or overcalls of opener and then we X the opponents' raise (OBAR). Their raise can be artificial.
+
+If these do not apply then some blanket rules exist.
+
+Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others play this to 3!s).
+*"All doubles of bids through 2!s are takeout UNLESS"*:
+
+1. It's defined above as one of *Negative, Competitive or Responsive*
+2. partner responded 1N/2C/2D, doubler sitting over. Compare when open or overcall -- [Overcalls of our NT](#Overcalls of our NT) first double is takeout, second penalty.
+3. our side bid and raised a suit. So, 1H--(P)--2H--(2S)--X should be penalty, whereas 1H--(1S)--2H--(2S)--X is competitive.
+4. our side redoubled
+5. our side made a penalty double or penalty pass
+6. the bid doubled was artificial
+7. partner preempts
+8. our side are in a GF (1!h/!s + 2/1, 1!c--1N/2!s)
+9. our side invites 3N (1!c--2!s, 1!c--2N)
+10. our side limits hand with no major (1!c--1N/2!c is no major or already in a GF)
+11. a passed hand doubles their solo rebid, (1H)--P--(P)--X--(2H)--X
+
+** Takeout Doubles
+
+Modern standard:
+
+- happy to X with minimum when have the other major
+- happy to have a doubleton in an unbid minor if we have the major(s)
+- 1C/1D takeout emphasises the majors, nothing about the minors
+
+Consider a takeout X (and maybe later DAB cue bid) instead of a 1NT bid with 4--4--3--2, the other major and the sort of hand where
+partner should play NT (we have Axx they Qx)
+
+
+** Relay Lebensohl Doubles
+
+- After we open or overcall, there are many times the opponents raise the bidding to the 3 level *before partners bids*
+- Played when we have shown a suit, so opened 1HS, overcalled or takeout double
+- Double is a relay to the next suit, instead of being a "responsive" double or negative double, with competitive hands
+- Double of most 3 level bids, anything that's not specifically shortage showing, so fit jumps, new suits,
+  natural raises or artificial raises. Doubling a shortage implies our own double fit or a very good suit with sacrifice interest
+- A later cue bid or 3N by doubler shows a normal negative double
+- Lebensohl like allowing a distinction between competitive bids and genuine GF new suits / support invitational raises
+
+Note, over 3S double can be competitive relay like, but we initially assume it's asking for a stop (Thrump).
+
+It's conceivable to play this after we open 1C/1D/1N, but without a known long suit finding a stop or checking for a
+4 card major should be more frequent and useful than just having the option to compete, certainly for IMPs.
+
+Examples:
+
+- 1HS--(3x)
+- (1H)--1S--(3H)
+- (1H)--1S--(3C) support showing bid
+- (1H)--1S--(3C) anything, not shortage showing
+- (1H)--X--(3H)
+- (1H)--X--(3C) support showing bid
+- (1H)--X--(3C) anything, not shortage showing
+- (1H)--2D--(3H)
+- (1H)--2S--(3H) our weak jump overcall
+- (2D)--X--(3D)
+- (2H)--X--(3H) weak two preempted further
+- (2H)--2S--(3H)
+- (2D)--2S--(3H) multi preempted further
+
+When we open and the opponent jump bids, it's often a preempt (maybe intermediate). Here, it's good to have a way
+to find a slam and not preempt a preempt. E.g.
+
+1H--(3D)
+    3H = natural limit raise
+    4H = slam try without !d control, not obstructive
+
+When they open a slam is very unlikely for our side and a penalty double will rarely be useful. E.g.
+
+(1H)--1S--(3H)
+    3S = natural limit raise
+    4S = obstructive, ambiguous strength
+
+*** Optional Extension After 1C Opening or 1D Opening
+
+Given that a 1C and 1D opening can be ambiguous, the relay double can be extended to auctions such as:
+
+- 1C--(1H)--X--(3H) or any other 3 raise
+- 1C--(1S)--X--(3S)
+- 1C--(2H)--X--(3H)
+
+Responder has shown a suit and the opponents have pushed to the 3 level. Given that 1C (and less so 1D) are quite vague
+we can treat opener as having not bid.
+
+
+** Responsive Doubles Style
+
+A standard responsive double is a form of takeout with focus on the unbid major(s). When partner makes a takeout double
+advancer's double is a form of re-takeout. Sometimes it is more values, perhaps with a single minor suit, tolerance for partner but
+lacking a stop for NT.
+
+What about when there is no unbid/implied major? For example, (1H)--1S--(2H) or (1S)--X--(2S). Should our responsive
+double be used to cater for minor hands with values?
+
+- (1H)--1S--(2H), we know overcaller has 5 cards and use the usual HCR, or 2N support bids, 2S limited support or
+  3S cooperative -- lots of options, therefore double can be a standard takeout bid showing the minors and relevant
+  values for the level
+- (1S)--2H--(2S), we also know overcaller has 5 cards, 2N is a support bid. The HCR goes beyond 3 of our suit and
+  therefore is GF and shortage/offensive showing. 3H, however, can still be used as competitive, therefore double is
+  the typical responsive values with the minor(s)
+
+Pushed to the 3 level, things are different. Here we choose to play [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
+to allow competing in partner's suit or a different suit.
+
+- (1H)--1S--(3H), with limited bidding space, a standard 3S becomes cooperative to game and double a typical takeout,
+  but played with [Relay Lebensohl Doubles](#Relay Lebensohl Doubles) 3S is invitational. A hand without a stop and
+  limited !s may struggle with this style.
+- (1S)--2H--(3S), in standard style as forced to the 4 level this is a mainly values showing responsive double, but
+  we interpret it as Thrump OR [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
+
+The double is always more value showing as it gets high level, especially over 3!s. At the 4 level we just call our
+double "values" showing instead of responsive.
+
+What about when the opponents raise a minor?
+
+- (1D)--1S--(2D), there's a lot of space and various support showing bids so double is similar to a negative double
+  showing 4 !hs (maybe 5 bad ones). With a good 5!h hand we could just bid 2H, or 3H with a 6 card good invitational
+  hand.
+- (1D)--1S--(3D), again [Relay Lebensohl Doubles](#Relay Lebensohl Doubles) + invitational 3S bid. The alternative
+  standard style could use 3S as cooperative mildly invitational bid.
+
+When we bid a minor?
+
+- (1S)--2C--(2S), the 2C overcall virtually denies !hs, so double can show 5 !hs or 6 bad ones. Standard responsive
+  doubles focus on the two other suits, e.g. 4!hs and 5!ds, which makes it less clear that bidding the other
+  major directly promises 6 reasonable cards. There is no room for a jump invitational 3H bid so the distinction is
+  important.
+
+When we start with a takeout double:
+
+- (1D)--X--(2D), we cannot expect partner to have 5 cards in a particular major, rarely not even 4 cards. We cue bid 3D
+  with GF both majors 4--4+ (or possibly one major and slam try with shortage) or double with values and one 4 card
+  major (or less than an invite both majors), so 2N [RLEB](#Reversed Lebensohl RLEB) with both majors + stop and an
+  exact invite is possible, though maybe clearer to punt the 3D GF cue
+- (1D)--X--(3D), similar but more pressure. [Relay Lebensohl Doubles](#Relay Lebensohl Doubles) + 3HS invitational.
+  Subject to further refinement, given that doubler may not have both majors. Perhaps double 3+ both majors + 3HS with 5
+  cards invitational is better.
+
+Takeout over a major:
+
+- (1M)--X--(2M), no promise of a 5 card other major by doubler. [RLEB](#Reversed Lebensohl RLEB) is on here. Double can
+  show values with 4 card major support instead of maybe values and minors (similar to doubles after interference over
+  1NT). Bidding the other major directly or via Lebensohl at the 3 level should indicate 5 cards
+- (1H)--X--(3H), [Relay Lebensohl Doubles](#Relay Lebensohl Doubles) + 3S invitational. Given that a takeout double is
+  not as wide ranging as an overcall the standard alternative with double as "values", a competitive 3S and
+  no invitational bid is reasonable
+- (1S)--X--(3S), double is Thrump OR [Relay Lebensohl Doubles](#Relay Lebensohl Doubles). Unsure of !h length, the
+  alternative standard double showing values (with 5!hs would probably just bid 4H) is reasonable.
+
+
+** Activity Doubles and Splinters
+
+When the opponents show a short suit that does not make much sense for us to lead, such as a splinter, then
+despite us apparently lacking strength, double should be for activity, in this case a potential sacrifice
+
+Note, an alternative is takeout, e.g. !ss if they bid !hs and more general takeout if they have the master !ss
+
+** Activity Doubles by Weak Often Preempt Hands
+
+A weak hand that has already described some offensive ability, such as a weak two, cannot reasonably have a penalty double
+of any game the opponents bid, UNLESS partner has had space to show GF values and defense.
+
+So, if we open with a preempt, it is possible for the preempter to double with extreme shape (e.g. 6--4/6--5 after 2HS openings)
+and shortage in the opponents' suit, which suggests sacrifice unless partner can pass with a penalty trump stack.
+
+
+** Single Raise they Compete We Double
+
+- Double shows extra values (possibly penalty)
+
+1H--(1S)--2H--(2S)
+    Dbl = extra values, lacking extra length
+    2N = general game try, not exposing opener
+    3CD = natural trial bid, exposing opener
+    3H = weaker not invitational, reasonable suit/shape
+    3S = GF, !s shortage, offensive hand
+
+1HS--(P)--2HS--(2/3x)
+    Dbl = penalty (see rule - we bid and raised a suit)
+
+1HS--(P)--2HS--(X)
+    XX = extra values and not just length as partner supported, forcing to 3HS or penalties
+    3HS = NF
+
+1HS--(X)--2HS--(3oM)
+    Dbl = extras, penalty suggestion (see rule - we bid and raised a suit)
+    3HS = NF
+
+1HS--(any)--2HS--(3raise)
+    Dbl = extras, penalty suggestion (see rule - we bid and raised a suit)
+    3HS = NF
+
+** 2N support raise then we Double
+
+- More likely have game on, so double is NOT penalty interest if they bid raise a suit
+- Where they have no fit double remains penalty
+
+1HS--(any)--2N--(any)
+    Dbl = penalty, (see rule - we bid and raised a suit)
+
+1HS--(2x)--(2N)--(3x)
+    Dbl = extra values, shortage - SPECIAL non-penalty agreement
+    4x = (below game), void
+
+
+** Delayed Takeout Doubles
+
+When not doubling on the first round:
+
+- X is typically long in the opponents' first bid suit
+    - short in opener's second bid suit
+    - short in responders bid suit when opener rebids the same suit
+- decent strength, often 4 card suits competing
+
+** Stolen Double by advancer - Opponents' HCR double
+
+(1H)--1S--(2S/3S)
+    X = "Stolen" bid, double I would have bid that.
+
+** Anti-Leading Doubles of Raised or Strongly Bid Suits
+
+- strongly bid means shown 6 cards already
+- typically a 3 level anti lead double
+
+The extra length meaning has less value when we have already shown a 6 card suit or our side has raised the suit.
+
+
+** Extra Length 2 Level Double of Cuebid by Opener - Partner not bid
+
+1H--(1S)--P--(2H)
+    X = extra !h length, extra values inviting 3!h bid with Hx+ support
+    3H = very good suit and shape, extras
+
+Other examples:
+
+- 1D--(1HS)--P--(2D)--X
+- 1S--(2CDH)--P--(2S)--X
+
+Pass then later X would allow opener to compete in the minors suits.
+
+** Double Showing HCR by advancer - Opponents' 3x raise
+
+- (1x) then overcall by us then the opponents raise to (3x)
+- Note, (1x)--1M--(2x) then X is values 9+ as we have space for 2N invite plus raise
+
+X then shows a HCR.
+
+** Extra trump redouble - we stop 2HS they takeout X
+
+Examples:
+
+1D--(P)--1S--(P)--2S--(P)--P--(X)
+    XX = opener shows 4 card support as may have raised with only 3 cards
+
+1D--(P)--1S--(P)--2S--(X)
+    XX = responder now shows 5 cards, inviting opener to compete 3!s
+
+1M--(P)--1N--(P)--2M--(X)
+    XX = responder has 3+ card support opposite 6 cards
+
+1M--(P)--1N--(P)--2CD--(P)--2M--(X)
+    XX = opener has 6 cards
+
+1M--(P)--2M--(X)
+    XX = pointless?, 6 cards, dead minimum presumably as facing a 3 card invite
+
+1N--(P)--2D--(P)--2H--(P)--P--(X)
+    XX = opener has 3 card support
+
+1C--(P)--1S--(P)--2S--(P)--P--(X)
+    XX = 5 card weak NT hand
+
+1C--(P)--1S--(P)--2S--(X)
+    XX = responder now shows 5 cards, inviting opener to compete 3!s
+
+1C--(P)--1H--(P)--1S--(P)--2S--(X)
+    XX = opener has 5 cards
+
+** FSF Redouble or Other Artificial Forcing Bids
+
+When opponents double an artificial bid for lead direction
+
+- XX for strong play suggestion (e.g. 4 very good / 5+ reasonable suit)
+- Pass to play if partner can help in support e.g. Hxx+
+- Cannot play in the contract only doubled, must be redoubled
+- Otherwise bid on as if not doubled
+
+** Handling doubles of our stopper ask of their suit
+
+Helping to right side 3N or not play it.
+
+(1S)--X--(P)--3C--(P)--3S--(X) = lead-directing X of DAB
+    P = xx, Jx, or xxx in their suit
+    3N = good stopper, e.g. AJx
+    XX = either a full or partial stopper (Qx, Jxx)
+    bid = singleton only in their suit
+    4S = void in their suit
+
+3!s cue here could be a proxy for a very strong unbalanced hand, not a DAB with something in !s, but then 3N will be pulled anyway.
+
+** 3N Contract Lead Directing Double
+
+Standard meanings by the defender sitting under the declarer:
+
+- lead my suit
+- lead our suit (we both bid obvious)
+- lead dummies first bid suit
+- lead shortest major if no suits mentioned
 
 
 * Opponents open Strong 1C
