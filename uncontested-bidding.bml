@@ -211,7 +211,7 @@ Remember any maximum 5--5+ minors hand rebids 3C over 1M, so a shapely 5--5+ is 
 2C = natural, NF, 5--4+ either way in !cs + !ds, denies 4 !ss or 3!hs, often 14--15 hcp unless min 5--5 minors
     2D = simple preference, NF, natural continuations
     2H = 6+ !hs, natural NF, ~8--10
-    2S = FSF, GF
+    2S = FSF, invite plus
     2N = natural, invitational, expects game v.s. 14--15
         3C = NF
         3DHS = forcing
@@ -359,7 +359,7 @@ Natural, 4+ cards, maybe longer minor canapé
 
 2C = natural, NF, 4--4+ minors either way, denies 3 !ss, often 14--15 hcp unless min 5--5+ minors
     2D = simple preference, NF, natural continuations
-    2H = FSF, GF
+    2H = FSF, invite plus
     2S = 6+ !ss, natural NF, ~8--10
     2N = natural, invitational, expects game v.s. 14--15
         3C = NF
@@ -440,7 +440,7 @@ Natural, up to 11 hcp, no 4 card major
     2D = natural, weak, dislikes opener's minor (beware 3 suiters with both majors though)
     2N = natural, invitational, major stops
     3CD = raise natural, invitational, game try
-    3om = stop showing
+    3om = weak
 2HS = 6--5 hand, extras (6!d, 5 major minimum hands open 1!h/!s)
     3D = to play
 2N = max invitational, various shapes
@@ -1371,7 +1371,7 @@ Natural 2/1 GF, always 5+ cards.
     4C = delayed splinter, !h support, commonly 3--3--6--1
     4D = self-sufficient, max 1 loser, some outside control
     4H = [picture raise](#Picture Raises), no outside controls
-2S = natural 4+ !s, any strength
+2S = natural 4+ !s, not 6!hs, any strength
     2N = natural, forcing ~16+ hcp
     3C = FSF, maybe long !cs if bid again
     3D = natural, 6th !d
@@ -2389,8 +2389,8 @@ Similar to [1H interference](#1H interference).
     3D = [HCR](#HCR cue bids and 2N Raise in Competition)
     3H = mixed !s raise
     3S = competitive, simple raise
-    4CD = [!h slam tries](#Major Opening and Responder's 4CD Slam Try)
-    4H = splinter (of their known suit)
+    4CD = [!s slam tries](#Major Opening and Responder's 4CD Slam Try)
+    4H = splinter (of their known suit), likely void with slam tries available
 
 1S--(2!s) !hs + !cs known two suiter example
     X = values, forcing to 3S
