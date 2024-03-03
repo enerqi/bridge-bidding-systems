@@ -914,14 +914,41 @@ Helping to right side 3N or not play it.
 
 3!s cue here could be a proxy for a very strong unbalanced hand, not a DAB with something in !s, but then 3N will be pulled anyway.
 
-** 3N Contract Lead Directing Double
+** Confidently Bid Game/Slam Contract Lead Directing Doubles
 
-Standard meanings by the defender sitting under the declarer:
+If the opponents bid confidently suit doubles are *Lightner* and NT doubles have standard meanings (lead our suit/suits,
+else dummy's first bid suit or the shortest major). See [Special Leads](#Special Leads).
 
-- lead my suit
-- lead our suit (we both bid obvious)
-- lead dummies first bid suit
-- lead shortest major if no suits mentioned
+*** 5 Level Doubles in Competition
+
+- Generalization: if in doubt, the 5 level belongs to the opponents
+- Caveat: phantom saves with highly distributional competitive hands at IMPs are often a reasonable insurance policy
+
+Phantom saves at matchpoints are far more tolerable than at IMPs, indeed there are many attempts to go minus 100 insted
+of minus 110 etc at matchpoints etc. The double game swing (along with slams) is one of the greatest sources of IMP
+gains/losses, so on highly distributional hands it can pay to ignore the usual caution around phantom saves at IMPs,
+and bid to go an expected one off in a 5 level contract
+
+**** We "Own" The Hand
+
+Typically we were expecting to bid and make some 4 level game, or maybe 5CD and then they interfered.
+In these 5 level situations there is a first and second bidder on our side. For the first bidder:
+
+- Double is minimum / defensive
+- Pass is *Forcing*, interest in bidding more
+- Bidding shows uncommunicated extras
+
+For the second bidder:
+
+- Pass (requires partner to have doubled) and agrees to defend
+- Bidding shows near slam values or extra distribution
+- Double to defend, not accepting an invitation to play at the 5 level
+
+**** We Do NOT Own The Hand
+
+Generally pass or sacrifice further!
+
+A double is *Lightner* by default, assuming you think they bid confidently
 
 
 * Opponents open Strong 1C

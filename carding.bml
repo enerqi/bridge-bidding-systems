@@ -292,7 +292,7 @@ The 5 lines of defense suggest a general direction, but if unsure of what to do 
 what we are more likely to do.
 
 - two card sequences fine in suit contracts, e.g. KQxx then lead K
-- avoid underleading an Ace in suit contracts generally, but when expecting partner to have the King, the general caveat
+- avoid underleading an Ace in suit contracts generally, but when expecting partner to have the King or the general caveat
   about forcing/active defences
 - Ace lead without King sometimes against suit contracts: maybe if they preempted, we need to attack (e.g. side suit
   threats), it's a slam, a singleton Ace, 5 level contract, known strength is there, the suit is 7/8 cards long
@@ -303,3 +303,32 @@ what we are more likely to do.
 - small tripleton leads ok, often passive play
 - singleton leads generally ok, but if we have reasonable trumps consider if we won't gain anything and just help
   declarer pick up a bad suit
+
+** Special Leads
+
+*** Gambling 3N Types / Long Running Suit Threats
+
+Ace lead without King whe looking for attitude - where is declarer's weakness
+
+*** NT Slams
+
+Go passive
+
+*** Suit Grand Slams
+
+Passive Trump
+
+*** Suit Contract - Doubled Confidently Bid Game/Slam
+
+- Note, non-confidently bid contracts are normal "penalty" doubles!
+- Lightner by default, unusual leading - typically lead your longest suit that is not trumps and not your partner's suit
+  as they probably have a void somewhere.
+- Naturally, we can also be doubling on a trump stack, but usually only if they don't have a better contract to escape to.
+
+*** NT Contract - Doubled Confidently Bid Game/Slam
+
+- Partner bid and doubled -> lead their suit
+- We bid and doubled -> lead your suit
+- Our side bid two suits -> lead suit of the strongest hand to account for entries
+- Only defenders bid -> lead dummy's 1st bid suit
+- No suits bid -> lead shortest major
