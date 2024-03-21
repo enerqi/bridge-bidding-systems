@@ -6,10 +6,10 @@ BBOalert
 ,1D,nebulous 0+ !Ds; 11 to 15 hcp,
 ,1H,5+ !Hs; (10)11 to 15 hcp,
 ,1S,5+ !Ss; (10)11 to 15 hcp,
-,1N,16 to 18; maybe 5 card major,
+,1N,16 to 18; maybe 5 card major; rare 6 !C/!D or 4441 single A/K,
 ,2C,6+ !Cs; (10)11 to 15 hcp,
 ,2D,6+ !Ds; (10)11 to 15 hcp,
-,2N,19 to 20; maybe 5 card major,
+,2N,19 to 20; maybe 5 card major or 4441 single A/K,
 ,4N,specific ace ask,
 Option,Opening_@v@1@2
 ,2H,6+ !Hs; 1+ top honour; 7 to 10 hcp,
@@ -39,14 +39,14 @@ Option
 # 1C initial responses
 
 1C--,1D,0 to 7 hcp or 8-9 no 4cM,
-+,1H,8+ natural; maybe longer minor,
-+,1S,8+ natural; maybe longer minor,
-+,1N,GF bal maybe 4cM; OR 4441; OR unbalanced no major
-+,2C,NF 8-10 natural; maybe 5-5 minors,
-+,2D,NF 8-10 natural,
-+,2H,5-5+ majors limited; ~4-7 hcp,
-+,2S,both minors limited GF; ~12-15 hcp,
-+,2N,natural invite,
++,1H,8+ natural; unbalanced if 12+; maybe longer minor if not GF,
++,1S,8+ natural; unbalanced if 12+; maybe longer minor if not GF,
++,1N,8+ !C transfer; when GF maybe 4!Cs and longer !Ds,
++,2C,8+ !D transfer; when not GF denies 1HS canapé response,
++,2D,balanced GF; (10)11+ no 5cm/4cM OR 12+ maybe 4!Hs/!Ss not 5!Cs/!Ds OR 14+ maybe 5!Cs/!Ds,
++,2H,6+ !Hs ~4-7 hcp,
++,2S,~9--11 hcp invitational !Cs and !Ds with any short major,
++,2N,natural invite ~9-10 hcp,
 +,3C,!C preempt; ~3-7 hcp,
 +,3D,!D preempt; ~3-7 hcp,
 +,3H,!H preempt; ~3-7 hcp,
@@ -64,6 +64,8 @@ Option
 1C--1D--1H--1S--,2C,various extra strong hands
 +,2D,4!H 4441
 +,2N,23-24 hcp NT
++,3N,27-28 hcp NT
++,4N,31-32 hcp NT
 1C--1D--1H--,1N,4!S exactly not 4!H
 1C--1D--1H--1N,2C,various extra strong hands
 +,2D,4!H 4441
@@ -74,17 +76,25 @@ Option
 +,2N,21-22 hcp NT
 +,3C,5-5 !C + major ~16-18 hcp
 +,3D,5-5 both majors ~16-18 hcp
++,3N,25-26 hcp NT
++,4N,29-30 hcp NT
 
 # 1C--1H continuations
 
-1C--1H--,2C,natural strong or 21 balanced or 4441 !H singleton 19+; denies 3!Hs
-1C--1H--2C,2D,any 8-11 hcp
-+,2H,12+ hcp 5 card major
-+,2S,natural 12+ hcp
-+,2N,12+ hcp 6 card major
-+,3C,12+ hcp 5+ !C
-+,3D,12+ hcp 5+ !D
-+,3H,12+ hcp 7+ card major
+1C--1H--,1S,natural but NF hands maybe longer minor; unbal if 12+; not 3+ !Hs if strong,
+1C--1H--1S--,2N,puppet for !C signoff or 4441 GF and short !Ss
+1C--1H--1N--,2N,puppet for !C signoff or 4441 GF
+
+1C--1H--,2C,any 5+ card minor; unbalanced strong natural strong; denies 3!Hs
+1C--1H--2C--,2D,ask
+1C--1H--2C--2D--,2H,20+ hcp; 5-4 minors
++,2S,natural; 16+ hcp
++,2N,minors 5-4 / 5-5; ~16-19 hcp
++,3C,natural; denies a major
++,3D,natural; denies a major
++,3H,splinter with 5-5 minors
++,3S,splinter with 5-5 minors
+
 1C--1H--2D,strong 3+ card support
 1C--1H--2D--,2H,any 12+
 +,2S,4 card major only 8-11 hcp
@@ -105,6 +115,7 @@ Option
 +,3N,5-5 both majors
 +,4C,5-5 !H + !C
 +,4D,5-5 !H + !D
+
 1C--1H--,2S,6!S + 3!H
 1C--1H--,2N,!D + other major
 1C--1H--,3C,!D + 4+!C
@@ -114,14 +125,16 @@ Option
 
 # 1C--1S continuations
 
-1C--1S--,2C,natural strong or 21 balanced or 4441 !H singleton 19+; denies 3!Ss
-1C--1S--2C,2D,any 8-11 hcp
-+,2H,natural 12+ hcp
-+,2S,12+ hcp 5 card major
-+,2N,12+ hcp 6 card major
-+,3C,12+ hcp 5+ !C
-+,3D,12+ hcp 5+ !D
-+,3S,12+ hcp 7+ card major
+1C--1S--1N--,2N,puppet for !C signoff or 4441 GF
+1C--1S--,2C,any 5+ card minor; unbalanced strong natural strong; denies 3!Ss
+1C--1S--2C--,2D,ask
+1C--1S--2C--2D--,2H,natural; 16+ hcp
++,2S,20+ hcp; 5-4 minors
++,2N,minors 5-4 / 5-5; ~16-19 hcp
++,3C,natural; denies a major
++,3D,natural; denies a major
++,3H,splinter with 5-5 minors
++,3S,splinter with 5-5 minors
 1C--1S--2D,strong 3+ card support
 1C--1S--2D--,2H,any 12+
 +,2S,4 card major only 8-11 hcp
@@ -142,6 +155,15 @@ Option
 +,3N,5-5 both majors
 +,4C,5-5 !H + !C
 +,4D,5-5 !H + !D
+
+1C--1S--,2H,5+ !hs strong ~16-18hcp; maybe 6!H + 3!S support
+1C--1S--2H--,2S,5 !Ss
++,2N,6+ !Ss
+1C--1S--2H--2S--,2N,ask
+1C--1S--2H--2S--2N--,3H,15+ hcp; 5332
++,3S,12-14 hcp; 5332
++,3N,8-11 hcp; 5332
+
 1C--1S--,2N,!D + other major
 1C--1S--,3C,!D + 4+!C
 1C--1S--,3D,6+!D single suited
@@ -150,26 +172,61 @@ Option
 
 # 1C--1N continuations
 
-1C--1N--,2C,strong hand artificial relay
-1C--1N--2C--,2D,5+!Cs unbalanced
-+,2H,balanced
-+,2S,6+!Ds single suited
-+,2N,some 4441
-+,3C,16+ hcp 5+!D 4+!C not 5-5 !H shortage
-+,3D,16+ hcp 5+!D 4+!C not 5-5 !S shortage
-+,3H,5!D 4!C semi-balanced
-1C--1N--,2D,weak NT hand
+1C--1N--,2C,weak hand transfer
+1C--1N--2C--,2D,GF both minors 5-4+
++,2H,artificial GF; 5!Cs + 4 card major
++,2S,artificial GF; 6+ !Cs no side suit
 
-# 1C--2m continuations
+1C--1N--,2D,GF relay
+1C--1N--2D--,2H,artificial both minors 5-4+; 12+ hcp
++,2S,artificial 5+ !Cs + 4 card major
++,2N,artificial 6+ !Cs; 12+ hcp
++,3C,6+ !Cs; 8-11 hcp
++,3D,5+!Cs + 4+!Ds; 8-11 hcp
++,3H,5332; 8-10 hcp
++,3S,5332; 11-13 hcp
++,3N,6322; 8-11 hcp
 
-1C--2C--,2D,strong hand artificial relay
-1C--2C--2D,2H,6+ !Cs single suited
-+,3C,6!C 4!D
-+,3D,5!C 4!D
-+,3H,singleton 5-5+ minors
-+,3S,singleton 5-5+ minors
+1C--1N--,3C,strong hand with support
++,3D,splinter support
++,3H,splinter support
++,3S,splinter support
 
-1C--2D--,2H,strong hand artificial relay
+# 1C--2C continuations
+
+1C--2C--,2D,weak hand transfer
+1C--2C--2D--,2H,artificial GF 5+ !Ds + side 4 card major
++,2S,artificial GF; 6+ !Ds no side suit
+
+1C--2C--,2H,GF relay
+1C--2C--2H--,2S,artificial 5+ !Ds side 4 card major; 12+ extras
++,2N,artificial 6+ !Ds; 12+ hcp
++,3C,artificial 6+ !Ds with shortage; 8-11 hcp
++,3D,limited ~8-11hcp; 5+!Ds 4+!Cs
++,3H,~8-10 hcp; 5332
++,3S,~11-13 hcp; 5332
++,3N,~8-11 hcp; 6322
+
+1C--2C--2H--2N--,3C,shortage ask
+1C--2C--2H--3C--,3D,shortage ask
+
+1C--2C--,3D,strong hand with support
++,3H,splinter support
++,3S,splinter support
++,4C,splinter support
+
+# 1C--2D continuations
+
+1C--2D--,2N,staymanic range ask
+1C--2D--2N--,3C,11-13 hcp; 4432/4333 hand
+1C--2D--2N--3C,3D,artificial staymanic
+1C--2D--2N--,3D,14-15 hcp; no 4cM; no 5cm
+1C--2D--2N--,3H,14-15 hcp; natural
+1C--2D--2N--,3S,14-15 hcp; natural
+1C--2D--2N--,3N,16+ hcp
+1C--2D--2N--,4C,14-15 hcp; 5 card minor
+1C--2D--2N--,4D,14-15 hcp; 5 card minor
+
 1C--2D--2H--,2S,6+ !Ds single suited
 +,3C,5!D 4!C
 +,3D,6!D 4!C
@@ -226,7 +283,7 @@ Option
 +,4D,!Ss + minor; strong two suiter; max 5 losers
 +,4N,minors
 
-1C1S,Db,4-5 !Hs 6+ hcp OR 6!Hs invitational
+1C1S,Db,4-5 !Hs 8+ hcp OR 6!Hs invitational
 +,2C,!D transfer; GF v.s. strong hand
 +,2D,!H transfer; 6+ cards weak or GF
 +,2H,!Cs; 10+ hcp
@@ -418,6 +475,7 @@ Option
 +,2N,minors OR strong majors
 +,4C,preempt
 +,4D,preempt
+
 
 1D2C,Db,stayman
 +,2D,!H transfer
@@ -834,9 +892,34 @@ Option
 
 # 2C 2D relay
 
-2C--2D--,2H,no 4 card major medium/max strength
-+,2N,4 card !H suit any strength
-+,3C,no major minimum
+2C--2D--,2H,any major; any strength
++,2S,no major; max with shortage or min 2+ top honours
++,2N,semi-balanced max 2+ top honours
++,3C,minimum without 2+ top honours
++,3N,maximum with solid !Cs
+
+2C--2D--2H--,2S,NF ask
+2C--2D--2H--2S--,2N,!H minimum
+2C--2D--2H--2S--,3C,!S minimum
+2C--2D--2H--2S--,3D,!H maximum
+2C--2D--2H--2S--,3H,!S maximum
+
+2C--2D--2H--,2N,GF ask
+2C--2D--2H--2N--,3C,!H minimum
+2C--2D--2H--2N--,3D,!S minimum
+2C--2D--2H--2N--,3H,!H maximum
+2C--2D--2H--2N--,3S,!S maximum
+
+2C--2D--2H--,3D,!C slam try
+
+2C--2D--2S--,2N,ask
+2C--2D--2S--,3D,!C slam try
+
+2C--2D--2N--,3D,!C slam try
+
+2C--2D--3C--,3D,!C slam try
++,4D,natural GF
+
 
 # 2D initial responses
 
@@ -850,6 +933,27 @@ Option
 +,4C,roman keycard blackwood for !Ds
 +,4D,preempt
 +,4N,blackwood
+
+2D--2H--,2N,minimum < 3 card !H support
+2D--2H--2N--,3C,GF relay
+2D--2H--,3C,artificial 3 card !H support
++,3D,maximum with !C stopper
++,3H,maximum with Hx !H support, denies !C stop
++,3S,splinter !H support
++,3N,maximum without Hx !H support, denies !C stop
+
+2D--2S--,2N,minimum < 3 card !S support
+2D--2S--2N--,3C,GF relay
+2D--2S--,3C,artificial 3 card !S support
++,3D,maximum with !C stopper
++,3H,maximum with natural 4 !Hs
++,3S,maximum with Hx !S support, denies !C stop
++,3N,maximum without Hx !S support, denies !C stop
+
+2D--2N--,3C,artificial sub-minimum strength
++,3D,minimum
++,3H,quasi natural maximum
++,3S,quasi natural maximum
 
 # 2D interference
 
