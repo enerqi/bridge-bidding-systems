@@ -6,7 +6,7 @@ Intermediate 2!C/2!D, weak 2!H/2!S,
 CC,ntopen
 1NT = 16-18, 2N = 19-20
 Notrump openings maybe 5 card major, 
-no singleton, very rarely 6332 minor
+singleton A/K, rarely 6332 minor
 1NT 
     2!C stayman promissory
     2!S range ask or !C
@@ -41,10 +41,11 @@ CC,minoropen
       16+ unbalanced OR 21+ balanced
     1!D negative 0-7/8-9 no 4cM
     1!H!S 8+ maybe longer minor
-    1N GF bal or unbal no major
-    2!C/!D NF 8-10
+    1N !C transfer
+    2!C !D transfer
+    2!D GF balanced
     2!H 4-7 5--5 majors
-    2!S ~12-15 minors + short major
+    2!S invitational minors + short major
     3x preempt
 1!D = 11-15, short - maybe zero cards. 
     Flat 11-13 or 11-15 3 suited or 
@@ -52,7 +53,8 @@ CC,minoropen
     extreme shape 13-15 6!D + 5!H/!S
     1!H/!S maybe longer minor
     2!C/!D 10+ and no 4cM
-    higher bids weak
+    2!H 5!S + 4/5!H weak
+    2!S 5!S + 4/5!H invite
 CC,level2open
 2!C = 6+!Cs (10)11-15
     2!D ask invite plus

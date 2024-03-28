@@ -413,19 +413,42 @@ Option
 
 # 1D--2C continuations
 
-1D--2C--,3D,fit jump maximum
-+,2H,quasi-natural;mostly feature showing
-+,2S,quasi-natural;mostly feature showing
-+,3H,splinter
-+,3S,splinter
+1D--2C--,2H,artificial;any 11-13 balanced
++,2S,artificial;unknown splinter !C support
++,2N,minimum 4441
++,3C,minors 2-2-(5-4) either way
++,3D,maximum (4-1)-5-3
++,3N,maximum 4441
++,4C,!C void;7!D 5!H
++,4D,!C void;7!D 5!S
++,4H,!S void;7!D 5!H
++,4S,!H void;7!D 5!S
+
+1D--2C--2H--,2S,puppet; often NT transfer
++,2N,slam interest;flattish;4+ minor ask
+
+1D--2C--2H--2S--2N--,3H,6!H + 4+ minor
++,3S,6!S + 4+ minor
 
 # 1D--2D continuations
 
-1D--2D--,3D,fit jump maximum
-+,2H,quasi-natural;feature showing or catchall maximum
-+,2S,quasi-natural;feature showing or catchall maximum
-+,3H,splinter
-+,3S,splinter
+1D--2D--,2H,artificial;any 11-13 balanced
++,2S,artificial;unknown splinter !C support
++,2N,minimum 4441
++,3C,minors 2-2-(5-4) either way
++,3D,maximum (4-1)-3-5
++,3N,maximum 4441
++,4C,!C void;7!D 5!H
++,4D,!C void;7!D 5!S
++,4H,!S void;7!D 5!H
++,4S,!H void;7!D 5!S
+
+1D--2D--2H--,2S,puppet; often NT transfer
++,2N,slam interest;flattish;4+ minor ask
+
+1D--2D--2H--2S--2N--,3H,6!H + 4+ minor
++,3S,6!S + 4+ minor
+
 
 # 1D overcalled interference
 

@@ -300,12 +300,12 @@ Acol two strength 6--5 two suiter:
     2CDH = 5+ suit, 5--7 hcp
     2S = 4+ card support, 4--7 hcp
         2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
-    2N = rare, 9 hcp invite, Hxx+ !s support
-        3S = to play
+    2N = invite, did not want to declare
     3CDH = mini-splinter
     3S = 5(+) card support, NF
 1N [weak NT](#1NT Opening)
     any = NT Scheme
+    2C = 3 card stayman
 2C = natural strong, ~16--19, !cs, not exactly 4!ss (use 1!s then canapé rebid with 4!ss non-GF)
     2D = positive 5+ relay
         2H = natural, F1
@@ -635,6 +635,7 @@ Acol two strength 6--5 two suiter:
                 3H = shortage ask
                     3S = !d shortage
                     3N = !h shortage
+            3HS = natural, no shortage
     2N = artificial, 6+ !cs, 12+ hcp
         3C = shortage ask
             3D = no
