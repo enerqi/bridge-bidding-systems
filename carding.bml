@@ -52,19 +52,11 @@ could be used to encourage a force and suit preference to direct the switch. Ass
 
 **** Trump Echos on declarer's lead
 
-Assuming we can afford to signal, e.g. they are obviously in control then abnormal plays are primarily about suit
-preference:
+Assuming we can afford to signal, e.g. they are obviously in control then high low echoes are a special reverse *count*
+showing a 3 card suit, when it's safe to give partner count.
 
-- normal low to high order says nothing
-- 2 trumps: high low is suit preference
-- 3+ trumps: medium then signal high low or low high suit preference
-
-Sometimes the best remaining suit is obvious, specifically when dummy has one very strong suit. Assuming that the
-opening leader already has your attitude for the opening lead, the trump echo can be used as count for this strong suit
-when entries are a problem. Without attitude for the opening lead, it could be use like a smith peter.
-
-Note, an alternative is to play high low as suggesting a ruff can be taken with a 3rd trump, but it's probably too
-infrequent.
+Note, alternatives are using high low as showing 3 trumps and ability to ruff a side suit, or as suit preference (high
+medium low, or medium low high)
 
 **** Count on declarer's lead
 
@@ -115,7 +107,8 @@ With 4th highest (2nd from 9xxx or worse) leads from broken honour sequences the
 11 helps (11 minus spot card lead is how many higher cards than the spot lead in the other hands). In NT we are less
 likely to want to burn a high spot card such as the 3rd highest.
 
-When leading partner's known suit we maximise count accuracy and played 3rd and Low as we do against suit contracts.
+When leading partner's known suit (5+ promised suit) we maximise count accuracy and played 3rd and Low as we do against suit
+contracts.
 
 **** MUD from xxx
 
@@ -129,10 +122,10 @@ For all except the King power lead, the primary signal is reverse attitude
 As with suit contracts, when not being asked to unblock, a very high card can be an alternative to encourage
 underleading, e.g. on an Ace lead partner could play the Queen showing the Jack
 
-**** Reverse Smith Peter (Echo) on declarer's lead
+**** Smith Peter (Echo) on declarer's lead
 
 - signal on declarer's lead in a different suit to the opening lead
-- indicates reverse attitude for the opening lead: low encourage, high discourage
+- indicates attitude for the opening lead: high encourage, low discourage
 - usable by the opening leader or their partner
 - by the opening leader it suggests something better than expected or a very strong desire to continue the suit quickly
 - by the partner it shows something extra
@@ -178,6 +171,10 @@ from:
 The simplest approach is to map a low (1st card) high (2nd card) to the usual Revolving suit preference mechanics, e.g.
 QKA is low high and AQK is high low. The other combinations could be included if you want to distinguish mild v.s.
 strong preference and do not mind the complexity.
+
+Low high means revolve to lower suit.
+
+High low means revolve to higher suit.
 
 ** New Suit Leads After Trick 1
 

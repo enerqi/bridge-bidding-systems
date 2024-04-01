@@ -238,6 +238,7 @@ Responding:
     P = nothing special
     X = negative
     !d/!h/!s = 2 level NF, 3 level forcing
+    2N = GF 6–4 majors (3x already forcing)
     cue = forcing, !c support
     jump-cue = splinter, !c support
 
