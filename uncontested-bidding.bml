@@ -151,7 +151,7 @@ Natural, 4+ cards, maybe longer minor canapé
         3C = 5 !cs
         3D = 5 !ds
         3H = !h doubleton, not Hx support
-    2H = 6+ !hs, natural NF, ~8--10, too good for weak jump shift
+    2H = 6+ !hs, natural NF, ~6--9, wider strength without weak jump shift
     2S = 4 card support flattish 6--9(10), not worth mixed raise via 2!c
     2N = puppet, !c signoff or 4--4--4--1 GF
         3C = complete
@@ -193,7 +193,7 @@ Natural, 4+ cards, maybe longer minor canapé
         3C = 5 !cs
         3D = 5 !ds
         3H = !h doubleton, not Hx support
-    2H = 6+ !hs, natural NF, ~8--10, too good for weak jump shift
+    2H = 6+ !hs, natural NF, ~6--9, wider strength without weak jump shift
     2S = 5--6 majors, invitational (bid 3!s with GF 6--5)
     2N = puppet, !c signoff or 4--4--4--1 GF
         3C = complete
@@ -340,7 +340,7 @@ Natural, 4+ cards, maybe longer minor canapé
         3H = !s doubleton, 4!hs stopper
         3S = !s doubleton
     2H = natural, NF, less than invitational (else 2!c over 1N)
-    2S = 6+ !ss, natural NF, ~8--10, too good for weak jump shift
+    2S = 6+ !ss, natural NF, ~6--9, wider strength without weak jump shift
     2N = puppet, !c signoff or 4--4--4--1 GF
         3C = complete
             P = signoff
