@@ -8,14 +8,14 @@
 
 1C
     (any) = [1!c interference](#1C Interference)
-    [1D](#1C--1D) Negative 0--7 hcp or 8--9 semi-positive no 4cM
+    [1D](#1C--1D) Negative 0--7 hcp or 8--9(10) semi-positive no 4cM
     [1HS](#1C--1HS) 8+ hcp, 4+ card suit, denies 2!d response, unbalanced if 12+, maybe longer minor when not GF
     [1N](#1C--1N) 8+ hcp, !c transfer, when GF maybe 4!cs and longer !ds, when limited denies 1HS canapé response
     [2C](#1C--2C) 8+ hcp, !d transfer, when limited denies 1HS canapé response, not GF 5!ds and 4!cs
-    [2D](#1C--2D) Balanced GF, (10)11+ no 5cm/4cM OR 12+ maybe 4!hs/!ss not 5!cs/!ds OR 14+ maybe 5!cs/!ds
+    [2D](#1C--2D) Balanced GF, (10)11--15/19+ hcp, no 5cM, when 12+ maybe 4!hs/!ss, when 14+ maybe 5!cs/!ds
     2H ~4--7 hcp, good weak two (2+ honours), continue as if opened [2H preempt](#2H Opening Responses)
     [2S](#1C--2S) ~9--11 hcp invitational !cs + !ds, minors + any short major, does not want to play 2N
-    [2N](#1C--2N) ~9--10 hcp, natural NT invite, wants to declare
+    [2N](#1C--2N) 16--18 hcp, natural maybe 5 card major, [2NT system on](#2NT Opening)
     3CD invitational, good 6+ card minor, continue as if opened [3CD preempt](#3CD Openings)
     3HS ~3--7 hcp, weak, continue as if opened [3HS preempt](#3HS Openings)
     [3N](#1C--3N) Any 6 card Solid AKQJ suit, no outside A/K, max one extra Q
@@ -25,8 +25,10 @@
 
 ** 1C--1D
 
-Negative 1D with 0--7 hcp or flat 8--9 hcp semi-positive no 4cM. The semi-positive is very limited ~8--9 hcp, less than
-an unconditional invite. For opener's continuations:
+Negative 1D with 0--7 hcp or flat 8--9 hcp semi-positive no 4cM. The semi-positive includes very limited 8 hcp hands and
+invitational NT hands ~9(10) hcp.
+
+For opener's continuations:
 
 - suits are bid in natural order except the "moderate two suiter" !s canapé situations
 - For shapely 5--5+ hands the limited v.s. Acol 2 v.s. GF bids are more expected trick focussed than just HCP, e.g. 9
@@ -125,7 +127,10 @@ Acol two strength 6--5 two suiter:
     - GF hands (without self-sufficient single suiter)
     - balanced 23--24 or 27--28 (and 31--32)
     1S = asking bid, unsuitable for artificial 1N response
-        1N = weak NT with 4!hs, further bids are natural, to play
+        1N = weak NT with 4!h
+            suit = to play
+            2N = invite
+            3N = ~9--10, happy with !h suit
         2C = unbalanced, multiple extra strong (!c, !d, !c+?, !d+?) or GF !h hand
             2D = ask
                 2H = natural 5+ !hs, GF, not as long as 3!h rebid over 1!d, stronger than Acol 2
@@ -261,7 +266,7 @@ Acol two strength 6--5 two suiter:
         4S = to play
 1S = natural, ~14--21 with 4+ !ss, maybe 4--1--4--4 or canapé exactly 4!ss, when weak denies 4!hs
     P = very weak, often !s tolerance
-    1N = passable ask, any 0--9 hcp hand
+    1N = passable ask, any 0--8 hcp hand
         P = weak NT hand
         2C = artificial, any hand 5+ !ss
             2D = relay, invitational plus
@@ -300,9 +305,10 @@ Acol two strength 6--5 two suiter:
     2CDH = 5+ suit, 5--7 hcp
     2S = 4+ card support, 4--7 hcp
         2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
-    2N = invite, did not want to declare
+    2N = invite
     3CDH = mini-splinter
     3S = 5(+) card support, NF
+    3N = ~9--10, happy with !s bid
 1N [weak NT](#1NT Opening)
     any = NT Scheme
     2C = 3 card stayman
@@ -446,12 +452,14 @@ Acol two strength 6--5 two suiter:
             3CD = natural 4+ card support
             other = natural, no 3 card minor
         2oM = natural, with longer minor, 16+ hcp
-            2N = ask
-                3CD = natural, 5/6 cards minimum
+            2N = major support, extras ~12+ hcp
+            3C = ask
+                3D = natural, 5/6 cards minimum
                 3H = artificial !cs + oM 5--4, 20+ hcp
                 3S = artificial !ds + oM 5--4, 20+ hcp
+                3N = artificial !cs, 5/6 cards minimum
                 4CD = 6--4, extras
-            3oM = natural raise, minimum ~8--11 hcp
+            3oM = natural minimum raise, ~8--11 hcp
             jump = splinter, major support
             other = cue, major support with extras ~12+ hcp
         2N = 5--4 / 5--5 (6--5) minors, ~16--19 hcp
@@ -759,12 +767,12 @@ Acol two strength 6--5 two suiter:
 
 ** 1C--2D
 
-- artificial GF balanced
+- artificial GF balanced (10)11--15 / 19+ hcp
 - no 5 card major
 - NOT 5--4--2--2 or 6--3--2--2
-- (10)11+ hcp, no 5 card minor and no 4 card major (one or two 4 card minors, 4--4--3--2 / 4--3--3--3)
+- (10)/11 hcp, no 5 card minor and no 4 card major (one or two 4 card minors, 4--4--3--2 / 4--3--3--3)
 - 12+ hcp, maybe with 4 card major (4--4--3--2 / 4--3--3--3), NO 5 card minor
-- 14+ hcp, additionally maybe with a 5 card minor (5--3--3--2 exactly)
+- 14--15/19+ hcp, additionally maybe with a 5 card minor (5--3--3--2 exactly)
 
 
 Responding:
@@ -778,14 +786,14 @@ Responding:
     3CD = 5 cards
     3oM = 4 cards
     3N = usually no 3 card major, fast arrival
-2N = staymanic range ask, usually flattish hands
+2N = staymanic range ask, usually flattish strong 16+ opening hands
     3C = (10)11--13, some 4--4--3--2/4--3--3--3
         3D = artificial stayman
             3HS = 4 cards
             3N = no
     3D = 14--15, no 4 card major, no 5 card minor
     3HS = 14--15, natural 4 card major
-    3N = 16+
+    3N = 19+
         4C = artificial stayman
             4HS = natural
                 4N = RKB
@@ -812,7 +820,7 @@ Responding:
         P = weak, nothing to say
             X = takeout by responder up to 3!s
         X = penalty
-        2N = system on, but expect 4 card major OR strong hand
+        2N = system on staymanic range ask, but expect 4 card major OR strong hand
         other = system on
 
 
@@ -898,36 +906,12 @@ Responding:
 
 ** 1C--2N
 
-- natural invite
+- Natural balanced 16--18 hcp
+- Maybe 5--3--3--2 with 5 card major
+- Should not have semi-balanced 5--4--2--2 hands - 6CD or other slams should be easier to bid if showing suits
 
-3CD = natural, strong, 5+ cards
-    3D = natural, 5(6) cards (!c tolerance xxx+ expected)
-        3HS = natural 5+ cards
-        4C = !c [RKB](#RKB 4N)
-        4D = double fit [RKB](#RKB 4N)
-    3HS = cue, Hxx+ support
-    3N = natural
-        4m = minor [RKB](#RKB 4N)
-        4HS = natural, 6--5+
-    4m = natural, Hxxx+ 4 card support
-        4HS = [RKB](#RKB 4N) or natural, 6--5+
-    4C = (over 3!d) natural, 5(6) cards (!d tolerance xxx+ expected)
-        4D = !d [RKB](#RKB 4N)
-        4HS = natural, 6--5+
-        4N = double fit RKB
-    4N = 5 card support, 2 KC
-    5m = 5 card support, 1 KC
-3HS = natural, strong, 5+ cards, later 4N always [RKB](#RKB 4N) even over 3N
-    3N = natural
-        4HS = slam try, asking for something extra
-    other = cue
-4C = N/A (though could play self-sufficient !c or even Gerber)
-4D = artificial 5--5 majors ~16--18  (start with 3!s with 19+ both majors)
-4HS = 6+ card suit, minimum strong
-4N = quantitative, ~21--22
-5CD = 6(7)+ card suit, minimum strong
+[2NT system on](#2NT Opening) for responses and interference handling.
 
-[Inteference as 1C--2S](#Interference over 1C--2S)
 
 ** 1C--3N
 

@@ -599,7 +599,7 @@ on our way.
 ** Strong Club Defence Variants
 
 Against an artificial Precision club 16+ or similar, natural overcalling is very reasonable, with an emphasis on bidding obstructively as
-we are unlikely to have a game on. NT advances could still be used as constructive going responses to partner's often weak overcalls.
+we are unlikely to have a game on. NT advances could still be used as constructive game going responses to partner's often weak overcalls.
 
 Bids of double or 1D do not take any room away, (even 1!h takes little space) so they need to useful, where useful corresponds to goals of bidding, which we think
 should be mostly obstructive over a strong club - finding a fit and raising to our maximum level. Given the goals strong hands may choose
@@ -664,6 +664,23 @@ Specific two suiters style, ambiguous relative lengths so hard to raise that muc
     1N = !d + !s
     2C = !c + !d
     others = natural
+
+*** Whirlwind
+
+Two suiter style with one naturally bid suit and the other specific suit depending on strength. The double to show an
+opening balanced hand is interesting - maybe giving up too much information but hoping partner can preempt further in
+any suit they like. After a second position bid the defenders should have a much better estimate of overall strength and
+shape than the opening side.
+
+1C
+    Dbl = 13+ balanced, partner can preempt assured of 2+ card support and defensive cards sitting over
+    1D = !d + !h ~8--11 or !d + !c 12+
+    1H = !h + !s ~8--11 or !h + !d 12+
+    1S = !s + !c ~8--11 or !s + !h 12+
+    1N = !c + !h ~8--11 or !d + !s 12+
+        2C = pass or correct
+    2C = !c + !d ~8--11 or !c + !s 12+
+    2DHS = natural single suiter
 
 *** Modified Truscott
 
@@ -1121,6 +1138,55 @@ Fourth ask checks for queens NOT held, grand slam fishing:
 
 2D--(P)--2N--(3x)
     3HS = sound, non-minimum
+
+
+** 2D Weak Only Multi
+
+Either major, perhaps 5 cards NV or you can be more constructive and only open 6 carders. Weak only puts more pressure
+on the opponents as partner can pass the 2D opening. As with a normal multi, the stronger hand, the responder is more
+likely to declare.
+
+Playable if a 2H opening is used to show the short !d 3 suiter with 11--15 hcp. These responses assume possible 5
+carders - the 3CD responses look for a fit in the other major with no way to bid constructively in a minor. As with any
+possible 5 card weak two, checking for a fit with your own 5/6 card suit and clarifying whether opener has 5/6 cards is
+full of compromises.
+
+2D
+    P = to play
+    2H = pass or correct
+    2S = modified pass or correct
+        P = !ss
+        2N = !hs minimump
+        3C = !hs extras
+    2N = ask, invite plus
+        3C = !h minimum
+        3D = !s minimum
+        3H = !s extras (transfer like), GF
+            3S = length ask
+                3N = 5 cards
+                other = feature, 6 carder
+        3S = 5!hs, extras, GF
+        3N = 6!hs, extras, GF
+    3C = 5+ !hs, invite plus
+        3D = 0/1
+        3H = 2
+        3S = 3/4, GF trumps set regardless of strength
+        3N = !s shortage, massive fit
+        4C = !c shortage, massive fit
+        4D = !c shortage, massive fit
+    3D = 5+ !ss, invite plus
+        3H = 0/1
+        3S = 2
+        3N = 3/4, GF trumps set regardless of strength
+        4C = !c shortage, massive fit
+        4D = !c shortage, massive fit
+        4H = !c shortage, massive fit
+    3HS = pass or correct
+    3N = to play
+    4C = ask to bid one under major
+    4D = ask to bid major
+    4HS = to play
+    5CD = to play
 
 
 ** 2H Both Majors

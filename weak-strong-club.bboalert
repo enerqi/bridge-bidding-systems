@@ -38,15 +38,15 @@ Option
 
 # 1C initial responses
 
-1C--,1D,0 to 7 hcp or 8-9 no 4cM,
+1C--,1D,0 to 7 hcp or 8-9(10) no 4cM,
 +,1H,8+ natural; unbalanced if 12+; maybe longer minor if not GF,
 +,1S,8+ natural; unbalanced if 12+; maybe longer minor if not GF,
 +,1N,8+ !C transfer; when GF maybe 4!Cs and longer !Ds,
 +,2C,8+ !D transfer; when not GF denies 1HS canapé response,
-+,2D,balanced GF; (10)11+ no 5cm/4cM OR 12+ maybe 4!Hs/!Ss not 5!Cs/!Ds OR 14+ maybe 5!Cs/!Ds,
++,2D,Balanced GF; (10)11–15/19+ hcp; no 5cM; when 12+ maybe 4!Hs/!Ss, when 14+ maybe 5!Cs/!Ds
 +,2H,6+ !Hs ~4-7 hcp,
 +,2S,~9--11 hcp invitational !Cs and !Ds with any short major,
-+,2N,natural invite ~9-10 hcp,
++,2N,16–18 hcp natural; maybe 5 card major,
 +,3C,!C preempt; ~3-7 hcp,
 +,3D,!D preempt; ~3-7 hcp,
 +,3H,!H preempt; ~3-7 hcp,
@@ -223,15 +223,9 @@ Option
 1C--2D--2N--,3D,14-15 hcp; no 4cM; no 5cm
 1C--2D--2N--,3H,14-15 hcp; natural
 1C--2D--2N--,3S,14-15 hcp; natural
-1C--2D--2N--,3N,16+ hcp
+1C--2D--2N--,3N,19+ hcp
 1C--2D--2N--,4C,14-15 hcp; 5 card minor
 1C--2D--2N--,4D,14-15 hcp; 5 card minor
-
-1C--2D--2H--,2S,6+ !Ds single suited
-+,3C,5!D 4!C
-+,3D,6!D 4!C
-+,3H,singleton 6-5+ minors
-+,3S,singleton 6-5+ minors
 
 # 1C--2S continuations
 
@@ -240,6 +234,19 @@ Option
 +,3D,5/6!D 4!C
 +,3H,singleton 5-5+ minors
 +,3S,singleton 5-5+ minors
+
+# 1C--2N continuations
+
+1C--2N--,3C,5 card muppet stayman
+1C--2N--,3D,!H transfer; maybe 4 !Ss
+1C--2N--,3H,!S transfer; not 4 !Hs
+1C--2N--,3S,minors 5-4+; often slam try
+1C--2N--,4C,!H slam try
+1C--2N--,4D,!S slam try
+1C--2N--,4H,!C slam try
+1C--2N--,4S,!D slam try
+1C--2N--,5S,6NT invite asking for any 5 card suit
+
 
 # 1C overcalled interference
 
@@ -513,7 +520,7 @@ Option
 +,4D,!S transfer
 
 Option,natural_opponents_minor_cue
-1D2D,Db,takeout
+1D2D,Db,values
 +,3D,stop asks
 +,3H,GF 6+ suit
 +,3S,GF 6+ suit
