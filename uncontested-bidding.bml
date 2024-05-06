@@ -468,8 +468,7 @@ Invitational plus.
     2S = puppet, often like NT transfer
         2N = complete puppet
             3CD = natural, slam interest
-                3D = set suit
-                3M = control bid, agree last suit
+                3x = control bid, agree last suit
             3HS = 6--4 minor/major GF
             3N = to play, NT transferred
     2N = slam interest, flattish, 4+ minor ask
@@ -1261,7 +1260,7 @@ By a *passed hand* 2!c *Reverse Drury* shows a 9--10 hcp limit raise with 3+ car
 Opener bids 2!h (fast arrival) with a (sub)minimum hand.
 
 2D = second 4+ suit, any strength, may have 4 !ss (4--5--4--0) or 6th !h
-    2H = usual doubleton !h (3!h bid otherwise), denies 4!ss. 3 card support is a 3N looking hand, little slam interest.
+    2H = 2 or 3 card support !h (3!h bid otherwise), denies 4!ss
         3H = set !h trumps, slam interest, 3N bids are "serious" control prompts
         4H = 6 cards but not serious slam interest
         any = ...
@@ -1274,10 +1273,7 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
     2N = natural, forcing ~16+ hcp
     3C = forcing 6+ !cs
     3D = natural, forcing raise, !d minor contract interest
-    3H = [picture raise](#Picture Raises), with outside controls
-    3H = 3 (occasionally 4) card !h support, was checking for double fit slam possibility.
-        3N = serious control prompt by either
-        4C = control, fragment
+    3H = [picture raise](#Picture Raises), with outside controls hmmmmmm
     3S = splinter for !d (with 6--5 !c/!s, bid 2!s then more !ss instead)
     3N = natural, ~12--15, stoppers in !ss
     4C = self-sufficient, max 1 loser, some outside control

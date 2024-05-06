@@ -1112,7 +1112,7 @@ With limited strength may want to hide distribution information and just bid the
             Others = [Lebensohl system](#1NT Interference and Lebensohl)
     2C = over prepared !c: natural
         2x = NF, natural
-        2N+ = [Lebensohl System](#1NT Interference and Lebensohl)
+        2N+ = [RLEB](#Reversed Lebensohl RLEB)
     2C = over natural !c: majors, not strong
         2D = relay, weak major signoff type hands
             2H = relayed
@@ -1241,6 +1241,22 @@ With limited strength may want to hide distribution information and just bid the
 (1C)--P--(3C)
     others = as [Opponents open 3C](#Opponents open 3CDHS)
 
+*** 4th Balancing 1C
+
+[Summary](#4th balancing of 1x openings)
+
+(1C)--P--(P)
+    1HS = maybe 4 card avoiding 1NT
+    1N = 11--15(16)
+        2C = [staymanic range ask](#responding to 4th balancing 1NT)
+        Others = [1N system on](#1NT Opening)
+    2C = Michaels
+    2DHS = natural ~10--13
+    2N = 19--21 natural
+    3x = natural intermediate
+    4x = natural
+
+
 * Opponents open 1D
 
 **** (1D)--X
@@ -1352,7 +1368,7 @@ With limited strength may want to hide distribution information and just bid the
             3HS = GF, fit jump
     2D = over prepared !d: natural
         2HS = NF, natural
-        2N+ = [Lebensohl System](#1NT Interference and Lebensohl)
+        2N+ = [RLEB](#Reversed Lebensohl RLEB)
     2D = over natural !d: majors, not strong
         2HS = simple preference, prefer !hs with equal length
         2N = natural invitational, very rare, very strong minor stops
@@ -1462,6 +1478,22 @@ With limited strength may want to hide distribution information and just bid the
 
 (1D)--P--(3D)
     any = as [Opponents open 3D](#Opponents open 3CDHS)
+
+*** 4th Balancing 1D
+
+[Summary](#4th balancing of 1x openings)
+
+(1D)--P--(P)
+    1HS = maybe 4 card avoiding 1NT
+    1N = 11--15(16)
+        2C = [staymanic range ask](#responding to 4th balancing 1NT)
+        Others = [1N system on](#1NT Opening)
+    2D = Michaels
+    2HS = natural ~10--13
+    2N = 19--21 natural
+    3x = natural intermediate
+    4x = natural
+
 
 * Opponents open 1H
 
@@ -1733,6 +1765,22 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
     X = general takeout including !s, 4th or 6th
         4N = choose a minor
 
+*** 4th Balancing 1H
+
+[Summary](#4th balancing of 1x openings)
+
+(1H)--P--(P)
+    1S = maybe 4 card avoiding 1NT
+    1N = 11--15(16)
+        2C = [staymanic range ask](#responding to 4th balancing 1NT)
+        Others = [1N system on](#1NT Opening)
+    2H = Michaels
+    2S = natural ~10--13
+    2N = 19--21 natural
+    3x = natural intermediate
+    4x = natural
+
+
 * Opponents open 1S
 
 **** (1S)--X
@@ -1942,6 +1990,20 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
     X = general takeout, some support for 3 suits
     X = passed hand would be gamble 0--4--4--5, probably only NV
     4N = true 2 suiter, maybe !hs
+
+
+*** 4th Balancing 1S
+
+[Summary](#4th balancing of 1x openings)
+
+(1S)--P--(P)
+    1N = 11--15(16)
+        2C = [staymanic range ask](#responding to 4th balancing 1NT)
+        Others = [1N system on](#1NT Opening)
+    2S = Michaels
+    2N = 19--21 natural
+    3x = natural intermediate
+    4x = natural
 
 * Opponents open 1NT
 

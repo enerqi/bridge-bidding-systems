@@ -156,7 +156,7 @@ Option
 +,4C,5-5 !H + !C
 +,4D,5-5 !H + !D
 
-1C--1S--,2H,5+ !hs strong ~16-18hcp; maybe 6!H + 3!S support
+1C--1S--,2H,5+ !hs; maybe 6!H + 3!S support
 1C--1S--2H--,2S,5 !Ss
 +,2N,6+ !Ss
 1C--1S--2H--2S--,2N,ask
@@ -479,7 +479,7 @@ Option
 +,2D,3 !Ss; ~6-9 hcp; 3-2-4-4 or 3-1-(5-4)
 +,2H,!S transfer; 6+ cards weak or GF
 +,2S,stop ask; invite plus
-+,3C,preempt
++,3C,preempt 5-4+ minors
 +,3D,preempt
 +,3H,!Ss + minor; mild GF two suiter
 +,3S,preempt
