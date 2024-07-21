@@ -146,6 +146,7 @@ Natural, 4+ cards, maybe longer minor canapé
         2H = 4+ !ds with 3!hs, !d super-accept, non-minimum
     2D = artificial, GF
         2H = 3 card !h support
+            3N = 5--3--3--2
         2S = Hx !h support (higher priority than 3!c!d)
         2N = !h singleton (lowest priority)
         3C = 5 !cs
@@ -188,6 +189,7 @@ Natural, 4+ cards, maybe longer minor canapé
         2H = break, 4+ !ds with 3!hs, !d super-accept, non-minimum
     2D = artificial GF, mostly natural continuations, priority show 3 card !h support
         2H = 3 card !h support
+            3N = 5--3--3--2
         2S = Hx !h support (higher priority than 3!c!d)
         2N = !h singleton (lowest priority)
         3C = 5 !cs
@@ -334,6 +336,7 @@ Natural, 4+ cards, maybe longer minor canapé
     2D = artificial, GF, mostly natural continuations
         2H = Hx !s support (higher priority than 3!c!d)
         2S = 3 card !s support
+            3N = 5--3--3--2
         2N = !s singleton (lowest priority)
         3C = 5 !cs
         3D = 5 !ds
@@ -772,7 +775,7 @@ stopper ask, as only natural invitational 3!d rebids (e.g. xx/Axx/AKQJxx/xxx) wo
 
 **** Support doubles and redoubles by opener
 
-- responder bids 1!h/1!s
+- responder's 1 level bid shows a suit (often 1H/1S but could be an artificial minor showing bid)
 - 4th hand bids, even NT bids
 - 2nd hand's bid is irrelevant
 - opener can X/XX or do a direct raise
@@ -1870,6 +1873,7 @@ Responding:
         3CDH = 5--5, extras (maybe minimum 5--6), maybe risky
     2N = NF, ~6--(10), 4+ !cs
     3CD = NF, ~6--(10), 6+ card minor, canapé
+    3H = invitational, 6+ suit (not quite worth 1S--3H)
     3S = natural, 3 card invite
 2D = natural, 4+ !ds, 11--13
     P = best contract guess, usually 5 cards, maybe 1--4--4--4 or even 1--4--3--5

@@ -310,8 +310,7 @@ Acol two strength 6--5 two suiter:
     3S = 5(+) card support, NF
     3N = ~9--10, happy with !s bid
 1N [weak NT](#1NT Opening)
-    any = NT Scheme
-    2C = 3 card stayman
+    any = natural, 2x weak, 2N/3x invitational
 2C = natural strong, ~16--19, !cs, not exactly 4!ss (use 1!s then canapé rebid with 4!ss non-GF)
     2D = positive 5+ relay
         2H = natural, F1
@@ -400,6 +399,7 @@ Acol two strength 6--5 two suiter:
         other = strong 16+
     2D = artificial GF, natural continuations, normal only 2!s bid used by strong hand
         2H = weak NT, 3 card support
+            3N = 5--3--3--2
         2S = natural, 6!ss
         2N = weak NT, nothing special, may have 5 card !s suit
         3CD = natural, strong, 5--4+
@@ -431,6 +431,7 @@ Acol two strength 6--5 two suiter:
             3S = (after 1!h response) invite with 6--5
     2D = artificial GF, natural continuations
         2M = 3 card major support
+            3N = 5--3--3--2
         2oM = Hx major support
         2N = singleton support
         3C = 5 !cs
@@ -695,7 +696,7 @@ Acol two strength 6--5 two suiter:
 - when NF limited ~8--10 hcp denies a 4 card major
 - when GF not 5!ds and 4!cs (starts with 1N !c transfer!)
 - when GF we may have a 4 card major
-- possibly 5--3--3--2 balanced, but can bid 1D (~8--9 hcp), 2D (14+ hcp 5--3--3--2) or 2N (~9--10 hcp)
+- possibly 5--3--3--2 balanced, but can bid 1D (~8--9 hcp), 2D (14+ hcp 5--3--3--2)
 
 2D = Weak NT, transfer accept
     P = limited ~8--9 hcp
@@ -987,6 +988,8 @@ Compared to the [1D opening interference](#1D interference):
 - 1C can be strong unlimited so 2N by opener is used for some 16+ hands
 - In competition the 1 level major response to 1C are 6+, so system is off
 - System remains on over 1D as the values don't really change and opener is limited
+- support doubles/redoubles by opener maybe weak iff we have the higher ranked suit (so we could compete and win the 2
+  level or force the opponents to bid to the 3 level)
 
 
 1C--(X)
@@ -1083,8 +1086,9 @@ Compared to the [1D opening interference](#1D interference):
     1S = 4+ !cs, not 4 !ss unless GF and bidding natural suit order
         1N = weak
             2H = stop ask
-        2CD = weak
+        2C = weak
             2H = stop ask
+        2DS = natural, strong
         2H = strong, no stopper
         (2H) = interference
             2S = weak, decent 5 cards
@@ -1220,7 +1224,7 @@ Compared to the [1D opening interference](#1D interference):
 
 1C--(X)--1H--(X)
     P = weak, 2 card support
-    XX = strong hand, 3 card support
+    XX = 3 card support, weak (may win 2 level) or strong
     1S = accept transfer example, weak hand, 3 card support
     1N = weak hand, NT friendly, 2--3 card support
     2S = raise, accept, weak hand, 4 card support
@@ -1233,7 +1237,7 @@ Compared to the [1D opening interference](#1D interference):
 
 1C--(1S)--2C--(X)
     P = weak, 2 card support
-    XX = strong hand, 3 card support
+    XX = strong hand, 3 card support (cannot win 2 level so not weak)
     2D = accept transfer example, weak hand, 3+ support
     2H = strong, natural
     2S = general force
@@ -1248,7 +1252,7 @@ Compared to the [1D opening interference](#1D interference):
 
 1C--(1D)--1H--(X)
     P = weak, no stop
-    XX = strong, 3 card support
+    XX = 3 card support, weak (may win 2 level) or strong
     1N = weak natural, !s stop
     2D = general force
     2H = weak 4+ card
@@ -1260,7 +1264,7 @@ Compared to the [1D opening interference](#1D interference):
 
 1C--(1D)--1H--(1S)
     P = weak, no stop
-    X = strong, 3 card support
+    X = strong, 3 card support (cannot win 2 level so not weak)
     1N = weak natural, !s stop
     2D = general force
     2H = weak 4+ card
@@ -1272,7 +1276,7 @@ Compared to the [1D opening interference](#1D interference):
 
 1C--(1D)--1S--(2D)
     P = weak hand, 2 card support
-    X = support, strong
+    X = 3 card support, weak (may win 2 level) or strong
     2H = strong, natural
     2S = weak hand, support
     2N = Good-Bad, usually GF strong support, else ~16--18 !cs
@@ -1283,7 +1287,7 @@ Compared to the [1D opening interference](#1D interference):
 
 1C--(P)--1S--(2D)
     P = weak hand, 2 card support
-    X = support strong
+    X = 3 card support, weak (may win 2 level) or strong
     2H = strong natural
     2S = weak hand, support
     2N = Good-Bad, usually GF strong support, else ~16--18 !cs

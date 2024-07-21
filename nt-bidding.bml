@@ -38,7 +38,8 @@ Responding:
 - 5!ss invitational: 2!c Stayman then 2!s
 - 5--5 majors invitational: !s transfer then bid 3!h
 - 5--5 majors GF or slam try: 2!c then artificial 4!c/4!d over a 2!d response
-- 6--4 majors: usually just go for the 6 card suit
+- 6--4 majors GF: stayman then bid 4M (no transfer option) or just show the 6 card major
+- 6--4 majors slam try: usually just show 6 card major otherwise no way to show 6 cards
 - 4--3--3--3 hands with 4 card !h/!s often do better in NT
 - 5--3--3--2 with major can use stayman then bid NT or Smolen, maybe only bidding 4HS with a 9 card fit
 - 5 card minor + 3 card major 5--3--3--2 slam try: puppet stayman
@@ -216,6 +217,7 @@ Stayman, promissory, maybe weakish 4--4--4--1!c
     4D = majors 5--5, GF or slam try depending on suit preferred
         4HS = preference
             next = RKB
+    4HS = to play, probably 6--4 majors
     4N = quantitative
     5S = onway to 6N, asks for any 5 card suit
 
@@ -740,8 +742,8 @@ Puppet Stayman
             4S = to play
         4CD = shortage, !h slam try, can be mild slam try
         4H =  mild slam try, looking for good trump support
-    3N = bad !hs, slam warning, weak xx in !hs
-    4H = bad !hs, xx in !hs, but very good hand
+    3N = bad !hs, bad hand, slam warning, weak xx in !hs
+    4H = bad !hs, good hand, xx in !hs, but very good hand
 
 *** 1N--3H
 
@@ -758,8 +760,8 @@ Puppet Stayman
         4C = general !s slam try
         4DH = shortage, !s slam try, can be mild slam try
         4S = mild slam try, looking for a good trump support
-    3N = bad !ss, slam warning, weak xx in !ss
-    4S = bad !ss, xx in !ss, but very good hand
+    3N = bad !ss, bad hand, slam warning, weak xx in !ss
+    4S = bad !ss, good hand, xx in !ss, but very good hand
 
 *** 1N--3S
 

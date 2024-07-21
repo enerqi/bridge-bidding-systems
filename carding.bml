@@ -27,17 +27,25 @@ Attitude request. Maybe no King when against:
 
 - 5+ level contract
 - 3+ level opening preempt
+- other desparate try to find our tricks quick starts
 
 **** King Lead for Count
 
 Count asking from from AK+ or KQ+
 
+As with NT leads, an alternative method to clear up this ambiguity when playing King count lead is some Rusinow style
+leads, Q from KQ, J from QJ, 10 from J10 and 9 from 109. Harder to decipher when leading a doubleton, which is more
+common in suit contracts than NT (e.g. from 10x or 9x).
+
+
 ** Suit Contract Signals
 
-**** Reverse Attitude on partner's lead
+**** Reverse Attitude on partner's lead (count where cannot beat dummy's Queen or lower)
 
 A very high discard can be an alternative to encourage underleading, e.g. on Ace lead (often from AK) partner could
 play the Queen showing the Jack or better.
+
+If partners has lead a low card and you cannot beat a Q or worse in dummy then we should fallback to giving count.
 
 
 **** 3-way defensive signals
@@ -147,7 +155,6 @@ situation such as declarer trying to establish a long suit in an entryless dummy
 - after the primary reverse attitude discard, we can try to give partner count in suits, if we think they need it
 
 
-
 ** Suit Preference Mechanics
 
 - we use Revolving suit preference, when following suit or possibly later after already doing a reverse attitude discard
@@ -182,6 +189,20 @@ Breaking open a new suit is less precise on count, we play (reverse) attitude le
 in the suit whilst a high card does not. In neither case is there any specific count information as there is with
 2nd/4th or 3rd/5th.
 
+The benefit of the reverse attitude leads is hinting whether you want to look for tricks in this new (second) suit or
+continue with your side's first suit.
+
+** "Remaining Equals" information from an opening leader
+
+"Unnecessary" play (when declarer or partner are winning) of highest equal card means no higher card exists and that it is equivalent in value to other lower
+cards that you have.
+
+When either declarer or partner is winning the second round of a suit we led, following suit with a our *highest equal*
+card denies a higher card.
+
+Additionally, applies when discarding an A, K, Q or J.
+
+
 ** Opening Leads in Partner's Suit
 
 - 3rd and low from an honour for clearer count
@@ -199,15 +220,31 @@ in the suit whilst a high card does not. In neither case is there any specific c
 
 ** Count Philosophy
 
-When to give count voluntarily? There is some merit to the notion of when partner needs it. Some more obvious places
-where it's needed:
+When to give count voluntarily? There is some merit to the notion of when partner needs it or with more nuance, where it
+probably helps more than it hurts. The assumption is that getting a general count on the hand helps defenders more than
+it hurts, so where is it less useful, or hurtful?
+
+A weak hand typically does not need accurate count information from a strong hand
+(though you may argue that a weak hand protecting two honourless 4 card suits may still need help, e.g. in a squeeze).
+Neither partner need give count on a suit if it's expected to be calculable from other distributional information such
+as the bidding or there is a notable danger of declarer playing the suit better with real count help.
+
+Some places where it's often really needed:
 
 - declarer is trying to establish a long suit in dummy with limited entries
 - partner is struggling to decide which suit to keep, particularly against a slam
 
-Note, the "when partner needs it" can be extended to opening leads with general attitude leads instead of 2nd/4th or
-3rd/5th leads. Attitude leads are reverse attitude information but no count information, perhaps creating
-difficulties for both declarer and the opening leader's partner.
+Where the need is less obvious but overall likely beneficial:
+
+- getting count on our first suit or declarer's suit to estimate the number of tricks potentially available to declarer
+
+As an aside, the philosophy can be applied to opening leads balancing general attitude leads instead of 2nd/4th or
+3rd/5th leads. Attitude leads are reverse attitude information but no count information, perhaps creating difficulties
+for both declarer and the opening leader's partner. 3rd/5th and 2nd/4th both give count but the 3rd/5th leads give
+clearer immediate count.
+
+When you are the "strong" defending hand it can help to randomly lie. This can be extended to false carding the opening
+lead.
 
 
 * 5 Lines of Defense Guide

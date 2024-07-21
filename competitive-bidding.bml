@@ -645,7 +645,7 @@ partner should play NT (we have Axx they Qx)
 
 ** Relay Lebensohl Doubles
 
-- After we open or overcall, there are many times the opponents raise the bidding to the 3 level *before partners bids*
+- After we open or overcall, there are many times the opponents raise the bidding to the 3 level *before partner responds* (maybe be a good passed hand)
 - Played when we have shown a suit, so opened 1HS, overcalled or takeout double
 - Double is a relay to the next suit, instead of being a "responsive" double or negative double, with competitive hands
 - Double of most 3 level bids, anything that's not specifically shortage showing, so fit jumps, new suits,
@@ -1113,6 +1113,7 @@ With limited strength may want to hide distribution information and just bid the
     2C = over prepared !c: natural
         2x = NF, natural
         2N+ = [RLEB](#Reversed Lebensohl RLEB)
+        3C = invitational
     2C = over natural !c: majors, not strong
         2D = relay, weak major signoff type hands
             2H = relayed
@@ -1125,6 +1126,8 @@ With limited strength may want to hide distribution information and just bid the
         4C = choose a major jump cue, later 4N double fit RKB
         4HS = ambiguous, fast arrival
     2D = weak jump overcall
+        2N = feature/strength ask
+            3D = minimum
     2HS = weak, respond as [6 card weak two](#2HS Weak Openings)
     2N = 5--5 !hs + !ds
         3C = good !h raise, 2 useful features
@@ -1369,6 +1372,7 @@ With limited strength may want to hide distribution information and just bid the
     2D = over prepared !d: natural
         2HS = NF, natural
         2N+ = [RLEB](#Reversed Lebensohl RLEB)
+        3D = invitational
     2D = over natural !d: majors, not strong
         2HS = simple preference, prefer !hs with equal length
         2N = natural invitational, very rare, very strong minor stops
@@ -1749,6 +1753,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 
 (1H)--P--(2H)
     X = takeout
+        2N = scrambling, later double 3 bad !ss, later 3!ss 3 good !ss
     2N = minors
     others = as [Opponents open 2H](#Opponents open Weak 2D 2H 2S)
 
