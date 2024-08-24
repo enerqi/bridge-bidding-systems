@@ -118,7 +118,7 @@ Natural, 4+ cards, maybe longer minor canapé
 
 1S = exactly 4 !ss (always bid with 4 !ss), may have 3 card !h support (note 5!s--6!d open 1!s or open 1!d reverse to 2!s)
     P = 3+ !ss, no game chance
-    1N = natural, 6--10, any shape where 1N seems ok
+    1N = natural, 6--10(11), any shape where 1N seems ok
         P = most hands with no game interest
         2CD = 14--15, natural, 5 cards 4--1--(3--5) or 4--2--(2--5) long minor, NOT FSF
             2H = natural, 5 cards, not worth initial 2!h bid over 1!d or 1!s rebid
@@ -745,11 +745,13 @@ with less nuance if they bid at the 2 level.
 1D--(P)--1H--(1S)
     2S = best invitational !h raise, maximum and shape
     3H = weak limit (4 card support, shape, probably a singleton)
+    others = system on
 
 1D--(1H)--X--(P)
     1S = nothing special
     2H = best invitational 4 card !s support
     2S = weak limit (4 card support, shape, probably a singleton)
+    others = system on
 
 1D--(1H)--1S--(P)  showing !cs
     2C = nothing special
@@ -771,6 +773,7 @@ stopper ask, as only natural invitational 3!d rebids (e.g. xx/Axx/AKQJxx/xxx) wo
     3C = good 3!s raise
     3S = weaker !s raise
     X = support, not rubbish VUL
+    others = system on
 
 
 **** Support doubles and redoubles by opener
@@ -1455,18 +1458,21 @@ remaining below 4!h:
   3D = relay, better than 3!h bid (fine in game v.s. minimum with !s singleton)
       3H = minimum 5--3--3--2/5--4--2--2/6--3--2--2/7--2--2--2, NF
           3N = to play, often 4--3--3--3 or 4--4--3--2 with strong doubleton
-          4CD = control
+          4C = control
+          4D = Last Train
       3S = !s singleton minimum OR !s void any strength
           3N = relay for shortage details, mild slam interest
               4C = void !s, maximum, e.g. -/AKxxx/Axxx/Kxxx
               4D = void !s, minimum, e.g. -/AKxxx/Axxx/Jxxx
               4H = singleton !s minimum, e.g. x/AKxxx/Axxx/Jxx
-          4CD = control bids, not interested in !s shortage
+          4C = control bids, not interested in !s shortage
+          4D = Last Train
           4H = to play, no slam interest v.s. short !ss
       3N = !c/!d void, minimum
           4C = relay
               4D = void !d
               4H = void !c
+          4D = Last Train
       4C = !c void, maximum
       4D = !d void, maximum
       4H = (semi)balanced maximum but unsuitable for 3N (e.g. strength in main suit)
@@ -1474,17 +1480,20 @@ remaining below 4!h:
       4H = maximum any OR void minimum
 3D = minimum, singleton !d
     3N = to play, with !d stoppers
+    4D = Last Train
 3H = minimum, singleton !c, NF
     3N = to play, with !c stoppers
+    4D = Last Train
 3S = maximum, unknown singleton
     3N = ask, slam interest normally
         4C = !c singleton
         4D = !d singleton
         4H = !s singleton
-    4CD = control
+    4C = control
+    4D = Last Train
     4S = Kickback [RKB](#RKB 4N)
 3N = maximum 6--3--2--2 / 5--4--2--2 (with good doubleton control), stops
-    4S = Kickback [RKB](#RKB 4N)
+    4D = Last Train
 4CD = maximum, 5--5+ (4!h showing !ss which would be 5--6 shape or 7--4--1--1), responder should only care about the Ace in other suits
 4H = maximum, 5!s--6!h / 7!h--4!s--1--1 (bid !s first with equal length) OR versus passed hand fast arrival game bid
 
@@ -2116,7 +2125,7 @@ Game-forcing. Usually five cards. Could be 2--4--4--3.
 2N = catchall, stops not guaranteed
     3H = natural, forcing 6+ !hs
         4S = !h RKB
-    3S = 3 (occasionally 4) card support, slam interest (bid 4!s without slam interest)
+    3S = forcing, ambiguous strength unsuitable for 4!s picture raise
         3N = Serious
     4H = to play
     4S = [picture raise](#Picture Raises), no outside controls
@@ -2187,14 +2196,17 @@ invitational plus raise 3 (GF) or 4 card support.
               4H = minimum, !h singleton, but some shape so would accept game
               4S = dead minimum, !h singleton
           4CD = control bids, not interested in !h shortage
+          4H = Last Train
           4S = to play, no slam interest v.s. short !hs
       3S = minimum 5--3--3--2/5--4--2--2/6--3--2--2/7--2--2--2, NF
           3N = to play, often 4--3--3--3 or 4--4--3--2 with strong doubleton
-          4CDH = control
+          4CD = control
+          4H = Last Train
       3N = !c/!d void, minimum
           4C = relay
               4D = void !d
               4H = void !c
+          4H = Last Train
       4C = !c void, maximum
       4D = !d void, maximum
       4S = (semi)balanced maximum but unsuitable for 3N
@@ -2204,18 +2216,22 @@ invitational plus raise 3 (GF) or 4 card support.
 3D = minimum, singleton !d
     3H = control bid
     3N = to play, with !d stoppers
+    4H = Last Train
 3H = minimum, singleton !c
     3N = to play, with !c stoppers
+    4H = Last Train
 3S = maximum, unknown singleton.
     3N = ask, slam interest normally
         4C = !c singleton maximum
         4D = !d singleton maximum
         4H = !h singleton maximum
     4CD = control
+    4H = Last Train
     4S = to play, no slam interest
     4N = [RKB](#RKB 4N)
 3N = maximum 6--3--2--2 / 5--4--2--2 (with good doubleton control), stops
-    4CDH = control
+    4CD = control
+    4H = Last Train
     4N = [RKB](#RKB 4N)
 4CDH = maximum, 5--5+, responder should only care about the Ace in other suits
 
