@@ -1156,7 +1156,7 @@ full of compromises.
     2H = pass or correct
     2S = modified pass or correct
         P = !ss
-        2N = !hs minimump
+        2N = !hs minimum
         3C = !hs extras
     2N = ask, invite plus
         3C = !h minimum

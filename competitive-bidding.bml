@@ -613,8 +613,35 @@ Examples:
   when partner has opened or overcalled: 1H--(2D)--2H--(3D)--X
 - Is it a standard [*responsive* double](#Responsive Doubles Style) situation showing the other two suits? Responsive X played to 3!s. Partner does
   takeout X or overcalls of opener and then we X the opponents' raise (OBAR). Their raise can be artificial.
+- Over Live auction 4x raises from the opponents doubles are more "values" based (awkward cooperative not highly
+  distributional). Note some play "responsive" to 4H or higher. At the 4 level there's not much meaningful difference
+  between general values and responsive.
+- Freely bid new suits (not live supported) at the 4 level by the opponents typically has a penalty emphasis unless it's
+  the initial overcall in which case it's negative up to 4H. Doubles of 4th hand up to 4H are max support after 1DHS
+  opening.
+- Special annoyance 1C--(4x) is treated like 1N--(4x) values/negative-ish
+- Special annoyance 1C then 4th bids 4x such as 1C--(P)--1N--(4D) are "penalty", assuming opener has a NT hand and
+  punishing. Penalty maybe made with a less distributional strong hand. As with any 4x preempt partner may still
+  "cooperatively" bid something else with a very distributional hand
 
-If these do not apply then some blanket rules exist.
+Live auction 4x pressure examples:
+
+- 1C--(P)--1D--4x 1C bidder treats as 4x opener
+- 1C--(2H)--3x--(4H) then double from 1C bidder is general values without good support for any shown suit
+- 1D--(1H)--X--(4H) as we play support doubles to 4H this should be good values for 1D plus 3 card support
+- 1S--(2C)--2S--(4C) max values cooperative
+- 1S--(2D)--3D--(4D) as partner is basically inviting, this is good values with a defensive hand
+- 1S--(2H)--2N--(4H) given the good raise the values maybe more defensive than extra HCP, more penalty focus (nominally 2N system inteference on but that assumes 4th coming in alone)
+- 1S--(2H)--3S--(4H) over partner's mixed raise like hand, double still is extra values defensive preference
+- 2D--(2S)--3D--(4S) extra values defensive, partner may have a bad hand
+- 2D--(2S)--3C--(4S) general defensive values, not necessarily extras as 3C was forcing
+- (2x)--X--(4x) auctions are values
+- (1x/2x)--P--(3x/4x) treat as opening 3x/4x preempt
+
+
+** Blanket Rules
+
+Where the above do not apply.
 
 Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others play this to 3!s).
 *"All doubles of bids through 2!s are takeout UNLESS"*:
@@ -628,7 +655,7 @@ Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others pla
 7. partner preempts
 8. our side are in a GF (1!h/!s + 2/1, 1!c--1N/2!s)
 9. our side invites 3N (1!c--2!s, 1!c--2N)
-10. our side limits hand with no major (1!c--1N/2!c is no major or already in a GF)
+10. our side limits hand with no major (1!c--1N/2!c is no major OR maybe major but already in a GF)
 11. a passed hand doubles their solo rebid, (1H)--P--(P)--X--(2H)--X
 
 ** Takeout Doubles
@@ -1607,7 +1634,7 @@ With limited strength may want to hide distribution information and just bid the
     (2H) = opponents raise
         2S = natural, decent 6+ cards
         X = 5 or bad 6 card, tolerance for minor suit
-2H = !s + minor, Michaels, not strong
+2H = !s + minor, Michaels
     (Dbl) = whatever
         XX = !s invitational
     (3H) = opponents raise
