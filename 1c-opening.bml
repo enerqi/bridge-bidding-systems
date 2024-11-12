@@ -9,14 +9,14 @@
 1C
     (any) = [1!c interference](#1C Interference)
     [1D](#1C--1D) Negative 0--7 hcp or 8--9(10) semi-positive no 4cM
-    [1HS](#1C--1HS) 8+ hcp, 4+ card suit, denies 2!d response, unbalanced if 12+, maybe longer minor when not GF
+    [1HS](#1C--1HS) 8+ hcp, 4+ card suit, denies 2!d response, unbal if 12+, maybe longer minor when not GF
     [1N](#1C--1N) 8+ hcp, !c transfer, when GF maybe 4!cs and longer !ds, when limited denies 1HS canapé response
     [2C](#1C--2C) 8+ hcp, !d transfer, when limited denies 1HS canapé response, not GF 5!ds and 4!cs
     [2D](#1C--2D) Balanced GF, (10)11--15/19+ hcp, no 5cM, when 12+ maybe 4!hs/!ss, when 14+ maybe 5!cs/!ds
     2H ~4--7 hcp, good weak two (2+ honours), continue as if opened [2H preempt](#2H Opening Responses)
     [2S](#1C--2S) ~9--11 hcp invitational !cs + !ds, minors + any short major, does not want to play 2N
     [2N](#1C--2N) 16--18 hcp, natural maybe 5 card major, [2NT system on](#2NT Opening)
-    3CD invitational, good 6+ card minor, continue as if opened [3CD preempt](#3CD Openings)
+    3CD invitational ~7--9 hcp, good 6+ card minor, continue as if opened [3CD preempt](#3CD Openings)
     3HS ~3--7 hcp, weak, continue as if opened [3HS preempt](#3HS Openings)
     [3N](#1C--3N) Any 6 card Solid AKQJ suit, no outside A/K, max one extra Q
     [4CD](#1C--4CD) 8 card !h/!s suit, exactly AQJ or KQJ, no outside A/K, max one outside Q
@@ -382,8 +382,8 @@ Acol two strength 6--5 two suiter:
 - Bid 1!h with 4--4 both majors
 - Bid 1!s with 5--5 both majors
 - Unbalanced if 12+ (maybe balanced 4 card major otherwise)
-- After a positive major response there is *no canapé bidding from opener* responders 1HS
-  is already possible canapé and only one side of the partnership ever does canapé bidding.
+- After a positive major response there is *no canapé bidding from opener* responder's 1HS
+  is already possible canapé and only one side of the partnership ever does canapé bidding
 
 
 1S = (over 1!h) natural weak/strong, F1, 5+ *unbalanced* suit if strong (NOT canapé), not 3+ !hs if strong (use 2!d)
@@ -493,7 +493,7 @@ Acol two strength 6--5 two suiter:
             3x = natural
         4new = splinter
         others = natural, sound 6 card suit
-    3C = canapé, ~8--11 hcp
+    3C = canapé ~8--11 hcp, or natural 12+
         3D = singleton ask
             3oM = other major singleton
                 4C = !c RKB
@@ -509,7 +509,7 @@ Acol two strength 6--5 two suiter:
                 4N = (over !s fit) double fit RKB
         4C = !c RKB
         4D = [Double Fit RKB](#Double Fit RKB)
-    3D = canapé, ~8--11 hcp
+    3D = canapé ~8--11 hcp, or natural 12+
         3oM = natural, 5+ carder
         3M = singleton ask
             oM = other major singleton
@@ -621,7 +621,7 @@ Acol two strength 6--5 two suiter:
             3N = to play
             4DHS = void splinter
         3C = negative, usually 2 card support
-    2N = invite, (semi)balanced with !c suit worth showing, instead of direct 2N
+    2N = invite, (semi)balanced with !c suit worth showing
     3C = invite, weakish suit, not worth initial 3!c response
     3DHS = 6--4 GF
 2D = GF relay
@@ -714,7 +714,7 @@ Acol two strength 6--5 two suiter:
             3N = to play
             4CHS = void splinter
         3D = negative, usually 2 card support
-    2N = invite, (semi)balanced with !d suit worth showing, instead of direct 2N
+    2N = invite, (semi)balanced with !d suit worth showing
     3C = 6--4 GF
     3D = invite, weakish suit, not worth initial 3!d response
     3HS = 6--4 GF
@@ -739,6 +739,8 @@ Acol two strength 6--5 two suiter:
 2N = good 6+ !h suit
     4D = self-sufficient, max 1 loser, some outside control
 3C = good 6+ card suit
+    bid = any
+        4D = !c RKB
     4D = self-sufficient, max 1 loser, some outside control
 3D = support, strong
 3HS = splinter, strong
