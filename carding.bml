@@ -8,217 +8,146 @@ about partnership preference than any evidence for being "better". Some give cou
 attitude and at times weight suit preference more highly. Some signal count mechanically, others are more flexible.
 
 
-** Suit Contract Opening Leads
+** Discards - General Advice
+
+- *clear* signals with highest or lowest from equals 9 from (9)87, 2 from 43(2) etc.
+- new suit first discard (reverse) attitude, second discard present/remaining count (not original count)
+- after already lead a suit (implies attitude already known), first discard is count in that same suit
+- discarding from partner's lead suit is present/remaining count by default - assumes already given attitude signal
+- top of honour sequences (similar to standard lead), Q from (Q)J109x etc., showing a perfect (remaining) sequence that
+  you can afford to discard from, which helps partner not worry about that suit or just understand its strength. Note
+  this unecessary high card play can also apply when just following suit, particularly when throwing it under declarer's
+  winner
+- in dummy's "strong" suit it shows *count* (you were going to count signal anyway), never attitude, giving partner that
+  count info before declarer/dummy even leads the suit
+- throwing *all* your cards in a suit can be clearer than a simple count echo, making it clear that declarer, the hidden
+  hand cannot have many of those cards, e.g. throwing 4 cards is more obvious than partner trying to read your secondary
+  count signals
+- throwing an honour in partner's lead suit is to make it clear they can now run the suit and don't need to put you in to
+  lead through declarer. In theory it could also be a form of risky unblock, wasting your blocked honour and hoping
+  partner has the lower cards
+- keep winners, not losers, so look to use negative discards where appropriate, especially if you can make 2 negative
+  discards to show your implied positive attitude suit
+- at NT when discarding your own suit (that you lead), we naturally imply negative attitude
+- at NT, keeping partner's suit as entry to their winners *if we may win* a future trick is very important
+- at NT primarily, creating entries back to partner's winners may require a creative top honour discard, though at
+  matchpoints it maybe wrong to try send off the contract and concede an overtrick in the process
+- reduce information leakage by discarding from your long suit, and if declarer naturally knows how many cards you have
+  in any suit, then give partner the count on it aswell when they don't know
+- discards from strong dummy/declarer suits are risky when you have 2 or 3 cards, it may make picking up cards that your
+  partner holds easy
+- risky discards from short suits, that show up partner's holding, imply a good chance of getting a ruff
+- signal negative attitude in the likely switch suit when your partner is wary of giving declarer a ruff and discard
+  but you are looking for a trump promotion
+- when you and dummy have a long 4+ card suit and your lowest card is higher than theirs, you often need to keep a
+  matching length in that suit so they don't setup a small winner. This can apply to declarer's holdings, but is harder
+  to visualize early without enough count information
+- if declarer draws dummy's trumps, often that implies any short suit in dummy can be thrown away - declarer has no
+  losers in that suit to ruff in dummy etc. This may happen when declarer is doing a squeeze, pseudo or not
+
+** Opening Leads - General Advice
+
+- sequence leads at NT promise a 3 card perfect sequence or one gap, QJ10 or QJ9
+- sequence leads with trumps may not have any better than HHxx, e.g. QJxx, J10xx
+- interior sequences are similar to trump leads whether in suit or NT contracts, AJ10, KJ10, K109, AQJ, H98 etc.
+- HHx leads top of the sequence, also no promise of extra lower cards - could be QJ2 or QJ9. Helps to early unblock.
+  In some "standard" NT leads K maybe lead from AKx when playing A as power lead, but playing K power leads this is not
+  a concern. Playing the K power lead you have to lead Q from KQx at NT
+- some prefer to play coded 10s/9s, strong 10s etc so that the lead of the J denies a high honour, but this (probably)
+  gives declarer more help than the defenders
+- whilst 10 is considered an honour in conjunction with A/K/Q/J don't treat 10xx(x...) as an honour holding unless it's
+  5 or 6 cards at NT with some side entries
+- Trumps: partner's *unsupported* suit tend to lead an honour, otherwise lead count from 2/3/4 small cards
+- NT: partner's *unsupported* suit tend to lead count - top from Hx or xx, low from Hxx or xxx
+- Trumps: partner's *supported* suit use attitude leads to signal honour presence, not typical 3rd and low
+- NT: partner's *supported* suit use attitude leads to signal honour presence, top from xxx(x), low from Hxx(x)
+- K in partner's suit is not a count asking lead at trumps and not a power lead at NT. Lead K from AK or KQ, similar to
+  opening up new suits after the opening lead (doubleton A then K, Q then K)
+- NT: 2nd from x(x)xx, which may protect your top 9/8
+
+*** Opening Lead Strategy
+
+- sequence leads or AK / KQ are powerful leads, as is leading partner's overcalled or lead directed suit. Natural
+  openings in 3rd maybe more lead directing than strength
+- underleading Kings is overall safer and more active than underleading the A/Q/J. Even if declarer scores a free
+  finesse you may still win the King later. Ace underleads are very dangerous at trumps
+- NT: leading opponent's bid suit when we have a rare very strong holding, then may lead low to unblock or not crash
+  partners hopefully helpful singleton
+- NT: unbid majors favoured over unbid minors in close calls. With 3 good cards would lead the minor
+- with 2 similar reasonable suits often lead the one without the Ace as it will be a future entry
+- NT: Q from AQx maybe a desparate unblock play at NT with Ace power lead, but with K power lead you may try the Ace
+  attitude lead, hoping partner has the K or if not carry on with Q to unblock
+- NT: (K)Q109 power lead often appropriate, even with only 4 cards
+- NT: AK109(x) your guess, with 5+ cards may look for a squash. With 4 cards less likely to squash etc.
+- NT: AQ109x(x) maybe lead Q to start Jack squash in dummy etc.
+- NT: AQxxx+ low lead with 5+ cards is much better than only AQxx 4 cards, which may need to be played passively as it
+  has few long cards to setup
+- NT: x(x)xxx(x)+ lots of small cards treat as good suit and lead low if have the entries to support running it, otherwise
+  do the 2nd highest lead as with 4 cards. With weak suits and limited entries it's often better to think what we can
+  help partner with
+- Trumps: xxx leads are painful, top of nothing looks like doubleton, low looks like honour and MUD is too vague
+- Trumps: short suit leads, especially doubletons, looking for a future ruff, work better when one of us is likely to
+  have some trump control such as Ax(x) or Kx(x). Short suit leads are bad when we sacrifice a natural trump trick
+  or one of us has 4+ trumps where a force maybe better (if dummy has fewer trumps etc.)
+- Trumps: short suit leads maybe poor if we need to actively attack before a strong side suit is set up
+- Trumps: we may lead from a long suit in expectation of partner being short
+- Trumps: a force maybe right without 4 trumps, where they have a misfit, possible 4-3 fit etc.
+- Trumps: the trump lead could be passive or a deliberate attempt to cut down on ruffs. Sacrifices without a second good
+  side suit, dummy showing simple preference for declarer's 2nd suit, or 1 level penalty doubles are obvious examples of
+  reducing ruffs. Auctions such as 1M--2M where you have no good suit to lead are a passive example - may give a trump
+  trick away but so could anything and a powerful second suit is not evident so an active defence is often wrong
+
+
+** Follow Up Plays
+
+- sequence continuations of the 3rd (or 4th) card ask partner to unblock (drop) the honour below, e.g. (Q)J108 then 10
+  asks for the 9 drop. Mainly for NT, but can apply for suit contracts. Note the power K lead covers some occasions
+  where you want partner to unblock or give count, but the unblock for power K leads is for honours, not small cards
+- new suit after opening lead: King lead from A(K)x(x)+ or (K)Qx(x)+ to quickly locate the honours, otherwise honour
+  leads are similar to opening
+- new suit low card after opening lead: standard reverse attitude leads (less precise on count than any 2nd/4th, 3rd/low
+  etc. opening leads). The benefit of the reverse attitude leads is hinting whether you want to look for tricks in this
+  new (second) suit or continue with your side's first suit.
+
 
-**** 3rd and Low
+** Attitude Signals
 
-Leading 3rd and Low from broken honour sequences means 3rd highest from even and lowest from odd. To some players 3rd
-and 5th may mean the same thing although it should really mean lead 5th highest when holding 5+ cards and 3rd highest
-with 3 or 4 cards.
+Encouragement is one of:
 
-This provides clearer immediate count than 4th highest leads, which is more important when trying to cash out against
-suit contracts.
+- an "equal" honour, e.g. Q lead at NT then the 10 or K is equal as partner has QJ9 or QJ10
+- *clear* signals with highest or lowest from equals 9 from (9)87, 2 from 43(2) etc.
+- hate a suit shift even if you lack good cards in the lead suit. Opposite logic for discourage, may just want a switch
+  now
+- Trumps: often doubleton if game or part score (not slams!), but beware leading partner into a bath coup or free
+  finesse if they lead from K/Q
+- Trumps: want the suit to be ruffed by declarer for whatever reason
+- Queen under Ace lead, promises Jack
 
-**** MUD from xxx
+** Count Signals
 
-**** Ace Lead for Attitude
+- simple even/odd semantics, nothing non-standard about what it shows
+- *clear* signals with highest or lowest from equals 9 from (9)87, 2 from 43(2) etc.
+- never when bidding or initial play has made it blantant to both defenders what the count is
+- when declarer or dummy leads, this is most players' primary signal
+- accurate count (by the weak hand) is most important when dummy has a long strong suit that is being setup (and may lack entries)
+- maybe: when partner leads Ace and dummy has KQ. Count takes precedence immediately, similar to if partner cannot beat
+  a low card lead when dummy plays the Q or lower, BUT if the KQ is an important source of discards then suit preference
+  is priority (this one is subtle - depends on counting tricks)
 
-Attitude request. Maybe no King when against:
+*** Count Mechanics
 
-- 5+ level contract
-- 3+ level opening preempt
-- other desparate try to find our tricks quick starts
-
-**** King Lead for Count
-
-Count asking from from AK+ or KQ+
-
-As with NT leads, an alternative method to clear up this ambiguity when playing King count lead is some Rusinow style
-leads, Q from KQ, J from QJ, 10 from J10 and 9 from 109. Harder to decipher when leading a doubleton, which is more
-common in suit contracts than NT (e.g. from 10x or 9x).
-
-
-** Suit Contract Signals
-
-**** Reverse Attitude on partner's lead (count where cannot beat dummy's Queen or lower)
-
-A very high discard can be an alternative to encourage underleading, e.g. on Ace lead (often from AK) partner could
-play the Queen showing the Jack or better.
-
-If partners has lead a low card and you cannot beat a Q or worse in dummy then we should fallback to giving count.
-
-
-**** 3-way defensive signals
-
-This commonly occurs after an opening lead when both partner's know that declarer will be able to ruff now, or more often,
-if we continue another round of the opening suit. At this point suit preference or attitude could be correct. Attitude
-could be used to encourage a force and suit preference to direct the switch. Assuming we can afford a choice of 3 cards:
-
-- high card = high suit preference
-- middle card = low suit preference
-- low card = reverse attitude
-
-**** Trump Echos on declarer's lead
-
-Assuming we can afford to signal, e.g. they are obviously in control then high low echoes are a special reverse *count*
-showing a 3 card suit, when it's safe to give partner count.
-
-Note, alternatives are using high low as showing 3 trumps and ability to ruff a side suit, or as suit preference (high
-medium low, or medium low high)
-
-**** Count on declarer's lead
-
-- Standard count, high even, low odd on declarer's lead
-
-**** Reverse Attitude Discard
-
-- the first discard has a primary meaning of reverse attitude: low encourage, high discourage
-
-**** Count (optional) for Secondary Discarding
-
-- after the primary reverse attitude discard, we can try to give partner count in suits, if we think they need it
-
-
-
-** NT Contract Opening Leads
-
-**** King Power Lead
-
-- Asks partner to give count or unblock.
-- NOT in partner's *known* suit: play standard leads there
-
-**** Queen Ambiguity
-
-- Asks for attitude
-
-Due to the King power lead, the queen could be from:
-
-- KQ10
-- KQx
-- QJ10
-- QJx
-
-Note, an alternative method to clear up this ambiguity when playing King power leads v.s. NT contracts is A from AK, Q
-from KQ, J from QJ, 10 from J10 and 9 from 109. As with any Rusinow style leads this can be harder to decipher when
-leading a doubleton, but that can easily be avoided at NT, plus when leading partners suits we play standard honour
-leads.
-
-**** Honour leads in general
-
-- Ask for attitude (except the King power lead)
-- usually an interior sequence e.g. queen from QJ9+ or QJ10 instead of bare QJx+
-
-
-*** 4th v.s. NoTrumps but 3rd and Low for Partner
-
-With 4th highest (2nd from 9xxx or worse) leads from broken honour sequences the count is less clear, though the rule of
-11 helps (11 minus spot card lead is how many higher cards than the spot lead in the other hands). In NT we are less
-likely to want to burn a high spot card such as the 3rd highest.
-
-When leading partner's known suit (5+ promised suit) we maximise count accuracy and played 3rd and Low as we do against suit
-contracts.
-
-**** MUD from xxx
-
-
-** NT Contract Signals
-
-**** Reverse Attitude on partner's lead
-
-For all except the King power lead, the primary signal is reverse attitude
-
-As with suit contracts, when not being asked to unblock, a very high card can be an alternative to encourage
-underleading, e.g. on an Ace lead partner could play the Queen showing the Jack
-
-**** Smith Peter (Echo) on declarer's lead
-
-- signal on declarer's lead in a different suit to the opening lead
-- indicates attitude for the opening lead: high encourage, low discourage
-- usable by the opening leader or their partner
-- by the opening leader it suggests something better than expected or a very strong desire to continue the suit quickly
-- by the partner it shows something extra
-
-Whilst this is normally the highest priority signal at NT on declarer's lead, it should secede to Count in a standard
-situation such as declarer trying to establish a long suit in an entryless dummy and we are holding up a winner.
-
-**** Secondary Count on declarer's lead
-
-- Standard count, high even, low odd on declarer's lead
-- but flip priority with smith peter in "obvious" situations
-
-**** Reverse Attitude Discard
-
-- the first discard has a primary meaning of reverse attitude: low encourage, high discourage
-
-**** Count (optional) for Secondary Discarding
-
-- after the primary reverse attitude discard, we can try to give partner count in suits, if we think they need it
-
-
-** Suit Preference Mechanics
-
-- we use Revolving suit preference, when following suit or possibly later after already doing a reverse attitude discard
-  where count discards mean little
-- high/low cards encourages the rank above/below
-
-This is arbitrary, mostly for familiarity reasons. McKenney/Lavinthal etc. are just as good.
-
-*** Cashing cards order and suit preference
-
-Sometimes we have a choice in the order to cash the cards. Standard we would go low to high to show partner that we can
-win with a low card. Consider an example suit such as AKQxx+ in a trump contract, we want to show partner that we can
-win with the Queen, so will probably play it on the first or second round, but that still leaves flexibility, any order
-from:
-
-- QKA
-- QAK
-- AQK
-- KQA
-
-The simplest approach is to map a low (1st card) high (2nd card) to the usual Revolving suit preference mechanics, e.g.
-QKA is low high and AQK is high low. The other combinations could be included if you want to distinguish mild v.s.
-strong preference and do not mind the complexity.
-
-Low high means revolve to lower suit.
-
-High low means revolve to higher suit.
-
-** New Suit Leads After Trick 1
-
-Breaking open a new suit is less precise on count, we play (reverse) attitude leads, so a low card indicates something
-in the suit whilst a high card does not. In neither case is there any specific count information as there is with
-2nd/4th or 3rd/5th.
-
-The benefit of the reverse attitude leads is hinting whether you want to look for tricks in this new (second) suit or
-continue with your side's first suit.
-
-** "Remaining Equals" information from an opening leader
-
-"Unnecessary" play (when declarer or partner are winning) of highest equal card means no higher card exists and that it is equivalent in value to other lower
-cards that you have.
-
-When either declarer or partner is winning the second round of a suit we led, following suit with a our *highest equal*
-card denies a higher card.
-
-Additionally, applies when discarding an A, K, Q or J.
-
-
-** Opening Leads in Partner's Suit
-
-- 3rd and low from an honour for clearer count
-- high cards suggest no honour, after supporting partner high from xxx instead of MUD can be clearer about honour
-  holdings
-
-** Count Mechanics
-
-- use remaining / present count (not original count) when returning partner's suit (continuing a suit we like) or doing
-  count discards. The high low mechanics from 4 cards varies depending on whether we are leading or not:
+- use remaining / present count (not original count) on later rounds of a suit - whether returning partner's suit
+  (continuing a suit we like) or making discards. The high low mechanics from 4 cards varies depending on whether we are
+  leading or not...
 - with 2 remaining cards this requires leading the highest
 - when discarding or signalling with 4 cards aim to play the 2nd then 3rd card
-- when returning after starting with 4+ cards play the original 4th highest: low from 3 remaining and 3rd from 4 left etc.
+- when returning after starting with 4+ cards play the original 4th highest: low from 3 remaining and 3rd from 4 left
+  etc.
 
+In theory suit preference would be the fallback if count and attitude are known, iff both partners can see the need for
+it
 
-** Count Philosophy
+*** Count Philosophy
 
 When to give count voluntarily? There is some merit to the notion of when partner needs it or with more nuance, where it
 probably helps more than it hurts. The assumption is that getting a general count on the hand helps defenders more than
@@ -245,6 +174,264 @@ clearer immediate count.
 
 When you are the "strong" defending hand it can help to randomly lie. This can be extended to false carding the opening
 lead.
+
+** Suit Preference
+
+Often the lowest priority signal, but there are specific situations where it is the primary signal
+
+- giving a ruff (you expect the card to be ruffed) and so indicate which switch you prefer afterwards
+- obvious singleton leads, even at trick one, demand suit pref from partner so we know their entry in order to give the
+  singleton leader a ruff. Even if you do not win the singleton lead, partner often has a trump control so declarer
+  cannot draw all
+- partner's lead sets up tricks in dummy that can be used as a source of discards. This may even be a suit that our side
+  has bid and supported, e.g. the Ace opening lead sets up a KQ in dummy
+- 3 way defensive signals when you have promised 6+ cards. Drop top honour to show relative *solidity* and attitude,
+  other high card (Q/J/10/9) as suit pref, middle card (8/7/6/5) as positive attitude not solid, lower card (432) as
+  suit pref
+- dummy has a singleton at this point (but we are not known to have enough cards for 3 way defensive signals), reverse
+  attitude is used to encourage the continuation perhaps as a trump promotion, whereas a discouraging card is preference
+  for the "obvious" suit shift
+- in obvious suit shift situations (attitude or shift), drop a very high card to make the "bad" unsual suit the
+  preferred shift
+
+** Suit Preference at NT
+
+Rarely useful!
+
+- mainly when driving out declarer's stopper and trying to indicate your future entry. With enough length and attention
+  to detail this may select from 3 suits. When playing revolving suit pref semantics, this middle card would select the
+  suit that is not one up or one below the current suit!
+
+
+** Trump echoes
+
+Typically 2 different meanings. They may both require careful consideration as we generally lack cards to make clear
+signals in declarer's suit
+
+- reverse count signal in trumps
+- suit preference (revolving semantics or whatever)
+
+*** Count Trump Echo Situations
+
+- With some potential ruffing following short suit leads, the trump echo with 3 cards is often to show the ability to
+  ruff when partner may win the second trump. Declarer may notice you giving the count info away, so it's usually done
+  with a purpose, though you may argue that a general early count is useful
+- The trump echo often starts when actually ruffing, not following to declarer's play of the suit
+- An echoed opening lead in trumps yourself (where you think an early reverse count signal is useful)
+
+*** Suit Preference Echo Situations
+
+- partner lead an obvious shortage and we haven't been able to show suit preference (perhaps we had to play high)
+- there's some obvious urgent active defense requiring a crucial switch (you may duck your trump winner to see the echo)
+
+*** Unclear Trump Echo Situations
+
+If in doubt and neither count nor suit preference seems obviously useful then the meaning may be extracted from the
+order of the cards.
+
+- immediate echo with (high -> low) or (middle -> low -> high) is reverse count
+- delayed echo (middle -> high -> low) is suit preference (revolving)
+
+If lacking any other clear information, then no delayed echo and seeing partner play 3 insignificant trumps may suggest
+suit preference (revolving) for the next relevant suit down. All speculative.
+
+
+** 2nd Hand Plays
+
+Covering honours is about the potential for promotion of other cards. Any advice is relative to how many tricks you need
+(e.g. don't duck when declarer is sneaking an extra trick to make their contract that should go off)
+
+- Cover the last of the opponent's equal honours (in general). Exceptions maybe when they are leading from HH and
+  the early cover helps block the suit;  when we have Hx ourselves (they could play a low card on the next round and you
+  are forced to play your honour) or they don't have enough cards to lead to make your play and lose your honour (e.g.
+  dummy Hx and your have Hxxx)
+- Assume a Q or J lead from the hidden declarer hand includes the card below when it comes to covering decisions
+- Lowest equal honour when splitting honours (HHx+) but...
+- Top from doubleton HH in theory, though from QJ doubleton may worry that partner plays you for QJ10
+- HHH sequence play top of sequence - should be more informative
+- KQJ exception probably play the J and hope the bidding makes the situation clear (K looks like AK)
+- QJ9 usually the Q (promising K or J) is fine
+- Jxx and J lead from dummy, then often play A from AQx to waste entries
+- Jx and J lead from dummy difficult, maybe low at suit, high at NT (may block or try to promote the suit for us)
+
+Times to consider playing high:
+
+- entry management to side suit in dummy, e.g. declarer xx, dummy HH109x, we have Hx under dummy and partner Hxxx (the left jab)
+- they are sneaking a trick or we want to return partner's suit quickly before their entries are removed or our cards to
+  lead in their suit are gone etc.
+- partner maybe end played
+- deception
+- KQxx may depend on how many tricks we need
+
+** 3rd Hand Plays
+
+In general play high by default, maybe even overtaking or playing an unnecessarily high honour to unblock
+
+- depending on the context of tricks required, we may try to capture an honour in dummy with our higher honour by playing
+  the 9 or higher (but not our top capturing card)
+- play the lower of touching equals. Playing high low should indicate a doubleton
+
+Some places not to play high
+
+- you want declarer to use their stopper(s) whilst partner still has cards to later lead this suit
+- NT: lead to your AQx+, then Q better preserves entries
+- you are blantantly not promoting anything, declarer has all the good cards, no hope to win
+- really want to discourage this suit, there's something better
+- give count when all you have is an odd number of small cards and no reason to play the highest, so playing a high
+  spot card may suggest an even number (unless you thought it was important to play for promotion reasons)
+- you hope to keep a card for over-ruffing / trump promotion
+- hold up on a running suit (seems partner lead the wrong suit) or to capture the entry card to a long suit
+- partner lead an obvious doubleton and you want to give them a ruff but you have no other entry except the Ace in the
+  lead suit
+
+
+** Our Suit Contract Agreements
+
+**** 3rd and Low (not for Partner's suit)
+
+- Leading 3rd and Low from broken honour sequences means 3rd highest from even and lowest from odd.
+- This provides clearer immediate count than 4th highest leads, which is more important when trying to cash out against
+  suit contracts.
+- (NOT 3rd/5th, 5th highest when holding 5+ cards and 3rd highest with 3 or 4 cards)
+
+**** Leading Partner's Suit
+
+When leading partner's 5+ card *unsupported* suit normally lead an honour, otherwise count from small cards. Honour does
+*not* promise a sequence and the signal should be reverse attitude (not count on your K lead etc.)
+
+When we supported partner's suit we lead reverse attitude - top from (x)x+ and low from Hxx(x). An honour lead does
+show a sequence and can use the usual A/Q/J attitude and K count signal semantics
+
+Note, leading our own long suit, supported or not follows the usual 3rd and Low.
+
+**** MUD from xxx in new suit
+
+Beware small tripleton leads are awful for communicating your holding at trump contracts.
+
+**** Ace Lead for Attitude
+
+**** King Lead for Count
+
+Count asking from from AK+ or KQ+
+
+As with NT leads, an alternative method to clear up this ambiguity when playing King count lead is some Rusinow style
+leads, Q from KQ, J from QJ, 10 from J10 and 9 from 109. Harder to decipher when leading a doubleton, which is more
+common in suit contracts than NT (e.g. from 10x or 9x).
+
+**** Queen/Jack for Attitude
+
+**** primary signal reverse attitude, secondary signal standard count, reverse attitude discards
+
+*** Cash Out Situation Adjustments v.s. Suit
+
+- 3+ level opening preempt
+- 5+ level contract
+- 10+ cards two suiter
+
+Ace lead maybe speculative without a supporting honour. Other leads no change.
+
+- Ace without King, attitude should assume looking for K
+
+
+** Our NT Contract Agreements
+
+*** 4th Highest (not for Partner's suit)
+
+With 4th highest (2nd from four cards and 9xxx or worse) leads from broken honour sequences the count is less clear,
+though the rule of 11 helps (11 minus spot card lead is how many higher cards than the spot lead in the other hands). In
+NT we are less likely to want to burn a high spot card such as the 3rd highest.
+
+**** Leading Partner's Suit
+
+When leading partner's 5+ card *unsupported* suit we lead count (low from xxx or Hxx). An honour does promise a sequence
+(unlike when leading a partner's unsupported suit at trumps) and can use the usual A/Q/J attitude and K count signal
+semantics
+
+When we supported partner's suit we lead reverse attitude - top from (x)xx+ and low from Hxx(x). An honour lead does
+show a sequence (if 3+ cards) and uses *attitude* signals
+
+Leading our own long suit, supported or not follows the usual 4th highest
+
+**** Top of nothing from xxx in new suit
+
+**** King Power Lead
+
+- Asks partner to give count or unblock.
+- NOT in partner's *known* suit: play standard leads there
+
+**** Queen Ambiguity
+
+- Asks for attitude
+- Conventionally maybe from AKQx to get J attitude
+
+Due to the King power lead, the queen could be from:
+
+- KQ10
+- KQx
+- QJ10(x)
+- QJx
+- QJ9x+
+
+Note, an alternative method to clear up this ambiguity when playing King power leads v.s. NT contracts is A from AK, Q
+from KQ, J from QJ, 10 from J10 and 9 from 109. As with any Rusinow style leads this can be harder to decipher when
+leading a doubleton, but that can easily be avoided at NT, plus when leading partner's suits we play standard honour
+leads
+
+**** primary signal reverse attitude, secondary signal standard count, reverse attitude discards
+
+**** Smith Peter (Echo) on declarer's lead
+
+- trick 2 signal on declarer's lead in a different suit that indicates attitude for the opening lead: high encourage,
+  low discourage
+- ignored when count needed to deal with a hold up play, i.e. declarer setting up a long suit with limited entries
+- irrelevant when naturally signal attitude, e.g the trick 1 leader plays an honour that you let run around to 4th hand
+- usable by both the opening leader and their partner
+- generally shows a fitting honour from the 3rd hand to the opening lead (e.g started with 2 honours and we will not
+  need to lead through declarer)
+- generally encourages a continuation by opening leader if that looks best for defense, (e.g. opening leader started
+  with 2 honours etc., J was from an interior sequence not just J109x)
+- when 3rd hand at trick 1, when you cannot beat trick 1 dummy then follow the normal signalling rules (count if
+  cannot beat a Queen or lower, otherwise attitude) then follow with smith peter or count as appropriate at trick 2
+- optional(!): when 3rd hand high player has an obviously bad holding (played a small card, not capturing an honour)
+  then they may play suit preference in declarer's suit at trick 2 when count clearly not needed
+
+Strong 10 leads in theory make smith peters less important. Much like strong 10s, it may give info to declarer aswell as
+the defenders. Some times a single card played in declarer's suit is too vague as it is often our short suit.
+
+*** Cash Out Situation Adjustments v.s. NT
+
+- 3+ level preempt (opening or overcall)
+- any known "solid" 6+ carder
+
+May lead speculatively without a supporting honour
+
+- Ace asks attitude for K
+- King asks attitude for Q (NOT power lead)
+
+** Suit Preference Mechanics
+
+- we use Revolving suit preference, when following suit or possibly later after already doing a reverse attitude discard
+  where count discards mean little
+- high/low cards encourages the rank above/below
+
+This is arbitrary, mostly for familiarity reasons. McKenney/Lavinthal etc. are just as good.
+
+*** Cashing cards order and suit preference
+
+Sometimes we have a choice in the order to cash the cards. Standard we would go low to high to show partner that we can
+win with a low card. Consider an example suit such as AKQxx+ in a trump contract, we want to show partner that we can
+win with the Queen, so will probably play it on the first or second round, but that still leaves flexibility, any order
+from:
+
+- QKA
+- QAK
+- AQK
+- KQA
+
+The simplest approach is to map a low (1st card) high (2nd card) to the usual suit preference mechanics:
+
+- Low high means revolve to lower suit (e.g. QKA)
+- High low means revolve to higher suit (e.g. AQK)
 
 
 * 5 Lines of Defense Guide
@@ -364,5 +551,5 @@ Passive Trump
 - Partner bid and doubled -> lead their suit
 - We bid and doubled -> lead your suit
 - Our side bid two suits -> lead suit of the strongest hand to account for entries
-- Only defenders bid -> lead dummy's 1st bid suit
+- Only opponents bid -> lead dummy's 1st bid suit
 - No suits bid -> lead shortest major
