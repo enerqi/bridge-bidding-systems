@@ -10,7 +10,6 @@ BBOalert
 ,2C,6+ !Cs; (10)11 to 15 hcp,
 ,2D,6+ !Ds; (10)11 to 15 hcp,
 ,2N,19 to 20; maybe 5 card major or 4441 single A/K,
-,4N,specific ace ask,
 Option,Opening_@v@1@2
 ,2H,6+ !Hs; 1+ top honour; 7 to 10 hcp,
 ,2S,6+ !Ss; 1+ top honour; 7 to 10 hcp,
@@ -27,6 +26,7 @@ Option,Opening_@1@2
 ,3N,good 4!H or 4!S preempt; semi-solid+; 2 or 3 keycards,
 ,4H,7+ !Hs; broken not semi-solid preempt; max 1 outside A/K,
 ,4S,7+ !Ss; broken not semi-solid preempt; max 1 outside A/K,
+,4N,Good 5!C/5!D preempt; solid or side Ace,
 Option
 Option,Opening_@3
 ,2H,5+ !Hs; undisciplined 5 to 11 hcp,
@@ -34,6 +34,7 @@ Option,Opening_@3
 ,3C,6+ !Cs; undisciplined preempt,
 ,3D,6+ !Ds; undisciplined preempt,
 ,3N,ambiguous;to play,
+,4N,both minors ~6 to 15 hcp,
 Option
 
 # 1C initial responses

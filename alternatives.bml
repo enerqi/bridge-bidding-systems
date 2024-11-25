@@ -11,11 +11,11 @@ It's somewhat a negative not having a pre-emptive weak NT, specifically NV at ma
 16--18 just fits too well with the other system parts where we force all ~16--20 1C opening hands to be unbalanced as
 1N and 2N handle 16--20 (semi)balanced hands. Hands tend be limited very quickly.
 
-Mini NTs are a fun novelty but hard to construct over. When vulnerable, particularly at IMPs scoring there's too
-much risk of going for a penalty when defenders X to show 13+ points. When NV it's definitely safer, high frequency
-and pre-emptive. It also pre-empts partner though, so perhaps better played NV in 3rd position only. The opponents will
-declare more often over a mini NT and shape/strength information has been given away.
-Having two systems for VUL and NV is possible but a chore.
+Mini NTs are a fun novelty but hard to construct over. When vulnerable, particularly at IMPs scoring there's too much
+risk of going for a penalty when defenders X to show 13+ points. When NV it's definitely safer, high frequency and
+pre-emptive. It also pre-empts partner though, so perhaps better played NV in 3rd position or white v.s. red only. The
+opponents will declare more often over a mini NT and shape/strength information has been given away. Having two systems
+for VUL and NV is possible but a chore.
 
 ** NT Opening Responses
 
@@ -31,8 +31,9 @@ non-promissory to do a NT invite whilst trying to avoid giving the opponents mor
 We can't use 2S as a game try based on !cs, as it might just be a NT invite without !cs. How bad that is compared to
 Stayman telling the opponents what 4 card major opener may have v.s. letting the 4th hand double 2S is unclear.
 
-2C as 5 card puppet stayman is an interesting alternative, which gives us the 3C bid back to use. Puppet stayman may
-better hide opener's major holding but show responders instead in a paradox auction such as 1N--2C--2D--2S (showing !hs).
+Using 2C as 5 card puppet stayman is an interesting alternative, which gives us the 3C bid back to use. Puppet stayman
+may better hide opener's major holding but show responders instead in a paradox auction such as 1N--2C--2D--2S (showing
+!hs).
 
 The transfer breaks after 2N openings are similarly constructive focussed showing top HHx+ support and a doubleton. This
 perhaps fits less well with our 19--20 opening, so the 3 card support HHx type hand should be something special. Its
@@ -76,11 +77,12 @@ the opponent's of a cheap 1!h!s overcall.
 
 ** 2/1 GF vs NF vs invitational
 
-Note, very little evidence that 2/1 GF vs NF (weak) matters when playing a forcing NT.
-The old-fashioned ~9/10+ NF invitational style is equally unlikely to make much difference. There is some comfort though in knowing
-that we don't have to push the bidding high to force to game and can focus on slam finding when playing 2/1 GF.
-The difficulty with standard 2/1 GF is how opener shows extras, but that's easier with club systems
-due to limited openings. Conventions like the serious 3NT and last train can convey extras at a later stage.
+Note, very little evidence that 2/1 GF vs NF (weak) matters when playing a forcing NT. The old-fashioned ~9/10+ NF
+invitational style is equally unlikely to make much difference. There is some comfort though in knowing that we don't
+have to push the bidding high to force to game and can focus on slam finding when playing 2/1 GF. The difficulty with
+standard 2/1 GF is how opener shows extras, but that's easier with club systems due to limited openings (though can
+still be challeging after 1M with 11--15 when not playing an intermediate 2HS opening). Conventions like the serious 3NT
+and last train can convey extras at a later stage.
 
 We play 2/1 GF over a major opening. The major rebid is then shape showing, 6+ cards "Bergen" style, which deviates from the
 catchall minimum strength showing "Lawrence" rebid style that the Revision club system uses. 3N will be serious after
@@ -431,7 +433,15 @@ Opening 3N as a specific ace ask is another option.
 
 ** 4N Opening Alternatives
 
-Instead of the specific ace ask:
+Specific Ace Ask:
+
+4N
+    5C = no ace
+    5DHS = specific ace
+    5N = 2 aces
+    6C = !c specific ace
+
+Or one of these:
 
 - 4N as 6--6 minors pre-empt
 - 4N as 6--5+ minors pre-empt
@@ -868,6 +878,28 @@ More majors focus including two suited transfer overcalls and a natural 1S overc
     1N = minors
     2x = natural
     2N = minors
+
+
+** 2CD Intermediate Openings with 5--4 Minors
+
+We prefer the 2C and 2D opening bids that show a 6 card minor. The common precision style with 5--4 and possibly a 4
+card major is awkward but there's another rare style which allows (3--1)(5--4) openings, so a 3 card major, major
+singleton plus 5--4 in the minors whilst always denying a 4 card major (even with a 6 card minor).
+
+5--4--3--1 is common (3rd most likely hand shape at 12.9%) and when we deny a 4 card major it is also
+preemptive. 1N may still have been the best contract at matchpoints, but we may also shut the opponents out of a major.
+
+Denying a 4 card major in the 2CD opening puts more load on the 1D opening, so using the 2N opening as intermediate with
+5--5+ minors seems prudent. 2N minors opening loses the probably more common natural 2N opening and there's a lot of
+benefit to quickly showing shape and points with balanced hands and not giving opponents space to overcall, even if
+there's always examples where going slow with balanced hands works out better for tight slam finding. Maybe there's a
+way to allow a 4 card major with a 6 card minor 2CD opening to reduce the load on 1D? If that's true though, responder
+maybe even more unsure about whether to rescue to a major (hence this style would play forcing 2HS responses) and play a
+5--2 minor fit instead of 5--3 major fit. On principle you have to pass in a 5--1 fit.
+
+The responses I've seen over 1D use 1H as a relay, maybe natural, maybe balanced game try or general GF. How this copes
+with competitive pressure is unclear. Unlike most systems the 1D opening includes 6!c or 6!d with some 4cM and a whole
+load of other hands.
 
 
 ** 2D Precision Style 3 Suiter
