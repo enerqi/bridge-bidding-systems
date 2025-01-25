@@ -261,9 +261,9 @@ Acol two strength 6--5 two suiter:
         2S = to play, weak NT hand
         2N = semi-natural, 21--23 NT
         3CD = single suited !c/!d Acol 2 equivalent ~19--21 hcp, ~8--9 playing tricks, 4+ Quick Tricks, F1
-        3S = invitational, strong with extras ~19+
+        3S = invitational, strong
         3N = punt ~23/24+
-        4S = to play
+        4S = to play, ~20+
 1S = natural, ~14--21 with 4+ !ss, maybe 4--1--4--4 or canapé exactly 4!ss, when weak denies 4!hs
     P = very weak, often !s tolerance
     1N = passable ask, any 0--8 hcp hand
@@ -311,6 +311,7 @@ Acol two strength 6--5 two suiter:
     3N = ~9--10, happy with !s bid
 1N [weak NT](#1NT Opening)
     any = natural, 2x weak, 2N/3x invitational
+    (overcall) = as [Overcalls of our NT](#Overcalls of our NT)
 2C = natural strong, ~16--19, !cs, not exactly 4!ss (use 1!s then canapé rebid with 4!ss non-GF)
     2D = positive 5+ relay
         2H = natural, F1
@@ -397,13 +398,13 @@ Acol two strength 6--5 two suiter:
         2H = strong, 5 card !s suit, Hx !h support (use 2!d if 3+)
         2S = natural, strong, 6!ss
         other = strong 16+
-    2D = artificial GF, natural continuations, normal only 2!s bid used by strong hand
+    2D = artificial GF, natural continuations
         2H = weak NT, 3 card support
             3N = 5--3--3--2
         2S = natural, 6!ss
         2N = weak NT, nothing special, may have 5 card !s suit
         3CD = natural, strong, 5--4+
-        3H = !ss self-sufficient, strong, extras, Ax/Kx !hs
+        3H = extras, Ax/Kx !hs
         3S = self-sufficient, strong, extras
         4other = self/auto-splinter, slam try
     2H = to play v.s. weak hand
@@ -430,13 +431,29 @@ Acol two strength 6--5 two suiter:
             3H = (after 1!s response) invite with 5--5
             3S = (after 1!h response) invite with 6--5
     2D = artificial GF, natural continuations
-        2M = 3 card major support
-            3N = 5--3--3--2
-        2oM = Hx major support
-        2N = singleton support
-        3C = 5 !cs
-        3D = 5 !ds
-        3H = doubleton support, not Hx support
+        2H = artificial, 1--2 card support
+            2S = major details ask
+                2N = xx / H singleton
+                3x = singleton, natural suit
+                3M = Hx
+                3N = A/K singleton
+            2N = other suits ask
+                3x = natural (e.g. good 5 / 5--4 hand)
+            3x = natural slam try
+            3M = natural 6 carder, wants xx or singleton honour support
+            jump = void auto splinter
+        2S = artificial 3 card support
+            2N = general ask, maybe slam interest
+            3x = natural slam try
+            3M = mild slam try
+            3N = weak trumps, mild slam try, still expect to play 4M
+            jump = splinter, singleton/void
+            4M = common sign off (partner not expressed NT interest)
+        2N = 3 card support, NT interest
+            3x = natural slam try
+            3M = mild slam try
+            3N = to play
+            jump = splinter, singleton/void
     2M = to play
     2S = (after 1!h response) N/A
     2N = puppet, !c signoff or 4--4--4--1 GF
@@ -446,6 +463,7 @@ Acol two strength 6--5 two suiter:
     3new = 5--5+ slam interest
     3M = 6+ suit, slam interest
     4other = self/auto-splinter, slam try
+    (any) = as [Overcalls of our NT](#Overcalls of our NT), double of 2C NMF
 2C = Lakebeach, unbalanced strong with a 5+ card minor, not worth 3CD (20+ hcp and single suited)
     2D = ask
         2M = artificial 20+ hcp, 5--4 minors
@@ -590,7 +608,7 @@ Acol two strength 6--5 two suiter:
     4M = fast arrival
 3N = 4--4--4--1 singleton in partner's major, 16--20 hcp
 4x = extra long suit, ~8--9 PT, distributional, weaker than Acol two
-
+4M = raise with 5 card max weak NT
 
 ** 1C--1N
 
@@ -786,6 +804,7 @@ Responding:
 
 2HS = natural 4+ suit
     2N = waiting, maybe 3 card major
+        3M = rebid maybe 5 card major weak NT OR 6+ cards below Acol two
     3CD = 5 cards
     3oM = 4 cards
     3N = usually no 3 card major, fast arrival
@@ -1034,7 +1053,7 @@ Compared to the [1D opening interference](#1D interference):
             3N = to play
             4C = natural, GF
             4HS = ~16--18, 4+ support
-    1HS = natural, 6+ hcp, *system off*
+    1HS = natural, 6+ hcp, *system off*, later new suits over strong hand GF
     1N = natural ~6--9
         2x = F1
         cue = two-suiter
@@ -1047,6 +1066,10 @@ Compared to the [1D opening interference](#1D interference):
                 3HS = maximum, 3 cards
                     3S = 5 cards strong
     2C = natural, F1
+        2D = general GF, strong
+        2M = 5+ suit
+        2N = weak NT, maybe no stop
+        3HS = ~16--19 6+ suit
     2D = majors 5--5 (as opponents open 1!d defence)
     2HS = ~5--7 hcp, sound weak two
     2N = !hs + !cs 5--5 (as opponents open 1!d defence)
@@ -1056,7 +1079,7 @@ Compared to the [1D opening interference](#1D interference):
 
 1C--(1H)
     P = natural not game going v.s. strong hand, later bids balancing
-    Dbl = 4--5 !ss ~6+ hcp or 6+ !ss invitational precisely, not GF if canapé
+    Dbl = 4!ss ~6+ hcp or 6+ !ss invitational precisely, not GF if canapé
         1S = ~3 card support, weak NT
             cue = force
             2m = canapé
@@ -1085,20 +1108,7 @@ Compared to the [1D opening interference](#1D interference):
                     4CD = natural, GF
             3S = competitive
             4CD = natural, GF
-    1S = 4+ !cs, not 4 !ss unless GF and bidding natural suit order
-        1N = weak
-            2H = stop ask
-        2C = weak
-            2H = stop ask
-        2DS = natural, strong
-        2H = strong, no stopper
-        (2H) = interference
-            2S = weak, decent 5 cards
-            Dbl = strong, takeout
-                2S = 3 cards
-                3C = 6 carder
-            2N = good !c raise
-            3C = competitive !c raise
+    1S = natural, 5!ss, not 6
     1N = natural, ~6--9
         2x = F1
         cue = two-suiter
@@ -1109,14 +1119,17 @@ Compared to the [1D opening interference](#1D interference):
                 2N = scrambling
                 3CD = minimal 5 carder
     2C = !d transfer, 5+ !ds, GF v.s. strong hand
+        2D = complete transfer, weak hand
         3D = weak NT, support
-    2D = 3 card !s suit, ~8--11 hcp, 3--2--4--4 or 3--1--(5--4)
-        2H = artificial, stop ask game interest OR strong
-        2S = natural, minimum weak NT
-        2N = natural, minimum weak NT
-        3CD = preference, weak NT
-        3S = natural, 5 card maximum weak NT
+        others = strong
+            3D = only NF bid
+    2D = !cs, GF
+        2N = NF minimum, stopper
+        3C = NF weak NT
     2H = !s transfer, 6+ !ss, weak/GF
+        2S = complete transfer, weak hand
+        others = strong
+            3S = only NF bid
     2S = stop ask, invite plus (0--3!s, no !h stop maybe 4 though, 3--3+ minors), or trying NT transfer (may bid !hs again)
         3CD = minimum weak NT, no stop
     2N = natural
@@ -1154,10 +1167,12 @@ Compared to the [1D opening interference](#1D interference):
         2D = complete transfer, weak hand
         3D = weak hand, 4+ support
         others = strong, natural
+            3D = only NF bid
     2D = !h transfer, 6+ !hs, weak/GF
         2H = complete transfer, weak hand
         3H = weak hand, 4+ card support
         others = strong, natural
+            3H = only NF bid
     2H = !c showing, 10+
         2N = NF minimum, stopper
         3C = NF weak NT
