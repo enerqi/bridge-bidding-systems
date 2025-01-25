@@ -305,21 +305,31 @@ Some may not be available depending on how high responder has pushed the bidding
 - Fit jumps take priority over splinters, making splinters in competition unavailable at times
 - Fit jumps are impossible in the opponent's suit, always a splinter
 
-When is a jump a fit jump? The following must *all* be *true* about the bid:
+When is a jump a fit jump?
 
-- we have another way to bid the fit jump suit either naturally or artificially directly at a lower level
+*** Fit Jumps When We Simple Overcall
+
+Always on, no complexity
+
+- we simple overcall anything (1x, 1N, multi, weak two etc.), regardless of whether 3rd hands bids, regardless if advancer is 4th or 6th position
+
+*** Fit Jumps When We Open
+
+The following must *all* be *true* about the bid:
+
 - below 4H game
+- we have another way to bid the fit jump suit either naturally or artificially directly at a lower level
 - we open 1HS or 2HS (and very rarely open 1!c!d, bid a suit naturally and then get delayed competition). Not over
   intermediate 2CD given limited space available to show NF or forcing natural suits. Not over 1CD as they do not show
   any suit.
 - when we open 1HS or 2HS, only after simple overcalls by the opponent (after 1HS--(jump) 4!c!d are artificial slam tries)
-- we simple overcall anything (1x, 1N, multi, weak two etc.), regardless of whether 3rd hands bids, regardless if advancer is 4th or 6th position
 
-What about a double jump?
+*** What about a double jump?
 
 Double jumps below 4H are fit jumps iff a fit jump is not available as a single jump, e.g. because a single jump shows a
 natural invitational suit OR a 1-under mixed raise. Otherwise a double jump is a splinter below 4H game (a direct 4!h
 could only be a splinter in a slow constructive auction - 2nd rebid e.g. 1!s--2!d--2!s--4!h).
+
 
 ** 2N Artificial Scrambling
 
@@ -1236,6 +1246,18 @@ With limited strength may want to hide distribution information and just bid the
     4C = splinter
     4D = fit jump
 
+(1C)--1HS--(2C)
+    X = 4 card other major (maybe 5 bad) and values ~9+
+    2M = natural raise, ~6--10
+    2Y = new suit, NF, often ~8--12 maybe 6--12 but expect a 12+ overcaller to bid on
+    2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition)
+    3C = HCR, not as good as 2N (no room for jump mixed raise)
+    3D = invitational, 6+ new suit
+    3M = [cooperative](#HCR cue bids and 2N Raise in Competition)
+    3HS = other major invitational, 6+ new suit
+    4C = splinter
+    4D = fit jump
+
 (1C)--1HS--(3C)
     X = [Relay competitive double](#Relay Lebensohl Doubles)
     3M = invitational
@@ -1475,6 +1497,19 @@ With limited strength may want to hide distribution information and just bid the
     4C = fit jump
     4D = splinter
 
+(1D)--1HS--(2D)
+    X = 4 card other major (maybe 5 bad) and values ~9+
+    2M = natural raise, ~6--10
+    2Y = new suit, NF, often ~8--12 maybe 6--12 but expect a 12+ overcaller to bid on
+    2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition)
+    3C = new suit, NF, often ~8--12 maybe 6--12 but expect a 12+ overcaller to bid on
+    3D = HCR, not as good as 2N (no room for jump mixed raise)
+    3M = [cooperative](#HCR cue bids and 2N Raise in Competition)
+    3H = (over 1!s overcall) invitational, 6+ new suit
+    3S = (over 1!h overcall) fit jump
+    4C = fit jump
+    4D = splinter
+
 (1D)--1HS--(3D)
     X = [Relay competitive double](#Relay Lebensohl Doubles)
     3M = invitational
@@ -1505,7 +1540,7 @@ With limited strength may want to hide distribution information and just bid the
     3D = Majors, *strong* (even over 1M from 3rd hand)
 
 (1D)--P--(2D)
-    2HS = [OBAR](#OBAR 4th seat bids) competitive
+    any = as [Opponents weak 2D](#Opponents open Weak 2D 2H 2S)
 
 (1D)--P--(3D)
     any = as [Opponents open 3D](#Opponents open 3CDHS)
