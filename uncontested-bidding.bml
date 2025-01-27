@@ -943,10 +943,11 @@ By responder example:
 - in-between hands uncertain of level likely to show 3 card !h support immediately
 - 4 !ss + 3+ card !h support is possible with GF values - it's easier to control the auction
 
+
 1N = [11--13(14) NT interest, often !s singleton / 5--3--3--2 / semi-balanced with 4 card minor, values spread out](#1H--1S--1N)
-2C = [Gazilli 14--15 6+ !hs, 6 losers, OR good 14--15 6!hs + 3 card !s raise (NOT 3--5--4--1), OR good 14--15 mini-splinter, OR 14--15 (semi)balanced, OR natural !cs, OR 14--15 !ds](#1H--1S--2C)
-2D = [natural, minimum ~11--13, often 5 cards or values very concentrated](#1H--1S--2D)
-2H = [natural, 6+ !hs, minimum ~11--13, could be 3!ss if hearts strong enough v.s. a singleton !h otherwise raise !s](#1H--1S--2H)
+2C = [Gazilli variant, minimum 6!hs or various good !h / !s hands or medium plus 5--5](#1H--1S--2C)
+2D = [natural, 11--15, without extra shape](#1H--1S--2D)
+2H = [!cs and !hs, 11--15, without extra shape](#1H--1S--2H)
 2S = [natural, minimum ~11--13, 3 or 4 cards - will often raise with 3 card support + singleton](#1H--1S--2S)
 2N = [6(7)–4 with a minor, maximum, 6 losers](#1H--1S--2N)
 3C = [6--5+ (rebid 3!c over 2!h preference with 5--5), maximum](#1H--1S--3C)
@@ -1017,53 +1018,46 @@ By responder example:
     4N = NO, not used. Start with 2!d first for more info.
     5CDH = [EKB Voidwood](#EKB Voidwood) for !s
 
+
 *** 1H--1S--2C
 
-- This Gazilli variant makes it impossible to play 2!c
-- It's harder to invite with 5 !ss, however opener should be unlikely to have anything that would
-  accept a 5 card !s invite unless holding the good 14--15 3 card !s raise
-- If opener does have a natural !c hand it's harder to show a 5--4--4--0 type
+Gazilli variant includes:
 
-2C = Gazilli variant, one of:
-    - 14--15 6+ !hs, 6 losers
-    - 14--15 3 card !s raise (not 3--5--4--1), 6 losers
-    - 14--15 mini-splinter !s raise, 6 losers
-    - 14--15 (semi)balanced catchall or !s singleton likes NT
-    - 14--15 with !ds
-    - natural with !cs
-    2D = artificial, ~(10)11+, GF v.s. stronger 14--15 hands
-        2H = !cs, minimum
-            2S = natural, invitational
-            2N = natural, invitational, maybe 5!ss
-            3C = natural, invitational
-            3D = FSF
-            3H = 3 card invitational, typically looking for a side suit shortage
+- minimum 6!hs rebid
+- extras 6+ !hs, 6 losers, not worth 3!h rebid
+- 5--5 medium/max
+- 14--15 3 card !s raise, 6 losers
+- 14--15 mini-splinter !s raise, 6 losers
+
+2C = Gazilli variant
+    2D = artificial, ~10/11+, GF v.s. stronger 14--15 hands
+        2H = minimum 6!hs
+            2S = natural, invitational, maybe 5!ss
+            2N = NF, natural invitational
+            3CD = sign off
+            3H = invite
             3S = GF natural
-            3N = to play
-            4C = GF !c support
-            4D = Redwood for !cs
-            4HS = to play
-        2S = 14--15 3 card !s support
-        2N = semi-natural catchall
-        3CD = !cs/!ds, extras
-        3H = 14--15, 6+ !hs, 6 losers
-        3S = 14--15, 6+ !hs AND 3 card !s support
+        2S = max, 3 card !s support
+        2N = max, 6+ !hs, values outside suit
+        3CD = 5--5 natural
+        3H = max, 6+ !hs, 6 losers
+        3S = max, 6+ !hs AND 3 card !s support
         3N = solid 6 card suit
-        4CD = 14--15 !s support, mini-splinter
-        4S = 14--15 !s support mini-splinter, hiding shortage, limited honour controls
+        4CD = max !s support, mini-splinter
+        4S = max !s support mini-splinter, hiding shortage, limited honour controls
     2H = NF, ~6--(10), natural preference
         2S = natural, 3 card support
             2N = only 4 !ss, NT suggestion
                 3CD = 5 card minor 3--5--(5--0)
-        3CD = 14--15 !s support, mini-splinter
+        3CD = 14--15 !s support, mini-splinter (do not show 5--5 with minor here!)
         3H = 14--15, 6+ !hs AND 3 card !s support, maybe risky
     2S = 6+ !ss invitational, ~9--12 (not weak when opener could be showing a 2nd suit)
         3CD = escaping opposite minimum to !c/!d or !h, slightly invitational (otherwise pass)
             3S = really good !s (maybe facing a void)
-    2N = NF, ~6--(10), 4--5 !cs (3m with 6 card minor)
-        3C = sign off
-        3D = 14--15 !s support, mini-splinter
-    3CD = NF, ~6--(10), 6+ card minor, canapé
+    2N = both minors, weak, 4!ss only
+        3CD = sign off
+        3S = max mini-splinter !s support
+    3CD = weak
         3S = 14--15 !s support, mini-splinter hand
     3H = 14+ slam try, 3(+) card !h support
     3S = natural, forcing, 6+ !ss, good hand
@@ -1074,22 +1068,21 @@ By responder example:
 
 *** 1H--1S--2D
 
-- 11--13 hcp
-- never 0--5--4--4 (bid 2!c instead)
+- 11--15 hcp
+- minimum if 5--5
+- very unlikely 3 card !s support and max (use Gazilli instead)
 
-2D = natural, NF, often 5 cards or values very concentrated
-    2H = natural, NF, preference, hoped for !s raise. Opener may continue with 6--4 / 5--5
-        2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
+2D = natural, NF
+    2H = natural, NF, preference, hoped for !s raise
     2S = 6+ !ss, invitational, ~9--12 (not weak after a second new suit)
         3C = grope asking for !c stopper, or back to 5--2 !h fit
         3D = NF, slight game hope
     2N = natural, invitational
-        3C = semi three-suiter, 0--5--5--3, game accepting values
+        3C = 3 suiter, game accepting values
         3D = NF, weak 5--5 type
         3H = forcing, good 6--4 type, short !ss
         3S = Hx in !s and lacking a !c stop, 5--2 fit suggestion
         3N = to play
-        4S = extras with 3 card support
     3C = FSF GF, but by passed hand stop ask hand like AKxxx/Qx/Qxx/xxx
     3D = natural, invitational, only 4+ !ss guaranteed
     3H = natural invite, probably 3 cards, trying for !s fit first
@@ -1103,8 +1096,13 @@ By responder example:
 
 *** 1H--1S--2H
 
-2H = natural, 6+ !hs, minimum ~11--13, could be 3!ss if hearts strong enough v.s. singleton otherwise raise !s
+- artificial showing !cs (2C Gazilli)
+- 3 card !s support often directly raises instead (e.g. if have a singleton)
+- very unlikely 3 card !s support and max (use Gazilli instead)
+
+2H = !cs and !hs, 11--15, without extra shape
     2S = invitational, 6+ !ss
+    2N = invite
     3CD = GF quasi-natural (passed hand NF 6 card minor canapé)
     3H = natural, invitational (usually doubleton, maybe xxx and just < direct 2!h raise)
     3S = forcing
@@ -1144,10 +1142,10 @@ Maximum, 6 loser, 6(7)--4 with a minor. The reasonable alternative is a good max
 
 2N = 14--15, 6 loser, 6+ !hs with 4 card minor suit
     3C = ask
-        3D = 6--4, with !ds
+        3DH = !d/!c
             3H = to play, preferred !cs
-        3H = 6--4 with !cs
-            4C = sign off
+            3S = implied cue, minor slam try
+            4om = implied cue, minor slam try
         4CD = 7--4 shape
     3D = GF, 5--5+ !ss + !ds
     3H = sign off
@@ -1238,34 +1236,31 @@ Responding:
 
 - The 2!c Gazilli variant response makes it impossible to play 2!c
 - Gazilli also makes a 2!d sign off over 2!c impossible, though a 3!c/!d signoff is available
-- 2C response bids with natural !c suits have extras in shape or hcp, otherwise normally stick with 1NT
-- 2D response is natural 4+ !ds, 11--13
+- minimum 5!h + 4!c hands should usually pass, given the lack of space after the artificial 2H rebid
 
-2C = Gazilli variant, one of:
-    - 14--15 6+ !hs, 6 losers
-    - 14--15 5--(3--3--2), tactical good 5 carder if 14--15 not opening 1!c
-    - 14--15 artificial catchall, i.e. 4!s--5!h--(2--2/3--1)
-    - 14--15 with !ds
-    - natural !cs
+
+2C = Gazilli variant:
+    - minimum 6!hs rebid
+    - extras 6!hs, 6 losers, not worth 3!h rebid
+    - 5--5 medium/max
     P = gamble, long weak !cs
     2D = artificial maximum, ~10/11 hcp
-        2H = !cs, artifical, minimum
+        2H = minimum 6!hs
             2N = NF, natural invitational
-            3C = NF, natural invitational with support
-        2S = natural 4!ss, maximum, less shape than direct 2!s rebid
-        2N = semi-natural catchall
-        3CD = !cs/!ds, extras
+            3CD = sign off
+        2S = N/A
+        2N = 14--15, 6+ !hs, values outside suit
+        3CD = 5--5, natural
         3H = 14--15, 6+ !hs, 6 losers
         3N = solid 6 card suit
     2H = NF preference
         3CD = 5--5, extras (maybe minimum 5--6), maybe risky
-    2S = artificial, ~6--(10), both *minors*
-        2N = signoff
-        3CDH = signoff
-    2N = NF, ~6--(10), 4--5 !cs
-    3CD = NF, ~6--(10), 6+ card minor, canapé
-    3H = natural, 3 card invite
-2D = natural, 4+ !ds, 11--13
+    2S = N/A
+    2N = both minors, weak
+    3CD = weak
+    3H = invitational, 6+ suit (not quite worth 1S--3H)
+    3S = natural, 3 card invite
+2D = natural, 11--15, without extra shape
     2H = NF preference
         2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
     2N = natural, invite, often stiff !h
@@ -1276,31 +1271,24 @@ Responding:
     3S = splinter !d support
     3N = to play, rare
     4C = splinter for !d, rare 7!ds
-    4D = !d game invite
-    4H = no
-2H = natural, 6+ !hs, minimum, ~11--13 not worth Gazilli 2!c
-    2S = artificial, shortness ask, game try
-    2N = natural, NF, invitational, aggressive
-    3CD = sign off
-    3H = natural 3 card invite
-2S = reverse, maximum, at least 4--6 in the majors
-    P = possible with 3 !ss and weak hand
-    2N = GF, ask for more distribution info
-        3CD = 2/3 card minor fragment
-        3H = 7th !h or 6 self-sufficient
-        3S = 5 cards !s suit
+    4D = !d game invite, long fit
+2H = !cs and !hs, 11--15, without extra shape
+    2S = N/A
+    2N = invite
+    3CDH = to play
+    3S = invite
+2S = 6--5
+    3CD = sign off, (6)7+ suit
+    2N = F1, invite plus
+        3CD = extras, stop (unlikely)
+        3H = minimum
+        3S = extras
         3N = runnable !h suit
-    3CDH = sign off
-    3S = natural, good 3 card !s fit, suggests weak minor stops
-    3N = to play
-    4CD = 3 card splinter, presumably 3--3--(6--1), max NT
-    4HS = to play
+        4H = extras
 2N = 14--15, 6 losers, 6+ !hs with 4 card minor suit
     3C = ask
-        3D = 6--4, with !ds
-            3H = to play, preferred !cs
-        3H = 6--4 with !cs
-            4C = sign off
+        3DH = !ds/!cs
+            bid = sign off
         4CD = 7--4 shape
     3D = NF natural
     3H = sign off
@@ -1325,6 +1313,7 @@ Responding:
     4S = !h RKB
     4N = double fit RKB
 4H = very long !hs, usual 8 (or 7 + shape), too strong for 4!h opening
+
 
 ** 1H--2C
 
@@ -1933,49 +1922,44 @@ Responding:
 
 - The 2!c Gazilli variant response makes it impossible to play 2!c
 - Gazilli also makes a 2!d sign off over 2!c impossible, though a 3!c/!d signoff is available
-- 2C response bids with natural !c suits have extras in shape or hcp, otherwise normally stick with 1NT
-- 2D response is natural 4+ !ds, 11--13
+- minimum 5!s + 4!c hands should usually pass, given the lack of space after the artificial 2S rebid
 
-2C = Gazilli variant, one of:
-    - 14--15 6+ !ss, 6 losers
-    - 14--15 5+!ss and 4+!hs, 6 losers
-    - 13+ 5--(3--3--2), tactical good 5 carder if 14--15 not opening 1!c
-    - natural !cs including 3 card !h support 5--3--1--4
-    - 14--15 with !ds
+
+2C = Gazilli variant:
+    - minimum 6!ss rebid
+    - extras 6!ss, 6 losers, not worth 3!s rebid
+    - extras with 4+ !hs
+    - 5--5 medium/max
     P = gamble, long weak !cs
     2D = artificial maximum, ~10/11 hcp
-        2H = 14--15 5!ss/6!ss and 4 !hs, 6 losers
+        2H = 14--15 5!ss/6!ss and 4 !hs, 6 losers, not worth 2N rebid
             3H = invite
-        2S = !cs, artificial, minimum
-            2N = NF, natural invitational
-            3C = NF, natural invitational with support
-        2N = semi-natural catchall
-        3CD = !cs/!ds, extras
+        2S = minimum 6!ss
+            2N = invite
+            3CDH = sign off, misfit
+        2N = 5!s--4!h--2--2, something in doubletons
+        3CD = 5--5, natural
         3H = 5--5 natural
         3S = 14--15, 6+ !ss, 6 losers
         3N = solid 6 card suit
-    2H = natural, NF, ~6--(10), (4)5+ !hs
-        3H = natural, invitational, likely 5+!ss and 4+!hs type hand
+    2H = 5 cards with 0--1 !ss / 6 cards 2 !ss, weak
     2S = NF preference
-        3CDH = 5--5, extras (maybe minimum 5--6), maybe risky
-    2N = NF, ~6--(10), 4--5 !cs
-    3CD = NF, ~6--(10), 6+ card minor, canapé
+    2N = both minors, weak
+    3CD = weak
     3H = invitational, 6+ suit (not quite worth 1S--3H)
     3S = natural, 3 card invite
-2D = natural, 4+ !ds, 11--13
-    P = best contract guess, usually 5 cards, maybe 1--4--4--4 or even 1--4--3--5
+2D = natural, 11--15, without extra shape
     2H = natural, NF, usually 6 cards
     2S = NF preference
-        2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
     2N = natural invite, 1--2 !ss
-    3C = natural, NF, to play
+    3C = NF, weak
     3D = natural raise, NF
     3H = splinter !d support
     3S = 3 card support, invitational
     3N = to play
     4C = splinter for !d
-    4D = !d game invite
-2H = natural, 4+ cards, minimum, ~11--13 not worth Gazilli 2!c, including 6--4 (usually show 4!hs before 6 !ss)
+    4D = !d game invite, long fit
+2H = minimum ~11--13, including 6--4 (usually show 4!hs before 6 !ss)
     2S = NF preference (2!s and 3!h normally should prefer 2!s in case 6--4)
         2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
     2N = natural, invitational
@@ -1986,20 +1970,16 @@ Responding:
     3N = to play
     4CD = splinter !h support
     4H = to play
-2S = natural, 6+ !ss, minimum, ~11--13 not worth Gazilli 2!c
-    2N = invitational, implying singleton !s
-        3x = NF, e.g. weak 6--4
-        3S = NF
-    3CDH = natural, NF, to play
-    3S = invite, often doubleton
-2N = 14--15, 6 losers, 6+ !ss with 4 card minor suit
+2S = !cs and !ss, 11--15, without extra shape
+    2N = invite
+    3CDH = to play
+    3S = invite
+2N = 6--4 max, any lower rank 4 card side suit
     3C = ask
-        3D = 6--4, with !ds
-            3H = to play, preferred !cs
-        3H = 6--4 with !cs
-            4C = sign off
+        3DHS = !d/!h/!c suits
+            bid = sign off
         4CD = 7--4 shape
-    3D = NF natural, long suit, still limited strength
+    3DH = NF
     3S = sign off
 3CD = NF, 6--5+, maximum
     3new = stop probe at first OR slam try big minor fit
@@ -2027,6 +2007,7 @@ Responding:
     4S = sign off
     4N = double fit RKB
 4S = very long !ss, usual 8 (or 7 + shape), too strong for 4!s opening
+
 
 ** 1S--2C
 
