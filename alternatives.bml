@@ -81,12 +81,12 @@ Note, very little evidence that 2/1 GF vs NF (weak) matters when playing a forci
 invitational style is equally unlikely to make much difference. There is some comfort though in knowing that we don't
 have to push the bidding high to force to game and can focus on slam finding when playing 2/1 GF. The difficulty with
 standard 2/1 GF is how opener shows extras, but that's easier with club systems due to limited openings (though can
-still be challeging after 1M with 11--15 when not playing an intermediate 2HS opening). Conventions like the serious 3NT
-and last train can convey extras at a later stage.
+still be challeging after 1M with 11--15 when not playing either an intermediate 2HS opening or a Gazilli variant).
+Conventions like the serious 3NT and last train can convey extras at a later stage.
 
-We play 2/1 GF over a major opening. The major rebid is then shape showing, 6+ cards "Bergen" style, which deviates from the
-catchall minimum strength showing "Lawrence" rebid style that the Revision club system uses. 3N will be serious after
-agreeing a major following 2/1 GF.
+We play 2/1 GF over a major opening. The major rebid is then shape showing, 6+ cards "Bergen" style, which deviates from
+the catchall minimum strength showing "Lawrence" rebid style that the Revision club system uses. 3N will be serious
+after agreeing a major following 2/1 GF.
 
 ** 1D Opening Responses
 
@@ -128,22 +128,25 @@ using 3C as 5--4--2--2 minimum maybe the best compromise.
 
 ** Forcing vs "semi"-forcing 1NT over 1HS openings
 
-It makes sense if playing 2/1 GF, as we are, that the bidding with more limited hands is more difficult.
-The semi-forcing 1NT response (really just non-forcing) allows opener to pass with a flat(ish) 11/12 (maybe bad 13) hand.
-Typically 5--3--3--2 or maybe 4!s--5!h--2--2 after 1!h--1N.
-As the 5--3--3--2 handshape is frequent and hands with values closer to 10 are also more frequent a semi-forcing NT seems valuable as
+It makes sense if playing 2/1 GF, as we are, that the bidding with more limited hands is more difficult. Note, this is
+why many playing 2/1 GF in natural systems employ Gazilli after the wide ranging 1N response. We also use Gazilli even
+in a limited opening system.
+
+The semi-forcing 1NT response (really just non-forcing) allows opener to pass with a
+flat(ish) 11/12 (maybe bad 13) hand. Typically 5--3--3--2 or maybe 4!s--5!h--2--2 after 1!h--1N. As the 5--3--3--2
+handshape is frequent and hands with values closer to 10 are also more frequent then a semi-forcing NT seems valuable as
 1N is often the best place to play with limited values. When responder has a 3 card game invite and opener has a minimum
 there's also a reasonable chance that 3!h!s would not have made but 1N will.
 
-That said, the 100% forcing NT, as e.g. the Revision club system uses, has its benefits. It maybe useful to escape to a weak
-suit at the two level when dreading playing in 1N and not wanting to play in partner's major.
-It may also help in just preempting the bidding a bit with very limited support or general rubbish.
+That said, the 100% forcing NT, as e.g. the Revision club system uses, has its benefits. It maybe useful to escape to a
+weak suit at the two level when dreading playing in 1N and not wanting to play in partner's major. It may also help in
+just preempting the bidding a bit with very limited support or general rubbish.
 
 Revision also makes clever use of 1!h--1N--2x--2!s as 4 card !s suit with 10--12 hcp. It is pointed out that an
-invitational hand with 4!s may often go too high in the bidding after 1!h--1!s--2!s. As the 2!s raise could be done
-with 3 cards and a singleton, responder with 4 cards will have to bid 2N even if 2!s was the best spot or even pass 2!s with a 7 card fit and a weak hand.
-It's also possible to push 4--4--4--1 hands (short in partner's major), or other esoteric GF bids, through a forcing NT
-which makes the 2/1 suit bids clearer.
+invitational hand with 4!s may often go too high in the bidding after 1!h--1!s--2!s. As the 2!s raise could be done with
+3 cards and a singleton, responder with 4 cards will have to bid 2N even if 2!s was the best spot or even pass 2!s with
+a 7 card fit and a weak hand. It's also possible to push 4--4--4--1 hands (short in partner's major), or other esoteric
+GF bids, through a forcing NT which makes the 2/1 suit bids clearer.
 
 ** Multi 2D, Weak 2D opener, 5--4+ Major/Minor Weak Openers
 
@@ -157,7 +160,9 @@ a Precision 2H opening, that is a 3 suiter with short !ds that opens 2H. As 2H i
 pressure on the opponents. The multi does not apply as much pressure, but it is some what awkward to defend against and
 gives us an extra constructive bid. It also loses the 2H opening preempt, though it has been argued that it is the least
 useful preempt of !ds, !hs and !ss (it's hard to bid and double 2!d without both majors and the 2!h opening almost points the opponents
-at the higher ranked !s suit). A weak only multi would apply more pressure and perhaps be more fun.
+at the higher ranked !s suit).
+
+A weak only multi would apply more pressure and perhaps be more fun.
 
 5--4/5--5 major/minor two suiters are more frequent than a standard 6 card weak two bid, roughly a 3:2 ratio. Ambiguity
 in 5 v.s. 6 cards makes safe game constructive bidding a challenge, so we can choose one of 5 or 6 cards in a
@@ -244,7 +249,7 @@ mini splinters and showing 6--5 shapely hands (though not in the most natural in
 
 After 1H--1S we keep 2N as 6--4 with a minor and 3CD rebids as 6--5 hands. No space has been left for direct mini
 splinters even though they are more frequent. Having the jump rebids be shapely hands works with a limited opening
-system to show offensive hands with limited points. In a natural wide ranging strength system employing Gazilli covers
+system to show offensive hands with limited points. In a natural wide ranging strength system Gazilli covers
 the 16+ hands. We do play Gazilli over 1H--1S so it can be used to show a max 14--15 mini-splinter like raise --
 opposite the NF responses opener going to the 3 level in a new suit often makes little sense.
 
@@ -399,6 +404,8 @@ Medium strength matters less in a limited opening system, where we can just use 
 
 *** Natural Extras
 
+No way to check whether the minimum hand any singleton if using as a limit plus raise and not just GF.
+
 3CD = natural, extras
     next = shortage ask
 3M = minimum
@@ -509,7 +516,7 @@ There's a lot of options and the "best" defence is probably scoring specific and
 
 Good article - www.clairebridge.com/en/defenses-against-1nt/
 
-*** Woolsey
+*** Woolsey / Multi-Landy
 
 Nice against Strong NTs getting high frequency 5--4 hands and both majors.
 The ambiguity of the 2D bid makes it vulnerable to further interference though, and the ambiguity gives the opening side
@@ -894,7 +901,7 @@ Denying a 4 card major in the 2CD opening puts more load on the 1D opening, so u
 benefit to quickly showing shape and points with balanced hands and not giving opponents space to overcall, even if
 there's always examples where going slow with balanced hands works out better for tight slam finding. Maybe there's a
 way to allow a 4 card major with a 6 card minor 2CD opening to reduce the load on 1D? If that's true though, responder
-maybe even more unsure about whether to rescue to a major (hence this style would play forcing 2HS responses) and play a
+maybe even more unsure about whether to rescue to a major (hence this style would play forcing 2!h!s responses) and play a
 5--2 minor fit instead of 5--3 major fit. On principle you have to pass in a 5--1 fit.
 
 The responses I've seen over 1D use 1H as a relay, maybe natural, maybe balanced game try or general GF. How this copes
