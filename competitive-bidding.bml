@@ -152,16 +152,6 @@ Follow up responses are roughly 1 point more conservative
 - raise mixed weaker
 - 2N forcing
 
-**** responding to 4th balancing 1NT
-
-(1x)--P--(P)--1N
-    2C = range ask staymanic
-        2D = minimum, no major
-        2HS = minimum, major
-        2N = maximum
-            3C = major ask again
-
-
 *** Passed hand balancing
 
 - Over (1!h) 1N is long minor + 4 !ss
@@ -1299,12 +1289,10 @@ With limited strength may want to hide distribution information and just bid the
 
 (1C)--P--(P)
     1HS = maybe 4 card avoiding 1NT
-    1N = 11--15(16)
-        2C = [staymanic range ask](#responding to 4th balancing 1NT)
-        Others = [1N system on](#1NT Opening)
+    1N = 11--14
     2C = Michaels
     2DHS = natural ~10--13
-    2N = 19--21 natural
+    2N = 18--20 natural
     3x = natural intermediate
     4x = natural
 
@@ -1551,12 +1539,10 @@ With limited strength may want to hide distribution information and just bid the
 
 (1D)--P--(P)
     1HS = maybe 4 card avoiding 1NT
-    1N = 11--15(16)
-        2C = [staymanic range ask](#responding to 4th balancing 1NT)
-        Others = [1N system on](#1NT Opening)
+    1N = 11--14
     2D = Michaels
     2HS = natural ~10--13
-    2N = 19--21 natural
+    2N = 18--20 natural
     3x = natural intermediate
     4x = natural
 
@@ -1838,12 +1824,10 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 
 (1H)--P--(P)
     1S = maybe 4 card avoiding 1NT
-    1N = 11--15(16)
-        2C = [staymanic range ask](#responding to 4th balancing 1NT)
-        Others = [1N system on](#1NT Opening)
+    1N = 11--14
     2H = Michaels
     2S = natural ~10--13
-    2N = 19--21 natural
+    2N = 18--20 natural
     3x = natural intermediate
     4x = natural
 
@@ -2063,11 +2047,9 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 [Summary](#4th balancing of 1x openings)
 
 (1S)--P--(P)
-    1N = 11--15(16)
-        2C = [staymanic range ask](#responding to 4th balancing 1NT)
-        Others = [1N system on](#1NT Opening)
+    1N = 11--14
     2S = Michaels
-    2N = 19--21 natural
+    2N = 18--20 natural
     3x = natural intermediate
     4x = natural
 
@@ -2411,7 +2393,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
         2N = natural
         3x = NF, invitational, ~7--11, no support
         4CD = fit jump
-    2N = natural, 16-18 balanced. Could have 4 card !h/!s, NT scheme follows.
+    2N = natural, 16-18 balanced. Could have 4/5 card !h/!s, NT scheme follows.
     3C = natural
         4D = fit jump
     3D = majors, any strength
@@ -2444,7 +2426,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
         2N = natural
         3x = NF, invitational, ~7--11, no support
         4CD = fit jump
-    2N = natural, 16-18 balanced. Could have 4 card !s, NT scheme follows.
+    2N = natural, 16-18 balanced. Could have 4/5 card !s, NT scheme follows.
     3CD = natural
         4D = (over 3C) fit jump
     3H = michaels !s + minor, limited wide range
@@ -2491,7 +2473,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
 (2S)
     X = takeout
         any = [Lebensohl system](#1NT Interference and Lebensohl)
-    2N = natural, 16-18 balanced. Could have 4 card !s, NT scheme follows.
+    2N = natural, 16-18 balanced. Could have 4/5 card !s, NT scheme follows.
     3CDH = natural
         4D = (over 3C) fit jump
     3S = michaels !hs + minor, limited wide range
