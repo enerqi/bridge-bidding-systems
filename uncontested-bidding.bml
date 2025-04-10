@@ -83,16 +83,16 @@ Natural, 4+ cards, maybe longer minor canapé
 2D = [good !h raise, maybe 3 card shapely !h support; OR minimum 4 card void raise](#1D--1H--2D)
 2H = [normal/weaker !h raise, maybe 3 !hs if have singleton](#1D--1H--2H)
 2S = [natural, NF, 6--5, extras](#1D--1H--2S)
-2N = 14--15, !c mini-splinter 4 card !h raise
+2N = 14--15, !c mini-splinter 4 card !h raise, 6 losers
 3C = 14--15, 5--5+ both minors
     3D = NF
     3H = forcing, 6+ cards
         3S = stop ask
     4CD = forcing, encouraging a cue or Redwood
         4DH = Redwood [RKB](#RKB 4N)
-3D = 14--15, !d mini-splinter 4 card !h raise
-3H = 14--15, !s mini-splinter 4 card !h raise
-3S = 14--15, !s void-splinter,4 card !h raise
+3D = 14--15, !d mini-splinter 4 card !h raise, 6 losers
+3H = 14--15, !s mini-splinter 4 card !h raise, 6 losers
+3S = 14--15, !s void-splinter 4 card !h raise, 6 losers
     3N = serious (not obscure length or minor ask)
 3N = 6(7)!d--5!h support, some void
     4C = void ask, slam try
@@ -274,6 +274,7 @@ Remember any maximum 5--5+ minors hand rebids 3C over 1M, so a shapely 5--5+ is 
 *** 1D--1H--2D
 
 - NOT flat 11--13
+- extra shape or 6 losers
 - Unsuitable for jump support bids that show maximums with 4 card support
 
 2D = good !h raise, maybe 3 card shapely !h support; OR minimum 4 card void raise (5--4--4--0)
@@ -406,12 +407,12 @@ Natural, 4+ cards, maybe longer minor canapé
 - Remember any maximum 5--5+ minors hand rebids 3C over 1M, so a shapely 5--5+ is minimum hcp
 - Minimum 1--4--4--4 would bid 1N
 - Maximum 1--4--4--4 is awkward, probably best NT, but a minimum partner with 5!ss and 4!hs cannot bid FSF
-  and has to choose a minor to sign off in
+  (unless playing 1!d--2M as majors weak/invite) and has to choose a minor to sign off in
 
 2C = natural, NF, 4--4+ minors either way, denies 3 !ss, often 14--15 hcp unless min 5--5+ minors
     2D = simple preference, NF, natural continuations
     2H = FSF, invite plus
-    2S = 6+ !ss, natural NF, ~8--10
+    2S = 6+ !ss, natural NF
     2N = natural, invitational, expects game v.s. 14--15
         3C = NF
         3DHS = forcing
@@ -439,6 +440,7 @@ Natural, 4+ cards, maybe longer minor canapé
 *** 1D--1S--2D
 
 - NOT flat 11--13
+- extra shape or 6 losers
 - Unsuitable for jump support bids that show maximums with 4 card support
 
 2D = good !s raise, maybe 3 card shapely !s support; OR minimum 4 card void raise
@@ -515,6 +517,7 @@ Invitational plus.
 2D = natural unbalanced 5!ds, without 4+ !cs
     2HS = quasi natural, GF
     3CD = NF
+    3HS = splinter, !d support
 2H = artificial, 11--13 balanced (maybe awkward minimum 4--4--1--4)
     2S = puppet, often like NT transfer
         2N = complete puppet
@@ -1211,17 +1214,18 @@ Maximum, 6 loser, 6(7)--4 with a minor. The reasonable alternative is a good max
 
 ** 1H--2H
 
-Single raise, 3+ cards
+Single raise, 3 cards
 
-- not worth a mixed raise, so 4 card support flat or ~4--6 hcp
-- 3 cards raises ~(7)8--10 support points
-- use the "semi" forcing 1NT for the 3 card game invite or weaker 3 card raises
-- either 1N or 2M could be gambling semi-preemptive extra weak on occasion
-- opener needs a good hand to continue, usually 6 losers or better (note a 5 loser single suiter often opens 1!c)
+- 3 card raises ~8--10 support points
+- 2M is semi-constructive (only 1N could be gambling semi-preemptive extra weak on occasion)
+- 2M by passed hands is unconstructive (use drury for better hands)
+- 4 carders worse than a mixed raise should bid 1N, rarely passed out
+- also use the "semi" forcing 1NT for the 3 card game invite or weaker 3 card raises
 
 2N = general game try, not exposing opener
     3CD = natural trial bid, e.g. xx Qxxx KQxx xx, cooperating - unsure of game
         3D = more trial bids if necessary
+3new = natural game try
 3H = extra trump length game try, ~6 losers, e.g. x Qxxxxx KQx AQx
     4H = acceptance values or trump support e.g. xx AJxx J10x J10xx
 
@@ -1231,6 +1235,7 @@ Single raise, 3+ cards
 
 - ~5 hcp up to anything happy to play v.s opener's 11--12 hcp 5--3--3--2 / 4!s--5!h--2--2 (maybe 5--4--2--2 with a minor)
 - may include 3 card limit raise hands ~(5)--7 support points or 3 card invitational ~11--12 support points
+- may include weak 4 card raises ~4--7 support that are not worth a mixed raise
 
 Responding:
 
@@ -1605,6 +1610,7 @@ remaining below 4!h:
 ** 1H--3CD
 
 Limit jump shift, 6 card suit invitational, denying major support
+Limit jump shift, 6 card suit invitational, denying major support, denying !ss
 
 - exact values depend on how easy it is for the suit to run in 3N
 - possibly used with weak long suits like x/x/xxx/KQJ10xxxx, bid suit again over 3N
@@ -1636,23 +1642,18 @@ Similar to 1!h--3!c:
 
 ** 1H--3H
 
-Mixed raise (weak limit raise) -- ~7--9(10) support points, 7.5--9 losers, 4+ cards
+Mixed raise (weak limit raise) -- ~8--10 support points, 7.5--9 losers, 4+ cards
 
 - New suit by opener is extreme two suiter slam try.
 - Almost always wrong to bid game with 5--3--3--2/5--4--2--2.
+- Responder's 5--4--2--2 is good due to the two shortages for ruffing and potential long suit to setup
 
 ** 1H--3S
 
-Unknown singleton splinter, 10--13 hcp, 7 loser hand or better.
+Unknown singleton splinter, 10--12 hcp (~9--10 by passed hand)
 
 Splinter bids typically have fairly evenly distributed strength amongst the side suits as otherwise a 2/1 GF bid
 of the strong suit is often better (unless the strong suit is mostly self-sufficient).
-
-Splinter bidder promises 3--4 cover cards outside of the shortness, e.g. Kxxx/Axxx/x/Axxx. After asking for the shortage
-opener counts losers in other suits and with 6+ losers signs off, e.g. Jxx/KQxxx/KQJ/Qx easy to sign off v.s. !d
-singleton. 5 losers is hardest to judge as opener needs to make a slam try and let responder bid on with 4 cover cards
-or a void. Responder can always bid on once with 5+ cover cards, though won't have that hand for a low tier 10--13 hcp
-splinter. When responder bids on opener is ok with having 6 losers.
 
 3N = ask
     4C = !c singleton
@@ -1661,11 +1662,8 @@ splinter. When responder bids on opener is ok with having 6 losers.
 
 ** 1H--3N/4C/4D
 
-Short !s/!c/!d splinter, upper-tier ~13--16 hcp, 4.5+ cover cards. Possibly > 16 hcp if judge best route,
-but will be driving to five level at least. Possibly void and needs to decide if should drive
-to five level.
-
-4S = Kickback [RKB](#RKB 4N), maybe important to bid if 4!c/4!d was doubled and 5!c/!d raise impending
+Maximum splinter, short !s/!c/!d, upper-tier ~13--15 hcp (could GF without a shortage)
+(Fit jump by passed hand)
 
 ** 1H interference
 
@@ -1917,6 +1915,7 @@ at the 3 level.
 
 - ~5 hcp up to anything happy to play v.s opener's 11--12 hcp 5--3--3--2 (maybe 5--4--2--2 with a minor) hand
 - may include 3 card limit raise hands ~(5)--7 support points or 3 card invitational ~11--12 support points
+- may include weak 4 card raises ~4--7 support that are not worth a mixed raise
 
 Responding:
 
@@ -2075,7 +2074,7 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
     4H = delayed splinter !s support, maybe only 3 card support
     4S = [picture raise](#Picture Raises), no outside controls
 2N = catchall, stops not guaranteed, denies 4!hs, no !c raise interest
-    3S = forcing, ambiguous strength unsuitable for 4S picture raise
+    3S = ambiguous strength unsuitable for 4S picture raise
         3N = Serious
     4C = !c RKB, special case, solid suit
     4S = [picture raise](#Picture Raises), no outside controls
@@ -2214,19 +2213,21 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
 
 ** 1S--2S
 
-Single raise, 3+ cards
+Single raise, 3 cards
 
-- not worth a mixed raise, so 4 card support flat or ~4--6 hcp
-- 3 cards raises ~(7)8--10 support points
-- use the "semi" forcing 1NT for the 3 card game invite or weaker 3 card raises
-- either 1N or 2M could be gambling semi-preemptive extra weak on occasion
-- opener needs a good hand to continue, usually 6 losers or better (note a 5 loser single suiter often opens 1!c)
+- 3 card raises ~8--10 support points
+- 2M is semi-constructive (only 1N could be gambling semi-preemptive extra weak on occasion)
+- 2M by passed hands is unconstructive (use drury for better hands)
+- 4 carders worse than a mixed raise should bid 1N, rarely passed out
+- also use the "semi" forcing 1NT for the 3 card game invite or weaker 3 card raises
+
 
 2N = general game try, not exposing opener
     3CDH = natural trial bid, e.g. Qxxx KQxx xx xxx, cooperating - unsure of game
         3x = more trial bids if necessary
     3S = sign off
     4S = accept
+3new = natural game try
 3S = extra trump length game try, ~6 losers, e.g. Qxxxxx KQx AQx x
     4S = acceptance values or trump support e.g. AJxx xx J10x J10xx
 
@@ -2346,14 +2347,15 @@ Not as much suit quality required as the minor bids - directed to a major game i
 
 ** 1S--3S
 
-Mixed raise (weak limit raise) -- ~7--9(10) support points, 7.5--9 losers, 4+ cards
+Mixed raise (weak limit raise) -- ~8--10 support points, 7.5--9 losers, 4+ cards
 
 - New suit by opener is extreme two suiter slam try.
 - Almost always wrong to bid game with 5--3--3--2/5--4--2--2.
+- Responder's 5--4--2--2 is good due to the two shortages for ruffing and potential long suit to setup
 
 ** 1S--3N
 
-Unknown singleton splinter, 10--13 hcp, 3--4 cover cards outside of shortage
+Unknown singleton splinter, 10--12 hcp (~9--10 by passed hand)
 
 Splinter bids typically have fairly evenly distributed strength amongst the side suits as otherwise a 2/1 GF bid
 of the strong suit is often better (unless the strong suit is mostly self-sufficient).
@@ -2363,24 +2365,14 @@ of the strong suit is often better (unless the strong suit is mostly self-suffic
     4H = !h shortage
     4S = !c shortage
 
-** 1S--4C
+** 1S--4C/4D/4H
 
-Maximum splinter in !c or !h, upper-tier ~13--16 hcp, 4.5+ cover cards.
+Maximum splinter, short !c/!d/!h, upper-tier ~13--15 hcp (could GF without a shortage)
 (Fit jump by passed hand)
 
-4D = ask
-    4H = !h
-    4S = !c
-    4N+ = [RKB](#RKB 4N) response (1430...) with !c shortage
+** 1S--4S
 
-** 1S--4D
-
-Maximum splinter, short !d, upper-tier ~13--16 hcp, 4.5+ cover cards.
-(Fit jump by passed hand)
-
-** 1S--4H/4S
-
-To play, always. By a passed hand 4!h also implies some sort of !s fit, e.g Kxxxx/QJ10xxx/x/x
+To play, always. Could be highly obstructive and weak with long trumps or a fast arrival minimum flattish game bid.
 
 ** 1S--4N
 

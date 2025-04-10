@@ -25,7 +25,7 @@ Opening:
 - 15/18 hcp hands can be promoted to 1N/2N.
 - 16/19 hcp hands rarely demoted.
 - 5--4--2--2 with a long minor can be opened with 1N
-- 6--3--2--2 with a long minor can also by judgement open 1N
+- 6--3--2--2 with a long minor can also by judgement open 1N (e.g. with poor suit quality)
 - rare 4--4--4--1 singleton A/K
 
 Responding:
@@ -445,15 +445,15 @@ Responder's 2N vs 3N 5--3--3--2 rebid preferences after transfer:
         4CD = void, !h slam try
         4H = to play
         4N = quantitative
-    2S = good !h support, NOT maximum, not necessary
-    2N = support, maximum, but looking for 3N
+    2S = good side suit A/K, 3 top 5 honours, !h support, any strength
+    2N = maximum, support, no good side suit, some NT interest
         3D = retransfer
             3H = complete transfer
                 3N = serious, slam try
         3N = likes NT
         4CDS = void
-    3CD = natural, unusual
-    3H = support, maximum
+    3CD = good side suit A/K, 3 top 5 honours, !h support, any strength
+    3H = (not mandatory) minimum !h support, without good side suit
 
 *** 1N--2H
 
@@ -555,27 +555,27 @@ Responder's 2N vs 3N 5--3--3--2 rebid preferences after transfer:
         4CDH = void, !s slam try
         4S = to play
         4N = quantitative
-    2N = maximum, support but also looking for 3N
+    2N = maximum, support, no good side suit, some NT interest
         3H = retransfer (to play 3!s/4!s or make slam try)
             3S = complete transfer
                 3N = slam try, serious
         3N = likes NT
         4CDH = void
-    3CD = natural, unusual
-        3S = natural
-            3N = forcing
-            new = shortage
-    3H = good !s support, NOT maximum
-    3S = !s support, maximum
+    3CDH = good side suit A/K, 3 top 5 honours, !s support, any strength
+        3S = waiting
+            3N = no shortage
+            new = shortage (doubleton)
+    3S = (not mandatory) minimum !s support, without good side suit
 
 *** 1N--2S/2N
 
-- decline/accept invite is about the minor fit, not HCP, similar to 3!c/!d opening
+- decline/accept invite is about the minor fit (Qx+), not HCP, similar to 3!c/!d opening
 
 2S = range ask OR transfer to !cs, 6+ cards, weak or invite plus
     2N = decline an invite
         3C = signoff
         3DHS = singleton, finding right game or slam
+            major = no stop, good 4+ card major
             4C = no stop, minimum
         3N = to play
         4C = slam try
@@ -583,6 +583,7 @@ Responder's 2N vs 3N 5--3--3--2 rebid preferences after transfer:
         4DHS = void
     3C = accept an invite
         3DHS = singleton, finding right game or slam
+            major = no stop, good 4+ card major
             4C = no stop, minimum
         3N = to play
         4C = slam try
@@ -592,6 +593,7 @@ Responder's 2N vs 3N 5--3--3--2 rebid preferences after transfer:
     3C = decline an invite
         3D = signoff
         3HS = singleton, finding right game or slam
+            3S/4H = no stop, good 4+ card major
             4D = no stop, minimum
         4C = singleton, slam try
             4N = negative
@@ -599,8 +601,9 @@ Responder's 2N vs 3N 5--3--3--2 rebid preferences after transfer:
             4N = negative
         4HS = void
         5C = void
-    3D = accept an invite
+    3D = good points OR good !ds
         3HS = singleton, finding right game or slam
+            3S/4H = no stop, good 4+ card major
             4D = no stop, minimum
         4C = singleton, slam try (passed 3N already)
             4N = negative

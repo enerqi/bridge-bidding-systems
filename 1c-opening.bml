@@ -407,8 +407,9 @@ Acol two strength 6--5 two suiter:
         3H = extras, Ax/Kx !hs
         3S = self-sufficient, strong, extras
         4other = self/auto-splinter, slam try
-    2H = to play v.s. weak hand
-    2S = to play v.s. weak hand, 4 card support or possibly good 3 cards + singleton
+    2H = minimum, 6 carder
+        3H = invite
+    2S = minimum, to play v.s. weak hand, 4 card support or possibly good 3 cards + singleton
     2N = puppet, !c signoff or 4--4--4--1 GF and short !ss
         3C = weak
             other = natural, baron 4 card suit with control
@@ -480,7 +481,7 @@ Acol two strength 6--5 two suiter:
                 4CD = 6--4, extras
             3oM = natural minimum raise, ~8--11 hcp
             jump = splinter, major support
-            other = cue, major support with extras ~12+ hcp
+            higher = cue, major support with extras ~12+ hcp
         2N = 5--4 / 5--5 (6--5) minors, ~16--19 hcp
             3CD = natural 4+ card support
             other = quasi-natural
@@ -1147,6 +1148,9 @@ Compared to the [1D opening interference](#1D interference):
 1C--(1S)
     Dbl = 4--5 !hs ~8+ hcp or 6!h invitational precisely, not GF if canapé
         1N = weak, maybe no !s stop
+            2CD = natural, equal length or longer
+                2H = 3 card support
+            2H = 5!hs
             cue = force
             2N = invite
             3H = 6 card invite

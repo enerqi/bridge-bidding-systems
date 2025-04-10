@@ -5,8 +5,8 @@
 ** We Overcall or X/XX Summary
 
 - Generally based more on shape than exact strength
-- Usually 5 cards, 4 cards may have leading value occasionally, but normally we only bid if partner passed already and
-  the suit is very good, plus compensating extra values
+- Usually 5 cards, 4 cards may have leading value occasionally, but normally we only bid if partner passed already, we
+  are NV, and our hand is worth just one bid (perhaps with a longer minor)
 - 1 level light major suit overcalls, ~(7)8+ hcp and sensible suits or unbalanced with low hcp or VUL
 - 1D overcalls are likely 10+ reasonable opening bids (they are not very preemptive after all, even if lead-directing)
 - 2 level minor overcalls are fine on "bad" 5 carders e.g. AJxxx+ iff partner not passed and have enough values / other suit tolerance
@@ -131,7 +131,7 @@ Hand examples:
 - 2 minor cue is always Michaels as sitting under any prepared minor
 - 2HS is a standard minimum opening good 6 carder
 - slightly more chance of 4 card suit at the 1 level, e.g. AQJ10/Axxx/xxxx/x or avoiding 1N vulnerable
-- 1N is ~11--15 (maybe 16 over 1!h/!s), use instead of a weak 4 card suit, no stopper guaranteed
+- 1N is ~11--14 (maybe 15 over 1!h/!s), use instead of a weak 4 card suit, no stopper guaranteed
 - X usual takeout, but lighter ~8+ depending on shape
 - jump cue bid is a stopper ask
 - 4x jumps are natural
@@ -611,8 +611,9 @@ Examples:
   to start a *stop ask* (Directional Asking Bid).
 - Is it a standard maximal *competitive* double situation? Competitive X played to 3!s. Double of opponents' raised suit
   when partner has opened or overcalled: 1H--(2D)--2H--(3D)--X
-- Is it a standard [*responsive* double](#Responsive Doubles Style) situation showing the other two suits? Responsive X played to 3!s. Partner does
-  takeout X or overcalls of opener and then we X the opponents' raise (OBAR). Their raise can be artificial.
+- Is it a standard [*responsive* double](#Responsive Doubles Style) situation showing the other two suits? Responsive X
+  played to 3!s. Partner does takeout X or overcalls of opener and then we X the opponents' raise (OBAR). Their raise
+  can be artificial.
 - Over Live auction 4x raises from the opponents doubles are more "values" based (awkward cooperative not highly
   distributional). Note some play "responsive" to 4H or higher. At the 4 level there's not much meaningful difference
   between general values and responsive.
