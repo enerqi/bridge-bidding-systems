@@ -793,7 +793,6 @@ Puppet Stayman
         4N = optional RKB
         5M = void
     4N = only 3--3 minors fit, but good honours fit
-        4N = optional RKB
         5M = void
 
 *** 1N--4CD
@@ -821,8 +820,8 @@ Most important is its use against weak twos and after we have made natural openi
 - 1C--(2!d!h!s)
 - 1C--1D--(2!d!h!s)--X
 - 1D--(2!h!s)
-- (1C prepared)--2C natural
-- (1D prepared)--2D natural
+- (1C short)--2C natural
+- (1D short)--2D natural
 - (1H)--X--(2H)
 - (1S)--X--(2S)
 - balancing or reopening doubles forcing partner to bid
@@ -1037,8 +1036,6 @@ immediately or the final option is to bid a suit without any invitational nuance
     2N = puppet, weak or GF !cs OR one 4 card major invite plus
         3C = puppet, normal takeout double
             3D = staymanic, one 4 card major
-                3HS = pass/correct
-                4H = pass/correct
         3D = power takeout double, usually 5--4+ majors
         3HS = power double
     3C = invitational plus !h
@@ -1069,19 +1066,19 @@ such an effective preempt
 
 (2H)--X
     2S = weak
-    2N = ask for better minor
+    2N = ask for better minor, but includes various hands
         3CD = better minor
             P = to play, opposite "normal" takeout double
             3D = to play, weak !ds
-            3H = cue, GF with STOP and 4!ss
+            3H = cue, GF with NO stop and 4!ss
             3S = 4 card invitational
             3N = NO stop, maybe 3!ss + 5/6 minor or both minors
         3H = power double type strong hand, e.g. 5--4+
-        3S = natural, extra strength ~17+, 5+ card major bid
+        3S = natural, extra strength ~17+, 5+ card major bid (suit too poor for strong jump overcall)
         3N = power double with stop
     3C = ~0--10 hcp
     3D = natural, invitational
-    3H = no stop, 4!ss
+    3H = stop, 4!ss, GF
     3S = 5 card invitational
     3N = to play, stop implied, no other major
     4CD = natural, GF, unsuitable for 3N
@@ -1091,17 +1088,30 @@ such an effective preempt
         3CD = better minor
             P = to play, opposite "normal" takeout double
             3DH = to play, weak hand
-            3S = cue, GF with STOP and 4!hs
+            3S = cue, GF with NO stop and 4!hs
             3N = NO stop, maybe 3!hs + 5/6 minor or both minors
         3H = natural, extra strength ~17+, 5+ card major bid
         3S = power double type strong hand, e.g. 5--4+
         3N = power double with stop
     3C = ~0--10 hcp
     3DH = natural, invitational
-    3S = no stop, 4!hs
+    3S = stop, 4!hs, GF
     3N = to play, stop implied, no other major
     4CD = natural, GF, unsuitable for 3N
     4H = game values
+
+How do we describe this variant's details, where slow means bid via 2N? "Slow denies / fast shows".
+
+- fast 3N shows a stop
+- slow 3N denies a stop
+- fast cue shows a stop, GF, 4 card other major
+- slow cue denies a stop, GF, 4 card other major
+- fast 3 level suit invitational (except the !c suit - downside of better minor)
+- slow 3 level suit weak(er)
+
+In the case of bidding !ss, the weaker slow bid of 3!ss just shows 4 cards invitational instead of 5 cards invitational.
+With a weak !s hand there is room to just bid 2S.
+
 
 *** Reversed Lebensohl RLEB
 

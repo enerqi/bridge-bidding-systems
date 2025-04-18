@@ -26,7 +26,7 @@
 - Switch transfers over 2CD overcalls
 - Jump cue (3 level) is a mixed raise supporting a major
 - Jump cue (3 level) is a splinter supporting a minor
-- 3 level raise depends if responder bids a balance or [pre-emptive and cooperative](#HCR cue bids and 2N Raise in Competition)
+- 3 level raise depends if responder bids or passes [pre-emptive and cooperative](#HCR cue bids and 2N Raise in Competition)
 - when opponents have 2 suits a 4th position (sandwich): cue sitting OVER is natural, cue sitting UNDER is *Michaels*,
   2N better Michaels (6--5 usually) unless there are three unbid suits then unusual
 - when opponents bid (1 Major)--(1NT) cue is *Michaels*
@@ -38,19 +38,27 @@
 - over opponents bid (1!h)--P--(1!s), special case, 2H cue is !s + minor Michaels (not both minors), 2S is still natural cue sitting over
 - over opponents bid (1!s)--P--(2!s), special case, 2N is 5+!hs with 4+ minor
 
-*** Minimum Level Conversion and Takeout Doubles
+*** Minimum/Equal Level Conversion and Takeout Doubles
 
-- any level takeout doubles then correcting to the cheapest other suit shows a different 2 suiter and not any extras
+OffShape Takeout / Conversion style is:
+
+- bid naturally with 5--4 majors unless the 5 carder is terrible
+- over takeout of a 2/3/4 level preempt we play equal level conversion (not minimum level), meaning bidding a new suit
+  at a higher level is constructive/strong
+- after 1 level takeout, conversion at the 1 or 2 level is considered equal / escaping and not showing extra values
+- we can double with 4--4 majors over a 1 level minor bid, takeout responses are adjusted e.g. may bid 1H/1S with 3
+  cards if lacking a 5 card minor
+- !cs are usually bid naturally with a 4 card major as we often would be forced to the 3 level playing off shape
+  conversion. However, over a 1D opening we do have space to convert back to !cs with only one 4 card major so could
+  double
+
+Takeout style:
+
 - reasonable defensive values are required for a takeout double, not some very light overcall - advancer will push to
   game with 13+ and invite with ~10--12 on their own suit
 - perfect takeout double shapes e.g. 4--4--4--1 maybe light "opening" values, i.e ~10 hcp
 - 11 hcp doubles can be 4--4--3--2 without wasted values
-- 6--4 major hands can optionally be bid like 5--4 hands after the takeout double.
-- 6 major and 4 minor will typically ignore the minor.
-- minor X then ELC typically is only both majors, not a minor major
-- can include the less common style with !cs and a major, correcting to a major suggesting long minor and 4 card major
-- a jump in the lower suit or forcing to a higher level implies a strong two suiter 5--5+ (that doesn't fit agreed
-  strength ranges of the main two suiter overcalls)
+- a jump in the lower suit or forcing to a higher level implies a two suiter 5--5+ (that doesn't fit into any two suiter overcall convention)
 - concept may also apply to high level bids with limited space like 4N, e.g. (4!s)--4N, or a cue bid showing a two
   suiter when there are 3 unknown suits
 - very strong single suiters are rare, and may need to jump cue bid or double and jump cue bid, or just bid game
@@ -86,8 +94,8 @@ Hand examples:
 
 **** After minor openings:
 
-- cue of a prepared minor is natural
-- cue of a natural minor is a non-strong majors hand
+- cue of a short 2+ minor is natural
+- cue of a natural or prepared 3+ minor is a non-strong majors hand
 - over a prepared/short minor bid 1S with both majors (unless strong majors)
 - jump cue is strong majors
 - simple overcall with !s + other minor (or both majors against a prepared/short minor)
@@ -109,7 +117,6 @@ Hand examples:
 - 2 level new suit jumps are weak after suit or takeout
 - a 1-under (3M--1) jump is mixed for a major
 - other jumps are [priority fit or splinter](#Fit Jumps and Splinters in Competition)
-- 4CD major slam tries AFTER MAJOR OPENING + JUMP PREEMPT
 - [Cue bids](#HCR cue bids and 2N Raise in Competition) exactly invitational HCR OR minimum game hand / limited defensive values / marginal balanced game hands, AFTER MAJOR OPENING
 - 1m--(2!c) then Stayman/NT system on AFTER MINOR OPENING
 - 3 level jump raise is preemptive ~0--6 if a 1-under jump mixed raise is available, else mixed replacement AFTER SUIT or TAKEOUT
@@ -312,7 +319,6 @@ The following must *all* be *true* about the bid:
 - we open 1HS or 2HS (and very rarely open 1!c!d, bid a suit naturally and then get delayed competition). Not over
   intermediate 2CD given limited space available to show NF or forcing natural suits. Not over 1CD as they do not show
   any suit.
-- when we open 1HS or 2HS, only after simple overcalls by the opponent (after 1HS--(jump) 4!c!d are artificial slam tries)
 
 *** What about a double jump?
 
@@ -363,36 +369,6 @@ reasonably have a natural 2N bid (when the opponents have opened first we often 
 
 P--(1H)--X--(2H)--
     2N = scrambling, not forced, passed originally so limited strength
-
-** Major Opening and Responder's 4CD Slam Try
-
-We open 1H/1S and opponents interfere with a 2S jump overcall OR specific two suiter bids, e.g.
-
-- 1H--(2H) michaels
-- 1H--(2S) weak/intermediate
-- 1H--(2N) unusual
-- 1H--(3C) ghestem variant showings !cs + another
-- 1H--(3D) !ds + another
-- 1S--(2S) michaels
-- 1S--(2N) unusual
-- 1S--(3C) ghestem variant showings !cs + another
-
-Note, it's possible to play these over single suiter 3 level jump overcalls, but we use [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
-in those situations along with a natural GF 4CD bids.
-
-**** One known opponent's suit  (whether showing one or two suiter)
-
-1M--(jump)
-    4C = good game raise, control in opponent's suit
-        4D = some extras, Last Train like extra strength ask
-    4D = major slam try without control in opponent's suit
-    4M = minimal game values or moderate whilst lacking control
-
-**** Two known opponent's suit
-
-1M--(jump)
-    4C = major slam try, shortness in lowest suit
-    4D = major slam try, shortness in highest suit
 
 ** Bidding to 4CD over 3HS competition is Invitational
 
@@ -576,7 +552,7 @@ Examples:
     2H = 8--11, main suit nothing special
         2N = natural, invitational
         cue = F1, with Hx major support
-    2N = F1, 10+ shapely, e.g. 6 card main suit and 4 card side suit, forcing to 3S
+    2N = F1, 10+ shapely, e.g. 6 card main suit and 4 card side suit, forcing to 3H
     3x = 8--11, 5--5
     3H = 8--11, excellent 6+ cards main suit (not mandatory with minimum)
 
@@ -1040,6 +1016,8 @@ With limited strength may want to hide distribution information and just bid the
 **** (1C)--X
 
 (1C)--X = Takeout
+    1D = usually 5+!ds (unless no 3 card major), playing offshape 4--4 major takeouts
+    1HS = rarely 3 cards with only 4!ds
     1N = natural ~8--11
         2D = to play, shape, improving the contract, must GF cue bid or jump (invitational) to show stronger minor hand
         2HS = normal, stronger than 1!h overcall
@@ -1138,11 +1116,11 @@ With limited strength may want to hide distribution information and just bid the
         (any)
             X = negative of natural bids
             Others = [Lebensohl system](#1NT Interference and Lebensohl)
-    2C = over prepared !c: natural
+    2C = over short 2+ card !c: natural
         2x = NF, natural
         2N+ = [RLEB](#Reversed Lebensohl RLEB)
         3C = invitational
-    2C = over natural !c: majors, not strong
+    2C = over natural or prepared 3+ cards !c: majors, not strong
         2D = relay, weak major signoff type hands
             2H = relayed
                 P/2S = simple preference, less than limit raise
@@ -1303,12 +1281,14 @@ With limited strength may want to hide distribution information and just bid the
 **** (1D)--X
 
 (1D)--X = Takeout
+    1HS = rarely 3 cards with only 4!cs
     1N = natural ~8--11
         2C = to play, shape, improving the contract, must GF cue bid or jump (invitational) to show stronger minor hand
         2HS = normal, stronger than 1!h overcall
         (2D) = re-compete
             3C = shape, improving the contract
             3HS = normal, stronger than 1!s overcall
+    2C = usually 5+!cs (unless no 3 card major), playing offshape 4--4 major takeouts
     2D = cue 4--4 majors or strong, forcing, will rebid, not GF
     2HS = ~8--11 5+ suit
     3C = ~12--14
@@ -1407,11 +1387,11 @@ With limited strength may want to hide distribution information and just bid the
             3C = natural, NF
             3D = splinter, e.g. 4--4--1--4 or longer !cs
             3HS = GF, fit jump
-    2D = over prepared !d: natural
+    2D = over short 2+ card !d: natural
         2HS = NF, natural
         2N+ = [RLEB](#Reversed Lebensohl RLEB)
         3D = invitational
-    2D = over natural !d: majors, not strong
+    2D = over natural or prepared 3+ card !d: majors, not strong
         2HS = simple preference, prefer !hs with equal length
         2N = natural invitational, very rare, very strong minor stops
         3C = !h limit+ raise, 3+ card support, 3 useful features (A, K or short in partner's suits)
@@ -1687,7 +1667,7 @@ With limited strength may want to hide distribution information and just bid the
         3CD = !c/!d weak
         3HS = !c/!d (Lissabon like) and extra values
     3C = pass/correct
-    3D = !s game try, good 3 card spade raise, 2 useful features (A, K or short in partner's suits)
+    3D = !s game try, good !s raise (e.g. 3 card + 3 features - A, K or short in partner's suits)
     3H = N/A, assume forgot and same as 3D game try bid
     3S = mixed raise, 4 trumps, 2 useful features (A, K or short in partner's suits)
 2S = weak jump, response as [6 card weak two](#2HS Weak Openings)
@@ -1922,6 +1902,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
             3S = splinter
     2D = normal overcall, virtually deny !hs
         2H = natural, NF constructive ~8--12 (no transfers too high)
+          2S = [Einar Cue](#Einar Cue Bid) (as have room to bid 3!d still)
         2S = [HCR](#HCR cue bids and 2N Raise in Competition) / general force
         2N = natural, NF
         3C = natural, invitational
@@ -1949,7 +1930,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
             3CD = !c strong / !d weak
             3HS = !c mega strong / !d extras (Lissabon like)
         3C = pass/correct
-        3D = !h game try, either 3 cards + 3 useful features (A, K or short in partner's suits) or 4 cards + 2 useful features
+        3D = !h game try, e.g. 3 cards + 3 useful features (A, K or short in partner's suits) or 4 cards + 2 useful features
         3H = to play
         3S = good 4!h bid, offensive e.g. !s shortage
         (3S) = competitive or invite
