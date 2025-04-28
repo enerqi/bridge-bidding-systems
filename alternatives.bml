@@ -258,6 +258,44 @@ system to show offensive hands with limited points. In a natural wide ranging st
 the 16+ hands. We do play Gazilli over 1H--1S so it can be used to show a max 14--15 mini-splinter like raise --
 opposite the NF responses opener going to the 3 level in a new suit often makes little sense.
 
+** Negative Free Bids With Competition
+
+When we open 1H/1S and the opponents overcall we play standard one round forcing new suit bids at the 2 level. It's
+possible to play negative free bids, e.g. 1H--(2C)--2S as non-forcing, less than a mild invite. Paired with a limited
+opening structure this works fairly well, as long as we don't bid too many bad 5 card suits when VUL.
+
+With this structure you have to jump in a new suit to game force with a good suit (double with a poor suit GF), so 2
+level non-forcing, 3 level forcing for new suits. With a good suit the jump is ok but with a poor suit we have to double
+first, which means the advancer can preempt us before we've really said whether we have 4/5/6 cards. Using a jump as GF
+loses fit jumps and also a 1-under jump as a mixed raise. The mixed raise is the most useful aspect. Arguably we could
+still play mixed raises by just raising to the 3 level instead of using the 3 raise as preemptive.
+
+It's also possible to use the jump as an good invite hand, or just not play a natural jump. Either way if advancer raises
+the bidding it can be hard to sort out certain hands.
+
+Transfers are the way to try to get the benefits of NFBs without so many drawbacks, though they add complexity. After
+opening 1C/1D we do have a transfer structure for some suits after (1H/1S) interference, which gives some benefits
+similar to negative free bids at the cost of giving the opponents a suit to double for lead/values.
+
+** 1C/1D Opening Interference
+
+When we open a minor we assume it's a balanced hand. The responses could perhaps be more finely optimized for each
+specific opening and overcall but instead they are made more memorable by being similar.
+
+After a takeout double there are transfers, including 1S to 1N. At this point it might be good to use 1N as an invite
+type hand so we don't have to go too high. An invite over 1C with it's tight range makes little sense though, so 1N is
+just a !c transfer. If it were more optimized over 1D--(X) then 1N might be an invite with 2C/2D system on 10+ natural -
+no way to bid a less than invite minor hand. As it is the transfers to the 2 level are 8+, mostly for consistency and so
+that over a strong 1C we can assume a GF. Not quite as aggressive as a negative free bid or weak transfer, but less than
+the strength for a standard 2 level new suit bid.
+
+After a suit overcall, there are again some transfers, but we keep a natural 1N for its positional advantage. The major
+transfer can be weak or GF (double with invite), so that can be negative free bid like but promising 6 cards. Should the
+2 level major transfer be done with any constructive (6+ hcp over 1C, 8+ hcp over 1D) 6+ cards instead of doubling with
+6 and invite (only double with a poor 6 carder, weak values)? We play that variant aswell as it's unclear which way
+handles interference better. The minor bid is again more constructive 8+ for consistency. As 1N is natural, !cs as ever
+is harder to bid and requires a sound 10+ hcp as you cannot play it at the 2 level.
+
 ** 2C Opening Responses
 
 Generally content with the structure -- promising 6 cards makes the constructive bidding much easier than only 5 clubs.

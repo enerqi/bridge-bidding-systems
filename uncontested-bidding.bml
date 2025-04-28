@@ -648,8 +648,7 @@ Invitational plus.
             cue/jump = only forcing bids
         jump = fit jump
         2N = !d super-accept
-    2D = weak
-    2HS = weak jump shift, system on
+    2DHS = weak
     2N = minors, unusual
     3C = preempt 5--4(+) minors
     3DHS = preempt
@@ -758,7 +757,11 @@ Invitational plus.
 
 1D--(1N)
     X = penalty rarely GF, after escape opener can still use good-bad 2N or cue to GF whilst responder can bid 2N natural, 3x NF or also cue to GF
-    Bid = [As weak 1N defence](#Opponents open 1NT)
+    2C = Majors [as weak 1N defence](#Opponents open 1NT)
+    2DH = transfer
+    2S = artificial, 5--4 minors
+        2N = longest ask
+    2N = minors
     3CD = preempt
 
 1D--(1N)--P--P
@@ -917,6 +920,7 @@ By responder example:
 
 * 1H Opening
 
+- rule 19, but can downgrade some 10 hcp hands
 - a minimum 5!h and 6!c/!d may show a 5--5 hand bidding !h first
 
 1H = (10)11--15, 5 card Major
@@ -1668,7 +1672,7 @@ Maximum splinter, short !s/!c/!d, upper-tier ~13--15 hcp (could GF without a sho
 ** 1H interference
 
 1H--(X)
-    XX = doubleton !h, 6+ hcp, encourage 6 card suit rebid, often like standard 1N bid
+    XX = 10+ values, no clear bid, maybe penalty interest
     1S = natural, forcing (by unpassed hand), ignores the double - later system on if possible e.g:
         1N = usual omnibus NT
             2CD = system on puppet bids
@@ -1889,6 +1893,7 @@ at the 3 level.
 
 * 1S Opening
 
+- rule 19, but can downgrade some 10 hcp hands
 - a minimum 5!s and 6!h may show a 5--5 hand bidding !s first
 
 1S = (10)11--15, 5 card Major
@@ -2385,7 +2390,7 @@ Normal Blackwood. Responder can bid their own suit at 5/6/7 level after opener s
 Similar to [1H interference](#1H interference).
 
 1S--(X)
-    XX = doubleton !s, 6+ hcp, encourage 6 card suit rebid, often like standard 1N bid
+    XX = 10+ values, no clear bid, maybe penalty interest
     1N = !cs, 6+ hcp, sound weak two or better 6+ cards OR 5 cards and will bid again, or lead directing 4+ suit with 3 card support
     2C = !ds, 6+ hcp
     2D = !hs, 6+ hcp

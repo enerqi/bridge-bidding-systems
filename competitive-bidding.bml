@@ -127,7 +127,7 @@ Hand examples:
 - 1!h/!s--(1N) 2!c is a good 8--10 raise, 2!d artificial 5--3 other major with 3 card support, 2M natural, 2N usual limit+ raise system
 - Transfer bids after 1!c opening and 1HS O/C (not just over takeout X like 1!d!h!s openers)
 - Negative doubles to 4!h
-- XX after opponent's takeout double varies: *doubleton* support 6+ for a *major*, but next suit *transfer* after *minor* opening
+- XX after opponent's takeout double varies: values 10+ for a *major*, but next suit *transfer* after *minor* opening
 - Support doubles by *opener* for partner's *1x major* response and *weak 2x major* response
 - X/XX of cue bids of *our suit is extra length*, but of *partner's suit is Stolen bid* support showing
 
@@ -199,7 +199,7 @@ The primary situation is 1HS--2N, but there's other situations. In summary:
 
 - 1HS--2N--(3x/4x) known major fit and game try plus
 - 1HS--Splinter--(4x) major support splinter slam try
-- 2D--4C--(3S/4x) slam try suit set
+- 2D--4C--(4x) slam try suit set
 
 Continuations in general:
 
@@ -233,9 +233,9 @@ Pass used to show a control in the overcalled suit.
 
 1H--(P)--2N--(4D)
     X = good values, penalty
-    P = !d control implication
+    P = no control/shortness
         X = extra strength ask (last train like), slam try
-    4H = minimum, no control, assumes we will always compete to game
+    4H = !d control implication, no control, assumes we will always compete to game
 
 
 ** HCR cue bids and 2N Raise in Competition
@@ -345,30 +345,13 @@ reasonably have a natural 2N bid (when the opponents have opened first we often 
 
 (1D)--P--(1S)--X
 (2S)
-    2N = natural
+    2N = natural, could have good values
     3D = heart invite
     3H = competitive
     X = minors
 
-(1D)--P--(1S)--X
-(2S)--X--(P)
-    2N = better minor Lebensohl, forcing partner to bid
-
-(1S)--P--(2S)--X
-    2N = better minor Lebensohl, forcing partner to bid
-
-(1S)--2C--(2S)--X--(P)
-    2N = Lebensohl, forcing partner to bid, likely 5--4 minors
-    3C = minimum, no side minor
-
-1D--(2S)--P--(P)--X--(P) limited in principle though could have 8/9 no bid or penalty pass
-    2N = better minor Lebensohl, forcing partner to bid
-
-1D--(1S)--P--(2S)--X--(P) limited after passing the opponent's overcall
-    2N = better minor Lebensohl, forcing partner to bid
-
-P--(1H)--X--(2H)--
-    2N = scrambling, not forced, passed originally so limited strength
+Pass--(1H)--X--(2H)
+  2N = scrambling (not RLEB), not forced, passed originally so limited strength
 
 ** Bidding to 4CD over 3HS competition is Invitational
 
@@ -583,10 +566,10 @@ Examples:
 * Doubles
 
 - Is it a standard *negative* double situation? Negative X played to 4!h (but more values showing Thrump style over
-  double jump to 3DHS). Promising the unbid major(s) or ability to handle the auction based on partner's next bid. Used
+  double jump to 3!d!h!s). Promising the unbid major(s) or ability to handle the auction based on partner's next bid. Used
   to start a *stop ask* (Directional Asking Bid).
-- Is it a standard maximal *competitive* double situation? Competitive X played to 3!s. Double of opponents' raised suit
-  when partner has opened or overcalled: 1H--(2D)--2H--(3D)--X
+- Is it a standard maximal *competitive* double situation? Competitive X played to 3!s. Double of opponents' raised
+  suit, both sides have a fit and game is possible, e.g 1H--(2D)--2H--(3D)--X
 - Is it a standard [*responsive* double](#Responsive Doubles Style) situation showing the other two suits? Responsive X
   played to 3!s. Partner does takeout X or overcalls of opener and then we X the opponents' raise (OBAR). Their raise
   can be artificial.
@@ -634,6 +617,7 @@ Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others pla
 9. our side invites 3N (1!c--2!s, 1!c--2N)
 10. our side limits hand with no major (1!c--1N/2!c is no major OR maybe major but already in a GF)
 11. a passed hand doubles their solo rebid, (1H)--P--(P)--X--(2H)--X
+12. our side does a takeout double then doubles a 2 level+ different suit or 2NT+ (so not a responsive double)
 
 ** Takeout Doubles
 
@@ -641,7 +625,7 @@ Modern standard:
 
 - happy to X with minimum when have the other major
 - happy to have a doubleton in an unbid minor if we have the major(s)
-- 1C/1D takeout emphasises the majors, nothing about the minors
+- 1C/1D takeout emphasises the majors, nothing about the minors (see Minimum Level Conversion Doubles)
 
 Consider a takeout X (and maybe later DAB cue bid) instead of a 1NT bid with 4--4--3--2, the other major and the sort of hand where
 partner should play NT (we have Axx they Qx)
@@ -691,16 +675,18 @@ When they open a slam is very unlikely for our side and a penalty double will ra
     3S = natural limit raise
     4S = obstructive, ambiguous strength
 
-*** Optional Extension After 1C Opening or 1D Opening
+*** Optional Extension After 1C Opening or 1D Opening and Raises
 
 Given that a 1C and 1D opening can be ambiguous, the relay double can be extended to auctions such as:
 
 - 1C--(1H)--X--(3H) or any other 3 raise
-- 1C--(1S)--X--(3S)
 - 1C--(2H)--X--(3H)
+- 1C--(1S)--X--(3S)  (mixed thrump / competitive double over 3!s)
+- 1D--(1H)--1S--(3H)
+- 1D--(2H)--X--(3H)
 
-Responder has shown a suit and the opponents have pushed to the 3 level. Given that 1C (and less so 1D) are quite vague
-we can treat opener as having not bid.
+Responder has shown a suit and the opponents have raised it to the 3 level. Given that 1C (and less so 1D) are quite
+vague we can treat opener as having not bid.
 
 
 ** Responsive Doubles Style
@@ -1044,6 +1030,9 @@ With limited strength may want to hide distribution information and just bid the
 (1C)--X--(1N)
     X = 4--4+ two suiter, including a major
 
+(1C)--X--(2x+)
+    X = penalty
+
 (1C)--X--(2N)
     3HS = co-operative, natural
     3N = sacrifice suggestion, good 4+ majors support
@@ -1310,6 +1299,9 @@ With limited strength may want to hide distribution information and just bid the
 (1D)--X--(1N)
     X = 4--4+ two suiter, at least one major
 
+(1D)--X--(2x+)
+    X = penalty
+
 (1D)--X--(2N)
     3HS = co-operative, natural
     3N = sacrifice suggestion, good 4+ majors support
@@ -1558,6 +1550,9 @@ With limited strength may want to hide distribution information and just bid the
 
 (1H)--X--(1N)
     X = 4--4+ two suiter, including !ss
+
+(1H)--X--(2x+)
+    X = penalty
 
 (1H)--X--(2N)
     X = responsive, exactly 4 !ss (not standard X implying a minor)
@@ -1841,6 +1836,9 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 
 (1S)--X--(1N)
     X = 4--4+ two suiter, including !hs
+
+(1S)--X--(2x+)
+    X = penalty
 
 (1S)--X--(2N)
     X = responsive, exactly 4 !hs (not standard X implying a minor)

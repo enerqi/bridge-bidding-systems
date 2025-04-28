@@ -403,6 +403,8 @@ Acol two strength 6--5 two suiter:
             3N = 5--3--3--2
         2S = natural, 6!ss
         2N = weak NT, nothing special, may have 5 card !s suit
+            3x = forcing, maybe stop checking
+            3S = !s slam try
         3CD = natural, strong, 5--4+
         3H = extras, Ax/Kx !hs
         3S = self-sufficient, strong, extras
@@ -1198,7 +1200,12 @@ Compared to the [1D opening interference](#1D interference):
         2N = minors
         3x = strong, good 6+ suit
     X = penalty
-    Bid = [As weak 1N defence](#Opponents open 1NT)
+    2C = Majors [as weak 1N defence](#Opponents open 1NT)
+    2DH = transfer
+    2S = artificial, 5--4 minors
+        2N = longest ask
+    2N = minors
+    3CD = preempt
 
 1C--(2C) natural
     X = stand in for 2!c Stayman
@@ -1366,7 +1373,7 @@ Treated as weak two opening, so natural ~16--19
     4H = winging it
 
 1C--(1H)--X--(3H) 4--5 !s or 6!s invitational precisely
-    X = strong, support
+    X = [Relay Lebensohl](#Relay Lebensohl Doubles)
     3S = weak
     4CD = natural
     4H = cue, slam try
@@ -1391,7 +1398,7 @@ Treated as weak two opening, so natural ~16--19
 
 1C--(1S)--X--(3S)
     P = weak
-    X = takeout/responsive
+    X = takeout/responsive/thrump
 
 **** Double jump plus interference:
 
