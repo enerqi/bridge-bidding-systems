@@ -85,5 +85,6 @@ notrump bidding books.
 
 
 #INCLUDE carding.bml
-#INCLUDE alternatives.bml
 #INCLUDE announcing.bml
+
+

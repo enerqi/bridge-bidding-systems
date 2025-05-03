@@ -151,12 +151,16 @@ def task_publish_bidding_systems():
     improvements_file = "youth-improvements.html"
     dst_improvements = f"w:/{improvements_file}"
 
+    alternatives_file = "alternatives.html"
+    dst_alternatives = f"w:/{alternatives_file}"
+
     def copy_file(dependencies, targets) -> None:
         copyfile(dependencies[0], targets[0])
 
     for src, dst in [(swedish_file, dst_swedish), (css_file, dst_css),
                      (scanian_file, dst_scanian), (bboalert_file, dst_bboalert),
-                     (u16_squad_file, dst_u16), (improvements_file, dst_improvements)]:
+                     (u16_squad_file, dst_u16), (improvements_file, dst_improvements),
+                     (alternatives_file, dst_alternatives)]:
         yield {
             'name': basename(src),
             'actions': [copy_file],
