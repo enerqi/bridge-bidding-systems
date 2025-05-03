@@ -926,23 +926,24 @@ By responder example:
 1H = (10)11--15, 5 card Major
   (any) = [interference](#1H interference)
   1S = [4/5+ cards, maybe weak !d canapé](#1H--1S)
-  1N = [non-forcing, ~5--11](#1H--1N)
-  2C = [GF natural (passed hand 3-card Reverse Drury raise), usually 5 cards](#1H--2C)
-  2D = [GF natural (passed hand 4-card Reverse Drury raise)](#1H--2D)
-  2H = [single raise, 3+ card support, ~(7)8--10 support points](#1H--2H)
+  1N = [non-forcing, ~5--11 hcp](#1H--1N)
+  2C = [GF natural (passed hand 3-card Reverse Drury raise)](#1H--2C)
+  2D = [GF natural (passed hand 4-card Reverse Drury raise), usually 5 cards](#1H--2D)
+  2H = [single raise, 3 card support, ~8--10 support points (passed hand weaker)](#1H--2H)
   2S = [6+!ss, ~6--9 hcp, semi-weak, no !h fit](#1H--2S)
   2N = [limit+ raise](#1H--2N)
-  3C = [6+ !cs, invitational ~10--12, no major support](#1H--3C)
-  3D = [6+ !ds, invitational ~10--12, no major support](#1H--3D)
-  3H = [Mixed raise ~7--9(10) support points, 7.5--9 losers, 4+ cards](#1H--3H)
-  3S = [unknown singleton splinter, 10--13 hcp 3 cover cards](#1H--3S)
-  3N = [splinter !s, 13--16 hcp 4.5+ cover cards (passed hand - FJ mild slam interest)](#1H--3N/4C/4D)
-  4C = [splinter !c, 13--16 hcp 4.5+ cover cards (passed hand - FJ mild slam interest)](#1H--3N/4C/4D)
-  4D = [splinter !d, 13--16 hcp 4.5+ cover cards (passed hand - FJ mild slam interest)](#1H--3N/4C/4D)
-  4H = Obstructive bid, classic weak preempt, or fast arrival auction e.g. Kxxx/Axx/K/Qxxxx
+  3C = [6+ !cs, invitational ~10--12, no major](#1H--3C)
+  3D = [6+ !ds, invitational ~10--12, no major](#1H--3D)
+  3H = [mixed raise ~8--10 support points, 4+ cards](#1H--3H)
+  3S = [unknown splinter, 10--12 hcp (~9--10 by passed hand)](#1H--3S)
+  3N = [splinter !s, 13--15 hcp, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
+  4C = [splinter !c, 13--15 hcp, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
+  4D = [splinter !d, 13--15 hcp, Passed hand - FJ mild slam interest](#1H--3N/4C/4D)
+  4H = to play
   4S = preempt
   4N = [RKB](#RKB 4N)
   5CD = [EKB](#EKB Voidwood)
+
 
 ** 1H--1S
 
@@ -1421,9 +1422,12 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
 4H = long !hs, picture rebid, max 1 loser e.g. KQJ10xx+
 4S = void splinter for !cs
 
+
 ** 1H--2D
 
-Natural 2/1 GF, always 5+ cards (4-card Reverse Drury by passed hand)
+Natural 2/1 GF (4-card Reverse Drury by passed hand)
+
+- Always 5+ cards
 
 By a *passed hand* 2!d *Reverse Drury* shows a (8)9--10 hcp limit raise with 4 card support.
 Opener bids 2!h (fast arrival) with a (sub)minimum hand.
@@ -1509,69 +1513,75 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
 
 ** 1H--2N
 
-invitational plus raise 3 (GF) or 4 card support.
 
-- Normally invitational or slam try hands - game hands typically should end the auction quickly
-- Natural systems with a standard "Jacoby 2N" only have 4+ card support, but with limited openings responder can take control so we allow 3 cards game forcing
+3+ card GF raise, 4 card limit raise or rare 3 card distributional invite (e.g. 6--3--3--1 distribution)
+
+- maximum game accept hands typically 6 losers
+- Natural systems with a standard "Jacoby 2N" only have 4+ card support, but with limited openings responder can take
+  control so we allow 3 cards game forcing and some rare distributional 3 card invites
 - 4--4--3--2 / 4--3--3--3 hands should show 3 card support immediately
-- With game values, 3 card support, 5 card side suit and slam interest can bid 2/1 GF first instead of 2N
+- With game values, 3 card support, 5 card side suit and slam interest can bid 2/1 GF first instead of 2N, depending on
+  if looking for support for the suit from partner
 - With 4 card support + 5 card side suit and no other side controls e.g. 5--4--2--2, can also bid 2/1 GF first then a
-  jump raise to 4M shows e.g AJxx support, AKJxx side suit and nothing outside - a picture raise
-- Consider if a 4 card raise is suitable for a splinter, there are two ranges ~10--13 3+ cover cards and 13--16 4.5+ cover cards
+  jump raise to 4M shows a picture raise, e.g AJxx support, AKJxx side suit and nothing outside
+- Consider if a 4 card raise is suitable for a splinter, there are two ranges ~10--12 hcp and 13--15 hcp
 - With game values and almost no chance of slam consider bidding game directly
-- Roughly like Jacoby, responder basically drives the auction, 3 level bids to show singleton, can stop in 3M
-- Control bids by responder, the 2N bidder, will follow the agreed style, e.g. natural (perhaps fit finding) v.s honour
-  or shortage control
+- The system allows strong 16+ hcp splinter responders to bid 2N then show their shortage
 
-The response structure has just enough room for the 18 different hand types opener could show whilst
-remaining below 4!h:
 
-3C = artificial, multi-meaning.
-(a) minimum (semi)balanced no singleton (5332, 6322, 5422, 7222)
-(b) minimum with singleton !s, note can drive to game later if e.g. mid-range 10 cards in two suits
-(c) maximum, no shortness 5--4--2--2 or 6--3--2--2/7--2--2--2 with strength in main suit
-(d) void hand, any strength
-  3D = relay, better than 3!h bid (fine in game v.s. minimum with !s singleton)
-      3H = minimum 5--3--3--2/5--4--2--2/6--3--2--2/7--2--2--2, NF
-          3N = to play, often 4--3--3--3 or 4--4--3--2 with strong doubleton
-          4C = control
-          4D = Last Train
-      3S = !s singleton minimum OR !s void any strength
-          3N = relay for shortage details, mild slam interest
-              4C = void !s, maximum, e.g. -/AKxxx/Axxx/Kxxx
-              4D = void !s, minimum, e.g. -/AKxxx/Axxx/Jxxx
-              4H = singleton !s minimum, e.g. x/AKxxx/Axxx/Jxx
-          4C = control bids, not interested in !s shortage
-          4D = Last Train
-          4H = to play, no slam interest v.s. short !ss
-      3N = !c/!d void, minimum
-          4C = relay
-              4D = void !d
-              4H = void !c
-          4D = Last Train
-      4C = !c void, maximum
-      4D = !d void, maximum
-      4H = (semi)balanced maximum but unsuitable for 3N (e.g. strength in main suit)
-  3H = to play v.s. *any* minimum, e.g. no good opposite min singleton !s or min (semi)balanced
-      4H = maximum any OR void minimum
-3D = minimum, singleton !d
-    3N = to play, with !d stoppers
-    4D = Last Train
-3H = minimum, singleton !c, NF
-    3N = to play, with !c stoppers
-    4D = Last Train
-3S = maximum, unknown singleton
-    3N = ask, slam interest normally
-        4C = !c singleton
-        4D = !d singleton
-        4H = !s singleton
-    4C = control
-    4D = Last Train
-    4S = Kickback [RKB](#RKB 4N)
-3N = maximum 6--3--2--2 / 5--4--2--2 (with good doubleton control), stops
-    4D = Last Train
-4CD = maximum, 5--5+ (4!h showing !ss which would be 5--6 shape or 7--4--1--1), responder should only care about the Ace in other suits
-4H = maximum, 5!s--6!h / 7!h--4!s--1--1 (bid !s first with equal length) OR versus passed hand fast arrival game bid
+3C = artificial catchall game accept, GF
+    3D = ask
+        3H = any shortage
+            3S = ask
+                3N = any void
+                    4C = ask
+                        4D = !d void
+                        4H = !c void
+                        4S = !s void
+                4CD = singleton
+                4H = !s singleton
+        3S = any 5--4--2--2, 2nd suit QJxx or better
+            3N = ask
+                4CD = natural
+                4H = !s side suit
+        3N = 5--3--3--2 or bad 5--4--2--2 Q10xx or worse
+        4CD = control bid, 6+ card major, no shortage 6--3--2--2 / 7--2--2--2
+        4H = 6+ card major, no minor control, no shortage 6--3--2--2 / 7--2--2--2
+    3S/4C = !s/!c shortage, strong ~16+ hcp splinter hand
+    3H = !d shortage, strong ~16+ hcp splinter hand
+    3N = suggests 3N, 4 card support 4--3--3--3 or similar 3 card support
+        P = lack of A/K controls, QJ heavy, something in doubleton etc.
+    4H = to play
+3D = medium, ~12 unbalanced or 13 balanced
+    3H = to play
+    3S = shortage ask, can't play 3N
+        3N = nope
+        4CD = !c/!d shortage
+        4H = !s shortage
+    3N = !s shortage, strong ~16+ hcp splinter hand (no space for natural 3N suggestion)
+    4CD = !c/!d shortage, strong ~16+ hcp splinter hand
+    4H = to play
+3H = minimum, ~10--11 unbalanced or 11--12 balanced
+    3S = !s shortage, strong ~16+ hcp splinter
+    3N = serious, general slam try for cue bidding (no room for shortage ask or suggesting 3N to play)
+        4x = control bids
+    4CD = !c/!d, strong ~16+ hcp splinter
+    4H = to play
+3S = 6+ !hs, unknown singleton, artificial GF
+    3N = shortage ask (we don't show strong splinter hands when partner shows a shortage!)
+        4CD = !c/!d shortage
+        4H = !s other major shortage
+    4H = to play
+    other = general control bidding
+3N = artificial GF, some void, any !h length
+    4C = ask
+        4H = !c void
+        4DS = !d/!s void
+    other = general control bidding (but usually ask void)
+4CD = medium+, 5--5+, good side suit, responder should mainly care about controls in other suits
+4H = medium+, 5!s--6!h / 7!h--4!s--1--1
+4H = (opposite passed hand) just natural fast arrival
+
 
 *** 2N Invite Plus Interference
 
@@ -1613,7 +1623,6 @@ remaining below 4!h:
 
 ** 1H--3CD
 
-Limit jump shift, 6 card suit invitational, denying major support
 Limit jump shift, 6 card suit invitational, denying major support, denying !ss
 
 - exact values depend on how easy it is for the suit to run in 3N
@@ -1646,7 +1655,7 @@ Similar to 1!h--3!c:
 
 ** 1H--3H
 
-Mixed raise (weak limit raise) -- ~8--10 support points, 7.5--9 losers, 4+ cards
+Mixed raise (weak limit raise) -- ~8--10 support points, 4+ cards
 
 - New suit by opener is extreme two suiter slam try.
 - Almost always wrong to bid game with 5--3--3--2/5--4--2--2.
@@ -1898,20 +1907,21 @@ at the 3 level.
 
 1S = (10)11--15, 5 card Major
   (any) = [interference](#1S interference)
-  1N = [non-forcing, ~5--11](#1S--1N)
+  1N = [non-forcing, ~5--11 hcp](#1S--1N)
   2C = [GF natural (passed hand 3-card Reverse Drury raise)](#1S--2C)
-  2D = [GF natural usually 5 cards, maybe 2--4--4--3, (passed hand 4-card Reverse Drury raise)](#1S--2D)
-  2H = [GF natural always 5+ cards, (passed hand 9--10)](#1S--2H)
-  2S = [single raise, 3+ card support, ~(7)8--10 support points](#1S--2S)
+  2D = [GF natural (passed hand 4-card Reverse Drury raise), usually 5 cards, maybe 2--4--4--3](#1S--2D)
+  2H = [GF natural (passed hand 9--10), always 5+ cards](#1S--2H)
+  2S = [single raise, 3 card support, ~8--10 support points (passed hand weaker)](#1S--2S)
   2N = [limit+ raise](#1S--2N)
-  3C = [6+ !cs, invitational ~10--12, no major support](#1S--3C)
-  3D = [6+ !ds, invitational ~10--12, no major support](#1S--3D)
+  3C = [6+ !cs, invitational ~10--12, no major](#1S--3C)
+  3D = [6+ !ds, invitational ~10--12, no major](#1S--3D)
   3H = [6+ !hs, invitational ~10--12, no major support](#1S--3H)
-  3S = [Mixed raise ~7--9(10) support points, 7.5--9 losers, 4+ cards](#1S--3S)
-  3N = [unknown singleton splinter, 10--13 hcp 3 cover cards, ~9--12 by passed hand](#1S--3N)
-  4C = [splinter !c or !h, 13--16 hcp 4.5+ cover cards (passed hand - FJ mild slam interest)](#1S--4C)
-  4D = [splinter !d, 13--16 hcp 4.5+ cover cards (passed hand - FJ mild slam interest)](#1S--4D)
-  4HS = [to play](#1S--4H/4S)
+  3S = [mixed raise ~8--10 support points, 4+ cards](#1S--3S)
+  3N = [unknown splinter, 10--12 hcp (~9--10 by passed hand)](#1S--3N)
+  4C = [splinter !c, 13--15 hcp, Passed hand - FJ mild slam interest](#1S--4C/4D/4H)
+  4D = [splinter !d, 13--15 hcp, Passed hand - FJ mild slam interest](#1S--4C/4D/4H)
+  4H = [splinter !h, 13--15 hcp, Passed hand - FJ mild slam interest](#1S--4C/4D/4H)
+  4S = [to play](#1S--4S)
   4N = [RKB](#RKB 4N)
   5CDH = [EKB](#EKB Voidwood)
 
@@ -2101,9 +2111,13 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
 4H = void splinter !c support
 4S = long !ss, picture rebid, max 1 loser e.g. KQJ10xx+
 
+
 ** 1S--2D
 
-Game-forcing. Usually five cards. Could be 2--4--4--3. (4-card Reverse Drury by passed hand).
+Game-forcing, (4-card Reverse Drury by passed hand).
+
+- Always five cards when played with 1M--2C nebulous GF
+- Usually five cards, could be 2--4--4--3, when played without nebulous 2C GF
 
 By a *passed hand* 2!d *Reverse Drury* shows a (8)9--10 hcp limit raise with 4 card support.
 Opener bids 2!s (fast arrival) with a (sub)minimum hand.
@@ -2240,78 +2254,77 @@ Single raise, 3 cards
 
 ** 1S--2N
 
-invitational plus raise 3 (GF) or 4 card support.
+3+ card GF raise, 4 card limit raise or rare 3 card distributional invite (e.g. 6--3--3--1 distribution)
 
-- Normally invitational or slam try hands - game hands typically should end the auction quickly
-- With game values, 3 card support, 5 card side suit and slam interest can bid 2/1 GF first instead of 2N
+- Natural systems with a standard "Jacoby 2N" only have 4+ card support, but with limited openings responder can take
+  control so we allow 3 cards game forcing and some rare distributional 3 card invites
+- 4--4--3--2 / 4--3--3--3 hands should show 3 card support immediately
+- With game values, 3 card support, 5 card side suit and slam interest can bid 2/1 GF first instead of 2N, depending on
+  if looking for support for the suit from partner
 - With 4 card support + 5 card side suit and no other side controls e.g. 5--4--2--2, can also bid 2/1 GF first then a
-  jump raise to 4M shows e.g AJxx support, AKJxx side suit and nothing outside
-- Consider if a 4 card raise is suitable for a splinter, there are two ranges ~10--13 3--4 cover cards and 13--16 4.5+ cover cards
-- Roughly like Jacoby, responder basically drives the auction, 3 level bids to show singleton, can stop in 3M
-- Control bids by responder, the 2N bidder, will follow the agreed style, e.g. natural (perhaps fit finding) v.s honour
-  or shortage control
+  jump raise to 4M shows a picture raise, e.g AJxx support, AKJxx side suit and nothing outside
+- Consider if a 4 card raise is suitable for a splinter, there are two ranges ~10--12 hcp and 13--15 hcp
+- With game values and almost no chance of slam consider bidding game directly
+- The system allows strong 16+ hcp splinter responders to bid 2N then show their shortage
 
-3C = artificial, multi-meaning.
-(a) minimum (semi)balanced no singleton (5332, 6322, 5422, 7222)
-(b) minimum with singleton !h, note can drive to game later if e.g. mid-range 10 cards in two suits
-(c) maximum, no shortness 5--4--2--2 or 6--3--2--2/7--2--2--2 with strength in main suit
-(d) void hand, any strength
-  3D = relay, better than 3!s bid (fine in game v.s. minimum with !h singleton)
-      3H = !h singleton minimum OR void any strength
-          3S = NF, no game interest v.s. minimum with singleton !h
-          3N = relay for shortage details, slam interest
-              4C = maximum, !h void, e.g. AKxxx/-/Axxx/Kxxx
-              4D = minimum, !h void, e.g. AKxxx/-/Axxx/Jxxx
-              4H = minimum, !h singleton, but some shape so would accept game
-              4S = dead minimum, !h singleton
-          4CD = control bids, not interested in !h shortage
-          4H = Last Train
-          4S = to play, no slam interest v.s. short !hs
-      3S = minimum 5--3--3--2/5--4--2--2/6--3--2--2/7--2--2--2, NF
-          3N = to play, often 4--3--3--3 or 4--4--3--2 with strong doubleton
-          4CD = control
-          4H = Last Train
-      3N = !c/!d void, minimum
-          4C = relay
-              4D = void !d
-              4H = void !c
-          4H = Last Train
-      4C = !c void, maximum
-      4D = !d void, maximum
-      4S = (semi)balanced maximum but unsuitable for 3N
-         = 6 or 7 cards
-  3S = to play v.s. *any* minimum, e.g. no good opposite min singleton !h or min (semi)balanced
-      4S = maximum any OR void minimum
-3D = minimum, singleton !d
-    3H = control bid
-    3N = to play, with !d stoppers
-    4H = Last Train
-3H = minimum, singleton !c
-    3N = to play, with !c stoppers
-    4H = Last Train
-3S = maximum, unknown singleton.
-    3N = ask, slam interest normally
-        4C = !c singleton maximum
-        4D = !d singleton maximum
-        4H = !h singleton maximum
-    4CD = control
-    4H = Last Train
-    4S = to play, no slam interest
-    4N = [RKB](#RKB 4N)
-3N = maximum 6--3--2--2 / 5--4--2--2 (with good doubleton control), stops
-    4CD = control
-    4H = Last Train
-    4N = [RKB](#RKB 4N)
-4CDH = maximum, 5--5+, responder should only care about the Ace in other suits
 
+3C = artificial catchall game accept, GF
+    3D = ask
+        3H = any shortage
+            3S = ask
+                3N = any void
+                    4C = ask
+                        4DH = !d/!h void
+                        4S = !c void
+                4CDH = singleton
+        3S = any 5--4--2--2, 2nd suit QJxx or better
+            3N = ask
+                4CDH = natural
+        3N = 5--3--3--2 or bad 5--4--2--2 Q10xx or worse
+        4CDH = control bid, 6+ card major, no shortage 6--3--2--2 / 7--2--2--2
+        4S = 6+ card major, no controls in other suits, no shortage 6--3--2--2 / 7--2--2--2
+    3H/4C = !h/!c shortage, strong ~16+ hcp splinter hand
+    3S = !d shortage, strong ~16+ hcp splinter hand
+    3N = suggests 3N, 4 card support 4--3--3--3 or similar 3 card support
+        P = lack of A/K controls, QJ heavy, something in doubleton etc.
+    4S = to play
+3D = medium, ~12 unbalanced or 13 balanced
+    3H = shortage ask, can't play 3N
+        3S = !h other major shortage
+        3N = nope
+        4CD = !c/!d shortage
+    3S = to play
+    3N = suggests 3N (still space to show strong splinters), 4 card support 4--3--3--3 or similar 3 card support
+        P = lack of A/K controls, QJ heavy, something in doubleton etc.
+    4CDH = !c/!d/!h shortage, strong ~16+ hcp splinter hand
+3H = 6+ !ss, unknown singleton, artificial GF
+    3S = shortage ask (we don't show strong splinter hands when partner shows a shortage!)
+        3N = !h other major shortage
+        4CD = !c/!d shortage
+    3N = serious
+    4S = to play
+    other = general control bidding
+3S = minimum, ~10--11 unbalanced or 11--12 balanced
+    3N = serious, general slam try for cue bidding (no room for shortage ask or suggesting 3N to play)
+        4x = control bids
+    4CDH = !c/!d/!h shortage, strong ~16+ hcp splinter
+    4S = to play
+3N = artificial GF, some void, any !s length
+    4C = ask
+        4S = !c void
+        4DH = !d/!h void
+    other = general control bidding (but usually ask void)
+4CDH = medium+, 5--5+, good side suit, responder should mainly care about controls in other suits
+4S = (opposite passed hand) just natural fast arrival
 
 *** Interference
 
 [See 1H--2N Invite Plus Interference examples](#2N Invite Plus Interference)
 
+
 ** 1S--3CD
 
-Limit jump shift, 6 card suit invitational, denying major support
+Limit jump shift, 6 card suit invitational, denying major support, denying !hs
 
 - exact values depend on how easy it is for the suit to run in 3N
 - possibly used with weak long suits like x/x/xxx/KQJ10xxxx, bid suit again over 3N
@@ -2353,7 +2366,7 @@ Not as much suit quality required as the minor bids - directed to a major game i
 
 ** 1S--3S
 
-Mixed raise (weak limit raise) -- ~8--10 support points, 7.5--9 losers, 4+ cards
+Mixed raise (weak limit raise) -- ~8--10 support points, 4+ cards
 
 - New suit by opener is extreme two suiter slam try.
 - Almost always wrong to bid game with 5--3--3--2/5--4--2--2.

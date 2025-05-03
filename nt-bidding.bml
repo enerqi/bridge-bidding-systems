@@ -194,7 +194,7 @@ Stayman, promissory
                 3S/4CD = shortage
                 3N = control prompting, forcing
         3H = artificial, !d shortage, slam try
-        3S = shortage slam try
+        3S = shortage slam try (e.g. small singleton)
         4S = EKB
         4N = RKB
     2N = maximum, support, no good side suit, NT suitable e.g. 4--3--3--3 or very QJ heavy (not slammish)
@@ -210,7 +210,7 @@ Stayman, promissory
             3H = retransferred
                 3S/4CD = shortage
                 3N = control prompting, forcing
-        3H = artificial !c shortage, slam try!
+        3H = artificial !c/!d shortage, slam try!
         3S = shortage, slam try
         3N = (semi)balanced slam try
         4D = (3!d not available) retransfer
@@ -225,79 +225,80 @@ Stayman, promissory
 
 *** 1N--2H
 
-2S = normal bid
-    2N = transfer, 4+ !cs, GF, later 4C set minor as trump, 4D RKB, 4S minor RKB if no 4D free
-        3C = 2 card !s support, unsure 3N
-            3D = 5--3--1--4, !d shortage
-            3H = 5--1--3--4, !h shortage
-            3S = artificial 5--5 hand
-            3N = artificial 6--4 hand
-            4N = 5--4--2--2 quantitative
-        3D = (1st break, not 3 other major) artificial 3+ card support, control bidding / serious 3N on
-        3H = natural 5 carder, also 2 !ss
-        3N = other suits stopped
-            4S = to play, probably 6--4
-            4N = quantitative
-    3C = transfer, 4+ !ds, GF, later 4C set minor as trump, 4D RKB, 4S minor RKB if no 4D free
-        3D = 0--2 card !s support, unsure 3N
-            3D = 5--3--4--1, !c shortage
-            3H = 5--1--3--4, !h shortage
-            3S = artificial 5--5 hand
-            3N = artificial 6--4 hand
-            4N = 5--4--2--2 quantitative
-        3H = natural 5 carder, also 2 !ss
-        3S = (1st break, not 3 other major) 3+ card support, control bidding / serious 3N on
-        3N = other suits stopped
-            4S = to play, probably 6--4
-            4N = quantitative
-    3D = transfer, 5+ !hs, GF
-        3H = only 2 card !s support, !h support guarantee
-        3S = !s support, maybe also !h support
-        3N = implies 2--2--(5--4), minors stopped
-        4CD = control, either 4 card !h support or well fitting 3--3 majors
-    3H = transfer, 6+ !ss, game invite OR slam invite including stronger splinter hand (minimum with fitting values ok)
-        3S = reject invite
-            3N = (semi)balanced slam try
-            4CDH = shortage, slam try, stronger splinter
-        3N = artificial accept, control bidding etc. follow
-    3S = artificial unbalanced 5!ss, NT needs help, 5--4--2--2, 5--4--3--1 singleton honour / 5--3--3--2 no stop
-        3N = to play, very rare to have 3 !ss
-        4S = 3 card support
-    3N = 5--3--3--2, A/K/Q+ in doubleton
-        P = maybe 3 card support, Q/J heavy hands
-    4CDH = weaker splinter, want support and fitting values
-    4S = to play, very mild slam interest implied, perhaps over transfer break
-2N = maximum, support, no good side suit, NT suitable e.g. 4--3--3--3 or very QJ heavy (not slammish)
-    3H = retransfer
-        3S = retransferred
-            3N = serious, slam try, despite opener's spread out values
-            3S/4CD = shortage
-    3N = likes NT
-3C = good side suit A/K, 3 top 5 honours, !s support, any strength, can't play 3N
-    3D = !d shortage
-    3H = retransfer
-        3S = retransferred
-            3N = control prompting, forcing
-            suit = shortage
-    3S = artificial !h shortage
-    3N = (semi)balanced slam try
-3D = good side suit A/K, 3 top 5 honours, !s support, any strength, can't play 3N
-    3H = retransfer
-        3S = retransferred
-            3N = control prompting, forcing
-            suit = shortage
-    3S = artificial !d shortage
-    3N = (semi)balanced slam try
-    4C = !c shortage
-3H = good side suit A/K, 3 top 5 honours, !s support, any strength, can't play 3N
-    3S = to play, weak hand
-    3N = (semi)balanced slam try
-    4CD = !c/!d shortage
-    4H = retransfer
-        4S = retransferred
-3S = (not mandatory with minimum) !s support, without good side suit, can't play 3N
-    3N = (semi)balanced slam try
-    4CDH = shortage, slam try
+2H = transfer to !s, 5+ cards
+    2S = normal bid
+        2N = transfer, 4+ !cs, GF, later 4C set minor as trump, 4D RKB, 4S minor RKB if no 4D free
+            3C = 2 card !s support, unsure 3N
+                3D = 5--3--1--4, !d shortage
+                3H = 5--1--3--4, !h shortage
+                3S = artificial 5--5 hand
+                3N = artificial 6--4 hand
+                4N = 5--4--2--2 quantitative
+            3D = (1st break, not 3 other major) artificial 3+ card support, control bidding / serious 3N on
+            3H = natural 5 carder, also 2 !ss
+            3N = other suits stopped
+                4S = to play, probably 6--4
+                4N = quantitative
+        3C = transfer, 4+ !ds, GF, later 4C set minor as trump, 4D RKB, 4S minor RKB if no 4D free
+            3D = 0--2 card !s support, unsure 3N
+                3D = 5--3--4--1, !c shortage
+                3H = 5--1--3--4, !h shortage
+                3S = artificial 5--5 hand
+                3N = artificial 6--4 hand
+                4N = 5--4--2--2 quantitative
+            3H = natural 5 carder, also 2 !ss
+            3S = (1st break, not 3 other major) 3+ card support, control bidding / serious 3N on
+            3N = other suits stopped
+                4S = to play, probably 6--4
+                4N = quantitative
+        3D = transfer, 5+ !hs, GF
+            3H = only 2 card !s support, !h support guarantee
+            3S = !s support, maybe also !h support
+            3N = implies 2--2--(5--4), minors stopped
+            4CD = control, either 4 card !h support or well fitting 3--3 majors
+        3H = transfer, 6+ !ss, game invite OR slam invite including stronger splinter hand (minimum with fitting values ok)
+            3S = reject invite
+                3N = (semi)balanced slam try
+                4CDH = shortage, slam try, stronger splinter
+            3N = artificial accept, control bidding etc. follow
+        3S = artificial unbalanced 5!ss, NT needs help, 5--4--2--2, 5--4--3--1 singleton honour / 5--3--3--2 no stop
+            3N = to play, very rare to have 3 !ss
+            4S = 3 card support
+        3N = 5--3--3--2, A/K/Q+ in doubleton
+            P = maybe 3 card support, Q/J heavy hands
+        4CDH = weaker splinter, want support and fitting values
+        4S = to play, very mild slam interest implied, perhaps over transfer break
+    2N = maximum, support, no good side suit, NT suitable e.g. 4--3--3--3 or very QJ heavy (not slammish)
+        3H = retransfer
+            3S = retransferred
+                3N = serious, slam try, despite opener's spread out values
+                3S/4CD = shortage
+        3N = likes NT
+    3C = good side suit A/K, 3 top 5 honours, !s support, any strength, can't play 3N
+        3D = !d shortage
+        3H = retransfer
+            3S = retransferred
+                3N = control prompting, forcing
+                suit = shortage
+        3S = artificial !h shortage
+        3N = (semi)balanced slam try
+    3D = good side suit A/K, 3 top 5 honours, !s support, any strength, can't play 3N
+        3H = retransfer
+            3S = retransferred
+                3N = control prompting, forcing
+                suit = shortage
+        3S = artificial !d shortage
+        3N = (semi)balanced slam try
+        4C = !c shortage
+    3H = good side suit A/K, 3 top 5 honours, !s support, any strength, can't play 3N
+        3S = to play, weak hand
+        3N = (semi)balanced slam try
+        4CD = !c/!d shortage
+        4H = retransfer
+            4S = retransferred
+    3S = (not mandatory with minimum) !s support, without good side suit, can't play 3N
+        3N = (semi)balanced slam try
+        4CDH = shortage, slam try
 
 *** 1N--2S/2N
 
@@ -415,7 +416,7 @@ Muppet Stayman
 
 *** 1N--4CD
 
-To play a major game, preemptive, game going values or direct RKB values.
+To play a major game, preemptive, game going values or direct RKB slam force values.
 
 Most good hands can transfer at the 2 level and try a (semi)balanced slam try if they have no shortage need to
 investigate slam potential. Therefore, the super fit is only for rare excellent, typically 5 card major openers. 4C

@@ -445,6 +445,104 @@ Medium strength matters less in a limited opening system, where we can just use 
 3N = 15+ game accepting, other major side suit  (could be 4 or 5 cards)
 4x = void, 11--13 or 18+
 
+**** 1H--2N
+
+3C = minimum OR max void
+    3D = relay, full detail, shortness ask
+        3M = none
+        3oM = other major singleton
+        3N = !d singleton
+        4C = !c singleton
+        4D = max, !d void
+        4M = max, !c void
+        4oM = max, oM void
+    3M = NF, limit raise
+        4M = to play
+        suit = max void
+    3oM = void check or game
+        4M = to play
+        suit = void
+    3N = play suggestion
+        4M = to play
+        suit = void
+    4CDH = shortage, slam interest
+    4M = to play
+3D = max (no void, not worth showing any side suit)
+    3H = singleton ask
+        3S = other major singleton
+        3N = no
+        4CD = minor singleton
+    3S = forcing, oM cue
+        3N = serious, no shortage to show
+        4X = singleton
+    3N = NF, play suggestion
+        4X = cue bid, significant extras
+    4X = shortage
+3H = max 4+ !cs ("medium" 5--5/6--4). Info given away with good reason.
+    3N = waiting or limited slam interest
+    4CD = preferred trump suit
+    4M = minimum
+    other = cue
+3S = max 4+ !ds ("medium" 5--5/6--4). Info given away with good reason.
+    3N = waiting or limited slam interest
+    4CD = preferred trump suit
+    4M = minimum
+    other = cue
+3N = max with 4+!ss, OR "medium" 5--5/6--4
+    4CD = cue
+    4oM = support, NF
+    4M = natural, limited
+4x = void, minimum
+
+**** 1S--2N
+
+3C = minimum OR max void
+    3D = relay, full detail, shortness ask
+        3M = none
+        3oM = other major singleton
+        3N = !d singleton
+        4C = !c singleton
+        4D = max, !d void
+        4M = max, !c void
+        4oM = max, oM void
+    3M = NF, limit raise
+        4M = to play
+        suit = max void
+    3oM = void check or game
+        4M = to play
+        suit = void
+    3N = play suggestion
+        4M = to play
+        suit = void
+    4CDH = shortage, slam interest
+    4M = to play
+3D = max (no void, not worth showing any side suit)
+    3H = singleton ask
+        3S = other major singleton
+        3N = no
+        4CD = minor singleton
+    3S = forcing, oM cue
+        3N = serious, no shortage to show
+        4X = singleton
+    3N = NF, play suggestion
+        4X = cue bid, significant extras
+    4X = shortage
+3H = max 4+ !cs ("medium" 5--5/6--4). Info given away with good reason.
+    3N = waiting or limited slam interest
+    4CD = preferred trump suit
+    4M = minimum
+    other = cue
+3S = max 4+ !ds ("medium" 5--5/6--4). Info given away with good reason.
+    3N = waiting or limited slam interest
+    4CD = preferred trump suit
+    4M = minimum
+    other = cue
+3N = max with 4+!ss, OR "medium" 5--5/6--4
+    4CD = cue
+    4oM = support, NF
+    4M = natural, limited
+4x = void, minimum
+
 *** Natural Extras
 
 No way to check whether the minimum hand any singleton if using as a limit plus raise and not just GF.
@@ -455,6 +553,121 @@ No way to check whether the minimum hand any singleton if using as a limit plus 
 3oM = natural, extras
     next = shortage ask
 4x = void, extras
+
+*** Revision Club Variation
+
+This version has been played for a long time previously. It's quite good at finding cheap games opposite the right
+minimum singleton but readily gives away that shortage info to the opponents. As the tight game finding is based on
+explicit singleton finding it doesn't cater to showing a roughly medium value type hand (without a shortage), which can
+help if we stretch the opening range to more 10 hcp unbalanced hands. No way to explicitly agree double fits with side
+4--4 suits, which is true of many systems outside of the "natural extras" and Scanian variants above. Can be hard to
+untangle slam going hands with 5 vs 6 card suits beyond general last train usage. Does not let responder show any
+shortage they may have if too strong for a normal splinter.
+
+**** 1H--2N
+
+3C = artificial, multi-meaning.
+(a) minimum (semi)balanced no singleton (5332, 6322, 5422, 7222)
+(b) minimum with singleton !s, note can drive to game later if e.g. mid-range 10 cards in two suits
+(c) maximum, no shortness 5--4--2--2 or 6--3--2--2/7--2--2--2 with strength in main suit
+(d) void hand, any strength
+  3D = relay, better than 3!h bid (fine in game v.s. minimum with !s singleton)
+      3H = minimum 5--3--3--2/5--4--2--2/6--3--2--2/7--2--2--2, NF
+          3N = to play, often 4--3--3--3 or 4--4--3--2 with strong doubleton
+          4C = control
+          4D = Last Train
+      3S = !s singleton minimum OR !s void any strength
+          3N = relay for shortage details, mild slam interest
+              4C = void !s, maximum, e.g. -/AKxxx/Axxx/Kxxx
+              4D = void !s, minimum, e.g. -/AKxxx/Axxx/Jxxx
+              4H = singleton !s minimum, e.g. x/AKxxx/Axxx/Jxx
+          4C = control bids, not interested in !s shortage
+          4D = Last Train
+          4H = to play, no slam interest v.s. short !ss
+      3N = !c/!d void, minimum
+          4C = relay
+              4D = void !d
+              4H = void !c
+          4D = Last Train
+      4C = !c void, maximum
+      4D = !d void, maximum
+      4H = (semi)balanced maximum but unsuitable for 3N (e.g. strength in main suit)
+  3H = to play v.s. *any* minimum, e.g. no good opposite min singleton !s or min (semi)balanced
+      4H = maximum any OR void minimum
+3D = minimum, singleton !d
+    3N = to play, with !d stoppers
+    4D = Last Train
+3H = minimum, singleton !c, NF
+    3N = to play, with !c stoppers
+    4D = Last Train
+3S = maximum, unknown singleton
+    3N = ask, slam interest normally
+        4C = !c singleton
+        4D = !d singleton
+        4H = !s singleton
+    4C = control
+    4D = Last Train
+    4S = Kickback [RKB](#RKB 4N)
+3N = maximum 6--3--2--2 / 5--4--2--2 (with good doubleton control), stops
+    4D = Last Train
+4CD = maximum, 5--5+ (4!h showing !ss which would be 5--6 shape or 7--4--1--1), responder should only care about the Ace in other suits
+4H = maximum, 5!s--6!h / 7!h--4!s--1--1 (bid !s first with equal length) OR versus passed hand fast arrival game bid
+
+**** 1S--2N
+
+3C = artificial, multi-meaning.
+(a) minimum (semi)balanced no singleton (5332, 6322, 5422, 7222)
+(b) minimum with singleton !h, note can drive to game later if e.g. mid-range 10 cards in two suits
+(c) maximum, no shortness 5--4--2--2 or 6--3--2--2/7--2--2--2 with strength in main suit
+(d) void hand, any strength
+  3D = relay, better than 3!s bid (fine in game v.s. minimum with !h singleton)
+      3H = !h singleton minimum OR void any strength
+          3S = NF, no game interest v.s. minimum with singleton !h
+          3N = relay for shortage details, slam interest
+              4C = maximum, !h void, e.g. AKxxx/-/Axxx/Kxxx
+              4D = minimum, !h void, e.g. AKxxx/-/Axxx/Jxxx
+              4H = minimum, !h singleton, but some shape so would accept game
+              4S = dead minimum, !h singleton
+          4CD = control bids, not interested in !h shortage
+          4H = Last Train
+          4S = to play, no slam interest v.s. short !hs
+      3S = minimum 5--3--3--2/5--4--2--2/6--3--2--2/7--2--2--2, NF
+          3N = to play, often 4--3--3--3 or 4--4--3--2 with strong doubleton
+          4CD = control
+          4H = Last Train
+      3N = !c/!d void, minimum
+          4C = relay
+              4D = void !d
+              4H = void !c
+          4H = Last Train
+      4C = !c void, maximum
+      4D = !d void, maximum
+      4S = (semi)balanced maximum but unsuitable for 3N
+         = 6 or 7 cards
+  3S = to play v.s. *any* minimum, e.g. no good opposite min singleton !h or min (semi)balanced
+      4S = maximum any OR void minimum
+3D = minimum, singleton !d
+    3H = control bid
+    3N = to play, with !d stoppers
+    4H = Last Train
+3H = minimum, singleton !c
+    3N = to play, with !c stoppers
+    4H = Last Train
+3S = maximum, unknown singleton.
+    3N = ask, slam interest normally
+        4C = !c singleton maximum
+        4D = !d singleton maximum
+        4H = !h singleton maximum
+    4CD = control
+    4H = Last Train
+    4S = to play, no slam interest
+    4N = [RKB](#RKB 4N)
+3N = maximum 6--3--2--2 / 5--4--2--2 (with good doubleton control), stops
+    4CD = control
+    4H = Last Train
+    4N = [RKB](#RKB 4N)
+4CDH = maximum, 5--5+, responder should only care about the Ace in other suits
+
 
 ** 3N Opening Alternatives
 
