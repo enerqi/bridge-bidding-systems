@@ -136,7 +136,7 @@ Stayman, promissory
 
 *** 1N--2D
 
-2D = transfer to !h, 5+ cards
+2D = transfer to !hs, 5+ cards
     2H = normal bid
         2S = artificial, 5!hs invitational
             2N = deny
@@ -186,6 +186,10 @@ Stayman, promissory
         4H = to play, very mild slam interest implied, perhaps over transfer break
         4S = serious quantitative (beyond game, not !s splinter)
         4N = quantitative
+
+**** Transfer breaks
+
+2D = transfer to !hs
     2S = good side suit A/K, 3 top 5 honours, !h support, any strength, can't play 3N
         2N = (semi)balanced slam try
         3C = shortage, slam try
@@ -222,10 +226,21 @@ Stayman, promissory
         4S = EKB
         4N = RKB
 
+2N = minimal break
+    3D = retransfer
+        3H = complete transfer
+            3S/4CD = shortage
+            3N = (semi)balanced slam try
+3H = maximal break
+    suit = shortage, slam try
+    3N = (semi)balanced slam try
+    4S = EKB
+    4N = RKB
+
 
 *** 1N--2H
 
-2H = transfer to !s, 5+ cards
+2H = transfer to !ss, 5+ cards
     2S = normal bid
         2N = transfer, 4+ !cs, GF, later 4C set minor as trump, 4D RKB, 4S minor RKB if no 4D free
             3C = 2 card !s support, unsure 3N
@@ -268,6 +283,10 @@ Stayman, promissory
             P = maybe 3 card support, Q/J heavy hands
         4CDH = weaker splinter, want support and fitting values
         4S = to play, very mild slam interest implied, perhaps over transfer break
+
+**** Transfer breaks
+
+2H = transfer to !ss
     2N = maximum, support, no good side suit, NT suitable e.g. 4--3--3--3 or very QJ heavy (not slammish)
         3H = retransfer
             3S = retransferred
@@ -299,6 +318,15 @@ Stayman, promissory
     3S = (not mandatory with minimum) !s support, without good side suit, can't play 3N
         3N = (semi)balanced slam try
         4CDH = shortage, slam try
+
+2N = minimal break
+    3H = retransfer
+        3S = retransferred
+            3N = serious, slam try, despite opener's spread out values
+            3S/4CD = shortage
+3S = maximal break
+    3N = (semi)balanced slam try
+    4CDH = shortage, slam try
 
 *** 1N--2S/2N
 
