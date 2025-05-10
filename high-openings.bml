@@ -8,25 +8,15 @@ Constructive preempts in 1st/2nd usually 6 cards, good chance to play 3N.
 - Suit expected to run with 0--1 loser opposite Hx (on normal percentage breaks) OR 1--2 losers if have side entry (Ace or King).
   E.g. AK109xx with no side entry OR KQ109xx, KJ109xx with side A/K
 - 6 or 7 cards does not matter, run potential and entries v.s. Hx does matter
-- New 4 level suits responses are artificial
-- 4C Preempt RKB means that 4N is a substitute control asking bid
-- After a double there are transfer bid, which need not be that strong, primarily lead directing and often
-  with tolerance for partner's suit. Breaking the transfer would show a fit
 
 3C
     (Dbl)
-        P/X = later double penalty
-        XX = !d transfer
-            break = fit (xxx+)
-        3D = !h transfer
-        3H = !s transfer
-        3S = good !c raise
-        4C = competitive !c raise, maybe no top honour
+        XX = penalty/values
+        NewSuit = NF
+        3N/game = to play
         4D = [Preempt RKB](#Preempt RKB)
-        Game = to play, control asking bids OFF
-        4N = quantitative
-    3D = forcing, any 5 card major asking for 3 card support. (FNJ by passed hands).
-        3HS = short in that suit and 3 card other major support (so stronger hand can play)
+    3D = artificial, any 5 card major asking for 3 card support. (FNJ by passed hands).
+        3HS = shortage/paradox, short in that suit and 3 card other major support (so stronger hand can play)
         3N = no 3 card major
         4D = !d void, 3--3--0--7
         4H = !d singleton, 3--3--1--6
@@ -34,32 +24,27 @@ Constructive preempts in 1st/2nd usually 6 cards, good chance to play 3N.
     3N = to play
     4C = obstructive
     4D = [Preempt RKB](#Preempt RKB)
-    4HS = [control asking bid](#Control Asking Bids Over Preempts)
-    4N = [!d substitute control asking bid](#Control Asking Bids Over Preempts)
+    4HS = to play
+    4N = quantitative
     5CD = to play
 3D
     (Dbl)
-        P/X = later double penalty
-        XX = !h transfer
-            break = fit (xxx+)
-        3H = !s transfer
-        3S = !c transfer
-        4C = good !d raise
-        4D = competitive !d raise, maybe no top honour
-        Game = to play, control asking bids OFF
-        4N = quantitative
+        XX = penalty/values
+        NewSuit = NF
+        3N/game = to play
+        4C = [Preempt RKB](#Preempt RKB)
     3HS = forcing, maybe 5 only cards
     3N = to play
     4C = [Preempt RKB](#Preempt RKB)
     4D = obstructive
-    4HS = [control asking bid](#Control Asking Bids Over Preempts)
-    4N = [!c substitute control asking bid](#Control Asking Bids Over Preempts)
+    4HS = to play
+    4N = quantitative
     5CD = to play
 
 3CD
     (overcall)
-        NewSuit = natural, GF
-        Game = NF, control asking bids OFF
+        NewSuit = NF
+        Game = to play
         X = penalty, all positions
         4N = quantitative
 
@@ -73,54 +58,38 @@ Constructive preempts in 1st/2nd usually 6 cards, good chance to play 3N.
 - P/T integrity required (in 1st/2nd), max 1 outside A/K, no 4 card side Major
 - when side Ace, not 2/3 top honours in 1st/2nd (try to open 1HS)
 - 1 top honour, reasonable points or shape in second or if VUL
-- New 4 level suits responses are artificial (except major bids that could not force at the 3 level)
-- 4C Preempt RKB means that 4N is a substitute control asking bid
-- After a double there are transfer bid, which need not be that strong, primarily lead directing and often
-  with tolerance for partner's suit. Breaking the transfer would show a fit
-
 
 3H
     (Dbl)
-        P/X = later double penalty
-        XX = !s transfer
-            break = fit (xxx+)
-        3S = !c transfer
-        4C = !d transfer
-        4D = good !h raise
-        4H = competitive !h raise, maybe no top honour
-        4S = to play, control asking bids OFF
-        4N = [RKB](#RKB 4N)
+        XX = penalty/values
+        3S = NF, natural
+        3N = to play
+        4CD = fit non-jump lead directing implication
+        4HS = to play
     3S = natural, forcing
     3N = to play
     4C = [Preempt RKB](#Preempt RKB)
-    4DS = [control asking bid](#Control Asking Bids Over Preempts)
+    4DS = GF, natural (passed hand fit)
     4H = to play
-    4N = [!c substitute control asking bid](#Control Asking Bids Over Preempts)
     5CD = to play
     5HS = [quality ask](#Free 5x Major Raise)
 
 3S
     (Dbl)
-        P/X = later double penalty
-        XX = !c transfer
-            break = fit (xxx+)
-        4C = !d transfer
-        4D = !h transfer (unlikely to break this one!)
-        4H = good !s raise
-        4S = competitive !s raise, maybe no top honour
-        4N = [RKB](#RKB 4N)
+        XX = penalty/values
+        3N = to play
+        4CD = fit non-jump lead directing implication
+        4HS = to play
     3N = to play
     4C = [Preempt RKB](#Preempt RKB)
-    4D = [control asking bid](#Control Asking Bids Over Preempts)
+    4D = GF natural (passed hand fit)
     4HS = to play
-    4N = [!c substitute control asking bid](#Control Asking Bids Over Preempts)
     5CD = to play
     5HS = [quality ask](#Free 5x Major Raise)
 
 3HS
     (overcall)
-        NewSuit = natural, GF
-        Game = NF
+        NewSuit = NF
         X = penalty, all positions
 
 3HS--(P)--P--(X)--P--(P)
@@ -137,14 +106,14 @@ In 1st/2nd:
 - Exactly 2 or 3 keycards (1) AK trumps (2) A or K trumps + side Ace (3) AK trumps + side ace
 
 3N
-    4C = slam try ask, further cue bids may fish for a void
+    4C = keycard count ask, further cue bids may fish for a void
         4M = natural, 2 keycards
-        4D = !h + 3 keycards
-        4N = !s + 3 keycards
+        4D = !hs + 3 keycards
+        4N = !ss + 3 keycards
     4D = extra trump length (8 cards) ask, further cue bids may fish for a void
         4M = nope
-        step1 = (4oM) 2 keycards
-        step2 = (4N) 3 keycards
+        4oM = keycard min, 2 keycards
+        4N = keycard max, 3 keycards
     4H = Pass or Correct
     4S = to play (typically knows partner's suit is !ss)
 3N
@@ -161,63 +130,59 @@ Note [3N Alternatives](#3N Opening Alternatives)
 * 4CD Openings
 
 - Normal distributional minor preempts, must have a singleton/void
-- Major games to play
-- As 4!c--4!d is Preempt RKB, a 4N response is a substitute control asking bid
-- 5 level new suits are control asking bids if there is not a lower one available
 
 4C
     4D = [Preempt RKB](#Preempt RKB)
     4HS = to play
-    4N = [substitute !d control asking bid](#Control Asking Bids Over Preempts)
-    5C = to play
-    5D = EKB (already have a !d control ask)
-    5HS = [control asking bids](#Control Asking Bids Over Preempts)
+    5CD = to play
 4D
     4HS = to play
-    4N = "quantitative" (i.e. have you got 3 CPs?)
-    5D = to play
-    5CHS = [control asking bids](#Control Asking Bids Over Preempts)
+    4N = !d RKB
+    5CD = to play
+
+4CD
+    (Bid/X)
+        X/XX = penalty
 
 
 * 4H 4S 5C 5D Openings
 
 - P/T integrity required (in 1st/2nd), rare distributions, max 1 outside A/K.
-- Cannot show a better suit than partner's beyond punting a new suit slam
-- Trumps assumed, so 4N is a substitute control asking bid over 4!h
-- New suits over game level openings are otherwise specific control asks.
 
 4H = broken preempt (not semi-solid+ or only 1 keycard if semi-solid+, so unsuitable for 3N opening)
-    4S = [control asking bid](#Control Asking Bids Over Preempts)
+    4S = natural, to play (game below RKB)
     4N = [RKB](#RKB 4N)
-    5CD = [control asking bids](#Control Asking Bids Over Preempts)
+    5CD = [control asking bids](#5x Control Asking Bids Over Preempts)
     5H = [quality ask](#Free 5x Major Raise)
     5S = EKB
-    5N = no, just use RKB
-    6x = to play
-    7x = to play
+    slam = to play
 
 4S = broken preempt (not semi-solid+ or only 1 keycard if semi-solid+, so unsuitable for 3N opening)
     4N = [RKB](#RKB 4N)
-    5CDH = [control asking bids](#Control Asking Bids Over Preempts)
+    5CDH = [control asking bids](#5x Control Asking Bids Over Preempts)
     5S = [quality ask](#Free 5x Major Raise)
     5N = no, just use RKB
-    6x = to play
-    7x = to play
+    slam = to play
 
 5CD
-    5DHS = [control asking bids](#Control Asking Bids Over Preempts)
-    6x = to play
-    7x = to play
+    5DHS = [control asking bids](#5x Control Asking Bids Over Preempts)
+    slam = to play
 
-*** Control Asking Bids Over Preempts
+4HS/5CD
+    (Bid/X)
+        X/XX = penalty
 
-Specific suit asks:
+*** 5x Control Asking Bids Over Preempts
 
-- NT = King
-- 1step = rubbish
-- 2steps = singleton
-- 3steps = Ace
-- 4steps = void
+- no room to bid 4N RKB, so after game level preempt of 4S+
+
+Specific control suit asks. What do you have in this suit?:
+
+- sign off = bad
+- 5NT = King
+- slam raise = singleton
+- 6 control suit = 1st round
+- new suit cue = 1st round + side control (typically a singleton)
 
 
 * 4N Opening

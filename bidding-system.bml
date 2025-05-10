@@ -20,26 +20,30 @@
   super scientific relay methods (though artificial bids/relays may exist later in some auctions - after competitive threats
   are gone).
 - Optimizing to get into the right games/slams means fewer aggressive high variance (sometimes more fun) bids, e.g.
-  [2D Intermediate Opening](#2D Intermediate Opening) is a bit difficult to construct over (though still usefully competitive), but there
-  to make other 1 level openings more precise. A multi 2!d allows more fun aggressive bids plus a place to put one
-  strong constructive bid but loses the intermediate opening thus making a 1!d opening very vague. By not playing a
-  multi 2!d we cannot (accurately) play 5 major + 4 minor weak twos AND 6 card major weak twos. We also cannot play a fun weak only 2!d, 5 or 6 card.
+  [2D Intermediate Opening](#2D Intermediate Opening) is a bit difficult to construct over (though still usefully
+  competitive), but there to make other 1 level openings more precise. A Multi 2!d allows more fun aggressive bids plus
+  a place to put one strong constructive bid but loses the intermediate opening thus making a 1!d opening very vague. By
+  not playing a multi 2!d we cannot (accurately) play 5 major + 4 minor weak twos AND 6 card major weak twos (do not
+  know how many trumps partner has when it's mixed 5 or 6). We also cannot play a fun weak only 2!d, 5 or 6 card.
 - Fewer high variance bids includes not making crazy bids - e.g. on flat hands that have little lead directing values and
   are likely to just give away information etc. We don't need to pressure less experienced opponents if it's also going to
   risk partner putting us in the wrong contract. Stick to the expected ranges for bids. Some places that is a tight range and
   others it's looser (3rd position bids, P--(1!c)--1!s overcalls etc).
 - Accept the occasional bad result due to luck in the opponents' high variance or the weaker parts of our system
-- Weak 2!h/2!s are 5+ (NV) 6+ (VUL) card constructive (1 honour, 7--10(11) hcp) in 1st/2nd when vulnerable. When NV we
-  require high quality 5 carders, aswell as the tight point range, to keep the constructive aspect. 3rd is undisciplined
-  of course. We state that we have a constructive aspect - we specifically do not follow a wild preempt style in
-  1st/2nd, even though there may still be bidding theory debate about benefits of aggressive bidding, especially 1st
-  position moreso than 2nd position. Going more aggressive NV at matchpoints in 1st position may have merit!
+- Weak 2!h/2!s are 5+ (NV) 6+ (VUL) card constructive in 1st/2nd when vulnerable. When NV we require high quality 5
+  carders, aswell as a fairly tight point range (good 6 to bad 10), to keep the constructive aspect. 3rd is
+  undisciplined of course. We state that we have a constructive aspect - we specifically do not follow a wild preempt
+  style in 1st/2nd, even though there may still be bidding theory debate about benefits of aggressive bidding,
+  especially 1st position moreso than 2nd position. Going more aggressive NV at matchpoints in 1st position may have
+  merit!
 - Wide ranging openings are imprecise and make judging games/slams difficult, especially in competition. Yet we do want
-  to open almost all 11 counts (perhaps not some 4--4--4--1 hands or bad majorless vulnerable hands) to compete - those balanced 11 hcp hands are very frequent.
-  Naturally we choose to use an artificial 1!c opening to limit the 1D/1H/1S/2C/2D openings. So called natural systems
-  often use a prepared club and a slew of later artificial bids (e.g. Gazilli) in a struggle to limit themselves.
-- Bidding shapely hands quickly and clearly without promising many hcp is very important, whether showing 5--5/6--5 hands with jump
-  rebids, weak jump shift responses or bidding with less than the standard 6 hcp over 1 level openings. Limited openings really help here.
+  to open almost all 11 counts (perhaps not some 4--4--4--1 hands or bad majorless vulnerable hands) to compete - those
+  balanced 11 hcp hands are very frequent. Naturally we choose to use an artificial 1!c opening to limit the
+  1D/1H/1S/2C/2D openings. So called natural systems often use a prepared club and a slew of later artificial bids
+  (e.g Gazilli) in a struggle to limit themselves.
+- Bidding shapely hands quickly and clearly without promising many hcp is very important, whether showing 5--5/6--5
+  hands with jump rebids, weak jump shift responses or bidding with less than the standard 6 hcp over 1 level openings.
+  Limited openings really help here.
 - The 1!c and often 2C openings are the weak points of an artificial club system. It's hard to construct accurately over an
   intermediate 5 card 2C opening, therefore it promises 6 cards unlike many of the older 5 card variants played in
   Precision/Swedish club systems. The competitive/preemptive benefits of 2!c with 5 cards are limited.
@@ -48,10 +52,13 @@
   separate bids (1!d for 11--13 NT and 1!c for ((13)--15) helps define those hands quickly. It's somewhat arbitrary but the
   weak hand opening 1D arguably competes better.
 - An unbalanced 1!d opening is nice (natural competition in !ds), but not nice enough to require playing a wide range weak
-  NT (12--15 1!c opening) or passing various 12 hcp hands (13--15 NT). We want to bid those highly frequent 11--12 hcp balanced hands.
-- 10--15 is slightly too wide ranging. Opening 10 hcp balanced (with 1!d) would be fun, but unlikely to play as it
+  NT (12--15 1!c opening) or passing various 12 hcp hands (13--15 NT). We want to bid those highly frequent 11--12 hcp
+  balanced hands.
+- any 10--15 is slightly too wide ranging. Opening 10 hcp balanced (with 1!d) would be fun, but unlikely to play as it
   struggles with constructive accuracy for IMPs/Rubbers. Unbalanced only 16 hcp hands open 1!c strong, as
-  they are unbalanced there's a better chance of game at 24 hcp opposite any positive 8 hcp hand.
+  they are unbalanced there's a better chance of game at 24 hcp opposite any positive 8 hcp hand. Good 10 hcp hands can
+  open 1HS or 2CD. Rule of 19 applies to 1HS openings, though you may open a weak two depending on position/vulnerability
+  with 10 hcp.
 - Precisely bidding strong hands after opponents compete following our artificial 1!c is difficult, but by playing a
   strong 16--18 1NT opening and 2NT right after at 19--20 hcp, all strong 16--20 hcp 1!c opening hands will be
   unbalanced. Given that we open almost all 5--3--3--2 hands (even with 5 card majors), and some 5--4--2--2 hands
@@ -59,19 +66,20 @@
   when it does occur it's easier to bid out the shape. Removing some strong NT hands from the 1 suited opening bids to
   improve constructive accuracy, especially in competition is a philosophy showing up in natural systems aswell - e.g.
   Nilsland's Scanian 2C opener including 18--21 balanced hands and 2D showing 18--19 balanced in some Italian systems.
-- Bidding flat hands quickly is important, much like limiting HCP ranges and bidding shapely hands clearly.
-  5--3--3--2 hands with a 5 card major, except for 11--12 (13) hcp 5 card major hands (1!d opening constructive sequences
+- Bidding flat hands quickly is important, much like limiting HCP ranges and bidding shapely hands clearly. 5--3--3--2
+  hands with a 5 card major, except for 11--12 (13) hcp 5 card major hands (1!d opening constructive sequences
   overloaded otherwise) should show a balanced hand straight away unless judgment strongly suggests otherwise.
-  5--4--2--2 hands with a long minor, and rarely 6--3--2--2, may also want to show a balanced hand.
+  5--4--2--2 hands with a long minor, and rarely 6--3--2--2, may also want to show a balanced hand. Of course there is a
+  downside to opening hands with a natural 2N opening - there is limited bidding space to find slams, but it also shuts
+  out lead directing or other actions from the opponents.
 - We give up a weak NT opening - a pairs optimization. The even stronger 16--18 NT gets a chance to bid in 3rd more
   often as 1st/2nd will have fewer points. The risk of opening 2N with 19 HCP is low, especially compared to the clarity
   it gives to strong 1!c club openings and the gains from many faster auctions (1N--3N, 2N--3N etc.)
 - Four vs Five card majors, much like mini (NV in 3rd) v.s. weak v.s. strong notrumps, there are closely balanced pros
   and cons. There is more five card major literature to draw from when selecting one to use with artificial 1!c
   openings. Some of the benefits of 4 card majors are lost when all balanced hands are covered by specific bids (1NT, or
-  1!c--1NT rebid, though that leaves 1!d as nebulous). 4 card majors does not fit with 2/1 GF responses and a forcing
-  NT, which could make slam bidding harder. 4 card majors may, with other changes, allow a natural 1!d opening and free
-  up the 2!d opening bid as a weak two.
+  1!c--1NT rebid, though that leaves 1!d as nebulous). 4 card majors may, with other changes, allow a natural 1!d
+  opening and free up the 2!d opening bid as a weak two.
 
 This details of this system were initially taken from the *Revision Club* (v4.0 by John Montgomery) system, but with
 some minor and notable changes. The 1!d and especially 2!d intermediate openings are influenced by *IMPrecision* (Adam
@@ -79,12 +87,9 @@ Meyerson) with the rest of the 1!h through 4!s openings initially taken from Rev
 "semi" forcing instead of forcing as in Revision. Swapping Revision's strong only 1!c for a *Swedish* weak strong *club*
 (based on Erik Sjostrand's write up) is the most obvious point of change. In many ways it's easy enough to swap back to
 a strong only 1!c opening, again potentially at the cost of having opponents bid more destructively over 1!c and making
-the 1!d opening rather overloaded if we still want to open most 11--12 balanced hands. The competitive bids are heavily
-influenced by Mat Nilsland's "Competitive Bids The Scanian Way" book and the 1N/2N responses are based off Nilsland's
-notrump bidding books.
+the 1!d opening rather overloaded if we still want to open most 11--12 balanced hands. The competitive bids are
+influenced by Mat Nilsland's "Competitive Bids The Scanian Way" book.
 
 
 #INCLUDE carding.bml
 #INCLUDE announcing.bml
-
-

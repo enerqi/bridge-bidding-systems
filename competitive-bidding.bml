@@ -997,7 +997,7 @@ With limited strength may want to hide distribution information and just bid the
     NT = takeout, lower suits, 4 in a suit that can be bid at 1 level, 5 card suit if must be bid at 2level
     Others = natural
 
-* Opponents open 1C Natural / Prepared / Multi
+* Opponents open 1C Natural (Quasi)
 
 **** (1C)--X
 
@@ -1121,9 +1121,30 @@ With limited strength may want to hide distribution information and just bid the
         4C = choose a major jump cue, later 4N double fit RKB
         4HS = ambiguous, fast arrival
     2D = weak jump overcall
-        2N = feature/strength ask
+        2N = Vinny asking bid
+            3C = maximum (not medium/max as over a major)
+                3D = shortage ask, then cue bids for !ds
+                    3HS = shortage
+                    3N = no
+                4C = [Preempt RKB](#Preempt RKB), only time after 2N
             3D = minimum
+                3H = shortage ask (not immediate control bids as over a major)
+                    3S = !s shortage
+                    3N = no
+                    4C = !c shortage
+                    4D = !h shortage (or 4H if forget)
+            3H = 6--4 natural
+                3S = !d slam try (lowest other suits flag slam try, natural if possible else ranked order)
+                4C = !s slam try
+            3S = 6--4 natural
+                4C = !s slam try
+                4D = !d slam try
+        cue = partial stop asking (do not need HCR), or rarely slam try
+        new = forcing
+        game = to play
+        4C = [Preempt RKB](#Preempt RKB)
     2HS = weak, respond as [6 card weak two](#2HS Weak Openings)
+        cue = partial stop asking (do not need HCR), or rarely slam try
     2N = 5--5 !hs + !ds
         3C = good !h raise, 2 useful features
         3DH = to play
@@ -1393,6 +1414,7 @@ With limited strength may want to hide distribution information and just bid the
         4D = choose a major jump cue, later 4N double fit RKB
         4HS = ambiguous, fast arrival
     2HS = weak, respond as [6 card weak two](#2HS Weak Openings)
+        cue = partial stop asking (do not need HCR), or rarely slam try
     2N = 5--5 !hs + !cs
         3CH = to play
         3D = good 3H raise, 2 useful features
@@ -1666,6 +1688,7 @@ With limited strength may want to hide distribution information and just bid the
     3H = N/A, assume forgot and same as 3D game try bid
     3S = mixed raise, 4 trumps, 2 useful features (A, K or short in partner's suits)
 2S = weak jump, response as [6 card weak two](#2HS Weak Openings)
+    cue = partial stop asking (do not need HCR), or rarely slam try
 2N = both minors
     3CD = to play
     3H = general force

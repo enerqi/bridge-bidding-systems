@@ -19,12 +19,15 @@ for VUL and NV is possible but a chore.
 
 * NT Opening Responses
 
-Less considered than other parts of the system - even some fairly basic stayman + transfer responses will go a long way.
-The main point is that our responses includes more invites/constructive bids than some other options. If we were playing
-a weak or mini NT then there is more incentive to have a range of immediate escape options, either to avoid an awful NT
-contract or just to add to the preemption. For example, we do not play some sort of rescue/garbage stayman (even a
-garbage 3 suiter short in clubs has to be careful as the 2N/3C responses show both majors). Our stayman 2C -- 2D then 2M
-is invitational, or transfer to 2H then 2S is an artificial 5 card invite. 2N after a major transfer is GF.
+Even some fairly basic stayman + transfer responses will go a long way. However, the 1N and 2N responses have been
+rewritten multiple times. There's many reasonable alternatives, all with their pros and cons. It's a common opening bid
+that should have some design thought, but complexity with regards rarer auctions is a danger.
+
+The choices over 1N are more focussed on being close to a current expert standard without too much added complexity.
+Things such as 2H garbage/rescue stayman after a 2D Stayman response and 2S as a natural 5 card invite. That in turn
+leads to transfers over transfers, without anything too complex. There's a lot of transfer break styles, but given all
+the space below 4HS we don't need to reveal too much about openers hand in the break, just a rough min/max showing
+approach instead of showing good side suits or doubletons.
 
 When playing 4 suit transfers, as we do, the difference between using 2S as a range ask or using 2C stayman
 non-promissory to do a NT invite whilst trying to avoid giving the opponents more informations has arguments either way.
@@ -35,9 +38,18 @@ Using 2C as 5 card puppet stayman is an interesting alternative, which gives us 
 may better hide opener's major holding but show responders instead in a paradox auction such as 1N--2C--2D--2S (showing
 !hs).
 
-The transfer breaks after 2N openings are similarly constructive focussed showing top HHx+ support and a doubleton. This
-perhaps fits less well with our 19--20 opening, so the 3 card support HHx type hand should be something special. Its
-design comes from the Scanian 22--24 NT responses, but we also use 2N rebids after 1C openings with 21--24.
+Designing responses over 2N is difficult. Opening 2N is often a slam killer given the lack of space left. Transfer
+breaks are therefore more informative/revealing showing a side source of tricks and possibly done on 3 cards (with good
+controls, some doubleton and HHx 2/3 top honours support). There's so many response structures over 2N, all with
+different flaws. Given the prevalence of opening 2N with a 5 card major, committed partnerships often want to play some
+sort of modified puppet (muppet) 5 card stayman, but it's much easier just to play 4 card Stayman and Smolen (which
+maybe fine at IMPs where the +20 from a 5--3 major fit matters little). Nilsland's Scanian 2N responses are good
+for many auctions at the cost of complexity. Our latest structure is based on the Revision club system. It does let us
+find all 5--3/3--5 major fits at the cost of not being able to sign off at the 3 level in a major. Compared to some
+muppet systems the 4CD minor bids are often natural slam tries and not too complex. 2N + muppet responses become very
+complex as you try to to support every type of responding hand and at the same time minimise information leakage. Even a
+basic muppet system has a lot of bids that have responder bid the other major or relay/retransfer somehow to make opener
+play the contract.
 
 
 * Unbalanced Diamond Opening
@@ -175,7 +187,7 @@ constructive style or be careful of the hcp and suit quality when bidding mixed 
 We define the style for the stronger hand (the 6 card suit) first and add 5+ carders non-vulnerable as an optional
 extension with tight quality requirements. In 3rd position anything is biddable of course - mix of 5 or 6 carders.
 
-At the moment the weak two style is reasonably constructive - a 4 hcp 7--10 range. This range is more frequent than 4--6
+At the moment the weak two style is reasonably constructive - good 6 to bad 10 range. This range is more frequent than 4--6
 hcp hands which are more suited to destructive bidding preventing slams.
 
 The 1st/2nd bid quality is lumped together, but really 2nd position should be more constructive than 1st.
@@ -406,14 +418,32 @@ We play this as limit plus, not GF. This works better in a limited opening syste
 take over and be captain with a powerhouse hand. Playing as limit plus means the opponents are unlikely to make a
 dangerous lead directing double or overcall in 4th, as we may never have had a game on anyway.
 
-There could be further improvements here. The main thing is that there are bids to show a minimum with specific
-singletons. This allows finding some tight games. This has similarities to the weak two responses, you cannot stay below
-3M whilst hiding the singleton location from the opponents whilst giving responder an opportunity to ask about it. This
-information leakage is less of a problem in a limited opening system as we will often just bid game with an
-uninteresting hand that would rarely make slam opposite a shapely maximum from opener.
+Many options here. Some things to consider:
 
-If less room is given over to showing minimum singletons then it could be easier to distinguish 5--4--2--2 vs 6 card
-openings without shortages or show a side suit below the 4 level.
+- do we want to hide info by not bidding 2/1 GF natural suits and so use 2N with some unbalanced hands?
+- do we want some 3 card GF hands? In limited opening systems this can make the 2/1 bids clearer
+- do we want rare 3 card invites with too much shape e.g. 6--3--3--1?
+- do we want gradations of value showing to handle the 10--15 range, not just min/max? Previously we showed min ranges
+  with specific singletons. Recently we show max/medium/min values in addition to other options
+- do we show a shortage immediately giving away info?
+- do we void show immediately for it's unique power?
+- do we show 5 card decent suits at the 4 level giving away info, but communicating a potential source of trick?
+- do we show natural length immediately (giving away info) but usually the only way to explicitly show a double fit?
+  This can lead to playing in the other suit
+- do differentiate 5 cards + shortage v.s. 6 cards + shortage as a source of tricks, or rely on last train focussed on
+  opener?
+- do we show 6/7 semi-bal separately as a source of tricks, or rely on last train?
+- do we show 5--4--2--2 semi balanced as a potential source of tricks?
+
+Our latest variant is mostly a combination of the standard modern precision 2N responses and the "Wilson" option further
+below. It let's opener show a shortage (too strong to splinter) or ask for a shortage whenever opener uses the main
+min/medium/max strength showing bids. Shortages are often the best route to a cheaper slam, probably more so than
+showing a 5 card suit which requires fitting honours from partner. There's an immediate response that shows 6+ cards and
+shortage - that extra trump is often crucial. Over the 3C GF max response there's space to distinguish 5 vs 6/7
+semi-balanced hands, show shortages and 5--4--2--2 with a reasonable side suit. The weakness is that we can't focus on
+those hands unless the response was 3C. Also 1M--2N--3C, or 1S--2N--3D are the only responses over which a natural 3N
+contract might be played. A positive is that all the responses, except 4x showing a 5 card side suit, reveal only
+limited information.
 
 ** Cohen Variation
 
