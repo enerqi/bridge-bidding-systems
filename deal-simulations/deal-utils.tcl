@@ -142,6 +142,37 @@ proc is_1major_opener {hand} {
   return 1
 }
 
+proc is_1major_overcall {hand} {
+  set points [hcp $hand]
+  if { $points <8 || $points>16 } { return 0 }
+  set hs [hearts $hand]
+  set ss [spades $hand]
+  if { $hs<5 && $ss<5 } { return 0 }
+
+  set ds [diamonds $hand]
+  set cs [clubs $hand]
+  if { $cs>$hs && $cs>$ss} { return 0 }
+  if { $ds>$hs && $ds>$ss} { return 0 }
+
+  if {[5CM_nt $hand 15 18]} { return 0 }
+
+  return 1
+}
+
+proc is_1d_takeout {hand} {
+  set points [hcp $hand]
+  if { $points <11  } { return 0 }
+
+  if {[is_1major_overcall $hand]} { return 0}
+  if {[5CM_nt $hand 15 18]} { return 0 }
+
+  set ds [diamonds $hand]
+  if { $ds >= 3 } { return 0 }
+
+  return 1
+}
+
+
 proc has_major_support {opener_hand responder_hand support_length} {
   set ss [spades $opener_hand]
   set hs [hearts $opener_hand]

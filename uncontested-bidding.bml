@@ -29,14 +29,14 @@ Other bids:
     1N = [natural, up to 11 hcp, no 4 card major](#1D--1N)
     2C = [10+ natural, maybe 6+--4 GF with 4 card major](#1D--2C)
     2D = [10+ natural, maybe 6+--4 GF with 4 card major](#1D--2D)
-    2H = 5!ss + 4--5!hs, weak (~5--9)
+    2H = 5!ss + 4--5!hs, weak (~5--9), two way reverse flannery
         2N = game try
             3C = min 5--4
             3D = max 5--4
             3H = min 5--5
             3S = max 5--5
         3C = 5--5+ minors, NF
-    2S = 5!ss + 4--5!hs, invitational (~10--12)
+    2S = 5!ss + 4--5!hs, invitational (~10--12), two way reverse flannery
         2N = game try
             3C = min 5--4
             3D = max 5--4
@@ -45,7 +45,7 @@ Other bids:
         3C = 5--5+ minors, NF
     2N = natural invitational ~(11)--12(13), no 4 card major, usually very flat 4--4--3--2/4--3--3--3, normally no 5 card minor. Can bid 2!d to rightside NT with one major stop. With zero major stops probably look to bid 2!c with a 4 card !c suit or 2!d.
         3CD = natural, NF
-        3HS = stop show
+        3HS = shortage, maximum 5--4+ both minors
         4C = minor two-suiter, GF, *unlikely* as 6--5 hands can open 2!c/2!d
         4HS = 6!d--5M hands
     3C = 5--4(+) minors, either minor longer, 5--9 hcp, usually a singleton major
@@ -391,7 +391,7 @@ Natural, 4+ cards, maybe longer minor canapé
             3M = mild slam try
             3N = to play
             jump = splinter, singleton/void
-    2H = natural, NF, less than invitational (else 2!c over 1N)
+    2H = natural, NF, weak (else 2!c over 1N), likely 6--4 else reverse flannery
     2S = 6+ !ss, natural NF, ~6--9, wider strength without weak jump shift
     2N = puppet, !c signoff or 4--4--4--1 GF
         3C = complete
@@ -648,7 +648,8 @@ Invitational plus.
             cue/jump = only forcing bids
         jump = fit jump
         2N = !d super-accept
-    2DHS = weak
+    2D = weak
+    2HS = system on, reverse flannery 5!ss + 4/5!hs weak/invitational
     2N = minors, unusual
     3C = preempt 5--4(+) minors
     3DHS = preempt

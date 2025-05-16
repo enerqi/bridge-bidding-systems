@@ -1,3 +1,9 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "docopt",
+# ]
+# ///
 # Quick helper script to call run-deal.py on every tcl script in this directory and create an html page for each script
 # Assumes it is run from this `deal-simulations` directory
 # python regen-html-deals.py output-directory [deal-count=48]
