@@ -715,14 +715,15 @@ With the shape showing Bergen style after a 1H/1S opening:
 1M--2x = 2/1 response
   2M = 6+ card major
   2new = natural, shape showing
-  2N = balanced, maybe no stop
+  2N = either balanced maybe no stop (minimum 12--14 OR maximum 18--19), OR poor 2nd suit not want to bid 3new
   3x = raise, good support, no extra strength required
-  3new = natural, no extra strength required
-  3M = semi-solid+ suit, slam potential
+  3new = natural, no extra strength required, but either 5 cards or reasonable 4 card suit
+  3M = semi-solid+ suit, max 1 loser opposite a void, any strength
 
 Shape style finds the 6 card major quickly making slam bidding easier, but checking for stops if ending in 3N is a
-concern. Some partnerships may restrict a new 3 level bid either to extras in hcp or extras in shape (5 cards), in which
-case 2N can be more catchall. Note, a reverse does not promise any extras, it's just shape showing.
+concern. Even with shape style some partnerships may restrict a new 3 level bid either to extras in hcp or extras in
+shape (5 cards), in which case 2N can be more catchall. Note, a reverse does not promise any extras, it's just shape
+showing.
 
 With the Lawerence style 2M is catchall:
 
@@ -731,8 +732,9 @@ With the Lawerence style 2M is catchall:
   2new = natural
   2N = balanced minimum, stoppers
   3x = raise with some extras, e.g. 14+ hcp
-  3new = natural with some extras
-  3M = semi-solid+ suit, slam potential
+  3new = natural with some extras, e.g. either 5 cards or 14+ hcp
+  3M = semi-solid+ suit, max 1 loser opposite a void, some extras
+  3N = 18--19 balanced
 
 This style is better at NT bidding, but untangling all the hands going through 2M can be difficult, making slam bidding
 harder in particular.
@@ -748,7 +750,7 @@ This promises 5+ !cs and a game forcing hand.
 
 Shape showing style for this:
 
-1D--2C
+1D--2C = 5+ !cs natural GF
   2D = 5+ !ds natural
   2HS = natural, 4+ card major, not 5+ !ds, no extra strength needed
   2N = 12--14 or 18--19 balanced, no 4 card major
@@ -769,9 +771,10 @@ Whether you push 18--19 balanced through 2N to save space and go slow or bid 3N 
 
 Fast arrival bidding can remove all bidding space for exploring slams. Fast arrival is likely what players learn to use
 by default when in a game forcing auction. Fast arrival means that bidding game quickly shows a minimum hand without
-slam interest. Perhaps the first obvious place where we learn fast arrival is 2C--2D--2M--4M. We would go slower and
-raise 2M to 3M with a better hand. It's possible to play fast arrival in other places, for example in 2-Over-1 GF
-auctions:
+slam interest. Note in the 2-Over-1 GF context, definitely do NOT bid fast arrival with 2 keycards + Queen of trumps or
+better, even with a minimum. Perhaps the first obvious place where we learn fast arrival is 2C--2D--2M--4M. We would go
+slower and raise 2M to 3M with a better hand. It's possible to play fast arrival in other places, for example in
+2-Over-1 GF auctions:
 
 - 1S--2D--2S--4S
 - 1S--2D--2H--4H
@@ -789,7 +792,7 @@ shows more specific hand types. All of the above example auctions are treated as
 Jump bidding partner's suit after showing a side suit:
 
 - shows trumps support and good side suit source of tricks
-- 3 card trump support at least one top honour (Hxx). With 4 card support raise trump quality is less of a concern
+- 3 card trump support at least one top honour (Hxx) or with a 4 card support raise trump quality is less of a concern
 - side suit quality, particularly with only 3 card trump support would be 3 top 5 or 2 top 3 honours
 
 *** Picture Raise Jump level Determines Outside Controls
@@ -804,13 +807,29 @@ An auction like 1S--2C--2S--3S is more ambiguous as the only jump is to game, de
 bid example could be a good hand with side suit and outside controls interested in slam, or it could just be waiting on
 the way to game
 
+*** With 3 Raises Available
+
+Where there are 3 raises available, e.g:
+
+1S--2D--2H
+  2S = waiting, shape ask, 2 or 3 card support
+    2N = 5--4--2--2 other suits
+    3C = 3 or 4 cards, so !d shortage
+    3D = 3 card support, so !c shortage
+    3H = 5--5+
+    3S = 6--4
+  3S = outside controls
+  4S = no outside controls
+
+The shape ask has opener bid a quasi-natural 3 card suit or NT with 2--2 in the other suits. Stops irrelevant.
+
 *** How to distinguish bad hands from slam going hands without fast arrival?
 
-We already have a solution to this. Our base system does suggest using the Serious 3N convention in GF auctions (and
-some others) where a major is agreed:
+We already have a solution to this. Our base system does suggest using the Serious 3N convention in GF auctions where a
+major is agreed/set:
 
-- 1M--3M
-- 1M--2N--3x
+- 1M--3M  (invitational in base system, but if accepting in a game force)
+- 1M--2N--3x  (Jacoby 2N then shown extras)
 - 1N--2D/2H--Transfer Break
 - 1M--2x--2M--3M
 - 1M--2x--2y--2M/3M
@@ -866,57 +885,72 @@ best auction even with 8 solid !ds and no outside control.
 
 * 2-Over-1 Nebulous 2C Response
 
-...
-2C 2+ cards including balanced hands
-  later...
-  - bidding openers major shows that !cs maybe short and 3 card support
-  - bidding 3N usually shows flat hand aswell, 3+ clubs ant not 3 card major support, so bid 3N
-  - 3other bid more stop showing (in theory could be e.g. 5c + 4h)
+** Problem
 
-do picture bids apply after bidding clubs then 4M?
-maybe fast arrival after 2C
+The 1S--2H response already promises 5 cards, a good start to describing the hands. However, a minor response is not
+very clear, both 2C and 2D could be bid on 3 cards, e.g. over 1S we may only have 4!hs (3--4--3--3). A 4 card minor suit
+responder has also not shown much shape, just waited for opener to describe more, with hands over 1S such as 3--4--4--2
+/ 3--4--2--4 / 2--3--4--4. Over 1H it is recommended to bid a game forcing minor instead of a 4 card !s suit, even with
+a shorter minor (4--3--3--3) or same length minor (4--2--4--3 etc). We must do this to make it clear when we start an
+auction with 1H--1S that it is a 5 card suit if we later game force (e.g. new suit at the 3 level, 3 level fourth suit
+forcing). So, a minor could also be a short suit over 1H.
 
-- 2N with weaker 6--2 fit and waiting, 3M raise Hx or xxx
-  hmm instead of 16+ nt hands, which is probably lawrence style
-- splinter with good 6--3 fine as would do something else with 4 card support
+Note, it is possible to play a style of Jacoby 2N which includes 3 card GF support, but it's not common. It's even
+possible to play 2N as GF balanced without support with some other jump suit bid as a Jacoby replacement. Balanced hands
+are often better letting the unbalanced hand describe themselves and using that information to set the final contract.
+Ideally this process of the unbalanced hand describing themselves starts as low as possible. Whilst 2N is not that high,
+sometimes it also cuts out a little too much space, particularly because opener has such wide ranging hand strength and
+they may have to take over the auction and captain things. In those situations it's clearer if a known 9 card fit
+exists.
 
-2N rebid after 2over1 = 12-14 OR 18-19, stops unknown
-  fast arrival not relevant to NT contracts
-reverse not promise extras
-3 level not extra
-cannot splinter with !c support, just raise
-may want to check stops
-
-
-{precision? 2N 10--13, 3N 14--15 ??? as cannot easily bid 4N with tiny extras, no}
+Some players have used 1M--3N as as 4--3--3--3 hand with 3 card support and ~13--15 hcp. This bid wastes too much space.
+Even the most boring 13--15 hcp hand with 2 card major support can make slam bidding overly difficult by bidding a
+natural 3N. It's worth playing [Two Tier Splinters](#Two Tier Splinters) instead or just not bidding 3N.
 
 
-2D/2H 5+ cards (unlike either minor 4+ cards)
-  new minor at 3 level rebid better 5 cards, but maybe with no stop
-  may miss slam if 3 level rebid no extras promised
-  1s-2d-3c stuck bidding without 6cM and poort !h stop
-  now ... will be bid NT with stops and ignore 4 clubs
-    maybe really good 4 card suit
+** Solution
 
-  can raise 5 card !d suit with 3 cards and no stop with balanced hand
+1M-2C = either GF natural OR GF balanced with a 2+ card !c suit
+1M--2D = natural GF, 5+ !ds
 
-- jump rebid is solid type, not extras, set trumps, max 1 loser
+- Now 2D promises 5 cards, the same as 1S--2H. 2C sets a GF with any balanced hand whilst keeping the bidding low
+- Note, this has nothing to do with 1D--2C auctions! Over 1D the 2C GF response also promises 5+ cards
 
-- splinter by opener also not extras, just 4 card support
+Clearly the tradeoff is being unsure how many !cs responder has.
 
-  what about 5 card !c support? yes splinter with 5-5 hand
-    partner will have 3cM support or 3 clubs
+- When we only have 2!cs then we will certainly have 3 card major support, which can be shown with responder's next bid
+- Responder will have 3+!cs if they do not have 3 card major support
+- Splinter bids should be done with 5 card !c support, i.e. opener has a 5M + 5!c hand
 
-___
+When responder is given space, they can bid 2N to show a balanced hand. This is not always the case, so an optional
+extra, instead of keeping the bidding purely natural, is to make 2D artificial:
 
-- over 1H bid a 2/1 GF minor with only 4!ss. !ss then GF is 5 card
+1M--2C
+  2D = either natural 4+ !ds OR 12--14 balanced (usually 5--3--3--2)
+    2M = 3(+) card support
+    2oM = artificial, 5+ !cs unbalanced with 4+ !ds, not worth 3C rebid, could be 6--4
+    2N = balanced, natural
+    3C = excellent 6+ card !c suit, max 1 loser
+    3D = natural, unbalanced, 5--4+ minors
+    3oM = natural 6!cs + 5oM extreme shape
+  2M = 6+ cards, always Bergen style (we can handle both balanced hands with or without stops now)
+  2oM = natural 4+ cards
+  2N = 18--19 hcp balanced (usually 5--3--3--2)
+  3C = natural 4+ !cs, 5--4+
+  3D = splinter, 5+ !cs
+  3oM = splinter, 5+ !cs
+  3N = 18--19 balanced
 
-If playing 2C with bal hands then and 3 cards then may aswell do for all bal hands without support
-instead of 1S--2D with 4 cards, bid a 2 card minor
-e.g 3--4--4--2
+An alternative way to distinguish the 2D and 2N bids is:
 
-- 1M--2N then 4+ card support hands
+2D = either natural 4+ !ds OR 5--3--3--2 hand without stoppers
+2N = (semi)balanced minimum, some stoppers in all suits
 
+In some ways it's the same Bergen v.s Lawrence style issues. You might choose to bid 2D or 2N with a 5--4--2--2 minors
+hand if you have values in the doubletons and little in a side 4 card !d suit.
+
+The 2oM (other major) bid is also artificial as opener will not have a 4 card other major at that point and responder
+would not have a 5 card other major without a 6--5 shape, with which they rebid 3oM.
 
 
 * Constructive 2M Raises
@@ -2499,7 +2533,53 @@ Over 1C there's the options to use 2D as a reverse flannery bid, though the oppo
 
 * 5N Pick a Slam
 
-....
+** Problem
+
+Some hands we know we should be in a slam, but there's no particularly good auction to get more useful information out of
+partner.
+
+- 1N--2C--2H
+
+With this normal stayman sequence opener could still have 4!ss. They may have a 4 card minor suit we could play in.
+Perhaps you could bid 3C/3D with a 4 card minor (even though it should show 5+ cards), however, you want partner to bid
+!ss if they have them instead of raising the minor or trying 3N instead.
+
+- 1N--2D--2H
+
+This could be a choice of slam type hand. We don't want to set !hs as trumps if we only have 5 cards, but we may have
+the strength to force to slam. If we don't have a side 4 card suit then we don't want to bid a new minor.
+
+** Solution
+
+The 5N bid can be played as pick a slam, letting partner help decide where to go. As part of this it a good idea to
+throw out 5N as quantitative to reduce any potential confusion!
+
+Note, it should obviously not be 5N pick a slam after Roman Keycard where 5N is a King ask!
+
+- Essentially, if it's not Roman Keycard related then 5N is pick a slam.
+
+To respond to 5N you show shape and/or strength that partner is unaware of. An unbid side suit, a better than expected
+main suit or better support than indicated are all common. Sometimes you just have a flat hand with good stops and bid
+NT.
+
+*** What are some example picks on offer?
+
+When forced to bid at the 5 level by competition:
+
+- big two suiter: 1H--(5C)--5N
+- opener having moderate support plus 4!cs aswell as their own suit: 1S--(5D)--5H--5N
+- by skipping 5N we imply 5--5: 1S--(5D)--5H--6C
+- equal preference for two suiter, slam going: 1D--(4S)--4N--5N, therefore 5S cue is grand slam try
+
+After control bidding:
+
+- Implication that a control bid suit has length: 1H--3H--4D--5C--5N (!ds maybe very strong and !hs weak)
+
+After heading to a NT contract, may prefer a minor or even major:
+
+- good !ds worried about !cs in 6N: 1D--1H--3D--3S--3N--4N--5N
+- either minor or NT is possible, but not great !cs, only 3!ds: 1D--2C--2N--5N
+
 
 * Fit Jumps in Competition
 
@@ -3527,7 +3607,7 @@ that show up to a bad invite, e.g. ~5--10 hcp and a good 5 card or 6+ card suit.
 of 3D or perhaps just 2S. These bids are non-forcing and alertable. The affect on your system is that you should then
 play a jump new suit as a good 6+ card GF hand, which means that some fit jumps are not available and a 1 under jump as
 a mixed raise (if you play those) is also not available (so the jump raise should be a mixed raise in that case). Those
-changes may not be too problematic as fit jumps are quite rare and maybe be usable at a higher level. The biggest issue
+changes may not be too problematic as fit jumps are quite rare and maybe usable at a higher level. The biggest issue
 is that you have to double with various invite plus hands that are not good enough for jump new suit. After a double the
 opponents can raise the bidding and it becomes difficult to sort out your hand, e.g 1D--(1!s)--X--(3!s) is difficult to
 deal with.
@@ -3910,7 +3990,6 @@ If you play Gazilli after 1H--1S then the responses focus on the !s support. The
 
 *** Interference?
 
-...
 Stick with Gazzilli-2♣-then-2NT as 18-19 balanced, and just don't have an artificial game-force.
 
 
@@ -4119,8 +4198,9 @@ two suits you have, so with a little practice it's not hard to defend this bid, 
     4C = majors two suiter, strong
 
 If that doesn't convince you that 2N both minors is not a great idea, then consider how you will bid your 20--21
-balanced NT hand. There is a lot of value in having a bid to show a balanced hand with a specific point range. Additionally,
-even though it's a lot of points, it's actually more frequent than picking up a 5--5+ minor hand.
+balanced NT hand. There is a lot of value in having a bid to show a balanced hand with a specific point range (despite
+2N sometimes preempting ourselves, making slam hard to bid). Additionally, even though it's a lot of points, it's
+actually more frequent than picking up a 5--5+ minor hand.
 
 *** Lucas Twos
 
