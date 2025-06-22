@@ -78,17 +78,18 @@ Stayman, promissory
     3CD = natural 5+ cards, GF, maybe a NT weakness
     3H = GF 4 !hs and 5 !ss (Smolen), or bidding on with 4--6 slam try
         3S = support
-        3N = natural
+        3N = natural, no support
             4H = retransfer
             cue = 6 !ss and slam interest
                 4H = retransfer
         4CDH = super max, cue, !s support
+            4H = retransfer
         4S = fast arrival, i.e. minimum or 4--3--3--3
     3S = GF 4 !ss and 5 !hs (Smolen), or bidding on with 4--6 slam try
         3N = natural
             4D = retransfer
             cue = 6 !hs and slam interest
-        4C = maximum, !h support
+        4CD = maximum, !h support
             4D = retransfer
         4H = normal bid, support, minimum or 4--3--3--3
     3N = to play
@@ -136,6 +137,9 @@ Stayman, promissory
 
 *** 1N--2D
 
+- no 5--5 majors type hand
+- artificial 5 card !h invite uses responder's 2S rebid
+
 2D = transfer to !hs, 5+ cards
     2H = normal bid
         2S = artificial, 5!hs invitational
@@ -159,10 +163,10 @@ Stayman, promissory
                 4N = quantitative
         3C = transfer, 4+ !ds, GF, later 4C set minor as trump, 4D RKB, 4S minor RKB if no 4D free
             3D = 2 card !h support, unsure 3N
-                3D = 3--5--4--1, !c shortage
-                3H = 1--5--3--4, !s shortage
-                3S = artificial 5--5 hand
-                3N = artificial 6--4 hand
+                3H = 3--5--4--1, !c shortage
+                3S = 1--5--3--4, !s shortage
+                3N = artificial 5--5 hand
+                4C = artificial 6--4 hand
                 4N = 5--4--2--2 quantitative
             3H = (1st break, not 3oM) 3+ card support, control bidding / serious 3N
             3S = natural 5 carder, 2 !hs
@@ -189,43 +193,6 @@ Stayman, promissory
 
 **** Transfer breaks
 
-2D = transfer to !hs
-    2S = good side suit A/K, 3 top 5 honours, !h support, any strength, can't play 3N
-        2N = (semi)balanced slam try
-        3C = shortage, slam try
-        3D = retransfer
-            3H = retransferred
-                3S/4CD = shortage
-                3N = control prompting, forcing
-        3H = artificial, !d shortage, slam try
-        3S = shortage slam try (e.g. small singleton)
-        4S = EKB
-        4N = RKB
-    2N = maximum, support, no good side suit, NT suitable e.g. 4--3--3--3 or very QJ heavy (not slammish)
-        3D = retransfer
-            3H = complete transfer
-                3S/4CD = shortage
-                3N = serious, slam try, despite opener's spread out values
-        3N = likes NT
-        4S = EKB
-        4N = RKB
-    3CD = good side suit A/K, 3 top 5 honours, !h support, any strength, can't play 3N
-        3D = retransfer
-            3H = retransferred
-                3S/4CD = shortage
-                3N = control prompting, forcing
-        3H = artificial !c/!d shortage, slam try!
-        3S = shortage, slam try
-        3N = (semi)balanced slam try
-        4D = (3!d not available) retransfer
-        4S = EKB
-        4N = RKB
-    3H = (not mandatory with minimum) !h support, without good side suit, can't play 3N
-        suit = shortage, slam try
-        3N = (semi)balanced slam try
-        4S = EKB
-        4N = RKB
-
 2N = minimal break
     3D = retransfer
         3H = complete transfer
@@ -239,6 +206,9 @@ Stayman, promissory
 
 
 *** 1N--2H
+
+- includes 5--5+ majors, GF or Slam Try hands
+- not 5--5 majors invite, just punt
 
 2H = transfer to !ss, 5+ cards
     2S = normal bid
@@ -285,39 +255,6 @@ Stayman, promissory
         4S = to play, very mild slam interest implied, perhaps over transfer break
 
 **** Transfer breaks
-
-2H = transfer to !ss
-    2N = maximum, support, no good side suit, NT suitable e.g. 4--3--3--3 or very QJ heavy (not slammish)
-        3H = retransfer
-            3S = retransferred
-                3N = serious, slam try, despite opener's spread out values
-                3S/4CD = shortage
-        3N = likes NT
-    3C = good side suit A/K, 3 top 5 honours, !s support, any strength, can't play 3N
-        3D = !d shortage
-        3H = retransfer
-            3S = retransferred
-                3N = control prompting, forcing
-                suit = shortage
-        3S = artificial !h shortage
-        3N = (semi)balanced slam try
-    3D = good side suit A/K, 3 top 5 honours, !s support, any strength, can't play 3N
-        3H = retransfer
-            3S = retransferred
-                3N = control prompting, forcing
-                suit = shortage
-        3S = artificial !d shortage
-        3N = (semi)balanced slam try
-        4C = !c shortage
-    3H = good side suit A/K, 3 top 5 honours, !s support, any strength, can't play 3N
-        3S = to play, weak hand
-        3N = (semi)balanced slam try
-        4CD = !c/!d shortage
-        4H = retransfer
-            4S = retransferred
-    3S = (not mandatory with minimum) !s support, without good side suit, can't play 3N
-        3N = (semi)balanced slam try
-        4CDH = shortage, slam try
 
 2N = minimal break
     3H = retransfer
@@ -588,7 +525,7 @@ immediately or the final option is to bid a suit without any invitational nuance
         4H = last train !s fit, strong
         4S = fit, maximum/strong
         4N = !s RKB, probably strong 1!c opener
-    3H = GF, staymanic 4!ss + singleton/void in !hs, no stop
+    3H = GF, singleton/void in !hs, takeout 4!ss, 3 suiter type hand
         3S = fit, extras
         3N = no fit, stopper
         4CD = natural, strong
@@ -596,7 +533,7 @@ immediately or the final option is to bid a suit without any invitational nuance
         4H = last train !s fit, strong
         4S = fit, fast arrival
         5CD = 5 cards, to play
-    3S = artificial, GF, no stopper
+    3S = artificial, GF, 3!ss and singleton/void in !hs
         3N = to play, stop or pray
         4CD = no stop, natural
             next = Redwood
@@ -667,7 +604,7 @@ immediately or the final option is to bid a suit without any invitational nuance
         4H = fit, maximum/strong
     3H = fast weak/competitive with !hs
         any = strong, GF
-    3S = GF, staymanic 4!hs + singleton/void in !ss
+    3S = GF, singleton/void in !ss, takeout 4!hs GF, 3 suiter type hand
         3N = no fit, stopper
         4CD = natural, strong
             next = Redwood
@@ -1084,28 +1021,30 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
         3HS = 5 card major
         4H = (over 3!s) 5 card major
 
-1N--(P)--2DH
+1N--(P)--2DH = transfer interference
     (X)
-        XX = to play interest (4 very good or 5 reasonable)
-        P = doubleton support
-            XX = retransfer ask
-        complete = 3 cards normally
+        XX = fit, max, offensive
+        complete = fit, minimum
+        P = no fit
+            XX = retransfer ask, later new suit GF
+            new = NF, competitive
     (Cue) bidding partners transfer suit with 2!h or 2!s
         P = doubleton
         X = 3 card support
     (higher)
-        P = nothing special
-            X = negative, typically with doubleton, can start a force
-            3-lower = NF, lower ranking new suit
-            Cue = shortness, good hand, stop check
+        P = nothing special, maybe 3 card support but VUL / defensive
+            X = VALUES (sitting under), can start a force with 2 suiter or stop ask
+            3x = competitive only (punt if invite, NO retransfers)
+            Cue = shortness, good hand, stop check implying 5 card main suit
             4x = GF
-        X = negative
-        accept = complete transfer next level, fit + non-minimum
+        X = penalty (negative little use after partner transfers), often 5 cards
+        accept = complete transfer next level, fit/offensive typically NV unless 4 cards
         new-suit = FNJ fit + side suit
 
 1N--(P)--2S+
     (X)
-        XX = to play interest
+        XX = (if transfer) fit and wants to compete
+        XX = (if artificial) play interest
         any = system on
 
 * 1NT Escape
@@ -1132,7 +1071,7 @@ Situations include:
 1N--(X) = our 1N opening is penalty doubled
     P = ~4+ hcp, creates forcing pass up to 2!h
     XX = to play / penalise, creates forcing pass up to 2!h
-    2C = artificial, no 5 carder unless clubs
+    2C = artificial, no 5 carder unless clubs, later XX sos maybe 3 suiter
         2x = cheapest 5 card or 4 card suit
     2DHS = ~0--4 hcp, natural escape
     2N = artificial, 5--5 GF
@@ -1143,7 +1082,7 @@ Situations include:
 (1x)--1N--(X)
     P = happy to play
     XX = to play / penalise, creates forcing pass up to 2!h
-    2C = artificial, no 5 carder unless clubs
+    2C = artificial, no 5 carder unless clubs, later XX sos maybe 3 suiter
         2x = cheapest 5 card or 4 card suit
     2DHS = ~0--4 hcp, natural escape
     2N = artificial, 5--5 GF
