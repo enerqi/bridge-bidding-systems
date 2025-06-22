@@ -747,7 +747,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
             3DH = natural, forcing
             3S = 6+ cards, slam interest
         3CD = natural game force, good 18/19+
-        3H = 6+!hs, 6.5--7.5 playing tricks, ~14--17 hcp
+        3H = 6+!hs, good 6.5--7.5 playing tricks, ~15--17 hcp
         3S = double raise, ~15--17 hcp
         4CD = splinter, shortage, 4+!ss support
         4H = 6+!hs semi-solid or better, with 4!ss
@@ -755,8 +755,14 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
     1N = ~6--11 hcp, denies 4!ss, includes bad(~5--6 hcp) 3 card raises
         P = minimum balanced ~12--14 hcp or 4--5--2--2 or 4--5--3--1 singleton A/K
         2CD = usually natural ~12--17(bad 18) hcp, maybe 3 cards with 4--5 majors and 3--1 minors
+            2H = simple preference, sometime false preference (2 !hs, 4 card minor support, waiting to see if extras)
+                2S/3om = quasi natural (maybe 3 cards), extras ~16--17(18) hcp
+                2N = semi-balanced ~16--17(18) hcp
+            2S = (advanced) impossible 2S (responder skipped 1!s bid), very good invitational minor support, ~11--12 hcp
+            3m = natural raise ~8--10 hcp
         2H = 5+ cards (may have 4!ss without strength for reverse)
-        2S = natural reverse, ~17+ hcp, forcing
+            4H = 3 card limit raise or better
+        2S = natural reverse (uncomfortable bidding 2N if only 4!ss), ~17+ hcp, forcing
             2N = (advanced) blackout, relay to 3C, weak hands
                 3C = semi-forced
                     P = weak long !cs
@@ -769,7 +775,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
         3CD = natural game force, good 18/19+
             3H = preference
             4H = 3 card limit raise hand (not fast arrival)
-        3H = 6+!hs, 6.5--7.5 playing tricks, ~14--17 hcp
+        3H = 6+!hs, good 6.5--7.5 playing tricks, ~15--17 hcp
         3S = auto-splinter, excellent !h suit, shortage, maximum
         4CD  = auto-splinter, excellent !h suit, shortage, maximum
         4H = 6+!hs, maximum, ~18--20
@@ -964,13 +970,24 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
 1S = 11--21, 5+ !ss
     1N = ~6--11 hcp, includes bad(~5--6 hcp) 3 card raises
         P = minimum balanced ~12--14 hcp
-        2CDH = natural, ~12--17(bad 18) hcp
-        2S = 6+!ss, minimum
+        2CD = natural, ~12--17(bad 18) hcp, if also 6+ !ss then extra values
+            2S = simple preference, sometime false preference (2 !ss, 4 card minor support, waiting to see if extras)
+                3om/3H = quasi natural (maybe 3 cards), extras ~16--17(18) hcp
+                3S = 6--4 extra values
+            3m = natural raise, fairly wide range (no impossible 2!s bid available)
+        2H = natural, show before 6 card !s suit (unlike minors where depends on strength)
+            P = preference, maybe very weak 3 !hs and 2!ss (not want partner rebid again with a max)
+            2S = preference
+                2N = semi-balanced maximum ~16--17(18) hcp
+                3H = 5 !hs, extras ~16--17(18) hcp
+            3C = weak long !cs
+        2S = 6+!ss, minimum, may have side 4 card minor
+            4S = 2 card GF values or 3 card limit raise
         2N = 18--19 balanced
         3CDH = natural game force, good 18/19+
             3S = preference
             4S = 3 card limit raise (not fast arrival)
-        3S = 6+!ss, 6.5--7.5 playing tricks, ~14--17 hcp
+        3S = 6+!ss, good 6.5--7.5 playing tricks, ~15--17 hcp
         4CDH  = auto-splinter, excellent !s suit, shortage, maximum
         4S = 6+!ss good suit, maximum, ~18--20
     1N = (passed hand) 5--9 hcp
@@ -1905,17 +1922,17 @@ vulnerable).
 
 Show ask for specific kings (not count of Kings), with all 5 keycards held by our side
 
-6x = lowest side K, 1 or 2 Kings
-6slam = no side K
-6N = 3 Kings
+- 6x = lowest side K, 1 or 2 Kings
+- 6slam = no side K
+- 6N = 3 Kings
 
 *** Queen Ask after RKB 5CD Response
 
 The *next bid* up that is *not the trump suit* asks for the trump queen
 
-trump = bid our trump suit without iut
-5N = yes, but no side suit Kings
-otherSuit = yes trump queen, shows King in that side suit
+- trump = bid our trump suit without it
+- 5N = yes, but no side suit Kings
+- otherSuit = yes trump queen, shows King in that side suit
 
 *** New Suit 3rd Round Control Ask for Grand
 

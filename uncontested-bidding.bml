@@ -924,7 +924,7 @@ By responder example:
 - rule 19, but can downgrade some 10 hcp hands
 - a minimum 5!h and 6!c/!d may show a 5--5 hand bidding !h first
 
-1H = (10)11--15, 5 card Major
+1H = 10+--15, 5 card Major
   (any) = [interference](#1H interference)
   1S = [natural, 5+ cards when GF, maybe weak !d canapé](#1H--1S)
   1N = [non-forcing, ~5--11 hcp](#1H--1N)
@@ -949,6 +949,7 @@ By responder example:
 ** 1H--1S
 
 - maybe weak !d canapé, as well as any strength
+- NOT weak with long 6/7 !cs, usually better to bid 1N so can escape to !cs over a 2D rebid when 4--1--2--6 / 4--1--1--7
 - in-between hands uncertain of level likely to show 3 card !h support immediately
 - 4 !ss + 3+ card !h support is possible with GF values - it's easier to control the auction
 
@@ -1909,7 +1910,7 @@ at the 3 level.
 - rule 19, but can downgrade some 10 hcp hands
 - a minimum 5!s and 6!h may show a 5--5 hand bidding !s first
 
-1S = (10)11--15, 5 card Major
+1S = 10+--15, 5 card Major
   (any) = [interference](#1S interference)
   1N = [non-forcing, ~5--11 hcp](#1S--1N)
   2C = [GF, nebulous natural or balanced 2+ !cs (passed hand 3-card Reverse Drury raise)](#1S--2C)
