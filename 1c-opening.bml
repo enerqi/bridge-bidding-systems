@@ -12,7 +12,7 @@
     [1HS](#1C--1HS) 8+ hcp, 4+ card suit, denies 2!d response, unbal if 12+, maybe longer minor when not GF
     [1N](#1C--1N) 8+ hcp, !c transfer, when GF maybe 4!cs and longer !ds, when limited denies 1HS canapé response
     [2C](#1C--2C) 8+ hcp, !d transfer, when limited denies 1HS canapé response, not GF 5!ds and 4!cs
-    [2D](#1C--2D) Balanced GF, (10)11--15/19+ hcp, no 5cM, when 12+ maybe 4!hs/!ss, when 14+ maybe 5!cs/!ds
+    [2D](#1C--2D) Balanced GF, 10+--15/19+ hcp, no 5cM, when 12+ maybe 4!hs/!ss, when 14+ maybe 5!cs/!ds
     2H ~4--7 hcp, good weak two (2+ honours), continue as if opened [2H preempt](#2H Opening Responses)
     [2S](#1C--2S) ~9--11 hcp invitational !cs + !ds, minors + any short major, does not want to play 2N
     [2N](#1C--2N) 16--18 hcp, natural maybe 5 card major, [2NT system on](#2NT Opening)
@@ -387,7 +387,7 @@ Acol two strength 6--5 two suiter:
   is already possible canapé and only one side of the partnership ever does canapé bidding
 
 
-1S = (over 1!h) natural weak/strong, F1, 5+ *unbalanced* suit if strong (NOT canapé), not 3+ !hs if strong (use 2!d)
+1S = (over 1!h) natural weak/strong, F1, 5+ *unbalanced* suit if strong (NOT canapé)
     1N = ~8--9 hcp
     2C = puppet to 2!d v.s. weak NT, mostly weak !ds or invitational hands
         2D = completed, weak NT
@@ -397,6 +397,8 @@ Acol two strength 6--5 two suiter:
             3other = invite with 5--5 (5--4 not special enough)
         2H = strong, 5 card !s suit, Hx !h support (use 2!d if 3+)
         2S = natural, strong, 6!ss
+        3S = self-sufficient, extras, slam try
+        4S = extra long suit, ~8--9 PT, distributional, weaker than Acol two
         other = strong 16+
     2D = artificial GF, natural continuations
         2H = weak NT, 3 card support
@@ -408,6 +410,7 @@ Acol two strength 6--5 two suiter:
         3CD = natural, strong, 5--4+
         3H = extras, Ax/Kx !hs
         3S = self-sufficient, strong, extras
+        4S = (maybe with poor outside controls) extra long suit, ~8--9 PT, distributional, weaker than Acol two
         4other = self/auto-splinter, slam try
     2H = minimum, 6 carder
         3H = invite
@@ -490,12 +493,13 @@ Acol two strength 6--5 two suiter:
             3N = stops
         3CD = 6 carder, ~16--19, denies a major, maybe 4 card other minor
         3HS = auto-splinter 5--5 minors, ~(19)20+ hcp
+        4CD = natural extra long suit, ~8--9 PT, distributional, weaker than Acol two
     2HS = natural 6+ suit
     2oM = natural 5--5 majors
     2N = artificial, 3+ both minor, at least mild slam interest
     3CD = natural 5--5 major + minor
     3M = good 7+ suit, sets trumps
-2D = GF, 3+ support but 6!hs + 3!ss bids 2!h over 1!s, "Odwrotka",
+2D = GF, 3+ support, but 6 card other major bids naturally, "Odwrotka",
     2H = strong, ~12+, other bids are ~8-11
         2S = relay
             any = as immediate responses over "Odwrotka", but 12+ hcp
@@ -588,30 +592,34 @@ Acol two strength 6--5 two suiter:
         3CD = natural, extras (bid 2N ask with less)
         3H = natural 6+ cards
         3S = 3 card support and 6 !hs
+        4H = extra long suit, ~8--9 PT, distributional, weaker than Acol two
     2N = 6+ !ss, not worth 3!s, maybe wants to play 4!s
         3CD = quasi-natural
         3S = 3 card support and 6 !hs, bid something else with 2 card support
+        4H = extra long suit, ~8--9 PT, distributional, weaker than Acol two
     3CD = 5+ cards canapé OR 5-5, extras
         3S = 3 card support and 6 !hs
+        4H = extra long suit, ~8--9 PT, distributional, weaker than Acol two
     3N = natural, ~8--11 fast arrival including 5!ss with outside stops
     3S = self-sufficient suit, slam try interest
-    4HS = to play
-2S = (over 1!h) 6+ !ss and 3!hs
-    3CD = natural, canapé
-    3HS = sets the trump suit
-        3N = serious, control asking
+    4HS = to play, usually bad controls fast arrival
+2S = (over 1!h) self-sufficient, extras
 2N = 21+ balanced / 21+ 4--4--4--1 singleton in partner's major
     any = [NT Scheme](#2NT Opening)
 3C = 6+ !cs, single suited, 20+
 3D = 6+ !ds, single suited, 20+
-3H = (over 1!s) self-sufficient, extras
-3M = 5(+) card support, unbalanced ~16--18, probably with side suit
-    suit = good fragment or natural length
-    3N = serious
+3M = unknown splinter, 4+ card support, ~16--18
+    3N = shortage ask
+        4CD = !c/!d shortage
+        4H = other major shortage
+    other = control bid, no interest in shortage
     4M = fast arrival
+3H = (over 1!s) self-sufficient, extras
+    3N = serious
+3S = (over 1!h) splinter, 4+ card support, ~19--21 hcp
 3N = 4--4--4--1 singleton in partner's major, 16--20 hcp
-4x = extra long suit, ~8--9 PT, distributional, weaker than Acol two
-4M = raise with 5 card max weak NT
+4x = splinter, 4+ card support, ~19--21 hcp
+4M = weak NT, 5 card support
 
 ** 1C--1N
 
@@ -695,18 +703,21 @@ Acol two strength 6--5 two suiter:
 **** Interference over 1C--1N
 
 1C--(P)--1N-
-    (X) = whatever
+    (X) = whatever, usually takeout
         P = weak, doubleton
             XX = retransfer ask
-        XX = to play / values
-        2C = weak, 3+ cards
+        XX = strong, 3+ cards, system on
+        2C = weak, 3+ cards, system on
         other = system on
     (2C) = bidding partners transfer suit
         P = weak, doubleton
         X = weak, 3 cards
+        other = system on
     (bid)
         P = weak, no stop
-            X = takeout by responder up to 3!s
+            X = values by responder up to 3!s
+            2x = competitive
+        3C = 3+ card support, reasonable game chance
         NT = stop, no penalty interest
         X = penalty
 
@@ -774,18 +785,21 @@ Acol two strength 6--5 two suiter:
 **** Interference over 1C--2C
 
 1C--(P)--2C-
-    (X) = whatever
+    (X) = whatever, usually lead directing
         P = weak, doubleton
             XX = retransfer ask
-        XX = to play interest (4 very good or 5 reasonable)
-        2D = weak, 3+ cards
+        XX = strong, 3+ cards, system on
+        2D = weak, 3+ cards, system on
         other = system on
     (2D) = bidding partners transfer suit
         P = weak, doubleton
         X = weak, 3 cards
+        other = system on
     (bid)
         P = weak, no stop
-            X = takeout by responder up to 3!s
+            X = values by responder up to 3!s
+            2x = competitive
+        3D = 3+ card support, reasonable game chance
         NT = stop, no penalty interest
         X = penalty
 
@@ -922,8 +936,10 @@ Similar shape to 1N--3H/3S but invitational values.
 
 **** Interference over 1C--2S
 
-1C--(P)--2S--(X) !s normally
+1C--(P)--2S--(X) !ss normally
     P = weak, no stop
+        2N = stop, implies !h shortage
+        other = as over 2N, implies !s shortage
     XX = to play interest (4 very good or 5+ reasonable)
     2N+ = system on, but !s stop implication
 
@@ -1304,6 +1320,10 @@ Compared to the [1D opening interference](#1D interference):
     2N = jump 2NT limit plus raise system as over 1M
     3H = weak 5 card max support
     others = strong
+
+*** 1 level double by 4th
+
+... system on
 
 **** Suit bid where opener can support responder at 2 level after interference:
 
