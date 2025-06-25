@@ -997,27 +997,34 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
     4HS = natural
 
 1N--(P)--2C
-    (X)
-        XX = to play interest, good !c (4 very good or 5 reasonable)
-            2D = 3 suiter short in !c (was going to pass a 2!d response)
-            2M = natural, forcing
-            3D = long !d + 4 card major
-        P = !c stopper, Hxx+, responder can cooperate and play 2C doubled
-            XX = re-ask Stayman
-            2D = 3 suiter short in !c (was going to pass a 2!d response)
-            3D = long !d + 4 card major
-        2D+ = no !c stop, normal Stayman responses.
+    (X) = lead directing (usually)
+        XX = good 5 card !c suit, to play interest, no major
+            2D = garbage stayman hand, escape
+            2H = system on, weak majors
+            2S = system on, 5 card !s invite
+        P = no stop, denies stop
+            XX = stayman re-ask WITH single suit TRANSFER responses, invite plus values
+                2D = !hs, put lead directing doubler on lead
+                2D = !ss
+                2S = no major
+                2N = both majors
+            2D = garbage stayman hand, escape
+            2H = system on, weak majors
+            2S = system on, 5 card !s invite
+        2DHS = with stop, usual responses
     (2!d)
-        P = nothing/penalty pass
-        X = negative
+        P = no penalty, no major
+            2H = system on, weak majors
+            2S = system on, 5 card !s invite
+            2N = invitational, maybe no stop
+        X = penalty (all doubles penalty by our side with stayman interference)
         2H+ = system on. System remains on if opponents bid no more, pretend opener bid 2!d.
     (2!h!s)
-        X = negative
-        2S = 5 !ss
+        X = penalty (all doubles penalty by our side with stayman interference)
+        2S = system on
         3H = 5 !hs (over 2!s)
     (3x)
-        P = neutral
-        X = negative
+        X = penalty
         3HS = 5 card major
         4H = (over 3!s) 5 card major
 

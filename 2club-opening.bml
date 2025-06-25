@@ -259,6 +259,20 @@ Responding:
     XX = 5!d
     others = system on
 
+2C--2N--(X)
+    P = sub-minimum, system on
+    3C = minimum, system on
+    XX = maximal, system on
+
+2C--3C--(X)
+    XX = penalty interest
+    P = minimum, no support
+
+2C--3D--(X)
+    XX = side 5 card !d suit likely, to play interest, no major support
+    P = minimum, no 3 card major support
+    3HS = minimum, 3 card support
+
 2C--(P)--P--(2x)
     X = takeout
 

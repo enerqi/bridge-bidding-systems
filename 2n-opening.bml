@@ -324,17 +324,41 @@ hand so will NOT transfer break.
     Bids = GF
 
 2N--3C--(X)
-    P = to play with some support from partner
-        XX = by responder, rescue
-    XX = to play interest
-    3D = no !c interest, no major
-    3M = 5 card major, if want to show it
+    XX = to play interest, good 5 card !c suit, no major
+    P = no stop
+        XX = stayman repeat
+    others = with stop, system on
 
-2N--3C--(Others)
+2N--3C--(higher)
     X = penalty
+
+2N--3C--(3D)
+    P = as systemic 3D bid
+    X = penalty
+    other = system on
+
+2N--3C--(3H)
+    X = penalty
+    P = nothing special
+        X = penalty
+        3S = artificial waiting, stop ask
+    3S = 5!ss
+    3N = 4!ss (not usual 4--4 majors)
+
+2N--3C--(3S)
+    X = penalty
+    4H = 5!hs
+    3N = natural, stop
 
 2N--3DH--(X)
     P = doubleton support
         XX = retransfer by responder
         3M = to play
+        newSuit = NF, competitive
     XX = fit, something extra, but not worth transfer break
+
+2N--3DH--(higher)
+    P = nothing special
+        X = values, sitting under, can start a force or stop ask
+        3x = competitive
+    X = penalty
