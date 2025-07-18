@@ -157,7 +157,7 @@ Opening the flatter hands across you entire weak two point range makes your bidd
 
 To make your preempt easier to respond to:
 
-- do not have 2 Aces with a near maximum point count hand, or if you do then have no singleton and no King
+- do not have 2 Aces with a near maximum point count hand, or if you do then have no singleton and no side King
 - do not have 3 cards with 2 honours in the other major (perhaps you don't have enough strength in your long suit)
 - do not have values in 3 suits, they should be more concentrated in your suit
 - keep the point range fairly small, e.g. 4 point range, not wider ones like 5--9 / 4--9 / 5--10 etc.
@@ -167,13 +167,13 @@ To make your preempt easier to respond to:
 - decide when to open a 6 card suit at the one level...
 
 Having no gap between your weak two bids and 1 level openings actually helps you to be constructive and to bid more!
-Having a hand too good to open a weak two and too bad to open at the one level makes no sense. This may happens if your
+Having a hand too good to open a weak two and too bad to open at the one level makes no sense. This may happen if your
 normal point range is quite low, e.g. 6--9 hcp (so what about 10 hcp?), and you cannot see it as worth upgrading to a 1
 level opening.
 
 Why can we bid more by having no gap here? Hands closer to 10 hcp are more frequent than e.g. 5 or 6 hcp (those are less
 frequent). For that reason choosing a 7--10 hcp range maybe better than a common 6--9 hcp range. For this very reason,
-players may play a weak two opening as 8--11 hcp - it makes their 1 level opening bids more constructive - when they show a 6
+partnerships may play a weak two opening as 8--11 hcp - it makes their 1 level opening bids more constructive - when they show a 6
 card major their partner knows they have 12+ points (again, perhaps 11 hcp if they have 2 Aces or a singleton).
 
 *** How to choose whether to upgrade a hand on the border, e.g. 10 hcp when playing a 7--10 hcp range?
@@ -437,7 +437,7 @@ artificial bid, so there is no natural invite bid available, but gets back many 
 system, if the opponents overcall 2H over our 1N opening:
 
 1N--(2!h)
-    Dbl = penalty
+    Dbl = takeout
     2S = non-forcing
     2N = natural, stop
     cue = GF waiting, often stop asking or wants a 4 card major bid
@@ -710,6 +710,15 @@ balanced and reverses as a good 14+ hcp. What is a 2M rebid or 2N and what is a 
 You may already have a clear idea, but does your partner? In brief, there are two main styles, roughly strength showing
 v.s. shape showing. These may be called Lawrence style and Bergen style.
 
+Note, with either style we focus on finding the right game before slam bidding. The bidding system and continuations
+after 2-over-1 is setup to prioritise finding these types of games in this order:
+
+- 8+ card major fit
+- 3N
+- 7 card major fit (this can work well when we have enough top cards and when the short trump hand is likely to ruff)
+- 5CD
+
+
 With the shape showing Bergen style after a 1H/1S opening:
 
 1M--2x = 2/1 response
@@ -744,6 +753,17 @@ work out strength later with conventions like Serious 3N and Last Train. There a
 "Schuler shift" (a 2N rebid is artificial showing a 6+ card major) that try to work around the problems with both these
 approaches, but will add complexity and have other downsides.
 
+*** Jump 3N Bids as 16--17 hcp
+
+Any jump 3N by opener or responder in a 2/1 GF auction can be agreed to show ~16--17 hcp. For opener this is an
+alternative to playing the jump rebid as 18--19 balanced. This is not fast arrival by responder!
+
+It's rare we want to take up the space and risk missing some slam. Hands around the 16--17 hcp range are never quite
+good enough for quantitative 4N bids but can often miss a slam if partner also has a similar point range. If opener has
+18--19 balanced they can bid a slow 2N (i.e. could be 12--14 or 18--19) then raise quantitatively to 4N with the big
+18--19 hand.
+
+
 *** 1D--2C
 
 This promises 5+ !cs and a game forcing hand.
@@ -758,10 +778,10 @@ Shape showing style for this:
   3D = semi-solid+ suit, max 1 loser, 16+ hcp (not setting trumps as over 1M then 3M rebid)
   3HS = splinter, shortage and !c support, no extra strength needed
 
-2D is rebid first, up the line, where a long !d suit is held.
+We rebid 2D first, up the line, where a long !d suit is held.
 
-2HS are usually balanced (unless 4--4--4--1). In our base system it would promise some extra strength, 14+, but not
-here.
+The 2HS rebids are usually balanced (unless 4--4--4--1). In our base system it would promise some extra strength, 14+,
+but not here.
 
 Whether you push 18--19 balanced through 2N to save space and go slow or bid 3N instead is up to you.
 
@@ -1053,9 +1073,11 @@ can jump to 3D to show the invitational !d hand.
 1M--3D = limit raise, 4+ card support
   3M = sign off
   4M = accept game invite
-  3oM = shortage ask, slam try
-  3N = showing other major shortage, slam try
+  3oM = (optional) shortage ask, slam try
+  3N = (optional) showing other major shortage, slam try
   4CD = showing shortage, slam try
+
+Note we have less need for Serious 3N after a limit raise - responder is well defined.
 
 *** Jacoby Plus
 
@@ -1344,7 +1366,7 @@ fits less likely. We focus on the easier to remember xyNT here.
     2HS = (advanced) good !ds, maximum, 3 card major support or 4 card new major
   2D = game forcing, Checkback (next show 3 card major support or a new 4 card major)
     2N = no 3 card major support, no 4 card other major
-  2H = to play
+  2H = weak, natural
   2S = (after 1!s response) to play
   2S = (after 1!h response) 4--4 majors invite
   2N = relay to 3C
@@ -2145,6 +2167,141 @@ In short, we do not have to show support, there maybe far more important things 
 - our hand is very defensive, too many values in the opponents suits
 - our hand is very balanced and minimum, e.g. 4--3--3--3
 - our hand is very balanced with a double stopper so worth playing NT
+
+* Reverse Continuations
+
+** Problem
+
+After a reverse rebid (showing a 2nd suit at the 2 level that is higher ranked than our first suit) we have shown a hand
+that's worth roughly 17+ hcp (distribution and concentration of values depending) with the second suit always being
+shorter than the first suit (we always open the higher of two equal length suits). Partner's initial response does not
+promise enough values for game as they may only have 4--6(7) hcp opposite ~17 hcp. So, reverse rebids do not create a GF
+(in contrast a jump shift rebid does create a GF). Auctions can be awkward as we try to sort out part score vs game vs
+slam try hands.
+
+Our base system uses the Blackout 2N convention (2N relays to 3C, but can be broken by a 19/20+ hcp hand) after a
+reverse to show all weak options. Any other bid except 2N for responder's rebid is constructive, GF:
+
+- responder rebidding their own suit is constructive, 5+ cards. Note, as we are playing weak jump shift responses over
+  opener's bids we are unlikely to have a 6 card major and a weak hand
+- responder's jump rebid sets their own suit (a max 1 loser suit)
+- raising is game forcing, if it's a major raise the Serious 3N convention is on
+- the familiar FSF convention is available
+- preference to opener's first suit agrees that suit, though 3N may be chosen
+
+Blackout is fairly mechanical and so easy to understand. Lebensohl in this situation is basically the same, another 2N
+bid to show a weaker hand. The problem with Blackout or similar is that it's hard to find some part scores, e.g. how do
+we find a 5--3 major fit (assuming responder has a weak hand with a 5 card major) without potentially bypassing the best
+contract. Sometimes 2N is actually the best partscore. Even when opener has the values to GF (~19/20+ hcp) then the 3N
+contract is often wrong-sided by responder using 2N for weaker hands. A rarer concern could be slam hunting when
+responder has a 5--5, then FSF for responder's rebid gets in the way.
+
+Note, a very natural approach to bidding over a reverse will find part scores easily - simple raising partner's first or
+second suit, bidding 2N or rebidding 2M can all be NF. Without any conventional bid we now have a different problem -
+it's harder to set a GF and investigate slam. How to show our own strong trump suit and look for slam or make a forcing
+raise of partner's suit? Stop checking is available if you still play FSF (some play natural here). Overall the natural
+limit bidding approach is fine if missing slams is not a concern.
+
+** Solution
+
+After a 1x--1y--2z reverse auction (we're ignoring 1N responses for the moment) responder's rebids include:
+
+- supporting partner's first or second suit is GF (the same as with Blackout)
+- responder's 2M rebid is shape showing 5+ cards - weak OR GF
+- the LOWER bid of EITHER the 4th suit OR 2N is a weak braking bid
+- where the 4th suit is not the weak braking bid, the 4th suit is natural showing a GF 5--5 hand
+
+Note, bidding will be as ECONOMICAL / space saving as possible! What responder bypasses / skips in their rebid they deny
+having.
+
+- Responder skipping past 2M to bid the lower of the 4th suit or 2N denies a 5 card major
+- The other way around, skipping the weak braking bid if it's lower than 2M shows a GF hand
+- bidding 2N if the 4th suit is lower, is simply a GF waiting bid (no support for partner's suits, no 5 card major),
+  maybe no stop as FSF is not available for responder's immediate rebid
+
+Later, after responder's rebid the bidding is natural and FSF is back on.
+
+*** After 1N Response - 3rd Suit Weak Braking
+
+After a 1x--1N--2y reverse there is no 4th suit so this time we use the cheaper 3rd suit or 2N as the weak braking bid.
+
+*** 1H--1N--2S Exception
+
+- 2N is responder's catchall GF bid
+- 3x is NF
+
+
+* Jump Reverses
+
+What does an auction like 1C--1S--3H actually mean? Consider the following:
+
+- 1D--1H--1S is non forcing, ~11--17(18) hcp. Our base system would describe this as an unbalanced hand and require you
+  to bid 1N with a balanced hand. Other partnerships may prefer to always bid the 4 card major even with a balanced hand
+- 1D--1H--2S (or 1C--1D--2H) are 2 level jump reverses. These are natural GF rebids, similar to non-reversing jump shift
+  rebids (e.g. 1H--1S--3D). In these auctions we have to jump to differentiate the non-forcing from the GF hands. Note,
+  some pairs choose to play a 1 level reverse as forcing for one round in which case these comments don't quite apply
+
+This just leaves a 3 level jump reverse to be defined. The important point is that we can already GF with a simple
+(non-jump) 2 level reverse, e.g. 1C--1S--2H, therefore the 3 level jump reverse 1C--1S--3H does not need a natural limit
+bid meaning.
+
+If you had no special agreements at all then something like 1C--1S--3H would likely be treated as a normal GF splinter,
+but just started at a lower level leaving more room to investigate slam. This is a reasonable choice.
+
+A couple of suggested options follows. Of the two options the (mini)splinter is more frequent but the artificial minor
+single suited GF is much more useful when it comes up, so select (2) if unsure and find it easy enough to remember.
+
+** (1) Mini-Splinter or Splinter
+
+A mini-splinter is an invitational raise by opener, typically done in support of a major response.
+
+The 1C--1S--3H rebid is a mini-splinter as you can still stop in 3M (3!s) when you have support and a !h singleton.
+
+The 1D--1H--3S rebid is a splinter as you have gone past 3M (3!h).
+
+Note, as we still need rebids such as 1D--1H--3C as a natural GF jump shift, then we don't have all the mini-splinters
+available. These are the possible mini-splinter auctions that support a major:
+
+- 1C--1S--3D
+- 1C--1S--3H
+- 1C--1H--3D
+- 1D--1S--3H
+
+...
+
+- No 1C--1H then !s mini-splinter, only a normal splinter
+- No 1D--1H then !s mini-splinter, only a normal splinter
+- No 1D--1S then !c mini-splinter, only a normal splinter
+
+Not all the options unless you restructure your agreements to make 1x--1y--1z (e.g. 1D--1H--1S) suit bids forcing, which
+is hard to recommend, though might be playable paired with something like the XYZ convention - an extended way to play
+[Two-Way New Minor Forcing xyNT](#Two-Way New Minor Forcing xyNT)
+
+** (2) artificial minor single suited GF
+
+For all those awkward hands that need to force to game but don't necessarily want to skip past 3N and indeed may want
+to investigate slam.
+
+Minor suits such as AKQxxxx with a side AK may have 9 playing tricks in strength. Generally we won't open a GF 2C
+without enough tricks for game minus 1 (9 for a major, 10 for a minor), so we need better hands with minor single
+suiters and at the same time are more likely to want to play 3N as it only needs 9 tricks with the right stops from
+partner.
+
+- 1C--1D--3H
+- 1C--1H--3S
+- 1C--1S--3H
+- 1D--1H--3S
+- 1D--1S--3H
+- 1D--1N--3H
+
+These rebids can all be used to show GF minor single suiters.
+
+Not on after opening a major, e.g. 1H--1S--?, 1H--1N--?, 1S--1N--?. These auctions don't give us room for these special
+bids. 1H--1S--4C, 1H--1N--3S or 1S--1N--4C would usually be played as a standard splinter with major support.
+
+Note, you may have better options after a 1H/1S opening if playing [Gazilli](#Gazilli - Rebidding Good Hands), but it is
+more complicated.
+
 
 * Equal / Minimum Level Conversion Doubles
 
