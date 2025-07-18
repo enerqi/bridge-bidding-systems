@@ -123,13 +123,16 @@ Responding:
             3N = NF, opener can bid more with extra strength
             4D = Redwood
             4N = quantitative
-        3N = no shortness, not good for slam
+        3N = !d shortage with !hs
+        4C = !d shortage with !ss
+        3N = no shortness, not good for slam (fix must have a shortage)
             4D = Redwood
             4N = quantitative
         4C = no shortness, good hand
             4D = Redwood
             4N = quantitative
         4D = short !d, good hand
+            4N = Redwood
     3HS = 5 cards natural, GF
         new = shortness and support
     3N = to play, everything stopped

@@ -179,6 +179,7 @@ Acol two strength 6--5 two suiter:
                         4H = have !hs
                 3D = 6+ !ds, no shortage, GF single suiter
                 3H = 6+ !ds, short !hs, GF
+                    3S = natural
                     4D = NF
                 3S = 6+ !ds, short !ss, GF
                     4D = NF
@@ -1218,7 +1219,7 @@ Compared to the [1D opening interference](#1D interference):
         2N = minors
         3x = strong, good 6+ suit
     X = penalty
-    2C = Majors [as weak 1N defence](#Opponents open 1NT)
+    2C = Landik, Majors [as weak 1N defence](#Opponents open 1NT)
     2DH = transfer
     2S = artificial, 5--4 minors
         2N = longest ask
@@ -1348,23 +1349,6 @@ Compared to the [1D opening interference](#1D interference):
     3D = cue, general strong force
     3H = acol 2
     3S = invitational, support ~16--18
-
-**** Good-Bad 2N response to opener's re-opening double:
-
-- Not scrambling with multiple places to play, but distinguishing strength.
-- good major and a weaker minor goes by 2N
-- direct minor is good, direct major is competitive
-
-1C--(1S)--P--(2S)
-    Dbl = re-opening
-        2N = good !hs max (or extras with 5 !hs) bid OR a weak minor
-        3CD = good minor
-        3H = competitive !hs bid
-
-1C--(2S)--P--(P)
-    Dbl = takeout
-        2N = Transfer Lebensohl etc. (here playing as defending 2S opening)
-
 
 **** 2N over 2DHS interference by 4th hand:
 

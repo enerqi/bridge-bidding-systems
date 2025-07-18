@@ -106,7 +106,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
             3D = 6+ cards, slam interest, can stop in 3N
                 3HS = cue bid
             3HS = natural, forcing
-        3C = 6+!cs, 6.5--7.5 playing tricks, ~14--17 hcp
+        3C = 6+!cs, 6.5--7.5 playing tricks, ~14--17 hcp, denies 4 card major
         3D = double raise, ~15--17 hcp, denies 4 card major
         3HS = splinter, shortage, 4+!ds support
         4C = 6+!cs semi-solid or better, with 4!ds
@@ -151,7 +151,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
             2DS = natural, forcing one round
             2N = invite, natural
             3N = natural, ~12--15
-        2D = reverse, natural, ~17+ hcp, forcing
+        2D = reverse, natural, ~17+ hcp, forcing, shorter 2nd suit
             2H = constructive 7+, 5+ cards, forcing
             2S = fourth suit forcing, GF
             2N = (advanced) blackout, relay to 3C, weak hands
@@ -162,6 +162,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
             3C = GF preference
             3D = GF support
             3H = GF, self-sufficient semi-solid+, sets trumps
+            3N = stop(s), no slam interest, not shapely
         2H = single raise, ~12--14 hcp with 3 (usually with singleton) or 4 card support
             other = game tries, as 1H--2H
         2S = natural good 18+ unbalanced game force
@@ -175,7 +176,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
             3H = 6+ cards, slam interest
                 3S = cue bid
             3S = 4--4 majors, forcing
-        3C = 6+!cs, 6.5--7.5 playing tricks, ~14--17 hcp
+        3C = 6+!cs, 6.5--7.5 playing tricks, ~14--17 hcp, denies 4 card major
         3H = double raise, ~15--17 hcp
         3DS = splinter, shortage, 4+!hs support
         4C = 6+!cs semi-solid or better, with 4!hs
@@ -223,7 +224,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
             2N = invite, natural
             3S = GF good 6+ suit (use fourth suit forcing with bad suit)
             3N = natural, ~12--15
-        2D = reverse, natural ~17+ hcp, forcing
+        2D = reverse, natural ~17+ hcp, forcing, shorter 2nd suit
             2H = fourth suit forcing, GF
             2S = constructive 7+, 5+ cards, forcing
             2N = (advanced) blackout, relay to 3C, weak hands
@@ -233,7 +234,8 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
                 3x = natural ~20+ hcp
             3CD = GF preference
             3S = GF, self-sufficient semi-solid+, sets trumps
-        2H = reverse, natural ~17+ hcp, forcing
+            3N = stop(s), no slam interest, not shapely
+        2H = reverse, natural ~17+ hcp, forcing, shorter 2nd suit
             2S = constructive 7+, 5+ cards, forcing
             2N = (advanced) blackout, relay to 3C, weak hands
                 3C = semi-forced
@@ -243,6 +245,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
             3CH = GF preference
             3D = fourth suit forcing, GF
             3S = GF, self-sufficient semi-solid+, sets trumps
+            3N = stop(s), no slam interest, not shapely
         2S = single raise, ~12--14 hcp with 3 (usually with singleton) or 4 card support
             other = game tries as 1S--2S
         2N = 18--19 balanced
@@ -253,7 +256,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
                 3S = 3!ss, denies 4!hs
             3DH = natural, forcing
             3S = 6+ cards, slam interest
-        3C = 6+!cs, 6.5--7.5 playing tricks, ~14--17 hcp
+        3C = 6+!cs, 6.5--7.5 playing tricks, ~14--17 hcp, denies 4 card major
         3DH = splinter, shortage, 4+!ss support
         4C = 6+!cs semi-solid or better, with 4!ss
         4S = triple raise 18--19 hcp
@@ -265,6 +268,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
                     P = minimum, !c preference
                     others = minimum, preference
                 3x = natural good ~18+ hcp
+            3N = stop(s), no slam interest, not shapely
             others = GF
         3C = 6+!cs, 6.5--7.5 playing tricks, ~14--17 hcp
         3N = 18--19 balanced
@@ -464,7 +468,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
                 3S = cue bid
             3S = 4--4 majors, forcing
         3C = natural game force, good 18/19+
-        3D = 6+!ds, 6.5--7.5 playing tricks, ~14--17 hcp
+        3D = 6+!ds, 6.5--7.5 playing tricks, ~14--17 hcp, denies 4!ss
         3H = double raise, ~15--17 hcp
         3S = splinter, shortage, 4+!hs support
         4C = splinter, shortage, 4+!hs support
@@ -522,7 +526,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
             2S = invitational ~9--11 6+ suit
             3S = GF good 6+ suit (use fourth suit forcing with bad suit)
             3N = natural, ~12--15
-        2H = reverse, natural ~17+ hcp, forcing
+        2H = reverse, natural ~17+ hcp, forcing, shorter 2nd suit
             2S = constructive 7+, 5+ cards, forcing
             2N = (advanced) blackout, relay to 3C, weak hands
                 3C = semi-forced
@@ -532,6 +536,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
             3C = fourth suit forcing, GF
             3DH = GF preference
             3S = GF, self-sufficient semi-solid+, sets trumps
+            3N = stop(s), no slam interest, not shapely
         2S = single raise, ~12--14 hcp with 3 (usually with singleton) or 4 card support
             other = game tries as 1S--2S
         2N = 18--19 balanced
@@ -543,7 +548,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
             3DH = natural, forcing
             3S = 6+ cards, slam interest
         3CH = natural game force, good 18/19+
-        3D = 6+!ds, 6.5--7.5 playing tricks, ~14--17 hcp
+        3D = 6+!ds, 6.5--7.5 playing tricks, ~14--17 hcp, denies 4!hs
         3S = double raise, ~15--17 hcp
         4C = splinter, shortage, 4+!ss support
         4D = 6+!ds semi-solid or better, with 4!ss
@@ -558,6 +563,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
                     P = minimum, long !cs
                     3D = weak preference
                 3x = natural ~20+ hcp
+            3N = stop(s), no slam interest, not shapely
             others = GF
         3C = natural game force, good 18/19+
         3D = 6+!ds, 6.5--7.5 playing tricks, ~14--17 hcp
@@ -752,7 +758,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
         4CD = splinter, shortage, 4+!ss support
         4H = 6+!hs semi-solid or better, with 4!ss
         4S = triple raise 18--19 hcp
-    1N = ~6--11 hcp, denies 4!ss, includes bad(~5--6 hcp) 3 card raises
+    1N = ~6--11 hcp, denies 4!ss, includes bad(~5--6 hcp) and invite(~10/11) 3 card raises
         P = minimum balanced ~12--14 hcp or 4--5--2--2 or 4--5--3--1 singleton A/K
         2CD = usually natural ~12--17(bad 18) hcp, maybe 3 cards with 4--5 majors and 3--1 minors
             2H = simple preference, sometime false preference (2 !hs, 4 card minor support, waiting to see if extras)
@@ -760,9 +766,10 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
                 2N = semi-balanced ~16--17(18) hcp
             2S = (advanced) impossible 2S (responder skipped 1!s bid), very good invitational minor support, ~11--12 hcp
             3m = natural raise ~8--10 hcp
+            3H = 3 card invite
         2H = 5+ cards (may have 4!ss without strength for reverse)
             4H = 3 card limit raise or better
-        2S = natural reverse (uncomfortable bidding 2N if only 4!ss), ~17+ hcp, forcing
+        2S = natural reverse (uncomfortable bidding 2N if only 4!ss), ~17+ hcp, forcing, shorter 2nd suit
             2N = (advanced) blackout, relay to 3C, weak hands
                 3C = semi-forced
                     P = weak long !cs
@@ -770,7 +777,9 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
                     3HS = weak preference
                 3x = natural ~20+ hcp
             3CD = natural, GF
+            3H = GF, 3 card support support
             3HS = GF preference
+            3N = stop(s), no slam interest, not shapely
         2N = 18--19 balanced
         3CD = natural game force, good 18/19+
             3H = preference
@@ -968,19 +977,21 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
 * 1S Opening
 
 1S = 11--21, 5+ !ss
-    1N = ~6--11 hcp, includes bad(~5--6 hcp) 3 card raises
+    1N = ~6--11 hcp, includes bad(~5--6 hcp) and invite(~10/11) 3 card raises
         P = minimum balanced ~12--14 hcp
         2CD = natural, ~12--17(bad 18) hcp, if also 6+ !ss then extra values
             2S = simple preference, sometime false preference (2 !ss, 4 card minor support, waiting to see if extras)
                 3om/3H = quasi natural (maybe 3 cards), extras ~16--17(18) hcp
                 3S = 6--4 extra values
             3m = natural raise, fairly wide range (no impossible 2!s bid available)
+            3S = 3 card invite
         2H = natural, show before 6 card !s suit (unlike minors where depends on strength)
             P = preference, maybe very weak 3 !hs and 2!ss (not want partner rebid again with a max)
             2S = preference
                 2N = semi-balanced maximum ~16--17(18) hcp
                 3H = 5 !hs, extras ~16--17(18) hcp
             3C = weak long !cs
+            3S = 3 card invite
         2S = 6+!ss, minimum, may have side 4 card minor
             4S = 2 card GF values or 3 card limit raise
         2N = 18--19 balanced
