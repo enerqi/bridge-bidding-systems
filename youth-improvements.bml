@@ -1349,7 +1349,7 @@ There is also the "XYZ" convention, which might be considered another version of
 three 1 level bids such as 1C--1H--1S. In our base system style this example auction would show an unbalanced hand and
 1N maybe rebid with 4!ss to show the balanced hand and limit the strength to 12--14 straight away. Other partnerships
 may prefer to show the !ss immediately as a 4--4 fit can be missed when responder is weak. Note, the Walsh bidding style
-over 1C/1D is to show a shorter major instead of a minor at the 1 level if not invite plus strength, which makes missing
+over 1C/1D is to show a shorter major instead of a minor at the 1 level if not GF strength, which makes missing
 fits less likely. We focus on the easier to remember xyNT here.
 
 1x--1y--1N
@@ -1358,14 +1358,17 @@ fits less likely. We focus on the easier to remember xyNT here.
       P = !d sign off, weak
       2y = 5 card invite
         P = 2 or 3 card support, prefer trump contract
-        2N = prefer NT, minimum
+        2N = maximum, no fit
+          3m = distributional minor side suit
       2N = invite
       3new = 5--5 invite
       3y = 6 card invite
       3N = choice of games (5--3--3--2 with a major)
     2HS = (advanced) good !ds, maximum, 3 card major support or 4 card new major
   2D = game forcing, Checkback (next show 3 card major support or a new 4 card major)
+    2M = agree if bidding 3 card support before 4 card other major or just lowest bid first
     2N = no 3 card major support, no 4 card other major
+    3CD = (optional) show good 5 card minor
   2H = weak, natural
   2S = (after 1!s response) to play
   2S = (after 1!h response) 4--4 majors invite
@@ -2296,12 +2299,28 @@ partner.
 
 These rebids can all be used to show GF minor single suiters.
 
-Not on after opening a major, e.g. 1H--1S--?, 1H--1N--?, 1S--1N--?. These auctions don't give us room for these special
-bids. 1H--1S--4C, 1H--1N--3S or 1S--1N--4C would usually be played as a standard splinter with major support.
+Not on after opening a major, e.g. 1H--1S--?, 1H--1N--?, 1S--1N--?. Bids like 1H--1S--4C, 1H--1N--3S or 1S--1N--4C would
+usually be played as a splinter (when responder bids a suit) or self/auto-splinter over 1N (which is another form of
+single suited GF, but requires a shortage).
 
 Note, you may have better options after a 1H/1S opening if playing [Gazilli](#Gazilli - Rebidding Good Hands), but it is
 more complicated.
 
+** Jump 3N Rebid?
+
+This bid is probably not worth its own section. If you are thinking about jump reverses then this may also come to mind.
+When we play a 2N rebid as 18--19 and opening 2N as 20--21(+) then a jump to 3N is not needed to show a strong balanced
+hand as it would have done in some older bidding styles (typically 19 hcp exactly).
+
+- 1C/1D--1other--3N is often played as a solid 7 trick minor hand with partial stops in the other two suits. Not the
+  sort of hand that wants to try make 5C/5D without extras from partner. The long minor means we may make game on fewer
+  HCP than usual, without too many top controls.
+
+- 1H--1S--3N is less clear, so perhaps avoid it. When undiscussed we would assume it shows a semi-balanced hand in the
+  19--21 hcp range, not quite worth a 2C opening, but if the hand is that good a jump shift rebid maybe more appropriate
+  (but perhaps we are light in top controls, best values in short suits?).  Showing a solid suit with partial stops is
+  usually done by bidding game, but it could be played with the same meaning as over a minor, perhaps 7--2--2--2 or a
+  shortage in partner's !s suit.
 
 * Equal / Minimum Level Conversion Doubles
 
@@ -2686,6 +2705,28 @@ Over 1C there's the options to use 2D as a reverse flannery bid, though the oppo
 
 1D--2H = 5!ss + 4 or 5!hs weak
 1D--2S = weak jump shift
+
+*** Other Adjustments
+
+If a partnership always rebids a 4 card major instead of 1N in 1x--1y--1z auctions then it may let you come up with
+specific meanings for other auctions. When we always rebid 1S with 4 cards in a 1D--1H--1S auction and we also play
+reverse flannery then some bids have no obvious meaning. Bids done through [Two-Way New Minor Forcing xyNT](#Two-Way New Minor Forcing xyNT)
+can be given some unexpected meanings:
+
+**** 1D--1S--1N--2C--2D--2H
+
+In this two way new minor forcing auction then 2H could be GF instead of the usual expected invitational meaning as
+the 1D--2S takes care of the invite hands.
+
+**** 1D--1S--1N--2H
+
+Not needed for NF weak hands. One special meaning could a very good invite !s invite, meaning that
+1D--1S--1N--2C--2D--2S bid would be a weaker invite implying the need for 3 cards and a max support.
+
+**** 1D--1H--1N--2C--2D--2S
+
+If always rebidding 1S with 4 cards then this 2S can be artificial showing a very good !h invite, so again the alternative
+of 1D--1H--1N--2C--2D--2H would be a weaker invite implying the need for 3 cards and a max support.
 
 
 * 5N Pick a Slam
@@ -4144,10 +4185,6 @@ If you play Gazilli after 1H--1S then the responses focus on the !s support. The
   3CD = 5--5 two suiter, ~14--16
   3H = ~14--16, good 6+ suit
   3S = intermediate raise, some minor singleton
-
-*** Interference?
-
-Stick with Gazzilli-2♣-then-2NT as 18-19 balanced, and just don't have an artificial game-force.
 
 
 * More Esoteric Preempts
