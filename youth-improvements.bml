@@ -1077,7 +1077,16 @@ can jump to 3D to show the invitational !d hand.
   3N = (optional) showing other major shortage, slam try
   4CD = showing shortage, slam try
 
-Note we have less need for Serious 3N after a limit raise - responder is well defined.
+The 3N bid could also be the Serious 3N convention.
+
+**** Giving up both 1M--3C/3D intermediate jump shift bids?
+
+Note, if you give up the 3C bid aswell as 3D (and just bid 1N with both invite minor hands), then it is possible to play
+a 1M--3M raise as preemptive and use the 1-under jump as the mixed raise. Over a 1S opening we can still show a !h
+invite whilst having bid left over to show the general major limit raise.
+
+As noted earlier, these bad hands often encourage the opponents to bid, so may not be a good idea. Preempting is more
+important when the auction is live - the opponents are already overcalling/doubling.
 
 *** Jacoby Plus
 
@@ -1614,6 +1623,53 @@ Slam tries in a major start with a 3 level transfer. Any weaker hands should Tex
 level transfer then 4H/4S implies mild slam interest.
 
 As 4C Gerber is not a great convention we use it show a !d slam try.
+
+*** 2N--3C Stayman
+
+Mostly standard, but given the lack of space we use dedicated bids for 4--4 majors and include some 5--5 major
+hands (strong slam try or just to play game).
+
+3D = no major
+  3H = Smolen OR 5--5 majors best slam try
+    3N = to play, usually 2!ss + 3!hs
+      4H = 5--5 strong slam try
+  3S = Smolen
+  4H = 5--5 majors, to play a game
+3H = 4/5!hs, not !ss
+3S = 4/5!ss, not !hs
+3N = 4--4 majors, minimum would not accept slam invite
+  4DH = transfer to a major
+4C = 4--4 majors, max
+  4DH = transfer to a major
+
+*** 2N--3D Transfer
+
+Again, mostly familiar, but as we have Smolen for 5--4 major GF+ hands, transferring then bidding 3S can be played as
+puppet bid to force 3N and then show more hand types. We're too high to use it as an invite.
+
+3H = normal transfer completion
+  3S = puppet
+    3N = forced
+      4CD = natural, mild slam try
+      4H = 5--5 majors mild slam try (we use stayman with a strong slam try)
+  3N = choice of game, 5 card major
+  4CD = natural, good slam try
+  4H = natural (implies very mild slam interest if playing but not using Texas transfers)
+  4S = (advanced) could play as exclusion keycard blackwood or 0--5--4--4 shape slam try
+  5CD = exclusion keycard blackwood
+others = transfer break, whatever style you like, e.g. show source of tricks
+
+*** 2N--3H Transfer
+
+Here, the 4H continuation is very rare, but we have 5--5 major hands covered by other initial responses.
+
+3S = normal transfer completion
+  3N = choice of game
+  4CD = natural slam try
+  4H = (advanced) could play as exclusion keycard blackwood or 5--0--4--4 shape slam try
+  5CDH = exclusion keycard blackwood
+others = transfer break, whatever style you like, e.g. show source of tricks
+
 
 *** 2N--3S
 
@@ -3992,17 +4048,39 @@ allow showing e.g a 10--11 hcp response at the 1 level.
 
 * 3C--3D Response
 
-Over a 3C opening there is room to fish for a 5--3 major fit with an artificial 3D. Perhaps it's too infrequent to be
-worth remembering.
+Over a 3C opening there is room with an artificial 3D to fish for a 5--3 major fit or alternatively show a varient of
+hands including invite with a major. If bidding a 5 card major instead of 3N then you probably have a good enough suit
+to play 4M with just Hx support, so the second option is probably better.
+
 
 3C
-    3D = (advanced) promises a 5 card major, asking for 3 cards
+    3D = promises a 5 card major, asking for 3 cards
         3H = !h shortage, offering 3 card !s support (so stronger hand can play)
         3S = !s shortage, offering 3 card !h support (so stronger hand can play)
         3N = no 3 card major
         4D = !d void, both majors 3-–3-–0-–7
         4H = !d singleton, both majors 3–-3–-1-–6
     3HS = natural, maybe only 5 cards (6+ cards if playing the 3!d advanced agreement)
+
+3C
+    3D = artificial, 6+ good major invite OR GF strong !ds OR !c invite OR tight 3N Hx !cs
+        3H = pass if !hs, might accept !ss
+            P = !h invite hand
+            3S = !s invite
+            3N = Hx !cs, requires good !cs to play 3N
+            4C = natural invite
+            4D = GF natural long !ds
+        3S = pass if !ss, accepts !hs
+            P = !s invite hand
+            3N = Hx !cs, requires good !cs to play 3N
+            4C = natural invite
+            4D = GF natural long !ds
+            4H = to play, !h invite hand
+        3N = accepts either major
+            4C = natural invite
+            4D = GF natural long !ds
+            4M = to play
+    3HS = forcing, 5+ card suit, can raise with Hx
 
 
 * Gazilli - Rebidding Good Hands

@@ -157,23 +157,26 @@ Responding:
 ** 2HS interference
 
 2HS--(X)
-    XX = penalty/values
+    XX = 2N system
+    P = later penalty double
     2S = NF, natural
     2N = !c transfer, unbreakable, weak sign off OR constructive OR 4+ card lead directing with weak raise
     3C = !d transfer, unbreakable, ...
-    3D = !h transfer, invite if transfer to 3M, ...
-    3H = !s transfer, invite if transfer to 3M, ...
+    3D = !h transfer, invite (often distributional mixed like) if transfer to 3M,
+    3H = !s transfer, invite (often distributional mixed like) if transfer to 3M
     3M = weak limit raise
     3N = to play
     4CD = fit jumps
     4HS = to play
 2H--(2S)
     X = penalty
+    2N = system on
     newSuit = NF
     3S = cue, stop ask
     4CD = fit jumps
 2HS--(3x)
     X = penalty
     newSuit = NF
+    cue = slam try
 2HS--P--(P)--(2!s/3!c!d!h)--P--P
     X = re-opening takeout

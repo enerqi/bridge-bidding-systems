@@ -30,7 +30,7 @@ Responding:
     2D = [enquiry, many invite+ hands](#2D enquiry)
     2HS = natural, NF, 5/6+ suit, ~7--10 hcp, not good invite, unlikely both majors (both majors invite+ use 2!d)
         P = doubleton major support typically
-        2S = natural, NF, 4+ suit, no !h support,
+        2S = natural, NF, 4+ suit, no !h support
         2N = poor major support, maximum and stoppers in other suits, NF
             3x = NF, new suit or escape to !c or major
         3C = singleton major support
@@ -41,48 +41,47 @@ Responding:
         4C = 4 card support, 7--4
         4D/4oM = splinter
         4M = 4 card support, shot at game
-    2N = puppet, !c preempt OR GF single major OR GF 6--4 majors
+    2N = puppet, !c preempt OR some 5--5 GF
         3C = puppet
             P = !c preempt
-            3D = !s GF single suiter
-                3H = stop show
-            3H = !h GF single suiter
-                3S = stop show
-            3S = 6!s + 4!h GF
-            3N = 4!s + 6!h GF
-    3C = !d transfer, invite plus
-        3D = limited
+            3D = both majors 5--5 GF
+            3H = !hs + !ds 5--5 GF
+                3S = !h slam try
+            3S = !ss + !ds 5--5 GF
+                4H = !s slam try
+    3C = 6+ !ds, invite plus
+        3D = decline
             P = weak hand, long !ds
-            3HS = GF, 5--5+ (note 6!d + 4M use 2!d enquiry)
-            3N = 6+ diamonds, natural
-            4D = invitational
+            3HS = quasi natural
+            4C = !c support, GF
             4H = !d RKB
         3HS = quasi-natural, game values
+        3N = accept, something in majors
         4C = good 7+ !c suit, forcing
             4D = !c RKB
             4HS = slam try
             4N = [Double Fit RKB Kickback](#Double Fit RKB)
-        4D = strong !d support
+        4D = strong 4+ card !d support
             4H = !d RKB
             4N = [Double Fit RKB Kickback](#Double Fit RKB)
         4HS = natural, 6--5 hand
-    3D = 5--5+ majors, invite+
-        3HS = 2 or 3 card support, not game values
-            oM = other major shows 6--5, other game suggestion
-            3N = something in !d aswell
-            4C = forcing, 2 or 3 !c support. Opener can choose !c or major game.
-            4D = cue bid, slam try in major
-        3N = good !d, no major
-        4C = !c only, NF
-            4D = !c RKB
-        4D = !h transfer, game values 3 card support or most 4 card support
-            4H = happy to play
-        4H = !s transfer, game values 3 card support or most 4 card support
-            4S = happy to play
-                4N = RKB
-    3HS = invitational, good suit invite e.g. AQ10xxx / KJ10xxx, (passed hand = 6--4 majors invite)
+    3D = 6+ !hs, invite plus OR 6!h + 4!s GF
+        3H = decline
+            3S = 6!h + 4!s GF
+            4C = GF natural
+        3S = natural, will try 4H otherwise
+        3N = accept, no support
+        4S = freak 6--5
+    3HS = (passed hand) 6--4 majors invitational
+    3H = 6+ !ss, invite plus
+        3S = decline
+        3N = accept, no support
+        4D = accept, control bid
+        4H = rare natural, 6--5
+        4S = fast arrival
+    3S = 6!s + 4!h GF
     3N = to play, opener can bid on with lots shape and strength
-    4C = preempt
+    4C = mixed, not purely obstructive, opener can raise with good shape + extras
     4D = Redwood for clubs
     4HS = to play (passed hand = fit jump), opener can bid on with super fit and controls
     4N = Blackwood
@@ -93,10 +92,11 @@ Responding:
 - "minimum" openers are typically 7 losers and "maximums" 6 losers
 
 2H = [any major, any strength](#2C--2D--2H)
-2S = [no major, max with shortage OR minimum with 2/3 top !c honours ("medium")](#2C--2D--2S)
-2N = [semi-balanced max with 2/3 top !c honours](#2C--2D--2N)
-3C = [not 2/3 top !c honours, minimum](#2C--2D--3C+)
-3DHS = [6--5, forcing, natural bids follow](#2C--2D--3C+)
+2S = [no major, max with shortage OR minimum (not sub-minimum) with 2/3 top !c honours](#2C--2D--2S)
+2N = [semi-balanced good stops, any max or medium hcp with 2/3 top !c honours](#2C--2D--2N)
+3C = [minimum, not 2/3 top !c honours, or any sub-minimum](#2C--2D--3C+)
+3D = [natural, extras, 6--4+](#2C--2D--3C+)
+3HS = [6--5, forcing, natural bids follow](#2C--2D--3C+)
 3N = [2--2--2--7 or 6--3--2--2 shape, maximum, solid clubs, some side stop](#2C--2D--3C+)
 4C = [usually 4--8 in minors, or 1--1--3--8, forcing](#2C--2D--3C+)
 4DHS = [7--5, excellent playing strength, 2 top losers with !c as trumps, e.g. x/AKxxx/-/KQJ10xxx](#2C--2D--3C+)
@@ -107,16 +107,30 @@ Responding:
 **** 2C--2D--2H
 
 2H = any major, any strength
-    2S = ASK, invitational non-GF
+    2S = ASK, invitational non-GF / possible GF trying to rightside NT
         2N = !h minimum
             3C = signoff
-            3D = stop, probing
-        3C = !s minimum
-            3DH = stop, probing
+            3D = !c support flag
+            3H = to play
+            3S = !h GF raise (i.e. NT rightsiding hand if major misfit)
+            3N = to play
+        3C = !s minimum (note if this was any strength invite responder unclear if should pass)
+            P = !c signoff
+            3D = !c support flag
+            3H = !s GF raise (i.e. NT rightsiding hand if major misfit)
+            3S = to play
+            3N = to play
         3DH = !h/!s maximum
-    2N = GF ASK
-        3CD = !h/!s minimum
-        3HS = !h/!s maximum
+            next = major slam try
+            3S = (over 3D) forces 3N, either NT rightsiding or !c support
+            3N = to play
+            4C = !c slam try, unsure of controls (note space tradeoff if bid 3H as !s max v.s just 3C any strength)
+            4D = !c RKB
+    2N = GF ASK, more suitable for declaring 3N
+        3CD = !h/!s
+            next = !c support, often slam try
+            next+1 = (bid the shown major) major slam try
+            3N = to play
     3C = !c constructive raise
     3D = !c slam try
         3HS = shortness
@@ -140,12 +154,11 @@ Responding:
 
 **** 2C--2D--2S
 
-- "minimum" is typically 7 losers
-
-2S = no major, max with shortage OR minimum with 2/3 top !c honours ("medium")
-    2N = ASK
+2S = no major, max with shortage OR minimum, not sub-minimum, with 2/3 top !c honours ("medium")
+    2N = relay, ask
         3C = minimum with 2/3 top !c honours
         3DHS = shortage, maximum
+            3H = 5 cards, forcing
             4C = NF
         3N = AKQxxxx, some shortage + side A/K control (semi-balanced bids 3N immediately over 2D)
     3C = sign off, was looking for major fit
@@ -161,15 +174,12 @@ Responding:
     3HS = 5 cards natural, GF
         new = shortness and support
     3N = to play
+    4D = Redwood
 
 
 **** 2C--2D--2N
 
-- not solid (bid 3N over 2D)
-- note, unbalanced max with 2/3 top !c honours has no dedicated bid
-- semi-balanced max with 1 honour may just open NT, though maybe treat QJ10 or KJ10 as 2/3 top honours equivalent
-
-2N = semi-balanced max with 2/3 top !c honours
+2N = semi-balanced good stops, medium ~12/13 hcp good !cs or max
     3C = waiting, stop checking, some hole
     3D = !c slam try
         3HS = control, not shortage
@@ -182,7 +192,7 @@ Responding:
 
 *** 2C--2D--3C+
 
-3C = no 4 card major, (sub)minimum, not 2 top 3 !c honours
+3C = no 4 card major, (sub)minimum, unless sub-minimum not 2 top 3 !c honours
     3D = !c slam try
         3HS = shortness
             3N = NF, opener can bid more with extra strength
@@ -210,7 +220,8 @@ Responding:
         4N = natural, short in !ds
     4N = quantitative
     5CD = to play
-3DHS = 6--5, forcing, natural bids follow.
+3D = 6--4+ extras
+3HS = 6--5, forcing, natural bids follow.
     oM = forcing, natural (e.g. 6 or 7 cards)
     4C = forcing
     4D = forcing !d support over 3!d or slam try cue bid over 3!h!s

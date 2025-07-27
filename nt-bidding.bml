@@ -38,7 +38,7 @@ Opening:
     2D = [transfer to !h, 5+ cards](#1N--2D)
     2H = [transfer to !s, 5+ cards](#1N--2H)
     2S = [range ask OR transfer to !c, 6+ cards, weak or invite plus](#1N--2S/2N)
-    2N = [transfer to !d, 6+ cards, weak or invite plus](#1N--2S/2N)
+    2N = [transfer to !d, 6+ cards, weak or invite plus OR 5--5 both minors sign off](#1N--2S/2N)
     3C = [Muppet Stayman, 3+ card major(s), maybe one 4 card major, GF+](#1N--3C)
     3D = [5--5 minors game force](#1N--3D)
     3H = [singleton, 3 card !s suit, 5--4 minors](#1N--3H)
@@ -70,12 +70,16 @@ Stayman, promissory
     2S = invitational, 5 !ss (maybe 4 !hs)
         P = minimum / medium no fit
         2N = maximum (usually leave it in 2!s if not accepting game), but no fit
+            P = mild invite, balanced
+            3m = NF, 5--4 with 4 card minor
+            3N = to play
         3CD = rare, 6 card minor, NF
         3S = medium
         4S = maximum
     2N = invitational
         3CD = likely 5--4 minors, concern about combined weak majors
     3CD = natural 5+ cards, GF, maybe a NT weakness
+        3D = (alternative idea?) play as shortage ask?
     3H = GF 4 !hs and 5 !ss (Smolen), or bidding on with 4--6 slam try
         3S = support
         3N = natural, no support
@@ -107,13 +111,18 @@ Stayman, promissory
         3S = medium
         4S = maximum
     2N = invitational, natural
-    3CD = natural 5+ cards, GF, maybe a NT weakness
+        3H = game values + 5!hs
+    3CD = natural 5+ cards with 4!ss other major, GF, maybe a NT weakness
+        3H = 5 !hs
+            3S = waiting, either no fit or other minor stop
+        3S = agrees !ss
     3H = invitational
         3N = 4--3--3--3, suggests NT
     3S = agree !hs, slam try, checks !h length
         3N = 4 card !h suit
-        4CD = cue bid, 5!hs
+        4CD = control bid, 5!hs
         4H = 5!hs, minimum or occasionally 4 good !hs with a weak side suit
+    3S = (alternative note) play as any splinter raise and 4D as general balanced slam try
     4CD = splinter, singleton/void + !h support
     4H = to play
     4S = serious quantitative (beyond game, not !s splinter)
@@ -122,8 +131,11 @@ Stayman, promissory
 **** 1N--2C--2S
 
 2S = 4 or 5 !ss, not !hs
-    2N = invitational
-    3CD = natural 5+ cards, GF, maybe a NT weakness
+    2N = invitational, implies 4!hs
+    3CD = natural 5+ cards with 4!hs other major, GF, maybe a NT weakness
+        3D = (alternative) shortage ask
+        3H = impossible major, 4 card minor raise
+        4m = good minor raise, 5 carder
     3H = agree !ss, slam try, checks !s length
         3S = 4 good !ss, some weak suit often !hs
         3N = normal bid with 4!ss
@@ -287,8 +299,9 @@ Stayman, promissory
         4C = slam try
             4N = negative
         4DHS = void
-2N = transfer to !ds, 6+ cards, weak or invite plus
-    3C = decline an invite
+2N = transfer to !ds, 6+ cards, weak or invite plus OR 5--5 both minors sign off
+    3C = decline a !d invite, maybe max with bad doubleton !d
+        P = 5--5 minors escape
         3D = signoff
         3HS = singleton, finding right game or slam
             3S/4H = no stop, good 4+ card major
@@ -299,16 +312,19 @@ Stayman, promissory
             4N = negative
         4HS = void
         5C = void
-    3D = good points OR good !ds
+        5N = 6!ds, pick a slam
+    3D = Hxx+ !ds, side stops look ok
+        P = 5--5 minors escape
         3HS = singleton, finding right game or slam
             3S/4H = no stop, good 4+ card major
             4D = no stop, minimum
-        4C = singleton, slam try (passed 3N already)
+        4C = singleton, slam try
             4N = negative
         4D = slam try
             4N = negative
         4HS = void
         5C = void
+        5N = 6!ds, pick a slam
 
 *** 1N--3C
 
@@ -341,11 +357,13 @@ Muppet Stayman
                 4N = to play
                     5m = have length, poor keycards (i.e. 2 + no queen)
             others = optional RKB
+        4S = serious quantitative
         4N = quantitative
     3H = 5 card !h suit, (note removed any follow up 5 card bal minor slam tries)
         3S/4CD = control bid, !h slam try
         3N = to play
         4H = to play
+        4S = serious quantitative
         4N = quantitative
     3S = 5 card !s suit
         3N = to play
@@ -353,9 +371,18 @@ Muppet Stayman
         4S = to play
         4N = quantitative
 
+3C--(X) = lead-directing usually
+    P = no stopper
+        XX = system on again
+    others = stopper, system on
+
+
 *** 1N--3D
 
 3D = 5--5+ minors game force
+    3HS = (optional) !c/!d last train, decent 3 card support
+        3N = no slam interest
+            P = have major stops
     3N = good major stops
     4CD = good support
     4N = artificial, pick a minor, usually 3--3
@@ -393,6 +420,13 @@ Gerber is not very useful, so we keep this style.
 4D = !ss
     4H = excellent support, maximum, good controls
     4S = normal transfer completion
+
+4CD--(Dbl) leading directing usually
+    P = no control, offering partner to play it with Kx etc.
+        XX = retransfer
+        4M = to play
+    XX = no control, force(!) partner to play it
+    4M = declaring, have control
 
 
 * 1NT Interference and Lebensohl
@@ -884,61 +918,67 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
     XX = as double of what the bid shows
     [1N system on](#1NT Opening)
 
-1N--(2!c artificial) e.g. cappelletti 1 suiter
+1N--(2!c artificial OR natural) e.g. cappelletti 1 suiter
     X = Stolen bid double, stand in for 2!c system on
     Others = [1N system on](#1NT Opening)
 
-1N--(2!c natural)
-    X = Stolen bid double, stand in for 2!c
-    Others = [1N system on](#1NT Opening)
-
-1N--(2!c!d both majors)
+1N--(2!c/2!d both majors) special defense
     X = values / penalty
-    2D = to play
-    2H = competitive plus minors, often (1--3)(5--4) or 5--5 minors, not values doubling interest
-    2S = !cs, invite plus (same as normal transfers)
-    2N = !ds, invite plus
-    3CD = to play
-    3HS = GF, auto-splinter, 5--5 minors
+    2D = to play, often 5 cards
+    2H = weak minors takeout
+    2S = invite plus minors takeout
+    2N = artificial, weak minor signoff OR game values one major stopped
+        3C = relayed
+            3HS = stop, game values
+    3CD = invitational, natural
+    3HS = system on, shortage 5--4--3--1
+    4CD = Texas, system on
+
+1N--(2D unknown major - multi) systems on
+    X = !h transfer, system on
+    others = system on
+    P = maybe weak and balance later or maybe later stayman like takeout double
 
 1N--(2!d!h!s)
     X = negative of natural
+        2HS = 4 cards
+        2N = invite
+        3C = NF constructive
     2x = NF
     2N+ = [Lebensohl System](#1NT Interference and Lebensohl)
 
-1N--(2D !s + ?)  e.g. astro
+1N--(2x transfer overcall)
+    X = values (possible penalty interest)
+    2-Cue = takeout
+    others = as if bid the real suit
+
+1N--(2D !s + ?)  rare unanchored e.g. astro
     X = !ds
     2S = stop ask (one known suit)
     Others = [Lebensohl System](#1NT Interference and Lebensohl)
 
-1N--(2D !h + ?)
+1N--(2D !h + ?) rare unanchored suit
     X = !ds
     2H = stop ask
     Others = [Lebensohl System](#1NT Interference and Lebensohl)
 
-1N--(2D unknown major)
-    X = !d values
-    Others = [Lebensohl System](#1NT Interference and Lebensohl), no cue bid though
-
 1N--(2H both majors) awkward to defend, but rare
     X = penalty / values, awkward, partner needs 3+ !hs to pass
     2S = minors, competitive
-    2N/3CD = REGULAR Lebensohl
+    2N/3CD = REGULAR Lebensohl, invitational minor (not need transfers to majors)
+    3CD = REGULAR Lebensohl, competitive minor
     3HS = stop showing
 
-1N--(2x transfer overcall)
-    X = bid suit values
-    2-Cue = stop ask
-    3-Cue = singleton stayman, GF
-    Others = [Lebensohl System](#1NT Interference and Lebensohl)
 
 1N--(2N) usually minors
-    P = maybe competitive major (most likely !hs) hand, balancing next time
+    P = maybe takeout hand (e.g. 4--4 majors) or later balancing weak major
     X = values
-    3C = stayman
-    3D = 5+ !hs, GF
-    3H = 5+ !ss, GF
+    3C = 5--4 majors
+        3D = longest ask
+    3D = 5+ !hs transfer, invite plus
+    3H = 5+ !ss transfer, invite plus
     3S = NF, 6+ !ss
+    4C = 5--5 majors
 
 1N--(3C)
     Dbl = takeout, vague distribution
@@ -948,8 +988,9 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
     3DH = transfer mild invite plus
         break = max HHx+ or 4+ cards
     3S = !ds, GF
-    4C = both majors 5--5+, slam try
-    4D = both majors 5--5+, game only
+    4C = both majors 5--4+
+        4D = longest ask
+    4DH = Texas transfers (no slam interest or will go RKB)
 
 1N--(3D)
     3H = 5+ !s transfer, invite plus
@@ -958,22 +999,25 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
     3S = 5+ !hs, GF
         4D = slam try
         4N = RKB
-    4C = both majors 5--5+, slam try (note double then bid !cs with !c slam try)
-    4D = both majors 5--5+, game only
-    4HS = to play
+    4C = both majors 5--4+
+        4D = longest ask
+    4DH = Texas transfers (no slam interest or will go RKB)
 
 1N--(3D artifical, both majors)
     3HS = show stop, looking for 3N
 
 1N--(3H)
     3S = GF, natural
-        4CD = cue
-    4CD = GF, natural
-    4H = !s transfer, no slam interest or can bid RKB by self
+        4CD = control
+    4C = !d invite plus
+    4D = !c GF
+    4H = !s transfer, Texas
 
 1N--(3S)
-    4CDH = GF, natural
-    others = as [Opponents open 3S](#Opponents open 3CDHS)
+    4C = !d invite plus
+    4D = !hs Texas transfer
+    4H = !c GF
+    higher = as [Opponents open 3S](#Opponents open 3CDHS)
 
 1N--(3DHS)
     Dbl = Thrump, negative like but looking for 3N, no major guarantee
@@ -995,6 +1039,9 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
 1N--(4D)
     X = negative (values mostly)
     4HS = natural
+
+1N--(P)--P--(2x)
+    Dbl = takeout (partner not bid and only 2 level, even though sitting over)
 
 1N--(P)--2C
     (X) = lead directing (usually)

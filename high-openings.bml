@@ -2,12 +2,11 @@
 
 * 3CD Openings
 
-Constructive preempts in 1st/2nd usually 6 cards, good chance to play 3N.
-
-- Good suit, happy 3N with some fit and side stoppers
-- Suit expected to run with 0--1 loser opposite Hx (on normal percentage breaks) OR 1--2 losers if have side entry (Ace or King).
-  E.g. AK109xx with no side entry OR KQ109xx, KJ109xx with side A/K
-- 6 or 7 cards does not matter, run potential and entries v.s. Hx does matter
+- 3C standard variable preempt, position/vulnerability dependent
+- 3D constructive preempt in 1st/2nd usually 6 cards, good chance to play 3N. Good suit, happy 3N with some fit and side
+  stoppers. Suit expected to run with 0--1 loser opposite Hx (on normal percentage breaks) OR 1--2 losers if have side
+  entry (Ace or King). E.g. AK109xx with no side entry OR KQ109xx, KJ109xx with side A/K. 6 or 7 cards does not matter,
+  run potential and entries v.s. Hx does matter
 
 3C
     (Dbl)
@@ -15,12 +14,26 @@ Constructive preempts in 1st/2nd usually 6 cards, good chance to play 3N.
         NewSuit = NF
         3N/game = to play
         4D = [Preempt RKB](#Preempt RKB)
-    3D = artificial, any 5 card major asking for 3 card support. (FNJ by passed hands).
-        3HS = shortage/paradox, short in that suit and 3 card other major support (so stronger hand can play)
-        3N = no 3 card major
-        4D = !d void, 3--3--0--7
-        4H = !d singleton, 3--3--1--6
-    3HS = natural, forcing 6+ card suit. (FNJ by passed hands)
+    3D = artificial, 6+ good major invite OR GF strong !ds OR !c invite OR tight 3N Hx !cs
+        3H = pass if !hs, might accept !ss
+            P = !h invite hand
+            3S = !s invite
+            3N = Hx !cs, requires good !cs to play 3N
+                4C = escape, !cs not good enough
+            4C = natural invite
+            4D = GF natural long !ds
+        3S = pass if !ss, accepts !hs
+            P = !s invite hand
+            3N = Hx !cs, requires good !cs to play 3N
+                4C = escape, !cs not good enough
+            4C = natural invite
+            4D = GF natural long !ds
+            4H = to play, !h invite hand
+        3N = accepts either major
+            4C = natural invite
+            4D = GF natural long !ds
+            4M = to play
+    3HS = forcing, 5+ card suit, can raise with Hx
     3N = to play
     4C = obstructive
     4D = [Preempt RKB](#Preempt RKB)
@@ -33,7 +46,7 @@ Constructive preempts in 1st/2nd usually 6 cards, good chance to play 3N.
         NewSuit = NF
         3N/game = to play
         4C = [Preempt RKB](#Preempt RKB)
-    3HS = forcing, maybe 5 only cards
+    3HS = forcing, maybe 5 only cards, may raise with Hx
     3N = to play
     4C = [Preempt RKB](#Preempt RKB)
     4D = obstructive
@@ -66,7 +79,7 @@ Constructive preempts in 1st/2nd usually 6 cards, good chance to play 3N.
         3N = to play
         4CD = fit non-jump lead directing implication
         4HS = to play
-    3S = natural, forcing
+    3S = natural, forcing, may raise with Hx
     3N = to play
     4C = [Preempt RKB](#Preempt RKB)
     4DS = GF, natural (passed hand fit)

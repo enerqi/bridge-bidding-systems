@@ -67,7 +67,7 @@
   3N = [splinter !s, 13--15 hcp, Passed hand - !s Fit Jump](#1H--3N/4C/4D)
   4C = [splinter !c, 13--15 hcp, Passed hand - Fit Jump](#1H--3N/4C/4D)
   4D = [splinter !d, 13--15 hcp, Passed hand - Fit Jump](#1H--3N/4C/4D)
-  4H = to play
+  4H = [to play, obstructive](#1H--4H)
   4S = preempt
   4N = [RKB](#RKB 4N)
   5CD = [EKB](#EKB Voidwood)
@@ -88,7 +88,7 @@
   4C = [splinter !c, 13--15 hcp, Passed hand - FJ mild slam interest](#1S--4C/4D/4H)
   4D = [splinter !d, 13--15 hcp, Passed hand - FJ mild slam interest](#1S--4C/4D/4H)
   4H = [splinter !h, 13--15 hcp, Passed hand - FJ mild slam interest](#1S--4C/4D/4H)
-  4S = [to play](#1S--4S)
+  4S = [to play, obstructive](#1S--4S)
   4N = [RKB](#RKB 4N)
   5CDH = [EKB](#EKB Voidwood)
 
@@ -101,7 +101,7 @@
   2D = [transfer to !h, 5+ cards](#1N--2D)
   2H = [transfer to !s, 5+ cards](#1N--2H)
   2S = [range ask OR transfer to !c, 6+ cards, weak or invite plus](#1N--2S/2N)
-  2N = [transfer to !d, 6+ cards, weak or invite plus](#1N--2S/2N)
+  2N = [transfer to !d, 6+ cards, weak or invite plus OR 5--5 both minors sign off](#1N--2S/2N)
   3C = [Muppet Stayman, 3+ card major(s), maybe one 4 card major, GF+](#1N--3C)
   3D = [5--5 minors game force](#1N--3D)
   3H = [singleton, 3 card !s suit, 5--4 minors](#1N--3H)
@@ -116,14 +116,14 @@
 2C [10+--15 hcp, 6+ card !c suit](#2C Intermediate Opening)
   (any) = [interference defence](#2C Interference)
   2D = [enquiry, many invite+ hands](#2D enquiry)
-  2HS = natural, NF, ~7--10 hcp, not good invite, unlikely both majors (both majors invite+ use 2!d)
-  2N = puppet, !c preempt OR GF single major OR GF 6--4 majors
-  3C = !d transfer, invite+
-  3D = 5--5+ majors, invite+
-  3H = invitational, good suit
-  3S = invitational, good suit
+  2HS = natural, NF, ~7--10 hcp, not good invite
+  2N = puppet, !c preempt OR some 5--5 GF
+  3C = 6+ !ds, invite plus
+  3D = 6+ !hs, invite plus OR 6!h + 4!s GF
+  3H = 6+ !ss, invite plus
+  3S = 6!s + 4!h GF
   3N = to play, opener can bid on with lots shape and strength
-  4C = preempt
+  4C = mixed, not purely obstructive, opener can raise with good shape + extras
   4D = Redwood [RKB](#RKB 4N) for !cs
   4HS = to play (passed hand = fit jump), opener can bid on with super fit and controls
   4N = quantitative
@@ -168,7 +168,8 @@
   5CD = to play
 
 2N [19--20 NT](#2NT Opening)
-3CD [constructive minor preempt](#3CD Openings)
+3C [preempt, position/vulnerability dependent, max 1 outside A/K](#3CD Openings)
+3D [constructive minor preempt](#3CD Openings)
 3HS [preempt, max 1 outside A/K](#3HS Openings)
 3N  [1st/2nd good 4HS preempt semi-solid+ with 2 or 3 KC, 3rd/4th to play](#3N Opening)
 4CD [preempt, distributional with side singleton/void](#4CD Openings)
