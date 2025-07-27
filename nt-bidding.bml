@@ -934,7 +934,7 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
     3HS = system on, shortage 5--4--3--1
     4CD = Texas, system on
 
-1N--(2D unknown major - multi) systems on
+1N--(2!d unknown major - multi) systems on
     X = !h transfer, system on
     others = system on
     P = maybe weak and balance later or maybe later stayman like takeout double
@@ -952,17 +952,17 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
     2-Cue = takeout
     others = as if bid the real suit
 
-1N--(2D !s + ?)  rare unanchored e.g. astro
+1N--(2!d !s + ?)  rare unanchored e.g. astro
     X = !ds
     2S = stop ask (one known suit)
     Others = [Lebensohl System](#1NT Interference and Lebensohl)
 
-1N--(2D !h + ?) rare unanchored suit
+1N--(2!d !h + ?) rare unanchored suit
     X = !ds
     2H = stop ask
     Others = [Lebensohl System](#1NT Interference and Lebensohl)
 
-1N--(2H both majors) awkward to defend, but rare
+1N--(2!h both majors) awkward to defend, but rare
     X = penalty / values, awkward, partner needs 3+ !hs to pass
     2S = minors, competitive
     2N/3CD = REGULAR Lebensohl, invitational minor (not need transfers to majors)
@@ -980,7 +980,7 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
     3S = NF, 6+ !ss
     4C = 5--5 majors
 
-1N--(3C)
+1N--(3!c)
     Dbl = takeout, vague distribution
         nonJump = weak NT hand
         new suits by doubler show invitational only values
@@ -992,7 +992,7 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
         4D = longest ask
     4DH = Texas transfers (no slam interest or will go RKB)
 
-1N--(3D)
+1N--(3!d)
     3H = 5+ !s transfer, invite plus
         4D = slam try
         4N = RKB
@@ -1003,23 +1003,23 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
         4D = longest ask
     4DH = Texas transfers (no slam interest or will go RKB)
 
-1N--(3D artifical, both majors)
+1N--(3!d artifical, both majors)
     3HS = show stop, looking for 3N
 
-1N--(3H)
+1N--(3!h)
     3S = GF, natural
         4CD = control
     4C = !d invite plus
     4D = !c GF
     4H = !s transfer, Texas
 
-1N--(3S)
+1N--(3!s)
     4C = !d invite plus
     4D = !hs Texas transfer
     4H = !c GF
     higher = as [Opponents open 3S](#Opponents open 3CDHS)
 
-1N--(3DHS)
+1N--(3!d!h!s)
     Dbl = Thrump, negative like but looking for 3N, no major guarantee
         3HS = 4 card major, no stopper
             3S = 4 card major or maybe weak 5 card major
@@ -1030,13 +1030,13 @@ Where the cue bid does not have a specific meaning (such as *directly* over 2C s
             newSuit = cue bid
         4N = natural quantitative, extra strong
 
-1N--(4C)
+1N--(4!c)
     X = negative (values mostly)
     4D = !h transfer
     4H = !s transfer
     4S = !d transfer
 
-1N--(4D)
+1N--(4!d)
     X = negative (values mostly)
     4HS = natural
 

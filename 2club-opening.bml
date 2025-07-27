@@ -49,6 +49,7 @@ Responding:
                 3S = !h slam try
             3S = !ss + !ds 5--5 GF
                 4H = !s slam try
+    2N = (passed hand) natural invite ~10 hcp
     3C = 6+ !ds, invite plus
         3D = decline
             P = weak hand, long !ds
@@ -65,6 +66,8 @@ Responding:
             4H = !d RKB
             4N = [Double Fit RKB Kickback](#Double Fit RKB)
         4HS = natural, 6--5 hand
+    3C = (passed hand) preempt
+    3DHS = (passed hand) fit jump
     3D = 6+ !hs, invite plus OR 6!h + 4!s GF
         3H = decline
             3S = 6!h + 4!s GF
@@ -245,33 +248,81 @@ Responding:
 ** 2C Interference
 
 2C--(Dbl)
-    P = nothing special
-    XX = values
-    2D+ = system on
+    XX = 2D relay
+    2x = NF natural
+    2N = !c HCR
+    3C = competitive
+    3DHS = natural GF 6+ suit
 
-2C--(2x)
+2C--(2D)
     P = nothing special
     X = negative
-    !d/!h/!s = 2 level NF, 3 level forcing
-    2N = GF 6–4 majors (3x already forcing)
-    cue = forcing, !c support
-    jump-cue = splinter, !c support
-
+        2HS = 4 cards
+        2N = stopper, reasonable hand
+        3C = catchall
+    2H = NF natural
+        2S = natural
+        2N = constructive, misfit
+            3H = to play
+        3C = catchall, misfit
+        3H = support
+    2S = NF natural
+    2N = invite plus, natural, forcing to 3C
+        3C = decline
+    3C = to play
+    cue = stop ask, some !c support
+    3H = GF 6+ cards, denies 4!ss
+    3S = GF 6+ cards
+    4C = mixed
+    4D = !c RKB
+    4HS = to play
+2C--(2H)
+    X = negative, later new suit GF
+    2S = NF
+        3S = support
+    2N = invite plus, natural, forcing to 3C
+        3C = decline
+    3C = to play
+    3D = GF natural
+    cue = stop ask, some !c support
+    3S = GF 6+ cards natural
+    4C = mixed
+    4D = !c RKB
+2C--(2S)
+    X = negative, later !h bid 5 card GF
+    2N = invite plus, natural, forcing to 3C
+        3C = decline
+    3C = to play
+    3DH = GF natural
+    cue = stop ask, some !c support
+    4C = mixed
+    4D = !c RKB
 2C--(2N)
     X = penalty
     others = NF
-
-2C--(3x/4x)
-    X = negative
-    !d/!h/!s = new suit forcing
-
-2C--2D--(any)
-    X = penalty
+2C--(3C) majors
+    X = values
+    P = later double still penalty
+    3D = NF
+    3H = !c HCR
+    3S = !d GF
 
 2C--2D--(X) whether !d or !h/!s
-    P = 4!d
-    XX = 5!d
-    others = system on
+    XX = extras, no 4 card major, not 2N suitable
+    2HS = natural
+    2N = max, NT suitable
+    3C = 7+ !cs, minimum
+    3DHS = system on natural
+
+2C--2D--(2HS)
+    X = extras, no 4 card major, not 2N suitable
+    new = natural
+    2N = max, NT suitable
+    3C = 7+ !cs, minimum
+    cue = shortage, max good hand
+
+2C--2D--(3x)
+    X = penalty
 
 2C--2N--(X)
     P = sub-minimum, system on
