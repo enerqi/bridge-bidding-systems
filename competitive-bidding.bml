@@ -607,7 +607,7 @@ Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others pla
 *"All doubles of bids through 2!s are takeout UNLESS"*:
 
 1. It's defined above as one of *Negative, Competitive or Responsive*
-2. partner responded 1N/2C/2D, doubler sitting over. Compare when open or overcall -- [Overcalls of our NT](#Overcalls of our NT) first double is takeout, second penalty.
+2. partner responded 1N(except 1!d--1N--(2x))/2C/2D, doubler sitting over. Compare when open or overcall -- [Overcalls of our NT](#Overcalls of our NT) first double is takeout, second penalty.
 3. our side bid and raised a suit. So, 1H--(P)--2H--(2S)--X should be penalty, whereas 1H--(1S)--2H--(2S)--X is competitive.
 4. our side redoubled
 5. our side made a penalty double or penalty pass
@@ -1253,7 +1253,8 @@ With limited strength may want to hide distribution information and just bid the
 
 (1C)--P--(1x)
     X = takeout
-    1N = natural, system on (assuming light openings and responses by opponents)
+    1N = natural
+      any = natural
     2C = Michaels, sitting under
     CueOver = natural, sitting over
     2N = Michaels, better often 6--5
@@ -1278,6 +1279,8 @@ With limited strength may want to hide distribution information and just bid the
 
 (1C)--P--(P)
     1HS = maybe 4 card avoiding 1NT
+      (X) = reopening
+          any = as 1D--(1M)--X (transfers)
     1N = 11--14
     2C = Michaels
     2DHS = natural ~10--13
@@ -1509,7 +1512,8 @@ With limited strength may want to hide distribution information and just bid the
 
 (1D)--P--(1x)
     X = takeout
-    1N = natural, system on (assuming light openings and responses by opponents)
+    1N = natural
+      any = natural
     2D = Michaels, sitting under
     CueOver = natural, sitting over
     2N = Michaels, better often 6--5
@@ -1534,6 +1538,8 @@ With limited strength may want to hide distribution information and just bid the
 
 (1D)--P--(P)
     1HS = maybe 4 card avoiding 1NT
+      (X) = reopening
+        any = as 1D--(1M)--X (transfers)
     1N = 11--14
     2D = Michaels
     2HS = natural ~10--13
@@ -1702,7 +1708,6 @@ With limited strength may want to hide distribution information and just bid the
     3H/4H = HCR
 3H = stopper ask, with solid outside minor
 
-...
 
 (1H)--1S--(X)
     P = possibly trap with later doubles for penalty, 0/1 card support for overcaller's major
@@ -1777,9 +1782,8 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 
 (1H)--P--(1S)
     X = takeout
-    1N = natural, system on (assuming light openings and responses by opponents)
-        2H = forcing
-        2S = natural
+    1N = natural
+        any = natural
     2H = special case !ss + minor, Michaels, sitting over !s bid
     CueOver = natural, sitting over
 
@@ -1823,6 +1827,8 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 
 (1H)--P--(P)
     1S = maybe 4 card avoiding 1NT
+      (X) = reopening
+          any = as 1D--(1M)--X (transfers)
     1N = 11--14
     2H = Michaels
     2S = natural ~10--13
