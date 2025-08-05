@@ -862,7 +862,7 @@ Responding:
         XX = to play interest (4 very good or 5 reasonable)
         other = system on
     (bid)
-        P = weak, nothing to say
+        Pass = weak, nothing to say
             X = takeout by responder up to 3!s
         X = penalty
         2N = system on staymanic range ask, but expect 4 card major OR strong hand
@@ -874,67 +874,36 @@ Responding:
 - invitational both minors
 - some major shortage, so does not want to play 2N
 
-Similar shape to 1N--3H/3S but invitational values.
+Similar-ish shape to 1N--3H/3S but invitational values.
+
+- Over the 2N relay we can always find the shortage with another ask where required.
 
 2N = ask, weak or strong
-    3C = 5!c--4!d/6!c--4!d
-        3D = shortage ask
+    3C = longer !cs, 5!c--4!d/6!c--4!d
+        3D = shortage ask, after which bidding their longer major offers game
             3H = !h singleton/void
-                3S = inviting xxx or Hx support (not available for !hs)
-                3N = to play
-                4C = !c [RKB](#RKB 4N)
-                4D = [Double Fit RKB Kickback](#Double Fit RKB)
-                5CD = to play
+                3S = natural offer
             3S = !s singleton/void
-                3N = to play
-                4C = !c [RKB](#RKB 4N)
-                4D = [Double Fit RKB Kickback](#Double Fit RKB)
-                4H = natural
-                5CD = to play
-    3D = 5!d--4!c/6!d--4!c
+                4H = natural offer
+    3D = longer !ds, 5!d--4!c/6!d--4!c
         3H = shortage ask
-            3S = !s singleton/void
-                3N = to play
-                4C = !c [RKB](#RKB 4N)
-                4D = [Double Fit RKB Kickback](#Double Fit RKB)
-                4H = natural
-                5CD = to play
+            3S = !s singleton/void, after which bidding their longer major offers game
+                4H = natural offer
             3N = !h singleton/void
-                4C = [Double Fit RKB Kickback](#Double Fit RKB)
-                4D = !d [RKB](#RKB 4N)
-                4S = natural
-                5CD = to play
+                4S = natural offer
     3H = !h shortage, 5--5+
-        3S = inviting xxx or Hx support
-        3N = to play
-        4C = !c [RKB](#RKB 4N)
-        4D = !d [RKB](#RKB 4N)
-        4HS = N/A
-        4N = [Double Fit RKB Kickback](#Double Fit RKB)
-        5CD = to play
+        3S = natural offer
     3S = !s shortage, 5--5+
-        3N = to play
-        4C = !c [RKB](#RKB 4N)
-        4D = !d [RKB](#RKB 4N)
-        4H = natural, looking for doubleton support
-        4N = [Double Fit RKB Kickback](#Double Fit RKB)
-        5CD = to play
+        4H = natural offer
+            4N = reject
     3N = 6--6 minors
         4C = void ask
             4DH = !s/!h void
-                next = [Double Fit RKB Kickback](#Double Fit RKB), ignore void responses
         5CD = to play
-    4C = 7!c--4!d
-        4D = [Kickback RKB](#RKB 4N)
-        4N = [Double Fit RKB Kickback](#Double Fit RKB)
-        5D = weak NT, !d fit
-    4D = 7!d--4!c
-        4H = [Kickback RKB](#RKB 4N)
-        4N = [Double Fit RKB Kickback](#Double Fit RKB)
-        5C = weak NT, !c fit
+    4C = 7!c--4!d, !cs assumed unless bid 5D
+    4D = 7!d--4!c, !ds assumed unless bid 5C
 3CD = weak NF, 4+ support
-    3HS = singleton/void
-        4m = RKB, special case
+    3HS = shortage, usually max invite or 6--4
 3HS = natural, strong
 3N = to play
 4CD = strong, slam interest
@@ -942,11 +911,12 @@ Similar shape to 1N--3H/3S but invitational values.
 **** Interference over 1C--2S
 
 1C--(P)--2S--(X) !ss normally
-    P = weak, no stop
+    P = weak, no stop, no 4+ card minor
         2N = stop, implies !h shortage
         other = as over 2N, implies !s shortage
-    XX = to play interest (4 very good or 5+ reasonable)
-    2N+ = system on, but !s stop implication
+    2N = system on, with !s stop
+    XX = strong, no good !s stop
+    3CD = weak, system on, no stop implied
 
 1C--(P)--2S--(2N+)
     bid = natural
