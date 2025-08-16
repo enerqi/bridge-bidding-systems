@@ -1298,6 +1298,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
 
 1N--(2!d!h!s)
     Dbl = penalty
+    Dbl = (advanced) takeout
     2HS = non-forcing
     2N = natural, stop
     cue = GF waiting, often stop asking or wants a 4 card major bid
@@ -1460,13 +1461,6 @@ Intermediate 10--13 hcp in 4th position
     3CD = natural forcing
     3H = preemptive, 3+ trumps
     4H = obstructive, maybe preemptive 4+ trumps or expecting to make the game
-    (overcall) = opponents interference
-        X = penalty
-        newSuit = forcing, natural
-        2N = [Ogust artificial ask, invitational plus hands](#Weak Two Ask)
-    (X) = opponents takeout double
-        XX = penalty interest / strong hand 16+ hcp
-        others = ignore double (new suits still non-forcing constructive)
 
 * 2H Interference
 
@@ -1543,6 +1537,10 @@ Intermediate 10--13 hcp in 4th position
         6N = minimum
         7N = maximum (or nice 5 carder)
     5CD = to play, 7 cards, assumed safer than 3N, shapely hand
+
+* 2N Interference
+
+2N
     (3x) = opponents interfere at 3 level
         X = takeout, no long suit
     (4x) = opponents interfere at 4 level
@@ -1612,6 +1610,8 @@ Weak three preempt, ~4--9 hcp, usually 7+ cards with 2+ honours, maybe shapely 6
         pass = have !cs
         5D = have !ds
 
+* 3N Interference
+
 3NT
     (any)
         X = penalty
@@ -1623,13 +1623,8 @@ Preempt, lots of cards, good suit ~4--9 hcp. Often 8 cards, but also 7 cards wit
 
 As this skips 3NT, any 4CD preempt in 1st/2nd will be shapely with a singleton or void.
 
-4C
-    game = to play
-    4N = keycard blackwood (if not playing preempt keycard blackwood)
-    (overcall) = opponents interference
-        X = penalty
-
-4DHS
+4CDHS
+    4D = GF
     game = to play
     4N = keycard blackwood
     (overcall) = opponents interference
@@ -1973,7 +1968,7 @@ We open any preempt:
     2S = cue, general force or has at least two suits of same length
     2N = natural invite, stops
 
-** (1SS)--Overcall
+** (1S)--Overcall
 
 (1S)
     1N = good ~15--18 balanced + stop, (double then bid NT if stronger)
@@ -2142,6 +2137,28 @@ trick after the Ace then King have been played.
 - If we don't have space but have a hand which wishes to encourage slam, we can make a cuebid in the last suit before
   game without promising a control. This is known as 'Last Train'
 
+**** Serious 3N
+
+This convention separates hands with normal values that are just cooperating with partner in case they have slam try
+values from hands that have serious interest in slam. Serious only applies to major fits.
+
+- we must have a 9+ card fit with game try values OR 8+ card fit with GF values
+- both players must be clear that a major suit is agreed as trumps
+
+In such auctions bidding 3N shows serious slam interest whilst skipping past 3N and just cue bidding is more cooperative
+with fewer values.
+
+Either player can use serious 3N but most of the time it is opener doing the serious 3N bid as their 1 level opening
+bids are very wide ranging in hcp and playing strength. Sometimes opener is limited though and responder is wide
+ranging, e.g. after a 1N opening. Examples:
+
+- 1M--3M
+- 1M--2N--3x  (Jacoby 2N then shown extras, but still a wide range)
+- 1N--2D/2H--Transfer Break
+- 1M--2x--2M--3M
+- 1M--2x--2y--2M/3M
+
+
 ** What is 4N?
 
 *** RKB 4N Situations
@@ -2181,7 +2198,7 @@ Not a bidding agreement, but put here as it forms a part of the overall system.
 - high low from doubleton: (x)x, but K from AK
 - Q is KQ or QJ depending on the signal we want
 - K at NT asks for unblock of an honour from a strong holding such as KQJx+, KQ109+
-- K at trups just asks for count
+- K at trumps just asks for count
 
 ** Signals
 
@@ -2193,7 +2210,7 @@ Not a bidding agreement, but put here as it forms a part of the overall system.
 There are some standard situations where suit preference signals take priority:
 
 - leading to give partner a ruff (what do we want returned?)
-- partner is winning but declarer or dummy are know to have a singleton
+- partner is winning but declarer or dummy are known to have a singleton
 - count already known in that suit
 
 

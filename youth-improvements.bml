@@ -2100,6 +2100,17 @@ which over 2H looks like...
   3H = !s invite
   3S = competitive raise
 
+A 3rd option is to use XX as asking partner to respond to the 2N asking bid system (pretend we bid 2N as the usual ask)
+with a direct 2N bid being a !c transfer. This just flips the XX and 2N from the 1st solution.
+
+2S--(X)
+  XX = 2N system on
+  2N = !c transfer
+  3C = !d transfer
+  3D = !h transfer
+  3H = !s invite
+  3S = competitive raise
+
 
 You must discuss if you want to play transfers over a weak three then double. Some may play it over 3HS only, however,
 it's too late to differentiate invitational vs competitive raises and trying to escape seems odd given the length of
@@ -2985,8 +2996,8 @@ support points) whilst counting features.
 
 (1D)--2D
   2HS = preference
-  3C = !h limit+ raise, 3+ card support
-  3D = !s limit+ raise, 3+ card support
+  3C = !h limit+ raise, 3 features for invite, 3+ card support
+  3D = !s limit+ raise, 3 features for invite, 3+ card support
   3HS = 2 features, mixed raise, 4 card support, typically 7--9 support points
   4D = pick a major
   4HS = obstructive, possibly very weak 5+ card support
@@ -3387,7 +3398,7 @@ If we open !hs and there is 3S interference, there is naturally no room for rela
 *** Relay Doubles After We Takeout Double to Show a Major
 
 Such as (1H)--X--(3H). Partner may only have 4 cards here, but the relay double works fine here as well at the cost of
-not having a normal response takeout double. In those situations it maybe difficult to bid with both minors.
+not having a normal responsive takeout double. In those situations it maybe difficult to bid with both minors.
 
 (1H)--X--(3H)
   Dbl = relay
@@ -3414,7 +3425,7 @@ a 5+ suit and invitational or better hands. This is instead of the standard "new
   3H = !s transfer, invite plus
   3S = !hs artificial GF
 
-These bids transfers and switched bids maybe rare enough that you question how useful they are.
+These transfers bids and switched bids maybe rare enough that you question how useful they are.
 
 *** Thrump Doubles After We Open Minor or NT hands
 
@@ -3431,7 +3442,7 @@ At this point there is little room left.
 Only a couple of tricks here and given the rarity, may not be worth it!
 
 1H--(3S)
-  Dbl = could be stop showing or normal !h raise
+  Dbl = could be stop asking or normal !h raise
   4CD = GF, natural
   4H = slam try
 
@@ -3526,7 +3537,7 @@ that something like [Advancer's 2C Relay](#Advancer's 2C Relay) can be played to
 (1D)--1S--(P)
   2D = good !s raise
   2S = competitive
-  2N = natural or the best !s raise, your partneship choice
+  2N = natural or the best !s raise, your partnership choice
   3D = jump cue, often played as a mixed raise
   3S = preemptive, 4+ !ss
 
@@ -3723,9 +3734,9 @@ obviously more useful after a 1D opening.
 1D--(2C)
   X = negative, majors or catchall game force
   2DH = transfers, 5+ cards
-  2S = artificial, invitational plus !d raise
+  2S = 5--5+ majors, 8+ hcp
   2N = natural
-  3C = 5--5+ majors, 8+ hcp
+  3C = artificial, invitational plus !d raise
 
 In this specific auction some might just play their 1N system responses and double 2C for Stayman. This is not much
 different except we've made an effort to show the powerful 5--5 majors hand in one bid.
@@ -4048,7 +4059,7 @@ allow showing e.g a 10--11 hcp response at the 1 level.
 
 * 3C--3D Response
 
-Over a 3C opening there is room with an artificial 3D to fish for a 5--3 major fit or alternatively show a varient of
+Over a 3C opening there is room with an artificial 3D to fish for a 5--3 major fit or alternatively show a variety of
 hands including invite with a major. If bidding a 5 card major instead of 3N then you probably have a good enough suit
 to play 4M with just Hx support, so the second option is probably better.
 
