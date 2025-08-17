@@ -3918,8 +3918,10 @@ easy to pick up.
 Note, called transfer Walsh because it's played with Walsh style bids of the shorter major before minor with weaker
 hands (less than GF values). Continuations can make use of things like [two-way NMF](#Two-Way New Minor Forcing xyNT),
 as you might without transfers, or various other ideas, partnership choice. It's unlikely to be played with a better
-minor opening system - you will want to take advantage of it by opening 1C more often than 1D. Opening 1C with short
-!cs and 4!ds would be an unusual style trying to take advantage of the extra space.
+minor opening system - you will want to take advantage of it by opening 1C more often than 1D. Opening 1C with short !cs
+and 4!ds is the usual style trying to take advantage of the extra space. Some systems go as far as making both the 1C
+and 1D opening 2+ cards (a 5--5--2--2 opening system) so that starting via 1C or 1D then a 1N rebid can show different
+strengths, which may help if trying to pack something like a mini NT into your NT ladder.
 
 Downsides? As with any transfer the opposition can double the artificial suit, in this case to say they would have
 overcalled it or perhaps just for lead direction. You will have to clarify your follow on bids and how it may change
@@ -3965,7 +3967,7 @@ Here we can try to play any 5--2 major fit at the one level, which is often goin
 [1N stayman response](#1NT Responses, Smolen and Others) changes we may often play 2S in a 5--2 fit (but with
 invitational hands). Note, after the strong 1N rebid it will be more comfortable showing a 5 card major at the 2 level.
 Additionally, a jump 2N rebid can be used for something else -- one thought being an awkward 17+ hcp hand with a long 6+
-card !c suit and 3 card major support.
+card !c suit and 3 card major support (similar to a [jump reverse](#Jump Reverses)).
 
 As mentioned, if you can rebid 1N with (17)18--19 balanced you might look at the [NT ranges](#NT Ranges) and try a
 14--16 1N opening, but this is a big change. Do you want to open 1C with short !cs and 4!ds? The strong 1N rebid will
@@ -3992,7 +3994,7 @@ usually to be safe in 2N. The added accuracy on the NT ranges initially makes it
 After interference, you can play double of 1D or 1H as I would have bid that, a Stolen double.
 
 The above are the more basic options, and what you can experiment with initially. There are many more that you could
-research yourself. A couple of more complicated examples:
+research. A couple of more complicated examples:
 
 1C
   1D = 4+ !hs
