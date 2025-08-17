@@ -554,7 +554,7 @@ This changes all your balanced hand opening and rebid ranges. Why bother?
 
 You can open 11 hcp balanced hands, which are very frequent. It's usually easier to bid if our side opens first and it
 makes life harder for the opponents. As a bonus the 1NT opening is more frequent, so effectively more preemptive. The
-1NT opening is still strong enough that going for a penalty is unlikely, especially if we only bid it non-vulnerable.
+1NT opening is still strong enough that going for a penalty is unlikely, especially if we were to only bid it non-vulnerable.
 
 Whats the downside?
 
@@ -568,16 +568,18 @@ Whats the downside?
   or is it an invite opposite a potential 11 hcp balanced hand?
 - similarly the 2/1 GF bids need slightly better hands as partner may only have 11 hcp balanced
 
-You may decide the problems outweigh the benefits. 14--16 hcp is a common range in artificial strong 1C systems
+You may rightly decide the problems outweigh the benefits. 14--16 hcp is a common range in artificial strong 1C systems
 (Precision etc.), but the wide ranging openings of many (mostly) natural systems cause constructive bidding problems
-when opening 11 hcp balanced.
+when opening 11 hcp balanced. These aggressive balanced openings are more workable with [transfer Walsh](#Transfer Walsh Over 1C Opening)
+and a 5--5--2--2 opening system (see the Junior Dutch Doubleton system), but it's certainly a lot of disruptive changes.
 
-** 1HS 5--3--3--2 11 hcp Compromise
+** 1H/1S 5--3--3--2 11 hcp Compromise
 
-Moving everything to a 14--16 NT maybe too disruptive, but we can still open more balanced 11 hcp hands.
+Moving everything to a 14--16 NT is a lot of work and not a free lunch, but we can still open more balanced 11 hcp
+hands.
 
-A 1HS bit with a reasonable suit and a hand that doesn't look like it needs downgrading can be opened. We get in the bidding
-and suggest a lead. The extra length in your 5 card major will help towards setting up another trick.
+A 1HS bid with a reasonable suit and a hand that doesn't look like it needs downgrading can be opened. We get in the
+bidding and suggest a lead. The extra length in your 5 card major will help towards setting up another trick.
 
 The same argument could be extended to a 5 card minor suit, but a minor bid takes up less space (less preemptive) and
 does not guarantee 5 cards. There is less lead direction to it.
@@ -3916,7 +3918,7 @@ have notable knock on affects to a few other bidding sequences. Some response st
 easy to pick up.
 
 Note, called transfer Walsh because it's played with Walsh style bids of the shorter major before minor with weaker
-hands (less than GF values). Continuations can make use of things like [two-way NMF](#Two-Way New Minor Forcing xyNT),
+hands (less than invite/GF values). Continuations can make use of things like [two-way NMF](#Two-Way New Minor Forcing xyNT),
 as you might without transfers, or various other ideas, partnership choice. It's unlikely to be played with a better
 minor opening system - you will want to take advantage of it by opening 1C more often than 1D. Opening 1C with short !cs
 and 4!ds is the usual style trying to take advantage of the extra space. Some systems go as far as making both the 1C
