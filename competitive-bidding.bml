@@ -535,6 +535,7 @@ Examples:
     2H = 8--11, main suit nothing special
         2N = natural, invitational
         cue = F1, with Hx major support
+        3new = GF
     2N = F1, 10+ shapely, e.g. 6 card main suit and 4 card side suit, forcing to 3H
     3x = 8--11, 5--5
     3H = 8--11, excellent 6+ cards main suit (not mandatory with minimum)
@@ -553,6 +554,7 @@ Examples:
     2S = 8--11, main suit nothing special
         2N = natural, invitational
         cue = F1, with Hx major support
+        3new = GF
     2N = F1, 10+ shapely, e.g. 6 card main suit and 4 card side suit, forcing to 3S
     3x = 8--11, 5--5
     3S = 8--11, excellent 6+ cards main suit (not mandatory with minimum)
@@ -2018,7 +2020,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 **** (1S)--(Any) Sandwich Position
 
 (1S)--(2S)--X balancing takeout double, they bid ONE major suit (pointless over minor or 2 suits):
-    any = [Better Minor Lebensohl](#Better Minor Lebensohl over a major preempt takeout double)
+    any = [Better Minor Lebensohl](#Better Minor Lebensohl)
 
 When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also scrambling:
 (1S)--(any), X then 2N is scrambling
@@ -2356,7 +2358,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
     P = maybe 4 !h and opening values
     Dbl = 4 or 5 poor spades
         (P)
-            2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl over a major preempt takeout double)
+            2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
         (2!h!s) further interference
             X = !hs, it's our hand good 8+
     2HS = natural, decent 5--6 cards
@@ -2373,7 +2375,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
 
 (2D)--P--(2!h!s)
     Dbl = 4 or 5 poor spades
-        2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl over a major preempt takeout double)
+        2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
 
 (2D)--P--(2!h)
     P = maybe limited !h hand hoping partner will double after with passing minimal opening !h values
@@ -2384,7 +2386,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
 
 (2D)--P--(2!h)--P--(2!s)
     Dbl = takeout with 4 or 5 poor !hs
-        2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl over a major preempt takeout double)
+        2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
 
 * Opponents open Weak 2D 2H 2S
 
@@ -2398,7 +2400,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
 
 (2D)
     X = both majors takeout
-        any = [Weak 2D Lebensohl system](#Over a Weak 2D takeout double)
+        any = [Weak 2D Lebensohl system](#Better Minor Lebensohl)
     2HS = natural, decent 5--6 card suit
         2N = natural
         3x = NF, invitational, ~7--11, no support

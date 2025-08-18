@@ -437,7 +437,7 @@ artificial bid, so there is no natural invite bid available, but gets back many 
 system, if the opponents overcall 2H over our 1N opening:
 
 1N--(2!h)
-    Dbl = takeout
+    Dbl = takeout (possibly penalty by agreement)
     2S = non-forcing
     2N = natural, stop
     cue = GF waiting, often stop asking or wants a 4 card major bid
@@ -459,15 +459,15 @@ Variants of Lebensohl come under a confusing array of names such as:
 - Rumpelsohl (transfers weak or GF, 2N multi-meaning used to show invitational hands)
 
 Within those there could be minor variations around whether fast shows (a stop), slow shows (a stop via 2N first if 2N
-is multi-meaning puppet and not just showing !cs), slow/fast cue shows a 4 card major or not and stop asks, direct 3
+is a multi-meaning puppet), slow/fast cue shows a 4 card major or not and stop asks, direct 3
 level bids are strong or via 2N are strong etc. Transfers to the cue suit or transfer through it. Showing competitive
 hands faster naturally sounds more matchpoint oriented. Focusing on invitational/GF hands better for IMPs.
 
 If that all sounds like nonsense, no problem. We will look at Better Minor Lebensohl for dealing with 2HS preempt
 takeouts.
 
-Perhaps later we will document Transfer Lebensohl (for most other situations) and "Reversed" Lebensohl when partner is
-known to be unbalanced where we can choose to pass - e.g. (1!h)--X--(2!h).
+Later we look at [Transfer Lebensohl](#Transfer Lebensohl Over 2 Level Interference) for most other situations and
+["Reversed" Lebensohl](#Reversed Lebensohl) when partner is known to be unbalanced
 
 ** Solution
 
@@ -478,10 +478,26 @@ Better Minor Lebensohl, which may also be known as "Gucci Lebensohl".
 - we have no bid to to show an invitational !c hand (you must guess game or part score), but we can escape to our best
   minor fit
 
-Better minor makes no sense over a weak two !d preempt, and there's no space for better major. 2!d can be such an
-effective preempt because of the need to consider both majors. Over a weak two !d transfer Lebensohl or a normal
-Lebensohl variant would help, but the simple approach of 2x new suit NF, 3x new suit GF and cue waiting/forcing (perhaps
-looking for the longest major or a stop) will work ok.
+Over a 2D weak two, 3C is always the better minor so it looks similar to normal Lebensohl.
+
+(2D)--X
+  2HS = weak
+  2N = puppet to 3C, includes various hands
+      3C = only better minor available
+          P = to play
+          3D = staymanic cue bid with NO stop
+              3HS = natural major
+                  3N = I have the other major
+          3HS = natural 4 card invitational
+          3N = NO stop (probably partial stop), should have 5/6 !cs
+      3D = power double type strong hand, e.g. 5--4+ majors ~17+ hcp
+      3HS = natural, extra strength ~17+, 5+ card major bid (suit too poor for strong jump overcall)
+      3N = power double with stop
+  3C = natural ~0--10 hcp, less than game accept values
+  3D = stop, staymanic, GF
+  3HS = 5 card invitational
+  3N = to play, stop, no other major
+  4C = natural, GF, unsuitable for 3N
 
 (2H)--X
     2S = weak
@@ -495,11 +511,11 @@ looking for the longest major or a stop) will work ok.
         3H = power double type strong hand, e.g. 5--4+
         3S = natural, extra strength ~17+, 5+ card major bid (suit too poor for strong jump overcall)
         3N = power double with stop
-    3C = ~0--10 hcp
+    3C = natural ~0--10 hcp, less than game accept values
     3D = natural, invitational
     3H = stop, 4!ss, GF
     3S = 5 card invitational
-    3N = to play, stop implied, no other major
+    3N = to play, stop, no other major
     4CD = natural, GF, unsuitable for 3N
 
 (2S)--X
@@ -512,10 +528,10 @@ looking for the longest major or a stop) will work ok.
         3H = natural, extra strength ~17+, 5+ card major bid
         3S = power double type strong hand, e.g. 5--4+
         3N = power double with stop
-    3C = ~0--10 hcp
+    3C = natural ~0--10 hcp, less than game accept values
     3DH = natural, invitational
     3S = stop, 4!hs, GF
-    3N = to play, stop implied, no other major
+    3N = to play, stop, no other major
     4CD = natural, GF, unsuitable for 3N
     4H = game values
 
@@ -523,13 +539,13 @@ How do we describe this variant's details, where slow means bid via 2N? "Slow de
 
 - fast 3N shows a stop
 - slow 3N denies a stop
-- fast cue shows a stop, GF, 4 card other major
+- fast cue shows a stop, GF, 4 card other major (staymanic after weak 2!d)
 - slow cue denies a stop, GF, 4 card other major
 - fast 3 level suit invitational (except the !c suit - downside of better minor)
 - slow 3 level suit weak(er)
 
-In the case of bidding !ss, the weaker slow bid of 3!ss just shows 4 cards invitational instead of 5 cards invitational.
-With a weak !s hand there is room to just bid 2S.
+In the case of bidding !ss over a weak 2H, the weaker slow bid of 3!ss just shows 4 cards invitational instead of 5
+cards invitational. With a weak !s hand there is room to just bid 2S.
 
 
 * NT Ranges
@@ -2590,13 +2606,12 @@ can extend it to other situations:
 
 - 1NT--(Overcall)  (but not 2!c as just ignore)
 - (1X)--1NT Overcall by us including Protective--(bid over)
-- (Weak 2!d)--X
 - 1C--(2!d!h!s)
 - 1D--(2!h!s)
 - (1H)–X–(2H) (advanced partnerships may prefer reversed Lebensohl here)
 - (1S)–X–(2S)
 - 1H--(2S) (another possible reversed Lebensohl situation, though 2N as major raise maybe better)
-- (Weak 2!h!s)--X
+- (Weak 2!d!h!s)--X
 - (1C prepared/short)--2C natural
 - (1D prepared/short)--2D natural
 - (2D multi)--X
@@ -2610,111 +2625,132 @@ just bidding 2 level new suit forcing, 3 level game forcing and double negative/
 
 ** Solution
 
-This is another variant of Lebensohl that covers more than [Better Minor Lebensohl](Lebensohl - Defending Weak 2HS),
-(Better Minor is recommended for dealing with a 2!h!s weak two). Look at that variant first.
+This is another variant of Lebensohl that covers more than [Better Minor Lebensohl](#Lebensohl - Defending Weak 2HS),
+(Better Minor is recommended for responding to a weak two takeout double). Look at that variant first. Also take note of
+[Reversed Lebensohl](#Reversed Lebensohl) if you want a more tuned Lebensohl for situations where partner is unbalanced
+and you have the option of passing.
 
-Compared to (2!h/2!s)--X--(P), in the following situations there's a chance the other opponent is about to interfere,
-e.g. 1N--(2!h)--??--(3!h). With Better Minor Lebensohl there's good reasons to play the fast shows/slow denies a stop
-variant. Here there's good reason to do the opposite before possible interference. That said you can flip the fast/slow
-3N and fast/slow cue bid meanings around if easier on the memory.
+- we insist on playing *negative doubles* instead of penalty doubles when the opponents interfere. Negative doubles
+  remove the need for any staymanic cue bids (typically denying vs showing a stop if bidding 2N first). The cue bid can
+  now show a GF with shortage in the opponent's suit, a common shape being 5--4--3--1 with 3 cards in another major
+  that is unsuitable for a negative double (or any staymanic cue bid)
+- with transfer Lebensohl you show an invitational or better 5+ card suit with a transfer (though !cs is always a more
+  difficult suit to show). You show your invite plus suited hands before the other opponent bids (in traditional
+  Lebensohl some invite hands have to start with 2N giving the opponents more time to interfere). The transfer may give
+  you more room to describe your hand as well as the side benefit of letting opener play the contract with the
+  overcaller put on lead. As this is a transfer system, you have to decide if the suit below the opponent's is a
+  transfer into their suit and so a cue bid or a transfer through to the higher suit. We choose *transfer through*
+- in transfer Lebensohl 2N is mainly for any weak/competitive hands (that don't have space to be bid at the 2 level) or
+  a !c GF. However, we can also go via 2N if we just want to bid 3N slowly. It's up to you whether slow shows a stop or
+  fast shows a stop (bidding 3N immediately). Fast shows is maybe more intuitive but it should be discussed. A slow 3N
+  usually implies no 4 card major (no negative double), no 5+ other suit and so usually a !c suit, though possibly not
+  very long
+- note there are lots of Lebensohl variants as we mentiond within the Better Minor Lebensohl section, so it's good to
+  discuss how !cs are shown and what bidding 2N means. There are similarly named and almost the same Lebensohl variants
+  that involve some transferring. Some bids have no obvious meaning, but some alternative meanings have been mentioned
+  below. One example is over 2S interference you can play 3H as weak competitive instead of going via 2N to get your
+  suit in quickly before 4th hand also interferes. This variant is less useful when our side bids 1N as the 1N bidder is
+  unlikely to raise your !h suit with less than 5 cards if the other opponent raises !ss. It's more beneficial when our
+  side open something like 1C/1D and we are playing Lebensohl over jump interference
+- only applies over 2D, 2H and 2S. System is on over 2C with X being a Stayman replacement (Stolen double), though you
+  should have an exception for a X/2C/2D bid showing majors over our 1N - Stayman and transfers is not needed so use
+  double/XX to show values
 
-With transfer Lebensohl you show an invitational or better 5+ card suit with a transfer (though !cs is always a more
-difficult suit to show). You show your invite plus hands before the other opponent bids (in traditional Lebensohl some
-invite hands have to start with 2N). This may give you more room to describe your hand and the side benefit of letting
-opener play the contract with the overcaller put on lead. As this is a transfer system, you have to decide if the suit
-below the opponent's is a transfer into their suit and so a cue bid or a transfer through to the higher suit. We choose
-transfer through.
 
 *** NT Overcall Examples
 
 1N--(2!d)
+  X = negative, staymanic, later !c suit competitive
   2HS = weak
-  2N = puppet, weak or GF !cs
+  2N = puppet, weak or GF !cs or slow 3N
+    3C = relayed
+      P = weak !cs
+      3D = cue, !cs GF
+      3HS = !cs + 4M GF
+      3N = slow 3N, no stop (or play slow shows a stop instead), no shortage, denies 4M
   3C = transfer through!, invitational plus !h
-    3D = no fit, no stop (not any minimum as no room for cue stop ask)
-    3H = fit, minimum
-    3S = natural, 5 carder, no stop implied
-    3N = no fit, stopper, any strength (not ideal with minimum but helps the GF responder decide)
-  3D = cue, GF staymanic
+    3D = accepts game, no stop
+    3H = not accept any invite
+    3S = accepts game, natural 5 carder, no stop implied
+    3N = accepts game, stop
+    4CD = super fit, good controls/fit/max
+    4H = accepts game, fit
+  3D = !d shortage, may have 4 card major (unlike over 2!h/2!s where cue denies the other major)
   3H = transfer, invitational plus !s
-    3S = minimum
-    3N = no fit, stopper (not ideal with minimum but helps the GF responder decide)
-  3S = artificial, GF, no stopper
+    3S = not accept any invite
+    3N = accepts game, unclear if stopper
+    4CDH = super fit, good controls/fit/max
+    4S = accepts game, fit
+  3S = no obvious meaning
   3N = to play, stop implied, no other major
+  4x = texas transfers (if you normally play those, any jump in competition)
   4C = (advanced) two suiter, !cs + other major, GF
   4D = (advanced) two suiter, majors GF
 
 1N--(2!h)
+  X = negative, staymanic, later minor suit competitive
   2S = weak
     3H = extras, 5 card !s fit
-    3S = 4 card support
-  2N = puppet, weak minor or GF clubs
+    3S = extras, 4 card support
+  2N = puppet, weak minor or GF clubs or slow 3N
     3C = relayed
       P = weak !cs
       3D = weak !ds
-  3C = transfer, invitational plus !d
-    3D = minimum, maybe only 2 card support (still room to cue stop ask)
-    3H = maximum, no stop
-    3S = natural, 5 carder, no stop implied
-    3N = maximum/strong
-  3D = transfer through!, invitational plus !s
-    3H = no fit, no stop
-    3S = fit, minimum
-    3N = no fit, stopper (not ideal with minimum but helps the GF responder decide)
-  3H = GF, staymanic 4!ss, no stop
-    3S = fit, extras
-    4S = fit, fast arrival
-  3S = artificial, GF, no stopper
-    3N = to play, stop or pray
-  3N = to play, stop implied, no other major
+      3H = cue, !cs GF
+      3S = !cs + 4!ss GF (no room to show other specific combinations)
+      3N = slow 3N, no stop (or play slow shows a stop instead), no shortage, denies 4!ss
+  3C = transfer, invitational plus !ds
+    3D = not accept any invite
+      3H = stop ask, game values
+      3S = natural, GF
+    3H = accepts game, no stop
+    3S = accepts game, natural, 5 carder, no stop implied
+    3N = accepts game, stop
+  3D = transfer through, invitational plus !ss
+    3H = accepts game, no stop
+    3S = not accept any invite
+    3N = accepts game, stop
+    4CDH = super fit, good controls/fit/max
+    4S = accepts game, fit
+  3H = GF, !h shortage, denies 4!ss
+  3S = no obvious meaning
+  3S = (alternative) both minors 5--5+ GF
+  3N = to play, stop implied (or play slow shows a stop instead), no other major
+  4CD = texas transfers (if you normally play those, when jump in competition)
   4CD = (advanced) two suiter, minor + other major, GF
 
 1N--(2!s)
-  2N = puppet, weak minor or GF clubs (maybe only 4!cs if GF balanced no stop - no dedicated bid)
+  X = negative, staymanic, later minor suit competitive
+  2N = puppet, weak minor or GF clubs or slow 3N
     3C = relayed
       P = weak !cs
       3D = weak !ds
+      3H = weak !hs
+      3H = (alternative) !cs + 4!hs GF, if playing direct 3H as weak !hs
+      3S = cue, !cs GF
+      3N = slow 3N, no stop GF (or play slow shows a stop instead), no shortage, denies 4!hs
   3C = transfer, invitational plus !d
-    3D = minimum, maybe only 2 card support (still room to cue stop ask)
-    3H = natural, 5 carder, no stop implied
-    3S = maximum, no stop
-    3N = maximum, stopper
+    3D = not accept any invite
+      3H = natural, GF
+      3S = stop ask, game values
+    3H = accepts game, natural 5 carder, no stop implied
+    3S = accepts game, no stop
+    3N = accepts game, stop
   3D = transfer, invitational plus !h
-    3H = minimum, maybe only 2 card support (still room to cue stop ask)
-    3S = no fit, no stop, maximum
-    3N = no fit, stopper, maximum/strong (not any strength as still room to cue stop ask over 3!h response)
-  3H = fast weak/competitive with !hs
-  3S = GF, staymanic 4!hs, no stop
-  3N = to play, stop implied, no other major
+    3H = not accept any invite
+      3S = stop ask, game values
+    3S = accepts game, no stop
+    3N = accepts game, stop
+    4CD = super fit, good controls/fit/max
+    4H = accepts game, fit
+  3H = no meaning by default
+  3H = (alternative) fast weak/competitive with !hs
+  3H = (alternative) both minors 5--5+ GF
+  3S = GF, !s shortage, denies 4!hs
+  3N = to play, stop implied (or play slow shows a stop instead), no other major
+  4CD = texas transfers (if you normally play those, when jump in competition)
   4CD = (advanced) two suiter, minor + other major, GF
 
-Additionally, if you play double as negative/takeout instead of for penalty, then the cue bid can be used to imply a
-singleton/void in the opponent's suit.
-
-*** Weak 2D Takeout Example
-
-(2D)--X
-    2HS = weak
-    2N = puppet, weak or GF !cs OR one 4 card major invite plus
-        3C = puppet, normal takeout double
-            3D = staymanic, one 4 card major
-        3D = power takeout double, usually 5--4+ majors
-        3HS = power double
-    3C = invitational plus !h
-        3D = no fit, no stop, any strength (not any minimum as no room for cue stop ask)
-        3H = fit, minimum
-        3S = natural, 5 carder maximum, no stop implied
-        3N = no fit, stopper, any strength (not ideal with minimum but helps the GF responder decide)
-    3D = cue, GF staymanic 4--3/4--4/5--4 majors
-        3M = 4 cards
-        4D = 4--4 doubler
-        4M = 5 cards
-    3H = invitational plus !s
-        3S = minimum
-        3N = no fit, stopper, any strength (not ideal with minimum but helps the GF responder decide)
-    3S = artificial, GF, no stopper
-    3N = to play, stop implied, no other major
-    4x = natural preempt
 
 * Reverse Flannery Over 1C/1D
 
@@ -3858,6 +3894,131 @@ Obvious situations you can agree to play it are weak twos, weaks threes and 4C o
 
 You include other situations where your bid is by agreement a weak two / weak three / 4C, i.e. jump overcalls
 after which you are responding as though it's a weak opening.
+
+* Reversed Lebensohl
+
+** Problem
+
+Yet another Lebensohl like situation where we want to distinguish different hand strengths / shapes / stops when the
+opponents are interfering at the 2 level.
+
+- with the earlier [Transfer Lebensohl](#Transfer Lebensohl Over 2 Level Interference) our partner is usually balanced
+  and we may pass
+- with [Better Minor Lebensohl](#Lebensohl - Defending Weak 2HS) we are FORCED to bid over partner's takeout double of a
+  weak two (and 3rd hand, the weak two bidder's partner has passed)
+
+Transfers make less sense when partner is unbalanced (the auction can be more cooperative / two-way), although right
+siding the contract still has merit. When the auction is already live with two bids from the opposition, we need to show
+shape or NT feature immediately - if we try to bid 2N to distinguish weak vs invite vs possibly some GF hands then we
+might be preempted out the bidding.
+
+** Solution
+
+Reversed Lebensohl can be better where partner is expected to be UNBALANCED and we are allowed to pass, bidding is
+optional. The most obvious situations are (1!d)--X--(2!d) or (1M)--X--(2M). These are live auctions, the opener could raise
+the bidding further giving us little space to bid constructively.
+
+With Reversed Lebensohl 2N puts focus on finding a NT contract, promises some sort of stop(s) and is at least invitational.
+Responses to 2N are similar to Better Minor Lebensohl.
+
+The 3x new suit bids are weak / competitive with no way to show invitational strength, i.e ~0--9(10) hcp. You must choose
+between a game punt or competing (which is similar to the Better Minor Gucci Lebensohl 3!c bid). The motivation is to
+get into the auction before opener shuts us out. We might compete and reopen double with a max 9/10 hcp. Despite 3x
+being competitive by default, if your suit is available to bid at the 2 level, e.g. (1!h)--X--(2!h)--2S then a jump 3x is
+still free to use as an invite
+
+Note, the name "reversed" doesn't really help, as other variations of Lebensohl might be called "Reverse" Lebensohl
+(without the 'd'). This variant is "Reversed" compared to standard Lebensohl in that it does not focus on splitting up
+strength ranges weak/invite/GF with 2N but instead focusses on stops.
+
+(1C)--X--(2C)
+    2DHS = competitive ~0--9(10) hcp
+    2N = F1, invite plus with suitable NT stop, rarely exact invite both majors
+        3C = artificial, minimum ~11--13(14)
+            3D = staymanic
+            3HS = NF, usually play there
+        3D = artificial, GF staymanic, ~14+
+        3HS = GF, 5+ suit
+        3N = ~14--19 to play
+        4D = GF, 5+ suit
+        4N = quantitative ~20 hcp
+    3C = GF both majors (or possibly one major and slam try with shortage)
+    3DHS = jump available, invitational 5+ cards
+    3N = natural, no major
+    4C = slam try both majors, !c shortage
+    4D = natural, GF, unsuitable for 3N
+    Dbl = responsive takeout
+
+(1D)--X--(2D)
+    2HS = competitive ~0--9(10) hcp
+    2N = F1, invite plus with suitable NT stop, rarely exact invite both majors
+        3C = artificial, minimum ~11--13(14)
+            3D = staymanic / NF after natural (1D)--2D
+            3HS = NF, usually play there
+        3D = artificial, GF staymanic, ~14+
+        3HS = GF, 5+ suit
+        3N = ~14--19 to play
+        4C = GF, 5+ suit
+        4N = quantitative ~20 hcp
+    3C = competitive, natural ~0--9(10) hcp
+    3D = GF both majors (or possibly one major and slam try with shortage)
+    3HS = jump available, invitational 5+ cards
+    3N = natural, no major
+    4C = natural, GF, unsuitable for 3N
+    4D = slam try both majors, !d shortage
+    Dbl = responsive takeout
+
+(1H)--X--(2H)
+    2S = competitive ~0--9(10) hcp
+    2N = F1, invite plus with suitable NT stop, possibly 4!ss exact invite
+        3CD = better minor, minimum ~11--13(14)
+            3D = invitational, natural
+            3H = stop and 4!ss, choice of game
+            3S = NF, usually play there
+            3N = natural, was waiting before with 2N
+            4CD = forcing, natural
+        3S = 5+ !ss 17+ GF
+            3N = no !s fit
+        3N = ~14--19 to play
+        4CD = ~17+ natural 5+ card suit
+        4H = both minors slam try
+        4N = quantitative ~20 hcp
+    3CD = competitive, natural ~0--9(10) hcp
+    3H = cue NO stop, GF 4(+)!ss (possibly stronger 5+ card slam try)
+    3S = jump available, invitational 5+ cards
+    3N = natural, no other major
+    4CD = natural, GF, unsuitable for 3N
+    4H = splinter, !s slam try
+    Dbl = responsive takeout
+
+(1S)--X--(2S)
+    2N = F1, invite plus with suitable NT stop, possibly 4!hs exact invite
+        3CD = better minor, minimum ~11--13(14)
+            3D = invitational, natural
+            3H = NF, invitational, 4 !hs (not forcing as over 1H--X--2H)
+            3S = cue, 4!hs GF (possibly stronger 5+ card slam try)
+            3N = natural, was waiting before with 2N
+            4CD = forcing, natural
+        3H = 5+ !hs 17+ GF
+        3S = 4!hs GF
+            3N = no !h fit
+        3N = ~14--19 to play
+        4CD = ~17+ natural 5+ card suit
+        4S = both minors slam try
+        4N = quantitative ~20 hcp
+    3CDH = competitive, natural ~0--9(10) hcp
+    3S = cue NO stop, GF 4(+)!hs (possibly stronger 5+ card slam try)
+    3N = natural, no major
+    4CD = natural, GF, unsuitable for 3N
+    4H = 5+ !h suit (possibly 4 card e.g. AKJ9)
+    Dbl = responsive takeout
+        2N = (advanced) artificial, 4!hs
+            3H = invitational, usualy 4!hs not 5!hs
+        3H = (advanced) GF 5!hs
+        3S = GF without !hs, usually both minors
+        3N = ~18--20 NT with stopper
+        4CD = GF single suiter
+
 
 * 1M--(2C)--2D as Major Transfer
 
