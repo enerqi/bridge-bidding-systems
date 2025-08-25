@@ -546,6 +546,61 @@ proc is_1n_marmic_swedish_club_resp {hand} {
   return 0
 }
 
+proc is_weak2_major_in_range {hand low high} {
+  set points [hcp $hand]
+  if {$points<$low || $points>$high } { return 0 }
+
+  set ss [spades $hand]
+  set hs [hearts $hand]
+  # no 4 card side major
+  if {$ss>=4 && $hs >=4} {return 0}
+
+  # no 6 card minor
+  if {[diamonds $hand]>5 || [clubs $hand]>5} {return 0}
+
+  # 6 cards and 1+ honors
+  if {($ss==6 && [Honors $hand spades]>=2) || ($hs==6 && [Honors $hand hearts]>=2)} {return 1}
+  return 0
+}
+
+proc is_1d_swedish_club_resp {hand} {
+  set points [hcp $hand]
+  if { $points > 9 } { return 0 }
+  # not if worth multi / weak two response
+  if { [is_weak2_major_in_range $hand 5 7]  } { return 0 }
+
+  # not if worth 1M response
+  set ss [spades $hand]
+  set hs [hearts $hand]
+  if {($ss>=4 || $hs >=4) && $points >= 8} {return 0}
+
+  # not if worth minor response
+  set cs [clubs $hand]
+  set ds [diamonds $hand]
+  if {($cs>=6 || $ds >=6) && $points >= 8} {return 0}
+
+  # not 2s
+  if {[is_2s_swedish_club_resp $hand]} {return 0}
+
+  # not 3cd 6 carder
+  if {($cs>=6 || $ds >=6) && $points == 7 && ([Honors $hand clubs]==3 || [Honors $hand diamonds]==3)} {return 0}
+
+  # not preempt response
+  if {[is_3x_preempt_swedish_club_response $hand]} {return 0}
+
+  return 1
+}
+
+proc is_minor_swedish_club_positive_response {hand} {
+
+  if {[is_2s_swedish_club_resp $hand]} {return 1}
+  if {!([is_unbalanced_minor $hand] || [both_minors $hand])} {return 0}
+
+  if {[hcp $hand] < 11} {return 0}
+
+  return 1
+}
+
 proc is_1n_unbal_minor_swedish_club_resp {hand} {
   if { [hcp $hand] < 12 } { return 0 }
   if { [has_side_major $hand] || [is_2s_swedish_club_resp $hand] ||
@@ -579,7 +634,7 @@ proc is_2h_or_2n_swedish_club_resp {hand} {
 
 proc is_2s_swedish_club_resp {hand} {
   set points [hcp $hand]
-  if { [both_minors $hand] && [singleton_or_void_major $hand] && $points >= 12 && $points <= 15} { return 1 }
+  if { [both_minors $hand] && [singleton_or_void_major $hand] && $points >= 9 && $points <= 11} { return 1 }
   return 0
 }
 

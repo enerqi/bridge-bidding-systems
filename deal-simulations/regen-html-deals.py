@@ -18,6 +18,7 @@ assert os.path.exists(output_directory) and os.path.isdir(output_directory), "No
 deal_count = int(args[1]) if len(args) > 1 else 48
 
 tcl_scripts = glob.glob("*.tcl")
+script_count = 0
 for script in tcl_scripts:
     if "deal-utils" not in script:
         out_file = os.path.splitext(script)[0] + ".html"
@@ -26,3 +27,7 @@ for script in tcl_scripts:
 
         # print(cmd)
         subprocess.check_call(cmd, shell=True)
+
+        script_count += 1
+
+print(f"Executed run-deal.py {script_count} times generating {script_count * deal_count} hands")

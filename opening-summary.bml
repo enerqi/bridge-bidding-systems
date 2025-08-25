@@ -5,7 +5,7 @@
 
 - Swedish Artificial 1!c, 5 Card Majors, Strong NT, Intermediate 2!c/2!d, Weak 2!h/2!s
 - [System Philosophy](#System Philosophy)
-- Pages generated from BML source notes @ tinyurl.com/2zjr3fjb
+- Pages generated from [BML source notes](https://github.com/enerqi/bridge-bidding-systems)
 - [Alternative/Variant System Notes](alternatives.html) for things tried/considered but not included
 
 * Uncontested Openings Summary
@@ -17,11 +17,11 @@
       - 21+ balanced
   (any) = [1!c interference](#1C Interference)
   [1D](#1C--1D) Negative 0--7 hcp or 8--9(10) semi-positive no 4cM
-  [1HS](#1C--1HS) 8+ hcp, 4+ card suit, denies 2!d response, unbal if 12+, maybe longer minor when not GF
-  [1N](#1C--1N) 8+ hcp, !c transfer, when GF maybe 4!cs and longer !ds, when limited denies 1HS canapé response
-  [2C](#1C--2C) 8+ hcp, !d transfer, when limited denies 1HS canapé response
-  [2D](#1C--2D) Balanced GF, 10+--15/19+ hcp, no 5cM, when 12+ maybe 4!hs/!ss, when 14+ maybe 5!cs/!ds
-  2H ~4--7 hcp, good weak two (2+ honours), continue as if opened [2H preempt](#2H Opening Responses)
+  [1HS](#1C--1HS) 8+ hcp, 4+ card suit, unbal if 12+, maybe longer minor when 8--11
+  [1N](#1C--1N) 8+ hcp, !c transfer, when 8--11 denies 1HS canapé, when 12+ 5--4 minors either way
+  [2C](#1C--2C) 8+ hcp, !d transfer, when 8--11 denies 1HS canapé response
+  [2D](#1C--2D) 6 card !h weak two ~5--7 hcp OR balanced GF 10+--13 hcp no 5cM, when 12--13 maybe 4!hs/!ss
+  [2H](#1C--2H) balanced GF, 14--15/19+ hcp, no 5cM
   [2S](#1C--2S) ~9--11 hcp invitational !cs + !ds, minors + any short major, does not want to play 2N
   [2N](#1C--2N) 16--18 hcp, natural maybe 5 card major, [2NT system on](#2NT Opening)
   3CD invitational ~7--9 hcp, good 6+ card minor, continue as if opened [3CD preempt](#3CD Openings)
