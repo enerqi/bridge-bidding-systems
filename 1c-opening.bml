@@ -56,18 +56,26 @@ Continuations are very similar to a modern precision majors first rebid style.
         4S = picture raise, 6--4
     1N = catchall ~0--7 hcp, no major
         P = various up to ~18 hcp
-        2CD = natural strong, (5--4)+ either way, NF
-            2D = to play
-        2H = natural strong, NF, usually 6!hs, maybe 5 carder
-            2S = impossible, 5--5 minors max, ~6--7
-            3CD = rare, semi-balanced(ish), not wanted to jump to 3CD over 1H, dislike !hs
-        2S = natural reverse, extras, F1
-            2N = (optional) blackout convention, puppet to 3C, all terrible hands, others GF
-                break = extras, GF
-        2N = invite, probably ~18/19
-        3CD = GF canapé, 4!hs--5m
+        2C = relay, longer !hs, wide ~16--21 range
+            2D = 5--7 without 3 raise
+                2H = NF limited, ~16--18
+                2S = natural extras ~19--21, just showing shape
+                2N = artificial waiting, extras ~19--21, some side minor
+                3CD = NF limited natural
+                3H = 6+ suit GF
+                3S = 6--5+ GF (partner cannot have 4!ss)
+            2H = weak ~0--4, usually 2+!hs (yes maybe we are missing a shorter minor fit)
+            2S = impossible, no obvious meaning, perhaps weak 5--5 minors
+            2N = weak ~0--4, 4--4+ minors, !h shortage
+            3CD = weak ~0--4 long minor
+            3H = invite ~5--7 3!hs
+        2D = canapé, ~16--18 (extras means ~19--21 Acol 2 like)
+        2H = artificial longer !cs, ~16--18, similar to Gazilli
+        2S = 6--5 minimum
+        2N = artificial unknown minor GF canapé, 4!ss--5m
+        3CD = canapé, ~19--21
         3H = invite, ~8.5 tricks
-        3S = 6--5 NF
+        3S = 6--5 extras
     2C = artificial ~8--9 max (no major)
         2D = artificial, 14--15, only weak bid
             2H = NF, 3 card support, 4--3 fit suitable
@@ -95,7 +103,8 @@ Continuations are very similar to a modern precision majors first rebid style.
         3S = splinter
         4CD = splinter
     2H = 0--4, 4+ card support
-    2S = NF, ~5--7 hcp, good 6!ss + 3!hs + some singleton invite (otherwise 1C--2D)
+    2S = NF, ~5--7 hcp, good 6!ss
+    2S = (alternative) ~5--7 hcp, 6!ss + 3!hs
     2N = any mini-splinter, 8+ support points
         3C = shortage ask
     3CD = NF, shapely 6+ suit, ~5--7 points in suit, not worth initial 3C/3D
@@ -105,18 +114,31 @@ Continuations are very similar to a modern precision majors first rebid style.
     3N = !s shortage, 5 card splinter
     4CD = 5 card splinter
     4H = weak long suit
+
 1S = 14+ F1, majors first, usually 14--21 unless 4M--5m GF
     1N = catchall ~0--7 hcp
         P = various up to ~18 hcp
-        2CD = natural strong, (5--4)+ either way, NF
-            2D = to play
-        2H = natural strong, NF
-        2S = natural strong, NF, usually 6!ss, maybe 5 carder
-            3CD = rare, semi-balanced(ish), not wanted to jump to 3CD over 1S, dislike !ss
-        2N = invite, probably ~18/19
-        3CD = GF canapé, 4!ss--5m
+        2C = relay, longer !ss, wide ~16--21 range
+            2D = 5--7 without 3 raise
+                2H = natural extras ~19--21
+                2S = NF limited, ~16--18
+                2N = artificial waiting, extras ~19--21, some side minor
+                3CD = NF limited natural
+                3H = 6--4+ GF
+                3S = 6+ suit GF
+            2H = weak ~0--4 5!hs, maybe 2!ss at most
+            2S = weak ~0--4, usually 2+!ss (yes maybe we are missing a shorter minor fit)
+            2N = weak ~0--4, 4--4+ minors, !s shortage
+            3CD = weak ~0--4 long minor
+            3H = 5!hs + 3!ss invite
+            3S = invite ~5--7 3!ss
+        2D = canapé, ~16--18 (extras means ~19--21 Acol 2 like)
+        2H = natural ~16--18
+        2S = artificial longer !cs, ~16--18, similar to Gazilli
+        2N = artificial unknown minor GF canapé, 4!ss--5m
+        3CD = canapé, ~19--21
         3H = 5--5 extras
-        3S = invite, ~8.5 tricks
+        3S = invite, ~8.5 tricks, 6+ suit
     2C = artificial ~8--9 max (no major)
         2D = artificial, 14--15, only weak bid
             2H = (optional) impossible 2H, poor 3!ss hand checking for 5--3 fit
@@ -203,7 +225,7 @@ Continuations are very similar to a modern precision majors first rebid style.
             3D = xx+ support
             3S = natural 6+!ss
             4H = fast arrival
-        3D = natural, denies 4!ss
+        3D = natural, denies 4!ss (start with 1!h)
             3H = waiting
                 3S = quasi-natural 3 cards
             3S = natural 6+!ss
@@ -213,7 +235,7 @@ Continuations are very similar to a modern precision majors first rebid style.
             4C = artificial good !h raise
             4D = !d support
             4H = fast arrival
-        3H = artificial, 5+!hs with 4+!cs, denies 4!ss
+        3H = artificial, 5+!hs with 4+!cs, denies 4!ss (start with 1!h)
             3S = 5+!ss
             3N = to play
             4C = support
@@ -791,12 +813,12 @@ Bid as if they opened after 1C--1D then 4th interference
         3D = balanced 5 carder
         3H = weak 2
         3S = balanced 4 cards
-        3N = balanced no special
+        3N = balanced nothing special
         4C = GF bal 4+ card support
     3D = GF natural, strong
         3H = weak 2
         3S = balanced 4 cards
-        3N = balanced no special
+        3N = balanced nothing special
         4C = implied cue bid
         4D = GF bal 4+ card support
     3H = GF natural, expecting partner to be balanced, maybe 5!hs + 4!ss
@@ -896,8 +918,8 @@ Similar-ish shape to 1N--3H/3S but invitational values.
         4C = void ask
             4DH = !s/!h void
         5CD = to play
-    4C = 7!c--4!d, !cs assumed unless bid 5D
-    4D = 7!d--4!c, !ds assumed unless bid 5C
+    4C = 7!c--4!d, !cs set assumed unless bid 5D
+    4D = 7!d--4!c, !ds set assumed unless bid 5C
 3CD = weak NF, 4+ support
     3HS = shortage, usually max invite or 6--4
 3HS = natural, strong
@@ -923,7 +945,7 @@ Similar-ish shape to 1N--3H/3S but invitational values.
 
 - Natural balanced 16--18 hcp
 - Maybe 5--3--3--2 with 5 card major
-- Should not have semi-balanced 5--4--2--2 hands - 6CD or other slams should be easier to bid if showing suits
+- rarely semi-balanced 5--4--2--2 hands - 6CD or other slams should be easier to bid if showing suits
 
 [2NT system on](#2NT Opening) for responses and interference handling.
 
