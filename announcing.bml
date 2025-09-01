@@ -6,19 +6,13 @@ The basics and some less obvious alerts:
 
 ** 1C: *ALERT*
 
-- 1!c--1!h/1!s: *alert* (major minor canapé)
-- 1!c--1!d/1N/2!h/2!s: *alert* (totally artificial)
-- 1!c--2!c/2!d: *alert* (NF new suit)
-- 1!c--3!c/3!d/3!h/3!s: *alert* (NF new suit)
-- 1!c--3N: *alert* (some solid suit, nothing else)
-- 1!c--4!c/4!d/4!h/4!s: *alert* (specific good single major holdings)
+- 1!c--1!d/1N or higher: *alert* (totally artificial or unexpected strengths)
 
-** 1D: "may be zero maybe with five clubs"
+** 1D: "may be zero, maybe 4--5 minors when natural"
 
-- 1!d--1!h/1!s: *alert* (any strength, major minor canapé)
-- 1!d--2!c: *alert* (maybe longer !ds)
-- 1!d--2!d: *alert* (inverted like)
-- 1!d--2!h/2!s/3!c/3!d/3!h/3!s/4!c/4!d: *alert* (NF new suit)
+- 1!d--1!h/1!s: *alert* (maybe light hate !ds, major minor canapé)
+- 1!d--2!h/2!s: *alert* (two way reverse flannery, NF)
+- 1!d--3!c/3!d/3!h/3!s/4!c/4!d: *alert* (NF new suit)
 
 ** 1H/1S: ""
 
@@ -30,7 +24,7 @@ The basics and some less obvious alerts:
 - 1!h--3!s: *alert* (some weaker splinter)
 - 1!h--3N: *alert* (!s splinter)
 - 1!s--3N: *alert* (some weaker splinter)
-- 1!s--4!c: *alert* (!c OR !h splinter)
+- 1!s--4x: *alert* (splinter)
 
 ** 1N: "16 to 18"
 
@@ -38,16 +32,18 @@ The basics and some less obvious alerts:
 - 1N--2!c--2!d: not alerted
 - 1N--2!d: "Hearts" (2 level red suit transfers)
 - 1N--2!h: "Spades"
-- 1N--2!s: "Clubs"
+- 1N--2!s: *alert* (range ask or "Clubs")
 - 1N--2N: "Diamonds"
 
 ** 2C: "Intermediate"
 
 - 2!c--2!h/2!s: *alert* (NF new suit)
-- 2!c--4!c: *alert* (preemptive, not invitational)
+- 2!c--2N+: *alert* (all artificial, transfers etc.)
+- 2!c--4!c: *alert* (mixed, not invitational)
 
 ** 2D: *ALERT*
 
+- 2!d--2N: *alert* (forcing)
 - 2!d--3!d/4!d: *alert* (preemptive, not invitational)
 
 ** 2H: "Weak"
