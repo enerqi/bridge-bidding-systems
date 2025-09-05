@@ -1308,35 +1308,8 @@ After 1S opening 10--21, 5+ !ss:
             3H = (3 level other major) artificial force, agree !ss
             3S = invitational
             4N = quantitative
-    2D = !h transfer, 5+ !hs
-        2H = transferred
-            2S = GF natural
-            2N = invitational, 5!hs
-            3CD = GF natural
-            3H = invitational, 6!hs
-            3S = artificial force, sets trumps, slam interest
-            3N = choice of games, 5!hs
-            4CD = splinter, singleton/void, !hs trumps
-        2N = maximum 4/5 card support, no good side suit
-            3N = artificial extras, serious 3N, slam interest
-        3CDS = side good suit, 3+ top 5 honours, 4 card support
-            3N = artificial extras, serious 3N, slam interest
-        3H = minimum 4/5 card support
-            3N = artificial extras, serious 3N, slam interest
-    2H = !s transfer, 5+ !ss
-        2S = transferred
-            2N = invitational, 5!ss
-            3CDH = GF natural
-            3S = invitational, 6!ss
-            3N = choice of games, 5!ss
-            4CD = splinter, singleton/void, !ss trumps
-            4H = artificial force, sets trumps, slam interest
-        2N = maximum 4/5 card support, no good side suit
-            3N = artificial extras, serious 3N, slam interest
-        3CDH = side good suit, 3+ top 5 honours, 4 card support
-            3N = artificial extras, serious 3N, slam interest
-        3S = minimum 4/5 card support
-            3N = artificial extras, serious 3N, slam interest
+    2D = [!h transfer, 5+ !hs](#1N-2D/2H transfers)
+    2H = [!s transfer, 5+ !ss](#1N-2D/2H transfers)
     2S = !c transfer 6+ cards, weak or invite
         2N = artificial, no fit
             3C = to play
@@ -1357,6 +1330,40 @@ After 1S opening 10--21, 5+ !ss:
         6N = minimum
         7N = maximum
     6N = 17--19 hcp
+
+** 1N-2D/2H transfers
+
+After 1N 15--17, maybe a 5 card major:
+
+2D = !h transfer, 5+ !hs
+    2H = transferred
+        2S = GF natural
+        2N = invitational, 5!hs
+        3CD = GF natural
+        3H = invitational, 6!hs
+        3S = artificial force, sets trumps, slam interest
+        3N = choice of games, 5!hs
+        4CD = splinter, singleton/void, !hs trumps
+    2N = maximum 4/5 card support, no good side suit
+        3N = artificial extras, serious 3N, slam interest
+    3CDS = side good suit, 3+ top 5 honours, 4 card support
+        3N = artificial extras, serious 3N, slam interest
+    3H = minimum 4/5 card support
+        3N = artificial extras, serious 3N, slam interest
+2H = !s transfer, 5+ !ss
+    2S = transferred
+        2N = invitational, 5!ss
+        3CDH = GF natural
+        3S = invitational, 6!ss
+        3N = choice of games, 5!ss
+        4CD = splinter, singleton/void, !ss trumps
+        4H = artificial force, sets trumps, slam interest
+    2N = maximum 4/5 card support, no good side suit
+        3N = artificial extras, serious 3N, slam interest
+    3CDH = side good suit, 3+ top 5 honours, 4 card support
+        3N = artificial extras, serious 3N, slam interest
+    3S = minimum 4/5 card support
+        3N = artificial extras, serious 3N, slam interest
 
 * 1N Interference
 
