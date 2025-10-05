@@ -610,6 +610,7 @@ immediately or the final option is to bid a suit without any invitational nuance
                   3N = I have the other major
           3HS = natural 4 card invitational
           3N = NO stop (probably partial stop), should have 5/6 !cs
+          4C = !cs + major 5--5+ slam try
       3D = power double type strong hand, e.g. 5--4+ majors ~17+ hcp
       3HS = natural, extra strength ~17+, 5+ card major bid (suit too poor for strong jump overcall)
       3N = power double with stop
@@ -618,6 +619,7 @@ immediately or the final option is to bid a suit without any invitational nuance
   3HS = 5 card invitational
   3N = to play, stop, no other major
   4C = natural, GF, unsuitable for 3N
+  4D = majors 5--5+ slam try
 
 (2H)--X
     2S = weak
@@ -628,6 +630,7 @@ immediately or the final option is to bid a suit without any invitational nuance
             3H = cue, GF with NO stop and 4!ss
             3S = 4 card invitational
             3N = NO stop, maybe 3!ss + 5/6 minor or both minors
+            4H = both minors slam try
         3H = power double type strong hand, e.g. 5--4+
         3S = natural, extra strength ~17+, 5+ card major bid (suit too poor for strong jump overcall)
         3N = power double with stop
@@ -637,6 +640,7 @@ immediately or the final option is to bid a suit without any invitational nuance
     3S = 5 card invitational
     3N = to play, stop implied, no other major
     4CD = natural, GF, unsuitable for 3N
+    4H = !ss + minor 5--5+ slam try
 
 (2S)--X
     2N = ask for better minor
@@ -645,6 +649,7 @@ immediately or the final option is to bid a suit without any invitational nuance
             3DH = to play, weak hand
             3S = cue, GF with NO stop and 4!hs
             3N = NO stop, maybe 3!hs + 5/6 minor or both minors
+            4S = both minors slam try
         3H = natural, extra strength ~17+, 5+ card major bid
         3S = power double type strong hand, e.g. 5--4+
         3N = power double with stop
@@ -654,6 +659,7 @@ immediately or the final option is to bid a suit without any invitational nuance
     3N = to play, stop implied, no other major
     4CD = natural, GF, unsuitable for 3N
     4H = game values
+    4S = !ss + minor 5--5+ slam try
 
 How do we describe this variant's details, where slow means bid via 2N? "Slow denies / fast shows".
 

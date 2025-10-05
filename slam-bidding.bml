@@ -244,7 +244,7 @@ Following on, any suit is a King request to bid grand (do you have this specific
         7other = yes, Kx
         7trump = yes, I forgot this nonsense
 6slam = no side K
-6N = 3 Kings
+6N = 3 Kings (not including K of trumps)
 
 ??? 6x-6other-6n as yes have 2nd king but cannot bid 7 in case of 6N probe
 
