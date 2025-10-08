@@ -24,11 +24,11 @@ Other bids:
 
 1D = 11--13 flat; or 11--15 3 suited no 5 card major or both minors (5--4 / 5--5); or maximum 6+!d--5!h/!s
     (any) = [1!d interference](#1D interference)
-    1H = [natural, 4+ cards, maybe longer minor canapé](#1D--1H)
-    1S = [natural, 4+ cards, maybe longer minor canapé](#1D--1S)
+    1H = [natural, 4+ cards, maybe longer minor canapé (5m--4!h GF or just weak)](#1D--1H)
+    1S = [natural, 4+ cards, maybe longer minor canapé (5m--4!s GF or just weak)](#1D--1S)
     1N = [natural, up to 11 hcp, no 4 card major](#1D--1N)
-    2C = [10+ natural, maybe 6+--4 GF with 4 card major](#1D--2C)
-    2D = [10+ natural, maybe 6+--4 GF with 4 card major](#1D--2D)
+    2C = [10+ natural, maybe 6!cs GF with shorter side major](#1D--2C)
+    2D = [10+ natural, maybe 6!ds GF with shorter side major](#1D--2D)
     2H = 5!ss + 4--5!hs, weak (~5--9), two way reverse flannery
         2N = game try
             3C = min 5--4
@@ -76,6 +76,7 @@ Other bids:
 ** 1D--1H
 
 Natural, 4+ cards, maybe longer minor canapé
+Natural, 4+ cards, maybe longer minor canapé with 5m--4!h GF or a weak longer minor not worth 2 level response
 
 1S = [exactly 4 !ss (always bid with 4 !ss), may have 3 card !h support (note 5!s--6!d open 1!s or open 1!d reverse to 2!s)](#1D--1H--1S)
 1N = [flattish 11--13, denies 4 !ss, maybe 3!hs, could be singleton !h or semi-balanced](#1D--1H--1N)
@@ -123,7 +124,7 @@ Natural, 4+ cards, maybe longer minor canapé
         P = most hands with no game interest
         2CD = maximum, natural long minor, i.e 4--1--(3--5) or 4--2--(2--5), NOT FSF
             P = may play 7 card minor fit (2N is always constructive)
-            2H = natural, 5 cards, not worth earlier 2!h bid
+            2H = natural, 5 cards, not worth best invite 2!h bid over 1S
             2S = Hxx+ 3 card !s support, presumably weak in other minor may play 7 card !s fit
             2N = maximum, game try
             3m = game try, presumably stop concern in other minor
@@ -148,17 +149,17 @@ Natural, 4+ cards, maybe longer minor canapé
                 3SN = min/max
         3H = 4--0--4--5 min
         3S = 4--0--4--5 max
-    2D = puppet to 2H, either weak !hs or various invite hands
+    2D = puppet to 2H, !h signoff OR various invite hands
         2H = normal bid
             P = weak !hs, 6 cards typically as opener may not be balanced
             2S = mild !s invite, not as good as 3S
             2N = natural, only 4!hs, invite
             3CD = invite, longer minor, usually 6 cards
             3S = good !s invite
-        break = max good 3 card !h support, e.g. 4--3--(5--1)
-    2H = best invite 5/bad 6 card !h invite
+        3CD = break, max good 3 card !h support, e.g. 4--3--(5--1) not flat
+    2H = invitational, natural best 5 card/bad 6 card !h suit
     2S = 4 card support flattish 6--9(10)
-    2N = puppet, some minor signoff
+    2N = artificial puppet, some minor signoff
     3new = 5--5+ slam interest
     3H = 6+ suit, serious slam interest
         4H = no controls
@@ -173,8 +174,8 @@ Natural, 4+ cards, maybe longer minor canapé
 *** 1D--1H--1N
 
 - 11--13, which maybe offshape with shortage in partner's major or semi-balanced
-- 14--15 (minors or 3 suited) hands will bid something else with a risk of skipping a reasonable 1N contract
-- By judgement may treat a 4--4--4--1 14--15 hand as balanced, especially with a stiff honour
+- Note, 14--15 (minors or 3 suited) hands will bid something else with a risk of skipping a reasonable 1N contract
+- By judgement may treat a 4--4--4--1 14--15 hand as balanced, especially with a stiff top honour
 
 1N = flattish 11--13, 2+ !ds still, denies 4 !ss, could be singleton !h or semi-balanced
     2C = puppet to 2!d, invitational OR weak !d signoff OR choice of games
@@ -297,6 +298,7 @@ Remember any maximum 5--5+ minors hand rebids 3C over 1M, so a shapely 5--5+ is 
 ** 1D--1S
 
 Natural, 4+ cards, maybe longer minor canapé
+Natural, 4+ cards, maybe longer minor canapé with 5m--4!s GF or a weak longer minor not worth 2 level response
 
 1N = [flattish 11--13 usually, maybe 3!ss, could be singleton !s (maybe 14--15 4!hs) or semi-balanced](#1D--1S--1N)
 2C = [natural, NF, 4--4+ minors either way, denies 3 !ss, often 14--15 hcp unless min 5--5+ minors](#1D--1S--2C)
@@ -384,10 +386,10 @@ Natural, 4+ cards, maybe longer minor canapé
 
 *** 1D--1S--2C
 
-- Remember any maximum 5--5+ minors hand rebids 3C over 1M, so a shapely 5--5+ is minimum hcp
+- Remember any maximum 5--5+ minors hand jump rebids 2N over 1M, so a shapely 5--5+ is minimum hcp
 - Minimum 1--4--4--4 would bid 1N
-- Maximum 1--4--4--4 is awkward, probably best NT, but a minimum partner with 5!ss and 4!hs cannot bid FSF
-  (unless playing 1!d--2M as majors weak/invite) and has to choose a minor to sign off in
+- Maximum 1--4--4--4 is awkward, probably best downgrade to 1N. Partner would have shown weak/invite !hs with two way
+  reverse flannery already
 
 2C = natural, NF, 4--4+ minors either way, denies 3 !ss, often 14--15 hcp unless min 5--5+ minors
     2D = simple preference, NF, natural continuations
@@ -421,7 +423,11 @@ Natural, 4+ cards, maybe longer minor canapé
 
 - NOT flat 11--13
 - extra shape or 6 losers
-- Unsuitable for jump support bids that show maximums with 4 card support
+- Unsuitable for jump support bids that show maximum splinters or 6+!d--5!s hands
+
+Alternative note. This could show an awkward 5!ds + 4!hs constructive. A weak/invite responder would have used two-way
+reverse flannery, so missing a !h fit is unlikely unless responder is 6--4 majors. Even so, 5--4--2--2 max hands (more
+so 15 hcp) may have to open 1C to show their strength, potentially without a stop in the doubletons.
 
 2D = good !s raise, maybe 3 card shapely !s support; OR minimum 4 card void raise
     2H = natural GF, maybe double fit slam hunting
@@ -470,10 +476,10 @@ Natural, up to 11 hcp, no 4 card major
 - fairly catchall if not suitable for other bids
 
 2CD = natural, 5 cards, unknown other minor length, often maximum 5--4--2--2 (often pass part score hands)
-    2D = natural, weak, dislikes opener's minor (beware 3 suiters with both majors though)
+    2D = natural, weak, dislikes !cs (beware 3 suiters with both majors though)
     2N = natural, invitational, major stops
     3CD = raise natural, invitational, game try
-    3om = weak
+    3om = weak, often !cs or did not want to preempt !ds
 2HS = 6--5 hand, extras (6!d, 5 major minimum hands open 1!h/!s)
     3D = to play
 2N = max invitational, various shapes
@@ -492,8 +498,8 @@ Invitational plus.
 - 2C then immediate 3C is the only invite
 - 6!c--4M/5M GF with major bids 2C first
 - 5!c--4M GF with major bids 1HS first
-- still usually bid 1!h!s with rare non-GF and 6!c–5!h/!s
-- 5--5 minors GF, exception bidding lower of 5--5 first
+- rare non-GF and 6!c–5!h/!s probably bid 1!h!s
+- 5--5 minors GF exception, bidding lower of 5--5 first
 
 [interference after 1D--2C](#1D--2C Interference)
 
@@ -514,7 +520,7 @@ Invitational plus.
             3N = no OR !c shortage
             4C = !h shortage
     3HS = 6--4+ GF
-2H = artificial, 11--13 balanced
+2H = artificial, either 11--13 balanced OR any (4--2)--2--5 too strong for 3C
     2S = puppet, often like NT transfer
         2N = complete, denies 4+ !cs
             3C = 5--4/6--4 minors, longer !cs
@@ -522,7 +528,7 @@ Invitational plus.
                     3HS = major shortage
                 3N = often 4--4--3--2
             3DHS = shortage, 6+!cs
-        3C = 4+ !cs
+        3C = 4+ !cs, GF (bid immediate 3C if too weak v.s invite)
             next = quasi natural, stops
         3DHS = weak xx doubleton, 3!cs exactly
     2N = slam interest, flattish, 4+ minor ask
@@ -530,7 +536,7 @@ Invitational plus.
     3D = 5--5 minors
     3HS = 6--4+ GF
     3N = to play, wants to declare
-2S = artificial, unknown splinter (note lacks space to also include (4--1)--5--3 hands)
+2S = artificial, unknown splinter, 4 card support
     2N = splinter ask + strength ask
         3C = min
             3D = relay
@@ -540,8 +546,8 @@ Invitational plus.
     3C = NF, a minimum splinter could pass
 2N = 4--4--4--1 minimum
     3C = signoff
-3C = 4+!cs minimum, (semi)balanced, not medium (12)13, weak majors, includes 2--2--(5--4)
-3D = maximum (4--1)--5--3, awkward to slam find a 4--4 major fit  (alternative have as 3C bid)
+3C = 4+!cs minimum (not medium), (semi)balanced, weak majors, includes 2--2--(5--4)
+3D = maximum (4--1)--5--3, note now awkward to slam find a 4--4 major fit (alternative have as 3C bid)
     3HS = stop initially
         3N = have other major
         4C = good 3 card !c support, 4 card major iffy
@@ -598,11 +604,11 @@ Invitational plus.
 - 2D then immediate 3C/3D is only invite
 - 6!d--4M GF with major bids 2D first
 - 5!d--4M GF with major bids 1HS first
-- still usually bid 1!h!s with rare non-GF and 6!d–5!h/!s
+- rare non-GF and 6!d–5!h/!s probably bid 1!h!s
 
 [interference after 1D--2D](#1D--2D Interference)
 
-2H = artificial, 11--13 balanced (+ maybe creative 6M 5!d hands instead of splinter)
+2H = artificial, either 11--13 balanced OR any (4--2)--5--2 too strong for 3D, (+ maybe creative 6!d--5M--1--1 hands instead of splinter)
     2S = puppet, often like NT transfer
         2N = complete, denies 4+ !ds
             3C = 5--4/6--4 minors, longer !ds (5--5 via 1!d--2!c)
@@ -613,14 +619,15 @@ Invitational plus.
             3N = to play
             4S = serious quantitative
             4N = quantitative
-        3D = 4+ !ds balanced
+        3D = 4+ !ds, GF (bid immediate 3C if too weak v.s invite)
             next = quasi natural, stops
         3CHS = weak xx doubleton, 3!ds exactly
+        4HS = rare/creative 6!d--5M--1--1
     2N = slam interest, flattish, 4+ minor ask
     3CD = NF, invitational
     3HS = 6--4+
     3N = to play, wants to declare
-2S = artificial, unknown splinter OR max (4--1)--3--5
+2S = artificial, unknown splinter 4 card support OR max (4--1)--3--5 (has !d tolerance)
     2N = ask
         3CDH = !c/!s/!h shortage, splinter
             next = strength ask, min/max steps
@@ -630,12 +637,12 @@ Invitational plus.
         other = shortage
 2N = minimum !d shortage/weak doubleton (warn prefers NT)
     3D = signoff
-3C = minimum (4--1)--3--5
+3C = minimum (4--1)--3--5 (has !d tolerance)
     3D = to play
     3H = shortage ask
         3S = !ss
         3N = !hs
-3D = 4+!ds minimum, (semi)balanced, not medium (12)13, weak majors, includes 2--2--(5--4)
+3D = 4+!ds minimum (not medium), (semi)balanced, weak majors, includes 2--2--(5--4)
 3HS = 5+ !ds support splinter (an infrequent alternative is exactly 6!d--5M--1--1)
 3N = maximum !d shortage or weak doubleton
 4C = !c void, 6/7!d + 5!h, maximum
@@ -1669,7 +1676,7 @@ One of:
         4H = 6+ card major, no minor control, no shortage 6--3--2--2 / 7--2--2--2
     3S/4C = !s/!c shortage, strong ~16+ hcp splinter hand
     3H = !d shortage, strong ~16+ hcp splinter hand
-    3N = suggests 3N, 4 card support 4--3--3--3 or similar 3 card support
+    3N = suggests 3N, 4 card support 4--3--3--3 or similar
         P = lack of A/K controls, QJ heavy, something in doubleton etc.
     4H = to play
 3D = medium, ~12 unbalanced or 13 balanced
@@ -2459,7 +2466,7 @@ One of:
         4S = 6+ card major, no controls in other suits, no shortage 6--3--2--2 / 7--2--2--2
     3H/4C = !h/!c shortage, strong ~16+ hcp splinter hand
     3S = !d shortage, strong ~16+ hcp splinter hand
-    3N = suggests 3N, 4 card support 4--3--3--3 or similar 3 card support
+    3N = suggests 3N, 4 card support 4--3--3--3 or similar
         P = lack of A/K controls, QJ heavy, something in doubleton etc.
     4S = to play
 3D = medium, ~12 unbalanced or 13 balanced
