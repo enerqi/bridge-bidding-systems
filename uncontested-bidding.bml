@@ -256,7 +256,7 @@ Remember any maximum 5--5+ minors hand rebids 3C over 1M, so a shapely 5--5+ is 
 
 - NOT flat 11--13
 - extra shape or 6 losers
-- Unsuitable for jump support bids that show maximums with 4 card support
+- Unsuitable for jump support bids that show maximum splinters or 6+!d--5!h hands
 
 2D = good !h raise, maybe 3 card shapely !h support; OR minimum 4 card void raise (5--4--4--0)
     2H = to play
@@ -386,7 +386,7 @@ Natural, 4+ cards, maybe longer minor canapé with 5m--4!s GF or a weak longer m
 
 *** 1D--1S--2C
 
-- Remember any maximum 5--5+ minors hand jump rebids 2N over 1M, so a shapely 5--5+ is minimum hcp
+- Remember any maximum 5--5+ minors hand jump rebids 3C over 1M, so a shapely 5--5+ is minimum hcp
 - Minimum 1--4--4--4 would bid 1N
 - Maximum 1--4--4--4 is awkward, probably best downgrade to 1N. Partner would have shown weak/invite !hs with two way
   reverse flannery already
@@ -719,12 +719,8 @@ Invitational plus.
     2D = weak
     2HS = system on, reverse flannery 5!ss + 4/5!hs weak/invitational
     2N = minors, unusual
-    3C = preempt 5--4(+) minors
-    3DHS = preempt
-    3N = to play
-    4C = preempt 5--5(+) minors
-    4DHS = preempt
     4N = minors, unusual
+    other = system on
 
 1D--(X)--Pass = some !d length, later X are penalty suggestion, usually 4 cards in bid suit
     (P) = opponents penalty pass
@@ -924,52 +920,47 @@ Invitational plus.
 1D--(any)--any--(2C)
     2N = good hand, !ds and !c stop (similar to a natural 3!d bid)
 
+**** Systemic Opener Rebids On or Off?
+
+Systemic rebids meaning major support bids. Responder must show a major somehow, after which, when is 2D artificial or
+when are the mini-splinters / void splinters used?
+
+- both opponents bid -> off
+- one opponent bids 2D or higher -> off
+
+So one opponent bid, 2nd or 4th, and it's no higher than 2C.
 
 **** Opener's cue bid
 
-When partner bids 1!h/!s and the opponent bids (double or overcall) at the 1 level, or
-with less nuance if they bid at the 2 level.
+- systemic opener rebids on -> ignore and don't cue, gives a free stolen double to opponents
+- natural opener rebids, system off -> HCR, best major raise
 
 1D--(P)--1H--(1S)
-    2S = best invitational !h raise, maximum and shape
-    3H = weak limit (4 card support, shape, probably a singleton)
-    others = system on (only one opp bid, space available)
+    2S = N/A, ignore
+    3H = system on, !s mini-splinter
+    others = system on (only one opp bid, below 2!d)
 
 1D--(1H)--X--(P)
     1S = nothing special
-    2H = best invitational 4 card !s support
-    2S = weak limit (4 card support, shape, probably a singleton)
-    others = system on (only one opp bid, space available)
+    2D = system on, good !s raise
+    2H = N/A, ignore
+    2S = normal raise
+    others = system on (only one opp bid, below 2!d)
 
-1D--(1H)--1S--(P)  showing !cs
-    2C = nothing special
-    2H = best invitational 4 card !c support, maximum and shape
-    3C = weak limit !c raise (4 card support, shape, probably a singleton)
-
-Still on if 2nd position overcalls and advancer only bids 1N/2!c/2!d in 4th.
+But when system major support rebids off...
 
 1D--(1H)--1S--(1N/2C/2D)
     X = 3 card support double, not rubbish if forced 3 level
-    2C = 4 card support, often dead minimum
-    2D = natural (both opps bid)
-    2H = best invitational 4 card !c support, maximum and shape
-    2S = worst 3/4 card raise
-    3C = weak limit !c raise (4 card support, shape, probably a singleton)
-
-When they only overcall 2x then our cue bid is less nuanced at the 3 level. It is NOT a
-stopper ask, as only natural invitational 3!d rebids (e.g. xx/Axx/AKQJxx/xxx) would benefit.
-
-1D--(P)--1S--(2C)
-    3C = good 3!s raise
-    3S = weaker !s raise
-    X = support, not rubbish VUL
-    others = system on (only one opp bid, space available)
+    2CD = natural (both opps bid)
+    2H = best invitational 4 card raise, maximum and shape
+    2S = normal 4 card raise
+    3H = extreme max raise, either 6--5 or 5--4--4--0
 
 
 **** Support doubles and redoubles by opener
 
 - responder's 1 level bid shows a suit (often 1H/1S but could be an artificial minor showing bid)
-- 4th hand bids, even NT bids
+- 4th hand bids, even NT bids (1!d opener is not strong enough to penalty double)
 - 2nd hand's bid is irrelevant
 - opener can X/XX or do a direct raise
 - not required with xxx, especially with good defensive holdings
@@ -981,7 +972,7 @@ stopper ask, as only natural invitational 3!d rebids (e.g. xx/Axx/AKQJxx/xxx) wo
     raise = 4 card support (!s in this case as 1!h shows !ss)
 
 1D--(P)--1H--(2C)--X--(P)
-    2D = NF 3+ !ds, considering something better than a 4--3 !h fit
+    2D = NF 4+ !ds, considering something better than a 4--3 !h fit
     2H = NF natural
     2S = natural 4--4 majors, forcing, invitational plus
 
@@ -989,7 +980,7 @@ Extended to the 3 level, (note penalty unlikely with an artificial 1!c system) b
 
 1D--(1S)--X--(2S)
     X = support double, 14--15 hcp
-    2N = good bad
+    2N = good bad (good 4 card support or bad minors)
     3H = 4 card support, 11--13
 
 Extended through to 4!h, again more strength needed so not doubling does not deny 3 card support:
@@ -1013,12 +1004,35 @@ Includes 4th hands bids where 2nd hand does not bid at all:
 1D--(P)--1S--(P)--2S--(X)
     XX = responder now shows 5 cards, inviting opener to compete 3!s
 
-**** Good-Bad 2N over 2DHS interference by 4th hand
+**** 2H interference by 4th, partner shown spades then 2N is Minors Scrambling
 
-- Good-Bad 2N is usually strong/good support or a bad/worse lower suit bid
-- As a 1!d opener cannot have a long single suit, bad/worse will be both minors
+- X support
+- 2S is a normal !s raise
+- cue bid of 3H can show a good !s raise
+- leaving 2N only for minors with limited strength
+- 3C stronger both minors, 5--5+
 
-1D--(any)--any--(2DHS)
+1D--(1H)--X--(2H)
+    2N = weaker minors
+
+1D--(1H)--1S--(2H)
+    2N = weaker minors
+
+1D--(X)--1H--(2H)
+    2N = weaker minors
+
+**** 2S interference by 4th, partner shown hearts then 2N is Good-Bad
+
+- 3H is a decent normal raise
+- cue bid forces to game, therefore showing offensive GF
+- Good-Bad 2N is usually strong/good !h support or a weaker minors (a 1!d opener cannot have a long single suit, so bad/worse will be both minors)
+- 3C stronger both minors, 5--5+
+
+1D--(1S)--X--(2S)
+    2N = Good-Bad with strong support or weaker minors hand (e.g. 5--4 14--15)
+    3CD = minors 5--5+, maximum
+
+1D--(P)--1H--(2S)
     2N = Good-Bad with strong support or weaker minors hand (e.g. 5--4 14--15)
     3CD = minors 5--5+, maximum
 
