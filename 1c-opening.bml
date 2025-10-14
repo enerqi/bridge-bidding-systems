@@ -1031,7 +1031,7 @@ Compared to the [1D opening interference](#1D interference):
 1C--(X)
     P = weak
         (P) = penalty pass likely
-            P = strong hand with !cs
+            P = strong hand with !c
             XX = escape, weak hand
             others = natural, strong hand
         (any) = interference, opener passes with a weak hand
@@ -1225,8 +1225,26 @@ Compared to the [1D opening interference](#1D interference):
     2HS = competitive
 
 1C--(2C) natural
-    X = stand in for 2!c Stayman
-    Others = [1N system on](#1NT Opening)
+    Dbl = stand in for 2!c Stayman
+    2D = !h transfer
+        (any) = interference
+            3H = competitive
+            X = medium raise
+    2H = !s transfer
+        (any) = interference
+            3S = competitive
+            X = medium raise
+    2S = !d based invite plus
+        2N = decline, stop, maybe poor !ds
+            3C = stop ask
+            3D = to play
+        3C = accept, no stop though
+        3D = decline, no stop
+    2N = NT invite, stopper
+    3C = 3 suiter, !c shortage (no need for muppet stayman)
+    3D = to play, 6+ !ds
+    3HS = GF 6+ card natural, not other major
+    4CD = major transfers, as 1N system
 
 1C--(2C) Michaels - Majors
     X = values, forcing to 2NT
