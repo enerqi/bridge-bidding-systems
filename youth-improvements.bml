@@ -1146,9 +1146,9 @@ shortage showing gives away information that responder may not care about.
 
 The easiest reasonably effective version? As the 4x bid is void showing, there's no easy way to separate a normal side
 suit from a decent 5 card side suit, but at least 3N is clearer than the shortage showing option, though still unclear
-about the major length. We could alter 4x to show a decent 5 carder. Gives away some shape info when opener has extras,
-but hides the shortage unless asked for. The natural aspect allows for explicit double fit agreement and sometimes it's
-better to play e.g. a 4--4 minor slam instead of the major.
+about the major length. We could alter 4x to show a decent 5 carder, or include singleton shortage showing hands aswell.
+Gives away some shape info when opener has extras, but hides the shortage unless asked for. The natural aspect allows
+for explicit double fit agreement and sometimes it's better to play e.g. a 4--4 minor slam instead of the major.
 
 *** 3C Artificial Minimum and Shortage Showing
 
@@ -2048,7 +2048,7 @@ space to play penalty/value doubles and takeout doubles (pass then double)
 Some may play double to additionally include a very strong major overcall or balanced hand.
 
 
-** Majors Dual Strength
+*** Majors Dual Strength
 
 Nice to have more competitive v.s. constructive distinctions, particularly against a weak NT where we may have game
 on our way. Obviously light on combinations involving a minor, so fewer options for disturbing a strong NT.
@@ -2059,7 +2059,7 @@ on our way. Obviously light on combinations involving a minor, so fewer options 
     2HS = natural, constructive
     2N = minors OR any GF 2-suiter
 
-** Meckwell
+*** Meckwell
 
 Direct pressure bids with 2HS and directly quickly shows a minor for partner to raise. Double is very nebulous however,
 it allows the potential to show more combinations but the opening side may shut us out. A simplification is to just play
@@ -2704,7 +2704,7 @@ can extend it to other situations:
 - (1S)–X–(2S)
 - 1H--(2S) (another possible reversed Lebensohl situation, though 2N as major raise maybe better)
 - (Weak 2!d!h!s)--X
-- (1C prepared/short)--2C natural
+- (1C prepared/short)--2C natural  (possible reversed Lebensohl situation)
 - (1D prepared/short)--2D natural
 - (2D multi)--X
 - (1NT)--X--(XX Escape)
@@ -2737,7 +2737,7 @@ and you have the option of passing.
   fast shows a stop (bidding 3N immediately). Fast shows is maybe more intuitive but it should be discussed. A slow 3N
   usually implies no 4 card major (no negative double), no 5+ other suit and so usually a !c suit, though possibly not
   very long
-- note there are lots of Lebensohl variants as we mentiond within the Better Minor Lebensohl section, so it's good to
+- note there are lots of Lebensohl variants as we mentioned within the Better Minor Lebensohl section, so it's good to
   discuss how !cs are shown and what bidding 2N means. There are similarly named and almost the same Lebensohl variants
   that involve some transferring. Some bids have no obvious meaning, but some alternative meanings have been mentioned
   below. One example is over 2S interference you can play 3H as weak competitive instead of going via 2N to get your

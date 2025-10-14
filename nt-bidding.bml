@@ -394,6 +394,7 @@ Muppet Stayman
       3N = a singleton top honour
     3N = to play, stops
     4CD = natural, slam interest
+    4S = to play, prefer 5--3/4--3 fit
     4N = pick a minor
     5CD = to play
 
@@ -402,7 +403,7 @@ Muppet Stayman
 3S = singleton, 3 card !h suit, 5--4 minors
     3N = to play, stops
     4CD = natural, slam interest
-    4H = prefer 4--3 fit
+    4H = to play, prefer 5--3/4--3 fit
     4N = pick a minor
     5CD = to play
 
@@ -410,8 +411,8 @@ Muppet Stayman
 
 To play a major game, preemptive, game going values or direct RKB slam force values.
 
-Most good hands can transfer at the 2 level and try a (semi)balanced slam try if they have no shortage need to
-investigate slam potential. Therefore, the super fit is only for rare excellent, typically 5 card major openers. 4C
+Most good hands can transfer at the 2 level and try a (semi)balanced slam try if they have no shortage and need to
+investigate slam. Therefore, the super fit is only for rare excellent, typically 5 card major openers. 4C
 Gerber is not very useful, so we keep this style.
 
 4C = !hs
@@ -453,7 +454,7 @@ Most important is its use against weak twos and after we have made a natural ope
 
 It does not apply when partner has only a weak hand, e.g. they passed then an opponent balanced.
 
-Our (1) main variant ([note: Lebensohl variants](#Lebensohl Variants)) is a form of transfer Lebensohl.
+Our (1) main variant ([note: Lebensohl variants](https://sublime.is/alternatives.html#Lebensohl_Variants)) is a form of transfer Lebensohl.
 There are other variants that are used in specific situations - (2) when FORCED to bid over a weak two and
 (3) partner is likely unbalanced and we may pass or double, so NOT forced to bid
 
@@ -803,8 +804,8 @@ The *default is negative*, meaning any of:
 
 - weak competitive hand with perfect takeout shape, 4--4--4--1
 - less than invitational, but can handle partner's responses with minimum level conversion bids. Note, because opener is
-  very defined they never jump the bidding and minimum level conversion fits unlike other negative double scenarios
-- invitational plus hands, possibly very off shape, just trying to showing e.g. a 4 card other major
+  very defined they never jump the bidding and minimum level conversion works unlike other negative double scenarios
+- invitational plus hands, possibly very off shape, just trying to show e.g. a 4 card other major before bidding on to game
 - even *balancing by opener*, most hands with doubleton in their suit, 15+ hcp outside of the doubleton
 
 Any negative double at the 3 level (especially 4 level!) is basically GF and starts to lack clear shape information,
@@ -1131,6 +1132,8 @@ For example, 2C scurry with no 5 card major.
 
 
 *** when opponents run immediately to 2S or higher
+
+We don't follow the [blanket doubling rules](#Blanket Rules) when "our side made a penalty double or penalty pass".
 
 - double *values*
 - 2N+ Lebensohl system, if available, with the penalty doubler possibly breaking the relay with hand too good to
