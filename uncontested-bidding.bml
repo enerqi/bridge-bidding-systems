@@ -1091,13 +1091,12 @@ By responder example:
 
 ** 1H--1S
 
-- maybe weak !d canapé, as well as any strength
-- NOT weak with long 6/7 !cs, usually better to bid 1N so can escape to !cs over a 2D rebid when 4--1--2--6 / 4--1--1--7
+- maybe weak minor canapé
 - in-between hands uncertain of level likely to show 3 card !h support immediately
-- 4 !ss + 3+ card !h support is possible with GF values - it's easier to control the auction
+- 5+ cards when GF, balanced hands should use nebulous 2C, with or without 3 card !h support
 
 
-1N = [11--13(14) NT interest, often !s singleton / 5--3--3--2 / semi-balanced with 4 card minor, values spread out](#1H--1S--1N)
+1N = [11--13(14) NT interest, i.e. !s singleton / 5--3--3--2 / semi-balanced with 4 card minor, values spread out](#1H--1S--1N)
 2C = [Gazilli variant, minimum 6!hs or various good !h / !s hands or medium plus 5--5](#1H--1S--2C)
 2D = [natural, 11--15, without extra shape](#1H--1S--2D)
 2H = [!cs and !hs, 11--15, without extra shape](#1H--1S--2H)
@@ -1105,16 +1104,16 @@ By responder example:
 2N = [6(7)–4 with a minor, maximum, 6 losers](#1H--1S--2N)
 3C = [6--5+ (rebid 3!c over 2!h preference with 5--5), maximum](#1H--1S--3C)
 3D = [6--5+ (rebid 3!d over 2!h preference with 5--5), maximum](#1H--1S--3D)
-3H = [natural, invitational, AQJ10xxx+](#1H--1S--3H)
-3S = [natural, invitational 4+ card support, 6 losers](#1H--1S--3S)
-3N = [singleton splinter with !s support, maximum, often 6!hs + 4!ss](#1H--1S--3N/4x)
+3H = [natural invite long offensive suit, singleton support usually ok](#1H--1S--3H)
+3S = [invitational 4--5--2--2 maximum, 6 losers, 14--15 hcp](#1H--1S--3S)
+3N = [singleton splinter with !s support, extra shape, maximum, 6--4+](#1H--1S--3N/4x)
 4CD = [void splinter with !s support](#1H--1S--3N/4x)
 4H = [to play, ~8.5 PT, too strong to open 4H (e.g. 8 cards and 10 hcp)](#1H--1S--3N/4x)
 4S = [to play, probably minimum 5--6 in the majors, or 4 card support and shapely (4--7)](#1H--1S--3N/4x)
 
 *** 1H--1S--1N
 
-1N = 11--13(14) NT interest, often !s singleton / 5--3--3--2 / semi-balanced with 4 card minor, values spread out
+1N = 11--13(14) NT interest, i.e. !s singleton / 5--3--3--2 / semi-balanced with 4 card minor, values spread out
     2C = puppet to 2!d, invitational OR weak !d signoff OR choice of games
         2D = complete puppet
             P = weak !d canapé
@@ -1124,17 +1123,17 @@ By responder example:
             2S = invitational 5!ss / bad 6 carder, probably not Hx in !h.
                 3S = minimum, 3 card support
                 4S = extras, 3 card support
-            2N = natural
-            3C = natural, 5+ !cs, often 6 cards
-            3D = natural, 5+ !ds, often 6 cards
+            2N = natural invite
+            3C = invite usually canapé, 5+ !cs, often 6 cards
+            3D = invite usually canapé, 5+ !ds, often 6 cards
             3H = natural invite, ~12/13 hcp, usually 3 card support (direct 3!h shows 4 card support)
-            3S = natural, invitational, 6 !ss
+            3S = natural invite, 6 !ss
             3N = choice of games, 5!ss
     2D = artificial GF, natural continuations
         2H = impossible major, Hx support
         2S = 3 card support
         2N = nothing special
-    2D = by PASSED hand, natural invitational, 4/5!s and 5!d
+    2D = (PASSED hand) natural invitational, 4/5!s and 5!d
     2H = to play, maybe 3 card support was checking !s support (NOT a better !s invite as over 1D--1S--1N)
     2S = natural, NF, maybe 5 cards, not suitable for immediate 2!s weak jump shift (suit quality or ~Hx+ !h support)
     2N = puppet, !c signoff only (no need for 3 suiter showing shortage in this auction)
@@ -1146,11 +1145,10 @@ By responder example:
     3S = 6+ suit, serious slam interest
         4S = no controls
     3N = to play
-    4C = !c auto-splinter for !s, control bids or [RKB](#RKB 4N) follow
-    4D = !d auto-splinter for !s, control bids or [RKB](#RKB 4N) follow
+    4CD = auto-splinter for !s, control bids or [RKB](#RKB 4N) follow
     4H = to play, probably 3 card support, testing !s suit
     4S = to play
-    4N = NO, not used. Start with 2!d first for more info.
+    4N = quantitative, but usually start with 2!d first for more info
     5CDH = [EKB Voidwood](#EKB Voidwood) for !s
 
 
@@ -1181,8 +1179,8 @@ Gazilli variant includes:
         4CD = max !s support, mini-splinter
         4S = max !s support mini-splinter, hiding shortage, limited honour controls
     2H = NF, ~6--(10), natural preference
-        2S = natural, 3 card support
-            2N = only 4 !ss, NT suggestion
+        2S = natural, 3 card support, possible 4--3 fit ok
+            2N = NT suggestion, only 4 !ss
                 3CD = 5 card minor 3--5--(5--0)
         3CD = 14--15 !s support, mini-splinter (do not show 5--5 with minor here!)
         3H = 14--15, 6+ !hs AND 3 card !s support, maybe risky
@@ -1191,9 +1189,9 @@ Gazilli variant includes:
             3S = really good !s (maybe facing a void)
     2N = both minors, weak, 4!ss only
         3CD = sign off
-        3S = max mini-splinter !s support
+        3S = max unknown mini-splinter !s support
     3CD = weak
-        3S = 14--15 !s support, mini-splinter hand
+        3S = 14--15 !s support, unknown mini-splinter hand
     3H = 14+ slam try, 3(+) card !h support
     3S = natural, forcing, 6+ !ss, good hand
     3N = ~12--17, good minor stops
@@ -1205,11 +1203,11 @@ Gazilli variant includes:
 
 - 11--15 hcp
 - minimum if 5--5
-- very unlikely 3 card !s support and max (use Gazilli instead)
+- very unlikely max with 3 card !s support (use Gazilli instead)
 
 2D = natural, NF
     2H = natural, NF, preference, hoped for !s raise
-        2S = (irrelevant with Gazilli) max with 3 card support
+        2S = N/A, use Gazilli if max with 3 card support
     2S = 6+ !ss, invitational, ~9--12 (not weak after a second new suit)
         3C = grope asking for !c stopper, or back to 5--2 !h fit
         3D = NF, slight game hope
@@ -1226,21 +1224,21 @@ Gazilli variant includes:
     3N = ~12--17, good !c stops, 4 card !s or 5 cards and not 5--3 fit interested
     4C = !c splinter, !d slam try
     4D = !d RKB, special case
-    4H = to play, was testing !s OR slam try if opener showed extras
+    4H = to play, was testing !s
     4S = to play, was testing !s, too strong for 4!s response
-    4N = No. Do not bid.
+    4N = quantitative, but rarely useful
 
 *** 1H--1S--2H
 
 - artificial showing !cs (2!c Gazilli)
 - 3 card !s support often directly raises instead (e.g. if have a singleton)
-- very unlikely 3 card !s support and max (use Gazilli instead)
+- very unlikely max with 3 card !s support (use Gazilli instead)
 
 2H = !cs and !hs, 11--15, without extra shape
     2S = invitational, 6+ !ss
     2N = invite
     3CD = GF quasi-natural (passed hand NF 6 card minor canapé)
-    3H = natural, invitational (usually doubleton, maybe xxx and just < direct 2!h raise)
+    3H = natural, invitational, probably 5!ss + 3!hs
     3S = forcing
     4CD = splinter !h support
     4HS = to play
@@ -1254,7 +1252,7 @@ Gazilli variant includes:
         3D = !d fragment
         3H = 3--6--2--2, letting responder find 6--2 fit instead of 4--3 !s fit
         3S = minimum, sign off
-    3CD = invitational, often 4--6 with 4 card major + long minor
+    3CD = invitational, often 4--6 with 4 card major + long minor (NOT GF double fit try after 5cM opening)
         3H = 6th !h, only 3!ss, NF
         3S = sign off
     3H = GF, double fit, possible slam interest
@@ -1264,10 +1262,9 @@ Gazilli variant includes:
         4CDH = control bid, 4 card support
         4S = minimum, 4 card support
     3S = natural, invitational
-        3N = suggests NT game instead of 4!s
+        3N = suggests NT game instead of 4S
     3N = suggests NT game alternative
-    4C = splinter, !s slam try
-    4D = splinter, !s slam try
+    4CD = splinter, !s slam try
     4H = rare, let opener choose game, stay in !h if only 3 card !s support
     4S = to play
     4N = !s [RKB](#RKB 4N)
@@ -1280,15 +1277,16 @@ Maximum, 6 loser, 6(7)--4 with a minor. The reasonable alternative is a good max
     3C = ask
         3DH = !d/!c
             3H = to play, preferred !cs
-            3S = implied cue, minor slam try
-            4om = implied cue, minor slam try
+            3S = NF, invitational, usually 6 cards
+            4om = major flag, !h slam try
+            4m = minor flag, minor slam try
+            4H = to play
         4CD = 7--4 shape
     3D = GF, 5--5+ !ss + !ds
     3H = sign off
     3S = GF, 6+ good !ss
     3N = to play
-    4C = splinter for !s
-    4D = splinter for !s
+    4CD = auto splinter for !s (as no 2nd suit yet shown)
     4H = to play
     4S = to play, sign off
     4N = !h [RKB](#RKB 4N)
@@ -1320,7 +1318,7 @@ Maximum, 6 loser, 6(7)--4 with a minor. The reasonable alternative is a good max
 
 *** 1H--1S--3H
 
-3H = natural, invitational AQJ10xxx+
+3H = natural invite long offensive suit, singleton support usually ok
     3S = forcing, 6+ !ss, could even have 5/6 card minor
         3N = natural
             4CD = natural, forcing
@@ -1330,15 +1328,17 @@ Maximum, 6 loser, 6(7)--4 with a minor. The reasonable alternative is a good max
 
 *** 1H--1S--3S
 
-3S = natural, invitational 4 card support
-    3N = minor singleton ask
-    4CD = control bid
+- specifically 4--5--2--2 maximum 14--15 hcp, 6 losers
+- 2C Gazilli includes mini-splinter max raises (otherwise we'd include shortage raises with a shortage ask)
+
+3S = natural, invitational 4--5--2--2 maximum
+    3N = serious
     4H = last train
 
 *** 1H--1S--3N/4x
 
-3N = minor singleton splinter, !s support, best maximum, e.g. 6--4 / 5--5 / 7--4
-    4C = ask [shortness asks](#shortness ask general responses) follow.
+3N = minor singleton splinter, !s support, best maximum, e.g. 6--4 / 6--5 / 7--4
+    4C = ask [shortage ask](#shortness ask general responses) follow.
         4D = short !d
         4H = short !c
 4CD = *void* splinter with !s support
@@ -1350,7 +1350,7 @@ Maximum, 6 loser, 6(7)--4 with a minor. The reasonable alternative is a good max
 Single raise, 3 cards
 
 - 3 card raises ~8--10 support points
-- 2M is semi-constructive (only 1N could be gambling semi-preemptive extra weak on occasion)
+- 2M is constructive (only 1N could be gambling semi-preemptive extra weak on occasion)
 - 2M by passed hands is unconstructive (use drury for better hands)
 - 4 carders worse than a mixed raise should bid 1N, rarely passed out
 - also use the "semi" forcing 1NT for the 3 card game invite or weaker 3 card raises
@@ -1363,7 +1363,9 @@ Single raise, 3 cards
     4H = acceptance values or trump support e.g. xx AJxx J10x J10xx
 4CD = freak 6--5 slam try
 
-(Dbl) = takeout/interference
+*** interference by 4th
+
+1H--(P)--2H--(Dbl) = takeout/interference
     XX = values for 3H game try
     3H = preemptive
     others = system on
@@ -1407,7 +1409,7 @@ Responding:
 2D = natural, 11--15, without extra shape
     2H = NF preference
         2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)
-    2S = artificial 5--5 minors (cannot have !ss)
+    2S = artificial 5--5 minors (cannot have !ss), constructive
     2N = natural, invite, often stiff !h
         any = GF
     3C = natural, to play
@@ -1415,7 +1417,7 @@ Responding:
     3H = 3 card !h support, invitational
     3S = splinter !d support
     3N = to play, rare
-    4C = splinter for !d, rare 7!ds
+    4C = splinter for !ds
     4D = !d game invite, long fit
 2H = !cs and !hs, 11--15, without extra shape
     2S = artificial invitational good !c support (cannot have !ss)
@@ -1442,10 +1444,10 @@ Responding:
     4new = shortage, minor slam try
     4m = natural, invitational, no 3N hope
     4H = to play
-3H = invitational !h, often 7 cards
+3H = natural invite long offensive suit, singleton support usually ok
     3S = !s values, stop
     4CD = !h slam try, long suit trick source, e.g. Kxx/Kx/xx/KQxxx hope !c honour support
-3S = 5--6+ majors, NF, good non-minimum hand that's rare as not opening 1!c e.g. KQJ10x/AQJxxx/x/x
+3S = best 6--5+ majors, still NF, rare as not opening 1!c e.g. KQJ10x/AQJxxx/x/x
     4CD = cue, double fit, slam try
 3N = 7--5 !h/!s, e.g. KQ10xx/AKJxxxx/-/x
     4CD = cue, double fit, slam try
@@ -1465,6 +1467,7 @@ Responding:
 Nebulous 2/1 GF 2C -- natural or balanced 2+ !cs (3-card Reverse Drury by passed hand)
 
 - includes GF flattish hands with 3 card major support
+- includes 4!ss balanced GF as 1S should promise 5 cards when GF
 - rebids are Bergen shape showing style
 - 2D rebids are natural, unlike in wide ranging standard systems where 2D is often natural OR minimum balanced (or just
   stop missing in some styles)
@@ -1591,7 +1594,7 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
     4C = delayed splinter, !h support, commonly 3--3--6--1
     4D = self-sufficient, max 1 loser, some outside control
     4H = [picture raise](#Picture Raises), no outside controls
-2S = natural 4+ !s, not 6!hs, any strength
+2S = natural 4+!ss, not 6!hs, any strength
     2N = waiting, stop implied as FSF available
         3C = quasi-natural 3+ cards
         3D = 3 card support
@@ -1641,8 +1644,7 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
 
 6+!ss, ~(5)6--9 hcp, semi-weak, no !h fit
 
-- Stronger than 1!d--2!h/!s (there is less preemptive value)
-- Opener normally passes without fit.
+- Opener normally passes without fit
 
 2N = artificial shortage ask, invite plus
     3CDH = shortage
@@ -1726,49 +1728,34 @@ One of:
 
 *** 2N Invite Plus Interference
 
-1H--(any)--2N--(other)
-    X = penalty as they have no fit
+- X values in their suit, defensive suggestion, particularly if only 4th hand has bid
+- NT (3N or 4N over higher overcalls) is an honour control bid of their suit
+- new suit control + shortage in opponent's suit
+- 4M shortage in opponent's suit but nothing special, no side control
+- Pass catchall
 
 1H--2N--(3CD)
-    X = penalty, we raised a suit and only one of them came in late
-    P = minimum, no shortage
+    X = penalty interest, values in their suit
+    P = no shortage in their suit, catchall
     3H = minimum, shortage in their suit
-    3N = general extras, establish forcing pass if they sacrifice
-    other = control bid, usually shortage, maximum
+    3N = minor top honour control
+    other = control bid and shortage in their suit
 
 1H--2N--(3S)
-    X = penalty, we raised a suit and only one of them came in late
-    P = minimum, but forcing expecting to penalise or bid on
-    3N = general extras, establish forcing pass if they sacrifice
-    other = control bid, usually shortage, maximum
-
-1H--(2D)--2N--(3D) the support each other 3 level
-    P = no shortage, no control
-        X = last train like extra value ask
-    X = extras, shortage (penalty not on when they support each other 3 level)
-    3H = minimum WITH !d control
-    3N = general extras, establish forcing pass if they sacrifice
-    4D = void
-
-1H--(1S)--2N--(3S) the support each other 3 level above our suit
-    P = no shortage, no control
-        X = last train like extra value ask
-    X = extras, shortage (penalty not on when they support each other 3 level)
-    3N = general extras, establish forcing pass if they sacrifice
-    4H = minimum WITH !s control
+    X = penalty interest, spade values
+    P = no shortage in their suit, catchall
+    3N = A/K control in their suit
+    other = control bid and shortage in their suit
 
 1H--2N--(4D)
-    X = penalty, only one of them came in late
-    P = minimum, but forcing expecting to penalise or bid on
-        Dbl = last train like extra strength ask slam try
-    4H = minimum no control (assuming we will always play game or penalise now)
+    X = penalty interest, values in their suit, defensive suggestion
+    P = no shortage (but forcing expecting to penalise or bid on at 4 level)
+    4H = shortage in their suit
+    4S = control and shortage in their suit, good max
 
-1H--(2D)--2N--(4D) the support each other to the 4 level
-    X = values, cooperative, typical 4 level double meaning
-    P = minimum
-        Dbl = last train like extra strength ask slam try
-    4H = something extra
-    other = control bid
+When they support, e.g. 1H--(2!d)--2N--(4!d) each other the meanings stay the same, except double is more suggesting a
+defensive hand than a strong expectation of making a big profit
+
 
 ** 1H--3CD
 
@@ -1818,22 +1805,20 @@ Splinter bids typically have fairly evenly distributed strength amongst the side
 of the strong suit is often better (unless the strong suit is mostly self-sufficient).
 
 3N = ask
-    4C = !c singleton
-    4D = !d singleton
+    4CD = !c/!d singleton
     4H = !s singleton
 
 ** 1H--3N/4C/4D
 
 Maximum splinter, short !s/!c/!d, upper-tier ~13--15 hcp (could GF without a shortage)
+
 (Fit jump by passed hand)
 
 ** 1H--4H
 
 obstructive, either values based or preempt
 
-(overcall) = interference
-    X = cooperative, escape if preempt, pass if values
-
+Later X now *cooperative*, escape if preempt, pass if values
 
 ** 1H interference
 
@@ -1844,15 +1829,15 @@ obstructive, either values based or preempt
             2CD = system on puppet bids
     1N = !cs, 6+ hcp, sound weak two or better 6+ cards OR 5 cards and will bid again, or lead directing 4+ suit with 3 card support
     2C = !ds, 6+ hcp
-    2D = !h transfer, 3 cards ~8--10 support points, worse than mixed raise
+    2D = !h transfer, 3 cards ~8--10 support points
     2H = natural, very weak, 3 cards ~4--7 useful support points or possibly Hx
     2S = weak jump shift
     2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
     3CS = fit jump
-    3D = 1-under jump, mixed raise ~7--9 hcp, 4 card support
-    3H = preemptive, ~0--6
+    3D = 1-under jump, mixed raise ~8--10 support points, 4+ card support
+    3H = preemptive, ~0--7 support points
     4C = splinter
-    4D = fit jump (no 3D fit jump available)
+    4D = fit jump (no 3!d fit jump available)
     4S = to play (not splinter beyond game)
 
 Second round bids ignore the T/O X if advancer bids nothing, e.g. 1H--(X)--1S--(P)--1N--(P)
@@ -1898,7 +1883,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
             4H = minimum with !s control
     2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
     3C = fit jump
-    3D = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3D = 1-under jump, mixed raise ~8--10 support points, 4+ card support
     3H = preemptive
     3S = splinter, opponent's suit
     4C = splinter
@@ -1914,7 +1899,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     2S = competitive, natural
     2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
     3C = preempt (no natural minor bid available at lower level)
-    3D = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3D = 1-under jump, mixed raise ~8--10 support points, 4+ card support
     3H = preemptive
     3S = fit jump
 
@@ -1924,7 +1909,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     2H = natural, less than mixed raise
     2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
     3C = [HCR](#HCR cue bids and 2N Raise in Competition)
-    3D = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3D = 1-under jump, mixed raise ~8--10 support points, 4+ card support
     3H = preemptive
     3S = fit jump
     4C = splinter
@@ -1937,7 +1922,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
     3C = natural, 5+ cards, forcing
     3D = [HCR](#HCR cue bids and 2N Raise in Competition)
-    3H = mixed raise (no room for 1-under jump and preempt raise), ~7--9 support points and 4+ cards
+    3H = mixed raise (no room for 1-under jump and preempt raise), ~8--10 support points, 4+ card support
     3S = fit jump
     4C = fit jump (no 3C fit jump available)
     4D = splinter
@@ -2054,7 +2039,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
 
 1H--(P)--P--(X)
     XX = artificial, good suit mild extras, 6 !hs, not shapely enough for 3!h bid
-    1N = unspecified 4 card minor on way to 2!h bid, e.g. xx/KQJ10xx/AJQx/x
+    1N = unspecified 4 card minor on way to 2!h bid, e.g. xx/KQJ10xx/AQJx/x
         2x = lowest suit can play in
     2CD = 5 card suit normally
 
@@ -2079,9 +2064,7 @@ at the 3 level.
   3H = [6+ !hs, invitational ~10--12, no major support](#1S--3H)
   3S = [mixed raise ~8--10 support points, 4+ cards](#1S--3S)
   3N = [unknown splinter, 10--12 hcp (~9--10 by passed hand)](#1S--3N)
-  4C = [splinter !c, 13--15 hcp, Passed hand - FJ mild slam interest](#1S--4C/4D/4H)
-  4D = [splinter !d, 13--15 hcp, Passed hand - FJ mild slam interest](#1S--4C/4D/4H)
-  4H = [splinter !h, 13--15 hcp, Passed hand - FJ mild slam interest](#1S--4C/4D/4H)
+  4CDH = [splinter, 13--15 hcp, Passed hand - FJ mild slam interest](#1S--4C/4D/4H)
   4S = [to play](#1S--4S)
   4N = [RKB](#RKB 4N)
   5CDH = [EKB](#EKB Voidwood)
@@ -2164,7 +2147,7 @@ Responding:
     4m = natural, invitational, no 3N hope
 3H = invitational NF, good non-minimum hand, 6--5+
     4CD = slam try !h, control bid
-3S = invitational !s, often 7 cards
+3S = natural invite long offensive suit, singleton support usually ok
     4CDH = !s slam try, long suit trick source, e.g. Kxx/Kx/xx/KQxxx
 3N = 7--5 !s/!h with more space to find a slam, but can also bid 4!h
     4CD = cue, double fit, slam try
@@ -2285,8 +2268,7 @@ By a *passed hand* 2!c *Reverse Drury* shows a 9--10 hcp limit raise with 3 card
 3N = solid !ss + singleton !c, something in other suits e.g. AKQJxx/Jxx/Qxx/x
     4C = !c RKB, special case, solid suit
 4C = slam interest, typically 6--1--1--5
-4D = void splinter for !cs, 5+ card support
-4H = void splinter for !cs, 5+ card support
+4DH = void splinter for !cs, 5+ card support
 4S = long !ss, picture rebid, max 1 loser e.g. KQJ10xx+
 
 
@@ -2415,8 +2397,7 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
     4S = [picture raise](#Picture Raises), no outside controls
 3S = natural, maximum, max 1 loser e.g. KQJ10xx+, some side control(s)
 3N = solid !ss + singleton !h, something in other suits e.g. AKQJxx/x/J10x/Qxx
-4C = splinter for !h
-4D = splinter for !h
+4CD = splinter for !hs
 4H = picture raise, 5--4--2--2 without outside controls
 4S = long !ss, picture rebid, max 1 loser e.g. KQJ10xx+
 
@@ -2425,7 +2406,7 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
 Single raise, 3 cards
 
 - 3 card raises ~8--10 support points
-- 2M is semi-constructive (only 1N could be gambling semi-preemptive extra weak on occasion)
+- 2M is constructive (only 1N could be gambling semi-preemptive extra weak on occasion)
 - 2M by passed hands is unconstructive (use drury for better hands)
 - 4 carders worse than a mixed raise should bid 1N, rarely passed out
 - also use the "semi" forcing 1NT for the 3 card game invite or weaker 3 card raises
@@ -2441,8 +2422,10 @@ Single raise, 3 cards
     4S = acceptance values or trump support e.g. AJxx xx J10x J10xx
 4CD = freak 6--5 slam try
 
-(Dbl) = takeout/interference
-    XX = values for 3S game try
+*** interference by 4th
+
+1S--(P)--2S--(Dbl) = takeout/interference
+    XX = values for 3H game try
     3S = preemptive
     others = system on
 
@@ -2533,8 +2516,7 @@ Limit jump shift, 6 card suit invitational, denying major support, denying !hs
 3S = natural, long suit, NF invitational, responder can raise with Hx
 3N = to play, stopped
 4C = forcing, !c slam try
-4D = splinter for !cs
-4H = splinter for !cs
+4DH = splinter for !cs
 4S = to play
 
 *** 1S--3D
@@ -2555,8 +2537,7 @@ Not as much suit quality required as the minor bids - directed to a major game i
 
 3S = natural, long suit, NF invitational, responder can raise with Hx
 3N = to play, stopped
-4C = implied cue bid
-4D = implied cue bid
+4CD = implied cue bid
 4HS = to play
 
 ** 1S--3S
@@ -2575,8 +2556,7 @@ Splinter bids typically have fairly evenly distributed strength amongst the side
 of the strong suit is often better (unless the strong suit is mostly self-sufficient).
 
 4C = ask
-    4D = !d shortage
-    4H = !h shortage
+    4DH = !d/!h shortage
     4S = !c shortage
 
 ** 1S--4C/4D/4H
@@ -2588,8 +2568,7 @@ Maximum splinter, short !c/!d/!h, upper-tier ~13--15 hcp (could GF without a sho
 
 To play, always. Could be highly obstructive and weak with long trumps or a fast arrival minimum flattish game bid.
 
-(overcall) = interference
-    X = cooperative, escape if preempt, pass if values
+Over interference later X is now *cooperative*, escape if preempt, pass if values
 
 
 ** 1S interference
@@ -2605,7 +2584,7 @@ Similar to [1H interference](#1H interference).
     2S = natural, very weak, 3 cards ~4--7 useful support points, sometimes Hx
     2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
     3CD = fit jump
-    3H = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3H = 1-under jump, mixed raise ~8--10 support points, 4+ card support
     3S = preemptive
     4CD = splinter
     4H = to play (no fit jumps at game level)
@@ -2618,7 +2597,7 @@ Similar to [1H interference](#1H interference).
     2S = natural, ~4--7, 3 cards
     2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
     3CD = preempt (no natural minor bid available at lower level)
-    3H = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3H = 1-under jump, mixed raise ~8--10 support points, 4+ card support
     3S = preemptive
 
 1S--(2!c)
@@ -2628,7 +2607,7 @@ Similar to [1H interference](#1H interference).
     2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
     3C = [HCR](#HCR cue bids and 2N Raise in Competition)
     3D = fit jump
-    3H = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3H = 1-under jump, mixed raise ~8--10 support points, 4+ card support
     3S = preemptive
     4CD = splinter
     4H = to play (no fit jumps at game level)
@@ -2640,9 +2619,9 @@ Similar to [1H interference](#1H interference).
     2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
     3C = natural, forcing
     3D = [HCR](#HCR cue bids and 2N Raise in Competition)
-    3H = 1-under jump, mixed raise ~7--9 hcp, 4 card support
+    3H = 1-under jump, mixed raise ~8--10 support points, 4+ card support
     3S = preemptive
-    4C = fit jump (no 3C fit jump available)
+    4C = fit jump (no 3!c fit jump available)
     4D = splinter
     4H = to play (no fit jumps at game level)
 
@@ -2661,7 +2640,7 @@ Similar to [1H interference](#1H interference).
     2N = [invitational plus support](#HCR cue bids and 2N Raise in Competition), 2N system on
     3CD = natural, forcing
     3H = [HCR](#HCR cue bids and 2N Raise in Competition)
-    3S = mixed raise (no room for 1-under jump and preempt raise), ~7--9 support points and 4+ cards
+    3S = mixed raise (no room for 1-under jump and preempt raise), ~8--10 support points, 4+ card support
     4CD = fit jump (no 3CD fit jump available)
     4H = splinter
 
@@ -2699,8 +2678,8 @@ Similar to [1H interference](#1H interference).
             3H = competitive !hs
             3S = competitive raise, less than invite
             3N = 4!hs + stop
-            4C = "normal" negative double, skipped 3N though
-            4S = possibly a slam try
+            4C = "normal" negative double with 4(+)!hs, skipped 3N though
+            4S = game values, not slam try
     3D = natural, forcing, later 4D rebid is invitational
     3H = natural, forcing
     3S = natural invite
@@ -2715,8 +2694,8 @@ Similar to [1H interference](#1H interference).
             3S = competitive !ss
             3N = 4!ss + stop
             4C = competitive !cs
-            4D = "normal" negative double, skipped 3N though
-            4S = possibly a slam try
+            4D = "normal" negative double with 4(+)!hs, skipped 3N though
+            4S = game values, not slam try
     3H = natural, forcing
     3S = natural invite
     4C = GF, natural
@@ -2729,8 +2708,8 @@ Similar to [1H interference](#1H interference).
             P = competitive !ss
             3N = 4!ss + stop
             4C = competitive !cs
-            4D = "normal" negative double, skipped 3N though
-            4S = possibly a slam try
+            4D = "normal" negative double with 4(+)!hs, skipped 3N though
+            4S = game values, not slam try
     3S = natural invite
     4CD = GF, natural
     4H = cue, slam try
@@ -2772,7 +2751,7 @@ Similar to [1H interference](#1H interference).
 
 1S--(P)--P--(X)
     XX = artificial, good suit mild extras, 6 !ss, not shapely enough for 3!s bid
-    1N = unspecified 4 card side suit on way to 2!s bid, e.g. KQJ10xx/xx/AJQx/x
+    1N = unspecified 4 card side suit on way to 2!s bid, e.g. KQJ10xx/xx/AQJx/x
         2x = lowest suit can play in
             2H = showing 4 card !h suit, 6 !ss
     2CD = 5 card suit normally

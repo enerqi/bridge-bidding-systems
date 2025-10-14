@@ -1814,6 +1814,8 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 (1H)--P--(3H) or artificial bergen 3!c/!d etc. limit
     X = 5 !ss + long minor when opponents have a 10+ limit raise
     X = takeout v.s. weaker mixed/obstructive
+    3H = (over Bergen etc.) Michaels, as over weak two opening
+    4CD = (over Bergen etc.) Leaping Michaels, as over weak two opening
     others = as [Opponents open 3H](#Opponents open 3CDHS)
 
 (1H)--P--(4CD) (or 3!s) natural short splinter
@@ -2040,6 +2042,11 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 (1S)--P--(2S)
     2N = 5 !hs and 4+ card minor
     others = as [Opponents open 2S](#Opponents open Weak 2D 2H 2S)
+
+
+(1S)--P--(3x) Bergen artificial invites
+    3S = (over Bergen etc.) Michaels, as over weak two opening
+    4CD = (over Bergen etc.) Leaping Michaels, as over weak two openings
 
 (1S)--P--(3S)
     any = as [Opponents open 3S](#Opponents open 3CDHS)
