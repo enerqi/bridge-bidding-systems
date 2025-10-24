@@ -1,0 +1,18 @@
+[project]
+name = "bridge-bidding-system"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = "==3.14.*"
+dependencies = [
+    "docopt>=0.6.2",
+    "doit>=0.36.0",
+    "panel>=1.8.2",
+    "watchfiles>=1.1.1",
+]
+
+[tool.pyright]
+venvPath = "."
+venv =  ".venv"
+pythonVersion = "3.14"
+typeCheckingMode = "off"

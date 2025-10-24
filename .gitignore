@@ -4,3 +4,4 @@ __pycache__/
 *.html
 deal-simulations/parse-deal
 .ionide/
+bml.css
