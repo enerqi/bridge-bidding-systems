@@ -1394,7 +1394,7 @@ Responding:
         2H = minimum 6!hs
             2N = NF, natural invitational
             3CD = sign off
-        2S = N/A
+        2S = catchall values semi-balanced
         2N = 14--15, 6+ !hs, values outside suit
         3CD = 5--5, natural
         3H = 14--15, 6+ !hs, 6 losers
@@ -1404,8 +1404,7 @@ Responding:
     2S = artificial 5--5 minors (cannot have !ss)
     2N = both minors, weak
     3CD = weak
-    3H = invitational, 6+ suit (not quite worth 1S--3H)
-    3S = natural, 3 card invite
+    3H = natural, 3 card invite
 2D = natural, 11--15, without extra shape
     2H = NF preference
         2N+ = game try structure as [1!h--2!h raise](#1H--2H) or [1!s--2!s raise](#1S--2S)

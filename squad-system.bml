@@ -856,7 +856,7 @@ After 1H opening 10--21, 5+ !hs:
                 3HS = weak preference
             3x = natural ~20+ hcp
         3CD = natural, GF
-        3H = GF, 3 card support support
+        3H = GF, 3 card support
         3HS = GF preference
         3N = stop(s), no slam interest, not shapely
     2N = 18--19 balanced
@@ -1443,7 +1443,7 @@ Responding:
 
 After 2C opening artificial strong
 
-2D = waiting, negative 0--7 or 8+ without a 5+ suit to show
+2C--2D = waiting, negative 0--7 or 8+ without a 5+ suit to show
     2H = game forcing, at least 5 cards
         2S = natural 5+ card suit
         2N = artificial, double negative 0--3, no support
@@ -1619,7 +1619,7 @@ Intermediate 10--13 hcp in 4th position
     3H = transfer to !ss
         3S = transferred
             3N = choice of games, 5!ss
-            4H = to play, 6+!ss
+            4S = to play, 6+!ss
             4other = splinter, singleton/void
         3N = maximum, HHx 3 card or 4+ card support, no good side suit
         4CDH = side good suit, 3+ top 5 honours, HHx 3 card or 4+ card support
