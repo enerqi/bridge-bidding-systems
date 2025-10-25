@@ -25,22 +25,19 @@ pn.state.notifications.position = "center-center"
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-# weak strong club fixups?
-# - opponents open 1x okj
-# ! opps open strong 1c unclear that it's not a normal 1c
-# opps open 1n, guessing if weak or strong nt
-# e.g. (2C)-X is it a strong 2c or intermediate
-# - slam section, some tables have limited context or incorrectly shown as table
-# - constructive sections
-#   e.g. 2C then "2d enquiry"
-#       sub table of contents section , 2H, implies 2c-2d-2h...?
-#   section 2c-2d-2h title, but 2h first bid in tree
+# maybe push these into a config file
+if "swedish" in pn.state.location.search.lower():
+    title = "Swedish Club Quiz"
+    bml_source = "bidding-system.bml"
+    system_notes_url = "https://sublime.is/bidding-system.html"
+else:
+    title = "U16 Squad System Quiz"
+    bml_source = "squad-system.bml"
+    system_notes_url = "https://sublime.is/squad-system.html"
 
-
-u16_tables = quiz.load_bid_tables("squad-system.bml")
-# u16_tables = quiz.load_bid_tables("bidding-system.bml")
+u16_tables, header_contexts = quiz.load_bid_tables(bml_source)
 quiz.prettify_bid_table_nodes(u16_tables)
-bid_sequences = quiz.collect_bid_table_auctions(u16_tables)
+bid_sequences = quiz.collect_bid_table_auctions(u16_tables, header_contexts)
 
 # global question data made into a reactive signal so that other things can change when it updates
 # the alternative is to make question part of a Parameterized subclass
@@ -499,7 +496,7 @@ main_section = [
         # contents within should naturally fit to a Card, so no need to sizing_mode="stretch_width" on HTML pane
         # pane and internal iframe need some massaging to relative sizes
         pn.pane.HTML(
-            '<iframe src="https://sublime.is/squad-system.html" style="width: 100%; height: 40vh"></iframe>',
+            f'<iframe src="{system_notes_url}" style="width: 100%; height: 40vh"></iframe>',
             styles=dict(height="40vh", width="99%"),  # pane is 40% of viewport height
             # pane html it is 40vh high, but iframe is in a separate shadow dom
             # so setting iframe to same viewport relative spec
@@ -513,7 +510,7 @@ main_section = [
 ]
 
 template = pn.template.MaterialTemplate(
-    title="U16 Squad System Quiz",
+    title=title,
     main=main_section,
     sidebar=side_section,  # theme="dark"
     sidebar_width=200,

@@ -1,5 +1,7 @@
+from copy import deepcopy
 from dataclasses import dataclass
 from enum import Enum
+import functools
 from os import environ
 from os.path import join, expanduser
 import random
@@ -17,26 +19,42 @@ sys.path.append(bml_tools_dir)
 import bml
 
 ProcessBidNodeFunc = Callable[[bml.Node, int], None]
+HeaderBiddingContext = list[tuple[bml.ContentType, str]]
 
 
-def load_bid_tables(bml_file_path: str) -> list[bml.Node]:
+def load_bid_tables(
+    bml_file_path: str,
+) -> tuple[list[bml.Node], list[HeaderBiddingContext]]:
     bml.content_from_file(bml_file_path)
 
-    # also keep stack of tree position? H1, H2, H3, H4
-    # include file dumps into same translation unit
-    # H1 then H2 implies nested
-    # H1 then H2 then H1 implies exited scope of other H1 or lower headings
-    #
-    # parsing the header data is an extra step, e.g. if in an H2 then does the title
-    # have any relevance?
-    # 1C opening, 1C--1D, is any of 1c 1d in the bidtable
+    tables = []
+    doc_hierarchy_contexts: list[HeaderBiddingContext] = []
+    current_context_tree: HeaderBiddingContext = []
 
-    bid_tables = [
-        content
-        for (content_type, content) in bml.content
-        if content_type == bml.ContentType.BIDTABLE
-    ]
-    return bid_tables
+    def pop_header_context(new_header_content_type: bml.ContentType):
+        nonlocal current_context_tree
+        if current_context_tree:
+            last_content_type = current_context_tree[-1][0]
+            if new_header_content_type <= last_content_type:  # H1 < H2 < H3 < H4
+                # either we have moved up the tree or gone to a sibling
+                current_context_tree.pop()
+                pop_header_context(new_header_content_type)
+
+    for content_type, content in bml.content:
+        if content_type in (
+            bml.ContentType.H4,
+            bml.ContentType.H3,
+            bml.ContentType.H2,
+            bml.ContentType.H1,
+        ):
+            pop_header_context(content_type)
+            current_context_tree.append((content_type, content))
+
+        if content_type == bml.ContentType.BIDTABLE:
+            tables.append(content)
+            doc_hierarchy_contexts.append(deepcopy(current_context_tree))
+
+    return tables, doc_hierarchy_contexts
 
 
 def bid_table_dfs(node: bml.Node, node_visit_func: ProcessBidNodeFunc, depth=0):
@@ -81,19 +99,76 @@ class BidSequenceMeaning:
     description: str
 
 
-def collect_bid_table_auctions(tables: list[bml.Node]) -> list[BidSequenceMeaning]:
+bid_regex = re.compile(r"[1-7][CDHSN]$")
+separator_bid_regex = re.compile(r"\-[1-7][CDHSN]$")
+
+
+def parse_header_context_to_bid_prelude(
+    header_context: HeaderBiddingContext,
+) -> list[str]:
+    header_bids = []
+
+    for header in header_context:
+        _type, header_text = header
+
+        # 1) what about 4CDHS, 3CDHS etc., 2HS
+        # if prelude is multiple 4CDHS, then ignore?
+        #
+        # 2) "opps open 2d or 2h", then prelude is wrong 2d 2h, just potentially wrong
+        # maybe ignore all preludes without "-" bids, but then "2d enquiry"??? it does have sub bids
+        #
+        # 3) "opps open 1S" should really be (1S) not just "1S", so ignoring
+        #
+        # MVP: only support headers with "-"...
+        if "-" in header_text and re.search(separator_bid_regex, header_text):
+            norm = header_text.strip().upper()
+            norm = norm.replace("-", " ")
+            norm = norm.replace("/", " ")
+            norm = norm.replace("NT", "N")
+            parts = norm.split()
+
+            for part in parts:
+                if re.match(bid_regex, part):
+                    # in theory there could be bidding context information overlap been different headers
+                    # e.g 1D and 1D--1S
+                    if part not in header_bids:
+                        header_bids.append(part)
+
+    return header_bids
+
+
+def collect_bid_table_auctions(
+    tables: list[bml.Node], header_contexts: list[HeaderBiddingContext]
+) -> list[BidSequenceMeaning]:
     """Includes all sequences in a tree branch, not just tree leaves"""
     sequences = []
 
-    def collect_auctions(node, depth):
+    def collect_auctions(node, depth, header_context):
         if node.desc == "root":
             return
-        sequences.append(
-            BidSequenceMeaning(sequence=node.get_sequence(), description=node.desc)
-        )
 
-    for table in tables:
-        bid_table_dfs(table, collect_auctions)
+        context_bids = parse_header_context_to_bid_prelude(header_context)
+
+        next_sequence = BidSequenceMeaning(
+            sequence=node.get_sequence(), description=node.desc
+        )
+        sequences.append(next_sequence)
+
+        # WARN: what if bid table says e.g 4HS, then hard to match against a prelude of 4H or 4S
+        missing_context = []
+        for bid in context_bids:
+            if not any(bid in sequence_bid for sequence_bid in next_sequence.sequence):
+                missing_context.append(bid)
+        if missing_context:
+            # print(context_bids, next_sequence)
+            new_next_sequence = missing_context + next_sequence.sequence
+            # print(f"updating sequence, initial: {next_sequence.sequence}, new: {new_next_sequence}")
+            next_sequence.sequence = new_next_sequence
+
+    for table, context in zip(tables, header_contexts):
+        bid_table_dfs(
+            table, functools.partial(collect_auctions, header_context=context)
+        )
 
     return sequences
 
@@ -132,11 +207,12 @@ def random_multi_choice_type() -> MultiChoiceType:
     else:
         return MultiChoiceType.Descriptions
 
-def generate_question(
-    bid_sequences: list[BidSequenceMeaning], multi_choice_count: int = 5,
-    choice_type: MultiChoiceType = MultiChoiceType.Auctions
-) -> Question:
 
+def generate_question(
+    bid_sequences: list[BidSequenceMeaning],
+    multi_choice_count: int = 5,
+    choice_type: MultiChoiceType = MultiChoiceType.Auctions,
+) -> Question:
     answer_index = random.randint(0, multi_choice_count - 1)  # e.g. 0-4
     answer = ""
     answer_candidate = ""
@@ -210,16 +286,21 @@ def generate_question(
 
 
 if __name__ == "__main__":
-    bid_tables = load_bid_tables("squad-system.bml")
+    # bid_tables, header_contexts = load_bid_tables("squad-system.bml")
+    bid_tables, header_contexts = load_bid_tables("bidding-system.bml")
     prettify_bid_table_nodes(bid_tables)
-    bid_sequences = collect_bid_table_auctions(bid_tables)
+    bid_sequences = collect_bid_table_auctions(bid_tables, header_contexts)
+
     show_bid_table_nodes(bid_tables)
+    # print(bid_tables[10], header_contexts[10])
+    # snippet = collect_bid_table_auctions([bid_tables[10]], header_contexts)
+    # print(snippet)
 
     print("Distinct auctions count: ", len(bid_sequences), "\n")
 
     question = generate_question(bid_sequences)
-    for auction in question.candidates:
-        print(auction + "\n")
-    print("which matches the description:\n" + question.answer)
+    for candidate in question.candidates:
+        print(candidate + "\n")
+    print("which candidate fits the answer...\n" + question.answer)
 
     show_all_auctions(bid_sequences)
