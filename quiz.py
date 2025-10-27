@@ -25,7 +25,7 @@ HeaderBiddingContext = list[tuple[bml.ContentType, str]]
 def load_bid_tables(
     bml_file_path: str,
 ) -> tuple[list[bml.Node], list[HeaderBiddingContext]]:
-    bml.content_from_file(bml_file_path)
+    content = bml.content_from_file(bml_file_path)
 
     tables = []
     doc_hierarchy_contexts: list[HeaderBiddingContext] = []
@@ -40,7 +40,7 @@ def load_bid_tables(
                 current_context_tree.pop()
                 pop_header_context(new_header_content_type)
 
-    for content_type, content in bml.content:
+    for content_type, content in content:
         if content_type in (
             bml.ContentType.H4,
             bml.ContentType.H3,
@@ -99,8 +99,12 @@ class BidSequenceMeaning:
     description: str
 
 
-bid_regex = re.compile(r"[1-7][CDHSN]$")
-separator_bid_regex = re.compile(r"\-[1-7][CDHSN]$")
+bid_regex = re.compile(r"\(?[1-7][CDHSN]\)?$")
+multi_bid_regex = re.compile(r"\(?[1-7][CDHSN]+\)?$")
+separator_bid_regex = re.compile(
+    r"\-\(?[1-7][CDHSN]\)?"
+)  # without $ we allow e.g. 1C--1HS
+prefix_separator_bid_regex = re.compile(r"\(?[1-7][CDHSN]\)?\-")
 
 
 def parse_header_context_to_bid_prelude(
@@ -111,6 +115,13 @@ def parse_header_context_to_bid_prelude(
     for header in header_context:
         _type, header_text = header
 
+        # print(header_text)
+
+        look = False
+        if "1C--1HS" in header_text:
+            look = True
+            look = False
+
         # 1) what about 4CDHS, 3CDHS etc., 2HS
         # if prelude is multiple 4CDHS, then ignore?
         #
@@ -120,19 +131,38 @@ def parse_header_context_to_bid_prelude(
         # 3) "opps open 1S" should really be (1S) not just "1S", so ignoring
         #
         # MVP: only support headers with "-"...
-        if "-" in header_text and re.search(separator_bid_regex, header_text):
+        # not want e.g. "Good-Bad"
+        if look:
+            print(header_text)
+        if "-" in header_text and (
+            re.search(separator_bid_regex, header_text)
+            or re.search(prefix_separator_bid_regex, header_text)
+        ):
             norm = header_text.strip().upper()
             norm = norm.replace("-", " ")
             norm = norm.replace("/", " ")
             norm = norm.replace("NT", "N")
             parts = norm.split()
 
+            if look:
+                print(norm)
+                print(parts)
+
             for part in parts:
-                if re.match(bid_regex, part):
+                # so what about matching 1HS?
+                # diff regex to capture 1HS
+                # but then need later `missing_context` to account for 1HS being 1H or 1S
+                if re.match(bid_regex, part) or re.match(multi_bid_regex, part):
                     # in theory there could be bidding context information overlap been different headers
                     # e.g 1D and 1D--1S
                     if part not in header_bids:
                         header_bids.append(part)
+        else:
+            if look:
+                print("not checking out")
+
+    if look:
+        print(header_bids)
 
     return header_bids
 
@@ -157,6 +187,7 @@ def collect_bid_table_auctions(
         # WARN: what if bid table says e.g 4HS, then hard to match against a prelude of 4H or 4S
         missing_context = []
         for bid in context_bids:
+            # MVP assuming that multi_bid_regex e.g 4HS will not be in the sequence
             if not any(bid in sequence_bid for sequence_bid in next_sequence.sequence):
                 missing_context.append(bid)
         if missing_context:
@@ -284,7 +315,6 @@ def generate_question(
             choice_type=choice_type,
         )
 
-
 if __name__ == "__main__":
     # bid_tables, header_contexts = load_bid_tables("squad-system.bml")
     bid_tables, header_contexts = load_bid_tables("bidding-system.bml")
@@ -292,9 +322,6 @@ if __name__ == "__main__":
     bid_sequences = collect_bid_table_auctions(bid_tables, header_contexts)
 
     show_bid_table_nodes(bid_tables)
-    # print(bid_tables[10], header_contexts[10])
-    # snippet = collect_bid_table_auctions([bid_tables[10]], header_contexts)
-    # print(snippet)
 
     print("Distinct auctions count: ", len(bid_sequences), "\n")
 
