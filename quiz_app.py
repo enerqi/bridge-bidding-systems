@@ -17,33 +17,63 @@ import param
 
 import quiz
 
-# some better fonts with design material
-pn.extension(design="material", notifications=True)
-pn.state.notifications.position = "center-center"
 
+def session_key_func(request):  # tornado.httputil.HTTPServerRequest
+    # - for session caching / reuse used along with panel serve --reuse-sessions
+    # - our empty material template, before it is populated has the title/theme depend on the query params
+    if "swedish" in request.query.lower():
+        return "swedish"  # arbitrary key
+    else:
+        return "squad"
+
+
+pn.extension(
+    design="material",  # some better fonts with design material
+    notifications=True,  # modal "toasts" support
+    session_key_func=session_key_func,  # panel serve --reuse-sessions
+)
+pn.state.notifications.position = "center-center"
 
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-# maybe push these into a config file
 if "swedish" in pn.state.location.search.lower():
     title = "Swedish Club Quiz"
-    bml_source = "bidding-system.bml"
+    bml_file = "bidding-system.bml"
     system_notes_url = "https://sublime.is/bidding-system.html"
+    theme = "dark"
 else:
     title = "U16 Squad System Quiz"
-    bml_source = "squad-system.bml"
+    bml_file = "squad-system.bml"
     system_notes_url = "https://sublime.is/squad-system.html"
+    theme = "default"
 
-u16_tables, header_contexts = quiz.load_bid_tables(bml_source)
-quiz.prettify_bid_table_nodes(u16_tables)
-bid_sequences = quiz.collect_bid_table_auctions(u16_tables, header_contexts)
+debug_enabled = pn.config.autoreload or "debug" in pn.state.location.search.lower()
 
-# global question data made into a reactive signal so that other things can change when it updates
+
+# @pn.cache  # per user session caching, pn.state.as_cached for cross session caching
+# https://panel.holoviz.org/how_to/caching/manual.html
+# - Imported modules are executed once when they are first imported. Objects defined in these modules are shared across
+#   all user sessions!
+# - The app.py script is executed each time the app is loaded. Objects defined here are shared within the single user
+#   session only (unless cached).
+# - Only specific, bound functions are re-executed upon user interactions, not the entire app.py script.
+def load_bid_sequences(bml_source: str):
+    bid_tables, header_contexts = quiz.load_bid_tables(bml_source)
+    quiz.prettify_bid_table_nodes(bid_tables)
+    bid_sequences = quiz.collect_bid_table_auctions(bid_tables, header_contexts)
+    return bid_sequences
+
+
+bid_sequences = pn.state.as_cached(
+    "bid_sequences", load_bid_sequences, bml_source=bml_file
+)
+
+# Global question data made into a reactive signal so that other things can change when it updates
 # the alternative is to make question part of a Parameterized subclass
-# note we are currently making `Score` Parameterized as the alternative example, will experiment with how to render it
-# separately to its data, but currently the `view` method is under the Score class
-# `question.rx.value` allows us to mess with the underlying question class
+# Note we are currently making `Score` Parameterized as the alternative example, will experiment with how to render it
+# separately to its data, but currently the `view` method is under the Score class `question.rx.value` allows us to mess
+# with the underlying question class
 question = param.rx(
     quiz.generate_question(bid_sequences, choice_type=quiz.random_multi_choice_type())
 )
@@ -110,9 +140,6 @@ class Score(param.Parameterized):
         default=0, bounds=(0, None), doc="number of questions attempted"
     )
 
-    def __call__(self):
-        return f"{self.questions_correct} / {self.questions_attempted}"
-
     @param.depends("questions_correct", "questions_attempted")
     def view(self):
         if self.questions_attempted > 0:
@@ -127,7 +154,7 @@ class Score(param.Parameterized):
         return pn.pane.Markdown(s, disable_anchors=True)
 
 
-# parameterized type to custom widget
+# parameterized type to custom widget docs:
 # https://panel.holoviz.org/how_to/param/custom.htmls
 score = Score()
 
@@ -270,7 +297,7 @@ async def on_answer_click(event):  # event handlers can be async with no extra w
 
 
 # as there is little colour control, maybe better to use an icon image from dynamic svg with a "button icon"
-# but dynamic svg argh
+# but dynamic svg too complex?
 spade_emoji_black = "♠"
 heart_emoji_black = "♥️"
 diamond_emoji_black = "♦️"
@@ -280,7 +307,7 @@ heart_emoji_white = "♡"
 diamond_emoji_white = "♢"
 club_emoji_white = "♧"
 
-suit_replace_regex = re.compile(
+suit_replace_regex = pn.state.as_cached("suit_replace_regex", lambda: re.compile(
     r"""
     \d  # a number
     (
@@ -291,9 +318,9 @@ suit_replace_regex = re.compile(
     )+ # 1+ suit or N symbols to replace
     """,
     re.VERBOSE,
-)
+))
 
-link_regex = re.compile(r"\(#.*\)")
+link_regex = pn.state.as_cached("link_regex", lambda: re.compile(r"\(#.*\)"))
 
 
 def suit_replace(matchobj):
@@ -304,6 +331,7 @@ def suit_replace(matchobj):
     text = text.replace("S", spade_emoji_black)
     text = text.replace("N", "NT")
     return text
+
 
 def emoji_text_auction(auction: str):
     a = auction
@@ -360,9 +388,6 @@ ui_context = UI_Context()
 
 @pn.depends(question)
 def question_view():
-    # pn.state.notifications.error('questions_view running', duration=2000)
-
-    # put html pane inside button?
     def make_button(candidate):
         pretty_auction = emoji_text_auction(candidate)
         button = pn.widgets.Button(
@@ -395,7 +420,6 @@ def question_view():
         # https://panel.holoviz.org/reference/layouts/FlexBox.html
         justify_content="space-evenly",
     )
-    # pprint("pane objects: " + str(flex_pane.objects))
     return flex_pane
 
 
@@ -413,11 +437,18 @@ def answer_view():
 
 
 # testing data binding reactivity
-def test_button_action(event):
+def debug_button_action(event):
     pprint(question.rx.value)
+    print(title)
+    print(bml_file)
+    print(system_notes_url)
+    pprint(f"cookies: {pn.state.cookies}")
+    pprint(pn.state.location)
+    pprint(pn.state.session_info)
+    pprint(pn.config)
 
 
-test_button = pn.widgets.Button(name="Debug", on_click=test_button_action)
+debug_button = pn.widgets.Button(name="Debug", on_click=debug_button_action)
 
 
 def skip_question_handler(event):
@@ -458,13 +489,16 @@ restart_button = pn.widgets.Button(
 )
 
 card_like_style = dict(
-    background="seagreen", padding="20px", border_radius="25px", box_shadow="10px 10px"
+    background="seagreen",
+    padding="20px",
+    border_radius="25px",
+    box_shadow="10px 10px rgb(255 255 255 / 70%)" if theme == "dark" else "10px 10px rgb(0 0 0 / 70%)",
 )
 side_section = [
     pn.Row(score.view, styles={**card_like_style, "background": "lightblue"}),
     pn.Spacer(height=100),
-    test_button,
-    pn.Row(skip_button, skips_left_view),
+    debug_button if debug_enabled else "",
+    pn.Row(skip_button, skips_left_view, styles={**card_like_style, "background": "lightblue"}),
     pn.Spacer(height=100),
     restart_button,
 ]
@@ -514,6 +548,7 @@ template = pn.template.MaterialTemplate(
     main=main_section,
     sidebar=side_section,  # theme="dark"
     sidebar_width=200,
+    theme=theme,
 )
 
 # Enable dual-mode execution
