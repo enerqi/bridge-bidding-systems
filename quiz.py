@@ -25,7 +25,8 @@ HeaderBiddingContext = list[tuple[bml.ContentType, str]]
 def load_bid_tables(
     bml_file_path: str,
 ) -> tuple[list[bml.Node], list[HeaderBiddingContext]]:
-    content = bml.content_from_file(bml_file_path)
+    bml.content_from_file(bml_file_path)
+    content = deepcopy(bml.content)
 
     tables = []
     doc_hierarchy_contexts: list[HeaderBiddingContext] = []
