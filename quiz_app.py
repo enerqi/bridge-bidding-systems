@@ -51,13 +51,13 @@ else:
 debug_enabled = pn.config.autoreload or "debug" in pn.state.location.search.lower()
 
 
-# @pn.cache  # per user session caching, pn.state.as_cached for cross session caching
 # https://panel.holoviz.org/how_to/caching/manual.html
 # - Imported modules are executed once when they are first imported. Objects defined in these modules are shared across
 #   all user sessions!
 # - The app.py script is executed each time the app is loaded. Objects defined here are shared within the single user
 #   session only (unless cached).
 # - Only specific, bound functions are re-executed upon user interactions, not the entire app.py script.
+@pn.cache  # per server process OR per user session caching
 def load_bid_sequences(bml_source: str):
     bid_tables, header_contexts = quiz.load_bid_tables(bml_source)
     quiz.prettify_bid_table_nodes(bid_tables)
@@ -65,9 +65,7 @@ def load_bid_sequences(bml_source: str):
     return bid_sequences
 
 
-bid_sequences = pn.state.as_cached(
-    "bid_sequences", load_bid_sequences, bml_source=bml_file
-)
+bid_sequences = load_bid_sequences(bml_file)
 
 # Global question data made into a reactive signal so that other things can change when it updates
 # the alternative is to make question part of a Parameterized subclass
@@ -144,14 +142,25 @@ class Score(param.Parameterized):
     def view(self):
         if self.questions_attempted > 0:
             value = (self.questions_correct / self.questions_attempted) * 100
-            percentage = f"{round(value)}%"
+            percentage = round(value)
         else:
-            percentage = ""
-        s = f"""__Score__: {self.questions_correct} / {self.questions_attempted}
+            percentage = 0
+        s = f"__Score__: {self.questions_correct} / {self.questions_attempted}"
 
-        {percentage}
-        """
-        return pn.pane.Markdown(s, disable_anchors=True)
+        return pn.Column(
+            pn.Row(pn.pane.Markdown(s, disable_anchors=True)),
+            pn.Row(pn.indicators.Dial(
+                stylesheets=[
+                """
+                .bk-CanvasPanel .bk-right {
+                  background: lightblue;
+                }
+                """
+            ],
+                name="", value=percentage, bounds=(0, 100), width=150, height=150,
+                colors=[(0.0, '#B22222'), (0.3, '#F08080'), (0.5, "#F5F5DC"), (0.7, '#90EE90'), (0.9, '#006400'), (1.0, 'gold')]
+            )),
+        )
 
 
 # parameterized type to custom widget docs:
@@ -292,7 +301,9 @@ async def on_answer_click(event):  # event handlers can be async with no extra w
         await asyncio.sleep(4.2)
 
     question.rx.value = quiz.generate_question(
-        bid_sequences, choice_type=quiz.random_multi_choice_type()
+        bid_sequences,
+        choice_type=quiz.random_multi_choice_type(),
+        multi_choice_count=difficulty_slider.value_throttled,
     )
 
 
@@ -307,8 +318,10 @@ heart_emoji_white = "♡"
 diamond_emoji_white = "♢"
 club_emoji_white = "♧"
 
-suit_replace_regex = pn.state.as_cached("suit_replace_regex", lambda: re.compile(
-    r"""
+suit_replace_regex = pn.state.as_cached(
+    "suit_replace_regex",
+    lambda: re.compile(
+        r"""
     \d  # a number
     (
         [CDHS]  # CDHS to replace with spans, but will have to check it's not in [] or () somehow
@@ -317,8 +330,9 @@ suit_replace_regex = pn.state.as_cached("suit_replace_regex", lambda: re.compile
         N(?!T)
     )+ # 1+ suit or N symbols to replace
     """,
-    re.VERBOSE,
-))
+        re.VERBOSE,
+    ),
+)
 
 link_regex = pn.state.as_cached("link_regex", lambda: re.compile(r"\(#.*\)"))
 
@@ -457,7 +471,9 @@ def skip_question_handler(event):
     global skip_button
     if skips_left.rx.value > 0:
         question.rx.value = quiz.generate_question(
-            bid_sequences, choice_type=quiz.random_multi_choice_type()
+            bid_sequences,
+            choice_type=quiz.random_multi_choice_type(),
+            multi_choice_count=difficulty_slider.value_throttled,
         )
         skips_left.rx.value -= 1
 
@@ -476,7 +492,7 @@ def skips_left_view():
     return f"{skips_left.rx.value} left"
 
 
-def restart_handler(event):
+def reset_skips_and_scoring():
     skips_left.rx.value = 3
     score.questions_attempted = 0
     score.questions_correct = 0
@@ -484,22 +500,61 @@ def restart_handler(event):
     skip_button.disabled = False
 
 
+def restart_handler(event):
+    reset_skips_and_scoring()
+
+
 restart_button = pn.widgets.Button(
     name="Restart", on_click=restart_handler, button_type="danger"
 )
+
+
+difficulty_slider = pn.widgets.IntSlider(
+    name="Difficulty (restarts quiz!)", start=4, end=8, step=1, width=150, value=5
+)
+
+
+# @pn.io.hold  # batch / hold UI updates until skips/scoring/question all updated
+# but not so relevant to rx updates
+def difficulty_change(event):
+    reset_skips_and_scoring()
+    choice_count = event.new
+    question.rx.value = quiz.generate_question(
+        bid_sequences,
+        choice_type=quiz.random_multi_choice_type(),
+        multi_choice_count=choice_count,
+    )
+
+
+# imperative way, when difficulty_slider.value_throttled changes
+# `value_throttled` only updates when mouse released unlike `value`
+difficulty_slider.param.watch(difficulty_change, "value_throttled")
 
 card_like_style = dict(
     background="seagreen",
     padding="20px",
     border_radius="25px",
-    box_shadow="10px 10px rgb(255 255 255 / 70%)" if theme == "dark" else "10px 10px rgb(0 0 0 / 70%)",
+    box_shadow="10px 10px rgb(255 255 255 / 70%)"
+    if theme == "dark"
+    else "10px 10px rgb(0 0 0 / 70%)",
 )
 side_section = [
-    pn.Row(score.view, styles={**card_like_style, "background": "lightblue"}),
+    pn.Row(
+        pn.Column(
+            score.view
+        ),
+        styles={**card_like_style, "background": "lightblue"},
+    ),
     pn.Spacer(height=100),
     debug_button if debug_enabled else "",
-    pn.Row(skip_button, skips_left_view, styles={**card_like_style, "background": "lightblue"}),
+    pn.Row(
+        skip_button,
+        skips_left_view,
+        styles={**card_like_style, "background": "lightblue"},
+    ),
     pn.Spacer(height=100),
+    pn.Row(difficulty_slider),
+    pn.Spacer(height=50),
     restart_button,
 ]
 
@@ -546,8 +601,8 @@ main_section = [
 template = pn.template.MaterialTemplate(
     title=title,
     main=main_section,
-    sidebar=side_section,  # theme="dark"
-    sidebar_width=200,
+    sidebar=side_section,
+    sidebar_width=230,
     theme=theme,
 )
 

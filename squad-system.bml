@@ -389,7 +389,7 @@ After 1C opening 10--21, 2+ !cs:
 
 1C--(4!d!h)
     Dbl = takeout, often more general values
-    newSuit = forcing
+    game = to play
 
 1C--(4!s)
     Dbl = penalty/values mainly
@@ -713,7 +713,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
 
 1D--(4!c!h)
     Dbl = takeout, often more general values
-    newSuit = forcing
+    game = to play
 
 1D--(4!s)
     Dbl = penalty/values mainly
@@ -1015,7 +1015,8 @@ After 1H opening 10--21, 5+ !hs:
 
 1H--(4!c!d)
     Dbl = takeout, often more general values
-    newSuit = forcing
+    4D = forcing
+    game = to play
 
 1H--(4!s)
     Dbl = penalty/values mainly
@@ -1172,7 +1173,7 @@ After 1S opening 10--21, 5+ !ss:
 
 1S--(X)
     2N = good raise 4 card support, 10+ hcp
-    3H = competitive 4+ card support, less than invite
+    3S = competitive 4+ card support, less than invite
     XX = 10+ hcp without support, without own 5+ card biddable suit
     others = constructive, same as without the double
     4S = to play, often weak long trumps
@@ -1227,7 +1228,7 @@ After 1S opening 10--21, 5+ !ss:
     new = constructive, non-forcing
     cueLow = (cue bid of their lower rank suit) forcing in lower remaining suit
     cueHi = (cue bid of their higher rank suit) forcing in higher remaining suit
-    2N = natural
+    2N = natural invitational
     3N = natural
 
 1S--(2!s) = two suiter, one known
@@ -1235,7 +1236,7 @@ After 1S opening 10--21, 5+ !ss:
     3S = obstructive
     cue = good !s raise
     new = natural, forcing (not non-forcing as with two known suits)
-    2N = natural
+    2N = natural invitational
     3N = natural
 
 1S--(2N) = two suiter, two known (e.g. minors)
@@ -1254,10 +1255,12 @@ After 1S opening 10--21, 5+ !ss:
 
 1S--(4!c!d)
     Dbl = takeout, often more general values
-    newSuit = forcing
+    4D = forcing
+    game = to play
 
 1S--(4!h)
     Dbl = penalty/values
+    game = to play
 
 1S--(any)--P--(P)
     1N = 18--19
@@ -1926,7 +1929,8 @@ We open any preempt:
 (1D)--X = takeout - other suits playable OR something too strong to overcall
     1HS = ~0--7, 4+ cards
     1N = ~7--10, stops
-    2CHS = ~8--10 hcp, 4+ cards
+    2C = ~0--7, 4+ cards
+    2HS = ~8--10 hcp, 4+ cards
     2D = cue, general force or has at least two suits of same length (often majors)
     2N = natural invite, stops
 
@@ -1994,7 +1998,9 @@ We open any preempt:
 (1H)--X = takeout - other suits playable OR something too strong to overcall
     1S = ~0--7, 4+ cards
     1N = ~7--10, stops
-    2CDS = ~8--10 hcp, 4+ cards
+    2CD = ~0--7, 4+ cards
+    2S = ~8--10 hcp, 4+ cards
+    3CD = ~8--10 hcp, 4+ cards
     2H = cue, general force or has at least two suits of same length
     2N = natural invite, stops
 
@@ -2063,9 +2069,10 @@ We open any preempt:
 
 (1S)--X = takeout - other suits playable OR something too strong to overcall
     1N = ~7--10, stops
-    2CDH = ~8--10 hcp, 4+ cards
+    2CDH = ~0--7, 4+ cards
     2S = cue, general force or has at least two suits of same length
     2N = natural invite, stops
+    3CDH = ~8--10 hcp, 4+ cards
 
 ** (1S)--Overcall
 
