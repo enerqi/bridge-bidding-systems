@@ -16,3 +16,6 @@ venvPath = "."
 venv =  ".venv"
 pythonVersion = "3.14"
 typeCheckingMode = "off"
+
+[tool.ruff]
+line-length = 120

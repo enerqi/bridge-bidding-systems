@@ -41,7 +41,8 @@ if "swedish" in pn.state.location.search.lower():
     title = "Swedish Club Quiz"
     bml_file = "bidding-system.bml"
     system_notes_url = "https://sublime.is/bidding-system.html"
-    theme = "dark"
+    # theme = "dark"
+    theme = "default"
 else:
     title = "U16 Squad System Quiz"
     bml_file = "squad-system.bml"
@@ -72,9 +73,7 @@ bid_sequences = load_bid_sequences(bml_file)
 # Note we are currently making `Score` Parameterized as the alternative example, will experiment with how to render it
 # separately to its data, but currently the `view` method is under the Score class `question.rx.value` allows us to mess
 # with the underlying question class
-question = param.rx(
-    quiz.generate_question(bid_sequences, choice_type=quiz.random_multi_choice_type())
-)
+question = param.rx(quiz.generate_question(bid_sequences, choice_type=quiz.random_multi_choice_type()))
 
 
 @pn.depends(question)
@@ -131,12 +130,8 @@ def intro_view():
 #   https://panel.holoviz.org/how_to/links/links.html
 #   including transform functions
 class Score(param.Parameterized):
-    questions_correct = param.Integer(
-        default=0, bounds=(0, None), doc="number of questions answered correctly"
-    )
-    questions_attempted = param.Integer(
-        default=0, bounds=(0, None), doc="number of questions attempted"
-    )
+    questions_correct = param.Integer(default=0, bounds=(0, None), doc="number of questions answered correctly")
+    questions_attempted = param.Integer(default=0, bounds=(0, None), doc="number of questions attempted")
 
     @param.depends("questions_correct", "questions_attempted")
     def view(self):
@@ -149,17 +144,31 @@ class Score(param.Parameterized):
 
         return pn.Column(
             pn.Row(pn.pane.Markdown(s, disable_anchors=True)),
-            pn.Row(pn.indicators.Dial(
-                stylesheets=[
-                """
+            pn.Row(
+                pn.indicators.Dial(
+                    # not working
+                    stylesheets=[
+                        """
                 .bk-CanvasPanel .bk-right {
                   background: lightblue;
                 }
                 """
-            ],
-                name="", value=percentage, bounds=(0, 100), width=150, height=150,
-                colors=[(0.0, '#B22222'), (0.3, '#F08080'), (0.5, "#F5F5DC"), (0.7, '#90EE90'), (0.9, '#006400'), (1.0, 'gold')]
-            )),
+                    ],
+                    name="",
+                    value=percentage,
+                    bounds=(0, 100),
+                    width=150,
+                    height=150,
+                    colors=[
+                        (0, "#FF0000"),  # Red
+                        (0.3, "#FF6600"),  # Orange-Red
+                        (0.49, "#FFCC00"),  # Yellow
+                        (0.59, "#99CC00"),  # Yellow-Green
+                        (0.75, "#66CC00"),  # Greenish
+                        (1, "#00CC00"),  # Green
+                    ],
+                )
+            ),
         )
 
 
@@ -443,11 +452,7 @@ def answer_view():
     answer = emoji_text_auction(question.rx.value.answer)
     leading_cap = answer[0].upper() + answer[1:]
     # markdown bold
-    return pn.Row(
-        pn.pane.Markdown(
-            f'# "__{leading_cap}__"', styles={"font-size": "2rem"}, disable_anchors=True
-        )
-    )
+    return pn.Row(pn.pane.Markdown(f'# "__{leading_cap}__"', styles={"font-size": "2rem"}, disable_anchors=True))
 
 
 # testing data binding reactivity
@@ -481,9 +486,7 @@ def skip_question_handler(event):
 
 
 skips_left = pn.rx(3)
-skip_button = pn.widgets.Button(
-    name="Skip", on_click=skip_question_handler, button_type="warning"
-)
+skip_button = pn.widgets.Button(name="Skip", on_click=skip_question_handler, button_type="warning")
 
 
 @pn.depends(skips_left)
@@ -504,13 +507,16 @@ def restart_handler(event):
     reset_skips_and_scoring()
 
 
-restart_button = pn.widgets.Button(
-    name="Restart", on_click=restart_handler, button_type="danger"
-)
+restart_button = pn.widgets.Button(name="Restart", on_click=restart_handler, button_type="danger")
 
 
 difficulty_slider = pn.widgets.IntSlider(
-    name="Difficulty (restarts quiz!)", start=4, end=8, step=1, width=150, value=5
+    name="Difficulty (restarts quiz!)",
+    start=4,
+    end=8,
+    step=1,
+    width=150,
+    value=5,
 )
 
 
@@ -530,32 +536,31 @@ def difficulty_change(event):
 # `value_throttled` only updates when mouse released unlike `value`
 difficulty_slider.param.watch(difficulty_change, "value_throttled")
 
-card_like_style = dict(
+main_card_like_style = dict(
     background="seagreen",
     padding="20px",
     border_radius="25px",
-    box_shadow="10px 10px rgb(255 255 255 / 70%)"
-    if theme == "dark"
-    else "10px 10px rgb(0 0 0 / 70%)",
+    box_shadow="10px 10px rgb(255 255 255 / 70%)" if theme == "dark" else "10px 10px rgb(0 0 0 / 70%)",
 )
+side_section_card_style = {**main_card_like_style, "background": "lightblue"}
+
 side_section = [
-    pn.Row(
-        pn.Column(
-            score.view
-        ),
-        styles={**card_like_style, "background": "lightblue"},
-    ),
+    pn.Row(pn.Column(score.view), styles=side_section_card_style),
     pn.Spacer(height=100),
     debug_button if debug_enabled else "",
     pn.Row(
         skip_button,
         skips_left_view,
-        styles={**card_like_style, "background": "lightblue"},
+        styles=side_section_card_style,
     ),
     pn.Spacer(height=100),
-    pn.Row(difficulty_slider),
-    pn.Spacer(height=50),
-    restart_button,
+    pn.Row(
+        pn.Column(
+            difficulty_slider,
+            restart_button,
+        ),
+        styles=side_section_card_style,
+    ),
 ]
 
 main_section = [
@@ -566,7 +571,7 @@ main_section = [
         question_view,
         # various base object attributes...api reference
         # https://panel.holoviz.org/api/index.html
-        styles=card_like_style,
+        styles=main_card_like_style,
     ),
     pn.Spacer(height=100),
     """
