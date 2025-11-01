@@ -170,7 +170,7 @@ After 1C opening 10--21, 2+ !cs:
         3N = to play
         4H = 6+!hs to play, no slam interest
         4N = quantitative to 6N
-    2C = natural 6+!cs, not worth 3C rebid
+    2C = natural often 6+!cs (maybe 5!cs + 4!ds not worth reverse), not worth 3C rebid
         2DS = natural, forcing one round
         2N = invite, natural
         3N = natural, ~12--15
@@ -246,7 +246,7 @@ After 1C opening 10--21, 2+ !cs:
         3N = to play
         4S = 6+!ss to play, no slam interest
         4N = quantitative to 6N
-    2C = natural 6+!cs, not worth 3D rebid
+    2C = natural often 6+!cs (maybe 5!cs + 4!ds/!hs not worth reverse), not worth 3C rebid
         2DH = natural, forcing one round
         2S = invitational ~9--11 6+ suit
         2N = invite, natural
@@ -573,7 +573,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
             3N = 15--17 with stop
         2S = invitational ~9--11 6+ suit
         3S = GF good 6+ suit (use fourth suit forcing with bad suit)
-    2D = natural 5+!ds (often 6), not worth 3D rebid
+    2D = natural often 6+!ds (maybe 5!ds + 4!hs not worth reverse), not worth 3D rebid
         2H = natural, forcing one round
         2N = invite, natural
         3C = natural, game forcing

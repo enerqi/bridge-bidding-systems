@@ -790,29 +790,36 @@ that over a strong 1C we can assume a GF. Not quite as aggressive as a negative 
 the strength for a standard 2 level new suit bid.
 
 After a suit overcall, there are again some transfers, but we keep a natural 1N for its positional advantage. The major
-transfer can be weak or GF (double with invite), so that can be negative free bid like but promising 6 cards. Should the
-2 level major transfer be done with any constructive (6+ hcp over 1C, 8+ hcp over 1D) 6+ cards instead of doubling with
-6 and invite (only double with a poor 6 carder, weak values)? We play that variant aswell as it's unclear which way
-handles interference better. The minor bid is again more constructive 8+ for consistency. As 1N is natural, !cs as ever
-is harder to bid and requires a sound 10+ hcp as you cannot play it at the 2 level.
+transfer can be weak or GF (double with invite), so the weak variant is negative free bid like but promising 6 cards.
+Should the 2 level major transfer be done with any constructive (6+ hcp over 1C, 8+ hcp over 1D) 6+ cards instead of
+doubling with 6 and invite (only double with a poor 6 carder, weak values)? We play that variant aswell as it's unclear
+which way handles interference better. The minor bid is again more constructive 8+ for consistency. As 1N is natural,
+!cs as ever is harder to bid and requires a sound 10+ hcp as you cannot play it at the 2 level. The 2S bid after a 1HS
+overcall is a stop ask. Some systems use this as 5--4+ minors invitational hands which are awkward to show quickly. We
+have to make do with an initial !d transfer then bidding 3C. As 2S is a stop ask a 3 level cue bid can be played as
+Michaels 5--5 instead of using 3 cue as stop ask. Some of these auctions are rare enough that it's hard to decide what
+is best, but the Michaels bid seems an overall plus as showing distributional swing inducing hands quickly is important.
+There is some divergence between 1C and 1D openings where after a 1HS overcall 3C is weak natural (over 1!c) v.s. 5--4+
+minors preempt (over 1!d). As 1C could be strong we want to take up bidding space with very specific hands. Over
+1D--(1!h!s) a natural 3C is slightly more frequent but likely to be outbid as the lowest ranking suit, so finding a
+double fit is probably more helpful.
 
 * 2C Opening Responses
 
 Generally content with the structure -- promising 6 cards makes the constructive bidding much easier than only 5 clubs.
 
-Standard modern precision has similar responses, except 3D (instead of 5--5+ majors) + 3H (instead of natural
-invitational) are invite plus transfers. Transfers have the usual downside of more lead directing doubles and bidding
-space for opponents, but transfers may quickly describe more hands, e.g. one 5 card major and able to go to 3N for which
-we must start with the 2D enquiry.
+Standard modern precision has similar responses, with which we are aligned. There's not too many variants, the main
+differences being in the rare auctions such as how to 5--5 GF two suiters or 6--4 major hands. Transfers have the usual
+downside of more lead directing doubles and bidding space for opponents, but transfers may quickly describe more hands and
+generally easy to remember.
 
-SMP uses 3S to show 6!ss + 4!hs GF. We have to go via 2N for 6--4 either way in the majors and for single suited GF
-major hands. It's not that likely to suffer from difficult pre-emption though -- we could double !ds for takeout or
-another major overcall for penalty. Unsure if a GF single major would struggle after !d preemption and support.
-Presumably a transfer to !hs then bidding 3S would show 6--4 in SMP.
+An older alternative would bid 2N with 6--4 major hands or a single suited GF major hand, with 3D used to show 5--5
+majors. Rare enough and probably not really any better, so we switched to use the SMP approach of 3S showing 6!ss + 4!hs
+GF and 2N as any 5--5 GF or a preempt. 6!hs + 4!ss start with a !h transfer, which has plenty of room to show the !ss.
 
-SMP uses 2N to show the 5--5 GF type hands, including a major + !ds which we start via the 3C !d transfer. Perhaps it's
-more important to show 5--5 majors directly with 3D in case of interference, regardless, our 3D is invite plus instead
-of GF, so perhaps a bit more accurate for major game bidding.
+The SMP 2D enquiry responses are a little unnatural but work well -- often able to show whether the !c suit has 2/3 top
+honours.
+
 
 * Weak Two Responses
 
