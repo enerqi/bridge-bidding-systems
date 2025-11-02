@@ -60,9 +60,9 @@ debug_enabled = pn.config.autoreload or "debug" in pn.state.location.search.lowe
 # - Only specific, bound functions are re-executed upon user interactions, not the entire app.py script.
 @pn.cache  # per server process OR per user session caching
 def load_bid_sequences(bml_source: str):
-    bid_tables, header_contexts = quiz.load_bid_tables(bml_source)
+    bid_tables = quiz.load_bid_tables(bml_source)
     quiz.prettify_bid_table_nodes(bid_tables)
-    bid_sequences = quiz.collect_bid_table_auctions(bid_tables, header_contexts)
+    bid_sequences = quiz.collect_bid_table_auctions(bid_tables)
     return bid_sequences
 
 

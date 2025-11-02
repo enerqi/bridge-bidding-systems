@@ -4,11 +4,11 @@ from enum import Enum
 import functools
 from os import environ
 from os.path import join, expanduser
+from pprint import pprint
 import random
 import re
 import sys
-from typing import Callable, Iterator, List, NewType, Optional
-
+from typing import Callable, NewType
 from panel.widgets import MultiChoice
 
 Path = NewType("Path", str)
@@ -19,76 +19,96 @@ sys.path.append(bml_tools_dir)
 import bml
 
 ProcessBidNodeFunc = Callable[[bml.Node, int], None]
-HeaderBiddingContext = list[tuple[bml.ContentType, str]]
+
+
+@dataclass
+class Header:
+    content_type: bml.ContentType
+    text: str
+
+
+@dataclass
+class BidTable:
+    tree_root: bml.Node
+    headers_context: list[Header]
 
 
 def load_bid_tables(
     bml_file_path: str,
-) -> tuple[list[bml.Node], list[HeaderBiddingContext]]:
+) -> list[BidTable]:
     bml.content_from_file(bml_file_path)
-    content = deepcopy(bml.content)
+    # this could be other things than nodes or strings, but we only extract tables and headers
+    content: list[tuple[bml.ContentType, bml.Node | str]] = deepcopy(bml.content)
 
-    tables = []
-    doc_hierarchy_contexts: list[HeaderBiddingContext] = []
-    current_context_tree: HeaderBiddingContext = []
+    tables: list[BidTable] = []
+    current_context_tree: list[Header] = []
 
-    def pop_header_context(new_header_content_type: bml.ContentType):
+    def pop_to_new_header_context(new_header_content_type: bml.ContentType):
         nonlocal current_context_tree
         if current_context_tree:
-            last_content_type = current_context_tree[-1][0]
+            last_content_type = current_context_tree[-1].content_type
             if new_header_content_type <= last_content_type:  # H1 < H2 < H3 < H4
                 # either we have moved up the tree or gone to a sibling
                 current_context_tree.pop()
-                pop_header_context(new_header_content_type)
+                pop_to_new_header_context(new_header_content_type)
 
     for content_type, content in content:
         if content_type in (
-            bml.ContentType.H4,
-            bml.ContentType.H3,
-            bml.ContentType.H2,
             bml.ContentType.H1,
+            bml.ContentType.H2,
+            bml.ContentType.H3,
+            bml.ContentType.H4,
         ):
-            pop_header_context(content_type)
-            current_context_tree.append((content_type, content))
+            pop_to_new_header_context(content_type)
+            assert isinstance(content, str)
+            current_context_tree.append(Header(content_type=content_type, text=content))
 
         if content_type == bml.ContentType.BIDTABLE:
-            tables.append(content)
-            doc_hierarchy_contexts.append(deepcopy(current_context_tree))
+            tables.append(BidTable(tree_root=content, headers_context=deepcopy(current_context_tree)))
 
-    return tables, doc_hierarchy_contexts
+    return tables
 
 
-def bid_table_dfs(node: bml.Node, node_visit_func: ProcessBidNodeFunc, depth=0):
+def bid_table_dfs(table: BidTable, node_visit_func: ProcessBidNodeFunc, depth=0):
+    node = table.tree_root
+    node_dfs(node, node_visit_func)
+
+
+def node_dfs(node: bml.Node, node_visit_func: ProcessBidNodeFunc, depth=0):
     node_visit_func(node, depth)
     if node.children:
         for child in node.children:
-            bid_table_dfs(child, node_visit_func, depth=depth + 1)
+            node_dfs(child, node_visit_func, depth=depth + 1)
 
 
-def show_bid_table_nodes(tables: list[bml.Node]):
+def show_bid_table_nodes(tables: list[BidTable], show_table_context: bool):
     def show_node(node, depth):
         if node.desc == "root":
             return
         print("    " * depth, node.bid, node.desc)
 
     for table in tables:
+        if show_table_context:
+            print(f"\n### Context: {table.headers_context}\n")
         bid_table_dfs(table, show_node)
 
 
-def prettify_bid_table_nodes(tables: list[bml.Node]):
-    def do_prettify_bidrep(bml_node, _depth):
+def prettify_bid_table_nodes(tables: list[BidTable]):
+    def do_prettify_bidrep(table_node: bml.Node, _depth):
+        table_bidrepr = table_node.bidrepr
+
         # extra tidy, maybe write our own get_sequence so mess less with bidrepr
-        bml_node.bidrepr = re.sub(r"([A-Za-z])\(", r"\1 (", bml_node.bidrepr)
-        bml_node.bidrepr = re.sub(r"\)(\d[A-Za-z])", r") \1", bml_node.bidrepr)
-        bml_node.bidrepr = re.sub(r"(\s)P(\s)", r"\1Pass\2", bml_node.bidrepr)
-        bml_node.bidrepr = bml_node.bidrepr.replace("(P)", "(Pass)")
-        bml_node.bidrepr = bml_node.bidrepr.replace(")P", ") Pass")
-        bml_node.bidrepr = bml_node.bidrepr.replace(")X", ") X")
-        bml_node.bidrepr = bml_node.bidrepr.replace("--", " ")
-        # bml_node.bidrepr = bml_node.bidrepr.replace("!c", "C")
-        # bml_node.bidrepr = bml_node.bidrepr.replace("!d", "D")
-        # bml_node.bidrepr = bml_node.bidrepr.replace("!h", "H")
-        # bml_node.bidrepr = bml_node.bidrepr.replace("!s", "S")
+        table_bidrepr = re.sub(r"([A-Za-z])\(", r"\1 (", table_bidrepr)
+        table_bidrepr = re.sub(r"\)(\d[A-Za-z])", r") \1", table_bidrepr)
+        table_bidrepr = re.sub(r"(\s)P(\s)", r"\1Pass\2", table_bidrepr)
+        table_bidrepr = table_bidrepr.replace("(P)", "(Pass)")
+        table_bidrepr = table_bidrepr.replace(")P", ") Pass")
+        table_bidrepr = table_bidrepr.replace(")X", ") X")
+        table_bidrepr = table_bidrepr.replace("--", " ")
+        # table_bidrepr = table_bidrepr.replace("!c", "C")
+        # table_bidrepr = table_bidrepr.replace("!d", "D")
+        # table_bidrepr = table_bidrepr.replace("!h", "H")
+        # table_bidrepr = table_bidrepr.replace("!s", "S")
 
     for table in tables:
         bid_table_dfs(table, do_prettify_bidrep)
@@ -106,17 +126,15 @@ separator_bid_regex = re.compile(r"\-\(?[1-7][CDHSN]\)?")  # without $ we allow 
 prefix_separator_bid_regex = re.compile(r"\(?[1-7][CDHSN]\)?\-")
 
 
-def parse_header_context_to_bid_prelude(
-    header_context: HeaderBiddingContext,
+def parse_bids_from_headers(
+    header_context: list[Header], debug: bool = False
 ) -> list[str]:
     header_bids = []
 
     for header in header_context:
-        _type, header_text = header
+        header_text = header.text
 
         # print(header_text)
-
-        debug = False
 
         # 1) what about 4CDHS, 3CDHS etc., 2HS
         # if prelude is multiple 4CDHS, then ignore?
@@ -130,6 +148,7 @@ def parse_header_context_to_bid_prelude(
         # not want e.g. "Good-Bad"
         if debug:
             print(header_text)
+
         if "-" in header_text and (
             re.search(separator_bid_regex, header_text) or re.search(prefix_separator_bid_regex, header_text)
         ):
@@ -158,24 +177,38 @@ def parse_header_context_to_bid_prelude(
 
     if debug:
         print(header_bids)
+        print(header_context, header_bids)
 
     return header_bids
 
 
+# todo? maybe the best place to turn the table into domain typed bids instead of strings
 def collect_bid_table_auctions(
-    tables: list[bml.Node], header_contexts: list[HeaderBiddingContext]
+    bid_tables: list[BidTable], debug: bool = False
 ) -> list[BidSequenceMeaning]:
     """Includes all sequences in a tree branch, not just tree leaves"""
-    sequences = []
+    sequences: list[BidSequenceMeaning] = []
 
-    def collect_auctions(node, depth, header_context):
+    unique_contexts_to_examples = {}
+
+    def collect_auctions(node: bml.Node, depth: int, headers_context: list[Header]):
         if node.desc == "root":
             return
 
-        context_bids = parse_header_context_to_bid_prelude(header_context)
+        # partially cleaned up but still has alternate bids e.g. "4HS"
+        # may not parse opponents bidding sections, they normally have full context anyway
+        # e.g. "(1H)"
+        context_bids = parse_bids_from_headers(headers_context)
 
+        # still a mess of multi bid / alternate bid strings of course
         next_sequence = BidSequenceMeaning(sequence=node.get_sequence(), description=node.desc)
         sequences.append(next_sequence)
+
+        if debug:
+            hashable_context = tuple(context_bids)
+            if hashable_context not in unique_contexts_to_examples:
+                unique_contexts_to_examples[hashable_context] = (tuple(next_sequence.sequence), next_sequence.description)
+
         # if any("1N--2D/2H" in context[1] for context in header_context):
         #     print(context_bids)
         #     print(next_sequence)
@@ -200,20 +233,33 @@ def collect_bid_table_auctions(
             # print("MISSING", missing_context)
             # but, is the missing_context actually less than the start of the next sequence
             seq_bids = parse_individual_bids(next_sequence.sequence)
-            first_bid = seq_bids[0]
-            context_bids = parse_individual_bids(missing_context)
-            # print(seq_bids, context_bids)
-            actually_missing_context = [context_bid for context_bid in context_bids if bid_less_than(context_bid, first_bid)]
+            if seq_bids:
+                first_bid = seq_bids[0]
+                context_bids = parse_individual_bids(missing_context)
+                # print(seq_bids, context_bids)
 
-            if actually_missing_context:
-                new_next_sequence = actually_missing_context + next_sequence.sequence
-                # print("ACTUALLY, ", actually_missing_context, next_sequence)
-                print(f"updating sequence, initial: {next_sequence.sequence}, new: {new_next_sequence}")
+                actually_missing_context = [
+                    context_bid for context_bid in context_bids if bid_less_than(context_bid, first_bid)
+                ]
+
+                if actually_missing_context:
+                    new_next_sequence = actually_missing_context + next_sequence.sequence
+                    # print("ACTUALLY, ", actually_missing_context, next_sequence)
+                    print(f"updating sequence, initial: {next_sequence.sequence}, new: {new_next_sequence}")
+                    next_sequence.sequence = new_next_sequence
+            else:
+                # TODO: may want to fix to parse e.g. "4CD = ...", e.g. 1C in header, then 4CD = GF, minorwood in table
+                new_next_sequence = missing_context + next_sequence.sequence
+                if debug:
+                    print(f"updating unparseable sequence, initial: {next_sequence.sequence}, new: {new_next_sequence}")
                 next_sequence.sequence = new_next_sequence
 
-    for table, context in zip(tables, header_contexts):
-        bid_table_dfs(table, functools.partial(collect_auctions, header_context=context))
+    for table in bid_tables:
+        bid_table_dfs(table, functools.partial(collect_auctions, headers_context=table.headers_context))
 
+    if debug:
+        print("Unique contexts:")
+        pprint(unique_contexts_to_examples)
     return sequences
 
 
@@ -363,19 +409,38 @@ def generate_question(
         )
 
 
-if __name__ == "__main__":
-    bid_tables, header_contexts = load_bid_tables("squad-system.bml")
-    # bid_tables, header_contexts = load_bid_tables("bidding-system.bml")
-    prettify_bid_table_nodes(bid_tables)
-    bid_sequences = collect_bid_table_auctions(bid_tables, header_contexts)
+def show_bid_table_sequences(tables: list[BidTable], show_table_context: bool):
+    def show_node(node, depth):
+        if node.desc == "root":
+            return
+        print(node.get_sequence())
 
-    show_bid_table_nodes(bid_tables)
+    for table in tables:
+        if show_table_context:
+            print(f"\n### Context: {table.headers_context}\n")
+        bid_table_dfs(table, show_node)
+
+
+if __name__ == "__main__":
+    # bid_tables, header_contexts = load_bid_tables("squad-system.bml")
+    bid_tables = load_bid_tables("bidding-system.bml")
+    prettify_bid_table_nodes(bid_tables)
+    # pprint(bid_tables)  just a node plus headers
+
+    # still a mess of strings:
+    # - single or multi bid strings, with a list of strings, e.g. 2H vs "2HS (P) 2N"
+    # - single or alternate auction paths, e.g. 2H vs 2HS
+    # show_bid_table_sequences(bid_tables, show_table_context=True)
+
+    bid_sequences = collect_bid_table_auctions(bid_tables, debug=False)
+    pprint(bid_sequences)
+    # show_bid_table_nodes(bid_tables, show_table_context=True)
 
     print("Distinct auctions count: ", len(bid_sequences), "\n")
 
     question = generate_question(bid_sequences)
-    for candidate in question.candidates:
-        print(candidate + "\n")
-    print("which candidate fits the answer...\n" + question.answer)
+    # for candidate in question.candidates:
+    #     print(candidate + "\n")
+    # print("which candidate fits the answer...\n" + question.answer)
 
-    show_all_auctions(bid_sequences)
+    # show_all_auctions(bid_sequences)
