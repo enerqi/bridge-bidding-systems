@@ -102,9 +102,7 @@ class BidSequenceMeaning:
 
 bid_regex = re.compile(r"\(?[1-7][CDHSN]\)?$")
 multi_bid_regex = re.compile(r"\(?[1-7][CDHSN]+\)?$")
-separator_bid_regex = re.compile(
-    r"\-\(?[1-7][CDHSN]\)?"
-)  # without $ we allow e.g. 1C--1HS
+separator_bid_regex = re.compile(r"\-\(?[1-7][CDHSN]\)?")  # without $ we allow e.g. 1C--1HS
 prefix_separator_bid_regex = re.compile(r"\(?[1-7][CDHSN]\)?\-")
 
 
@@ -118,10 +116,7 @@ def parse_header_context_to_bid_prelude(
 
         # print(header_text)
 
-        look = False
-        if "1C--1HS" in header_text:
-            look = True
-            look = False
+        debug = False
 
         # 1) what about 4CDHS, 3CDHS etc., 2HS
         # if prelude is multiple 4CDHS, then ignore?
@@ -133,11 +128,10 @@ def parse_header_context_to_bid_prelude(
         #
         # MVP: only support headers with "-"...
         # not want e.g. "Good-Bad"
-        if look:
+        if debug:
             print(header_text)
         if "-" in header_text and (
-            re.search(separator_bid_regex, header_text)
-            or re.search(prefix_separator_bid_regex, header_text)
+            re.search(separator_bid_regex, header_text) or re.search(prefix_separator_bid_regex, header_text)
         ):
             norm = header_text.strip().upper()
             norm = norm.replace("-", " ")
@@ -145,7 +139,7 @@ def parse_header_context_to_bid_prelude(
             norm = norm.replace("NT", "N")
             parts = norm.split()
 
-            if look:
+            if debug:
                 print(norm)
                 print(parts)
 
@@ -159,10 +153,10 @@ def parse_header_context_to_bid_prelude(
                     if part not in header_bids:
                         header_bids.append(part)
         else:
-            if look:
+            if debug:
                 print("not checking out")
 
-    if look:
+    if debug:
         print(header_bids)
 
     return header_bids
@@ -180,29 +174,87 @@ def collect_bid_table_auctions(
 
         context_bids = parse_header_context_to_bid_prelude(header_context)
 
-        next_sequence = BidSequenceMeaning(
-            sequence=node.get_sequence(), description=node.desc
-        )
+        next_sequence = BidSequenceMeaning(sequence=node.get_sequence(), description=node.desc)
         sequences.append(next_sequence)
+        # if any("1N--2D/2H" in context[1] for context in header_context):
+        #     print(context_bids)
+        #     print(next_sequence)
+
+        # ah, so header is 1n-2d/2h so OR, and actual table only has one of them
+        # need to check if missing bid is actually lower than the first bid
+        # next_sequence.sequence[0] string, which could be multiple, parse it and is it less...
+        #
+        # but what about header "1C/1D" then 1C--1S as 1D is missing, ok
+        # but 1D--1S then arguably 1C is in context and lower
 
         # WARN: what if bid table says e.g 4HS, then hard to match against a prelude of 4H or 4S
         missing_context = []
         for bid in context_bids:
             # MVP assuming that multi_bid_regex e.g 4HS will not be in the sequence
             if not any(bid in sequence_bid for sequence_bid in next_sequence.sequence):
+                # if any("1N--2D/2H" in context[1] for context in header_context):
+                #     print("missing:", bid, "context bids: ", context_bids, "next seq:", next_sequence)
                 missing_context.append(bid)
+
         if missing_context:
-            # print(context_bids, next_sequence)
-            new_next_sequence = missing_context + next_sequence.sequence
-            # print(f"updating sequence, initial: {next_sequence.sequence}, new: {new_next_sequence}")
-            next_sequence.sequence = new_next_sequence
+            # print("MISSING", missing_context)
+            # but, is the missing_context actually less than the start of the next sequence
+            seq_bids = parse_individual_bids(next_sequence.sequence)
+            first_bid = seq_bids[0]
+            context_bids = parse_individual_bids(missing_context)
+            # print(seq_bids, context_bids)
+            actually_missing_context = [context_bid for context_bid in context_bids if bid_less_than(context_bid, first_bid)]
+
+            if actually_missing_context:
+                new_next_sequence = actually_missing_context + next_sequence.sequence
+                # print("ACTUALLY, ", actually_missing_context, next_sequence)
+                print(f"updating sequence, initial: {next_sequence.sequence}, new: {new_next_sequence}")
+                next_sequence.sequence = new_next_sequence
 
     for table, context in zip(tables, header_contexts):
-        bid_table_dfs(
-            table, functools.partial(collect_auctions, header_context=context)
-        )
+        bid_table_dfs(table, functools.partial(collect_auctions, header_context=context))
 
     return sequences
+
+
+def parse_individual_bids(bid_strings: list[str]) -> list[str]:
+    # list of "1h pass 2h", or just "2S" etc.
+    bids = []
+    for bid_str in bid_strings:
+        parts = bid_str.split()
+        for part in parts:
+            if re.match(bid_regex, part):
+                bids.append(part)
+
+    return bids
+
+
+bid_level_regex = re.compile(r"(\d)")
+bid_suit_regex = re.compile(r"[1-7]([CDHSN])")
+ranks = {
+    "C": 1,
+    "D": 2,
+    "H": 3,
+    "S": 4,
+}
+
+
+def bid_less_than(b1: str, b2: str) -> bool:
+    try:
+        n1 = re.search(bid_level_regex, b1)[0]
+        n2 = re.search(bid_level_regex, b2)[0]
+        # print(b1, b2, n1, n2)
+
+        if n1 <= n2:
+            suit1 = re.search(bid_suit_regex, b1)[1]
+            suit2 = re.search(bid_suit_regex, b2)[1]
+            # print(b1, b2, suit1, suit2)
+            return ranks.get(suit1, 5) < ranks.get(suit2, 5)
+        else:
+            return False
+    except Exception:
+        print("logic needs fixing...")
+        return False
 
 
 # maybe remove, easier for end users to manipulate
@@ -261,10 +313,7 @@ def generate_question(
                 pretty_description = prettify_description(description)
 
                 # some auction sequences, some preludes do not have descriptions
-                if (
-                    pretty_description.strip()
-                    and pretty_description not in pretty_descriptions
-                ):
+                if pretty_description.strip() and pretty_description not in pretty_descriptions:
                     break
 
             pretty_descriptions.add(pretty_description)
@@ -293,10 +342,7 @@ def generate_question(
                 pretty_description = prettify_description(description)
 
                 # some auction sequences, some preludes do not have descriptions
-                if (
-                    pretty_description.strip()
-                    and pretty_description not in pretty_descriptions
-                ):
+                if pretty_description.strip() and pretty_description not in pretty_descriptions:
                     break  # unique description
 
             pretty_descriptions.add(pretty_description)
@@ -316,9 +362,10 @@ def generate_question(
             choice_type=choice_type,
         )
 
+
 if __name__ == "__main__":
-    # bid_tables, header_contexts = load_bid_tables("squad-system.bml")
-    bid_tables, header_contexts = load_bid_tables("bidding-system.bml")
+    bid_tables, header_contexts = load_bid_tables("squad-system.bml")
+    # bid_tables, header_contexts = load_bid_tables("bidding-system.bml")
     prettify_bid_table_nodes(bid_tables)
     bid_sequences = collect_bid_table_auctions(bid_tables, header_contexts)
 
