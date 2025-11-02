@@ -98,10 +98,10 @@ def prettify_bid_table_nodes(tables: list[BidTable]):
         table_bidrepr = table_node.bidrepr
 
         # extra tidy, maybe write our own get_sequence so mess less with bidrepr
-        table_bidrepr = re.sub(r"([A-Za-z])\(", r"\1 (", table_bidrepr)
-        table_bidrepr = re.sub(r"\)(\d[A-Za-z])", r") \1", table_bidrepr)
-        table_bidrepr = re.sub(r"(\s)P(\s)", r"\1Pass\2", table_bidrepr)
-        table_bidrepr = table_bidrepr.replace("(P)", "(Pass)")
+        table_bidrepr = re.sub(r"([A-Za-z])\(", r"\1 (", table_bidrepr)  # put space before letter then "("
+        table_bidrepr = re.sub(r"\)(\d[A-Za-z])", r") \1", table_bidrepr)  # put space after ")" then digit letter
+        table_bidrepr = re.sub(r"(\s)P(\s)", r"\1Pass\2", table_bidrepr)  # whitespace around P then P becomes Pass
+        table_bidrepr = table_bidrepr.replace("(P)", "(Pass)") # opposition pass pretty
         table_bidrepr = table_bidrepr.replace(")P", ") Pass")
         table_bidrepr = table_bidrepr.replace(")X", ") X")
         table_bidrepr = table_bidrepr.replace("--", " ")
@@ -109,6 +109,8 @@ def prettify_bid_table_nodes(tables: list[BidTable]):
         # table_bidrepr = table_bidrepr.replace("!d", "D")
         # table_bidrepr = table_bidrepr.replace("!h", "H")
         # table_bidrepr = table_bidrepr.replace("!s", "S")
+
+        table_node.bidrepr = table_bidrepr
 
     for table in tables:
         bid_table_dfs(table, do_prettify_bidrep)
@@ -245,7 +247,8 @@ def collect_bid_table_auctions(
                 if actually_missing_context:
                     new_next_sequence = actually_missing_context + next_sequence.sequence
                     # print("ACTUALLY, ", actually_missing_context, next_sequence)
-                    print(f"updating sequence, initial: {next_sequence.sequence}, new: {new_next_sequence}")
+                    if debug:
+                        print(f"updating sequence, initial: {next_sequence.sequence}, new: {new_next_sequence}")
                     next_sequence.sequence = new_next_sequence
             else:
                 # TODO: may want to fix to parse e.g. "4CD = ...", e.g. 1C in header, then 4CD = GF, minorwood in table

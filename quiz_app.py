@@ -290,6 +290,9 @@ async def on_answer_click(event):  # event handlers can be async with no extra w
         dashboard = pn.Column(slider, pn.Row(table_view, plot_view), status_view)
 
     """
+    if any(button.disabled for button in ui_context.buttons):
+        return  # multiple clicks occurred too quickly before server disabled the buttons
+
     global score
     global question
     clicked_candidate = event.obj.candidate  # custom attribute added
