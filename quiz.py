@@ -101,7 +101,7 @@ def prettify_bid_table_nodes(tables: list[BidTable]):
         table_bidrepr = re.sub(r"([A-Za-z])\(", r"\1 (", table_bidrepr)  # put space before letter then "("
         table_bidrepr = re.sub(r"\)(\d[A-Za-z])", r") \1", table_bidrepr)  # put space after ")" then digit letter
         table_bidrepr = re.sub(r"(\s)P(\s)", r"\1Pass\2", table_bidrepr)  # whitespace around P then P becomes Pass
-        table_bidrepr = table_bidrepr.replace("(P)", "(Pass)") # opposition pass pretty
+        table_bidrepr = table_bidrepr.replace("(P)", "(Pass)")  # opposition pass pretty
         table_bidrepr = table_bidrepr.replace(")P", ") Pass")
         table_bidrepr = table_bidrepr.replace(")X", ") X")
         table_bidrepr = table_bidrepr.replace("--", " ")
@@ -120,6 +120,9 @@ def prettify_bid_table_nodes(tables: list[BidTable]):
 class BidSequenceMeaning:
     sequence: list[str]
     description: str
+    _debug_headers_context: list[Header]
+    _parsed_context_bids: list[str]
+    _initial_sequence: list[str]
 
 
 bid_regex = re.compile(r"\(?[1-7][CDHSN]\)?$")
@@ -128,9 +131,7 @@ separator_bid_regex = re.compile(r"\-\(?[1-7][CDHSN]\)?")  # without $ we allow 
 prefix_separator_bid_regex = re.compile(r"\(?[1-7][CDHSN]\)?\-")
 
 
-def parse_bids_from_headers(
-    header_context: list[Header], debug: bool = False
-) -> list[str]:
+def parse_bids_from_headers(header_context: list[Header], debug: bool = False) -> list[str]:
     header_bids = []
 
     for header in header_context:
@@ -185,9 +186,7 @@ def parse_bids_from_headers(
 
 
 # todo? maybe the best place to turn the table into domain typed bids instead of strings
-def collect_bid_table_auctions(
-    bid_tables: list[BidTable], debug: bool = False
-) -> list[BidSequenceMeaning]:
+def collect_bid_table_auctions(bid_tables: list[BidTable], debug: bool = False) -> list[BidSequenceMeaning]:
     """Includes all sequences in a tree branch, not just tree leaves"""
     sequences: list[BidSequenceMeaning] = []
 
@@ -203,13 +202,23 @@ def collect_bid_table_auctions(
         context_bids = parse_bids_from_headers(headers_context)
 
         # still a mess of multi bid / alternate bid strings of course
-        next_sequence = BidSequenceMeaning(sequence=node.get_sequence(), description=node.desc)
+        initial_sequence = node.get_sequence()
+        next_sequence = BidSequenceMeaning(
+            sequence=initial_sequence,
+            description=node.desc,
+            _debug_headers_context=headers_context,
+            _parsed_context_bids=context_bids,
+            _initial_sequence=initial_sequence,
+        )
         sequences.append(next_sequence)
 
         if debug:
             hashable_context = tuple(context_bids)
             if hashable_context not in unique_contexts_to_examples:
-                unique_contexts_to_examples[hashable_context] = (tuple(next_sequence.sequence), next_sequence.description)
+                unique_contexts_to_examples[hashable_context] = (
+                    tuple(next_sequence.sequence),
+                    next_sequence.description,
+                )
 
         # if any("1N--2D/2H" in context[1] for context in header_context):
         #     print(context_bids)
@@ -223,6 +232,7 @@ def collect_bid_table_auctions(
         # but 1D--1S then arguably 1C is in context and lower
 
         # WARN: what if bid table says e.g 4HS, then hard to match against a prelude of 4H or 4S
+
         missing_context = []
         for bid in context_bids:
             # MVP assuming that multi_bid_regex e.g 4HS will not be in the sequence
@@ -237,11 +247,11 @@ def collect_bid_table_auctions(
             seq_bids = parse_individual_bids(next_sequence.sequence)
             if seq_bids:
                 first_bid = seq_bids[0]
-                context_bids = parse_individual_bids(missing_context)
+                missing_context_bids = parse_individual_bids(missing_context)
                 # print(seq_bids, context_bids)
 
                 actually_missing_context = [
-                    context_bid for context_bid in context_bids if bid_less_than(context_bid, first_bid)
+                    context_bid for context_bid in missing_context_bids if bid_less_than(context_bid, first_bid)
                 ]
 
                 if actually_missing_context:
@@ -278,6 +288,16 @@ def parse_individual_bids(bid_strings: list[str]) -> list[str]:
     return bids
 
 
+def test_parse_individual_bids():
+    simple_bids = ["2H", "(4H)", "5C"]
+    parsed = parse_individual_bids(simple_bids)
+    assert parsed == simple_bids
+
+    compound = ["1H (pass) 2S", "3C"]
+    parsed_compound = parse_individual_bids(compound)
+    assert parsed_compound == ["1H", "2S", "3C"]
+
+
 bid_level_regex = re.compile(r"(\d)")
 bid_suit_regex = re.compile(r"[1-7]([CDHSN])")
 ranks = {
@@ -292,18 +312,26 @@ def bid_less_than(b1: str, b2: str) -> bool:
     try:
         n1 = re.search(bid_level_regex, b1)[0]
         n2 = re.search(bid_level_regex, b2)[0]
-        # print(b1, b2, n1, n2)
+        if n1 < n2:
+            return True
 
-        if n1 <= n2:
+        if n1 == n2:
             suit1 = re.search(bid_suit_regex, b1)[1]
             suit2 = re.search(bid_suit_regex, b2)[1]
-            # print(b1, b2, suit1, suit2)
             return ranks.get(suit1, 5) < ranks.get(suit2, 5)
         else:
             return False
     except Exception:
         print("logic needs fixing...")
         return False
+
+
+def test_bid_less_than():
+    assert bid_less_than("1H", "2H")
+    assert bid_less_than("(1H)", "2H")
+    assert bid_less_than("(1H)", "2C")
+    assert bid_less_than("1H", "2C")
+    assert not bid_less_than("1N", "1S")
 
 
 # maybe remove, easier for end users to manipulate
@@ -332,6 +360,7 @@ class Question:
     answer: str
     answer_candidate: str
     choice_type: MultiChoiceType
+    _debug_bid_sequences: list[BidSequenceMeaning]
 
 
 def random_multi_choice_type() -> MultiChoiceType:
@@ -351,6 +380,7 @@ def generate_question(
     answer_candidate = ""
     pretty_descriptions = set()
     candidates = []
+    _debug_bid_sequences = []
 
     if choice_type == MultiChoiceType.Auctions:
         for question_index in range(multi_choice_count):  # e.g. 0-4
@@ -363,6 +393,7 @@ def generate_question(
 
                 # some auction sequences, some preludes do not have descriptions
                 if pretty_description.strip() and pretty_description not in pretty_descriptions:
+                    _debug_bid_sequences.append(rand_seq)
                     break
 
             pretty_descriptions.add(pretty_description)
@@ -380,6 +411,7 @@ def generate_question(
             answer=answer,
             answer_candidate=answer_candidate,
             choice_type=choice_type,
+            _debug_bid_sequences=_debug_bid_sequences,
         )
     else:
         for question_index in range(multi_choice_count):
@@ -392,6 +424,7 @@ def generate_question(
 
                 # some auction sequences, some preludes do not have descriptions
                 if pretty_description.strip() and pretty_description not in pretty_descriptions:
+                    _debug_bid_sequences.append(rand_seq)
                     break  # unique description
 
             pretty_descriptions.add(pretty_description)
@@ -409,6 +442,7 @@ def generate_question(
             answer=answer,
             answer_candidate=answer_candidate,
             choice_type=choice_type,
+            _debug_bid_sequences=_debug_bid_sequences,
         )
 
 
