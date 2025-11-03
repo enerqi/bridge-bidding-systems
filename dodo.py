@@ -33,7 +33,7 @@ def bml_include_dependencies(bml_path: Path) -> List[Path]:
                     included_file = include_directive_tokens[1].strip()
                     yield Path(included_file)
 
-    with open(bml_path, encoding='utf-8') as f:
+    with open(bml_path, encoding="utf-8") as f:
         unique_deps = {include for include in includes(f) if include != bml_path}
         return list(unique_deps)
 
@@ -42,7 +42,7 @@ def read_bml_includes_cache(bml_path: Path) -> Optional[List[Path]]:
     if not exists(bml_includes_cache_file):
         return None
 
-    with open(bml_includes_cache_file, encoding='utf-8') as f:
+    with open(bml_includes_cache_file, encoding="utf-8") as f:
         try:
             existing_deps = json.load(f)
         except Exception:
@@ -58,7 +58,7 @@ def read_bml_includes_cache(bml_path: Path) -> Optional[List[Path]]:
 def update_bml_includes_cache(bml_path: Path, bml_deps: List[Path]):
     existing_deps = {}
     if exists(bml_includes_cache_file):
-        with open(bml_includes_cache_file, encoding='utf-8') as f:
+        with open(bml_includes_cache_file, encoding="utf-8") as f:
             try:
                 existing_deps = json.load(f)
             except Exception:
@@ -66,7 +66,7 @@ def update_bml_includes_cache(bml_path: Path, bml_deps: List[Path]):
 
     existing_deps[bml_path] = bml_deps
 
-    with open(bml_includes_cache_file, "w", encoding='utf-8') as f:
+    with open(bml_includes_cache_file, "w", encoding="utf-8") as f:
         json.dump(existing_deps, f, indent=4)
 
 
@@ -89,10 +89,10 @@ def task_bml_include_cache():
         # Actually, using a different notion of an update (not just tracking file modifications) if another feature of
         # doit that could be applied if interested enough.
         yield {
-            'name': basename(bml_path),
-            'actions': [(calc_include_deps_and_cache, [bml_path])],
-            'file_dep': [bml_path],
-            'title': title_with_actions
+            "name": basename(bml_path),
+            "actions": [(calc_include_deps_and_cache, [bml_path])],
+            "file_dep": [bml_path],
+            "title": title_with_actions,
         }
 
 
@@ -111,11 +111,11 @@ def task_bml2html():
             update_bml_includes_cache(bml_path, bml_deps)
 
         yield {
-            'name': basename(bml_path),
-            'actions': [f"python {bml2html_path} {bml_path}"],
-            'file_dep': [bml_path] + bml_deps,
-            'targets': [html_output_path(bml_path)],
-            'title': title_with_actions
+            "name": basename(bml_path),
+            "actions": [f"python {bml2html_path} {bml_path}"],
+            "file_dep": [bml_path] + bml_deps,
+            "targets": [html_output_path(bml_path)],
+            "title": title_with_actions,
         }
 
 
@@ -128,12 +128,7 @@ def task_bmlcss():
         # OS neutral compared to running a shell command
         copyfile(src_css_file, css_basename)
 
-    return {
-        'actions': [copy_file],
-        'file_dep': [src_css_file],
-        'targets': [css_basename],
-        'title': title_with_actions
-    }
+    return {"actions": [copy_file], "file_dep": [src_css_file], "targets": [css_basename], "title": title_with_actions}
 
 
 def task_publish_bidding_systems():
@@ -157,14 +152,19 @@ def task_publish_bidding_systems():
     def copy_file(dependencies, targets) -> None:
         copyfile(dependencies[0], targets[0])
 
-    for src, dst in [(swedish_file, dst_swedish), (css_file, dst_css),
-                     (scanian_file, dst_scanian), (bboalert_file, dst_bboalert),
-                     (u16_squad_file, dst_u16), (improvements_file, dst_improvements),
-                     (alternatives_file, dst_alternatives)]:
+    for src, dst in [
+        (swedish_file, dst_swedish),
+        (css_file, dst_css),
+        (scanian_file, dst_scanian),
+        (bboalert_file, dst_bboalert),
+        (u16_squad_file, dst_u16),
+        (improvements_file, dst_improvements),
+        (alternatives_file, dst_alternatives),
+    ]:
         yield {
-            'name': basename(src),
-            'actions': [copy_file],
-            'file_dep': [src],
-            'targets': [dst],
-            'title': title_with_actions
+            "name": basename(src),
+            "actions": [copy_file],
+            "file_dep": [src],
+            "targets": [dst],
+            "title": title_with_actions,
         }

@@ -11,6 +11,9 @@ dependencies = [
     "watchfiles>=1.1.1",
 ]
 
+[dependency-groups]
+dev = ["pytest"]
+
 [tool.pyright]
 venvPath = "."
 venv =  ".venv"

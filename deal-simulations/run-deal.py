@@ -35,6 +35,7 @@ html-output-path option.
 Example:
      python run-deal.py --deal-count 24 --deal-script-path 2c-opener.tcl --html-output-path W:/deals/2c-openers.html
 """
+
 import os
 import random
 import subprocess
@@ -43,6 +44,7 @@ import sys
 from docopt import docopt
 
 this_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+
 
 def main():
     arguments = docopt(__doc__)
@@ -63,7 +65,7 @@ def main():
 
     # deal.exe's TCL interpreters needs forward slashes
     abs_script_path = os.path.abspath(deal_script)
-    fslash_script_path = abs_script_path.replace('\\', '/')
+    fslash_script_path = abs_script_path.replace("\\", "/")
 
     text_format_flag = "-l" if not pretty_text_output else ""
 
@@ -133,10 +135,12 @@ def to_html_page(deal_text: str) -> str:
 
     lines = deal_text.split("\n")
 
-    all_deals_handviewer_params = (parse_deal_to_handviewer_params(index, line)
-                                   for index, line in enumerate(lines))
-    deal_divs = [deal_div_template.format(handviewer_parameters=handviewer_params)
-                 for handviewer_params in all_deals_handviewer_params if handviewer_params is not None]
+    all_deals_handviewer_params = (parse_deal_to_handviewer_params(index, line) for index, line in enumerate(lines))
+    deal_divs = [
+        deal_div_template.format(handviewer_parameters=handviewer_params)
+        for handviewer_params in all_deals_handviewer_params
+        if handviewer_params is not None
+    ]
     all_deal_divs_content = "\n".join(deal_divs)
 
     page = page_template.replace("{CONTENT}", all_deal_divs_content)
@@ -169,10 +173,19 @@ def parse_deal_to_handviewer_params(index: int, deal_line: str, random_vulnerabi
     else:
         dealer_query_value = "n"
 
-    query_params = "&".join([single_seat_param("n", north), single_seat_param("s", south),
-                             single_seat_param("e", east), single_seat_param("w", west),
-                             # board number, seems we need an empty auction to show it though
-                             f"b={index+1}", "a=_", f"v={vul_query_value}", f"d={dealer_query_value}"])
+    query_params = "&".join(
+        [
+            single_seat_param("n", north),
+            single_seat_param("s", south),
+            single_seat_param("e", east),
+            single_seat_param("w", west),
+            # board number, seems we need an empty auction to show it though
+            f"b={index + 1}",
+            "a=_",
+            f"v={vul_query_value}",
+            f"d={dealer_query_value}",
+        ]
+    )
     return query_params
 
 

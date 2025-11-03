@@ -461,13 +461,12 @@ def answer_view():
 # testing data binding reactivity
 def debug_button_action(event):
     pprint(question.rx.value)
-    print(title)
-    print(bml_file)
-    print(system_notes_url)
-    pprint(f"cookies: {pn.state.cookies}")
+    print(f"{title} ({bml_file}) from {system_notes_url}")
     pprint(pn.state.location)
-    pprint(pn.state.session_info)
+    # pprint(pn.state.session_info)
+    print()
     pprint(pn.config)
+    print()
 
 
 debug_button = pn.widgets.Button(name="Debug", on_click=debug_button_action)

@@ -822,7 +822,6 @@ After 1H opening 10--21, 5+ !hs:
         3C = checkback stayman
             2D = denies 3!ss, denies 4!hs
                 3HS = stop showing
-            3H = 4!hs, maybe 3!ss
             3S = 3!ss, denies 4!hs
         3DH = natural, forcing
         3S = 6+ cards, slam interest
@@ -1046,7 +1045,7 @@ After 1H opening 10--21, 5+ !hs:
     1N = [~6--11 hcp, includes bad(~5--6 hcp) and invite(~10/11) 3 card raises](#1S--1N)
     1N = (passed hand) 5--9 hcp
     2C = [game force, 12+ hcp, 4+ cards](#1S--2C)
-    2C = (passed hand) 8--11 hcp, 4 card !s support
+    2C = (passed hand) 8--11 hcp, 3 card !s support
     2D = [game force, 12+ hcp, 4+ cards](#1S--2D)
     2D = (passed hand) 8--11 hcp, 4 card !s support
     2H = game force, 12+ hcp, 5+ !hs
