@@ -291,8 +291,14 @@ time_bonus = TimeBonus()
 
 
 def reset_time_bonus_by_difficulty(difficulty: int = INITIAL_DIFFICULTY):
-    seconds_per_level = 8
-    time = difficulty * seconds_per_level
+    seconds_per_level = {
+        4: 8,
+        5: 7,
+        6: 6,
+        7: 5,
+        8: 4
+    }
+    time = difficulty * seconds_per_level.get(difficulty, 4)
     time_bonus.reset(max_time_seconds=time)
 
 
