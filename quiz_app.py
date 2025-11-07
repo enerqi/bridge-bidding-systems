@@ -8,19 +8,32 @@
 import asyncio
 from dataclasses import dataclass
 import dataclasses
+import functools
 from pprint import pprint
 import re
 import sys
+import time
 
 import panel as pn
+from panel.io import hold
 import param
 
 import quiz
 
 
 def session_key_func(request):  # tornado.httputil.HTTPServerRequest
-    # - for session caching / reuse used along with panel serve --reuse-sessions
-    # - our empty material template, before it is populated has the title/theme depend on the query params
+    # EXPERIMENTAL: sticky session / mixup issues. Probably do not want to reuse sessions ( --reuse-sessions).
+    # Affects how Panel reuses existing Bokeh Documents (i.e., session state) when a user reconnects or reloads the
+    # page.When reusing sessions the theory is:
+    # - Widget values persist across reloads.
+    # - Callbacks remain active.
+    # - Session-specific state (like pn.state.cache, pn.state.session_args, etc.) is preserved.
+    # - Useful for long-running apps or apps with expensive initialization.
+    # Reuse only works within the same browser tab and short time window. It does not persist sessions across different
+    # tabs or devices. It is single proc, special server setup for sticky session routing needed with multiple processes
+    # * if stay with num procs == 1 then enable automatic threading at least, but prefer to test multiple procs
+    # Bokeh load balancing docs:
+    # https://docs.bokeh.org/en/latest/docs/user_guide/server/deploy.html#load-balancing
     if "swedish" in request.query.lower():
         return "swedish"  # arbitrary key
     else:
@@ -30,7 +43,8 @@ def session_key_func(request):  # tornado.httputil.HTTPServerRequest
 pn.extension(
     design="material",  # some better fonts with design material
     notifications=True,  # modal "toasts" support
-    session_key_func=session_key_func,  # panel serve --reuse-sessions
+    reconnect=True,
+    # session_key_func=session_key_func,  # panel serve --reuse-sessions
 )
 pn.state.notifications.position = "center-center"
 
@@ -68,31 +82,47 @@ def load_bid_sequences(bml_source: str):
 
 bid_sequences = load_bid_sequences(bml_file)
 
+INITIAL_DIFFICULTY = 5
+
 # Global question data made into a reactive signal so that other things can change when it updates
 # the alternative is to make question part of a Parameterized subclass
 # Note we are currently making `Score` Parameterized as the alternative example, will experiment with how to render it
 # separately to its data, but currently the `view` method is under the Score class `question.rx.value` allows us to mess
 # with the underlying question class
-question = param.rx(quiz.generate_question(bid_sequences, choice_type=quiz.random_multi_choice_type()))
+question = param.rx(
+    quiz.generate_question(
+        bid_sequences, choice_type=quiz.random_multi_choice_type(), multi_choice_count=INITIAL_DIFFICULTY
+    )
+)
+
+quiz_start_time_seconds = time.time()
+quiz_completion_time = param.rx(None)
 
 
-@pn.depends(question)
+def quiz_still_playing() -> bool:
+    return quiz_completion_time.rx.value is None
+
+
+@pn.depends(question, quiz_completion_time)
 def intro_view():
-    question_type = question.rx.value.choice_type
-    if question_type is quiz.MultiChoiceType.Auctions:
-        return pn.Row(
-            pn.pane.Markdown(
-                "## In which auction is the *final* bid best described by:",
-                disable_anchors=True,
+    if quiz_still_playing():
+        question_type = question.rx.value.choice_type
+        if question_type is quiz.MultiChoiceType.Auctions:
+            return pn.Row(
+                pn.pane.Markdown(
+                    "## In which auction is the *final* bid best described by:",
+                    disable_anchors=True,
+                )
             )
-        )
+        else:
+            return pn.Row(
+                pn.pane.Markdown(
+                    "## Which description matches the *final* bid in this sequence:",
+                    disable_anchors=True,
+                )
+            )
     else:
-        return pn.Row(
-            pn.pane.Markdown(
-                "## Which description matches the *final* bid in this sequence:",
-                disable_anchors=True,
-            )
-        )
+        return ""
 
 
 # score syncing? scores are not widgets so pn.bind seems less relevant
@@ -132,8 +162,14 @@ def intro_view():
 class Score(param.Parameterized):
     questions_correct = param.Integer(default=0, bounds=(0, None), doc="number of questions answered correctly")
     questions_attempted = param.Integer(default=0, bounds=(0, None), doc="number of questions attempted")
+    streak = param.Integer(default=0, bounds=(0, None), doc="number of consecutively correct questions")
+    total_points = param.Integer(default=0, bounds=(0, None), doc="points scored")
 
-    @param.depends("questions_correct", "questions_attempted")
+    SCORE_MILESTONES = [0.1, 0.25, 0.45, 0.65, 0.8, 1]
+    POINTS_GOAL = 1000
+    available_milestones = param.List(default=list(reversed(SCORE_MILESTONES)), doc="Remaining milestones to reach")
+
+    @param.depends("questions_correct", "questions_attempted", "total_points")
     def view(self):
         if self.questions_attempted > 0:
             value = (self.questions_correct / self.questions_attempted) * 100
@@ -142,6 +178,8 @@ class Score(param.Parameterized):
             percentage = 0
         s = f"__Score__: {self.questions_correct} / {self.questions_attempted}"
 
+        pts = f"__Points__: {self.total_points}"
+
         return pn.Column(
             pn.Row(pn.pane.Markdown(s, disable_anchors=True)),
             pn.Row(
@@ -149,10 +187,10 @@ class Score(param.Parameterized):
                     # not working
                     stylesheets=[
                         """
-                .bk-CanvasPanel .bk-right {
-                  background: lightblue;
-                }
-                """
+                        .bk-CanvasPanel .bk-right {
+                          background: lightblue;
+                        }
+                        """
                     ],
                     name="",
                     value=percentage,
@@ -169,12 +207,126 @@ class Score(param.Parameterized):
                     ],
                 )
             ),
+            pn.Row(pn.pane.Markdown(pts, disable_anchors=True)),
+            pn.Row(
+                pn.indicators.LinearGauge(
+                    name="",
+                    value=self.total_points,
+                    bounds=(0, Score.POINTS_GOAL),
+                    format="",
+                    colors=list(
+                        zip(
+                            Score.SCORE_MILESTONES,
+                            [
+                                "#FF0000",  # Red
+                                "#FF6600",  # Orange-Red
+                                "#FFCC00",  # Yellow
+                                "#99CC00",  # Yellow-Green
+                                "#66CC00",  # Greenish
+                                "#00CC00",  # Green
+                            ],
+                            strict=True,
+                        )
+                    ),
+                    show_boundaries=True,
+                )
+            ),
+        )
+
+
+class TimeBonus(param.Parameterized):
+    percent_bonus = param.Integer(default=100, bounds=(0, 100), doc="percentage bonus due to answer speed")
+    # time_left_seconds = param.fl
+    COLOUR_GRADES = [("dark", 17), ("secondary", 33), ("warning", 49), ("info", 65), ("success", 101)]
+
+    def __init__(self, **params):
+        super().__init__(**params)
+        self._update_progress_callback = None
+        self.reset()
+
+    def update_bonus(self):
+        t2 = time.time()
+        t1 = self._start_time
+        elapsed = t2 - t1
+        left = max(self._max_time_seconds - elapsed, 0.0)
+        percent_float = left / self._max_time_seconds
+        self._time_left_seconds = left
+        self.percent_bonus = round(percent_float * 100)
+
+    def stop(self):
+        self._update_progress_callback.stop()
+
+    def reset(self, max_time_seconds: float = 50.0):
+        self._time_left_seconds = max_time_seconds
+        self._max_time_seconds = max_time_seconds
+        self._start_time = time.time()
+        if self._update_progress_callback:  # cleanup old callback: might be calling without actually stopping it
+            self._update_progress_callback.stop()
+        self._update_progress_callback = pn.state.add_periodic_callback(
+            callback=functools.partial(TimeBonus.update_bonus, self=self),
+            period=100,
+            # docs are mixed on this, actually milliseconds
+            timeout=round(max_time_seconds * 1000),
+        )
+
+    @param.depends("percent_bonus")
+    def view(self):
+        value = self.percent_bonus
+        for colour, boundary in TimeBonus.COLOUR_GRADES:
+            if value < boundary:
+                new_colour = colour
+                break
+
+        return pn.Row(
+            pn.indicators.Progress(
+                value=value, bar_color=new_colour, sizing_mode="stretch_width", styles={"height": "2rem"}
+            )
         )
 
 
 # parameterized type to custom widget docs:
 # https://panel.holoviz.org/how_to/param/custom.htmls
 score = Score()
+time_bonus = TimeBonus()
+
+
+def reset_time_bonus_by_difficulty(difficulty: int = INITIAL_DIFFICULTY):
+    seconds_per_level = 8
+    time = difficulty * seconds_per_level
+    time_bonus.reset(max_time_seconds=time)
+
+
+reset_time_bonus_by_difficulty()
+
+
+@dataclass
+class Points:
+    from_candidate_lengths: int
+    from_streak_bonus: int
+    from_time_bonus: int
+
+
+def points(question_value: quiz.Question, streak: int, percent_time_left: int) -> Points:
+    from_candidate_lengths = 0
+    for candidate in question_value.candidates:
+        tokens_without_sep = candidate.replace("-->", "")
+        tokens = tokens_without_sep.split()
+        from_candidate_lengths += len(tokens)
+
+    if streak > 1:
+        percent_bonus = min(streak * 10 / 100, 1.0)
+        streak_bonus = round(from_candidate_lengths * percent_bonus)
+    else:
+        streak_bonus = 0
+
+    if percent_time_left > 0:
+        time_bonus = round(from_candidate_lengths * (percent_time_left / 100))
+    else:
+        time_bonus = 0
+
+    return Points(
+        from_candidate_lengths=from_candidate_lengths, from_streak_bonus=streak_bonus, from_time_bonus=time_bonus
+    )
 
 
 async def on_answer_click(event):  # event handlers can be async with no extra work
@@ -295,28 +447,74 @@ async def on_answer_click(event):  # event handlers can be async with no extra w
 
     global score
     global question
+    global quiz_completion_time
     clicked_candidate = event.obj.candidate  # custom attribute added
 
-    score.questions_attempted += 1
-
     # disable buttons, we will create new buttons after a delay
-    for button in ui_context.buttons:
-        button.disabled = True
+    with hold():
+        for button in ui_context.buttons:
+            button.disabled = True
+
+    time_bonus.stop()
 
     if clicked_candidate == question.rx.value.answer_candidate:
-        pn.state.notifications.success("Correct!", duration=1500)
-        score.questions_correct += 1
-        await asyncio.sleep(1.7)
+        score.streak += 1
+        points_increase = points(question.rx.value, score.streak, time_bonus.percent_bonus)
+        pn.state.notifications.success("Correct!", duration=3000)
+        await asyncio.sleep(0.5)
+
+        score.total_points += points_increase.from_candidate_lengths
+        pn.state.notifications.info(f"+{points_increase.from_candidate_lengths}!", duration=3000)
+        await asyncio.sleep(0.5)
+
+        if points_increase.from_streak_bonus > 0:
+            score.total_points += points_increase.from_streak_bonus
+            pn.state.notifications.info(
+                f"Streak {score.streak}, Bonus +{points_increase.from_streak_bonus}", duration=3000
+            )
+            await asyncio.sleep(0.5)
+
+        if points_increase.from_time_bonus > 0:
+            score.total_points += points_increase.from_time_bonus
+            pn.state.notifications.info(f"Time Bonus +{points_increase.from_time_bonus}", duration=3000)
+            await asyncio.sleep(0.5)
+
+        with hold():
+            score.questions_attempted += 1
+            score.questions_correct += 1
+
+        while score.available_milestones and score.available_milestones[-1] * score.POINTS_GOAL <= score.total_points:
+            score.available_milestones.pop()
+            pn.state.notifications.success("+1 SKIP!", duration=3000)
+            global skips_left
+            with hold():
+                skips_left.rx.value += 1
+                skip_button.disabled = False
+            await asyncio.sleep(0.5)
+
+        await asyncio.sleep(1.0)
+
+        if score.total_points >= Score.POINTS_GOAL:
+            quiz_completion_time.rx.value = time.time()
+
     else:
+        with hold():
+            score.streak = 0
+            score.questions_attempted += 1
         pretty_answer = emoji_text_auction(question.rx.value.answer_candidate)
         pn.state.notifications.warning(f"Answer: {pretty_answer}", duration=4000)
+
         await asyncio.sleep(4.2)
 
-    question.rx.value = quiz.generate_question(
-        bid_sequences,
-        choice_type=quiz.random_multi_choice_type(),
-        multi_choice_count=difficulty_slider.value_throttled,
-    )
+    if quiz_still_playing():
+        question.rx.value = quiz.generate_question(
+            bid_sequences,
+            choice_type=quiz.random_multi_choice_type(),
+            multi_choice_count=difficulty_slider.value_throttled,
+        )
+        reset_time_bonus_by_difficulty(difficulty_slider.value_throttled)
+    else:
+        skip_button.disabled = True
 
 
 # as there is little colour control, maybe better to use an icon image from dynamic svg with a "button icon"
@@ -412,8 +610,11 @@ class UI_Context:
 ui_context = UI_Context()
 
 
-@pn.depends(question)
+@pn.depends(question, quiz_completion_time)
 def question_view():
+    if not quiz_still_playing():
+        return ""
+
     def make_button(candidate):
         pretty_auction = emoji_text_auction(candidate)
         button = pn.widgets.Button(
@@ -449,24 +650,38 @@ def question_view():
     return flex_pane
 
 
-@pn.depends(question)
+@pn.depends(question, quiz_completion_time)
 def answer_view():
-    # bad name? can also emojify the answer
-    answer = emoji_text_auction(question.rx.value.answer)
-    leading_cap = answer[0].upper() + answer[1:]
-    # markdown bold
-    return pn.Row(pn.pane.Markdown(f'# "__{leading_cap}__"', styles={"font-size": "2rem"}, disable_anchors=True))
+    if quiz_still_playing():
+        # bad name? can also emojify the answer
+        answer = emoji_text_auction(question.rx.value.answer)
+        leading_cap = answer[0].upper() + answer[1:]
+        # markdown bold
+        return pn.Row(pn.pane.Markdown(f'# "__{leading_cap}__"', styles={"font-size": "2rem"}, disable_anchors=True))
+    else:
+        elapsed_time = round(quiz_completion_time.rx.value - quiz_start_time_seconds, ndigits=1)
+        return pn.FlexBox(
+            pn.pane.Markdown(
+                f"# 🎉🎉🎉\nQuiz completed in {elapsed_time} seconds!\n# 🎉🎉🎉\nWell done, now take a break...",
+                styles={"font-size": "3rem"},
+                disable_anchors=True,
+            ),
+            pn.pane.Image("./completed.jpeg", alt_text="cat sleeping next to computer mouse", width=600),
+        )
 
 
-# testing data binding reactivity
 def debug_button_action(event):
     pprint(question.rx.value)
     print(f"{title} ({bml_file}) from {system_notes_url}")
     pprint(pn.state.location)
-    # pprint(pn.state.session_info)
+    pprint(pn.state.session_info)
     print()
     pprint(pn.config)
     print()
+    pprint(pn.state.cache)
+    pprint(pn.state.session_args)  # seems to be query parameters
+    print()
+    pprint(pn.state)
 
 
 debug_button = pn.widgets.Button(name="Debug", on_click=debug_button_action)
@@ -477,14 +692,16 @@ def skip_question_handler(event):
     global skips_left
     global skip_button
     if skips_left.rx.value > 0:
-        question.rx.value = quiz.generate_question(
-            bid_sequences,
-            choice_type=quiz.random_multi_choice_type(),
-            multi_choice_count=difficulty_slider.value_throttled,
-        )
-        skips_left.rx.value -= 1
+        with hold():
+            question.rx.value = quiz.generate_question(
+                bid_sequences,
+                choice_type=quiz.random_multi_choice_type(),
+                multi_choice_count=difficulty_slider.value_throttled,
+            )
+            skips_left.rx.value -= 1
 
     skip_button.disabled = skips_left.rx.value <= 0
+    reset_time_bonus_by_difficulty(difficulty_slider.value_throttled)
 
 
 skips_left = pn.rx(3)
@@ -497,16 +714,33 @@ def skips_left_view():
     return f"{skips_left.rx.value} left"
 
 
-def reset_skips_and_scoring():
-    skips_left.rx.value = 3
-    score.questions_attempted = 0
-    score.questions_correct = 0
+def reset_skips_and_scoring_and_timer_and_question():
     global skip_button
-    skip_button.disabled = False
+    global quiz_start_time_seconds
+    global quiz_completion_time
+
+    with hold():
+        skips_left.rx.value = 3
+        skip_button.disabled = False
+        score.questions_attempted = 0
+        score.questions_correct = 0
+        score.streak = 0
+        score.total_points = 0
+        score.available_milestones = list(reversed(Score.SCORE_MILESTONES))
+        quiz_start_time_seconds = time.time()
+        quiz_completion_time.rx.value = None
+
+        reset_time_bonus_by_difficulty(difficulty_slider.value_throttled)
+
+        question.rx.value = quiz.generate_question(
+            bid_sequences,
+            choice_type=quiz.random_multi_choice_type(),
+            multi_choice_count=difficulty_slider.value_throttled,
+        )
 
 
 def restart_handler(event):
-    reset_skips_and_scoring()
+    reset_skips_and_scoring_and_timer_and_question()
 
 
 restart_button = pn.widgets.Button(name="Restart", on_click=restart_handler, button_type="danger")
@@ -518,20 +752,12 @@ difficulty_slider = pn.widgets.IntSlider(
     end=8,
     step=1,
     width=150,
-    value=5,
+    value=INITIAL_DIFFICULTY,
 )
 
 
-# @pn.io.hold  # batch / hold UI updates until skips/scoring/question all updated
-# but not so relevant to rx updates
 def difficulty_change(event):
-    reset_skips_and_scoring()
-    choice_count = event.new
-    question.rx.value = quiz.generate_question(
-        bid_sequences,
-        choice_type=quiz.random_multi_choice_type(),
-        multi_choice_count=choice_count,
-    )
+    reset_skips_and_scoring_and_timer_and_question()
 
 
 # imperative way, when difficulty_slider.value_throttled changes
@@ -565,16 +791,14 @@ side_section = [
     ),
 ]
 
+
 main_section = [
     intro_view,
     pn.Column(
-        pn.FlexBox(answer_view, justify_content="center"),
-        pn.Spacer(),
-        question_view,
-        # various base object attributes...api reference
-        # https://panel.holoviz.org/api/index.html
-        styles=main_card_like_style,
+        pn.FlexBox(answer_view, justify_content="center"), pn.Spacer(), question_view, styles=main_card_like_style
     ),
+    pn.Spacer(height=30),
+    time_bonus.view,
     pn.Spacer(height=100),
     """
     - Bids in brackets e.g (1♥), (bid), (any), (1NT) etc. indicate the opponents made the bid.
@@ -605,21 +829,27 @@ main_section = [
     ),
 ]
 
-template = pn.template.MaterialTemplate(
-    title=title,
-    main=main_section,
-    sidebar=side_section,
-    sidebar_width=230,
-    theme=theme,
-)
+
+def make_app_template():
+    # Should be fine to make this a global var as it's recreated per new session. In some situations we want a function
+    # so we get a new object on each call, e.g. if this were to be in a different module separate to the main script
+    # file that panel serve reruns per user connection.
+    return pn.template.MaterialTemplate(
+        title=title,
+        main=main_section,
+        sidebar=side_section,
+        sidebar_width=230,
+        theme=theme,
+    )
+
 
 # Enable dual-mode execution
 if pn.state.served:
     # Served mode: `panel serve script.py`
     # need global panel install or pyproject.toml
-    template.servable()
+    make_app_template().servable()
 elif __name__ == "__main__":
     # Script mode: `python script.py`
     # which can avoid pyproject.toml, but LSP worse(?)
     # uv add --script script.py --python "==3.14.*" panel watchfiles
-    template.show(port=5007)
+    make_app_template().show(port=5007)

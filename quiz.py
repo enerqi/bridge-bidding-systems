@@ -9,14 +9,13 @@ import random
 import re
 import sys
 from typing import Callable, NewType
-from panel.widgets import MultiChoice
 
 Path = NewType("Path", str)
 home = Path(expanduser("~"))
 bml_tools_dir = Path(environ.get("BML_TOOLS_DIRECTORY", join(home, "dev/bml")))
 sys.path.append(bml_tools_dir)
 
-import bml
+import bml  # noqa: E402
 
 ProcessBidNodeFunc = Callable[[bml.Node, int], None]
 
@@ -332,6 +331,8 @@ def test_bid_less_than():
     assert bid_less_than("(1H)", "2C")
     assert bid_less_than("1H", "2C")
     assert not bid_less_than("1N", "1S")
+    assert not bid_less_than("7C", "1S")
+    assert bid_less_than("7C", "7NT")
 
 
 # maybe remove, easier for end users to manipulate
