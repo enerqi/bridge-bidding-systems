@@ -236,7 +236,6 @@ class Score(param.Parameterized):
 
 class TimeBonus(param.Parameterized):
     percent_bonus = param.Integer(default=100, bounds=(0, 100), doc="percentage bonus due to answer speed")
-    # time_left_seconds = param.fl
     COLOUR_GRADES = [("dark", 17), ("secondary", 33), ("warning", 49), ("info", 65), ("success", 101)]
 
     def __init__(self, **params):
