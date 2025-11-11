@@ -1615,6 +1615,30 @@ Fun, but hard for advancer to raise.
     2C = 1 suiter natural OR 3 suiter with the other suits
     2DHS = 2 suiter
 
+** NT system
+
+Copy your NT defence, easy to remember
+
+1C
+    X = !cs
+    1DHS = natural
+    1N = as X of your opponent's opening 1N
+    2x = as 1N defence etc.
+
+** Polish
+
+NV only considering the 1N showing a bad balanced hand. Can opt to simply swap pass and 1N when VUL.
+Hard to raise after the 1M bid. Information leaking with regards 9--11/12--14 balanced hands.
+
+1C
+    Pass = 9--11 flat
+    X = ANY 15+
+    1D = 12--14 flat
+    1H = unbalanced 10--14, ambiguous if short !hs, 3+!hs or NOT !hs
+    1S = unbalanced 10--14, ambiguous if short !ss, 3+!ss or NOT !ss
+    1N = 0--8 flat
+    2x = 0--9, Woolsey strong notrump defense
+
 
 * Polish / Swedish Club Defence
 
