@@ -417,7 +417,7 @@ strength, then a maximum should probably be top of range e.g. 9--10 hcp
     3N = AKQxxx
 
 
-* Lebensohl - Defending Weak 2HS
+* Lebensohl - Defending Weak 2DHS
 
 ** Problem
 
@@ -463,7 +463,7 @@ is a multi-meaning puppet), slow/fast cue shows a 4 card major or not and stop a
 level bids are strong or via 2N are strong etc. Transfers to the cue suit or transfer through it. Showing competitive
 hands faster naturally sounds more matchpoint oriented. Focusing on invitational/GF hands better for IMPs.
 
-If that all sounds like nonsense, no problem. We will look at Better Minor Lebensohl for dealing with 2HS preempt
+If that all sounds like nonsense, no problem. We will look at Better Minor Lebensohl for dealing with 2DHS preempt
 takeouts.
 
 Later we look at [Transfer Lebensohl](#Transfer Lebensohl Over 2 Level Interference) for most other situations and
@@ -2041,7 +2041,7 @@ space to play penalty/value doubles and takeout doubles (pass then double)
 1N
     X = !cs or !ds or 4 card major + 5 card minor (but penalty v.s weak NT)
     2C = both majors
-    2D = 1 major, usually 6 cards (multi 2D like)
+    2D = 1 major, usually 6 cards (multi 2!d like)
     2M = 5 card major with 4+ minor
     2N = minors 5--5+
 
@@ -2854,9 +2854,8 @@ strength.
 The sequence 1D--1S--2C is the most concerning. 2H is fourth suit forcing and playing in 2C or 2D might be
 terrible, possibly missing a !h fit. Rebidding 2S could end up in a 5--1 or even 5--0 fit.
 
-Another sequence, 1D--1S--2D may also be difficult. With a weak hand it's easy to bid 2H, what about invitational
-hands with both majors? Well, we could still bid 2H and expect partner to raise if they have support, but then we maybe
-too high already.
+Another sequence, 1D--1S--2D may also be difficult. Is 2H now 3rd suit forcing for one round? With a weak hand we miss
+out bidding !hs in that case. If it's forcing then we would guess game if partner raises.
 
 ** Solution
 
@@ -3929,27 +3928,28 @@ helpful. A balanced hand with 24 hcp usually wants to go to game and any 26+ hcp
     2HS = some slam prospect with support from opener, e.g. 5 carder 3 honours + side control or 6 carder 2 honours + side control
     3CD = single suiter hand, 2+ "control points" (at least 2 kings or 1 ace), e.g. KQJxx + side K, KJ10xxx + side K
     3HS = semi-solid suit + side control, KQJ10xx, KQJxxxx, AQJ10xx etc, unlike the 2HS response these suits play well v.s. a doubleton or singleton honour
-    3N = (more advanced) any solid (AKQ+) 6/7 card suit (it's assumed opener can spot which suit they have!), setting trumps
+    3N = any solid (AKQ+) 6/7 card suit, no other controls
         4CDHS = control bids
         4N = keycard blackwood for the solid suit
-    4C = (more advanced) !d *transfer* with exactly 3 honours, 7 cards, no other controls
-        4D = bid as asked
-        4N = keycard blackwood for !ds
+    4C = !hs artificial with exactly 3 honours, 7 cards, no other controls
+        4D = shortage ask
+        4H = to play
         other = own excellent suit, to play
-    4D = (more advanced) !h *transfer* with exactly 3 honours, 7 cards, no other controls
-        4H = bid as asked
-        4N = keycard blackwood for !hs
+    4D = !ss artificial with exactly 3 honours, 7 cards, no other controls
+        4H = shortage ask
+        4S = to play
         other = own excellent suit, to play
-    4H = (more advanced) !s *transfer* with exactly 3 honours, 7 cards, no other controls
-        pass = !h suit excellent, to play
-        4S = bid as asked
-        4N = keycard blackwood for !ss
+    4H = !cs artificial with exactly 3 honours, 7 cards, no other controls
+        4S = shortage ask
+        5C = to play
         other = own excellent suit, to play
-    4S = (more advanced) !c *transfer* with exactly 3 honours, 7 cards, no other controls
-        pass = !s suit excellent, to play
-        4N = keycard blackwood for !cs
-        5C = bid as asked
+    4S = !ds artificial with exactly 3 honours, 7 cards, no other controls
+        4N = shortage ask
+        5D = to play
         other = own excellent suit, to play
+
+The 3N and higher bids are specialised extras showing powerful suits without any side Ace/King but could have a shortage.
+Over these bids 4N RKB is not very useful, a shortage ask is better.
 
 * Preempt Roman Keycard
 

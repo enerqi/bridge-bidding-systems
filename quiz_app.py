@@ -14,21 +14,24 @@ import re
 import sys
 import time
 
+from opentelemetry import trace
 import panel as pn
 from panel.io import hold
 import param
 
 import quiz
 
+tracer = trace.get_tracer(__name__)
+
 
 def session_key_func(request):  # tornado.httputil.HTTPServerRequest
     # EXPERIMENTAL: sticky session / mixup issues. Probably do not want to reuse sessions ( --reuse-sessions).
     # Affects how Panel reuses existing Bokeh Documents (i.e., session state) when a user reconnects or reloads the
-    # page.When reusing sessions the theory is:
-    # - Widget values persist across reloads.
-    # - Callbacks remain active.
-    # - Session-specific state (like pn.state.cache, pn.state.session_args, etc.) is preserved.
-    # - Useful for long-running apps or apps with expensive initialization.
+    # page. When reusing sessions the theory is:
+    # - Widget values persist across reloads
+    # - Callbacks remain active
+    # - Session-specific state (like pn.state.cache, pn.state.session_args, etc.) is preserved
+    # - Useful for long-running apps or apps with expensive initialization
     # Reuse only works within the same browser tab and short time window. It does not persist sessions across different
     # tabs or devices. It is single proc, special server setup for sticky session routing needed with multiple processes
     # * if stay with num procs == 1 then enable automatic threading at least, but prefer to test multiple procs
@@ -55,8 +58,8 @@ if "swedish" in pn.state.location.search.lower():
     title = "Swedish Club Quiz"
     bml_file = "bidding-system.bml"
     system_notes_url = "https://sublime.is/bidding-system.html"
-    # theme = "dark"
     theme = "default"
+    # theme = "dark"
 else:
     title = "U16 Squad System Quiz"
     bml_file = "squad-system.bml"
@@ -69,10 +72,10 @@ debug_enabled = pn.config.autoreload or "debug" in pn.state.location.search.lowe
 # https://panel.holoviz.org/how_to/caching/manual.html
 # - Imported modules are executed once when they are first imported. Objects defined in these modules are shared across
 #   all user sessions!
-# - The app.py script is executed each time the app is loaded. Objects defined here are shared within the single user
-#   session only (unless cached).
+# - The "app.py" main script is executed each time the app is loaded. Objects defined here are shared within the single
+#   user session only (unless cached).
 # - Only specific, bound functions are re-executed upon user interactions, not the entire app.py script.
-@pn.cache  # per server process OR per user session caching
+@pn.cache  # default per server process caching, optionally per user session
 def load_bid_sequences(bml_source: str):
     bid_tables = quiz.load_bid_tables(bml_source)
     quiz.prettify_bid_table_nodes(bid_tables)
@@ -83,12 +86,13 @@ def load_bid_sequences(bml_source: str):
 bid_sequences = load_bid_sequences(bml_file)
 
 INITIAL_DIFFICULTY = 5
+MAX_DIFFICULTY = 8
 
 # Global question data made into a reactive signal so that other things can change when it updates
 # the alternative is to make question part of a Parameterized subclass
 # Note we are currently making `Score` Parameterized as the alternative example, will experiment with how to render it
-# separately to its data, but currently the `view` method is under the Score class `question.rx.value` allows us to mess
-# with the underlying question class
+# separately to its data, but currently the `view` method is under the Score class.
+# `question.rx.value` allows us to mess with the underlying question class
 question = param.rx(
     quiz.generate_question(
         bid_sequences, choice_type=quiz.random_multi_choice_type(), multi_choice_count=INITIAL_DIFFICULTY
@@ -103,24 +107,27 @@ def quiz_still_playing() -> bool:
     return quiz_completion_time.rx.value is None
 
 
+@tracer.start_as_current_span("intro_view")
 @pn.depends(question, quiz_completion_time)
-def intro_view():
+def intro_view(_view_model_cache={}):
+    if not _view_model_cache:
+        _view_model_cache[quiz.MultiChoiceType.Auctions] = pn.Row(
+            pn.pane.Markdown(
+                "## In which auction is the *final* bid best described by:",
+                disable_anchors=True,
+            )
+        )
+
+        _view_model_cache[quiz.MultiChoiceType.Descriptions] = pn.Row(
+            pn.pane.Markdown(
+                "## Which description matches the *final* bid in this sequence:",
+                disable_anchors=True,
+            )
+        )
+
     if quiz_still_playing():
         question_type = question.rx.value.choice_type
-        if question_type is quiz.MultiChoiceType.Auctions:
-            return pn.Row(
-                pn.pane.Markdown(
-                    "## In which auction is the *final* bid best described by:",
-                    disable_anchors=True,
-                )
-            )
-        else:
-            return pn.Row(
-                pn.pane.Markdown(
-                    "## Which description matches the *final* bid in this sequence:",
-                    disable_anchors=True,
-                )
-            )
+        return _view_model_cache[question_type]
     else:
         return ""
 
@@ -169,6 +176,62 @@ class Score(param.Parameterized):
     POINTS_GOAL = 1000
     available_milestones = param.List(default=list(reversed(SCORE_MILESTONES)), doc="Remaining milestones to reach")
 
+    def __init__(self, **params):
+        super().__init__(**params)
+        self.score_markdown = pn.pane.Markdown("", disable_anchors=True)
+        self.score_dial = pn.indicators.Dial(
+            # styling out white edge not working
+            stylesheets=[
+                """
+                .bk-CanvasPanel .bk-right {
+                  background: lightblue;
+                }
+                """
+            ],
+            name="",
+            value=0,
+            bounds=(0, 100),
+            width=150,
+            height=150,
+            colors=[
+                (0, "#FF0000"),  # Red
+                (0.3, "#FF6600"),  # Orange-Red
+                (0.49, "#FFCC00"),  # Yellow
+                (0.59, "#99CC00"),  # Yellow-Green
+                (0.75, "#66CC00"),  # Greenish
+                (1, "#00CC00"),  # Green
+            ],
+        )
+        self.points_markdown = pn.pane.Markdown("", disable_anchors=True)
+        self.points_indicator = pn.indicators.LinearGauge(
+            name="",
+            value=0,
+            bounds=(0, Score.POINTS_GOAL),
+            format="",
+            colors=list(
+                zip(
+                    Score.SCORE_MILESTONES,
+                    [
+                        "#FF0000",  # Red
+                        "#FF6600",  # Orange-Red
+                        "#FFCC00",  # Yellow
+                        "#99CC00",  # Yellow-Green
+                        "#66CC00",  # Greenish
+                        "#00CC00",  # Green
+                    ],
+                    strict=True,
+                )
+            ),
+            show_boundaries=True,
+        )
+        self.view_model = pn.Column(
+            pn.Row(self.score_markdown),
+            pn.Row(self.score_dial),
+            pn.Row(self.points_markdown),
+            pn.Row(self.points_indicator),
+        )
+
+    @tracer.start_as_current_span("Score.view")
     @param.depends("questions_correct", "questions_attempted", "total_points")
     def view(self):
         if self.questions_attempted > 0:
@@ -176,62 +239,15 @@ class Score(param.Parameterized):
             percentage = round(value)
         else:
             percentage = 0
-        s = f"__Score__: {self.questions_correct} / {self.questions_attempted}"
+        score_text = f"__Score__: {self.questions_correct} / {self.questions_attempted}"
 
-        pts = f"__Points__: {self.total_points}"
+        points_text = f"__Points__: {self.total_points}"
 
-        return pn.Column(
-            pn.Row(pn.pane.Markdown(s, disable_anchors=True)),
-            pn.Row(
-                pn.indicators.Dial(
-                    # not working
-                    stylesheets=[
-                        """
-                        .bk-CanvasPanel .bk-right {
-                          background: lightblue;
-                        }
-                        """
-                    ],
-                    name="",
-                    value=percentage,
-                    bounds=(0, 100),
-                    width=150,
-                    height=150,
-                    colors=[
-                        (0, "#FF0000"),  # Red
-                        (0.3, "#FF6600"),  # Orange-Red
-                        (0.49, "#FFCC00"),  # Yellow
-                        (0.59, "#99CC00"),  # Yellow-Green
-                        (0.75, "#66CC00"),  # Greenish
-                        (1, "#00CC00"),  # Green
-                    ],
-                )
-            ),
-            pn.Row(pn.pane.Markdown(pts, disable_anchors=True)),
-            pn.Row(
-                pn.indicators.LinearGauge(
-                    name="",
-                    value=self.total_points,
-                    bounds=(0, Score.POINTS_GOAL),
-                    format="",
-                    colors=list(
-                        zip(
-                            Score.SCORE_MILESTONES,
-                            [
-                                "#FF0000",  # Red
-                                "#FF6600",  # Orange-Red
-                                "#FFCC00",  # Yellow
-                                "#99CC00",  # Yellow-Green
-                                "#66CC00",  # Greenish
-                                "#00CC00",  # Green
-                            ],
-                            strict=True,
-                        )
-                    ),
-                    show_boundaries=True,
-                )
-            ),
-        )
+        self.score_markdown.object = score_text
+        self.score_dial.value = percentage
+        self.points_markdown.object = points_text
+        self.points_indicator.value = self.total_points
+        return self.view_model
 
 
 class TimeBonus(param.Parameterized):
@@ -242,6 +258,9 @@ class TimeBonus(param.Parameterized):
         super().__init__(**params)
         self._update_progress_callback = None
         self.reset()
+
+        self.progress = pn.indicators.Progress(sizing_mode="stretch_width", styles={"height": "2rem"})
+        self.view_model = pn.Row(self.progress)
 
     def update_bonus(self):
         t2 = time.time()
@@ -276,11 +295,10 @@ class TimeBonus(param.Parameterized):
                 new_colour = colour
                 break
 
-        return pn.Row(
-            pn.indicators.Progress(
-                value=value, bar_color=new_colour, sizing_mode="stretch_width", styles={"height": "2rem"}
-            )
-        )
+        progress = self.progress
+        progress.value = value
+        progress.bar_color = new_colour
+        return self.view_model
 
 
 # parameterized type to custom widget docs:
@@ -290,13 +308,7 @@ time_bonus = TimeBonus()
 
 
 def reset_time_bonus_by_difficulty(difficulty: int = INITIAL_DIFFICULTY):
-    seconds_per_level = {
-        4: 8,
-        5: 7,
-        6: 6,
-        7: 5,
-        8: 4
-    }
+    seconds_per_level = {4: 8, 5: 7, 6: 6, 7: 5, 8: 4}
     time = difficulty * seconds_per_level.get(difficulty, 4)
     time_bonus.reset(max_time_seconds=time)
 
@@ -334,6 +346,7 @@ def points(question_value: quiz.Question, streak: int, percent_time_left: int) -
     )
 
 
+@tracer.start_as_current_span("on_answer_click")
 async def on_answer_click(event):  # event handlers can be async with no extra work
     """Event handler for question button presses that updates the score accordingly.
 
@@ -455,7 +468,7 @@ async def on_answer_click(event):  # event handlers can be async with no extra w
     global quiz_completion_time
     clicked_candidate = event.obj.candidate  # custom attribute added
 
-    # disable buttons, we will create new buttons after a delay
+    # disable buttons, we will refresh the buttons after a delay
     with hold():
         for button in ui_context.buttons:
             button.disabled = True
@@ -615,54 +628,74 @@ class UI_Context:
 ui_context = UI_Context()
 
 
+@tracer.start_as_current_span("question_view")
 @pn.depends(question, quiz_completion_time)
-def question_view():
+def question_view(_view_model_cache={}):
     if not quiz_still_playing():
         return ""
 
-    def make_button(candidate):
+    if not _view_model_cache:
+        def make_blank_button():
+            return pn.widgets.Button(
+                name="",
+                button_type="primary",
+                on_click=on_answer_click,
+                # this would only apply above the button shadow dom
+                # styles={"font-size": "2rem"},
+                # sizing_mode="stretch_width",
+                # annoying, `css_classes=["answer-button"]` + pn.extension(raw_css=...)
+                # not useful, .answer-button custom  is on the div above the button shadow dom
+                # doesn't pass through shadow dom used by material template, so have
+                # to pass in a fiddly css override per button
+                stylesheets=[
+                    """
+                    .bk-btn-group > button {
+                      font-size: 2rem;
+                    }
+                    """
+                ],
+            )
+
+        blank_buttons = [make_blank_button() for _ in range(MAX_DIFFICULTY)]
+        _view_model_cache["flexbox"] = pn.FlexBox(justify_content="space-evenly")
+        _view_model_cache["buttons_pool"] = blank_buttons
+
+
+    buttons = _view_model_cache["buttons_pool"]
+    for i, candidate in enumerate(question.rx.value.candidates):
+        button = buttons[i]
+        button.candidate = candidate  # custom dynamic attribute
+        button.disabled = False
         pretty_auction = emoji_text_auction(candidate)
-        button = pn.widgets.Button(
-            name=pretty_auction,
-            button_type="primary",
-            on_click=on_answer_click,
-            # this would only apply above the button shadow dom
-            # styles={"font-size": "2rem"},
-            # sizing_mode="stretch_width",
-            # annoying, `css_classes=["answer-button"]` + pn.extension(raw_css=...)
-            # not useful, .answer-button custom  is on the div above the button shadow dom
-            # doesn't pass through shadow dom used by material template, so have
-            # to pass in a fiddly css override per button
-            stylesheets=[
-                """
-                .bk-btn-group > button {
-                  font-size: 2rem;
-                }
-                """
-            ],
-        )
-        button.candidate = candidate
-        return button
+        button.name = pretty_auction
 
-    buttons = [make_button(candidate) for candidate in question.rx.value.candidates]
-    ui_context.buttons = buttons
+    active_buttons = buttons[:len(question.rx.value.candidates)]
+    ui_context.buttons = active_buttons
 
-    flex_pane = pn.FlexBox(
-        *buttons,
-        # https://panel.holoviz.org/reference/layouts/FlexBox.html
-        justify_content="space-evenly",
-    )
+    flex_pane = _view_model_cache["flexbox"]
+    flex_pane.objects = active_buttons
     return flex_pane
 
 
+@tracer.start_as_current_span("answer_view")
 @pn.depends(question, quiz_completion_time)
-def answer_view():
+def answer_view(_view_model_cache={}):
     if quiz_still_playing():
         # bad name? can also emojify the answer
         answer = emoji_text_auction(question.rx.value.answer)
         leading_cap = answer[0].upper() + answer[1:]
-        # markdown bold
-        return pn.Row(pn.pane.Markdown(f'# "__{leading_cap}__"', styles={"font-size": "2rem"}, disable_anchors=True))
+        answer_text_markdown = f'# "__{leading_cap}__"'
+
+        if _view_model_cache:
+            _view_model_cache["md"].object = answer_text_markdown
+        else:
+            # markdown bold
+            answer_markdown = pn.pane.Markdown(answer_text_markdown, styles={"font-size": "2rem"}, disable_anchors=True)
+            row = pn.Row(answer_markdown)
+            _view_model_cache["row"] = row
+            _view_model_cache["md"] = answer_markdown
+
+        return _view_model_cache["row"]
     else:
         elapsed_time = round(quiz_completion_time.rx.value - quiz_start_time_seconds, ndigits=1)
         return pn.FlexBox(
@@ -754,7 +787,7 @@ restart_button = pn.widgets.Button(name="Restart", on_click=restart_handler, but
 difficulty_slider = pn.widgets.IntSlider(
     name="Difficulty (restarts quiz!)",
     start=4,
-    end=8,
+    end=MAX_DIFFICULTY,
     step=1,
     width=150,
     value=INITIAL_DIFFICULTY,
@@ -835,6 +868,7 @@ main_section = [
 ]
 
 
+@tracer.start_as_current_span("make_app_template")
 def make_app_template():
     # Should be fine to make this a global var as it's recreated per new session. In some situations we want a function
     # so we get a new object on each call, e.g. if this were to be in a different module separate to the main script

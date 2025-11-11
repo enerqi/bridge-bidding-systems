@@ -52,7 +52,7 @@ want to look at these [Adventurous Improvements to your System](youth-improvemen
 General responding:
 
 - 1 level new suit is 5+ hcp forcing
-- 2 level new suit is game forcing. Occasionally 2CD is 3 cards balanced with a hand too strong to go straight to game
+- 2 level new suit is game forcing (2 over 1 simple (non-jump) bid). Occasionally 2CD is 3 cards balanced with a hand too strong to go straight to game
 - 1S--2H promises 5 !hs
 - usually show two 4 card suits by bidding up the line (lowest rank first), except...
 - ...show a major first hiding a longer minor if less than a game invitational hand
@@ -84,7 +84,7 @@ After 1C opening 10--21, 2+ !cs:
 1C--1D = natural, 5+ hcp, denies 4 card major unless invitational plus
     1H = natural, unbalanced ~11--17(bad 18) hcp
         1S = fourth suit forcing, GF
-            1N/2N = 12--14 with stop
+            1N = 12--14 with stop
             3N = 15--17 with stop
         2D = invitational ~9--11 6+ suit
         3D = GF good 6+ suit (use fourth suit forcing with bad suit)
@@ -95,28 +95,29 @@ After 1C opening 10--21, 2+ !cs:
         2D = invitational ~9--11 6+ suit
         3D = GF good 6+ suit (use fourth suit forcing with bad suit)
     1N = 12--14 balanced
-        2C = checkback stayman, majors ask, balanced, invite plus hands
-            2D = no major
-                2HS = stop showing
+        2C = checkback stayman, some invite or GF hands
+            2D = no 4 card major
+                2HS = stop showing, GF
             2H = 4!hs, maybe 4!ss
             2S = 4!ss, denies 4!hs
-        2D = weak 6+!ds
-        2HS = natural reverse, invite plus, unbalanced hands (unlike Checkback)
+        2D = rare, weak, disklike NT but not want to bid 1!c--2!d
+        2HS = natural responder reverse, forcing invite plus
         2N = invite
         3C = 5+!ds + 4+!cs invite
         3D = invitational, 6+ suit
         3H = 6--5 !ds + !hs, invitational, powerful rarely passed
         3S = 6--5 !ds + !ss, invitational, powerful rarely passed
-        3N = to play
-        4N = quantitative to 6N
+        3N = to play, no major
+        4N = quantitative
     2C = natural 6+!cs, not worth 3C rebid
         2HS = natural, forcing one round
         2N = invite, natural
-        3N = natural, ~12--15
+        3HS = splinter, shortage, !c support slam try
+        3N = to play, ~12--15
     2D = single raise, ~12--14 hcp with 3 (usually with singleton) or 4 card support
-    2HS = natural good 18+ unbalanced game force
+    2HS = natural jump shift rebid, good 18+ unbalanced GF
     2N = 18--19 balanced
-        3C = checkback stayman
+        3C = checkback stayman, GF
             3D = no major
                 3HS = stop showing
             3H = 4!hs, maybe 4!ss
@@ -126,7 +127,7 @@ After 1C opening 10--21, 2+ !cs:
         3HS = natural, forcing
     3C = 6+!cs, 6.5--7.5 playing tricks, ~14--17 hcp, denies 4 card major
     3D = double raise, ~15--17 hcp, denies 4 card major
-    3HS = splinter, shortage, 4+!ds support
+    3HS = splinter, shortage, !d support slam try
     4C = 6+!cs semi-solid or better, with 4!ds
     4D = rare, triple raise 18--19 hcp, usually splinter instead
 
@@ -1612,7 +1613,7 @@ Intermediate 10--13 hcp in 4th position
         3H = transferred
             3N = choice of games, 5!hs
             4H = to play, 6+!hs
-            4other = splinter, singleton/void
+            4CD = natural GF (or shortage/splinter like by agreement)
         3S = side good suit, 3+ top 5 honours, HHx 3 card or 4+ card support
         3N = maximum, HHx 3 card or 4+ card support, no good side suit
         4CD = side good suit, 3+ top 5 honours, HHx 3 card or 4+ card support
@@ -1622,7 +1623,7 @@ Intermediate 10--13 hcp in 4th position
         3S = transferred
             3N = choice of games, 5!ss
             4S = to play, 6+!ss
-            4other = splinter, singleton/void
+            4CDH = natural GF (or shortage/splinter like by agreement)
         3N = maximum, HHx 3 card or 4+ card support, no good side suit
         4CDH = side good suit, 3+ top 5 honours, HHx 3 card or 4+ card support
         4S = minimum, 4+ card support
