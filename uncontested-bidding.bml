@@ -1246,8 +1246,9 @@ Gazilli variant includes:
 
 2H = !cs and !hs, 11--15, without extra shape
     2S = invitational, 6+ !ss
-    2N = invite
-    3CD = GF quasi-natural (passed hand NF 6 card minor canapé)
+    2N = puppet to 3C, either escape or !c signoff
+    3C = invitational with !c support
+    3D = GF quasi-natural 4th suit (passed hand NF 6 card minor canapé)
     3H = natural, invitational, probably 5!ss + 3!hs
     3S = forcing
     4CD = splinter !h support
@@ -1429,10 +1430,11 @@ Responding:
     4C = splinter for !ds
     4D = !d game invite, long fit
 2H = !cs and !hs, 11--15, without extra shape
-    2S = artificial invitational good !c support (cannot have !ss)
-    2N = invite
-    3CDH = to play
-    3S = invite
+    2S = artificial, invite impossible major Hx support and !c support
+    2N = puppet to 3C, !d escape or !c signoff
+    3C = invitational with !c support
+    3D = NF, mild invite (use 2N escape with signoff)
+    3HS = invite
 2S = 6--5
     3CD = sign off, (6)7+ suit
     2N = F1, invite plus
@@ -1808,7 +1810,7 @@ Mixed raise (weak limit raise) -- ~8--10 support points, 4+ cards
 
 ** 1H--3S
 
-Unknown singleton splinter, 10--12 hcp (~9--10 by passed hand)
+Unknown splinter, ~10--12 hcp (less with void, ~9--10 by passed hand)
 
 Splinter bids typically have fairly evenly distributed strength amongst the side suits as otherwise a 2/1 GF bid
 of the strong suit is often better (unless the strong suit is mostly self-sufficient).
@@ -2072,7 +2074,7 @@ at the 3 level.
   3D = [6+ !ds, invitational ~10--12, no major](#1S--3D)
   3H = [6+ !hs, invitational ~10--12, no major support](#1S--3H)
   3S = [mixed raise ~8--10 support points, 4+ cards](#1S--3S)
-  3N = [unknown splinter, 10--12 hcp (~9--10 by passed hand)](#1S--3N)
+  3N = [unknown splinter, ~10--12 hcp (~9--10 by passed hand)](#1S--3N)
   4CDH = [splinter, 13--15 hcp, Passed hand - FJ mild slam interest](#1S--4C/4D/4H)
   4S = [to play](#1S--4S)
   4N = [RKB](#RKB 4N)
@@ -2139,8 +2141,9 @@ Responding:
     4CD = splinter !h support
     4H = to play
 2S = !cs and !ss, 11--15, without extra shape
-    2N = invite
-    3CDH = to play
+    2N = puppet to 3C, !d / !h escape or !c signoff
+    3C = invitational with !c support
+    3DH = NF, mild invite (use 2N escape with signoff)
     3S = invite
 2N = 6--4 max, any lower rank 4 card side suit
     3C = ask
@@ -2559,7 +2562,7 @@ Mixed raise (weak limit raise) -- ~8--10 support points, 4+ cards
 
 ** 1S--3N
 
-Unknown singleton splinter, 10--12 hcp (~9--10 by passed hand)
+Unknown splinter, ~10--12 hcp (less with void, ~9--10 by passed hand)
 
 Splinter bids typically have fairly evenly distributed strength amongst the side suits as otherwise a 2/1 GF bid
 of the strong suit is often better (unless the strong suit is mostly self-sufficient).

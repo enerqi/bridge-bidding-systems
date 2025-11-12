@@ -71,6 +71,7 @@ Continuations are very similar to a modern precision majors first rebid style.
             3H = invite ~5--7 3!hs
         2D = canapé, ~16--18 (extras means ~19--21 Acol 2 like)
         2H = artificial longer !cs, ~16--18, similar to Gazilli
+            2N = puppet to 3C, escape
         2S = 6--5 minimum
         2N = artificial unknown minor GF canapé, 4!ss--5m
         3CD = canapé, ~19--21
@@ -135,6 +136,7 @@ Continuations are very similar to a modern precision majors first rebid style.
         2D = canapé, ~16--18 (extras means ~19--21 Acol 2 like)
         2H = natural ~16--18
         2S = artificial longer !cs, ~16--18, similar to Gazilli
+            2N = puppet to 3C, escape
         2N = artificial unknown minor GF canapé, 4!ss--5m
         3CD = canapé, ~19--21
         3H = 5--5 extras
@@ -1141,8 +1143,8 @@ Compared to the [1D opening interference](#1D interference):
         others = strong
             3D = only NF bid
     2D = !cs, GF
-        2N = NF minimum, stopper
-        3C = NF weak NT
+        2N = minimum, stopper
+        3C = weak NT
     2H = !s transfer, 6+ !ss, weak/GF
         2S = complete transfer, weak hand
         others = strong
@@ -1221,6 +1223,7 @@ Compared to the [1D opening interference](#1D interference):
 1C--(1N) artificial MINORS
     P = natural weak
     X = values, possible penalty
+        cue = mix of checking for major fit, ideally also stop showing
     2CD = good !hs/!ss
     2HS = competitive
 
