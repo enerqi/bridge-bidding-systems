@@ -69,10 +69,15 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
     1S = [4+ !ss, 5+ hcp, shorter !h suit or 5--5](#1C--1S)
     1N = [~7--10(11) hcp, denies a 4 card major](#1C--1N)
     2C = 10+ unbalanced 5+!cs OR 12+ with 4/5!cs, inverted minor raise, denies 4 card major
+        2DHS = natural, forcing, maybe stop showing only
+        2N = 12--14, NF
+        3C = natural, NF
+        3DHS = splinter, singleton/void, !d slam try
+        3N = 18--19
     2DHS = weak two, respond as weak two bids
     2N = 11--12 hcp natural, no major
         3N = at least good 13 / 14 hcp
-    2N = (passed hand), 10--11 natural
+    2N = (passed hand), 10--11 natural, no major
     3C = ~5--9 6 !cs, denies 4 card major
     3DHS = weak three, respond as weak three bids
     4C = more preemptive, 7!cs
@@ -124,7 +129,7 @@ After 1C opening 10--21, 2+ !cs:
             3S = 4!ss, denies 4!hs
         3D = 6+ cards, slam interest, can stop in 3N
             3HS = cue bid
-        3HS = natural, forcing
+        3HS = natural 5 cards, forcing
     3C = 6+!cs, 6.5--7.5 playing tricks, ~14--17 hcp, denies 4 card major
     3D = double raise, ~15--17 hcp, denies 4 card major
     3HS = splinter, shortage, !d support slam try
@@ -145,7 +150,7 @@ After 1C opening 10--21, 2+ !cs:
     1N = 12--14 balanced
         2C = checkback stayman, majors ask, some invite or GF hands
             2D = denies 4!ss, denies 3!hs
-                2HS = stop showing, not natural, concern other suit
+                2HS = stop showing, quasi natural, concern other suit
                 2N = invite
                 3C = 5!hs + 4+!cs, GF
                 3D = 5!hs + 4+!ds, GF
@@ -174,7 +179,7 @@ After 1C opening 10--21, 2+ !cs:
     2C = natural often 6+!cs (maybe 5!cs + 4!ds not worth reverse), not worth 3C rebid
         2DS = natural, forcing one round
         2N = invite, natural
-        3N = natural, ~12--15
+        3N = to play, ~12--16
     2D = reverse, natural, ~17+ hcp, forcing, shorter 2nd suit
         2H = constructive 7+, 5+ cards, forcing
         2S = fourth suit forcing, GF
@@ -191,7 +196,7 @@ After 1C opening 10--21, 2+ !cs:
         other = game tries, as 1H--2H
     2S = natural good 18+ unbalanced game force
     2N = 18--19 balanced
-        3C = checkback stayman
+        3C = Checkback stayman
             3D = denies 4!ss, denies 3!hs
                 3HS = stop showing
             3H = 3!hs, maybe 4!ss
@@ -199,7 +204,7 @@ After 1C opening 10--21, 2+ !cs:
         3D = natural, forcing
         3H = 6+ cards, slam interest
             3S = cue bid
-        3S = 4--4 majors, forcing
+        3S = 4--4 majors (use Checkback with 5--4+), forcing
     3C = 6+!cs, 6.5--7.5 playing tricks, ~14--17 hcp, denies 4 card major
     3H = double raise, ~15--17 hcp
     3DS = splinter, shortage, 4+!hs support
@@ -214,7 +219,7 @@ After 1C opening 10--21, 2+ !cs:
     1N = 12--14 balanced
         2C = checkback stayman, majors ask, some invite or GF hands
             2D = denies 4!hs, denies 3!ss
-                2HS = stop showing, not natural, concern other suit
+                2HS = stop showing, quasi natural, concern other suit
                 2N = invite
                 3C = 5!ss + 4+!cs, GF
                 3D = 5!ss + 4+!ds, GF
@@ -252,7 +257,7 @@ After 1C opening 10--21, 2+ !cs:
         2S = invitational ~9--11 6+ suit
         2N = invite, natural
         3S = GF good 6+ suit (use fourth suit forcing with bad suit)
-        3N = natural, ~12--15
+        3N = natural, ~12--16
     2D = reverse, natural ~17+ hcp, forcing, shorter 2nd suit
         2H = fourth suit forcing, GF
         2S = constructive 7+, 5+ cards, forcing
@@ -339,7 +344,7 @@ After 1C opening 10--21, 2+ !cs:
         3N = 18--19 with stop
     2H = cue 10+ hcp, (4)5+ card support
     2S = NF, constructive, invitational
-    2N = natural
+    2N = natural, invitational
     3C = preemptive 5+ trumps, ~5--9 hcp depending on shape/vulnerability, not worth cue
     3H = splinter
 
@@ -351,7 +356,7 @@ After 1C opening 10--21, 2+ !cs:
         2N = 12--14 with stop
         3N = 18--19 with stop
     2S = cue 10+ hcp, (4)5+ card support
-    2N = natural
+    2N = natural, invitational
     3C = preemptive 5+ trumps, ~5--9 hcp depending on shape/vulnerability, not worth cue
     3DH = NF, constructive, invitational
     3S = splinter
@@ -367,16 +372,16 @@ After 1C opening 10--21, 2+ !cs:
     new = constructive, non-forcing
     cueLow = (cue bid of their lower rank suit) forcing in lower remaining suit
     cueHi = (cue bid of their higher rank suit) forcing in higher remaining suit
-    2N = natural
-    3N = natural
+    2N = natural, invitational
+    3N = natural, to play
 
 1C--(2!c) = two suiter, one known
     Dbl = penalty interest, values
     3C = preemptive
     cue = good !c raise
     new = natural, forcing (not non-forcing as with two known suits)
-    2N = natural
-    3N = natural
+    2N = natural, invitational
+    3N = natural, to play
 
 1C--(2!d!h!s) = weak two usually
     Dbl = takeout
@@ -427,16 +432,19 @@ After 1C opening 10--21, 2+ !cs:
     1S = [4+ !ss, 6+ hcp, shorter !h suit or 5--5](#1D--1S)
     1N = [~7--10 hcp, denies a 4 card major](#1D--1N)
     2C = game force, 12+ hcp, 5+ !cs
-        2D = natural
+        2D = natural, catchall nothing better to bid
             2N = 12--14
-            3N = 15--17
+            3N = jump 3N 15--17
         2HS = reverse, natural good 14+ hcp
             2N = 12--14
-            3N = 15--17
+            3N = jump 3N 15--17
+        2N = 12--14 balanced
+        3D = excellent self-sufficient suit, sets trumps
         3N = 18--19 balanced
     2D = 10+ unbalanced 5+!ds OR 12+ with 4+!ds, inverted minor raise, denies 4 card major
         2HS = natural, forcing, maybe stop showing only
-        2N = 12--14
+        2N = 12--14, NF
+        3D = natural, NF
         3HS = splinter, singleton/void, !d slam try
         3N = 18--19
     2HS = weak two, respond as weak two bids
@@ -463,7 +471,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
     1N = 12--14 balanced
         2C = checkback stayman, majors ask, some invite or GF hands
             2D = denies 4!ss, denies 3!hs
-                2HS = stop showing, not natural, concern other suit
+                2HS = stop showing, quasi natural, concern other suit
                 2N = invite
                 3C = 5!hs + 4+!cs, GF
                 3D = 5!hs + 4+!ds, GF
@@ -480,7 +488,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
                 3H = artificial 3 level other major, sets !ss, slam interest
                 3S = invitational raise
         2D = weak 5!hs + 4+!ds
-        2H = weak 5!hs, rarely 6 bad (1D--2H is a weak two)
+        2H = weak 5!hs, rarely 6 bad (1!d--2!h is a weak two)
         2S = 4--4 majors, forcing invite or better
         2N = invite
         3C = 5!hs + 4!cs invite
@@ -496,6 +504,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
         2S = fourth suit forcing, GF
             2N = 12--14 with stop
             3N = 15--17 with stop
+        2NT = invite, natural
         3H = GF good 6+ suit (use fourth suit forcing with bad suit)
     2D = natural 6+!ds, not worth 3D rebid
         2H = invitational ~9--11 6+ suit
@@ -503,12 +512,12 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
         2N = invite, natural
         3C = natural, game forcing
         3H = GF good 6+ suit (use fourth suit forcing with bad suit)
-        3N = natural, ~12--15
+        3N = to play, ~12--16
     2H = single raise, ~12--14 hcp with 3 (usually with singleton) or 4 card support
         other = game tries, as 1H--2H
     2S = natural good 18+ unbalanced game force
     2N = 18--19 balanced
-        3C = checkback stayman
+        3C = Checkback stayman
             3D = denies 4!ss, denies 3!hs
                 3HS = stop showing
             3H = 3!hs, maybe 4!ss
@@ -516,7 +525,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
         3D = natural, forcing (usually 4!ds and 5!hs)
         3H = 6+ cards, slam interest
             3S = cue bid
-        3S = 4--4 majors, forcing
+        3S = 4--4 majors (use Checkback with 5--4+), forcing
     3C = natural game force, good 18/19+
     3D = 6+!ds, 6.5--7.5 playing tricks, ~14--17 hcp, denies 4!ss
     3H = double raise, ~15--17 hcp
@@ -531,9 +540,9 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
 
 1D--1S = 4+ !ss, 6+ hcp, shorter !h suit or 5--5
     1N = 12--14 balanced
-        2C = checkback stayman, majors ask, some invite or GF hands
+        2C = Checkback stayman, majors ask, some invite or GF hands
             2D = denies 4!hs, denies 3!ss
-                2HS = stop showing, not natural, concern other suit
+                2HS = stop showing, quasi natural, concern other suit
                 2N = invite
                 3C = 5!ss + 4+!cs, GF
                 3D = 5!ss + 4+!ds, GF
@@ -566,7 +575,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
         3N = to play
         4S = 6+!ss to play, no slam interest
         4N = quantitative to 6N
-    2C = natural, ~12--17(bad 18)
+    2C = natural, ~11--17(bad 18)
         P = minimum, 2+ more cards than opener's first suit
         2D = minimum, simple preference
         2H = fourth suit forcing, GF
@@ -580,7 +589,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
         3C = natural, game forcing
         2S = invitational ~9--11 6+ suit
         3S = GF good 6+ suit (use fourth suit forcing with bad suit)
-        3N = natural, ~12--15
+        3N = natural, ~12--16
     2H = reverse, natural ~17+ hcp, forcing, shorter 2nd suit
         2S = constructive 7+, 5+ cards, forcing
         2N = (advanced) blackout, relay to 3C, weak hands
@@ -595,7 +604,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
     2S = single raise, ~12--14 hcp with 3 (usually with singleton) or 4 card support
         other = game tries as 1S--2S
     2N = 18--19 balanced
-        3C = checkback stayman
+        3C = Checkback stayman
             3D = denies 3!ss, denies 4!hs
                 3HS = stop showing
             3H = 4!hs, maybe 3!ss
@@ -615,7 +624,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
 After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
 
 1D--1N = ~7--10 hcp, denies a 4 card major
-    2C = natural ~12--17(bad 18) hcp
+    2C = natural ~11--17(bad 18) hcp
     2D = natural 5+!ds, not worth 3D rebid
     2HS = reverse, natural ~17+ hcp, game forcing (opposite 7--10)
         2N = (advanced) blackout, relay to 3C, weak hands (almost GF opposite ~6/7+)
@@ -652,7 +661,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
     2D = minimum raise, 4+ cards (NOT inverted minors)
     2H = cue 10+ hcp, 3+ card support
     2S = NF, constructive, invitational
-    2N = natural
+    2N = natural, invitational
     3C = NF, constructive, invitational
     3D = preemptive 4+ trumps, ~5--9 hcp depending on shape/vulnerability, not worth cue
     3H = splinter
@@ -665,7 +674,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
         3N = 18--19 with stop
     2D = minimum raise, 4+ cards (NOT inverted minors)
     2S = cue 10+ hcp, 3+ card support
-    2N = natural
+    2N = natural, invitational
     3CH = NF, constructive, invitational
     3D = preemptive 4+ trumps, ~5--9 hcp depending on shape/vulnerability, not worth cue
     3S = splinter
@@ -681,16 +690,16 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
     new = constructive, non-forcing
     cueLow = (cue bid of their lower rank suit) forcing in lower remaining suit
     cueHi = (cue bid of their higher rank suit) forcing in higher remaining suit
-    2N = natural
-    3N = natural
+    2N = natural, invitational
+    3N = to play
 
 1D--(2!d) = two suiter, one known
     Dbl = penalty interest, values
     3D = obstructive
     cue = good !d raise
     new = natural, forcing (not non-forcing as with two known suits)
-    2N = natural
-    3N = natural
+    2N = natural, invitational
+    3N = to play
 
 1D--(2!h!s) = weak two usually
     Dbl = takeout
@@ -704,7 +713,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
     cueHi = (cue bid of their higher rank suit) forcing in higher remaining suit
     new = constructive, non-forcing
     3D = obstructive
-    3N = natural
+    3N = to play
 
 1D--(3x)
     Dbl = negative/takeout, maybe stop hunting
@@ -802,7 +811,7 @@ After 1H opening 10--21, 5+ !hs:
         3S = invitational, 6+ suit
         3N = to play
         4N = quantitative to 6N
-    2CD = natural, ~12--17(bad 18)
+    2CD = natural, ~11--17(bad 18)
         P = minimum, 2+ more cards than opener's first suit
         newSuit = fourth suit forcing, GF
             2N = (over 2D) 12--14 with stop
@@ -815,7 +824,7 @@ After 1H opening 10--21, 5+ !hs:
         2N = invite, natural
         3CD = natural, game forcing
         3S = GF good 6+ suit (use fourth suit forcing with bad suit)
-        3N = natural, ~12--15
+        3N = to play, ~12--16
     2H = natural 6+!hs, not worth 3H rebid
     2S = single raise, ~12--14 hcp with 3 (usually with singleton) or 4 card support
         other = game tries as 1S--2S
@@ -827,7 +836,7 @@ After 1H opening 10--21, 5+ !hs:
         3DH = natural, forcing
         3S = 6+ cards, slam interest
     3CD = natural game force, good 18/19+
-    3H = 6+!hs, good 6.5--7.5 playing tricks, ~15--17 hcp
+    3H = 6+!hs, good 6.5--7.5 playing tricks, ~14--17 hcp
     3S = double raise, ~15--17 hcp
     4CD = splinter, shortage, 4+!ss support
     4H = 6+!hs semi-solid or better, with 4!ss
@@ -839,7 +848,7 @@ After 1H opening 10--21, 5+ !hs:
 
 1H--1N = ~6--11 hcp, denies 4!ss, includes bad(~5--6 hcp) and invite(~10/11) 3 card raises
     P = minimum balanced ~12--14 hcp or 4--5--2--2 or 4--5--3--1 singleton A/K
-    2CD = usually natural ~12--17(bad 18) hcp, maybe 3 cards with 4--5 majors and 3--1 minors
+    2CD = usually natural ~11--17(bad 18) hcp, maybe 3 cards with 4--5 majors and 3--1 minors
         2H = simple preference, sometime false preference (2 !hs, 4 card minor support, waiting to see if extras)
             2S/3om = quasi natural (maybe 3 cards), extras ~16--17(18) hcp
             2N = semi-balanced ~16--17(18) hcp
@@ -848,7 +857,7 @@ After 1H opening 10--21, 5+ !hs:
         3H = 3 card invite
     2H = 5+ cards (may have 4!ss without strength for reverse)
         4H = 3 card limit raise or better
-    2S = natural reverse (uncomfortable bidding 2N if only 4!ss), ~17+ hcp, forcing, shorter 2nd suit
+    2S = natural reverse, ~17+ hcp, forcing, shorter 2nd suit
         2N = (advanced) blackout, relay to 3C, weak hands
             3C = semi-forced
                 P = weak long !cs
@@ -863,7 +872,7 @@ After 1H opening 10--21, 5+ !hs:
     3CD = natural game force, good 18/19+
         3H = preference
         4H = 3 card limit raise hand (not fast arrival)
-    3H = 6+!hs, good 6.5--7.5 playing tricks, ~15--17 hcp
+    3H = 6+!hs, good 6.5--7.5 playing tricks, ~14--17 hcp
     3S = auto-splinter, excellent !h suit, shortage, maximum
     4CD  = auto-splinter, excellent !h suit, shortage, maximum
     4H = 6+!hs, maximum, ~18--20
@@ -874,23 +883,25 @@ After 1H opening 10--21, 5+ !hs:
 After 1H opening 10--21, 5+ !hs:
 
 1H--2C = game force, 12+ hcp, 4+ cards, may have GF 4--4 with !ss
-    2D = natural
+    2D = natural unbalanced, any strength
         2H = some support, maybe waiting
         2N = 12--14 or waiting
         3H = trumps agreed, possible slam interest
             3N = artificial extras, serious 3N, slam interest
-        3N = 15--17
-        4H = picture raise, two suits without outside values
-    2H = natural
+        3N = jump 3N 15--17
+        4H = fast arrival, minimum, poor slam holdings
+    2H = natural, catchall nothing better to bid
         2N = 12--14 or waiting
         3H = trumps agreed, possible slam interest
             3N = artificial extras, serious 3N, slam interest
-        3N = 15--17
-        4H = picture raise, two suits without outside values
+        3N = jump 3N 15--17
+        4H = fast arrival, minimum, poor slam holdings
     2S = reverse, natural, good 14+ hcp
         2N = 12--14 or waiting
-        3N = 15--17
+        3N = jump 3N 15--17
+    2N = 12--14 balanced
     3D = splinter, singleton/void, !c support
+    3H = excellent self-sufficient suit, sets trumps
     3S = splinter, singleton/void, !c support (more likely 5 as responder may have 3 !hs)
     3N = 18--19 balanced
 1H--2C = (passed hand) 8--11 hcp, 3 card !h support
@@ -902,18 +913,20 @@ After 1H opening 10--21, 5+ !hs:
 After 1H opening 10--21, 5+ !hs:
 
 1H--2D = game force, 12+ hcp, 4+ cards, may have GF 4--4 with !ss
-    2H = natural
+    2H = natural, catchall nothing better to bid
         2N = 12--14 or waiting
         3H = trumps agreed, possible slam interest
             3N = artificial extras, serious 3N, slam interest
-        3N = 15--17
-        4H = picture raise, two suits without outside values
+        3N = jump 3N 15--17
+        4H = fast arrival, minimum, poor slam holdings
     2S = reverse, natural, good 14+ hcp
         2N = 12--14 or waiting
         3H = trumps agreed, possible slam interest
             3N = artificial extras, serious 3N, slam interest
-        3N = 15--17
-        4H = picture raise, two suits without outside values
+        3N = jump 3N 15--17
+        4H = fast arrival, minimum, poor slam holdings
+    2N = 12--14 balanced
+    3H = excellent self-sufficient suit, sets trumps
     3S = splinter, singleton/void, !d support (more likely 5 as responder may have 3 !hs)
     3N = 18--19 balanced
     4C = splinter, singleton/void, !d support (more likely 5 as responder may have 3 !hs)
@@ -938,7 +951,7 @@ After 1H opening 10--21, 5+ !hs:
         3N = 18--19 with stop
     2H = minimum raise, 3+ cards
     2S = cue 10+ hcp, 3+ card support
-    2N = natural
+    2N = natural, invitational
     3CD = NF, constructive, invitational
     3H = preemptive 4+ trumps, ~5--9 hcp depending on shape/vulnerability, not worth cue
     3S = splinter
@@ -983,16 +996,16 @@ After 1H opening 10--21, 5+ !hs:
     new = constructive, non-forcing
     cueLow = (cue bid of their lower rank suit) forcing in lower remaining suit
     cueHi = (cue bid of their higher rank suit) forcing in higher remaining suit
-    2N = natural
-    3N = natural
+    2N = natural, invitational
+    3N = to play
 
 1H--(2!h) = two suiter, one known
     Dbl = penalty interest, values
     3H = obstructive
     cue = good !h raise
     new = natural, forcing (not non-forcing as with two known suits)
-    2N = natural
-    3N = natural
+    2N = natural, invitational
+    3N = to play
 
 1H--(2!s) = weak two usually
     Dbl = takeout, maybe looking for a stop
@@ -1005,7 +1018,7 @@ After 1H opening 10--21, 5+ !hs:
     cueHi = (cue bid of their higher rank suit) forcing in higher remaining suit
     new = constructive, non-forcing
     3H = obstructive
-    3N = natural
+    3N = to play
 
 1H--(3x)
     Dbl = negative/takeout
@@ -1050,12 +1063,14 @@ After 1H opening 10--21, 5+ !hs:
     2D = [game force, 12+ hcp, 4+ cards](#1S--2D)
     2D = (passed hand) 8--11 hcp, 4 card !s support
     2H = game force, 12+ hcp, 5+ !hs
-        2S = natural
+        2S = natural, catchall nothing better to bid
             2N = 12--14 or waiting
             3S = trumps agreed, possible slam interest
                 3N = artificial extras, serious 3N, slam interest
-            3N = 15--17
-            4S = picture raise, two suits without outside values
+            3N = jump 3N 15--17
+            4S = fast arrival, minimum, poor slam holdings
+        2N = 12--14 balanced
+        3S = excellent self-sufficient suit, sets trumps
         3N = 18--19 balanced
         4CD = splinter, singleton/void, !h support
     2H = (passed hand) natural forcing
@@ -1090,7 +1105,7 @@ After 1S opening 10--21, 5+ !ss:
 
 1S--1N = ~6--11 hcp, includes bad(~5--6 hcp) and invite(~10/11) 3 card raises
     P = minimum balanced ~12--14 hcp
-    2CD = natural, ~12--17(bad 18) hcp, if also 6+ !ss then extra values
+    2CD = natural, ~11--17(bad 18) hcp, if also 6+ !ss then extra values
         2S = simple preference, sometime false preference (2 !ss, 4 card minor support, waiting to see if extras)
             3om/3H = quasi natural (maybe 3 cards), extras ~16--17(18) hcp
             3S = 6--4 extra values
@@ -1109,7 +1124,7 @@ After 1S opening 10--21, 5+ !ss:
     3CDH = natural game force, good 18/19+
         3S = preference
         4S = 3 card limit raise (not fast arrival)
-    3S = 6+!ss, good 6.5--7.5 playing tricks, ~15--17 hcp
+    3S = 6+!ss, good 6.5--7.5 playing tricks, ~14--17 hcp
     4CDH  = auto-splinter, excellent !s suit, shortage, maximum
     4S = 6+!ss good suit, maximum, ~18--20
 1S--1N = (passed hand) 5--9 hcp
@@ -1119,27 +1134,29 @@ After 1S opening 10--21, 5+ !ss:
 After 1S opening 10--21, 5+ !ss:
 
 1S--2C = game force, 12+ hcp, 4+ cards
-    2D = natural
+    2D = natural unbalanced, any strength
         2S = some support, maybe waiting
         2N = 12--14 or waiting
         3S = trumps agreed, possible slam interest
             3N = artificial extras, serious 3N, slam interest
-        3N = 15--17
-        4S = picture raise, two suits without outside values
-    2H = natural
+        3N = jump 3N 15--17
+        4S = fast arrival, minimum, poor slam holdings
+    2H = natural unbalanced, any strength
         2S = some support, maybe waiting
         2N = 12--14 or waiting
         3S = trumps agreed, possible slam interest
             3N = artificial extras, serious 3N, slam interest
-        3N = 15--17
-        4S = picture raise, two suits without outside values
-    2S = natural
+        3N = jump 3N 15--17
+        4S = fast arrival, minimum, poor slam holdings
+    2S = natural, catchall nothing better to bid
         2N = 12--14 or waiting
         3S = trumps agreed, possible slam interest
             3N = artificial extras, serious 3N, slam interest
-        3N = 15--17
-        4S = picture raise, two suits without outside values
+        3N = jump 3N 15--17
+        4S = fast arrival, minimum, poor slam holdings
+    2N = 12--14 balanced
     3DH = splinter, singleton/void, !c support
+    3S = excellent self-sufficient suit, sets trumps
     3N = 18--19 balanced
 1S--2C = (passed hand) 8--11 hcp, 3 card !s support
     jump = splinter, singleton/void
@@ -1149,20 +1166,22 @@ After 1S opening 10--21, 5+ !ss:
 After 1S opening 10--21, 5+ !ss:
 
 1S--2D = game force, 12+ hcp, 4+ cards
-    2H = natural
+    2H = natural unbalanced, any strength
         2S = some support, maybe waiting
         2N = 12--14 or waiting
         3S = trumps agreed, possible slam interest
             3N = artificial extras, serious 3N, slam interest
-        3N = 15--17
-        4S = picture raise, two suits without outside values
-    2S = natural
+        3N = jump 3N 15--17
+        4S = fast arrival, minimum, poor slam holdings
+    2S = natural, catchall nothing better to bid
         2N = 12--14 or waiting
         3S = trumps agreed, possible slam interest
             3N = artificial extras, serious 3N, slam interest
-        3N = 15--17
-        4S = picture raise, two suits without outside values
+        3N = jump 3N 15--17
+        4S = fast arrival, minimum, poor slam holdings
+    2N = 12--14 balanced
     3H = splinter, singleton/void, !d support
+    3S = excellent self-sufficient suit, sets trumps
     3N = 18--19 balanced
     4C = splinter, singleton/void, !d support (more likely 5 cards at this level)
 1S--2D = (passed hand) 8--11 hcp, 4 card !s support
@@ -1229,7 +1248,7 @@ After 1S opening 10--21, 5+ !ss:
     cueLow = (cue bid of their lower rank suit) forcing in lower remaining suit
     cueHi = (cue bid of their higher rank suit) forcing in higher remaining suit
     2N = natural invitational
-    3N = natural
+    3N = to play
 
 1S--(2!s) = two suiter, one known
     Dbl = penalty interest, values
@@ -1237,7 +1256,7 @@ After 1S opening 10--21, 5+ !ss:
     cue = good !s raise
     new = natural, forcing (not non-forcing as with two known suits)
     2N = natural invitational
-    3N = natural
+    3N = to play
 
 1S--(2N) = two suiter, two known (e.g. minors)
     Dbl = penalty interest, values
@@ -1245,7 +1264,7 @@ After 1S opening 10--21, 5+ !ss:
     cueHi = (cue bid of their higher rank suit) forcing in higher remaining suit
     new = constructive, non-forcing
     3S = obstructive
-    3N = natural
+    3N = to play
 
 1S--(3x)
     Dbl = negative/takeout 123
@@ -1399,7 +1418,7 @@ After 1N 15--17, maybe a 5 card major:
     2N = natural, stop
     cue = GF waiting, often stop asking or wants a 4 card major bid
     3x = natural, GF
-    3N = natural, stop
+    3N = to play, stop
 
 1N--(2N) = minors
     Dbl = values
@@ -1521,9 +1540,9 @@ Weak roughly 5--9 hcp, 6!ds with 2+ honours OR maybe 5!ds 1st NV or 3rd
 Intermediate 10--13 hcp in 4th position
 
 2D = weak two
-    2HS = natural forcing
+    2HS = natural forcing, ~14+ hcp
     2N = [Ogust artificial ask, invitational plus hands](#Weak Two Ask)
-    3C = natural forcing
+    3C = natural forcing, ~14+ hcp
     3D = preemptive, 3+ trumps
     4D = preemptive, 4+ trumps
     5D = obstructive, maybe preemptive 4+ trumps or expecting to make the game
@@ -1558,7 +1577,7 @@ Weak roughly 5--9 hcp, 6!hs with 2+ honours OR maybe 5!hs 1st NV or 3rd
 Intermediate 10--13 hcp in 4th position
 
 2H = weak two
-    2S = natural forcing
+    2S = natural forcing, ~14+ hcp
     2N = [Ogust artificial ask, invitational plus hands](#Weak Two Ask)
     3CD = natural forcing
     3H = preemptive, 3+ trumps
@@ -1584,7 +1603,7 @@ Intermediate 10--13 hcp in 4th position
 
 2S = weak two
     2N = [Ogust artificial ask, invitational plus hands](#Weak Two Ask)
-    3CDH = natural forcing
+    3CDH = natural forcing, ~14+ hcp
     3S = preemptive, 3+ trumps
     4S = obstructive, maybe preemptive 4+ trumps or expecting to make the game
 
@@ -1668,15 +1687,15 @@ Weak three preempt, ~4--9 hcp, usually 7+ cards with 2+ honours, maybe shapely 6
     5D = obstructive, maybe preemptive (3)4+ trumps or expecting to make the game
 
 3H
-    3S = natural, forcing
+    3S = natural, GF
     game = to play
-    4CD = natural forcing
+    4CD = natural GF
     3N = to play
     4H = obstructive, maybe preemptive 3+ trumps or expecting to make the game
 
 3S
     game = to play
-    4CD = natural forcing
+    4CD = natural GF
     4S = obstructive, maybe preemptive 3+ trumps or expecting to make the game
 
 
@@ -1852,7 +1871,7 @@ We open any preempt:
 (1C)
     Dbl = majors, usually 5--4+, maybe 4--4 NV
         major = preemptive
-    1DHS = natural
+    1DHS = natural aggressive
         1N = artificial, constructive raise
     1N = minors, usually 5--4+
         minor = preemptive
@@ -2177,11 +2196,7 @@ We open any preempt:
 (3CDHS) = weak three
     Dbl = takeout
     3N = 16+, stop, guess that it's the best place to play
-        4C = range ask
-        4D = !h transfer
-        4H = !s transfer
-        4S = !c transfer
-        4N = !d transfer
+        any = natural GF (advanced agree Stayman + transfers)
     cue = (minor 4!c!d) 5--5+ majors, ~14+ hcp
 
 * Opponents Open Weak Four

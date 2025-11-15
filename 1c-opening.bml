@@ -791,7 +791,7 @@ Bid as if they opened after 1C--1D then 4th interference
     2H = pass/correct, maybe strong
         P = !h weak two
         2N = GF balanced
-            3C = !s 4 card Stayman (opener won't realistically have 4!hs)
+            3C = Stayman
             3S = 5+ card forcing
         3CD = good 5 card minor, GF balanced
     2S = natural F1
@@ -1441,6 +1441,13 @@ Treated as weak two opening, so natural ~16--19
     P = weak
     bid = strong
     X = penalty/values
+
+
+** 1C--1D--1HS Late Interference
+
+1C--1D--1M = natural canapé like
+    Dbl = whatever
+        XX = support (XX values has limited use here)
 
 
 ** 4th interferes after 2H/2S/2N positive response

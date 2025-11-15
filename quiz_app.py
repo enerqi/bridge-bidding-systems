@@ -246,7 +246,7 @@ class Score(param.Parameterized):
         self.score_markdown.object = score_text
         self.score_dial.value = percentage
         self.points_markdown.object = points_text
-        self.points_indicator.value = self.total_points
+        self.points_indicator.value = min(self.total_points, Score.POINTS_GOAL)
         return self.view_model
 
 
