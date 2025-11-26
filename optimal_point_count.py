@@ -14,21 +14,16 @@ class Honour(Enum):
     Jack = "Jack"
     Ten = "Ten"
 
+
 def honour_rank(hon: Honour) -> int:
-    ranks = {Honour.Ace: 1,
-        Honour.King: 2,
-        Honour.Queen: 3,
-        Honour.Jack: 4,
-        Honour.Ten:5 }
+    ranks = {Honour.Ace: 1, Honour.King: 2, Honour.Queen: 3, Honour.Jack: 4, Honour.Ten: 5}
     return ranks[hon]
 
+
 def show_honour(hon: Honour) -> str:
-    text = {Honour.Ace: "A",
-        Honour.King: "K",
-        Honour.Queen: "Q",
-        Honour.Jack: "J",
-        Honour.Ten: "T" }
+    text = {Honour.Ace: "A", Honour.King: "K", Honour.Queen: "Q", Honour.Jack: "J", Honour.Ten: "T"}
     return text[hon]
+
 
 @dataclass
 class SuitHolding:
@@ -42,6 +37,7 @@ class SuitHolding:
         hons = sorted(self.honours, key=honour_rank)
         prefix = "".join(show_honour(hon) for hon in hons)
         return prefix + "x" * self.xs
+
 
 @dataclass
 class Hand:
@@ -86,6 +82,10 @@ def validate_hand(hand: Hand) -> str | None:
     if card_count != 13:
         return "required: 13 cards for a hand"
 
+    for suit in hand.suits:
+        if len(suit.honours) != len(set(suit.honours)):
+            return "duplicate honours in one or more suits"
+
     return None
 
 
@@ -99,8 +99,12 @@ class Honour_Points:
 
 def is_accompanied_by_picture_honour(hon: Honour, holding: SuitHolding) -> bool:
     assert hon in holding.honours
-    return any(other_hon in holding.honours
-               for other_hon in [Honour.Ace, Honour.King, Honour.Queen, Honour.Jack] if other_hon != hon)
+    return any(
+        other_hon in holding.honours
+        for other_hon in [Honour.Ace, Honour.King, Honour.Queen, Honour.Jack]
+        if other_hon != hon
+    )
+
 
 def in_any_suit(hon: Honour, hand: Hand) -> bool:
     for suit in hand.suits:
@@ -109,14 +113,18 @@ def in_any_suit(hon: Honour, hand: Hand) -> bool:
 
     return False
 
+
 def count_honour(hon: Honour, hand: Hand) -> int:
     return sum(1 for suit in hand.suits if hon in suit.honours)
 
-def is_singleton_honour_suit(holding: SuitHolding) -> bool:
+
+def is_singleton_picture_honour_suit(holding: SuitHolding) -> bool:
     return len(holding.honours) == 1 and holding.honours[0] != Honour.Ten and holding.xs == 0
+
 
 def is_honour_x_doubleton(hon: Honour, suit: SuitHolding) -> bool:
     return hon in suit.honours and len(suit.honours) == 1 and suit.xs == 1
+
 
 def is_aq_ak_kq_qj_doubleton_honour(suit: SuitHolding) -> bool:
     if not suit.xs == 0:
@@ -125,10 +133,13 @@ def is_aq_ak_kq_qj_doubleton_honour(suit: SuitHolding) -> bool:
     if not len(suit.honours) == 2:
         return False
 
-    return ((Honour.Ace in suit.honours and Honour.Queen in suit.honours) or
-            (Honour.Ace in suit.honours and Honour.King in suit.honours) or
-            (Honour.King in suit.honours and Honour.Queen in suit.honours) or
-            (Honour.Queen in suit.honours and Honour.Jack in suit.honours))
+    return (
+        (Honour.Ace in suit.honours and Honour.Queen in suit.honours)
+        or (Honour.Ace in suit.honours and Honour.King in suit.honours)
+        or (Honour.King in suit.honours and Honour.Queen in suit.honours)
+        or (Honour.Queen in suit.honours and Honour.Jack in suit.honours)
+    )
+
 
 def is_kx_qx_jx_j10_doubleton(suit: SuitHolding) -> bool:
     if suit.xs == 1 and len(suit.honours) == 1:
@@ -139,8 +150,10 @@ def is_kx_qx_jx_j10_doubleton(suit: SuitHolding) -> bool:
 
     return False
 
+
 def suit_length(suit: SuitHolding) -> int:
     return len(suit.honours) + suit.xs
+
 
 def picture_honours_count(suit: SuitHolding) -> int:
     return sum(1 for hon in suit.honours if hon != Honour.Ten)
@@ -157,29 +170,38 @@ def milton_hcp(suit: SuitHolding) -> int:
 
     return sum(hcp[hon] for hon in suit.honours)
 
-def has_honours(suit: SuitHolding, honours: set[Honour]) -> bool:
+
+def has_all_honours(suit: SuitHolding, honours: set[Honour]) -> bool:
     return all(hon in suit.honours for hon in honours)
+
 
 def count_6_carders(hand: Hand) -> int:
     return sum(1 for suit in hand.suits if suit_length(suit) == 6)
 
+
 def count_5_carders(hand: Hand) -> int:
     return sum(1 for suit in hand.suits if suit_length(suit) == 5)
+
 
 def count_4_carders(hand: Hand) -> int:
     return sum(1 for suit in hand.suits if suit_length(suit) == 4)
 
+
 def count_tripleton(hand: Hand) -> int:
     return sum(1 for suit in hand.suits if suit_length(suit) == 3)
+
 
 def count_doubleton(hand: Hand) -> int:
     return sum(1 for suit in hand.suits if suit_length(suit) == 2)
 
+
 def count_singleton(hand: Hand) -> int:
     return sum(1 for suit in hand.suits if suit_length(suit) == 1)
 
+
 def count_void(hand: Hand) -> int:
     return sum(1 for suit in hand.suits if suit_length(suit) == 0)
+
 
 def is_4333_shape(hand: Hand) -> bool:
     return count_tripleton(hand) == 3
@@ -206,7 +228,7 @@ def honour_points(hand: Hand) -> Honour_Points:
                 tallies.append((2.0, "Queen accompanied by picture honour"))
             else:
                 total += 1.5
-                tallies.append((1.5, "Queen isolated"))
+                tallies.append((1.5, "Queen isolated, no picture honours"))
 
         if Honour.Jack in suit.honours:
             if is_accompanied_by_picture_honour(Honour.Jack, suit):
@@ -234,7 +256,7 @@ def honour_points(hand: Hand) -> Honour_Points:
                 total += 0.5
                 tallies.append((0.5, "Ten + King combo, no Q|J"))
 
-        if is_singleton_honour_suit(suit):
+        if is_singleton_picture_honour_suit(suit):
             total -= 1.0
             tallies.append((-1.0, "singleton honour"))
 
@@ -258,7 +280,6 @@ def honour_points(hand: Hand) -> Honour_Points:
                 total += 2.0
                 tallies.append((2.0, f"3+ picture honours in 6+ card suit ({suit})"))
 
-
     # global
     if not in_any_suit(Honour.Ace, hand):
         opening_only.append((-1.0, "Zero Aces"))
@@ -278,12 +299,12 @@ def honour_points(hand: Hand) -> Honour_Points:
         total += 2.0
         tallies.append((2.0, "4 Kings"))
 
-
     total_non_opening = total
     total_opening = total_non_opening + sum(x for (x, _) in opening_only)
 
-    return Honour_Points(total_non_opening=total_non_opening, total_opening=total_opening,
-                        tallies=tallies, opening_only=opening_only)
+    return Honour_Points(
+        total_non_opening=total_non_opening, total_opening=total_opening, tallies=tallies, opening_only=opening_only
+    )
 
 
 @dataclass
@@ -390,14 +411,21 @@ def hld(h_points: Honour_Points, l_points: Length_Points, d_points: Distribution
     total_non_opening_suit = l_points.total + h_points.total_non_opening + d_points.total_suit
     total_non_opening_nt = l_points.total + h_points.total_non_opening + d_points.total_nt
 
-    return HLD_Combined(H=h_points, L=l_points, D=d_points, total_opening_suit=total_opening_suit,
-                        total_opening_nt=total_opening_nt, total_non_opening_suit=total_non_opening_suit,
-                        total_non_opening_nt=total_non_opening_nt)
+    return HLD_Combined(
+        H=h_points,
+        L=l_points,
+        D=d_points,
+        total_opening_suit=total_opening_suit,
+        total_opening_nt=total_opening_nt,
+        total_non_opening_suit=total_non_opening_suit,
+        total_non_opening_nt=total_non_opening_nt,
+    )
 
 
 @dataclass
 class With_Partners_Long_Suit:
     potential_adjustments: list[tuple[float, str]]
+
 
 def with_partners_long_suit(hand: Hand) -> With_Partners_Long_Suit:
     potential_adjustments = []
@@ -412,8 +440,6 @@ def with_partners_long_suit(hand: Hand) -> With_Partners_Long_Suit:
         if is_kx_qx_jx_j10_doubleton(suit):
             potential_adjustments.append((1.0, f"semi-fit ({suit}): Kx/Qx/Jx/J10 opposite long suit"))
 
-        # todo: fit points - calculate honour value for single suit without adjustment info
-
     potential_adjustments.append((-1.0, "misfit: per mirror suit when partner has a long suit"))
     potential_adjustments.append((-2.0, "misfit: mirror hand when partner has a long suit"))
 
@@ -423,6 +449,7 @@ def with_partners_long_suit(hand: Hand) -> With_Partners_Long_Suit:
 @dataclass
 class With_Partners_Shortage:
     potential_adjustments: list[tuple[float, str]]
+
 
 def with_partners_shortage(hand: Hand) -> With_Partners_Shortage:
     potential_adjustments = []
@@ -445,12 +472,14 @@ def with_partners_shortage(hand: Hand) -> With_Partners_Shortage:
 class Fitting_Weak_Honours:
     potential_adjustments: list[tuple[float, str]]
 
+
 def fitting_weak_honours(hand: Hand) -> Fitting_Weak_Honours:
     potential_adjustments = []
 
     for suit in hand.suits:
-        if milton_hcp(suit) < 4 and not has_honours(suit, {Honour.Queen, Honour.Jack, Honour.Ten}):
-            if (len(suit.honours) == 1 and not has_honours(suit, {Honour.Ten})) or len(suit.honours) >= 2:
+        # Must be < 4 optimal points. QJ10 would be 4 points in OPC
+        if milton_hcp(suit) < 4 and not has_all_honours(suit, {Honour.Queen, Honour.Jack, Honour.Ten}):
+            if picture_honours_count(suit) >= 1:
                 potential_adjustments.append((1.0, f"upgrade weak honour(s) < 4 points ({suit}): with 8+ fit"))
 
     return Fitting_Weak_Honours(potential_adjustments=potential_adjustments)
@@ -467,8 +496,8 @@ class OPC_Summary:
     weak_fit: Fitting_Weak_Honours
 
 
-def opc_calculation(hand_args: list[str], verbose: bool=False) -> OPC_Summary:
-    suits = [parse_rough_suit(hand_arg) for hand_arg in hand_args]
+def opc_calculation(suit_args: list[str], verbose: bool = False) -> OPC_Summary:
+    suits = [parse_rough_suit(suit_arg) for suit_arg in suit_args]
     # fill in missing / implicit voids
     voids = 4 - len(suits)
     for _ in range(voids):
@@ -494,8 +523,16 @@ def opc_calculation(hand_args: list[str], verbose: bool=False) -> OPC_Summary:
     weak_honour_fits = fitting_weak_honours(hand)
     single_short_suit_adjustment = with_partners_shortage(hand)
 
-    return OPC_Summary(hand=hand, hand_text_summary=hand_text_summary, hand_validation=hand_validation, hld=hld_values, with_long=single_long_suit_adjustment,
-                       with_short=single_short_suit_adjustment, weak_fit=weak_honour_fits)
+    return OPC_Summary(
+        hand=hand,
+        hand_text_summary=hand_text_summary,
+        hand_validation=hand_validation,
+        hld=hld_values,
+        with_long=single_long_suit_adjustment,
+        with_short=single_short_suit_adjustment,
+        weak_fit=weak_honour_fits,
+    )
+
 
 TRICK_CONVERSIONS = """
     2 level
@@ -557,9 +594,11 @@ __NT__:   36 __37__ +  (~70%, ~70-75%, ~75%+ success)
 __Suit__: 35 __36__ +
 """
 
-def render_summary(summary: OPC_Summary, include_trick_conversion: bool=True) -> str:
+
+def render_summary(summary: OPC_Summary, include_trick_conversion: bool = True) -> str:
     buffer = io.StringIO()
     import pprint
+
     printer = pprint.PrettyPrinter(stream=buffer, width=120)
 
     print(f"{summary.hand_validation}", file=buffer)
@@ -583,15 +622,21 @@ def render_summary(summary: OPC_Summary, include_trick_conversion: bool=True) ->
     printer.pprint(summary.weak_fit)
 
     print(file=buffer)
-    print("""Fit points (both suit and NT contracts):
+    print(
+        """Fit points (both suit and NT contracts):
     +1 per 8 card fit
     +2 per 9 card fit
     +3 per 10+ card fit
-    """, file=buffer)
+    """,
+        file=buffer,
+    )
 
-    print("""Distribution-Fit points (suit contracts only):
+    print(
+        """Distribution-Fit points (suit contracts only):
     * For the *SHORTEST* suit only add the support hand's trump length minus that shortage length (e.g. 4 trumps and a singleton +3 points)
-    """, file=buffer)
+    """,
+        file=buffer,
+    )
 
     if include_trick_conversion:
         print("\n------------------------------------------------", file=buffer)
@@ -601,23 +646,24 @@ def render_summary(summary: OPC_Summary, include_trick_conversion: bool=True) ->
 
     return buffer.getvalue()
 
+
 def main():
     import sys
+
     args = sys.argv[1:]
 
     def is_verbose_arg(s: str) -> bool:
         return s.lower() == "-v" or s == "--verbose"
 
-    hand_args = []
+    suit_args = []
     verbose = False
-
     for arg in args:
         if is_verbose_arg(arg):
             verbose = True
         else:
-            hand_args.append(arg)
+            suit_args.append(arg)
 
-    summary = opc_calculation(hand_args, verbose=verbose)
+    summary = opc_calculation(suit_args, verbose=verbose)
     text_report = render_summary(summary)
     print(text_report)
 
