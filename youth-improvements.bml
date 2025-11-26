@@ -1036,7 +1036,7 @@ raising to the 3 level:
 - 1H--3H
 - 1S--3S
 
-These bids make it much clearer when partner has a "good" 2 level raise (where we have a 9+ card trump fit). The extra
+These bids make it much clearer when partner has a "good" 2 level raise (values and a 9+ card trump fit). The extra
 trumps often allow us to make a major game on (21)22/23 hcp. For a major raise or minor raise, it also preempts the 4th
 hand from bidding. Note, some players choose to play a 3 level raise as a preempt, e.g. 0--6 hcp or similar, but these
 bad hands often encourage the opponents to bid, whilst a more middling 8--10 support point type hand will often make
@@ -2075,50 +2075,6 @@ a double as both majors.
 Over a weak NT Meckwell plays 2C as !cs + !ss OR the majors because X is penalty. Just 2C both majors is a simpler
 variant.
 
-* 1C/1D--2N GF
-
-** Problem
-
-Opener often has a mundane minimum balanced hand when opening a minor suit. Checking stops before going to 3N can be
-difficult, particularly when we try to show one or two major suits before getting to game, i.e auctions that start
-1C/1D--1M--1N. Conventions such as Checkback or Two Way New Minor Forcing focus on shape more than stops. When we don't
-have any major to show and have minor support the inverted minor raise gives us the chance to check for stops, but other
-sequences are less helpful for stop checking.
-
-On top of that, it's not just having a stop but having the right hand play the contract. A suit like AQx works more like
-a double stop if the lead comes round to that suit, which means we want that hand to declare the contract.
-
-** Solution
-
-Play 2N over 1C/1D as game forcing AND allow it to contain a 4 card major. If you want to declare start with 2N, but if
-you think it better for partner to declare then try something else.
-
-As it is game forcing, we can have a mix of balanced strengths to make slam bidding easier.
-
-The stronger 18--19 response hands can safely raise 3N to 4N quantitatively later on. Temporizing with another bid then
-bidding 3N could then show 16--17 hcp, which is a most awkward point range to decide on whether to slam invite. However,
-if you want to keep it simpler to start, then 2N could just be a GF and less specific about hcp.
-
-1C--2N = GF, 12--15 or 18--19, maybe 4 card major
-  3C = Stayman (not with 4--3--3--3)
-  3D = artificial !c suit rebid, 6+ !cs
-  3HS = shortage, 5--4+ minors
-
-1D--2N = GF, 12--15 or 18--19, maybe 4 card major
-  3C = Stayman (not with 4--3--3--3)
-  3D = natural !d suit rebid, 6+ !ds
-  3HS = shortage, 5--4+ minors
-
-*** Invitational NT hands?
-
-- over 1C we might bid 1D with only 3 cards (needs alerting) and no 4 card major and bid 2N later
-- inverted minor raise if we have support
-- bid a 4 card major if we have one before bidding 2N
-- just bid 1N on a close invite, e.g. 11 hcp else optimistically try game
-
-Over 1D there's the artificial option of 1D--2H showing 11--12 balanced without a 4 card major (if you can remember it),
-but you may prefer to keep the weak jump shift bid. Note you could also be playing 1D--2H as Reverse Flannery.
-
 
 * Transfers after 1M--(X) or 1M overcall--(X)
 
@@ -2428,8 +2384,8 @@ bid meaning.
 If you had no special agreements at all then something like 1C--1S--3H would likely be treated as a normal GF splinter,
 but just started at a lower level leaving more room to investigate slam. This is a reasonable choice.
 
-A couple of suggested options follows. Of the two options the (mini)splinter is more frequent but the artificial minor
-single suited GF is much more useful when it comes up, so select (2) if unsure and find it easy enough to remember.
+Some options follow. Whilst not the most frequent, a meaning that revolves around a GF minor holding is probably most
+useful.
 
 ** (1) Mini-Splinter or Splinter
 
@@ -2467,21 +2423,38 @@ without enough tricks for game minus 1 (9 for a major, 10 for a minor), so we ne
 suiters and at the same time are more likely to want to play 3N as it only needs 9 tricks with the right stops from
 partner.
 
-- 1C--1D--3H
-- 1C--1H--3S
-- 1C--1S--3H
+- 1C--1D--3H (or 3!s)
+- 1C--1H--3D (or 3!s)
+- 1C--1S--3D (or 3!h)
+- 1C--1N--3D (or 3!h/3!s)
 - 1D--1H--3S
 - 1D--1S--3H
-- 1D--1N--3H
+- 1D--1N--3H (or 3!s)
 
 These rebids can all be used to show GF minor single suiters.
 
-Not on after opening a major, e.g. 1H--1S--?, 1H--1N--?, 1S--1N--?. Bids like 1H--1S--4C, 1H--1N--3S or 1S--1N--4C would
-usually be played as a splinter (when responder bids a suit) or self/auto-splinter over 1N (which is another form of
-single suited GF, but requires a shortage).
+Optionally as an extra detail, you may want to indicate poor stops in one suit to help decide on 3N or 5 minor.
+
+Naturally this is not on after opening a major, e.g. 1H--1S--?, 1H--1N--?, 1S--1N--?. Bids like 1H--1S--4C, 1H--1N--3S
+or 1S--1N--4C would usually be played as a splinter (when responder bids a suit) or self/auto-splinter over 1N (which is
+another form of single suited GF, but requires a shortage).
 
 Note, you may have better options after a 1H/1S opening if playing [Gazilli](#Gazilli - Rebidding Good Hands), but it is
 more complicated.
+
+** (3) balanced maximum with major support
+
+Specifically for hands where partner responds a major, the lowest jump reverse shows 18--19 balanced with 4 card
+support. Note, you would do a splinter with the same strength and a shortage plus major support.
+
+- 1C--1H--3D
+- 1C--1S--3D
+- 1D--1H--3S
+- 1D--1S--3H
+
+Normally we would just bid 4 major with this hand, but it removes control bidding space. A 4 major raise has no obvious
+meaning if playing this, as 1m--1M--4m already shows something close to a picture raise.
+
 
 ** Jump 3N Rebid?
 
@@ -2498,6 +2471,7 @@ hand as it would have done in some older bidding styles (typically 19 hcp exactl
   (but perhaps we are light in top controls, best values in short suits?).  Showing a solid suit with partial stops is
   usually done by bidding game, but it could be played with the same meaning as over a minor, perhaps 7--2--2--2 or a
   shortage in partner's !s suit.
+
 
 * Equal / Minimum Level Conversion Doubles
 
@@ -3951,6 +3925,52 @@ helpful. A balanced hand with 24 hcp usually wants to go to game and any 26+ hcp
 The 3N and higher bids are specialised extras showing powerful suits without any side Ace/King but could have a shortage.
 Over these bids 4N RKB is not very useful, a shortage ask is better.
 
+* 1C/1D--2N GF
+
+** Problem
+
+Opener often has a mundane minimum balanced hand when opening a minor suit. Checking stops before going to 3N can be
+difficult, particularly when we try to show one or two major suits before getting to game, i.e auctions that start
+1C/1D--1M--1N. Conventions such as Checkback or Two Way New Minor Forcing focus on shape more than stops. When we don't
+have any major to show and have minor support the inverted minor raise gives us the chance to check for stops, but other
+sequences are less helpful for stop checking.
+
+On top of that, it's not just having a stop but having the right hand play the contract. A suit like AQx works more like
+a double stop if the lead comes round to that suit, which means we want that hand to declare the contract.
+
+** Solution
+
+Play 2N over 1C/1D as game forcing AND allow it to contain a 4 card major. If you want to declare start with 2N, but if
+you think it better for partner to declare then try something else.
+
+As it is game forcing, we can have a mix of balanced strengths to make slam bidding easier.
+
+The stronger 18--19 response hands can safely raise 3N to 4N quantitatively later on. Temporizing with another bid then
+bidding 3N could then show 16--17 hcp, which is a most awkward point range to decide on whether to slam invite. However,
+if you want to keep it simpler to start, then 2N could just be a GF and less specific about hcp.
+
+1C--2N = GF, 12--15 or 18--19, maybe 4 card major
+  3C = Stayman (not with 4--3--3--3)
+  3D = artificial !c suit rebid, 6+ !cs
+  3HS = shortage, 5--4+ minors
+
+1D--2N = GF, 12--15 or 18--19, maybe 4 card major
+  3C = Stayman (not with 4--3--3--3)
+  3D = natural !d suit rebid, 6+ !ds
+  3HS = shortage, 5--4+ minors
+
+*** Invitational NT hands?
+
+- over 1C we might bid 1D with only 3 cards (needs alerting) and no 4 card major and bid 2N later
+- inverted minor raise if we have support
+- bid a 4 card major if we have one before bidding 2N
+- just bid 1N on a close invite, e.g. 11 hcp else optimistically try game
+
+Over 1D there's the artificial option of 1D--2H showing 11--12 balanced without a 4 card major (if you can remember it),
+but you may prefer to keep the weak jump shift bid. Note you could also be playing 1D--2H as Reverse Flannery.
+
+
+
 * Preempt Roman Keycard
 
 For cheaper slam hunting preempt keycard blackwood can help and keep the partnership at the natural game level.
@@ -4491,6 +4511,7 @@ all 17+ hands except for a 1H--1N--2S reverse being a strong 16+ hand with 6+ !h
   2H = artificial, showing 5!hs + 4!cs (now we don't have a natural 2!c rebid)
     3C = to play
     others = natural, invitational
+    2N = (alternative) puppet to 3C, signoff hands, direct 3C invite
   2S = reverse, 6+!hs and 4+!ss (start with 2!c when only 5!hs with extra strength)
   2N = 6!hs + 4 card minor, ~14--16
     3C = artificial 2nd suit ask
@@ -4504,6 +4525,7 @@ all 17+ hands except for a 1H--1N--2S reverse being a strong 16+ hand with 6+ !h
   2S = artificial, showing 5!ss + 4!cs (now we don't have a natural 2!c rebid)
     3C = to play
     others = natural, invitational
+    2N = (alternative) puppet to 3C, signoff hands, direct 3C invite
   2N = 6!ss + any other 4 card suit, ~14--16
     3C = artificial 2nd suit ask
       3DH = !d/!h natural

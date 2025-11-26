@@ -183,7 +183,7 @@ After 1C opening 10--21, 2+ !cs:
     2D = reverse, natural, ~17+ hcp, forcing, shorter 2nd suit
         2H = constructive 7+, 5+ cards, forcing
         2S = fourth suit forcing, GF
-        2N = (advanced) blackout, relay to 3C, weak hands
+        2N = Blackout, relay to 3C, weak hands
             3C = semi-forced
                 P = weak with !c preference
                 3D = weak preference
@@ -261,7 +261,7 @@ After 1C opening 10--21, 2+ !cs:
     2D = reverse, natural ~17+ hcp, forcing, shorter 2nd suit
         2H = fourth suit forcing, GF
         2S = constructive 7+, 5+ cards, forcing
-        2N = (advanced) blackout, relay to 3C, weak hands
+        2N = Blackout, relay to 3C, weak hands
             3C = semi-forced
                 P = weak with !c preference
                 3D = weak preference
@@ -271,7 +271,7 @@ After 1C opening 10--21, 2+ !cs:
         3N = stop(s), no slam interest, not shapely
     2H = reverse, natural ~17+ hcp, forcing, shorter 2nd suit
         2S = constructive 7+, 5+ cards, forcing
-        2N = (advanced) blackout, relay to 3C, weak hands
+        2N = Blackout, relay to 3C, weak hands
             3C = semi-forced
                 P = weak with !c preference
                 3H = weak preference
@@ -302,7 +302,7 @@ After 1C opening 10--21, 2+ !cs:
 1C--1N = ~7--10(11) hcp, denies a 4 card major
     2C = natural 5+!cs, not worth 3C rebid
     2DHS = reverse, natural ~17+ hcp, forcing
-        2N = (advanced) blackout, relay to 3C, weak hands (almost GF opposite ~6/7+)
+        2N = Blackout, relay to 3C, weak hands (almost GF opposite ~6/7+)
             3C = semi-forced
                 P = minimum, !c preference
                 others = minimum, preference
@@ -592,7 +592,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
         3N = natural, ~12--16
     2H = reverse, natural ~17+ hcp, forcing, shorter 2nd suit
         2S = constructive 7+, 5+ cards, forcing
-        2N = (advanced) blackout, relay to 3C, weak hands
+        2N = Blackout, relay to 3C, weak hands
             3C = semi-forced
                 P = weak long !cs
                 3DH = weak preference
@@ -627,7 +627,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
     2C = natural ~11--17(bad 18) hcp
     2D = natural 5+!ds, not worth 3D rebid
     2HS = reverse, natural ~17+ hcp, game forcing (opposite 7--10)
-        2N = (advanced) blackout, relay to 3C, weak hands (almost GF opposite ~6/7+)
+        2N = Blackout, relay to 3C, weak hands (almost GF opposite ~6/7+)
             3C = semi-forced
                 P = minimum, long !cs
                 3D = weak preference
@@ -858,7 +858,7 @@ After 1H opening 10--21, 5+ !hs:
     2H = 5+ cards (may have 4!ss without strength for reverse)
         4H = 3 card limit raise or better
     2S = natural reverse, ~17+ hcp, forcing, shorter 2nd suit
-        2N = (advanced) blackout, relay to 3C, weak hands
+        2N = Blackout, relay to 3C, weak hands
             3C = semi-forced
                 P = weak long !cs
                 3D = weak long !ds
@@ -1637,7 +1637,6 @@ Intermediate 10--13 hcp in 4th position
         3N = maximum, HHx 3 card or 4+ card support, no good side suit
         4CD = side good suit, 3+ top 5 honours, HHx 3 card or 4+ card support
         4H = minimum, 4+ card support
-        other = (advanced) 4+ card support, shortage (doubleton) suit
     3H = transfer to !ss
         3S = transferred
             3N = choice of games, 5!ss
@@ -1646,7 +1645,6 @@ Intermediate 10--13 hcp in 4th position
         3N = maximum, HHx 3 card or 4+ card support, no good side suit
         4CDH = side good suit, 3+ top 5 honours, HHx 3 card or 4+ card support
         4S = minimum, 4+ card support
-        other = (advanced) 4+ card support, shortage (doubleton) suit
     3S = 5!ss + 4!hs
     3N = to play, roughly 4+ hcp
     4CD = natural, game forcing slam try
@@ -2336,11 +2334,11 @@ There are some standard situations where suit preference signals take priority:
 
 
 The system is standard high encouraging / low discouraging for attitude and high-low even / low-high odd for count signals.
-You can also agree to play low encouraging / high discouraging.
+You can also agree to play low encouraging / high discouraging for attitude signals (also possibly reverse count signals).
 
 ** Discards
 
-Initial first discard is standard attitude: high like suit, low dislike suit.
+Initial first discard is *reverse* attitude: low like suit, high discourage suit.
 
 Later discards, remaining count, but possibly attitude or even suit preference if we think that's what they need to
 know.
