@@ -250,15 +250,19 @@ def honour_points(hand: Hand) -> Honour_Points:
                 total += 1.0
                 tallies.append((1.0, "Ten + Jack and other honour(s)"))
             elif Honour.Queen in suit.honours:
-                total += 1.0
-                tallies.append((1.0, "Ten + Queen combo"))
+                if picture_honours_count(suit) == 1 and suit.xs == 0:
+                    total += 0.5
+                    tallies.append((0.5, "Ten + Queen Doubleton"))
+                else:
+                    total += 1.0
+                    tallies.append((1.0, "Ten + Queen combo"))
             elif Honour.King in suit.honours:
                 total += 0.5
                 tallies.append((0.5, "Ten + King combo, no Q|J"))
 
-        if is_singleton_picture_honour_suit(suit):
+        if is_singleton_picture_honour_suit(suit) and Honour.Jack not in suit.honours:
             total -= 1.0
-            tallies.append((-1.0, "singleton honour"))
+            tallies.append((-1.0, "singleton honour, A|K|Q"))
 
         if is_honour_x_doubleton(Honour.Queen, suit):
             total -= 0.5
@@ -281,23 +285,35 @@ def honour_points(hand: Hand) -> Honour_Points:
                 tallies.append((2.0, f"3+ picture honours in 6+ card suit ({suit})"))
 
     # global
-    if not in_any_suit(Honour.Ace, hand):
-        opening_only.append((-1.0, "Zero Aces"))
+    no_kings = False
+    no_queens = False
 
     if not in_any_suit(Honour.Queen, hand):
         total -= 1
         tallies.append((-1.0, "Zero Queens"))
+        no_queens = True
 
     kings = count_honour(Honour.King, hand)
     if kings == 0:
         total -= 1
         tallies.append((-1.0, "Zero Kings"))
+        no_kings = True
     if kings == 3:
         total += 1.0
         tallies.append((1.0, "3 Kings"))
     if kings == 4:
         total += 2.0
         tallies.append((2.0, "4 Kings"))
+
+    if count_honour(Honour.Queen, hand) == 4:
+        total += 1.0
+        tallies.append((1.0, "4 Queens"))
+
+    if not in_any_suit(Honour.Ace, hand):
+        if not (no_kings and no_queens):
+            opening_only.append((-1.0, "Zero Aces"))
+        else:
+            opening_only.append((0.0, "Zero Aces, ignored as already No Queens and Kings"))
 
     total_non_opening = total
     total_opening = total_non_opening + sum(x for (x, _) in opening_only)
@@ -395,7 +411,7 @@ def distribution_points(hand: Hand) -> Distribution_Points:
 
 
 @dataclass
-class HLD_Combined:
+class Starting_Points:
     total_opening_suit: float
     total_opening_nt: float
     total_non_opening_suit: float
@@ -405,13 +421,13 @@ class HLD_Combined:
     D: Distribution_Points
 
 
-def hld(h_points: Honour_Points, l_points: Length_Points, d_points: Distribution_Points) -> HLD_Combined:
+def hld(h_points: Honour_Points, l_points: Length_Points, d_points: Distribution_Points) -> Starting_Points:
     total_opening_suit = l_points.total + h_points.total_opening + d_points.total_suit
     total_opening_nt = l_points.total + h_points.total_opening + d_points.total_nt
     total_non_opening_suit = l_points.total + h_points.total_non_opening + d_points.total_suit
     total_non_opening_nt = l_points.total + h_points.total_non_opening + d_points.total_nt
 
-    return HLD_Combined(
+    return Starting_Points(
         H=h_points,
         L=l_points,
         D=d_points,
@@ -490,7 +506,7 @@ class OPC_Summary:
     hand: Hand
     hand_validation: str
     hand_text_summary: str
-    hld: HLD_Combined
+    hld: Starting_Points
     with_long: With_Partners_Long_Suit
     with_short: With_Partners_Shortage
     weak_fit: Fitting_Weak_Honours
@@ -607,7 +623,36 @@ def render_summary(summary: OPC_Summary, include_trick_conversion: bool = True) 
     print("* Our hand in isolation\n", file=buffer)
     printer.pprint(summary.hld)
 
-    print("\n\n------------------------------------------------", file=buffer)
+    print("\n! Responder/Advancer only includes max 2 (L)ength points and the -1 4333 (D)istribution points, UNLESS opener/overcaller bids NT\n", file=buffer)
+
+    print("\n------------------------------------------------", file=buffer)
+    print("* Overcalling Adjustments\n", file=buffer)
+
+    print("""Suit overcall Length changes
+    -1 for 3 cards in their suit
+    -2 for 4 cards in their suit
+    -3 for 5 cards in their suit
+    +1 for singleton/void (in additional to existing (D)istribution points)
+    """, file=buffer)
+
+    print("""Suit overcall Honour changes
+    -0.5 side or opponent's suit: isolated Jack
+    -1 side or opponent's suit: isolated Kxx/Kxxx (3 or 4 card suit) ANY position
+    -1 opponent's suit KQ sat UNDER
+    +1 opponent's suit KQ sat OVER
+    """, file=buffer)
+
+    print("""NT overcall Length downgrades
+    -1 for 4 cards in their suit
+    -2 for 5 cards in their suit
+    """, file=buffer)
+
+    print("""NT overcall Honour downgrades
+    -1 isolated Kxx/Kxxx  (3 or 4 card suit)
+    -0.5 isolated Jack
+    """, file=buffer)
+
+    print("\n------------------------------------------------", file=buffer)
     print("* Calculations that depend on partner's hand\n", file=buffer)
 
     print("Opposite any 5+ card suit:", file=buffer)
@@ -664,7 +709,7 @@ def main():
             suit_args.append(arg)
 
     summary = opc_calculation(suit_args, verbose=verbose)
-    text_report = render_summary(summary)
+    text_report = render_summary(summary, False)
     print(text_report)
 
 
