@@ -14,15 +14,15 @@ class Honour(Enum):
     Jack = "Jack"
     Ten = "Ten"
 
+_RANKS = {Honour.Ace: 1, Honour.King: 2, Honour.Queen: 3, Honour.Jack: 4, Honour.Ten: 5}
+_TEXT = {Honour.Ace: "A", Honour.King: "K", Honour.Queen: "Q", Honour.Jack: "J", Honour.Ten: "T"}
 
 def honour_rank(hon: Honour) -> int:
-    ranks = {Honour.Ace: 1, Honour.King: 2, Honour.Queen: 3, Honour.Jack: 4, Honour.Ten: 5}
-    return ranks[hon]
+    return _RANKS[hon]
 
 
 def show_honour(hon: Honour) -> str:
-    text = {Honour.Ace: "A", Honour.King: "K", Honour.Queen: "Q", Honour.Jack: "J", Honour.Ten: "T"}
-    return text[hon]
+    return _TEXT[hon]
 
 
 @dataclass
@@ -394,15 +394,19 @@ def distribution_points(hand: Hand) -> Distribution_Points:
     if singletons:
         singleton_total = singletons * 2.0
         total += singleton_total
+
         tallies.append((singleton_total, f"{singletons} singleton(s)"))
 
         nt_only.append((-1.0 * singletons, "singletons at NT"))
+        nt_only.append((-1.0, "declaring NT penalty with a singleton"))
 
     voids = count_void(hand)
     if voids:
         voids_total = 4.0 * voids
         total += voids_total
         tallies.append((voids_total, f"{voids} void(s)"))
+        nt_only.append((-2.0, "voids at NT"))
+        nt_only.append((-1.0, "declaring NT penalty with a void"))
 
     total_suit = total
     total_nt = total_suit + sum(x for (x, _) in nt_only)
@@ -677,8 +681,9 @@ def render_summary(summary: OPC_Summary, include_trick_conversion: bool = True) 
     )
 
     print(
-        """Distribution-Fit points (suit contracts only):
-    * For the *SHORTEST* suit only add the support hand's trump length minus that shortage length (e.g. 4 trumps and a singleton +3 points)
+        """Distribution-Fit points (suit contracts, max 4 trump support only):
+    * With 2 to 4 card support: for the *SHORTEST* suit only add the support hand's trump length minus that shortage length (e.g. 4 trumps and a singleton +3 points)
+    * With 5(+) card support: only treat as a long suit, add (D)istribution points for shortages as an opening hand would
     """,
         file=buffer,
     )

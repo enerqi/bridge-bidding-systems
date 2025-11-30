@@ -29,13 +29,13 @@ hand_input = pn.widgets.TextInput(
     width=500,
     stylesheets=[
         """
-                    .bk-input-container > input {
-                      font-size: 2rem;
-                    }
-                    .bk-input-group > label {
-                      font-size: 2rem;
-                    }
-                    """
+        .bk-input-container > input {
+          font-size: 2rem;
+        }
+        .bk-input-group > label {
+          font-size: 2rem;
+        }
+        """
     ],
 )
 run_button = pn.widgets.Button(
@@ -44,10 +44,10 @@ run_button = pn.widgets.Button(
     on_click=calculate_opc,
     stylesheets=[
         """
-                    .bk-btn-group > button {
-                      font-size: 1.2rem;
-                    }
-                    """
+        .bk-btn-group > button {
+          font-size: 1.2rem;
+        }
+        """
     ],
 )
 out_pane = pn.pane.Str(styles={"font-size": "1.2rem"})
