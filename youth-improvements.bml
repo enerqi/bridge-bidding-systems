@@ -10,6 +10,45 @@ It is not expected that partnerships will add all of these, especially not in on
 maybe the most useful for the smallest effort ("bang for buck") - some of the early material is more about agreeing a
 style with partner than learning lots of new ideas and content. Some new ideas have clear tradeoffs to consider.
 
+* English U21 System Extras
+
+The above mentioned baseline natural system is based on the English U16 system. The U21 system includes some
+extra agreements, many of which can be found in this document.
+
+- "2-Way Checkback", which we call [Two-Way New Minor Forcing xyNT](#Two-Way New Minor Forcing xyNT). It doesn't use 2N
+  as an artificial option for ease of remembering. Auto splinters are added for jumps beyond 3M
+- over the 2x inverted minor raise, next step is artificial 12--14 balanced so that 2N is 18--19 instead of 3N which
+  wastes space
+- 1H--1N--2m--2S impossible 2S bid is a 10+ hcp minor raise, not invitational only
+- Smolen and Splinters after 1N Stayman as suggested in [1NT Responses, Smolen and Others](#1NT Responses, Smolen and Others)
+- Smolen also played over after 2N then Stayman, which means that 2N--3S is used to show both minors. 2N then 4x are
+  Lissabon slam tries (!cs shows !hs, !ds shows !ss, !hs shows !ds and !ss shows !ds). Not quite what is recommended in
+  the [2N responses](#2N Responses) but effective
+- After the 1N--2C--2H Stayman response, 2S is a 4 card invite rather than the suggested 5 card invite
+- After 1N--2D--2H then 3S is an auto splinter instead of an artificial force that sets trumps
+- Retransfers are played after breaking a 2 major transfer to 2N (showing a max)
+- The 3 level 1NT responses are mostly as [suggested futher below](#1N and 3+ Level Responses), except no explicit
+  mention of 5 card puppet Stayman (nor 4 level texas transfers)
+- Over the artificial Strong 2C opening [Kokish](#2C Opening Responses with Kokish) is played as suggested later
+- Weak Twos default to being 6 cards and only 5 cards in 3rd NV instead of possibly 1st NV
+- 2x response over a Weak Two is NF instead of the more common forcing and 2N is the feature ask instead of Ogust
+- The 2/1 rebid style gives opener's 2N rebid as dual meaning 12--14 or 18--19, so we don't waste space bidding 3N with 18--19
+- Raises in competition remain familiar with the suggested addition of a jump cue [mixed raise](#Mixed Raises with Jacoby Plus)
+  and 2N being an artificial 10+ hcp 4+ card raise. Some different but more complicated options for 2N can be found later
+  such as [Advancer's Good 2N](#Advancer's Good 2N)
+- Note the direct 1M--3M raise is not a Mixed raise. If the 4+ card raise has enough shape (shortage(s)) it can be
+  folded into a "normal" 3M raise, though it's not clear if the shortage fits well with opener's hand
+- After partner's overcall a new suit is only non-forcing when the responder (opener's partner) has bid
+- After partner's Michael's bid of 2M, e.g. (1!h)--2H, then 3D is a good major raise, which is part of the
+  [Meckwell responses](#Meckwell Responses to Michaels / Unusual) covered below
+- [Leaping/Non-Leaping Michaels](#Strong Michaels, Leaping Michaels) as covered below is included
+- The important Lebensohl convention is played over a weak two takeout double and after 1N interference. It's a "fast
+  arrival" (fast shows a stop) version of standard Lebensohl, rather than any of the
+  [improved Lebensohl options](#Lebensohl - Defending Weak 2DHS) discussed later
+- Multi-Landy is used as the 1N defence, except double is always Penalty (even v.s. strong NT). Multi-Landy is one of
+  the [suggested 1N defence options](#1N Defence) below
+- [Exclusion Keycard](#Exclusion Keycard Blackwood) is a recommended advanced slam bidding option, which is also covered
+  below. The sublety is being sure which jump bids are EKB
 
 * Preempt Styles
 
@@ -3899,6 +3938,8 @@ helpful. A balanced hand with 24 hcp usually wants to go to game and any 26+ hcp
             3D = artificial, waiting, in case opener has a 4+ card major
         3D = as normal
             3HS = as normal, 5+ card suit - no room for anything fancy!
+        3HS = set trumps
+        4CD = set trumps
     2HS = some slam prospect with support from opener, e.g. 5 carder 3 honours + side control or 6 carder 2 honours + side control
     3CD = single suiter hand, 2+ "control points" (at least 2 kings or 1 ace), e.g. KQJxx + side K, KJ10xxx + side K
     3HS = semi-solid suit + side control, KQJ10xx, KQJxxxx, AQJ10xx etc, unlike the 2HS response these suits play well v.s. a doubleton or singleton honour
@@ -3970,6 +4011,39 @@ Over 1D there's the artificial option of 1D--2H showing 11--12 balanced without 
 but you may prefer to keep the weak jump shift bid. Note you could also be playing 1D--2H as Reverse Flannery.
 
 
+
+* Exclusion Keycard Blackwood
+
+** Problem
+
+You have a void and want to ask partner about keycards as you would with Roman Keycard Blackwood, but don't want to
+count the Ace of your void suit.
+
+** Solution
+
+Exclusion Keycard or Voidwood shows a void in the suit bid and asks for keycard showing step responses using 03/14
+keycard, NOT the usual 1430 style! The 1430 style risks going too high on some auctions. In practice you never have
+3 or 4 keycards when responding to EKB so the steps are really:
+
+- 0 keycards
+- 1 keycard
+- 2 without Queen
+- 2 with Queen
+
+EKB is a new suit jump above the game level (of Opener's first suit) in a new suit.
+
+- Do you agree that 1H--4S is EKB or would you expect that to be to play?
+- 1S--5C is above game in opener's first suit. What if we just want to play 5C? Bid 2C then 5C to remove ambiguity
+- 1H--2D--4S. We are in a GF already so 3S would be a splinter with !d support. 4S is above 4H, so show's !d support and
+  a !s void
+- 1C--1S--2C--5D. Again we've gone above game for opener's suit. We could have used 4D as a normal splinter
+
+Ideally explicitly agree trumps, then it should be even clearer that the jump is EKB!
+
+- can in principle do EKB in partner's first bid suit after agreeing a different suit, but BEWARE we may play
+  1S--2H--3H--4S as a picture raise!
+- discussion is needed about whether cue bids in high level competion are EKB, e.g. (1S)--2H--(3S)--4S, what about
+  (1S)--X--(2S)--4S or (1S)--3H--(4S)--5S?
 
 * Preempt Roman Keycard
 
