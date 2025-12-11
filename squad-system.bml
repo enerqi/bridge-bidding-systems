@@ -67,7 +67,7 @@ Includes any balanced hand without a 5 card major and without 4!ds (except 15--1
     1D = [natural, 5+ hcp, denies 4 card major unless invitational plus](#1C--1D)
     1H = [4+ !hs, 5+ hcp, shorter !s suit or 4!hs + 4!ss](#1C--1H)
     1S = [4+ !ss, 5+ hcp, shorter !h suit or 5--5](#1C--1S)
-    1N = [~7--10(11) hcp, denies a 4 card major](#1C--1N)
+    1N = [~6--10(11) hcp, denies a 4 card major](#1C--1N)
     2C = 10+ unbalanced 5+!cs OR 12+ with 4/5!cs, inverted minor raise, denies 4 card major
         2DHS = natural, forcing, maybe stop showing only
         2N = 12--14, NF
@@ -91,9 +91,13 @@ After 1C opening 10--21, 2+ !cs:
         1S = fourth suit forcing, GF
             1N = 12--14 with stop
             3N = 15--17 with stop
+        1N = ~8--10(11)
+        2C = simple preference
         2D = invitational ~9--11 6+ suit
         3D = GF good 6+ suit (use fourth suit forcing with bad suit)
     1S = natural, unbalanced ~11--17(bad 18) hcp
+        1N = ~8--10(11)
+        2C = simple preference
         2H = fourth suit forcing, GF
             2N = 12--14 with stop
             3N = 15--17 with stop
@@ -142,6 +146,8 @@ After 1C opening 10--21, 2+ !cs:
 
 1C--1H = 4+ !hs, 5+ hcp, shorter !s suit or 4!hs + 4!ss
     1S = natural, unbalanced ~11--17 hcp
+        1N = ~8--10(11)
+        2C = simple preference
         2D = fourth suit forcing, GF
             2N = 12--14 with stop
             3N = 15--17 with stop
@@ -299,7 +305,7 @@ After 1C opening 10--21, 2+ !cs:
 
 After 1C opening 10--21, 2+ !cs:
 
-1C--1N = ~7--10(11) hcp, denies a 4 card major
+1C--1N = ~6--10(11) hcp, denies a 4 card major
     2C = natural 5+!cs, not worth 3C rebid
     2DHS = reverse, natural ~17+ hcp, forcing
         2N = Blackout, relay to 3C, weak hands (almost GF opposite ~6/7+)
@@ -430,7 +436,7 @@ After 1C opening 10--21, 2+ !cs:
 1D = 10--21, 4+ !ds, includes 4--4 minor openings
     1H = [4+ !hs, 6+ hcp, shorter !s suit or 4!hs + 4!ss](#1D--1H)
     1S = [4+ !ss, 6+ hcp, shorter !h suit or 5--5](#1D--1S)
-    1N = [~7--10 hcp, denies a 4 card major](#1D--1N)
+    1N = [~6--10 hcp, denies a 4 card major](#1D--1N)
     2C = game force, 12+ hcp, 5+ !cs
         2D = natural, catchall nothing better to bid
             2N = 12--14
@@ -463,9 +469,11 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
 
 1D--1H = 4+ !hs, 6+ hcp, shorter !s suit or 4!hs + 4!ss
     1S = natural, unbalanced ~11--17(bad 18) hcp
+        1N = ~8--10(11)
         2C = fourth suit forcing, GF
             2N = 12--14 with stop
             3N = 15--17 with stop
+        2D = simple preference
         2H = invitational ~9--11 6+ suit
         3H = GF good 6+ suit (use fourth suit forcing with bad suit)
     1N = 12--14 balanced
@@ -768,7 +776,7 @@ After 1D opening 10--21, 4+ !ds, includes 4--4 minor openings:
             3H = sign off
             4H = accept invite
         2N = invite balanced/semi-balanced ~17--18
-    2S = weak two, respond as weak two bids
+    2S = weak two, bad !h support (xx or worse) or very good !ss, respond as weak two bids
     2S = (passed hand) fit jump, good 5 carder and support ~8--10
     2N = artificial GF raise, 4+!hs
         3H = extras 15+, no shortage
@@ -818,6 +826,7 @@ After 1H opening 10--21, 5+ !hs:
             3N = (over 2D) 15--17 with stop
         2H = minimum, simple preference
         2S = invitational ~9--11 6+ suit
+        3H = 3 card invitational
         3S = GF good 6+ suit (use fourth suit forcing with bad suit)
     2H = natural 6+!hs, not worth 3H rebid
         2S = invitational ~9--11 6+ suit
@@ -849,6 +858,7 @@ After 1H opening 10--21, 5+ !hs:
 1H--1N = ~6--11 hcp, denies 4!ss, includes bad(~5--6 hcp) and invite(~10/11) 3 card raises
     P = minimum balanced ~12--14 hcp or 4--5--2--2 or 4--5--3--1 singleton A/K
     2CD = usually natural ~11--17(bad 18) hcp, maybe 3 cards with 4--5 majors and 3--1 minors
+        2D = weak ~5--8 6+!ds
         2H = simple preference, sometime false preference (2 !hs, 4 card minor support, waiting to see if extras)
             2S/3om = quasi natural (maybe 3 cards), extras ~16--17(18) hcp
             2N = semi-balanced ~16--17(18) hcp
@@ -1319,6 +1329,7 @@ After 1S opening 10--21, 5+ !ss:
             3CD = natural GF
             4N = quantitative
         2H = 4!hs, maybe 4!ss
+            2S = 4 card invite
             2N = natural invite, maybe no 4 card major, ~8 hcp
             3CD = natural GF
             3H = invitational
@@ -1335,8 +1346,9 @@ After 1S opening 10--21, 5+ !ss:
     2S = !c transfer 6+ cards, weak or invite
         2N = artificial, no fit
             3C = to play
+            new = shortage, stop worry, GF
         3C = some support, Qx+
-            new = shortage, stop worry
+            new = shortage, stop worry, GF
     2N = !d transfer 6+ cards, weak or invite
         3C = artificial, no fit
             3D = to play

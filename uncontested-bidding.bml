@@ -1543,7 +1543,8 @@ By a *passed hand* 2!c *Reverse Drury* shows a 9--10 hcp limit raise with 3 card
     4H = [picture raise](#Picture Raises), no outside controls
     4S = [picture raise](#Picture Raises), no outside controls
 2N = 11--13(14) (semi)balanced, possibly bad 14 hcp semi-balanced, stops not guaranteed
-    3CD = quasi-natural
+    3C = natural constructive
+    3D = quasi-natural
     3H = forcing, ambiguous strength unsuitable for 4H picture raise
         3N = Serious
     3S = rare, probably 6!cs--5!ss as should have some minor stop if stop checking
@@ -2261,7 +2262,8 @@ By a *passed hand* 2!c *Reverse Drury* shows a 9--10 hcp limit raise with 3 card
     4H = delayed splinter !s support, maybe only 3 card support
     4S = [picture raise](#Picture Raises), no outside controls
 2N = 11--13(14) (semi)balanced, possibly bad 14 hcp semi-balanced, stops not guaranteed
-    3CD = quasi-natural
+    3C = natural constructive
+    3D = quasi-natural
     3S = ambiguous strength unsuitable for 4S picture raise
         3N = Serious
     4C = !c RKB, special case, solid suit
