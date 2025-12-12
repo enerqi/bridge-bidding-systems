@@ -993,8 +993,8 @@ After opening 1C and using this structure for 3+ level inteference, then bids by
             2D = garbage stayman hand, escape
             2H = system on, weak majors
             2S = system on, 5 card !s invite
-        P = no stop, denies stop
-            XX = stayman re-ask WITH single suit TRANSFER responses, invite plus values
+        Pass = no stop, denies stop
+            Rdbl = stayman re-ask WITH single suit TRANSFER responses, invite plus values
                 2D = !hs, put lead directing doubler on lead
                 2H = !ss
                 2S = no major
