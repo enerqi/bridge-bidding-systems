@@ -897,14 +897,9 @@ When opponents double an artificial bid for lead direction
 
 Helping to right side 3N or not play it.
 
-(1S)--X--(P)--3C--(P)--3S--(X) = lead-directing X of DAB
-    P = xx, Jx, or xxx in their suit
-    3N = good stopper, e.g. AJx
-    XX = either a full or partial stopper (Qx, Jxx)
-    bid = singleton only in their suit
-    4S = void in their suit
-
-3!s cue here could be a proxy for a very strong unbalanced hand, not a DAB with something in !s, but then 3N will be pulled anyway.
+- XX shows a non-positional stop e.g. (Axx)
+- NT shows a good positional stop
+- pass maybe a partial stop, partner can XX to ask
 
 ** Confidently Bid Game/Slam Contract Lead Directing Doubles
 

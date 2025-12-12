@@ -15,6 +15,7 @@ style with partner than learning lots of new ideas and content. Some new ideas h
 The above mentioned baseline natural system is based on the English U16 system. The U21 system includes some
 extra agreements, many of which can be found in this document.
 
+- 2N opening is 20--21 as [NT Ranges](#NT Ranges) suggests
 - "2-Way Checkback", which we call [Two-Way New Minor Forcing xyNT](#Two-Way New Minor Forcing xyNT). It doesn't use 2N
   as an artificial option for ease of remembering. Auto splinters are added for jumps beyond 3M
 - over the 2x inverted minor raise, next step is artificial 12--14 balanced so that 2N is 18--19 instead of 3N which
@@ -84,7 +85,9 @@ vulnerable and the opponents had no chance of making a game.
   but you open more often
 
 So, clearly you get to open more often by having a more wide ranging open style. This can be fun, at least for a while,
-but can also be frustrating when it's too hard for responder to judge what contract to play in!
+but can also be frustrating when it's too hard for responder to judge what contract to play in! Some theoreticians argue
+that preempts only really gain when they have very light opening values but not too much more, otherwise the hands
+either lacks defence or has preempted partner whilst giving away distributional information to the opponents.
 
 *** What is the role of position?
 
@@ -235,7 +238,8 @@ This balances your ability to preempt frequently with partner being able to resp
 
 - (1) remove any gap between 2 level and one level openings, e.g. 6/7--10 hcp
 - (2) keep the overall hand strength range tight in 1st/2nd - either 7--10 hcp or 6--10 where you require a shortage
-  with 6 hcp point. Readily upgrade many good maximums to a 1 level opening
+  with 6 hcp point. Readily upgrade many good maximums to a 1 level opening. You may like the theory of having some
+  defensive values in which case maybe use an 8--11 hcp range and encroach on the 1 level openings (making them more accurate)
 - (3) factor in 1st/2nd v.s. 3rd position.
 - (4) NV agree to open hands with only 1 top honour
 - (5) IMPs NV vs VUL 2nd position, consider more aggressive bids
@@ -3110,10 +3114,9 @@ Double by such a weak player would suggest extreme shape for their preempt and s
 We may cue bid an opponents suit, or do some similar bid to specifically ask for a stop. What to do if the opponents
 double it for lead?
 
-- XX shows a partial stop
-- NT shows a good stop
-- optionally pass could show something like xxxx, the worst partial stop, but generally bid on as normal with anything
-  but a partial stop
+- XX shows a non-positional stop e.g. (Axx)
+- NT shows a good positional stop
+- pass maybe a partial stop, partner can XX to ask
 
 
 * Meckwell Responses to Michaels / Unusual
