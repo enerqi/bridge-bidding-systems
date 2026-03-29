@@ -2,7 +2,7 @@
 
 * 3CD Openings
 
-- 3C standard variable preempt, position/vulnerability dependent
+- 3C standard variable preempt (sound over 1!c opening), position/vulnerability dependent
 - 3D constructive preempt in 1st/2nd usually 6 cards, good chance to play 3N. Good suit, happy 3N with some fit and side
   stoppers. Suit expected to run with 0--1 loser opposite Hx (on normal percentage breaks) OR 1--2 losers if have side
   entry (Ace or King). E.g. AK109xx with no side entry OR KQ109xx, KJ109xx with side A/K. 6 or 7 cards does not matter,
@@ -69,7 +69,7 @@
 * 3HS Openings
 
 - P/T integrity required (in 1st/2nd), max 1 outside A/K, no 4 card side Major
-- when side Ace, not 2/3 top honours in 1st/2nd (try to open 1HS)
+- when side Ace, not 2/3 top honours in 1st/2nd (try to open 1!h!s)
 - 1 top honour, reasonable points or shape in second or if VUL
 
 3H
@@ -80,6 +80,7 @@
         4CD = fit non-jump lead directing implication
         4HS = to play
     3S = natural, forcing, may raise with Hx
+        3N = deny support
     3N = to play
     4C = [Preempt RKB](#Preempt RKB)
     4DS = GF, natural (passed hand fit)

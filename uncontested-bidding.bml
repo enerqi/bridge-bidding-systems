@@ -1086,7 +1086,7 @@ By responder example:
   2D = [GF 5+ !ds natural (passed hand 4-card Reverse Drury raise)](#1H--2D)
   2H = [single raise, constructive ~8--10 total points (passed hand weaker)](#1H--2H)
   2S = [6+!ss, ~6--9 hcp, semi-weak, no !h fit](#1H--2S)
-  2N = [limit+ raise](#1H--2N)
+  2N = [4+ card major raise, limit plus or GF (combined with mini-splinters)](#1H--2N)
   3C = [6+ !cs, invitational ~10--12, no major](#1H--3C)
   3D = [6+ !ds, invitational ~10--12, no major](#1H--3D)
   3H = [mixed raise, 4+ cards](#1H--3H)
@@ -1170,8 +1170,8 @@ Gazilli variant includes:
 - minimum 6!hs rebid
 - extras 6+ !hs, 6 losers, not worth 3!h rebid
 - 5--5 medium/max
-- 14--15 3 card !s raise, 6 losers
-- 14--15 mini-splinter !s raise, 6 losers
+- 14--15 3 card !s raise, 6 losers, with or without (very sound with singleton) 6!hs
+- mini-splinter !s raise, 6 losers (maybe lighter on hcp, but working values)
 
 2C = Gazilli variant
     2D = artificial, ~10/11+, GF v.s. stronger 14--15 hands
@@ -1187,22 +1187,22 @@ Gazilli variant includes:
         3H = max, 6+ !hs, 6 losers
         3S = max, 6+ !hs AND 3 card !s support
         3N = solid 6 card suit
-        4CD = max !s support, mini-splinter
-        4S = max !s support mini-splinter, hiding shortage, limited honour controls
+        4CD = !s support, mini-splinter
+        4S = !s support mini-splinter, hiding shortage, limited honour controls
     2H = NF, ~6--(10), natural preference
         2S = natural, 3 card support, possible 4--3 fit ok
             2N = NT suggestion, only 4 !ss
                 3CD = 5 card minor 3--5--(5--0)
-        3CD = 14--15 !s support, mini-splinter (do not show 5--5 with minor here!)
+        3CD = !s support, mini-splinter (do not show 5--5 with minor here!)
         3H = 14--15, 6+ !hs AND 3 card !s support, maybe risky
     2S = 6+ !ss invitational, ~9--12 (not weak when opener could be showing a 2nd suit)
         3CD = escaping opposite minimum to !c/!d or !h, slightly invitational (otherwise pass)
             3S = really good !s (maybe facing a void)
     2N = both minors, weak, 4!ss only
         3CD = sign off
-        3S = max unknown mini-splinter !s support
+        3S = unknown mini-splinter !s support
     3CD = weak
-        3S = 14--15 !s support, unknown mini-splinter hand
+        3S = !s support, unknown mini-splinter hand
     3H = 14+ slam try, 3(+) card !h support
     3S = natural, forcing, 6+ !ss, good hand
     3N = ~12--17, good minor stops
@@ -1214,7 +1214,7 @@ Gazilli variant includes:
 
 - 11--15 hcp
 - minimum if 5--5
-- very unlikely max with 3 card !s support (use Gazilli instead)
+- unlikely max with 3 card !s support (use Gazilli instead)
 
 2D = natural, NF
     2H = natural, NF, preference, hoped for !s raise
@@ -1674,7 +1674,9 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
 
 ** 1H--2N
 
-One of:
+*** Limit plus raise variant
+
+Limit plus raise when played with single suiter invitational jump shifts (not mini-splinters):
 
 - 4+ card GF raise
 - 4 card limit raise
@@ -1741,6 +1743,81 @@ One of:
 4CD = medium+, 5--5+, good side suit, responder should mainly care about controls in other suits
 4H = medium+, 5!s--6!h / 7!h--4!s--1--1
 4H = (opposite passed hand) just natural fast arrival
+
+*** GF combined with mini-splinters variant
+
+- 4+ card GF raise
+- maximum game accept hands typically 6 losers
+- With game values and 3 card support, use either the Nebulous 2C response or bid a 5 card side suit with slam interest
+  if looking for support for the suit from partner
+- Note, Picture raises are used after a 2/1 new suit
+- Consider if a 4 card raise is suitable for a splinter, there are two ranges ~10--12 hcp and 13--15 hcp
+- With game values and almost no chance of slam consider bidding game directly
+- The system allows strong 16+ hcp splinter responders to bid 2N then show their shortage
+
+
+3C = artificial, any minimum (up to bad 14hcp 5--3--3--2)
+    3D = GF ask
+        3H = some shortage
+            3S = void or singleton?
+                3N = void
+                    4C = ask
+                        4D = !d void
+                        4H = !c void
+                        4S = !s void
+                4CD = !c/!d singleton
+                4H = !s singleton
+        3S = 5--4--2--2, 2nd suit QJxx or better
+            3N = ask
+                4CD = natural
+                4H = !s side suit
+        3N = 5--3--3--2 or bad 5--4--2--2 Q10xx or worse
+        4x = 6+ card major, no shortage, control bidding up the line
+    3H = !c shortage, strong ~16+ hcp splinter (not needed as NF invite hand with GF 2N)
+    3S = !s shortage, strong ~16+ hcp splinter
+    3N = !d shortage, strong ~16+ hcp splinter
+    4H = to play
+3D = artificial extras, no shortage, 5/6/7 carder
+    3H = ask
+        3S = 5--4--2--2, 2nd suit QJxx or better
+            3N = ask
+            4CD = natural
+            4H = !s side suit
+        3N = 5--3--3--2 or bad 5--4--2--2 Q10xx or worse
+        4x = 6+ card major, no shortage, control bidding up the line
+    3S = !s shortage, strong ~16+ hcp splinter
+    3N = !d shortage, strong ~16+ hcp splinter
+    4C = !c shortage, strong ~16+ hcp splinter
+    4H = to play
+3H = extras, 5 card major, some shortage
+    3S = shortage ask (typical bid)
+        3N = some void
+            4C = ask
+                4D = !d void
+                4H = !c void
+                4S = !s void
+        4CD = !c/!d singleton
+        4H = !s singleton
+    3N = !s shortage, strong ~16+ hcp splinter
+    4CD = !c/!d shortage, strong ~16+ hcp splinter
+    4H = to play
+3S = extras, 6+ card major, some singleton
+    3N = ask
+        4CD = !c/!d singleton
+        4H = !s singleton
+    other = general control bidding (no space for strong splinter showing)
+3N = extras, 6+ card major, some void
+    4C = ask
+        4D = !d void
+        4H = !c void
+        4S = !s void (going to 5 level!)
+    other = general control bidding (no space for strong splinter showing)
+4CD = medium+, 5--5+, good side suit, responder should mainly care about controls in other suits
+4H = medium+, 5!s--6!h / 7!h--4!s--1--1
+4H = (opposite passed hand) just natural fast arrival
+
+Note, with wider range point counts playing the 2nd step (one after the ask) following an immediate 3C/3D response
+may usefully be played as a general balanced slam try (quantitative / last train like)
 
 
 *** 2N Invite Plus Interference
@@ -2082,7 +2159,7 @@ at the 3 level.
   2D = [GF 5+ !ds natural (passed hand 4-card Reverse Drury raise)](#1S--2D)
   2H = [GF 5+ !hs natural (passed hand 9--10)](#1S--2H)
   2S = [single raise, constructive ~8--10 total points (passed hand weaker)](#1S--2S)
-  2N = [limit+ raise](#1S--2N)
+  2N = [4+ card major raise, limit plus or GF (combined with mini-splinters)](#1S--2N)
   3C = [6+ !cs, invitational ~10--12, no major](#1S--3C)
   3D = [6+ !ds, invitational ~10--12, no major](#1S--3D)
   3H = [6+ !hs, invitational ~10--12, no major support](#1S--3H)
@@ -2454,7 +2531,9 @@ Kokish two way game tries:
 
 ** 1S--2N
 
-One of:
+*** Limit plus raise variant
+
+Limit plus raise when played with single suiter invitational jump shifts (not mini-splinters):
 
 - 4+ card GF raise
 - 4 card limit raise
@@ -2516,6 +2595,77 @@ One of:
     other = general control bidding (but usually ask void)
 4CDH = medium+, 5--5+, good side suit, responder should mainly care about controls in other suits
 4S = (opposite passed hand) just natural fast arrival
+
+*** GF combined with mini-splinters variant
+
+- 4+ card GF raise
+- maximum game accept hands typically 6 losers
+- With game values and 3 card support, use either the Nebulous 2C response or bid a 5 card side suit with slam interest
+  if looking for support for the suit from partner
+- Note, Picture raises are used after a 2/1 new suit
+- Consider if a 4 card raise is suitable for a splinter, there are two ranges ~10--12 hcp and 13--15 hcp
+- With game values and almost no chance of slam consider bidding game directly
+- The system allows strong 16+ hcp splinter responders to bid 2N then show their shortage
+
+
+3C = artificial, any minimum (up to bad 14hcp 5--3--3--2)
+    3D = GF ask
+        3H = some shortage
+            3S = void or singleton?
+                3N = void
+                    4C = ask
+                        4D = !d void
+                        4H = !h void
+                        4S = !c void
+                4CDH = !c/!d/!h singleton
+        3S = 5--4--2--2, 2nd suit QJxx or better
+            3N = ask
+                4CDH = natural
+        3N = 5--3--3--2 or bad 5--4--2--2 Q10xx or worse
+        4x = 6+ card major, no shortage, control bidding up the line
+    3H = !h shortage, strong ~16+ hcp splinter (not needed as NF invite hand with GF 2N)
+    3S = !c shortage, strong ~16+ hcp splinter
+    3N = !d shortage, strong ~16+ hcp splinter
+    4S = to play
+3D = artificial extras, no shortage, 5/6/7 carder
+    3H = ask
+        3S = 5--4--2--2, 2nd suit QJxx or better
+            3N = ask
+            4CDH = natural
+        3N = 5--3--3--2 or bad 5--4--2--2 Q10xx or worse
+        4x = 6+ card major, no shortage, control bidding up the line
+    3S = !d shortage, strong ~16+ hcp splinter
+    3N = !h shortage, strong ~16+ hcp splinter
+    4C = !c shortage, strong ~16+ hcp splinter
+    4S = to play
+3H = extras, 5 card major, some shortage
+    3S = shortage ask (typical bid)
+        3N = some void
+            4C = ask
+                4D = !d void
+                4H = !h void
+                4S = !c void
+        4CDH = !c/!d/!h singleton
+    3N = !h shortage, strong ~16+ hcp splinter
+    4CD = !c/!d shortage, strong ~16+ hcp splinter
+    4S = to play
+3S = extras, 6+ card major, some singleton
+    3N = ask
+        4CDH = !c/!d/!h singleton
+    other = general control bidding (no space for strong splinter showing)
+3N = extras, 6+ card major, some void
+    4C = ask
+        4D = !d void
+        4H = !h void
+        4S = !c void (going to 5 level!)
+    other = general control bidding (no space for strong splinter showing)
+4CD = medium+, 5--5+, good side suit, responder should mainly care about controls in other suits
+4H = medium+, 5!s--6!h / 7!h--4!s--1--1
+4H = (opposite passed hand) just natural fast arrival
+
+Note, with wider range point counts playing the 2nd step (one after the ask) following an immediate 3C/3D response
+may usefully be played as a general balanced slam try (quantitative / last train like)
+
 
 *** Interference
 

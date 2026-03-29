@@ -38,7 +38,7 @@ set shell := ["nu", "-c"]
 # alias for typing `just w`
 alias w := watch
 watch:
-    watchexec --exts bml,css uv run doit
+    watchexec --no-global-ignore --exts bml,css uv run doit
 
 regen:
     cd {{justfile_directory()}}/deal-simulations; uv run regen-html-deals.py w:/deals/

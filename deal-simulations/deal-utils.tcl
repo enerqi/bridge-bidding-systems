@@ -142,6 +142,21 @@ proc is_1major_opener {hand} {
   return 1
 }
 
+proc is_light_1major_opener {hand} {
+  set points [hcp $hand]
+  if { $points <9 || $points>11 } { return 0 }
+  set hs [hearts $hand]
+  set ss [spades $hand]
+  if { $hs<5 && $ss<5 } { return 0 }
+  if { [5CM_nt $hand 13 15] } { return 0 }
+  set ds [diamonds $hand]
+  set cs [clubs $hand]
+  if { $cs>$hs && $cs>$ss} { return 0 }
+  if { $ds>$hs && $ds>$ss} { return 0 }
+  if { [is_3n_opener $hand]} { return 0 }
+  return 1
+}
+
 proc is_1major_overcall {hand} {
   set points [hcp $hand]
   if { $points <8 || $points>16 } { return 0 }

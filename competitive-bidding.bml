@@ -882,22 +882,23 @@ Examples:
 1C--(P)--1H--(P)--1S--(P)--2S--(X)
     XX = opener has 5 cards
 
-** FSF Redouble or Other Artificial Forcing Bids
-
-When opponents double an artificial bid for lead direction
-
-- XX for strong play suggestion (e.g. 4 very good / 5+ reasonable suit)
-- Pass to play if partner can help in support e.g. Hxx+
-- Cannot play in the contract only doubled, must be redoubled
-- Otherwise bid on as if not doubled
-
-** Handling doubles of our stopper ask of their suit
+** Handling doubles of FSF OR our stopper ask
 
 Helping to right side 3N or not play it.
 
 - XX shows a non-positional stop e.g. (Axx)
 - NT shows a good positional stop
-- pass maybe a partial stop, partner can XX to ask
+- pass either nothing or maybe a partial stop, partner can XX to ask
+
+** Redouble of Other Artificial Forcing Bids
+
+When opponents double an artificial bid for lead direction
+
+- XX for strong play suggestion (e.g. one/two level then 4 very good / 5+ reasonable suit)
+- Pass is often no stop or neutral/waiting
+- Cannot play in the contract only doubled, must be redoubled
+- Otherwise bid on as if not doubled
+
 
 ** Confidently Bid Game/Slam Contract Lead Directing Doubles
 
@@ -2349,8 +2350,8 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
 
 - Bid naturally with decent 5--6 card suits or Strong NT hands.
 - Weaker suits maybe bid on the next round
-- Unlike common X showing weak NT defences this has more chance of penalising opponents.
-- Double is like a takeout of a weak 2!h (assumed)
+- Unlike common X showing strength (weak NT or power) defences this has more chance of penalising opponents
+- Double is like a takeout of a weak 2!h (assumed), showing !ss
 - 3M Strong jump overcalls
 - Leaping michaels
 
@@ -2359,13 +2360,19 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
     Dbl = 4 or 5 poor spades
         (P)
             2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
+            3D = (assuming pass !d showing) strong, GF, often stop ask
         (2!h!s) further interference
             X = !hs, it's our hand good 8+
+            2N+ = [Reversed Lebensohl](#Reversed Lebensohl RLEB) as not forced to bid
+        (XX) = suit ask
+            any = ignore redouble, [Reversed Lebensohl](#Reversed Lebensohl RLEB) as not forced to bid
+        (XX) = !d good values
+            3D = HCR cue
     2HS = natural, decent 5--6 cards
-        oM = artificial, major HCR
+        oM = other major is artificial, major HCR
+        3M = roughly good 2 raise, shapely
         2N = natural
     2N = 16--19 NT
-        3C = stayman, simple version
     3CD = natural, opening bid or better
     3HS = natural, strong
     3N = natural
@@ -2373,20 +2380,119 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
         next = major ask
     4N = minors, stronger
 
-(2D)--P--(2!h!s)
-    Dbl = 4 or 5 poor spades
+
+(2D)--P--(P) = !d signoff, over weak only multi
+    Dbl = values ~13+
         2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
 
 (2D)--P--(2!h)
-    P = maybe limited !h hand hoping partner will double after with passing minimal opening !h values
+    P = maybe limited !h hand hoping partner will double later with passing minimal opening !h values
+    Dbl = 4 or 5 poor spades
+        (P) = !hs, unless psyche
+            2S = to play
+            2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
 
 (2D)--P--(2!h)--P--(P)
-        Dbl = penalty/values, max 3 card !s suit, limited in values so a risk
-            Bid = natural limited
+    Dbl = penalty/values, max 3 card !s suit, good 4+ card !h holding
+        Bid = natural limited, run away
+
+(2D)--P--(2!s)
+    Dbl = 4 or 5 poor spades
+        (P) = !ss, unless pyche
+            2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl) run away / maybe forced to bid with poor defense
+
 
 (2D)--P--(2!h)--P--(2!s)
     Dbl = takeout with 4 or 5 poor !hs
         2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
+
+
+(2D)--P--(2N) = usually artificial ask
+    Dbl = strong ~16+ values, pysche expose etc, starts penalty doubles
+
+(2D)--P--(3H) = paradox preempt, likely 3!hs + 3!ss, aggressive 2--2 more hcp possible
+    Dbl = takeout (alternative is takeout/penalty, depends on openers next bid)
+        (P) = !h opening, unless psyche
+            P = penalty pass
+            3S = minimal, to play
+
+(2D)--P--(3S) = paradox preempt, likely 4!hs + 3!ss
+    Dbl = takeout
+        (P) = !s opening, unless psyche
+            P = penalty pass
+            4H = to play
+
+(2D)--P--(4CD) = various major(s) showing or asking/transferring to major
+    Dbl = shows suit, either strong values or distributional
+    P = maybe waiting to takeout double 4H or values double 4S
+
+(2D)--P--(4M) = paradox preempt
+    Dbl = values
+
+** alternative strength/values double
+
+(2D)
+    P = maybe a major takeout, not rushing to bid
+    Dbl = 13--15 / 19+ values, generally flattish
+        (P)
+            2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
+            3D = (assuming pass !d showing) strong, GF, often stop ask
+        (2!h!s) further interference
+            X = takeout
+            2N+ = [Reversed Lebensohl](#Reversed Lebensohl RLEB) as not forced to bid
+        (XX) = suit ask
+            any = ignore redouble, [Reversed Lebensohl](#Reversed Lebensohl RLEB) as not forced to bid
+        (XX) = !d good values
+            3D = general force, maybe a reasonable major else stop ask
+            other = [Reversed Lebensohl](#Reversed Lebensohl RLEB) as not forced to bid
+    2HS = natural ~12--15, decent 5--6 cards
+        oM = other major is artificial, major HCR
+        3M = roughly good 2 raise, shapely
+        2N = natural
+    2N = 16--18 generally flattish, some stop
+    3CD = natural, opening bid or better
+    3HS = natural, strong ~16--18
+    3N = natural
+    4CD = minor + major, GF
+        next = major ask
+    4N = minors, stronger
+
+
+(2D)--P--(P) = !d signoff, over weak only multi
+    Dbl = values ~13+
+        2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
+
+(2D)--P--(2M)
+    Dbl = takeout
+        2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
+
+(2D)--P--(2!h)--X--(2!s)
+    Dbl = penalty assuming partner has a normal takeout with some !ss
+        any = stronger game going, not sitting a penalty
+
+
+(2D)--P--(2N) = usually artificial ask
+    Dbl = strong ~16+ values, pysche expose etc, starts penalty doubles
+
+(2D)--P--(3H) = paradox preempt, likely 3!hs + 3!ss, aggressive 2--2 more hcp possible
+    Dbl = takeout (alternative is takeout/penalty, depends on openers next bid)
+        (P) = !h opening, unless psyche
+            P = penalty pass
+            3S = minimal, to play
+
+(2D)--P--(3S) = paradox preempt, likely 4!hs + 3!ss
+    Dbl = takeout
+        (P) = !s opening, unless psyche
+            P = penalty pass
+            4H = to play
+
+(2D)--P--(4CD) = various major(s) showing or asking/transferring to major
+    Dbl = shows suit, either strong values or distributional
+    P = maybe waiting to takeout double 4H or values double 4S
+
+(2D)--P--(4M) = paradox preempt
+    Dbl = values
+
 
 * Opponents open Weak 2D 2H 2S
 
@@ -2536,6 +2642,20 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
 (2x)--P--(P)
     X = takeout, protective ~10+ hcp for more penalty opportunity, but consider the strength
         that opponents can pass with
+
+* Opponents open Dutch/Lucas Two
+
+Mostly same as as [Opponents open Weak 2H 2S](#Opponents open Weak 2D 2H 2S)
+
+(2M)--P--(2N) = ask normally
+  Dbl = strong values, psyche expose, starts penalty
+  cue = Michaels
+  4CD = Leaping Michaels
+
+(2M)--P--(3!c) = pass or correct normally
+  Dbl = takeout
+  cue = Michaels
+  4CD = Leaping Michaels
 
 
 * Opponents open Intermediate 2H 2S

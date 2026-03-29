@@ -2042,6 +2042,81 @@ full of compromises.
     4HS = to play
     5CD = to play
 
+* 2D Multi Defenses
+
+At the time of writing we've opted for a less common double showing !ss, 4 card or 5 poor. There is some merit to
+playing different defenses according to whether it's a weak only Multi 2D or it has strong options. The weak only
+variant maybe passed in 2D, although this is rare. The worse the average quality of the weak two, the more this is
+likely.
+
+Against the weak only variant in particular, it's more ideal to get your values across immediately (and the most common
+hand with values but nothing in particular to say is a balanced weak NT ~13--15 hcp). The fairly common double showing
+values 13--15/19+ defense fits here.
+
+Some Lebensohl variant maybe played in response to the double.
+
+We prefer 2H/2S to be natural. This is good against the pressure of a weak only Multi and if we actually have a !h
+overcall we see a weakness of the Multi, that is giving space to a 2 level major overcall even if they had a weak 2S
+opening.
+
+Some defenses prefer to show which major we have a takeout of immediately - so two takeout doubles. This may sacrifice
+the natural 2H overcall.
+
+Other defenses ignore the notion of don't preempt a preempt and may play some direct, or even artificial, bids to show
+an aggressive minor suit overcall.
+
+Some may play a 3CD overcall as promising a stop in both majors. Others may use a jump 3HS bid as a stop ask instead of
+a strong jump overcall.
+
+Whatever is played, some hands will just be awkward. Consider how you would handle the auction (2!d)--P--(3!h) with
+your agreements (takeout in of 4th position, or depends on what opener does?).
+
+Various example defenses:
+
+** Values (Dixon)
+
+Hands looking to takeout a later known major usually pass to start. 4th position double usually played as takeout over
+2M.
+
+X = 13--15/19+ values
+2HS = natural
+jump = strong overcall ~16--18
+
+(2D)--P--(2M)
+    Dbl = takeout (not values in 4th)
+    Dbl = (alternative) takeout OR penalty, depends on what opener does assuming they don't try to psyche
+
+A variation is to value double with some penalty interest, but clarify if it always has something reasonable in both
+majors or just one trump stack.
+
+** Major takeouts
+
+Loses a natural 2H overcall.
+
+X = takeout, short !ss
+2H = takeout, short !hs
+2S = natural
+
+** Multi v Multi
+
+No immediate bid for takeout or some flat hands with values. Reopening takeout is possible. No natural 2M overcall.
+
+X = some major
+2H = !cs
+2S = !ds
+3CD = weak natural
+
+** Multi vs Multi with Major Takeouts
+
+X = some major
+2HS = takeout, have other major (can use like a power double)
+
+** Ambiguous Majors
+
+X = !hs OR takeout of !hs (not !hs)
+2H = !ss OR takeout of !ss (not !ss)
+2S = minors (just one idea)
+
 
 * 2H Both Majors
 
@@ -2147,3 +2222,187 @@ Note, usual undisciplined style in 3rd.
     4x = cue, slam try
     4CD = fit jump / fit non jump
     4HS = to play
+
+* Optimal Point Count Hand Evaluation Integration
+
+Optimal point count is a modern (Patrick Darricades, 2019) alternative to the standard Milton Work HCP hand evaluation
+(A is 4, K is 3, Q is 2, J is 1) that improves on various hand evaluation methods, older and newer, such Culbertson's
+honour trick count, 6-4-3-2-1 point count, 3-2-1-0.5 point count, 5-4-3-2-1 point count, Zar point count, losing trick
+count, playing tricks, quick tricks, controls, Goren point count and others.
+
+Many experts do a lot of adjustments to their hand's valuation precisely because HCP are flawed, just a rough guide in
+many situations. These adjustments may not be considered strictly in points. Sometimes points are added for shortages,
+well placed honours or controls, but also the goal HCP count may get lower rather than points being added towards the
+same target (such as 26 hcp for a 4 major game becoming 22/23 hcp for a 9 card fit). Some players may consider the
+length of suits, concentration of honours and shortages even if bidding NT.
+
+Try the [OPC calculator](https://sublime.is/opc/optimal_point_count_app). It definitely requires some practice.
+
+** Evaluating Generating Tricks v.s Taking Tricks
+
+An important part of OPC is how it considers the trick generating potential of hands, not just the more immediate trick
+taking power and as a consequence of this holistic view the final point numbers correspond very well to the number of
+tricks that can be taken by the two partnership hands. To quote the original OPC book: "The true test of an accurate
+evaluation method is the reverse, and that is: when a contract has the right odds to be bid and played, then the
+evaluation method should show the corresponding points for it. The optimal point count meets that criteria 95% of the
+time! The corollary of the above statement is just as important: when the optimal point count does not add up to a
+minimum of 25 total points for 3N or 32 points for a small suit slam, you can be 95% sure that these contracts are not
+odds-on, and should not be bid."
+
+** Upgrades and Downgrades Matter
+
+So, why do we not hear more about OPC after 5+ years? One reason might be how one's point count can change significantly.
+
+Unlike plain Milton Work HCP there are not a fixed 40 points in the pack. There can easily be 34 to 50 because hands
+generate more or less tricks depending on how well they fit together. Importantly, the number of points needed to make a
+certain number of tricks doesn't change - 26 OPC gives you a 50-55% shot at making 3N and 27 OPC does the same for 4HS.
+37 OPC gives a 70-75% chance at making 13 tricks. 21 OPC makes a 2 level trump contract at least 50%. With the extreme
+example of every player having a 13 card suit the final OPC evaluation would give each player ~41 OPC, for a total of
+over 160 OPC in the pack. The complications of the calculations can be learnt with practice, but without due care it's
+possible to over value hands if we optimistically assume a certain amount of fit before learning of partner's hand.
+Expect to upgrade or downgrade the hand as the bidding goes on!
+
+A hand such as QJxx QJxx QJx Ax is worth 12.5 OPC as a NT opening hand and looks very similar to standard HCP valuations
+of NT hands. A distributional KJTxxx x QJT xxx hand is, perhaps surprisingly, worth 12 OPC as an opening hand (working
+10s, shortage, good 6 card suit). This hand may generate lots of tricks with the long suit as trumps, but if partner has
+a misfit with a long !h suit then the value of the hand really drops. So, if we actually open this hand a natural 1S and
+partner bids a 2/1 GF with a traditional sound 13 hcp we could easily fail to make game. Note, outside very high level
+competition it's unlikely a legal agreement to call that 12 OPC distributional hand a normal 1 level opening bid.
+
+The challenge then is that hands may have a similar OPC value but with a very different balance of offensive/defensive
+values. Offensive values correspond more to trick generating power rather than the more immediate trick taking of
+defensive hands.
+
+** OPC Club System
+
+In the "Optimal Modified 2/1 Club System" (Neil Timm, 2022) effort is made into putting the hands into 3 point range
+zones and having most bids cover only a couple of zones. The natural 1H/1S openings are 12--17 OPC, which breaks down
+into two small zones of 12--14 and 15--17. The 1N opening is a 15--17 zone. Anything with 18+ OPC is opened with the
+strong artificial 1C (Precision like), which can be normal looking hands as low on standard HCP as KJTxxx x AQx Kxx.
+
+The "weak two" 2HS openings are 12--14 OPC with a 6 card suit. This avoids those very low hcp offensive hands going into
+a 1 level opening because a 5 card suit must have more hcp to be worth 12 OPC. Compared to some weak two styles, the
+point range is very narrow, so it's a more constructive approach and takes the philosophy that weak twos should have a
+reasonably high point count else they are a net negative - often preempting partner and giving away distributional
+information.
+
+The 2CD openings are intermediate with 15--17 OPC. These bids are quite preemptive and descriptive at the same time
+given the small point range. Whilst the 2D opening requires 6 cards, the 2C opening is the older Precision style that
+may include just 5!cs and a 4 card major, but at least it's a precise strength range.
+
+The 2N opening is both minors 12--14 OPC. This does have the downside of making all NT hands in the 18+ range go via 1C
+and so perhaps makes it more annoying to deal with interference.
+
+All the 3x openings are also 12--14 OPC, with 3CD as 6+ cards and 3HS as 7+ cards. This is similar to our constructive
+3CD openings. These bids may not always be desirable in 1st/2nd if preempting partner where we have reasonable major
+support, but at least the small point range gives responder a clear idea of whether game is attainable.
+
+The 3N opening is a constructive gambling 3N -- solid AKQ+ minor with 7+ cards and 17--21 OPC, no limits on side A/K.
+
+The 4CD openings are Namyats/SAT -- !h/!s 8+ card openings 8.5--9 playing tricks 2/3 top honours NV or 3/5 top
+honours VUL, actually with 18+ OPC, so enough offensive values for a strong 1C opening but few defensive values.
+
+All the above "constructive preempts" help to open hands with a lot of trick generating potential, and so 12+ OPC,
+whilst avoiding mixing them up with normal 1 level openings.
+
+A concern still is that hands such as JTxxxx Axx KTx x are 12 OPC but the main trump suit is poor. If you pass then you
+are suggesting that you have less than 12 OPC, but if you bid then there is some risk of preempting partner with your
+terrible suit. The argument in favour of the weak two would be that the 12--14 range is so small that responder can
+quickly judge if game is possible and worth inviting and not be scared of bidding too high. This seems mostly true, but
+if responder has a 5 card other major opposite this hand's Axx will they bother checking? Would they ever expect you to
+have something as good as KTx in the other suit? If they have a misfit with your long suit then a swift pass is likely.
+This is balanced against the value of getting in the way of the opponents aswell.
+
+** 2/1 GF, Forcing NT and Strong Club Responses
+
+Despite all the constructive preempts we can still end up opening hands with a fairly low hcp that on a misfit with
+partner will drop in value. KQxxx x KJTxx xx is 9 hcp, but 13 OPC as a suit opening. It wouldn't be surprising to see
+many opening it if they play rule of 19 openings. The holding KQTxx xx KJTx xx is 12 OPC, even without a singleton.
+
+What if we normally like to open most 11 hcp hands, as is typical of strong club systems? KQTxx Qxx Qxxx x is 9 hcp but
+worth 11 OPC as a suit opening. This is a rule of 18 opening, which in many Bridge games would be the lowest legal
+opening, whether it's sensible or not.
+
+Rule of 19 openings should perhaps be one lower bound, especially given the options to play a few constructive preempts
+
+- KQTxx Qxx QJxx x is 12.5 OPC and passes R19
+- JTxxx Qxxx Kx Ax hand is 12 OPC and R19
+- Jxxxx Qxxx Kx Ax is only 10.5 OPC and R19, so would not open
+- Jxxxx QTxx Kx Ax is 11.5 OPC and R19
+
+Would we want to open any 11+ OPC that is R19 or stick with 12+ OPC?
+
+In the OPC club system a 2/1 GF bid is 15+ OPC, otherwise we can bid too high on a misfit. We need a way for opener to
+split their hand into point zones despite limited bidding space. For that reason 1M--1N is forcing 13+ OPC instead of
+semi-forcing, which gives up on the 1N part score. It's argued that 2M is often best even with a 5--2 fit and with a
+misfit both contracts would fail to make. Over the forcing 1N the opener can conventionally bid 2C to show a minimum
+12--14 hand and all other bids can be a precise 15--17.
+
+Over the strong 1C opening the immediate responses include 1D as 0--6 OR 13+. Most other bids are transfers with 7--12
+points, 2HS are weak 7--9 and 2N is 10--12 natural without a 5+ card suit. These bids and openers immediate rebids help
+to work out the points zones for both players. This is more difficult if trying to play OPC with a Swedish weak strong
+club, e.g. ~14--15 NT type hand or 18+ OPC strong. We may still be working out if we are weak or strong, e.g. 1C--1D--1H
+is wide ranging not clearly defined, so how would things bid out if responder is also weak or strong? Some jump bids may
+help to clarify, but they often waste space needed for better game/slam investigation. Transfers seem a poor choice for
+a weak strong club as 1HS responses should really be natural so we can discover a major fit if opener is a 14--15 NT
+hand.
+
+So more investigation probably needed on the lower bound for the strong part of the weak strong club.
+
+*** Overcalling
+
+For simple overcalls the OPC club suggests:
+
+- 1x 12--17 OPC (with its overcalling adjustments, see calculator), prefer an A/K headed suit, possibly good 4 card
+  suits
+- 2x 15--17 OPC
+- 18+ use power (takeout) double
+
+The *jump* overcalls are intermediate:
+    - ideally a singleton/void in the opponent's suit, maybe doubleton with a bit extra
+    - 2x ~15--17
+    - 3x ~18--20
+
+These jump bids are more constructive than your typical jump overcalls.
+
+- Ununsual 2N is 15--17, but could also be played mini-maxi style e.g. 7--11/18+
+- Sandwich 1N 12--17 5--5
+- Sandwich 2N 18+ 5--5
+- Sandwich cue opener 15--17 5--4
+- Sandwich RHO could be natural or 15--17 5--4 the other way (Skew Bids)
+- Michaels perhaps mini-maxi, or just 12--17 if at the 2 level, 15--17 if forcing 3 level bids
+
+*** Major Raises
+
+OPC often focuses on the value of shortages:
+
+- natural 2M/3M raises based on OPC (fit points, distributional fit points etc)
+- mini-splinters 13--15 OPC
+- full splinters 16+ OPC, no limit
+- 2N GF raise without a shortage. 2N responses show shortages and OPC count 12--14 (3x) / 15--17 (4x)
+
+What about hands that we would currently use an invite jump shift, such as 1H--3D showing a !d invite? The 2/1 bid is
+still GF. Seems we are left with the forcing 1N response when ~13--14 OPC with the !d invite
+
+** OPC Free Benefits?
+
+What can we use from OPC before moving to adopt the main parts of the OPC club system?
+
+Any NT bidding focussed auction can employ OPC methods of evaluating the hand without going too far wrong.
+
+Tips on the adjusted OPC value of hands in overcalling situations are fine.
+
+Where we have a clear idea of the OPC point ranges involved it should be easier to bid accurately when a fit has been
+found.
+
+*** Non-Free Changes
+
+Mini-splinters. These either require playing 2/1 bids as 10+ (lose all the 2/1 GF benefits), bidding 1N with any
+invitational single suiter (instead of using 3 level invite jump shifts), or possibly bidding a forcing NT with those
+hands.
+
+Forcing NT is 13+ in OPC club, which means the simple rebids 2x 12--14, 3x 15--17 work fine. That does not fit with 10+
+hands - back to the traditional issues with rebidding short minor suits, particularly with 5--3--3--2 hands. If forcing
+NT needs to be 13+ to be more bearable then constructive 2M raises are not possible (cannot bid 1N with bad raises),
+they need to be wider ranging.
+

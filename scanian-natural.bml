@@ -169,12 +169,14 @@
             3S = Invite 5+ card major
             3N = play suggestion, often 4--3--3--3
             4x = void, major slam try
+        2N = 16+ single 6+ suiter with 0--2 card support and stoppers for 3N OR 4 card support
         3C = 13--15, good minor often 7 cards (self-sufficient)
         3S = 13--15, 4 card support, some distribution
             3N = singleton ask (have distribution so not natural 3N)
                 step1 = no singleton
                 step2 = lowest
                 step3 = highest singleton
+        3S+ = (above 3D opening suit) 16+, void and support
     1S = balanced 6+ hcp no major OR 5+ !ds
     1N = 11--12 balanced, mild invite
     2C = 11+ 4 !cs, no good 4 card major

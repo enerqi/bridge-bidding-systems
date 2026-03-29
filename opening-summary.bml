@@ -20,15 +20,15 @@
   [1HS](#1C--1HS) 8+ hcp, 4+ card suit, unbal if 12+, maybe longer minor when 8--11
   [1N](#1C--1N) 8+ hcp, !c transfer, when 8--11 denies 1HS canapé, when 12+ 5--4 minors either way
   [2C](#1C--2C) 8+ hcp, !d transfer, when 8--11 denies 1HS canapé response
-  [2D](#1C--2D) 6 card !h weak two ~5--7 hcp OR balanced GF 10+--13 hcp no 5cM, when 12--13 maybe 4!hs/!ss
+  [2D](#1C--2D) balanced GF 10+--13 hcp no 5cM, when 12--13 maybe 4!hs/!ss
   [2H](#1C--2H) balanced GF, 14--15/19+ hcp, no 5cM
   [2S](#1C--2S) ~9--11 hcp invitational !cs + !ds, minors + any short major, does not want to play 2N
   [2N](#1C--2N) 16--18 hcp, natural maybe 5 card major, [2NT system on](#2NT Opening)
   3CD invitational ~7--9 hcp, good 6+ card minor, continue as if opened [3CD preempt](#3CD Openings)
-  3HS ~3--7 hcp, weak, continue as if opened [3HS preempt](#3HS Openings)
+  3HS ~3--7 hcp, weak not worth 4HS, continue as if opened [3HS preempt](#3HS Openings)
   [3N](#1C--3N) Any 6 card Solid AKQJ suit, no outside A/K, max one extra Q
   [4CD](#1C--4CD) 8 card !h/!s suit, exactly AQJ or KQJ, no outside A/K, max one outside Q
-  [4HS](#1C--4HS) 7 card Solid AKQJ suit, no outside A/K, max one extra Q
+  [4HS](#1C--4HS) 7 card preempt ~5--7 hcp, 1 keycard, 2 or 3 honours, AQ(J) / AJ, or KQ(J) by judgement
 
 
 1D = [11--13 flat; or 11--15 3 suited no 5 card major or both minors (5–-4 / 5-–5); or maximum 6+!d--5!h/!s](#1D Opening)
@@ -59,7 +59,7 @@
   2D = [GF 5+ !ds natural (passed hand 4-card Reverse Drury raise)](#1H--2D)
   2H = [single raise, constructive ~8--10 total points (passed hand weaker)](#1H--2H)
   2S = [6+!ss, ~6--9 hcp, semi-weak, no !h fit](#1H--2S)
-  2N = [limit+ raise](#1H--2N)
+  2N = [4+ card major raise, limit plus or GF (combined with mini-splinters)](#1H--2N)
   3C = [6+ !cs, invitational ~10--12, no major](#1H--3C)
   3D = [6+ !ds, invitational ~10--12, no major](#1H--3D)
   3H = [mixed raise, 4+ cards](#1H--3H)
@@ -79,7 +79,7 @@
   2D = [GF 5+ !ds natural (passed hand 4-card Reverse Drury raise)](#1S--2D)
   2H = [GF 5+ !hs natural (passed hand 9--10)](#1S--2H)
   2S = [single raise, constructive ~8--10 total points (passed hand weaker)](#1S--2S)
-  2N = [limit+ raise](#1S--2N)
+  2N = [4+ card major raise, limit plus or GF (combined with mini-splinters)](#1S--2N)
   3C = [6+ !cs, invitational ~10--12, no major](#1S--3C)
   3D = [6+ !ds, invitational ~10--12, no major](#1S--3D)
   3H = [6+ !hs, invitational ~10--12, no major support](#1S--3H)
