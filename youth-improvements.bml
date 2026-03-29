@@ -22,7 +22,7 @@ extra agreements, many of which can be found in this document.
   wastes space
 - 1H--1N--2m--2S impossible 2S bid is a 10+ hcp minor raise, not invitational only
 - Smolen and Splinters after 1N Stayman as suggested in [1NT Responses, Smolen and Others](#1NT Responses, Smolen and Others)
-- Smolen also played over after 2N then Stayman, which means that 2N--3S is used to show both minors. 2N then 4x are
+- Smolen also played after 2N then Stayman, which means that 2N--3S is used to show both minors. 2N then 4x are
   Lissabon slam tries (!cs shows !hs, !ds shows !ss, !hs shows !ds and !ss shows !ds). Not quite what is recommended in
   the [2N responses](#2N Responses) but effective
 - After the 1N--2C--2H Stayman response, 2S is a 4 card invite rather than the suggested 5 card invite
@@ -986,7 +986,7 @@ they may have to take over the auction and captain things. In those situations i
 exists.
 
 Some players have used 1M--3N as as 4--3--3--3 hand with 3 card support and ~13--15 hcp. This bid wastes too much space.
-Even the most boring 13--15 hcp hand with 2 card major support can make slam bidding overly difficult by bidding a
+Even the most boring 13--15 hcp hand with 3 card major support can make slam bidding overly difficult by bidding a
 natural 3N. It's worth playing [Two Tier Splinters](#Two Tier Splinters) instead or just not bidding 3N.
 
 
@@ -4632,6 +4632,450 @@ If you play Gazilli after 1H--1S then the responses focus on the !s support. The
   3H = ~14--16, good 6+ suit
   3S = intermediate raise, some minor singleton
 
+A slightly more artificial improvement includes 16+ !s raises, allowing direct void splinters and a lighter
+mini-splinter like 3S raise:
+
+1H--1S
+  2N = ~14--16, good 6+ !h suit + 3 card !s support OR 16+ 4+ card support
+    3C = relay artificial
+      3D = shortage, 16+ support hand
+      3H = !h hand
+      3S = NF ~16--17 invite
+      3N = extras support, waiting, e.g. 4--5--2--2
+      4C = shortage, 16+ support hand
+    3D = artificial, !ss agreed
+    3H = to play
+    3S = to play opposite ~14--16 !h hand
+    3N = to play, (semi)balanced
+    4CDH = singleton splinter, !ss agreed
+    4S = to play
+  3S = ~13--15 4 card support, some singleton (like a very good 2 raise)
+  4CD = void splinter, !ss agreed, ~14+
+
+* 2C Opening Includes 18--19 balanced
+
+** Problem
+
+Opening 1 of a suit does not clarify the strength (and shape) of an 18--19 (maybe 18--20/21) type strong balanced hand.
+Jump rebidding 2N to show 18--19 balanced has some inefficiencies.
+
+First, the opponents often have space to compete and make lead directing or interfering bids starting at the 1 level.
+Especially, if the strong balanced hand's partner (responder) passes then there may be no good rebid for opener - they
+may lack a stop and a takeout double could be misleading, but at the same time there's a need to bid with such a strong
+hand. Even when responder can bid, without a fit and without a stop in the opponent's suit it's hard for opener to bid
+if those opponents have preempted to the 3 level. In the case where there is room for a cue bid at the 2 level, is that
+support showing or stop asking or either?
+
+Second, the jump 2N rebid takes up a lot of space in itself - there's limited room for things we would do after a 1N rebid
+such as [Two-Way New Minor Forcing](#Two-Way New Minor Forcing xyNT). The [Transfers Over 2N Rebid](#Transfers Over 2N Rebid)
+maybe the best option with the limited space. Certainly there's no room to stay out of game whilst exploring
+more, e.g. 1!d--1!h--2N and holding 4!ss, unsure of whether to look for a !s fit or stay in 2N.
+
+When responder bids with light hands such as 4/5 hcp (due to the wide ranging 1 level openings) we may already be too
+high with no space to play a suit contract below the 3 level. In the face of competition we often bid to show strength,
+possibly going too high.
+
+** Solution
+
+One convention that addresses this is the Mexican 2D which specifically shows 18--19 balanced without a 5 card major.
+However, mixing 18--19 balanced into the artificial strong 2C opening is better for giving responder bidding space. The
+actual strong GF unbalanced 2C opening hands are very rare, so making those auctions a bit harder to bid is considered a
+good trade off.
+
+How does this fit with playing [Gazilli](#Gazilli - Rebidding Good Hands)? Using 2C to show 18--19 balanced should deny
+a 5 card major, therefore playing Gazilli you open 1H/1S and rebid an artificial 2C with 18--19 balanced. Alternatively,
+you can ignore this style and experiment with opening 5 card majors.
+
+*** 2C Adjusted
+
+Note, some may play 2C as 18--20, 18--21 or even 20--21. The logic is that a 2N opening takes up too much space making
+slam investigation difficult such that it's better to open 2N with stronger less frequent hands, e.g 2N as 21--22 or
+even 22--24. Those extra strong hands are also less likely to fail in the 2N contract if responder is very weak.
+
+Playing it as 20--21 means we haven't fixed the main problems with opening 18--19 balance 1 of a suit. Some partnerships
+may use something like [Transfer Walsh Over 1C Opening](#Transfer Walsh Over 1C Opening) and various relays to show
+those hands instead of a jump 2N rebid, but they don't make interference handling any better.
+
+Naturally there are multiple options for responses with different drawbacks.
+
+**** 2D relay, 2M signoff
+
+This ("Scanian") set of responses cannot transfer to a major to play at the 2 level. As opener is often not a GF hand,
+the responses consider what works best opposite the 18--19 balanced hand.
+
+2C = 18--19 balanced (optionally bad 20 etc.) OR GF hand
+    (Dbl)
+      P = weak
+      XX = GF
+          2N = natural, then system on
+      other = system on
+    (Dbl) = both majors
+        P = weak, OR penalty double next
+        XX = GF
+            2N = natural, then system on
+        other = system on, but if X is 5--5+ then 2M cue is stop ask
+    (overcall)
+        X = GF
+        Bid = GF, natural
+    (5x)
+        P = F1, opener doubles with balanced hand type
+        X = not interested in higher contracts
+  2D = relay, most hands
+    (Dbl)
+      P = balanced 18--19, no stop
+          XX = ask, continue with system on
+      XX = weak !ds, better NT hand
+          3D = majors ask
+          others = natural, 5+ suit
+      other = system on
+    2H = 18--19 balanced OR GF 5+ !hs
+      2S = relay, common bid, may still be weak if no 5+ card suit
+          2N = 18--19 balanced, 2N system follows
+          3C = GF, 6+ !hs, often single suited
+              3D = relay, either negative or no !h fit
+              3D = some fit, xx+, 5--8 hcp
+              3S = 5+ !ss, 8+ hcp or good suit with little less
+                  4CD = !h/!s slam try
+              3N = 5--8 hcp, balanced OR 4--1--4--4
+              4x = cue bid, 8+ hcp, often better than xx support
+          3D = GF, 5+ !hs, 4+ !ds
+          3H = GF, 5+ !hs, 4+ !cs
+              4D = 8+ with !h support
+          3S = GF, 5+ !hs, 4+ !ss
+          3N = NF, 5 !hs and 4 !ss
+          4CD = 10--11 playing trick, 5--5+
+          4H = 10 playing tricks, no void
+      2N = (1) 0--4, 5--5 minors OR (2) 3--4 hcp, 5--5 majors
+          3CD = pass/correct
+              3H = majors
+          3H = GF, 6+ !hs
+          3S/4CD = GF, !hs and the bid suit
+          3N = to play, strong with !hs
+      3CD = NF, 4--6 with (5)6+ card suit, to play opposite 18--19 if no good
+      3H = GF, 5--6 hcp, 5--5 majors, preferably most points in long suits
+      3S = GF, 5--7 hcp, 5--5 minors, preferably most points in long suits
+    2S = GF, 5+ !ss
+    2N = better NT hand, e.g. 22--23 hcp (if 2C 18--19 and 2N opening 20--21)
+    3CD = natural GF
+    3HS = GF, self-sufficient suit
+    3N = 9 tricks, solid !cs
+    4N = 10 tricks, solid !cs, 4 Aces
+  2HS = 0--4(5), 5+ major to play
+  2N = 0--4(5), 5+ minor to play
+    3C = pass/correct
+    4N = minor ask, GF hand
+  3CDH = transfer, 6 carders Hxxxxx or HHxxxx, no side ace/king. Will rebid 3N if AKxxxx.
+    4N = ask
+        5C = Q
+        5D = A or K
+        5H = KQ or AQ
+        5S = AK
+    5N = bid grand with extra length
+  3S = HHxxxx in !cs, not AK, no side ace/king
+  3N = AKQxxx(x) any suit, no other honour controls
+  4x = transfer, 7 carder AKJxxxx / AQJxxxx / KQJxxxx, no other honour controls
+    4N = RKB
+    5N = bid grand with extra length
+
+When playing the Multi 2D mentioned further below (which includes a !d GF), over the 2D relay 3CD can be more specific:
+
+2C--2D
+  3C = GF 5+ !cs, not 4!ds (maybe major side suit)
+      3D = relay, weak or 8+ balanced without support
+          3HS = 4 card major
+      3N = 5--7
+      4C = 8+, support
+      4x = 8+, splinter, support
+      4N = 5--7 good support, no aces
+      5C = very weak, unbalanced support though
+  3D = GF 5+ !cs with 4+ !ds
+
+**** 18--19 2N Rebid and Kokish
+
+Easy enough if already familiar with [Kokish](#2C Opening Responses with Kokish). Takes care of the stronger hands
+without changing the 2C responses much, but not very good at signing off over 18--19 balanced or finding the best slot
+over the 18--19 hand.
+
+2C
+  2D = waiting
+    2H = Kokish, GF 5+!hs or stronger balanced
+      2S = relay
+        2N = 22--23
+        3N = ... much stronger NT, depends if playing Multi 2D
+    2N = 18--19
+  other = natural positive / normal 2C response bidding
+
+**** Transfers, 2D maybe waiting
+
+2C
+  2D = 5+ !hs OR waiting
+    2H = 18--19 balanced
+      2S = artificial, puppet
+        2N = forced
+          P = sign off route
+          3C = stayman
+      2N = natural invite with 5!hs
+    2N = stronger NT hand
+    other = GF natural, break transfer
+  2H = !s transfer
+    2S = 18--19 balanced
+
+When playing transfer responses, the higher bids could be as per Scanian above (focusing on finding cheap slams opposite
+6 cards suits of varying quality), similar to your standard 2C strong opening responses, or bids to make NT contract /
+stop searching easier as over 1N opening:
+
+- 2S/2N minor transfers
+- 3C majors 5--5 GF (instead of 5 card Stayman)
+- 3D minors GF
+- 3HS shortage, 3 suiter type 5--4 minors as over 1N
+
+
+*** 2N Jump Rebid Meaning
+
+A jump 2N rebid is no longer 18--19 balanced, so what is it? Some options below.
+
+**** Over 1 minor -- 1 major
+
+Simplest option is:
+
+- 2N shows a 6 card minor jump rebid with 3 card major support
+- 3m jump rebid is natural with less than 3 card support
+
+More advanced can make 2N a two way bid that includes 16+ major support and flips the meaning of whether 2N or 3m shows
+3 card major support. By showing 16+ support some/all splinter rebids bids by opener are void splinters (powerful for
+finding cheap slams) and the 3M raise is like an unknown mini-splinter raise (4 cards + singleton).
+
+As an extra complexity (not shown below), if the 2N bid includes any good 16+ jump minor rebid hand, including those
+extra strong hands for which an artificial [Jump Reverse](#Jump Reverses) may help, then the splinters can definitely be
+void showing. However, we maybe getting the bidding too high with limited space within which to sort out all these
+hands. A difficulty with natural systems is what if we are extra strong with 3 card major support. Additonally, what if
+we are in that grey zone of around 14--15 hcp and 3 card major support, unsure if worth a jump rebid. This won't be
+solved here, but note that Matt Nilsland's Scanian system makes the cheapest reverse artificial (e.g. 1!c--1!s--2!d or
+1!d--1!h--2!s) showing 14+ with 3 card major support OR natural, which has positive knock on effects to the bidding
+structure (but requires more relays/complexities over the reverse). As a benefit a 3m jump rebid can show ~13--15 (often
+7 cards) and no major support, which can offer a cheap 3N.
+
+1C--1H
+  2S = natural GF
+  2N = 6 card minor jump rebid 0--2 card major support OR 16+ hcp 4+ card support
+    3C = NF weak
+      3H = NF 16+ 4 card support
+      3D/3S/3N = GF minor hand
+      4x = extra strong major slam try
+      4H = to play
+    3D = other minor, artificial GF relay
+      3H = 16--17 support
+      3S = minor hand without major support, typically stop concern
+      3N = minor hand, stop(s)
+      4C = extra strong, implies !s shortage
+      4D = shortage, major support
+    3H = 6+ major forcing
+    3S = natural 6--5 (opener will not have 4!ss)
+    3N = to play opposite minor hand
+    4C = slam try
+  3C = 6 card minor jump rebid AND 3 card major support
+    3H = to play
+    4C = !c slam try
+  3D = partnership discussion, e.g. minimum void splinter or see [Jump Reverses](#Jump Reverses) very strong 3C rebid
+  3H = ~13--15 4 card support, some singleton (like a very good 2 raise)
+  3S = void splinter
+  3N = discuss, usually limited but solid 7 trick minor hand with partial stops in the other two suits
+  4D = void splinter
+
+1D--1H
+  2S = natural GF
+  2N = 6 card minor jump rebid 0--2 card major support OR 16+ hcp 4+ card support
+    3C = other minor, artificial GF relay
+      3DS = minor hand without major support, typically stop concern
+      3H = 16--17 support
+      3N = minor hand, stops
+      4C = shortage, major support
+      4D = extra strong, implies !s shortage
+    3D = NF weak
+      3H = NF 16+ 4 card support
+      3S/3N = GF minor hand
+      4x = extra strong major slam try
+      4H = to play
+    3H = 6+ major forcing
+    3S = natural 6--5 (opener will not have 4!ss)
+    3N = to play opposite minor hand
+    4D = slam try
+  3C = natural GF
+  3D = 6 card minor jump rebid AND 3 card major support
+    3H = to play
+    4C = control bid !h slam try
+    4D = !d slam try
+  3H = ~13--15 4 card support, some singleton (like a very good 2 raise)
+  3S = void splinter, alternatively see [Jump Reverses](#Jump Reverses) very strong 3D rebid
+  3N = discuss, usually limited but solid 7 trick minor hand with partial stops in the other two suits
+  4C = void splinter
+  4D = usual, 6+!ds semi-solid or better, with 4!hs
+
+Similar structure for 1S responses.
+
+
+**** Over 1H--1S (these still open with 18--19 balanced!)
+
+We mostly keep any 5 card major out of the 2C opening (maybe allowed if it's terrible e.g. Jxxxx), therefore your 1
+major openings and jump 2N rebids may remain the same.
+
+To allow 2N to be used more efficiently look at using [Gazilli](#Gazilli - Rebidding Good Hands). When playing Gazilli
+after a 1H/1S opening we suggested:
+
+1H--1S
+  2N = ~14--16, good 6+ !h suit + 3 card !s support
+
+...or again, 2N can also be a two way rebid over 1H--1S so you don't have to waste space jump rebidding 4S on some
+hands:
+
+1H--1S
+  2N = ~14--16, good 6+ !h suit + 3 card !s support OR 16+ hcp 4+ card support
+
+**** Over 1N Response
+
+1D--1N
+  2N = 16+ minor single suiter
+    3D = NF minimum (not too bad, 1N no worse than ~6--7 hcp)
+  3D = ~13--15 good long !d suit (often 7 cards or 6 solid)
+
+Fairly simple as there no 0--2 v.s 3 card major support to worry about. We have enough bidding space to put all strong
+single suited minor rebid hands through a 2N rebid without making follow on bids difficult.
+
+Again, 1major openers rebid naturally or you use [Gazilli](#Gazilli - Rebidding Good Hands) and its suggested 2N rebids.
+
+
+*** 2D Multi?
+
+Especially when playing a wider balanced range, it may help to also play a Multi 2D opening - see [More Esoteric Preempts](#More Esoteric Preempts).
+
+A Multi 2D can include a limited selection of your GF hands, e.g. 2D opening is some sort of weak two major opening OR
+25+ balanced OR !d GF. If playing a 2N opening as 22--24 we know the 2C opening is ~18--21 balanced or some shapely GF
+hand.
+
+If playing transfer responses it's hard for opener to use Kokish (2!c--2!d--2!h as GF !hs or ~24/25+ balanced). A Multi
+can offload some extra strong GF NT hands.
+
+
+Here's the Scanian system's Multi version:
+
+2D = multi with weak major OR 25+ balanced OR !d GF
+    (Dbl)
+        P = !ds
+        XX = suit ask
+        2HS = NF, natural, long suit
+        3C = NF, natural
+        other = system on
+    (2HS)
+        X = penalty
+        2S = guessing this is our suit
+        2N = F1, invite plus
+        3CD = F1, natural
+        3H = guessing this is our suit
+        4CD = system on
+    (2N)
+        3C = !h invite, to play 3S or 3H/4H
+        3D = !s invite, to play 3H or 3S/4S
+        3HS = pass/correct
+    (higher)
+        X = penalty
+        3M = pass/correct
+        4CD = system on
+    2H = pass/correct
+        P = !hs
+        2S = !ss
+            2N = F1, invite plus, natural rebids
+            other = NF, natural
+        2N = GF, 25+ (semi)balanced
+        3C = GF, 5+ !ds, may have 4 card major
+            3D relay, weak or balanced
+                3HS = 4 card major
+            3HS = 5+ major, some strength
+            3N = 5--7 hcp
+            4D = 8+, support
+            4x = 8!, splinter, support
+            4N = 5--7 good support, no aces
+            5D = very weak, but unbalanced
+        3D = GF, 5+ !ds, 4+ !cs
+        3H = GF, 1--4--4--4
+        3S = GF, 4--1--4--4
+        3N = solid !ds, 9 PT
+        4N = solid !ds, 10 PT, ALL aces
+    2S = NF, invite plus if opener has !hs
+        2N = weak hand, !hs
+            3CD = F1, natural !ss + a minor
+            3H = invite
+            3S = NF, natural
+        3N = 25+ balanced
+        other = as over 2D--2H
+    2N = F1, ask
+        (Dbl)
+            P = !hs
+                XX = to play
+            XX = !ss
+            others = system on
+        (3CD)
+            P = !hs
+            X = !ss
+            3HS = good weak two, short in overcalled suit
+        (3HS)
+            X = penalty
+            P = other major
+            3S/4H = maximum, shortness in overcalled suit
+        3C = !hs
+            3D = relay, when NVUL not GF
+                3H = minimum
+                    3S = shortness ask
+                    3S = extras, accepts game try
+                    3N = maximum !s shortage
+                    4C = maximum !c shortage
+                    4D = maximum !d shortage
+            3H = NF, invitational opposite 6--9 (upper range)
+                3N = two top honours
+        3D = !ss
+            3H = relay, when NVUL not GF
+                3S = minimum
+                    3N = natural
+                3N = extras, accepts game try
+                4CDH = maximum, shortage
+            3S = NF, invitational opposite 6--9 (upper range)
+                3N = two top honours
+        3HS = 4 card major, either 4--4--4--1 with short other major, OR 5+ !ds
+        3N = 25+ hcp, unlikely
+        4CD = natural, strong !d hand
+    3C = invite, 5+ !hs
+        3D = waiting, no support
+        3H = some support, Hx+
+        3S = good !ss, no !h fit
+    3D = invite, some 6+ major
+        3M/4M = pass correct
+    3HS = pass/correct
+    4C = requests transfer
+        4D = !h suit
+        4H = !s suit
+    4D = suit ask, no transfer
+    4HS = to play, natural
+
+A simpler variation is to include some middling strength NT hand in the Multi as the only strong option, e.g. 22--23/24.
+At that point NT bids are still needed to show 25+ after a 2C opening.
+
+For simpler responses to the 2N asking bid whilst transferring the weak two:
+
+2D--2N
+  3C = some max weak two
+    3D = tell me, paradox style
+      3H = !ss
+      3S = !hs
+  3D = bad with !hs
+  3H = bad with !ss
+  3N = strong NT hand
+
+*** Downsides?
+
+- this entire section being a lot of reading
+- no real way to play a two level 4--4 major fit
+- transfer breaking to 1N over a [1C opening with transfer Walsh](#Transfer Walsh Over 1C Opening) structure to show
+  18--19 NT hands keeps the auction lower (but fails to shut out the opponents)
+- you may decide it needs the help of a Multi 2D (more system to learn) to handle some of the really strong hands
 
 * More Esoteric Preempts
 
@@ -4652,8 +5096,9 @@ The Multi 2D gives us an extra bid to help us preempt more without making partne
 constructive bidding. Defending the 2D bid can be difficult.
 
 On the downside, some partnerships may include constructive strong hands in the Multi 2D opening bid (not a weak only bid
-then), which adds more complexity and won't be looked at here. Adding constructive bids reduces the pressure of the 2D
-bid (a weak only multi could be passed by responder with long !ds).
+then), which adds more complexity and won't be looked at here - see the previous
+[2C Opening Includes 18--19 balanced](#2C Opening Includes 18--19 balanced) section in part. Adding constructive bids
+reduces the pressure of the 2D bid (a weak only multi could be passed by responder with long !ds).
 
 Additionally, beware that the weak only Multi 2D might not be allowed in lower level bridge competitions (it can be hard to defend against without practice)
 
