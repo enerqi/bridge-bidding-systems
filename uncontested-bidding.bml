@@ -268,14 +268,14 @@ Remember any maximum 5--5+ minors hand rebids 3C over 1M, so a shapely 5--5+ is 
 *** 1D--1H--2H
 
 2H = normal/weaker !h raise, often flat 11--13, maybe 3 !hs if have singleton
-    2S = short suit game try
+    2S = GF natural, often double fit slam hunting
     2N = natural, 4 !hs, NF invitational
         P = minimum, probably 3 card support
         new = maximum, 3 card support
         3H = minimum, 4 card support
         3S/4CD = splinter
         4H = maximum, 4 card support
-    3CD = short suit game try
+    3CD = GF natural, maybe longer 5 card minor, often double fit slam hunting
     3H = 5+ !hs, NF invitational
     3S = 5+ !hs, splinter
     3N = natural, 4!hs, choice of game
@@ -462,7 +462,7 @@ so 15 hcp) may have to open 1C to show their strength, potentially without a sto
         3S = minimum, 4 card support
         4CDH = splinter
         4S = maximum, 4 card support
-    3CDH = short suit game try
+    3CDH = GF natural, maybe longer 5 card minor, often double fit slam hunting
     3S = 5+ !ss, NF invitational
     3N = natural, 4!ss
     4CDH = 5+ !ss, splinter
@@ -931,6 +931,17 @@ Invitational plus.
 1D--(any)--any--(2C)
     2N = good hand, !ds and !c stop (similar to a natural 3!d bid)
 
+**** (optional) 1D--(P)--1S--(X) Interference
+
+1D--(P)--1S--(X) = takeout
+    XX = support, priority
+    1N = 4+!ds, 5+!cs, trying to transfer to partner and put doubler on lead
+    2C = 5+!ds, 4+!cs
+    2D = system on, still space and only 1 opponent bid so far
+
+We know partner does not have !hs unless GF, no reverse flannery was used. Is stealing 1N that important
+if they often bid 2H? Vulnerability dependent perhaps.
+
 **** Systemic Opener Rebids On or Off?
 
 Systemic rebids meaning major support bids. Responder must show a major somehow, after which, when is 2D artificial or
@@ -1084,7 +1095,7 @@ By responder example:
   1N = [non-forcing, ~5--11 hcp](#1H--1N)
   2C = [GF, nebulous natural or balanced 2+ !cs (passed hand 3-card Reverse Drury raise)](#1H--2C)
   2D = [GF 5+ !ds natural (passed hand 4-card Reverse Drury raise)](#1H--2D)
-  2H = [single raise, constructive ~8--10 total points (passed hand weaker)](#1H--2H)
+  2H = [single raise, constructive ~7--10 total points (passed hand weaker)](#1H--2H)
   2S = [6+!ss, ~6--9 hcp, semi-weak, no !h fit](#1H--2S)
   2N = [4+ card major raise, limit plus or GF (combined with mini-splinters)](#1H--2N)
   3C = [6+ !cs, invitational ~10--12, no major](#1H--3C)
@@ -1361,7 +1372,9 @@ Maximum, 6 loser, 6(7)--4 with a minor. The reasonable alternative is a good max
 
 Single raise, 3 (often) or 4 cards
 
-- ~8--10 total points
+- ~7--10 total points e.g 5--9 hcp 4 cards, 7--9 3 card support
+- maybe 5+ hcp with 4 card support and doubleton or better
+- 4--3--3--3 and 4 card support often bids 1N if too weak
 - 2M is constructive (only 1N could be gambling semi-preemptive extra weak on occasion)
 - 2M by passed hands is *unconstructive* (use drury for better hands!)
 - also use the "semi" forcing 1NT for the 3 card game invite or bad raises
@@ -2158,7 +2171,7 @@ at the 3 level.
   2C = [GF, nebulous natural or balanced 2+ !cs (passed hand 3-card Reverse Drury raise)](#1S--2C)
   2D = [GF 5+ !ds natural (passed hand 4-card Reverse Drury raise)](#1S--2D)
   2H = [GF 5+ !hs natural (passed hand 9--10)](#1S--2H)
-  2S = [single raise, constructive ~8--10 total points (passed hand weaker)](#1S--2S)
+  2S = [single raise, constructive ~7--10 total points (passed hand weaker)](#1S--2S)
   2N = [4+ card major raise, limit plus or GF (combined with mini-splinters)](#1S--2N)
   3C = [6+ !cs, invitational ~10--12, no major](#1S--3C)
   3D = [6+ !ds, invitational ~10--12, no major](#1S--3D)
@@ -2507,7 +2520,9 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
 
 Single raise, 3 (often) or 4 cards
 
-- ~8--10 total points
+- ~7--10 total points e.g 5--9 hcp 4 cards, 7--9 3 card support
+- maybe 5+ hcp with 4 card support and doubleton or better
+- 4--3--3--3 and 4 card support often bids 1N if too weak
 - 2M is constructive (only 1N could be gambling semi-preemptive extra weak on occasion)
 - 2M by passed hands is *unconstructive* (use drury for better hands!)
 - also use the "semi" forcing 1NT for the 3 card game invite or bad raises
