@@ -1704,15 +1704,20 @@ More announcing our balanced hands, with potential for penalty:
 
 * 2CD Intermediate Openings with 5--4 Minors
 
-We prefer the 2C and 2D opening bids that show a 6 card minor. The common precision style with 5--4 and possibly a 4
-card major is awkward but there's another rare style which allows (3--1)(5--4) openings, so a 3 card major, major
-singleton plus 5--4 in the minors whilst always denying a 4 card major (even with a 6 card minor).
+We prefer the 2C and 2D opening bids that show a 6 card minor. A 6 carder makes speculative game tries in the 8--10 hcp
+range safer and there's chances to run a 6 card suit in a tight 3N. Preempting is easier aswell. The common precision
+style with 5--4 and possibly a 4 card major is awkward but there's another rare style which allows (3--1)(5--4)
+openings, so a 3 card major, major singleton plus 5--4 in the minors whilst always denying a 4 card major (even with a 6
+card minor).
 
 5--4--3--1 is common (3rd most likely hand shape at 12.9%) and when we deny a 4 card major it is also
 preemptive. 1N may still have been the best contract at matchpoints, but we may also shut the opponents out of a major.
 
+Aubey Ebenius 2C + 2D openings show 6 cards OR 5--4 minors without a 4 card major. A 5--4--2--2 may still be bid as
+balanced though. It maybe unclear whether to stay in the opened minor or correct to the other minor.
+
 Denying a 4 card major in the 2CD opening puts more load on the 1D opening, so using the 2N opening as intermediate with
-5--5+ minors seems prudent. 2N minors opening loses the probably more common natural 2N opening and there's a lot of
+5--5+ minors seems prudent. 2N minors opening loses the more common natural 2N opening and there's a lot of
 benefit to quickly showing shape and points with balanced hands and not giving opponents space to overcall, even if
 there's always examples where going slow with balanced hands works out better for tight slam finding. Maybe there's a
 way to allow a 4 card major with a 6 card minor 2CD opening to reduce the load on 1D? If that's true though, responder
@@ -2078,9 +2083,9 @@ Various example defenses:
 Hands looking to takeout a later known major usually pass to start. 4th position double usually played as takeout over
 2M.
 
-X = 13--15/19+ values
-2HS = natural
-jump = strong overcall ~16--18
+- X = 13--15/19+ values
+- 2HS = natural
+- jump = strong overcall ~16--18
 
 (2D)--P--(2M)
     Dbl = takeout (not values in 4th)
@@ -2093,29 +2098,43 @@ majors or just one trump stack.
 
 Loses a natural 2H overcall.
 
-X = takeout, short !ss
-2H = takeout, short !hs
-2S = natural
+- X = takeout, short !ss
+- 2H = takeout, short !hs
+- 2S = natural
 
 ** Multi v Multi
 
 No immediate bid for takeout or some flat hands with values. Reopening takeout is possible. No natural 2M overcall.
 
-X = some major
-2H = !cs
-2S = !ds
-3CD = weak natural
+- X = some major
+- 2H = !cs
+- 2S = !ds
+- 3CD = weak natural
 
 ** Multi vs Multi with Major Takeouts
 
-X = some major
-2HS = takeout, have other major (can use like a power double)
+- X = some major
+- 2HS = takeout, have other major (can use like a power double)
 
 ** Ambiguous Majors
 
-X = !hs OR takeout of !hs (not !hs)
-2H = !ss OR takeout of !ss (not !ss)
-2S = minors (just one idea)
+- X = !hs OR takeout of !hs (not !hs)
+- 2H = !ss OR takeout of !ss (not !ss)
+- 2S = minors (just one idea)
+
+** Transfer like Overcalls
+
+- X = decent weak no trump OR catchall strong
+- 2H = !s overcall OR strong balanced (would bid at least 2NT over 2M)
+- 2S = !cs, no 4cM
+- 2N = !ds, no 4cM
+- 3C = !cs + 4M
+- 3D = !ds + 4M
+- 3H = natural
+- 3S = strong natural
+- 3N = both minors, NF
+- 4m = NF leaping Michaels
+- 4M = to play, not extra strong
 
 
 * 2H Both Majors

@@ -53,3 +53,13 @@ run-scratch TCL_SCRIPT:
 # serve quiz app in dev mode
 quiz:
     uv run panel serve quiz_app.py --dev
+
+# copy quiz app files to deployment folder
+deploy-quiz:
+    #!nu
+    let dest = 'X:/quiz-u16/'
+    glob '*.bml' | each {|file| cp $file $dest }
+    glob '*.py' | each {|file| cp $file $dest }
+    glob '*.jpeg' | each {|file| cp $file $dest }
+    cp pyproject.toml $dest
+    cp uv.lock $dest
