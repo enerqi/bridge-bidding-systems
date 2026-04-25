@@ -37,17 +37,19 @@ set shell := ["nu", "-c"]
 
 # alias for typing `just w`
 alias w := watch
+
+# bml doc creation via doit when relevant files change
 watch:
     watchexec --no-global-ignore --exts bml,css uv run doit
 
+# regenerate all deal simulations. Output html to web server
 regen:
     cd {{justfile_directory()}}/deal-simulations; uv run regen-html-deals.py w:/deals/
 
-
-# TCL_SCRIPT is a script arg.
-# {{}} is used to execute just expressions, substitute variables - https://just.systems/man/en/chapter_28.html
+# generate 48 deals for TCL_SCRIPT. Output to current dir as html.
 run-scratch TCL_SCRIPT:
     cd {{justfile_directory()}}/deal-simulations; uv run run-deal.py --deal-count 48 --deal-script-path {{justfile_directory()}}/deal-simulations/{{TCL_SCRIPT}} --html-output-path {{justfile_directory()}}/{{TCL_SCRIPT}}.html
 
+# serve quiz app in dev mode
 quiz:
     uv run panel serve quiz_app.py --dev

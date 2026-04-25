@@ -231,14 +231,15 @@ class Score(param.Parameterized):
             pn.Row(self.points_indicator),
         )
 
+    def current_percentage(self) -> int:
+        if self.questions_attempted > 0:
+            return round((self.questions_correct / self.questions_attempted) * 100)
+        return 0
+
     @tracer.start_as_current_span("Score.view")
     @param.depends("questions_correct", "questions_attempted", "total_points")
     def view(self):
-        if self.questions_attempted > 0:
-            value = (self.questions_correct / self.questions_attempted) * 100
-            percentage = round(value)
-        else:
-            percentage = 0
+        percentage = self.current_percentage()
         score_text = f"__Score__: {self.questions_correct} / {self.questions_attempted}"
 
         points_text = f"__Points__: {self.total_points}"
@@ -516,7 +517,15 @@ async def on_answer_click(event):  # event handlers can be async with no extra w
         await asyncio.sleep(1.0)
 
         if score.total_points >= Score.POINTS_GOAL:
-            quiz_completion_time.rx.value = time.time()
+            current_percentage = score.current_percentage()
+            if (not target_percentage_checkbox.value) or current_percentage >= target_percentage_slider.value:
+                quiz_completion_time.rx.value = time.time()
+            else:
+                pn.state.notifications.warning(
+                    f"Current score {current_percentage}%, target score {target_percentage_slider.value}%",
+                    duration=4000,
+                )
+                await asyncio.sleep(0.5)
 
     else:
         with hold():
@@ -755,6 +764,27 @@ skips_left = pn.rx(3)
 skip_button = pn.widgets.Button(name="Skip", on_click=skip_question_handler, button_type="warning")
 
 ladder_mode_checkbox = pn.widgets.Checkbox(name="Ladder mode (can lose points)", value=True)
+target_percentage_checkbox = pn.widgets.Checkbox(name="Target percentage required", value=False)
+target_percentage_slider = pn.widgets.IntSlider(name="Target %", start=70, end=90, step=10, value=70, width=150)
+target_percentage_slider.disabled = True
+
+
+def ladder_mode_toggle(event):
+    reset_skips_and_scoring_and_timer_and_question()
+
+
+def target_percentage_toggle(event):
+    target_percentage_slider.disabled = not event.new
+    reset_skips_and_scoring_and_timer_and_question()
+
+
+def target_percentage_change(event):
+    reset_skips_and_scoring_and_timer_and_question()
+
+
+ladder_mode_checkbox.param.watch(ladder_mode_toggle, "value")
+target_percentage_checkbox.param.watch(target_percentage_toggle, "value")
+target_percentage_slider.param.watch(target_percentage_change, "value_throttled")
 
 
 @pn.depends(skips_left)
@@ -798,7 +828,7 @@ restart_button = pn.widgets.Button(name="Restart", on_click=restart_handler, but
 
 
 difficulty_slider = pn.widgets.IntSlider(
-    name="Difficulty (restarts quiz!)",
+    name="Difficulty",
     start=4,
     end=MAX_DIFFICULTY,
     step=1,
@@ -837,6 +867,9 @@ side_section = [
         pn.Column(
             difficulty_slider,
             ladder_mode_checkbox,
+            target_percentage_checkbox,
+            target_percentage_slider,
+            pn.pane.Markdown("_Changes restart the quiz._", disable_anchors=True),
             restart_button,
         ),
         styles=side_section_card_style,
