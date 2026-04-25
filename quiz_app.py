@@ -6,18 +6,18 @@
 # ]
 # ///
 import asyncio
-from dataclasses import dataclass
 import dataclasses
 import functools
-from pprint import pprint
 import re
 import sys
 import time
+from dataclasses import dataclass
+from pprint import pprint
 
-from opentelemetry import trace
 import panel as pn
-from panel.io import hold
 import param
+from opentelemetry import trace
+from panel.io import hold
 
 import quiz
 
@@ -305,6 +305,7 @@ class TimeBonus(param.Parameterized):
 # https://panel.holoviz.org/how_to/param/custom.htmls
 score = Score()
 time_bonus = TimeBonus()
+last_correct_question_points = 0
 
 
 def reset_time_bonus_by_difficulty(difficulty: int = INITIAL_DIFFICULTY):
@@ -466,6 +467,7 @@ async def on_answer_click(event):  # event handlers can be async with no extra w
     global score
     global question
     global quiz_completion_time
+    global last_correct_question_points
     clicked_candidate = event.obj.candidate  # custom attribute added
 
     # disable buttons, we will refresh the buttons after a delay
@@ -478,6 +480,7 @@ async def on_answer_click(event):  # event handlers can be async with no extra w
     if clicked_candidate == question.rx.value.answer_candidate:
         score.streak += 1
         points_increase = points(question.rx.value, score.streak, time_bonus.percent_bonus)
+        last_correct_question_points = sum(dataclasses.astuple(points_increase))
         pn.state.notifications.success("Correct!", duration=3000)
         await asyncio.sleep(0.5)
 
@@ -519,7 +522,13 @@ async def on_answer_click(event):  # event handlers can be async with no extra w
         with hold():
             score.streak = 0
             score.questions_attempted += 1
+            score_was_non_zero = score.total_points > 0
+            if ladder_mode_checkbox.value:
+                score.total_points = max(score.total_points - last_correct_question_points, 0)
         pretty_answer = emoji_text_auction(question.rx.value.answer_candidate)
+        if ladder_mode_checkbox.value and last_correct_question_points > 0 and score_was_non_zero:
+            pn.state.notifications.warning(f"Ladder mode: -{last_correct_question_points} points", duration=4000)
+            await asyncio.sleep(0.5)
         pn.state.notifications.warning(f"Answer: {pretty_answer}", duration=4000)
 
         await asyncio.sleep(4.2)
@@ -635,6 +644,7 @@ def question_view(_view_model_cache={}):
         return ""
 
     if not _view_model_cache:
+
         def make_blank_button():
             return pn.widgets.Button(
                 name="",
@@ -660,7 +670,6 @@ def question_view(_view_model_cache={}):
         _view_model_cache["flexbox"] = pn.FlexBox(justify_content="space-evenly")
         _view_model_cache["buttons_pool"] = blank_buttons
 
-
     buttons = _view_model_cache["buttons_pool"]
     for i, candidate in enumerate(question.rx.value.candidates):
         button = buttons[i]
@@ -669,7 +678,7 @@ def question_view(_view_model_cache={}):
         pretty_auction = emoji_text_auction(candidate)
         button.name = pretty_auction
 
-    active_buttons = buttons[:len(question.rx.value.candidates)]
+    active_buttons = buttons[: len(question.rx.value.candidates)]
     ui_context.buttons = active_buttons
 
     flex_pane = _view_model_cache["flexbox"]
@@ -745,6 +754,8 @@ def skip_question_handler(event):
 skips_left = pn.rx(3)
 skip_button = pn.widgets.Button(name="Skip", on_click=skip_question_handler, button_type="warning")
 
+ladder_mode_checkbox = pn.widgets.Checkbox(name="Ladder mode (can lose points)", value=True)
+
 
 @pn.depends(skips_left)
 def skips_left_view():
@@ -756,6 +767,7 @@ def reset_skips_and_scoring_and_timer_and_question():
     global skip_button
     global quiz_start_time_seconds
     global quiz_completion_time
+    global last_correct_question_points
 
     with hold():
         skips_left.rx.value = 3
@@ -765,6 +777,7 @@ def reset_skips_and_scoring_and_timer_and_question():
         score.streak = 0
         score.total_points = 0
         score.available_milestones = list(reversed(Score.SCORE_MILESTONES))
+        last_correct_question_points = 0
         quiz_start_time_seconds = time.time()
         quiz_completion_time.rx.value = None
 
@@ -823,6 +836,7 @@ side_section = [
     pn.Row(
         pn.Column(
             difficulty_slider,
+            ladder_mode_checkbox,
             restart_button,
         ),
         styles=side_section_card_style,

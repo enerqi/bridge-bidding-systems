@@ -1037,7 +1037,11 @@ Compared to the [1D opening interference](#1D interference):
         2S = 4+ card support, weak NT
     1S = transfer to NT, no 4 card major
     1N = transfer, 5+ !cs, 8+ hcp, GF v.s. strong hand
-    2CDHS = weak, ~5--7, sound weak two
+    2CD = weak, ~5--7, sound weak two
+    2HS = weak, ~5--7, sound weak two
+        2N = Good-Bad, strong support or weaker other suit
+        3CD = stronger natural bid
+        raise = competitive
     2N = 5--5 minors, GF versus strong hand
     3CDHS = preempt, 7 cards, points in suit
 
@@ -1070,6 +1074,9 @@ Compared to the [1D opening interference](#1D interference):
         3HS = ~16--19 6+ suit
     2D = majors 5--5 (as opponents open 1!d defence)
     2HS = ~5--7 hcp, sound weak two
+        2N = Good-Bad, strong support or weaker other suit
+        3CD = stronger natural bid
+        raise = competitive
     2N = !hs + !cs 5--5 (as opponents open 1!d defence)
     3D = majors GF stronger (as opponents open 1!d defence)
     3CHS = preempt

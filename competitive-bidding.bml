@@ -31,12 +31,13 @@
   2N better Michaels (6--5 usually) unless there are three unbid suits then unusual
 - when opponents bid (1 Major)--(1NT) cue is *Michaels*
 - when opponents bid (1 minor)--(1NT), special case, 2C is (5--4) majors, 2D is 5--5 majors regardless of minor opened
+- when opponents bid (1x)--P--(1Y) sandwich both X is 4--5+, 1N 5--4+ other, 2x sound *Michaels*, 2N better *Michaels*, 3x always strong Majors
 - when opponents have 2 suits and partner doubles X: advancer's cue when sitting OVER is natural, advancer's cue sitting
   UNDER is a general force
-- when balancing, e.g. (1!d)--P--(P)--2D, a cue bid is *Michaels*, never natural over prepared minor as sitting under
-- when a passed hand reopens over 2!s, (1!s)--P--(2!s)--P--(P)--2N, this special case is 5--4+ minors (would double with !hs)
 - over opponents bid (1!h)--P--(1!s), special case, 2H cue is !s + minor Michaels (not both minors), 2S is still natural cue sitting over
 - over opponents bid (1!s)--P--(2!s), special case, 2N is 5+!hs with 4+ minor
+- when balancing cue, e.g. (1!d)--P--(P)--2D, a cue bid is *Michaels*, never natural over prepared minor as sitting under
+- when a passed hand reopens over 2!s, (1!s)--P--(2!s)--P--(P)--2N, this special case is 5--4+ minors (would double with !hs)
 
 *** Minimum/Equal Level Conversion and Takeout Doubles
 
@@ -95,8 +96,8 @@ Hand examples:
 **** After minor openings:
 
 - cue of a short 2+ minor is natural
-- cue of a natural or prepared 3+ minor is a non-strong majors hand
-- over a prepared/short minor bid 1S with both majors (unless strong majors)
+- cue of a natural or prepared 3+ minor is a Michaels non-strong majors hand
+- over a short minor bid 1S with both majors (unless strong majors)
 - jump cue is strong majors
 - simple overcall with !s + other minor (or both majors against a prepared/short minor)
 - weak (3 level VUL intermediate) jumps otherwise
@@ -112,8 +113,8 @@ Hand examples:
 
 ** We Open they Interfere Summary
 
-- 2 level simple bids are natural, F1 freebids, 8+ good suit or typical 9/10+, less than invite AFTER SUIT
-- 1N/2x simple bids are transfers AFTER TAKEOUT
+- 2 level simple bids are natural, F1 freebids, 8+ good suit or typical 9/10+, less than invite AFTER SUIT O/C
+- 1N/2x simple bids are transfers AFTER TAKEOUT X
 - 2 level new suit jumps are weak after suit or takeout
 - a 1-under (3M--1) jump is mixed for a major
 - other jumps are [priority fit or splinter](#Fit Jumps and Splinters in Competition)
@@ -177,7 +178,7 @@ Adjust / downgrade:
 - slow values in opponent's suit
 - slow values in short side suits (usually harder to setup)
 - (partial) misfit indications
-- wasted values sat over by opponents
+- wasted values sat under opponents
 
 Upgrade influences:
 
@@ -204,39 +205,9 @@ The primary situation is 1HS--2N, but there's other situations. In summary:
 Continuations in general:
 
 - When 4th hand comes in high unsupported, then always *double* is *penalty*
+- Pass *no shortage* in their suit
 - 3N by opener is always artificial when the opponents come in high after we have a fit
 - See examples in [1HS--2NT Invite Plus Interference](#2NT Invite Plus Interference)
-
-**** 3 level rebid available
-
-1H--(P)--2N--(3D)
-    X = penalty
-    P = minimum, no control/shortness
-    3H = suit rebid, minimum often 6 cards, !d shortness
-    3S = extras, cue cooperative, GF, but not above game, unknown if !d control
-    4C = extras, cue cooperative, GF, but not above game, unknown if !d control
-    3N = extras, !d honour control, serious 3N
-    4H = better hand, !d shortness
-
-**** 3N bid available
-
-1H--(P)--2N--(3S)
-    X = penalty
-    3N = extras, !s control, serious 3N, unknown if shortage or honour control
-    4CD = extras, cue cooperative, GF, but not above game, unknown if !s control
-    4H = minimum, !s control
-    P = no !s control
-
-**** No 3N bid available
-
-Pass used to show a control in the overcalled suit.
-
-1H--(P)--2N--(4D)
-    X = good values, penalty
-    P = no control/shortness
-        X = extra strength ask (last train like), slam try
-    4H = !d control implication, no control, assumes we will always compete to game
-
 
 ** HCR cue bids and 2N Raise in Competition
 
@@ -309,6 +280,7 @@ When is a jump a fit jump?
 Always on, no complexity
 
 - we simple overcall anything (1x, 1N, multi, weak two etc.), regardless of whether 3rd hands bids, regardless if advancer is 4th or 6th position
+- the jump isn't needed to show an invitational hand, which often necessitates jumping to 4x for the fit jump
 
 *** Fit Jumps By Responder When We Open
 
@@ -411,14 +383,6 @@ E.g. (1C)--1!s--(P)--2!h--(X)
 - XX shows extra values, NOT LIGHT overcall, but not want to go higher if partner is minimum
 - 2S extra length
 
-** Opener's Second Round Double - After Partner's 2 Level WJS
-
-Double shows support and extras in shape or HCP
-
-1D--(P)--2H--(2S)
-    X = extras, support
-    3H = competitive
-
 ** Opener's Renegative Double for Both Majors
 
 1D--(2C)--X--(3C)
@@ -478,9 +442,9 @@ Main examples:
 
 - 1C--(X)--2HS weak 5--7
 - 1C--(1D)--2HS weak 5--7
-- 1DHS--(overcall/X)--then weak jump shift
 - 2C--(any)--2HS NF
 - 2D--(any)--2HS NF
+- iff playing weak jump shifts in competition: 1DHS--(overcall/X)--WJS
 
 2N = strong support or weaker other suit
 3CD = stronger natural bid
@@ -565,11 +529,14 @@ Examples:
 
 * Doubles
 
-- Is it a standard *negative* double situation? Negative X played to 4!h (but more values showing Thrump style over
-  double jump to 3!d!h!s). Promising the unbid major(s) or ability to handle the auction based on partner's next bid. Used
-  to start a *stop ask* (Directional Asking Bid).
+RE-READ NEXT
+
+- Is it a standard *negative* double situation? Negative X played to 4!h (but also Thrump style or Relay Lebensohl over
+  some double jump 3x bids). Promising the unbid major(s) or ability to handle the auction based on partner's next bid.
+  Maybe used to start a *stop ask*.
 - Is it a standard maximal *competitive* double situation? Competitive X played to 3!s. Double of opponents' raised
-  suit, both sides have a fit and game is possible, e.g 1H--(2D)--2H--(3D)--X
+  suit, both sides have a fit and game is possible, e.g 1H--(2D)--2H--(3D)--X. Note we have Good-Bad 2N if 4th chimes in
+  with 2N by themselves
 - Is it a standard [*responsive* double](#Responsive Doubles Style) situation showing the other two suits? Responsive X
   played to 3!s. Partner does takeout X or overcalls of opener and then we X the opponents' raise (OBAR). Their raise
   can be artificial.
@@ -608,13 +575,13 @@ Blanket rules apply up to 2!s - if not sure above 2!s assume penalty (others pla
 
 1. It's defined above as one of *Negative, Competitive or Responsive*
 2. partner responded 1N(except 1!d--1N--(2x))/2C/2D, doubler sitting over. Compare when open or overcall -- [Overcalls of our NT](#Overcalls of our NT) first double is takeout, second penalty.
-3. our side bid and raised a suit. So, 1H--(P)--2H--(2S)--X should be penalty, whereas 1H--(1S)--2H--(2S)--X is competitive.
+3. our side bid and raised a suit. So, 1H--(P)--2H--(2S)--X should be penalty (2N is Good-Bad), whereas 1H--(1S)--2H--(2S)--X is competitive.
 4. our side redoubled
 5. our side made a penalty double or penalty pass
 6. the bid doubled was artificial
 7. partner preempts
 8. our side are in a GF (1!h/!s + 2/1, 1!c--1N/2!s)
-9. our side invites 3N (1!c--2!s, 1!c--2N)
+9. our side invites 3N (1!c--2!s)
 10. our side limits hand with no major (1!c--1N/2!c is no major OR maybe major but already in a GF)
 11. a passed hand doubles their solo rebid, (1H)--P--(P)--X--(2H)--X
 12. our side does a takeout double then doubles a 2 level+ different suit or 2NT+ (so not a responsive double)
@@ -633,7 +600,7 @@ partner should play NT (we have Axx they Qx)
 
 ** Relay Lebensohl Doubles
 
-- After we open or overcall, there are many times the opponents raise the bidding to the 3 level *before partner responds* (maybe be a good passed hand)
+- After we open or overcall, there are many times the opponents raise the bidding to the 3 level *before partner responds* (maybe a good passed hand)
 - Played when we have shown a suit, so opened 1HS, overcalled or takeout double
 - Double is a relay to the next suit, instead of being a "responsive" double or negative double, with competitive hands
 - Double of most 3 level bids, anything that's not specifically shortage showing, so fit jumps, new suits,
@@ -682,10 +649,8 @@ Given that a 1C and 1D opening can be ambiguous, the relay double can be extende
 - 1C--(1H)--X--(3H) or any other 3 raise
 - 1C--(2H)--X--(3H)
 - 1C--(1S)--X--(3S)  (mixed thrump / competitive double over 3!s)
-- 1D--(1H)--1S--(3H)
-- 1D--(2H)--X--(3H)
 
-Responder has shown a suit and the opponents have raised it to the 3 level. Given that 1C (and less so 1D) are quite
+Responder has shown a suit and the opponents have raised it to the 3 level. Given that 1C (and less so 1!d) are quite
 vague we can treat opener as having not bid.
 
 
@@ -776,8 +741,8 @@ and shortage in the opponents' suit, which suggests sacrifice unless partner can
 
 1H--(1S)--2H--(2S)
     Dbl = extra values, lacking extra length
-    2N = general game try, not exposing opener
-    3CD = natural trial bid, exposing opener
+    2N = Kokish game try as 1M--2M
+    3CD = short suit trial bid as 1M--2M
     3H = weaker not invitational, reasonable suit/shape
     3S = GF, !s shortage, offensive hand
 
