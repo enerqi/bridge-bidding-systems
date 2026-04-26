@@ -38,6 +38,8 @@
 - over opponents bid (1!s)--P--(2!s), special case, 2N is 5+!hs with 4+ minor
 - when balancing cue, e.g. (1!d)--P--(P)--2D, a cue bid is *Michaels*, never natural over prepared minor as sitting under
 - when a passed hand reopens over 2!s, (1!s)--P--(2!s)--P--(P)--2N, this special case is 5--4+ minors (would double with !hs)
+- 2N rebid by suit overcaller (possibly some limited opening sequences aswell) when *partner only passed* shows 6--4
+  shape, lower 2nd suit
 
 *** Minimum/Equal Level Conversion and Takeout Doubles
 
@@ -1956,8 +1958,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
         4C = good !c raise, either 3 cards + 3 useful features (A, K or short in partner's suits) or 4 cards + 2 useful features
         4D = Redwood, !c slam try
         4H = to play
-        4S = Kickback, !h slam try
-        4N = double fit RKB
+        4N = !h RKB
     3DH = preempt weak/intermediate
     3S = stopper ask, solid minor
 
@@ -2791,8 +2792,8 @@ X is majors takeout, NT is minors.
     3N = natural, ~16+
       any = natural
     Dbl = takeout
-        4S = Kickback
-        4N = minors
+        4S = !h slam try
+        4N = quantitative
     4C = !cs + !hs, NF non-leaping
         4D = !h slam try
         4H = to play

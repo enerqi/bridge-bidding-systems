@@ -54,17 +54,19 @@ Responding:
         3D = decline
             P = weak hand, long !ds
             3HS = quasi natural
-            4C = !c support, GF
-            4H = !d RKB
+            4D = [Q-Minorwood](#Q-Minorwood)
+            4H = Redwood, !d RKB
         3HS = quasi-natural, game values
+            4D = [Q-Minorwood](#Q-Minorwood)
+            4H = Redwood, !d RKB
         3N = accept, something in majors
         4C = good 7+ !c suit, forcing
             4D = !c RKB
             4HS = slam try
-            4N = [Double Fit RKB Kickback](#Double Fit RKB)
+            4N = [Double Fit RKB](#Double Fit RKB)
         4D = strong 4+ card !d support
             4H = !d RKB
-            4N = [Double Fit RKB Kickback](#Double Fit RKB)
+            4N = [Double Fit RKB](#Double Fit RKB)
         4HS = natural, 6--5 hand
     3C = (passed hand) preempt
     3DHS = (passed hand) fit jump
@@ -87,7 +89,7 @@ Responding:
     4C = mixed, not purely obstructive, opener can raise with good shape + extras
     4D = Redwood for clubs
     4HS = to play (passed hand = fit jump), opener can bid on with super fit and controls
-    4N = Blackwood
+    4N = quantitative (2!d enquiry often more informative though)
     5C = to play
 
 *** 2D enquiry
@@ -237,10 +239,10 @@ Responding:
     4D = !c RKB
     4H = !d RKB
     4S = !c slam try, cue ace showing
-    4N = [Double Fit RKB Kickback](#Double Fit RKB)
+    4N = [Double Fit RKB](#Double Fit RKB)
 4DHS = 7--5, excellent playing strength, 2 top losers with !c as trumps, e.g. x/AKxxx/-/KQJ10xxx
     suit = cue, 1st round
-    4N = [Double Fit RKB Kickback](#Double Fit RKB)
+    4N = [Double Fit RKB](#Double Fit RKB)
 4N = 1--3--1--8, ~3 Control Points, too weak for 1!c, unsuitable for 4!c/5!c
 5C = 3--1--1--8, ~3 Control Points, too weak for 1!c, unsuitable for 4!c/5!c
 

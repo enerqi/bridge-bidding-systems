@@ -63,8 +63,8 @@ Other bids:
         4CD = natural, forcing, slam try
             4N = to play
         4HS = 6!d--5M
-            4S = Kickback
-            4N = RKB or !s substitute cue bid
+            4S = slam try, unclear which suit but usually !ds
+            4N = major RKB
         4N = quantitative
     4C = 5--5+ minors, 5--9 hcp
     4D = preempt
@@ -99,21 +99,14 @@ Natural, 4+ cards, maybe longer minor canapé with 5m--4!h GF or a weak longer m
     4C = void ask, slam try
         4D = !c void
         4H = !s void
-    4D = !d tolerance (top Hx) or better
-        4H = [Double Fit RKB](#Double Fit RKB)
+    4D = !d tolerance (top Hx) or better, may prefer minor slam
     4H = to play
-    4S = Kickback [RKB](#RKB 4N) for !hs
 4C = !c void-splinter, max 4 card !h raise
     4D = artificial, [Double Fit RKB](#Double Fit RKB)
     4H = to play
-    4S = Kickback [RKB](#RKB 4N) for !hs
 4D = !d void-splinter, max 4 card !h raise
     4H = to play
-    4S = Kickback [RKB](#RKB 4N) for !hs
-    4N = [Double Fit RKB](#Double Fit RKB)
 4H = big support and shape, 1--6!d--5!h--1 max type hand
-    4S = Kickback [RKB](#RKB 4N) for !hs
-    4N = [Double Fit RKB](#Double Fit RKB)
 
 
 *** 1D--1H--1S
@@ -529,6 +522,8 @@ Invitational plus.
                     3HS = major shortage
                 3N = often 4--4--3--2
             3DHS = shortage, 6+!cs
+                3x = game finding
+                    4C = slam try, [Q-Minorwood](#Q-Minorwood)
         3C = 4+ !cs, GF (bid immediate 3C if too weak v.s invite)
             next = quasi natural, stops
         3DHS = weak xx doubleton, 3!cs exactly
@@ -557,25 +552,24 @@ Invitational plus.
 3HS = 5+ !cs support splinter (an infrequent alternative is exactly 6!d--5M--1--1)
 3N = 4--4--4--1 maximum
 4C = !c void, 7!d + 5!h, maximum
-    4D = !d RKB, special case
+    4D = [Q-Minorwood](#Q-Minorwood)
     4H = to play
-    4S = Kickback [RKB](#RKB 4N) for !hs
-    4N = double fit RKB
+    4N = !h RKB
     5C = to play, extreme self-sufficient !c suit
     5D = to play
 4D = !c void, 7!d + 5!s, maximum
-    4H = !d RKB
+    4H = Redwood !d RKB
     4S = to play
-    4N = double fit RKB (!ss is secondary suit)
+    4N = !s RKB
     5C = to play, extreme self-sufficient !c suit
     5D = to play
 4H = other major void, 7!d + 5!h, maximum
-    4S = double fit RKB
-    4N = !d RKB
+    4S = !d slam try
+    4N = !h RKB
     5C = to play
     5D = to play
 4S = other major void, 7!d + 5!s, maximum
-    4N = double fit RKB
+    4N = !s RKB
     5C = to play
     5D = to play
 
@@ -617,11 +611,14 @@ Invitational plus.
                     3HS = major shortage
                 3N = to play
             3DHS = !c/!h/!s shortage, 6+!ds
+                3x = game finding
+                    4D = slam try, [Q-Minorwood](#Q-Minorwood)
             3N = to play
             4S = serious quantitative
             4N = quantitative
         3D = 4+ !ds, GF (bid immediate 3C if too weak v.s invite)
             next = quasi natural, stops
+            4D = Minorwood, unlimited hand
         3CHS = weak xx doubleton, 3!ds exactly
         4HS = rare/creative 6!d--5M--1--1
     2N = slam interest, flattish, 4+ minor ask
@@ -720,13 +717,15 @@ Invitational plus.
     1N = !c transfer, good 8+ hcp
         break = short !cs
             cue/jump = only forcing bids
-        jump = fit jump
-        2N = !c super-accept, (e.g. balanced hand that would accept suit invite)
+        2C = complete, nothing special, maybe nothing better to bid
+        jump = fit jump transfer break
+        2N = misfit, minimum, some stops
     2C = !d transfer, good 8+ hcp
-        break = short !ds
+        break = short !ds, e.g. 2N
             cue/jump = only forcing bids
-        jump = fit jump
-        2N = !d super-accept
+        2D = complete, nothing special, maybe nothing better to bid
+        jump = fit jump transfer break
+        2N = misfit, minimum, some stops
     2D = weak
     2HS = system on, reverse flannery 5!ss + 4/5!hs weak/invitational
     2N = minors, unusual
@@ -743,8 +742,8 @@ Invitational plus.
         X = decents !ds, lead directing, inviting support
 
 1D--(1H)
-    Dbl = 4!ss ~6+ hcp or 6+ !ss invitational precisely, *system on* without further interference
-        1S = 3 card support
+    Dbl = 4!ss exactly ~6+ hcp, *system on* without further interference
+        1S = 3 card support (unbal or dislike NT)
         1N = natural, Two Way NMF continuations
         2D = [good !s raise](#1D--1S--2D)
         2S = [normal !s raise](#1D--1S--2S)
@@ -800,81 +799,121 @@ Invitational plus.
         2S = 6--5 hand
         3C = 5--5+ minors, maximum
     2C = !d transfer, good 8+ hcp
-        break = short !ds
+        break = short !ds, e.g. 2N
             cue/jump = only forcing bids
-        jump = fit jump
-        2N = !d super-accept
+        jump = fit jump transfer break
+        2D = complete, nothing special, maybe singleton nothing better to bid
+            2H = cue, invite plus
+                2N = opener stop, minimum
+                3C = no stop, 4+ !cs
+            3C = GF (new suit 3 level)
+            3D = NF invite
+        2H = cue, max values, stop ask
+            2N = yes, responder stop, minimum 8--9 hcp
+            3C = no responder stop, NF
+            4C = no, GF minors
+        2N = misfit, minimum, some stops
     2D = !cs, invite plus
-        2H = extras, stop ask / forcing
+        2H = cue, catchall max, stop ask / forcing
+            2N = stop, forcing/waiting
         2S = 6--5 natural
         2N = NF minimum, stopper
-        3C = NF minimum
-        3D = natural, GF, not flat
-        3H = splinter
-        3S = splinter
-    2H = !s transfer, 6+ !ss, weak/GF
-        break = short !ss, probably not minimum
-            cue/jump = only forcing bids
-        jump = fit jump
+        3C = NF minimum, no stopper, either denies 5!ds or have 4+!cs
+        3D = NF minimum (partner has forced us to bid at 3 level), 5!ds
+        3HS = splinter
+    2H = 6+ !ss transfer
+        2S = most hands, partner maybe weak
+        3C = minors, max, usually singleton !s
+        3H = HCR, 3 card support
+        3S = moderate 3 card support
         (Dbl) = interference
-            P = shortage
+            P = usually singleton !s only
             2S = 2 or bad 3 card support
             3H = good raise
             3S = 3 card support, ok hand, competing
     2S = stop ask, invite plus, or trying NT transfer (may bid !hs again)
     2N = natural
-    3C = preempt 5--4(+) minors
-    3D = weak, natural
+    3C = 5--4(+) minors, NF semi-constructive / sound preempt
+    3D = sound preempt
     3H = !s + minor, mild GF 2 suiter
-    3S = preempt
+    3S = sound preempt
     3N = to play
     4CD = !s + minor, strong 2 suiter - max 5 losers, !h control (not 2 losers), e.g. AJxxx Ax AKxxx x or better
     4S = to play, obstructive
     4N = minors, unusual
 
 1D--(1S)
-    Dbl = 4--5 !hs ~(8)9+ hcp or 6!h invitational precisely, *system on* without further interference
+    Dbl = 4!hs exactly ~8+ hcp OR GF 5(rarely 6)!hs, maybe longer minor NF immediate rebid, system on
         (2S) = opponents raise
             Pass = minimum opener, maybe 5--4 minors
                 2N = takeout, 4!hs invite plus
                     3C = minor preference, denies 4 card !h support
                         3D = conversion, risky, minor correction, probably try 3N with stop
                 3CD = 4!hs + 5 minor, competitive only
-                3H = invitational 6 cards
-                X = 5!hs, invite plus
             Dbl = support 3 !hs, max, short !ss
             2N = Good-Bad strong support / weaker minors (but medium+ reasonable)
             3CD = minors 5--5, max
             3H = competitive, 4!hs, 11--13 hcp
-        1N = natural, Two Way NMF continuations
+        1N = natural, usual Two Way NMF continuations
         2D = [good !h raise](#1D--1H--2D)
         2H = [normal !h raise](#1D--1H--2H)
     1N = natural
         2H = 6--5 hand
         3C = 5--5+ minors, maximum
     2C = !d transfer, 5+ !ds, good 8+
-        break = short !ds
+        break = short !ds, e.g. 2N
             cue/jump = only forcing bids
-        jump = fit jump
-        2N = !d super-accept
-    2D = !h transfer, 6+ !hs, weak/GF
-        break = short !hs, probably not minimum 3 suiter
-            cue/jump = only forcing bids
-        jump = fit jump
-        2N = inconvenient 3 suiter (short transfer suit, extras)
-        (2S) = opponents raise
-            X = 3 card support
-            2N = good HCR
-            3H = competitive, shapely
-            3S = max with shortage
+        jump = fit jump transfer break
+        2D = complete, nothing special, maybe singleton nothing better to bid
+            2S = cue, invite plus
+                2N = opener stop, minimum
+                3C = no stop, 4+ !cs
+            3C = GF (new suit 3 level)
+            3D = NF invite
+        2S = cue, max values, stop ask
+            2N = yes, responder stop, minimum 8--9 hcp
+            3C = no responder stop, NF
+            4C = no, GF minors
+        2N = misfit, minimum, some stops
+    2D = 5+ !hs, wide range weak to mild invite
+        (2S) = competition
+            X = medium raise
+            2N = !c mini-splinter
+            3C = minors, max
+            3D = mini-splinter (as cannot have long !ds)
+            3H = minimum raise, 3 cards
+            3S = void splinter
+            4H = guessing, max raise, 4+ card support
+        (3S) = higher interference
+            X = unlikely, values max, defensive
+            4C = minors, max
+            4D = double fit showing
+            4H = guess
+        2H = most hands, partner maybe weak
+        2S = mini-splinter max
+        2N = !c mini-splinter, max
+        3C = minors, max
+        3D = mini-splinter
+        3H = 4 fit max, catchall, e.g. 2--4--(5--2)
+        3S = void splinter
+        4CD = void splinter
+        4H = 6!ds--5!hs max
     2H = !cs, 5+ cards(unless GF), 10+ invite plus
+        2S = cue, catchall max, stop ask
+            2N = stop, forcing/waiting
         2N = NF minimum, stopper
-        3C = NF, no stopper
+        3C = NF minimum, no stopper, either denies 5!ds or have 4+!cs
+        3D = NF minimum (partner has forced us to bid at 3 level), 5!ds
+        3H = 6--5 natural
+        3S = splinter, max
         jump = fit jump
     2S = !s stop ask / trying NT transfer (may bid !ss again)
     2N = natural
-    3C = preempt 5--4(+) minors
-    3DH = weak, natural
+    3C = 5--4(+) minors, NF semi-constructive / sound preempt
+    3D = preempt, sound
+    3H = 6+ !hs GF, reasonable suit quality
+        3S = good !h raise
+        4H = fast arrival
     3S = !hs + minor, mild GF 2 suiter
     3N = to play
     4CD = !h + minor, strong 2 suiter - max 5 losers, !s control (not 2 losers), e.g. AJxxx Ax AKxxx x or better
@@ -1370,7 +1409,7 @@ Maximum, 6 loser, 6(7)--4 with a minor. The reasonable alternative is a good max
 
 ** 1H--2H
 
-Single raise, 3 (often) or 4 cards
+Single raise, 3+ cards
 
 - ~7--10 total points e.g 5--9 hcp 4 cards, 7--9 3 card support
 - maybe 5+ hcp with 4 card support and doubleton or better
@@ -1522,7 +1561,7 @@ By a *passed hand* 2!c *Reverse Drury* shows a 9--10 hcp limit raise with 3 card
     3H = [picture raise](#Picture Raises), with outside controls
     3S = splinter, !d support
     3N = jump 3N ~16--17(18) (not 4N quantitative values)
-    4C = self-sufficient long suit, max 1 loser, some outside control
+    4C = [Q-Minorwood](#Q-Minorwood), max 1 loser suit, some outside control
     4H = [picture raise](#Picture Raises), no outside controls
 2H = 6+ cards, any strength, maybe 4/5!ss
     2S = natural, 4 card suit, general natural bids follow
@@ -1543,7 +1582,7 @@ By a *passed hand* 2!c *Reverse Drury* shows a 9--10 hcp limit raise with 3 card
     3S = splinter, only promises 3 card support, e.g. 1--3--3--6 / 1--3--4--5 (bid 2!s then more !s with 6--5 shape)
         3N = serious control prompt (by either player)
     3N = jump 3N ~16--17(18) (not 4N quantitative values)
-    4C = self-sufficient, max 1 loser, some outside control
+    4C = [Q-Minorwood](#Q-Minorwood), max 1 loser suit, some outside control
     4D = splinter, delayed !h support, typically 3--3--1--6
     4H = [picture raise](#Picture Raises), no outside controls
 2S = natural 4+ !ss, not 6!hs, any strength
@@ -1556,7 +1595,7 @@ By a *passed hand* 2!c *Reverse Drury* shows a 9--10 hcp limit raise with 3 card
     3S = 4+ card !s support, ambiguous strength unsuitable for 4S picture raise
         3N = Serious
     3N = jump 3N ~16--17(18) (not 4N quantitative values)
-    4C = self-sufficient long suit, max 1 loser, some outside control
+    4C = [Q-Minorwood](#Q-Minorwood), max 1 loser suit, some outside control
     4D = splinter, with !s support
     4H = [picture raise](#Picture Raises), no outside controls
     4S = [picture raise](#Picture Raises), no outside controls
@@ -1566,7 +1605,7 @@ By a *passed hand* 2!c *Reverse Drury* shows a 9--10 hcp limit raise with 3 card
     3H = forcing, ambiguous strength unsuitable for 4H picture raise
         3N = Serious
     3S = rare, probably 6!cs--5!ss as should have some minor stop if stop checking
-    4C = !c RKB, special case, max 1 loser suit
+    4C = [Q-Minorwood](#Q-Minorwood)
     4H = [picture raise](#Picture Raises), no outside controls
     4N = quantitative
 3C = natural 4+ cards, any strength
@@ -1622,7 +1661,7 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
     3S = splinter raise of !hs, only promises 3 card support, commonly 1--3--6--3
     3N = jump 3N ~16--17(18) (not 4N quantitative values)
     4C = delayed splinter, !h support, commonly 3--3--6--1
-    4D = self-sufficient, max 1 loser, some outside control
+    4D = [Q-Minorwood](#Q-Minorwood), max 1 loser suit, some outside control
     4H = [picture raise](#Picture Raises), no outside controls
 2S = natural 4+!ss, not 6!hs, any strength
     2N = waiting, stop implied as FSF available
@@ -1636,7 +1675,7 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
         3N = Serious
     3N = jump 3N ~16--17(18) (not 4N quantitative values)
     4C = splinter raise of !ss
-    4D = self-sufficient, max 1 loser, some outside control
+    4D = [Q-Minorwood](#Q-Minorwood), max 1 loser suit, some outside control
     4H = [picture raise](#Picture Raises), no outside controls
     4S = [picture raise](#Picture Raises), no outside controls
 2N = catchall, stops not guaranteed, denies 6!hs or 4!ss
@@ -1644,13 +1683,13 @@ Opener bids 2!h (fast arrival) with a (sub)minimum hand.
     3D = waiting
     3H = forcing, ambiguous strength unsuitable for 4H picture raise
         3N = Serious
-    4D = self-sufficient, max 1 loser, some outside control
+    4D = [Q-Minorwood](#Q-Minorwood)
     4H = [picture raise](#Picture Raises), no outside controls
 3C = 5+ !cs, any strength
     3H = forcing, ambiguous strength unsuitable for 4H picture raise
     3S = FSF
     4C = !c RKB, special case
-    4D = self-sufficient, max 1 loser, some outside control
+    4D = [Q-Minorwood](#Q-Minorwood), max 1 loser suit, some outside control
     4H = [picture raise](#Picture Raises), no outside controls
 3D = natural raise 3+ cards, any strength, denies 6!hs or 4!ss
     any = 3N contracted directed, unless going past 3N voluntarily
@@ -2311,7 +2350,7 @@ By a *passed hand* 2!c *Reverse Drury* shows a 9--10 hcp limit raise with 3 card
     3H = splinter for !d (with 6--5 !c/!h, bid 2!h then more !hs instead)
     3S = [picture raise](#Picture Raises), with outside controls
     3N = jump 3N ~16--17(18) (not 4N quantitative values)
-    4C = self-sufficient long suit, max 1 loser, some outside control
+    4C = [Q-Minorwood](#Q-Minorwood), max 1 loser suit, some outside control
     4H = void splinter for !ds
     4S = [picture raise](#Picture Raises), no outside controls
 2H = natural, 4+ !hs, any strength, maybe 6!ss
@@ -2346,7 +2385,7 @@ By a *passed hand* 2!c *Reverse Drury* shows a 9--10 hcp limit raise with 3 card
     3S = [picture raise](#Picture Raises), with outside controls
         3N = Serious
     3N = jump 3N ~16--17(18) (not 4N quantitative values)
-    4C = self-sufficient long suit, max 1 loser, some outside control
+    4C = [Q-Minorwood](#Q-Minorwood), max 1 loser suit, some outside control
     4D = splinter, !h support
     4H = [picture raise](#Picture Raises), no outside controls
     4S = [picture raise](#Picture Raises), no outside controls
@@ -2358,7 +2397,7 @@ By a *passed hand* 2!c *Reverse Drury* shows a 9--10 hcp limit raise with 3 card
     3S = forcing, ambiguous strength unsuitable for 4S picture raise
         3N = Serious
     3N = jump 3N ~16--17(18) (not 4N quantitative values)
-    4C = self-sufficient, max 1 loser, some outside control
+    4C = [Q-Minorwood](#Q-Minorwood), max 1 loser suit, some outside control
     4D = delayed splinter !s support, maybe only 3 card support
     4H = delayed splinter !s support, maybe only 3 card support
     4S = [picture raise](#Picture Raises), no outside controls
@@ -2367,7 +2406,7 @@ By a *passed hand* 2!c *Reverse Drury* shows a 9--10 hcp limit raise with 3 card
     3D = quasi-natural
     3S = ambiguous strength unsuitable for 4S picture raise
         3N = Serious
-    4C = !c RKB, special case, solid suit
+    4C = !c slam try, max 1 loser suit, [Q-Minorwood](#Q-Minorwood)
     4S = [picture raise](#Picture Raises), no outside controls
     4N = quantitative, directly or later on...
     5N = quantitative, directly or later on...
@@ -2410,7 +2449,7 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
         3N = serious control prompt
     3N = jump 3N ~16--17(18) (not 4N quantitative values)
     4C = splinter, !h support
-    4D = !d RKB, special case
+    4D = [Q-Minorwood](#Q-Minorwood), max 1 loser suit, some outside control
     4H = [picture raise](#Picture Raises), no outside controls
     4S = [picture raise](#Picture Raises), no outside controls
 2S = 6+ cards, any strength
@@ -2426,7 +2465,7 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
         3N = serious control prompt
     3N = jump 3N ~16--17(18) (not 4N quantitative values)
     4C = delayed splinter !s support
-    4D = !d RKB, special case
+    4D = [Q-Minorwood](#Q-Minorwood), max 1 loser suit, some outside control
     4H = delayed splinter !s support
     4S = [picture raise](#Picture Raises), no outside controls
 2N = catchall, stops not guaranteed, denies 6!ss or 4!hs
@@ -2434,13 +2473,13 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
     3D = waiting
     3S = forcing, ambiguous strength unsuitable for 4S picture raise
         3N = Serious
-    4D = !d RKB, special case
+    4D = [Q-Minorwood](#Q-Minorwood)
     4S = [picture raise](#Picture Raises), no outside controls
     4N = quantitative, directly or later on...
 3C = 5+ !cs, any strength
     3S = forcing, ambiguous strength unsuitable for 4S picture raise
     4C = !c RKB, special case
-    4D = !d RKB, special case
+    4D = [Q-Minorwood](#Q-Minorwood), max 1 loser suit, some outside control
     4S = [picture raise](#Picture Raises), no outside controls
 3D = natural raise, 3+ !ds, any strength, denies 6!ss or 4!hs
     3S = forcing, ambiguous strength unsuitable for 4S picture raise
@@ -2518,7 +2557,7 @@ Opener bids 2!s (fast arrival) with a (sub)minimum hand.
 
 ** 1S--2S
 
-Single raise, 3 (often) or 4 cards
+Single raise, 3+ cards
 
 - ~7--10 total points e.g 5--9 hcp 4 cards, 7--9 3 card support
 - maybe 5+ hcp with 4 card support and doubleton or better

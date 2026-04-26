@@ -16,8 +16,8 @@ Meta agreements and some slam finding conventions
 - somewhat limited hands (e.g. 11--15?) may skip control showing if minimum and bad fitting
 - neither cue bids nor last train show better hands than the other, flexibility is needed to get the most useful
   information
-- skipping cue bids up the line to use last train would usually imply someone has a wide range, perhaps the last train
-  bidder has something but a weak hand
+- skipping cue bids up the line to use last train would usually imply someone has a wide range and so it's a more
+  quantitative ask
 - after both partners cue bid, should we last train at all? perhaps only if both are ambiguous wide ranging? how wide?
 - splinters usually imply a hand that won't go to slam without a fitting hand from partner - consider if bidding on
   regardless that maybe it's best to find a way to control bid without revealing your shape, however, maybe the fitting
@@ -27,14 +27,8 @@ Meta agreements and some slam finding conventions
 - the responder to a splinter can go on with enough extras despite not fitting (e.g. ~13+ opening values outside splinter suit)
 - the cue bidding style means we do not show shortage in partner's suit, even though with a big trump fit it can make sense
 - supporting partner's suit after agreeing a different trump suit is natural double fit finding if we have only shown 2 suits
-- with only the trump suit shown, the first slam try is a natural suit, (v.s. 1c--1M--3M with singleton ask)?
-- ?? distinguishing serious v.s. non-serious (fitting and max required) slam trys is more a concern for natural wide
-  ranging systems. Is 11--15 wide enough for the distinction to matter, e.g. 1S--2H--2N--3S, 1H--2D--2S--3S? Is 3N more
-  a wait/punt the same as old school cue bidding without serious 3N?
-- 3N is natural, not serious in specific situations where a limited semi-balanced hand is expected, i.e. 1HS--2N--3CDH--3N
-- minor contracts distinguish serious/non-serious via 4N optional RKB (when have fit), auto RKB, a negative/natural 4N
-  (without a fit), finally leaving a freebid of the unbid suit as a general waiting last train like bid. 3N is natural,
-  not serious
+- with only the trump suit shown, the first slam try control bid is honour showing
+- 3N is natural, not serious in only a few specific situations, e.g. 1M--2N--3C--3N
 
 ** What is 4N?
 
@@ -48,45 +42,7 @@ Natural quantitative, to play, ace asking, key card asking, takeout or other?
 - non-jump 4N with limited hand - natural, to play
 - after Redwood - natural, to play (not King ask etc.)
 
-**** 2NT Auto RKB Module
-
-Special case - a natural 2N opening or rebid takes a lot of space and is a bit of a slam killer. Often a
-minor suit may not be shown until the 4 level making agreeing and using something like Redwood impractical. After
-showing a new minor at the 4 level:
-
-- next suit "last train" like (NOT Redwood), such as 3 card support, 3 keycards but something bad like xxx trump support
-
-Bidding 4N changes to be minor RKB! This is an exception to the general rule of 4N never being used as RKB/Redwood for a minor -
-it's normally only quantitative. 5x free bids are *auto RKB*, similar to the direct bids.
-
-Beware there's a special case in the [Minor slam tries module](#Minor slam tries module) where the next suit is 5!cs
-instead of last train.
-
-- other spare bids (e.g. ...4C--4H/4S) are control bids: good hand with support
-
-Bidding 4N changes to be minor RKB! 5x free bids are *auto RKB*, similar to the direct bids.
-
-- direct 4N is "negative", bad support and/or just 3 cards with few keycards (i.e. 2 keycards)
-
-PASSABLE. May also escape to the minor (e.g. perhaps they actually had 6 cards) or use Auto RKB.
-
-- direct 5m is fast arrival, 4+ card support, but otherwise bad keycards.
-
-Usually passed or raised to 6m. Presumably 5N King ask or a 3rd round control ask are still on if responder is good
-enough to search for the grand opposite the presumed 2 keycards.
-
-- 5x free bids are *auto RKB*, RKB step responses that cannot use 5m as a step, usually 3+ keycards as often forced to
-  slam
-
-**** Minor Lissabon follow on
-
-Whilst there's even less room in this situation, the 4N negative and auto RKB bids also apply after minor showing
-Lissabon bids (2N--4HS).
-
-Over 2N--4H there is space for a last train bid, but over 2N--4S it's not available
-
-
-*** Major Agreed 4N
+*** Major Agreed/Implied 4N
 
 - two suits naturally supported, at least one major, two 8+ card fits - [Double Fit RKB](#Double Fit RKB)
 - raised or set suit - [RKB](#RKB 4N)
@@ -105,8 +61,113 @@ Over 2N--4H there is space for a last train bid, but over 2N--4S it's not availa
 - long natural major (1!h/!s) then over jump 4 level interference - [RKB](#RKB 4N)
 - long natural minor (2!c/!d) then over jump 4 level interference - Quantitative
 
+** Q-Minorwood
+
+Quantitative Minorwood - bidding the 4 level minor trump suit as RKB with quantitative step. Let's responder give an
+opinion on whether they have a worse or better slam going hand, the initial step response simply being a "reject".
+
+Note, similar but higher, is (optional) "Auto RKB" where we pass 4N if minimum, otherwise respond as RKB.
+
+- next step rejects, follow up is RKB
+- higher bid auto RKB, accept slam try
+
+i.e with natural bidding:
+
+4C = natural, showing !cs
+    4D = reject slam try
+        4H = RKB anyway
+    4H = 1/4 KC, RKB responses
+    4S = 3/0 KC
+    4N = 2/5 KC
+    5C = 2/5 KC + Queen
+
+4D = natural, !ds
+    4H = reject slam try
+        4S = RKB anyway
+    4S = 1/4 KC, RKB responses
+    4N = 3/0 KC
+    5C = 2/5 KC
+    5D = 2/5 KC + Queen
+
+WHEN is 4m actually Q-Minorwood?
+
+- (a) when is it on versus a flattish limited hand?
+- (b) when is it on versus an unbalanced hand?
+- just forcing, offering control or natural bidding if neither (a) nor (b) apply
+
+*** 4CD vs Balanced/Defined Hands
+
+Where *all* apply:
+
+- (1) one hand shows a limited (fairly defined) flattish hand. E.g 2N opening/rebid/overcall, 1N opening. Such a hand is
+  unlikely to need to describe their own suits
+- (2) the partner shows a minor suit slam try at the 4 level (making agreeing and using something like Redwood impractical)
+- (3) no chance for the flattish hand to show whether a minor slam try is feasible earlier on in the bidding
+
+Examples:
+
+- 1N--2N--3D--4D. Whilst 2N transfer shows !ds, the focus was on 3N / general game finding until 4D as a slam try was
+  made
+- 1N--2S--2N--3S--3N--4C. Shows !s singleton then bids onto 4C after 3N attempted sign off
+- 1N--2S--2N--4C. Similar, late reveal of a slam try
+- 1N--3C--3D--4m. Puppet Stayman then showing 5+ minor
+- 1N--2C--2M--3m--3x--4m. Was finding best game until 4m implied slam interest
+- 2N--3C--3D--4D. 4 level first time to show !ds, to even suggest !d slam try
+- 2N--3C--3S--4D. Same, first time to show !ds. 4H only way to slam try !ss
+- 1C--2D--3D--3x--4D. Similarly, game focussed opposite flat hand, until rebid 4m
+- 1C--2H--3m--3x--4m. Same, only responder stronger balanced.
+- 1D--2D--2H--2S--2N--3DHS--3N--4D. When the limited flattish hand could have 1--3 !ds, asking rather than Minorwood better
+- 1M--2m--2N--4m. Again flattish opener, responder may want some indication of reject or accept
+
+**** Flattish Q-Minorwood Variants 1 Bid Lower
+
+Note there are some auctions where the bid below the minor suit shows a slam try in the minor suit. Responses are
+similar just 1 bid lower:
+
+- 1N--2N--3m--4C. Shows !d slam try with !c singleton, then similar
+- 2N--4C. Artificial !d single suiter shown, then straight into the usual responses
+
+*** 4CD vs Unbalanced Hands
+
+Even when both hands are unbalanced, sometimes bidding 4m as RKB instead of 4m+1 (Redwood) makes much more sense due to
+who is the auction's captain, who is (more) unlimited, or the general difficulty in setting trumps before being able to
+use Redwood.
+
+- game forcing constructive auctions
+- Not just best game finding. Not preemptive. Not competitive
+- 4m bidder is the captain, potentially unlimited (which is assumed if jump bidding 4m!). If limited and seeking
+  cooperation then 4m is more general slam try last train like before Redwood
+- either minor AGREED OR self JUMP 4m (re)bids showing good (often self-sufficient) hands
+
+
+** Flag Bidding
+
+Consider 2C/2D openings
+
+Consider double fit rkb stuff aswell
++ two suiters with choice made high - maybe special rules for double fit
++ 1d 1h 3n etc
++ 1d 1s 4d etc
+
+? 1c interference QM when they shut up
 
 ** Cue Bids
+
+More Robson style - “first control bid is honour showing and the next is ambiguous”
+...but jump cue with a void, or use void splinters if possible
+...maybe shortage asks, when not worried about overall controls
+   when a clear purpose, so what situations make ruffing value or wasted honours important
+   “If partner is short here, these cards are garbage”
+
+A shortage ask tries to give you:
+Precise shape info (void/singleton location)
+While still keeping honour controls meaningful
+BUT takes some space...Every artificial ask replaces 1–2 natural cue bids
+    only do when hands shapely?
+    maybe when worried if partner is short in your honour high suit (so you mirror in suits with poor honours)
+
+
+....................
 
 Italian style, showing 1st or 2nd round control.
 
@@ -394,7 +455,7 @@ tinyurl.com/y6yv5m8r
 "Weak keycard", "Poor man's keycard". Specific situations when responder is known to be weak (opening a preempt).  Steps
 responses limited to 2 keycards:
 
-- 0 keycards
+- 0 keycards (NEXT step Queen Ask IF Room)
 - 1 keycard
 - 1 keycard + Queen of trumps
 - 2 keycards

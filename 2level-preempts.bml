@@ -58,12 +58,14 @@ quality.
         3N = 6--4 with !cs
             4C = !c slam try
             4D = !h slam try
-    3CD = forcing
+    3m = forcing
+        3x = natural
+            4m = [Q-Minorwood](#Q-Minorwood)
     3H = obstructive
     3S = natural GF (passed hands fit jump)
     3N = to play, non-correctable
     4C = [Preempt RKB](#Preempt RKB)
-    4D = natural, GF, (passed hands fit jump)
+    4D = natural (passed hands fit jump), [Q-Minorwood](#Q-Minorwood), very good suit
     4HS = to play
     5CD = to play
 
@@ -91,11 +93,14 @@ quality.
         3N = 6--4 with !cs
             4C = !c slam try
             4D = !s slam try
-    3CDH = forcing
+    3m = forcing
+        3x = natural
+            4m = [Q-Minorwood](#Q-Minorwood)
+    3H = forcing
     3S = obstructive
     3N = to play, non-correctable
     4C = [Preempt RKB](#Preempt RKB)
-    4D = natural, GF, (passed hands fit jump)
+    4D = natural (passed hands fit jump), [Q-Minorwood](#Q-Minorwood), very good suit
     4HS = to play
     5CD = to play
 

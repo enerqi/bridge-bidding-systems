@@ -192,7 +192,7 @@ Stayman, promissory
                 4CD = shortage, slam try, stronger splinter
             3S = artificial accept, control bidding etc. follow
                 3N = serious
-        3H = artificial unbalanced 5!hs, NT needs help, 5--4--2--2, 5--4--3--1 singleton honour / 5--3--3--2 no stop
+        3H = artificial NT needs help, 5!hs 5--4--2--2, 5--4--3--1 singleton honour / 5--3--3--2 no stop
             3N = to play, very rare to have 3 !hs
             4H = 3 card support
         3S = weaker splinter, want support and fitting values
@@ -258,7 +258,7 @@ Stayman, promissory
                 3N = (semi)balanced slam try
                 4CDH = shortage, slam try, stronger splinter
             3N = artificial accept, control bidding etc. follow
-        3S = artificial unbalanced 5!ss, NT needs help, 5--4--2--2, 5--4--3--1 singleton honour / 5--3--3--2 no stop
+        3S = artificial NT needs help, 5!ss 5--4--2--2, 5--4--3--1 singleton honour / 5--3--3--2 no stop
             3N = to play, very rare to have 3 !ss
             4S = 3 card support
         3N = 5--3--3--2, A/K/Q+ in doubleton
@@ -286,18 +286,23 @@ Stayman, promissory
         3C = signoff
         3DHS = singleton, finding right game or slam
             major = no stop, good 4+ card major
+            3N = stopped
+                4C = slam try, [Q-Minorwood](#Q-Minorwood)
             4C = no stop, minimum
         3N = to play
-        4C = slam try
-            4N = negative
+        4C = slam try, [Q-Minorwood](#Q-Minorwood)
         4DHS = void
     3C = accept an invite
         3DHS = singleton, finding right game or slam
             major = no stop, good 4+ card major
+            3N = stopped
+                4C = slam try, [Q-Minorwood](#Q-Minorwood)
+                4H = 6--5
+                    4S = flag for !cs
+                    4N = !h RKB
             4C = no stop, minimum
         3N = to play
-        4C = slam try
-            4N = negative
+        4C = slam try, [Q-Minorwood](#Q-Minorwood)
         4DHS = void
 2N = transfer to !ds, 6+ cards, weak or invite plus OR 5--5 both minors sign off
     3C = decline a !d invite, maybe max with bad doubleton !d
@@ -305,11 +310,12 @@ Stayman, promissory
         3D = signoff
         3HS = singleton, finding right game or slam
             3S/4H = no stop, good 4+ card major
+            3N = stopped
+                4D = slam try, [Q-Minorwood](#Q-Minorwood)
             4D = no stop, minimum
         4C = singleton, slam try
-            4N = negative
-        4D = slam try
-            4N = negative
+            next = [Q-Minorwood](#Q-Minorwood) (one bid lower than usual)
+        4D = slam try, [Q-Minorwood](#Q-Minorwood)
         4HS = void
         5C = void
         5N = 6!ds, pick a slam
@@ -317,11 +323,11 @@ Stayman, promissory
         P = 5--5 minors escape
         3HS = singleton, finding right game or slam
             3S/4H = no stop, good 4+ card major
+            3N = stopped
+                4D = slam try, [Q-Minorwood](#Q-Minorwood)
             4D = no stop, minimum
-        4C = singleton, slam try
-            4N = negative
-        4D = slam try
-            4N = negative
+        4C = singleton, slam try, [Q-Minorwood](#Q-Minorwood) (one bid lower than usual)
+        4D = slam try, [Q-Minorwood](#Q-Minorwood)
         4HS = void
         5C = void
         5N = 6!ds, pick a slam
@@ -333,17 +339,13 @@ Muppet Stayman
 - 3 card major(s), maybe 5332 with long minor and slam try values
 - One 4 card major game plus values (use Stayman with 4--4 majors)
 - NOT slam try (43)(51) nor (42)(52), all these slam try hands with a longer minor start with 2!c Stayman
-- Minor slam try follows ons use the same next step negative and auto RKB responses as after the 2N opening
+- Minor slam try follows ons use [Q-Minorwood](#Q-Minorwood)
 
 3C = Muppet Stayman
     3D = no 5 card major
         3H = 4!ss, paradox
             3N = natural, no major fit
-                4CD = 4 card minor slam try
-                    next = reject
-                        4N = to play
-                            5m = have length, poor keycards (i.e. 2 + no queen)
-                    others = optional RKB
+                4CD = 4 card minor slam try, [Q-Minorwood](#Q-Minorwood) (always reject with no fit)
         3S = 4!hs, paradox
             3N = natural, no major fit
                 4CD = 4 card minor slam try
@@ -352,11 +354,7 @@ Muppet Stayman
                             5m = have length, poor keycards (i.e. 2 + no queen)
                     others = optional RKB
         3N = to play
-        4CD = 5 card minor slam try, no side 4 card major
-            next = reject
-                4N = to play
-                    5m = have length, poor keycards (i.e. 2 + no queen)
-            others = optional RKB
+        4CD = 5 card minor slam try, no side 4 card major, [Q-Minorwood](#Q-Minorwood)
         4S = serious quantitative
         4N = quantitative
     3H = 5 card !h suit, (note removed any follow up 5 card bal minor slam tries)
