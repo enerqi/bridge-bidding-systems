@@ -247,7 +247,7 @@ This balances your ability to preempt frequently with partner being able to resp
 
 You will play against some pairs whose philosophy is that making responder's life difficult (through very aggressive
 openings in 1st/2nd) does not matter as long as we might make it hard for the opponents. The problem is that too much
-randomness / variance may not lead too many good scores. In 1st position you can argue that there's a 1
+randomness / variance may not lead to many good scores. In 1st position you can argue that there's a 1
 in 3 chance you are preempting partner, so have a 2 in 3 chance of annoying the opponents instead. As mentioned, one
 terrible board at IMPs teams scoring, can take many good boards to recover from, so perhaps save the wildness for
 matchpoints when you are non-vulnerable.
@@ -1044,9 +1044,13 @@ then go off in a 3 level contract opposite some of those minimum raises.
 
 ** Solution
 
-A 2M raise shows 8--10 support points. If also played with the recommended [mixed raises](#Mixed Raises with Jacoby Plus)
-it usually shows exactly 3 card support, but only if you agree to bid 1N with 4 card support and 4--7 support
-points. "Usually" 3 cards because you may not want to do a mixed raise with 4--3--3--3 and bid 2M instead.
+A 2M raise shows (7)8--10 support points.
+
+A 4 card raise is worth an extra support point, so you can actually avoid bidding 1N with 4 card support and a bad hand.
+If it's really bad just pass. If it's 5 hcp and a doubleton it's at least 7 support points anyway. A very flat
+4--3--3--3 and 9 hcp is probably the best 4 card raise.
+
+A 3 card raise is typically 7--9 hcp. With less have to bid 1N first to avoid the overstretching problem.
 
 Recall support/dummy points are usually add 1 for a doubleton, 3 for a singleton (5 for a void). Beware though, that
 with only 3 card support when the opponents lead trumps you may struggle to get ruffs with dummy's short trump suit. So,
@@ -1071,8 +1075,8 @@ Separating 3 vs 4 card constructive raises that are a bit less than invitational
 
 ** Solution
 
-A mixed raise is a 4 card constructive raise, typically 7--9 hcp and ~10--12 total points, so just below an invite, that
-is shown by raising to the 3 level:
+A mixed raise is a 4+ card constructive raise, typically 7--9 hcp and ~10--12 total points, so just below an invite in
+hcp but invitational in shape/offense, that is shown by raising to the 3 level:
 
 - 1C--3C
 - 1D--3D
@@ -1768,13 +1772,10 @@ opener has some support.
 4D = reject
     4H = !d keycard blackwood
     4N = to play
-others = optional RKB
+others = Roman Keycard resposes
 
-We introduce yet another interesting way to slam bid when left without much room to agree a suit. We want opener to be
-the one showing keycards with responder in control. Therefore, if we like !ds we use "optional" keycard blackwood where
-the first bid is a negative rejecting the slam try and any other bid is like responding to keycard blackwood. In this
-example, 4H shows 1/4 keycards, 4S shows 3/0 keycards etc.
-
+The response are "Quantitative Minorwood". The first bid is a negative rejecting the slam try and any other bid is like
+responding to keycard blackwood. In this example, 4H shows 1/4 keycards, 4S shows 3/0 keycards etc.
 
 *** (advanced) A Muppet System?
 
@@ -1793,8 +1794,7 @@ the outline of one approach is below. It tries to keep as many natural 4CD slam 
 complex relative to most Muppet systems. Every detail is left in, but you don't have to have such specific agreements
 on what the bids mean further on in the auction.
 
-2N--3C = muppet stayman
-  3D = 4!ss OR nothing -- no 5 card major and not !hs
+3D = 4!ss OR nothing -- no 5 card major and not !hs
     3H = 4 !ss
         3S = have !s fit
             3N = !s slam try
@@ -1805,18 +1805,14 @@ on what the bids mean further on in the auction.
             4H = 5--5 in !h + !s, mild slam interest (3!h -> 3!s transfer weak 5--5, immediate 4H forcing 5--5)
         4CDH = super accepts, as transfer break, (3)4 card !s support, good hand, trick source / concentrated values
         4S = cathcall 3+ card !s support
-    4C = natural slam try, may also have !cs
+    4C = natural slam try, may also have !ds
         4D = natural!, 4 or 5 !ds, no club support, opener offers other minor
             4H = !d RKB (responder bidding Redwood)
             4N = to play
         4HS = control, !c slam try
         4N = to play
         5C = 4 card !c support, not slammish
-    4D = natural slam try, 5+ cards, ignores any !cs
-        4H = reject
-            4S = !d RKB
-            4N = to play
-        others = auto RKB
+    4D = natural slam try, 5+ cards, ignores any !cs, Quantitative Minorwood
     4H = 5--5 !h+!s, forcing to 4N, strong slam interest
         4S = !s fit, forcing
             4N = RKB !s
@@ -1826,62 +1822,41 @@ on what the bids mean further on in the auction.
             5HS = 6--5, NF
             6x = to play
         5CDHS = !h auto RKB
-  3H = 4!hs / 5!hs, not !s
-      3S = !h length ask, maybe with 4 !h
-          3N = 4 cards
-              4C = natural slam try, only 3!hs, maybe 1--3--(5--4) with both minors possible
-                  4D = natural!, 4 or 5 !ds, no club support, opener offers other minor
-                      4H = !d RKB (responder bidding Redwood)
-                      4N = to play
-                  4HS = control, !c slam try
-                  4N = to play
-                  5C = 4 card !c support, not slammish
-              4D = natural slam try, 5+ cards, 3 !hs only, ignores any !cs
-                  4H = reject
-                      4S = !d RKB
-                      4N = to play
-                  others = auto RKB
-          4CD = 5 !hs, good slam hand
-          4H = 5!hs
-      3N = to play, probably 4!s, no !h interest
-      4C = natural slam try, may also have !ds, < 3 !hs
-          4D = natural!, 4 or 5 !ds, no club support, opener offers other minor
-              4H = !d RKB (responder bidding Redwood)
-              4N = to play
-          4HS = control, !c slam try
-          4N = to play
-          5C = 4 card !c support, not slammish
-      4D = natural slam try, 5+ cards < 3 !hs, ignores any !cs
-          4H = reject
-              4S = !d RKB
-              4N = to play
-          others = auto RKB
-      4N = quantitative
-  3S = 5!ss, natural
-      3N = to play
-      4C = natural slam try, 5+ cards (opener 3 cards at most), cannot have !h fit
-          4D = negative
-              4H = !d RKB, 6 carder usually
-              4N = to play
-          other = auto RKB
-      4D = natural slam try, 5+ cards (opener 3 cards at most), cannot have !h fit
-          4H = negative
-              4S = !d RKB
-              4N = to play
-          other = auto RKB
-      4H = other major artificial, !s slam try
-      4S = to play
-  3N = 4--4 !h/!s
-      4C = artificial !d slam try, 5+ cards (opener 3 cards at most), only a 3 card major
-          4D = negative, usually just 2 card support
-              4H = !d RKB, 6 carder usually
-          other = auto RKB responses
-      4D = !h transfer
-      4H = !s transfer
-      4S = artificial !c slam try, 5+ card slam (opener 3 cards at most), only a 3 card major
-          4N = to play, no support
-          5C = to play, not slammish
-          5DHSN = auto RKB responses, at least 2KC + Queen or 3KC
+3H = 4!hs / 5!hs, not !s
+    3S = !h length ask, maybe with 4 !h
+        3N = 4 cards
+            4C = natural slam try, only 3!hs, maybe 1--3--(5--4) with both minors possible
+                4D = natural!, 4 or 5 !ds, no club support, opener offers other minor
+                    4H = !d RKB (responder bidding Redwood)
+                    4N = to play
+                4HS = control, !c slam try
+                4N = to play
+                5C = 4 card !c support, not slammish
+            4D = natural slam try, 5+ cards, 3 !hs only, ignores any !cs, Quantitative Minorwood
+        4CD = 5 !hs, good slam hand
+        4H = 5!hs
+    3N = to play, probably 4!s, no !h interest
+    4C = natural slam try, may also have !ds, < 3 !hs
+        4D = natural!, 4 or 5 !ds, no club support, opener offers other minor
+            4H = !d RKB (responder bidding Redwood)
+            4N = to play
+        4HS = control, !c slam try
+        4N = to play
+        5C = 4 card !c support, not slammish
+    4D = natural slam try, 5+ cards < 3 !hs, ignores any !cs
+        next = Quantitative Minorwood
+    4N = quantitative
+3S = 5!ss, natural
+    3N = to play
+    4C = natural slam try, 5+ cards (opener 3 cards at most), cannot have !h fit, Quantitative Minorwood
+    4D = natural slam try, 5+ cards (opener 3 cards at most), cannot have !h fit, Quantitative Minorwood
+    4H = other major artificial, !s slam try
+    4S = to play
+3N = 4--4 !h/!s
+    4C = natural !c slam try, only a 3 card major, Quantitative Minorwood
+    4D = !h transfer
+    4H = !s transfer
+    4S = ARTIFICIAL !d slam try, Quantitative Minorwood
 
 2N--3D = !h transfer
   3H = NOT 5!ss and 2 !hs, else normal transfer completion

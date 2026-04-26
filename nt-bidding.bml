@@ -313,8 +313,7 @@ Stayman, promissory
             3N = stopped
                 4D = slam try, [Q-Minorwood](#Q-Minorwood)
             4D = no stop, minimum
-        4C = singleton, slam try
-            next = [Q-Minorwood](#Q-Minorwood) (one bid lower than usual)
+        4C = singleton, slam try, [Q-Minorwood](#Q-Minorwood) (one bid lower than usual)
         4D = slam try, [Q-Minorwood](#Q-Minorwood)
         4HS = void
         5C = void

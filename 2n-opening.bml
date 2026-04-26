@@ -125,8 +125,7 @@ Accepting slam tries in general suggests values in the right place, controls and
         4HS = control, !c slam try
         4N = to play
         5C = 4 card !c support, not slammish
-    4D = natural slam try, 5+ cards < 3 !hs, ignores any !cs
-        next = [Q-Minorwood](#Q-Minorwood)
+    4D = natural slam try, 5+ cards < 3 !hs, ignores any !cs, [Q-Minorwood](#Q-Minorwood)
     4N = quantitative
 3S = 5!ss, natural
     3N = to play
