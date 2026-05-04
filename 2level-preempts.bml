@@ -47,8 +47,8 @@ quality.
             3H = invitational, medium v.s. maximum
             4C = [Preempt RKB](#Preempt RKB), only time after 2N
         3D = 6--4 natural
-            3H = !h slam try
-            3S = !d slam try
+            3H = !h slam try (natural flag)
+            3S = !d slam try (remaining flag)
         3H = bad hand relative to position/vulnerability
             3N = to play
             other = control bids
@@ -82,11 +82,11 @@ quality.
             3S = invitational, medium v.s. maximum
             4C = [Preempt RKB](#Preempt RKB), only time after 2N
         3D = 6--4 natural
-            3H = !d slam try
-            3S = !s slam try
+            3H = !d slam try (remaining flag)
+            3S = !s slam try (natural flag)
         3H = 6--4 natural
-            3S = !s slam try
-            4C = !h slam try
+            3S = !s slam try (natural flag)
+            4C = !h slam try (remaining flag)
         3S = bad hand relative to position/vulnerability
             3N = to play
             other = control bids

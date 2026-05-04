@@ -133,9 +133,9 @@ Responding:
             4D = !c RKB
     2N = GF ASK, more suitable for declaring 3N
         3CD = !h/!s
-            next = !c support, often slam try
-            next+1 = (bid the shown major) major slam try
+            3M = (bid the shown major) major slam try
             3N = to play
+            4C = [Q-Minorwood](#Q-Minorwood)
     3C = !c constructive raise
     3D = !c slam try
         3HS = shortness
@@ -155,6 +155,8 @@ Responding:
     3HS = 5 cards natural, GF
         new = shortness and support
     3N = to play, everything stopped
+    4C = rare, [Q-Minorwood](#Q-Minorwood), often ask or prefer 3D slam try
+
 
 
 **** 2C--2D--2S
@@ -179,6 +181,7 @@ Responding:
     3HS = 5 cards natural, GF
         new = shortness and support
     3N = to play
+    4C = rare, [Q-Minorwood](#Q-Minorwood), often ask or prefer 3D slam try
     4D = Redwood
 
 
@@ -226,25 +229,25 @@ Responding:
     4N = quantitative
     5CD = to play
 3D = 6--4+ extras
+    3HS = forcing, natural
+    4CD = [Q-Minorwood](#Q-Minorwood)
 3HS = 6--5, forcing, natural bids follow.
-    oM = forcing, natural (e.g. 6 or 7 cards)
-    4C = forcing
-    4D = forcing !d support over 3!d or slam try cue bid over 3!h!s
+    oM = natural (e.g. 6 or 7 cards)
+    4C = [Q-Minorwood](#Q-Minorwood)
+    4D = major slam try
+    4M = to play
 3N = 2--2--2--7 or 6--3--2--2 shape, maximum, solid clubs, no guaranteed side stoppers
     4C = forcing, slam try !c
     4D = !c RKB
     4HS = natural, NF
     4N = quantitative
-4C = usually 4--8 in minors, or 1--1--3--8, forcing
+4C = 8 carder, forcing
     4D = !c RKB
-    4H = !d RKB
-    4S = !c slam try, cue ace showing
-    4N = [Double Fit RKB](#Double Fit RKB)
+    5C = to play
+    other = control bidding
 4DHS = 7--5, excellent playing strength, 2 top losers with !c as trumps, e.g. x/AKxxx/-/KQJ10xxx
     suit = cue, 1st round
     4N = [Double Fit RKB](#Double Fit RKB)
-4N = 1--3--1--8, ~3 Control Points, too weak for 1!c, unsuitable for 4!c/5!c
-5C = 3--1--1--8, ~3 Control Points, too weak for 1!c, unsuitable for 4!c/5!c
 
 
 ** 2C Interference

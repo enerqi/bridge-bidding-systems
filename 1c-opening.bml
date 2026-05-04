@@ -280,17 +280,6 @@ Continuations are very similar to a modern precision majors first rebid style.
 4HS = long suit, ~8.5 PT minimum strong
 5CD = rare likely 8 card suit, (sub)minimum strong, expect 3 keycards
 
-1C--1D
-    (Dbl) = whatever
-        P = weak NT
-        1N = weak NT, probably NV, good stops, system on
-        XX = takeout of majors / power double
-        1HS = 5+ carder, maybe weak if reasonable
-        2HS = sound strong 6+ suit, bit extra
-        2N = natural system on
-
-Bid as if they opened after 1C--1D then 4th interference
-
 ** 1C--1HS
 
 - 8+ hcp
@@ -1544,14 +1533,15 @@ For the 3N/4CDHS responses it should be easy to place the contract or slam try o
 
 ** 4th Interferes after Responder Negative
 
-Bid as if they opened.
+Bid as if they opened after 1C--1D then 4th interference
 
-1C--(P)--1D = negative response
-    (X) = whatever, likely not much
-        P = vague hand
-            any = to play
-            XX = escape
-        XX = big balanced or GF unbalanced hand
-        bid = strong hand
-        2x+ = extra strong
+1C--1D
+    (Dbl) = whatever
+        P = weak NT
+        1N = weak NT, probably NV, good stops, system on
+        XX = takeout of majors / power double
+        1HS = 5+ carder, maybe weak if reasonable
+        2CD = strong
+        2HS = sound strong 6+ suit, bit extra
+        2N = natural system on
     (1x) = whatever, continuations same as 1C-(1x)-P

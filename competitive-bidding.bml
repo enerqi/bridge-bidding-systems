@@ -1098,11 +1098,7 @@ With limited strength may want to hide distribution information and just bid the
                     4C = !c shortage
                     4D = !h shortage (or 4H if forget)
             3H = 6--4 natural
-                3S = !d slam try (lowest other suits flag slam try, natural if possible else ranked order)
-                4C = !s slam try
             3S = 6--4 natural
-                4C = !s slam try
-                4D = !d slam try
         cue = partial stop asking (do not need HCR), or rarely slam try
         new = forcing
         game = to play
@@ -2363,6 +2359,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
 (2D)--P--(2!h)--P--(P)
     Dbl = penalty/values, max 3 card !s suit, good 4+ card !h holding
         Bid = natural limited, run away
+    2N = natural, !h stop
 
 (2D)--P--(2!s)
     Dbl = 4 or 5 poor spades
@@ -2373,6 +2370,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
 (2D)--P--(2!h)--P--(2!s)
     Dbl = takeout with 4 or 5 poor !hs
         2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
+    2N = natural, !s stop
 
 
 (2D)--P--(2N) = usually artificial ask
@@ -2493,7 +2491,7 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
         5C = to play
         5D = EKB
         5S = natural jump new suit, self-sufficient, slam interest
-    4D = !cs + !ss, GF
+    4D = !ds + !ss, GF
         4HS = to play
         4N = !c slam try
         5C = to play
@@ -2578,18 +2576,17 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
             5D = good 5H bid, offensive e.g. !s singleton
             5H = competitive
     4C = !cs + !hs, GF
-        4D = !h slam try, first step 1+ KC
-        4H = to play
-        4S = !c slam try, second step 1+ KC
+        4D = flag !hs
+        4S = flag !cs
+        4N = !h RKB
         5C = to play
         5D = natural jump new suit, self-sufficient, slam interest
-        5S = EKB
     4D = !ds + !hs, GF
         4H = to play
-        4S = !h slam try, first step 1+ KC
-        5C = !d slam try, second step 1+ KC
+        4S = !h slam try
+        4N = !h RKB
+        5C = !d slam try
         5D = to play
-        5S = EKB
     4H = to play, distributional
     4S = minors, slam interest 3 losers or better
         4N = RKB double fit
@@ -2696,9 +2693,10 @@ OR
     3D = 5+!ss, 4+!hs, sound values
     3HS = sound overcall
     4C = majors two suiter, strong
-        4D = slam try
+        4D = slam try, !h flag
         4HS = to play
-        5CD = EKB
+        4N = !s RKB
+        5CD = EKB, !s implied as 4N
 
 (2N)--P--(3!c)
     X = strong balanced
@@ -2724,13 +2722,16 @@ X is majors takeout, NT is minors.
     3N = natural, ~16+
       any = natural
     4C = majors two suiter, GF ~4 losers
-        4D = slam try
+        4D = !h flag slam try
         4HS = to play
+        4N = !s RKB
         5C = EKB
         5DHS = natural jump new suit, self-sufficient, slam interest
     4D = !ds + major, GF ~ 4 losers
-        4HS = pass/correct
-        5C = slam try
+        4H = pass/correct
+        4S = pass or !h flag, then [Constrained Auto RKB](#Constrained Auto RKB)
+        4N = !d RKB as no known major
+        5C = !s flag slam try, [Constrained Auto RKB](#Constrained Auto RKB)
         5D = to play
         5HS = natural jump new suit, self-sufficient, slam interest
     4HS = to play
