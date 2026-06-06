@@ -151,6 +151,7 @@ Stayman, promissory
 
 - no 5--5 majors type hand
 - artificial 5 card !h invite uses responder's 2S rebid
+- major + minor transfers over transfers prioritise safe 3N over slam try
 
 2D = transfer to !hs, 5+ cards
     2H = normal bid
@@ -162,29 +163,85 @@ Stayman, promissory
             3N = accept
             4H = 3 card, something extra
         2N = transfer, 4+ !cs, GF, later 4C set minor as trump, 4D RKB, 4S minor RKB if no 4D free
-            3C = 2 card !h support, unsure 3N
+            3C = 2 card !h support, unsure 3N, maybe good minor support
                 3D = 3--5--1--4, !d shortage
+                    3H = Hx/HH !h 5--2 tolerance, no good stop
+                    3S = 4!ss good suit, suggests 4--3 fit
+                    3N = good stop
+                    4C = fit, no good stop
+                        4H = good 5!hs prefer try 5--2 fit
+                    4D = (advanced) artificial, !d fit, usually 5 cards, slammish
+                        4H = good 5!hs prefer try 5--2 fit
                 3H = 1--5--3--4, !s shortage
-                3S = artificial 5--5 hand
-                3N = artificial 6--4 hand
+                    3S = (advanced) artificial, !c fit, usually 5 cards, slammish
+                    3N = good stop
+                    4C = fit, no good stop
+                        4H = good 5!hs prefer try 5--2 fit
+                    4D = 5--3 fit, no good stop
+                        4H = good 5!hs prefer try 5--2 fit
+                    4H = Hx/HH !h 5--2 tolerance, no good stop
+                3S = artificial 5--5 hand, unclear if slam interest
+                    3N = good stops
+                        4C = slam try, inviting Double Fit RKB
+                            4N = to play
+                        4D = [Double Fit RKB](#Double Fit RKB), taking control
+                        4H = excellent 5 carder, probably a void
+                    4C = fit
+                        4D = [Double Fit RKB](#Double Fit RKB), taking control
+                    4D = (advanced) artificial, !c fit, usually 5 cards, slammish
+                        4S = RKB (not using first bid major as RKB)
+                    4H = !h 5--2 preference, not good stops
+                3N = artificial 6--4 hand, implied slam try+
+                    4C = (4)5!cs preference, usually slammish else try 4M
+                        4D = RKB (not double for 6--2 fits)
+                    4D = !h preference, slammish
+                    4H = !h preference, weaker
                 4N = 5--4--2--2 quantitative
             3D = (1st break, not 3oM) artificial 3+ card support, control bidding / serious 3N
             3S = natural 5 carder, 2 !hs
             3N = other suits stopped
                 4S = serious quantitative (beyond game, not !s control)
                 4N = quantitative
+            4C = double fit, min (2+Q+Q or 3)/6 keycards, unknown !d control
         3C = transfer, 4+ !ds, GF, later 4C set minor as trump, 4D RKB, 4S minor RKB if no 4D free
-            3D = 2 card !h support, unsure 3N
-                3H = 3--5--4--1, !c shortage
-                3S = 1--5--3--4, !s shortage
-                3N = artificial 5--5 hand
-                4C = artificial 6--4 hand
+            3D = 2 card !h support, unsure 3N, maybe good minor support
+                3H = either 3--5--4--1, !c shortage OR 2--5--5--1 slam forcing
+                    3S = 4!ss good suit, suggests 4--3 fit
+                        4D = slam forcing 5--5, [Double Fit RKB](#Double Fit RKB)
+                    3N = good stop
+                        4D = slam forcing 5--5, [Double Fit RKB](#Double Fit RKB)
+                    4C = (advanced) artificial, !d fit, usually 5 cards, slammish
+                        4H = good 5!hs prefer try 5--2 fit
+                    4D = fit, no good stop, not slammish
+                        4H = good 5!hs prefer try 5--2 fit
+                    4H = Hx/HH !h 5--2 tolerance, no good stop
+                3S = either 1--5--4--3, !s shortage OR 1--5--5--2 slam forcing
+                    3N = good stop
+                        4D = slam forcing 5--5, [Double Fit RKB](#Double Fit RKB)
+                    4C = 5--3/5--2 !c fit, no good stop
+                        4D = slam forcing 5--5, [Double Fit RKB](#Double Fit RKB)
+                        4H = good 5!hs prefer try 5--2 fit
+                    4D = fit, no good stop
+                        4H = good 5!hs prefer try 5--2 fit
+                    4H = Hx/HH !h 5--2 tolerance, no good stop
+                3N = artificial 5--5 hand, maybe slam invite
+                    P = good stops
+                    4D = (4)5!ds slammish
+                    4H = !h 5--2 preference
+                    5D = to play, not slammish
+                4C = artificial 6--4 hand, implied slam try+
+                    4D = (4)5!ds preference, usually slammish else try 4M
+                        4H = RKB (not double for 6--2 fits)
+                    4H = !h preference
+                    4S = !h preference, slammish
                 4N = 5--4--2--2 quantitative
             3H = (1st break, not 3oM) 3+ card support, control bidding / serious 3N
             3S = natural 5 carder, 2 !hs
             3N = other suits stopped
                 4S = serious quantitative (beyond game, not !s control)
                 4N = quantitative
+            4C = !c control, double fit, min (2+Q+Q or 3)/6 keycards
+            4D = double fit, no !c control, min (2+Q+Q or 3)/6 keycards
         3D = transfer, 6+ !hs, game invite OR slam invite including stronger splinter hand (minimum with fitting values ok)
             3H = reject invite
                 3S = !s shortage, slam try, stronger splinter (minimum with fitting values ok)
@@ -192,7 +249,7 @@ Stayman, promissory
                 4CD = shortage, slam try, stronger splinter
             3S = artificial accept, control bidding etc. follow
                 3N = serious
-        3H = artificial NT needs help, 5!hs 5--4--2--2, 5--4--3--1 singleton honour / 5--3--3--2 no stop
+        3H = artificial NT needs help, prefer 5--3 fit, 5!hs 5--4--2--2, 5--4--3--1 singleton honour / 5--3--3--2 no stop
             3N = to play, very rare to have 3 !hs
             4H = 3 card support
         3S = weaker splinter, want support and fitting values
@@ -205,7 +262,7 @@ Stayman, promissory
 
 **** Transfer breaks
 
-2N = minimal break
+2N = minimal break, total fit more than hcp
     3D = retransfer
         3H = complete transfer
             3S/4CD = shortage
@@ -221,33 +278,93 @@ Stayman, promissory
 
 - includes 5--5+ majors, GF or Slam Try hands
 - not 5--5 majors invite, just punt
+- major + minor transfers over transfers prioritise safe 3N over slam try
 
 2H = transfer to !ss, 5+ cards
     2S = normal bid
         2N = transfer, 4+ !cs, GF, later 4C set minor as trump, 4D RKB, 4S minor RKB if no 4D free
-            3C = 2 card !s support, unsure 3N
+            3C = 2 card !s support, unsure 3N, maybe good minor support
                 3D = 5--3--1--4, !d shortage
+                    3H = 4!hs good suit, suggests 4--3 fit
+                    3S = Hx/HH !s 5--2 tolerance, no good stop
+                    3N = good stop
+                    4C = fit, no good stop
+                        4S = good 5!ss prefer try 5--2 fit
+                    4D = (advanced) artificial, !d fit, usually 5 cards, slammish
+                        4S = good 5!ss prefer try 5--2 fit
                 3H = 5--1--3--4, !h shortage
-                3S = artificial 5--5 hand
-                3N = artificial 6--4 hand
+                    3S = (advanced) artificial, !c fit, usually 5 cards, slammish
+                    3N = good stop
+                    4C = fit, no good stop
+                        4S = good 5!ss prefer try 5--2 fit
+                    4D = 5--3 fit, no good stop
+                        4S = good 5!ss prefer try 5--2 fit
+                    4S = Hx/HH !s 5--2 tolerance, no good stop
+                3S = artificial 5--5 hand, unclear if slam interest
+                    3N = good stops
+                        4C = slam try, inviting Double Fit RKB
+                            4N = to play
+                        4D = [Double Fit RKB](#Double Fit RKB), taking control
+                        4S = excellent 5 carder, probably a void
+                    4C = fit
+                        4D = [Double Fit RKB](#Double Fit RKB), taking control
+                    4D = (advanced) artificial, !c fit, usually 5 cards, slammish
+                        4H = RKB
+                    4S = !s 5--2 preference, not good stops
+                3N = artificial 6--4 hand, implied slam try+
+                    4C = (4)5!cs preference, usually slammish else try 4M
+                        4D = RKB (not double for 6--2 fits)
+                    4D = !s preference, slammish
+                    4S = !s preference, weaker
                 4N = 5--4--2--2 quantitative
             3D = (1st break, not 3 other major) artificial 3+ card support, control bidding / serious 3N on
             3H = natural 5 carder, also 2 !ss
             3N = other suits stopped
                 4S = to play, probably 6--4
                 4N = quantitative
+            4C = double fit, min (2+Q+Q or 3)/6 keycards, unknown !d control
         3C = transfer, 4+ !ds, GF, later 4C set minor as trump, 4D RKB, 4S minor RKB if no 4D free
-            3D = 0--2 card !s support, unsure 3N
-                3D = 5--3--4--1, !c shortage
-                3H = 5--1--3--4, !h shortage
-                3S = artificial 5--5 hand
-                3N = artificial 6--4 hand
+            3D = (1)2 card !s support, unsure 3N, maybe good minor support
+                3H = either 5--1--4--3, !h shortage or 5--1--5--2 slam forcing
+                    3S = Hx/HH !s 5--2 tolerance, no good stop
+                        4D = slam forcing 5--5, [Double Fit RKB](#Double Fit RKB)
+                    3N = good stop
+                        4D = slam forcing 5--5, [Double Fit RKB](#Double Fit RKB)
+                    4C = 5--3/5--2 !c fit, no good stop
+                        4D = slam forcing 5--5, [Double Fit RKB](#Double Fit RKB)
+                        4S = good 5!ss prefer try 5--2 fit
+                    4D = fit, no good stop, not slammish
+                        4S = good 5!ss prefer try 5--2 fit
+                    4H = (advanced) artificial, !d fit, usually 5 cards, slammish
+                        4S = good 5!ss prefer try 5--2 fit
+                    4S = Hx/HH !s 5--2 tolerance, no good stop
+                3S = either 5--3--4--1, !c shortage OR 5--2--5--1 slam forcing
+                    3N = good stop
+                        4D = slam forcing 5--5, [Double Fit RKB](#Double Fit RKB)
+                    4C = (advanced) artificial, !d fit, usually 5 cards, slammish
+                        4D = slam forcing 5--5, [Double Fit RKB](#Double Fit RKB)
+                        4S = good 5!ss prefer try 5--2 fit
+                    4D = fit, no good stop, not slammish
+                        4S = good 5!ss prefer try 5--2 fit
+                    4S = Hx/HH !s 5--2 tolerance, no good stop
+                3N = artificial 5--5 hand, maybe slam invite
+                    P = good stops
+                    4D = (4)5!ds slammish
+                    4S = !s 5--2 preference
+                    5D = to play, not slammish
+                4C = artificial 6--4 hand, implied slam try+
+                    4D = (4)5!ds preference, usually slammish else try 4M
+                        4H = RKB (not double for 6--2 fits)
+                    4H = !s preference, slammish
+                    4S = !s preference
                 4N = 5--4--2--2 quantitative
             3H = natural 5 carder, also 2 !ss
             3S = (1st break, not 3 other major) 3+ card support, control bidding / serious 3N on
             3N = other suits stopped
                 4S = to play, probably 6--4
                 4N = quantitative
+            4C = !c control, double fit, min (2+Q+Q or 3)/6 keycards,
+            4D = double fit, no !c control, min (2+Q+Q or 3)/6 keycards
         3D = transfer, 5+ !hs, GF
             3H = only 2 card !s support, !h support guarantee
             3S = !s support, maybe also !h support
@@ -258,7 +375,7 @@ Stayman, promissory
                 3N = (semi)balanced slam try
                 4CDH = shortage, slam try, stronger splinter
             3N = artificial accept, control bidding etc. follow
-        3S = artificial NT needs help, 5!ss 5--4--2--2, 5--4--3--1 singleton honour / 5--3--3--2 no stop
+        3S = artificial NT needs help, prefer 5--3 fit, 5!ss 5--4--2--2, 5--4--3--1 singleton honour / 5--3--3--2 no stop
             3N = to play, very rare to have 3 !ss
             4S = 3 card support
         3N = 5--3--3--2, A/K/Q+ in doubleton
@@ -268,7 +385,7 @@ Stayman, promissory
 
 **** Transfer breaks
 
-2N = minimal break
+2N = minimal break, total fit more than hcp
     3H = retransfer
         3S = retransferred
             3N = serious, slam try, despite opener's spread out values
@@ -289,7 +406,8 @@ Stayman, promissory
             3N = stopped
                 4C = slam try, [Q-Minorwood](#Q-Minorwood)
             4C = no stop, minimum
-        3N = to play
+        3N = to play, implied balanced slam try hand
+            4N = natural
         4C = slam try, [Q-Minorwood](#Q-Minorwood)
         4DHS = void
     3C = accept an invite
@@ -301,7 +419,7 @@ Stayman, promissory
                     4S = flag for !cs
                     4N = !h RKB
             4C = no stop, minimum
-        3N = to play
+        3N = to play, often just a balanced game try, not implied balanced slam try
         4C = slam try, [Q-Minorwood](#Q-Minorwood)
         4DHS = void
 2N = transfer to !ds, 6+ cards, weak or invite plus OR 5--5 both minors sign off
@@ -313,6 +431,8 @@ Stayman, promissory
             3N = stopped
                 4D = slam try, [Q-Minorwood](#Q-Minorwood)
             4D = no stop, minimum
+        3N = to play, implied balanced slam try hand
+            4N = natural
         4C = singleton, slam try, [Q-Minorwood](#Q-Minorwood) (one bid lower than usual)
         4D = slam try, [Q-Minorwood](#Q-Minorwood)
         4HS = void
@@ -325,6 +445,8 @@ Stayman, promissory
             3N = stopped
                 4D = slam try, [Q-Minorwood](#Q-Minorwood)
             4D = no stop, minimum
+        3N = balanced slam try
+            4N = natural
         4C = singleton, slam try, [Q-Minorwood](#Q-Minorwood) (one bid lower than usual)
         4D = slam try, [Q-Minorwood](#Q-Minorwood)
         4HS = void

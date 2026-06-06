@@ -37,6 +37,7 @@ quality.
 
 2H = weak two
     2S = forcing
+        jump = splinter, 1+ keycards, Hxx+ support
     2N = Vinny asking bid
         3C = like hand, relative to position/vulnerability, some medium/maximum
             3D = shortage ask
@@ -61,6 +62,7 @@ quality.
     3m = forcing
         3x = natural
             4m = [Q-Minorwood](#Q-Minorwood)
+        jump = splinter, 1+ keycards, Hxx+ support
     3H = obstructive
     3S = natural GF (passed hands fit jump)
     3N = to play, non-correctable
@@ -96,6 +98,7 @@ quality.
     3m = forcing
         3x = natural
             4m = [Q-Minorwood](#Q-Minorwood)
+        jump = splinter, 1+ keycards, Hxx+ support
     3H = forcing
     3S = obstructive
     3N = to play, non-correctable
