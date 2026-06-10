@@ -53,23 +53,13 @@ Transfer breaks, revision style:
   that suit is less valuable
 - 4M as catchall accept
 
-Minor RKB?:
-
-- over a 4CD minor slam try with one choice left between the minor and NT, next step rejects and other bids RKB - see
-  [Q-Minorwood](#Q-Minorwood). This leaves room for responder to insist on RKB after the reject step with the step after
-- over a natural 4CD minor slam try with a major choice, the lowest unbid suit slam try agrees the major, 4N is always
-  natural, the higher unbid suit slam try agrees the minor. No RKB available!
-- over a natural 4CD minor slam try, when only a minor fit is possible, then 4C--4D is natural to try the other minor
-  and 4N is natural. Over 4D we've given up on !cs, so it's the same next step reject and other bids auto (optional)
-  RKB.
-
 Accepting slam tries in general suggests values in the right place, controls and fit etc.
 
 
 **** 2N--3C
 
 - yes, 5!ss + 4!hs
-- yes, slam try+ 5--5 majors
+- yes, slam try+ 5--5 majors (might get more info this route?)
 - NOT game values 5--5 majors (transfer to !ss then bid 4!h)
 - NOT 5!hs + 4!ss
 - NOT 5--3 major hands, they should transfer as there's special transfer break support for those shapes
@@ -129,8 +119,7 @@ Accepting slam tries in general suggests values in the right place, controls and
     4N = quantitative
 3S = 5!ss, natural
     3N = to play
-    4C = natural slam try, 5+ cards (opener 3 cards at most), cannot have !h fit, [Q-Minorwood](#Q-Minorwood)
-    4D = natural slam try, 5+ cards (opener 3 cards at most), cannot have !h fit, [Q-Minorwood](#Q-Minorwood)
+    4CD = natural slam try, 5+ cards (opener 3 cards at most), cannot have !h fit, [Q-Minorwood](#Q-Minorwood)
     4H = other major artificial, !s slam try
     4S = to play
 3N = 4--4 !h/!s
@@ -145,30 +134,15 @@ Accepting slam tries in general suggests values in the right place, controls and
 - if wish to sign off with 5/6!hs then risk playing 3N if opener has 5oM + 2!hs
 
 3H = NOT 5!ss and 2 !hs, else normal transfer completion
-    3S = natural, 4 card !s suit  (4!s and 5!h)
+    3S = natural GF, 4 card !s suit (4!ss and 5!hs)
         3N = natural
             4CD = 3 suiter
-    4C = natural slam try, 4/5 card minor  (e.g. 5!h + 4/5 !c)
-        4D = !h slam try (cheapest unbid suit, major slam try)
-            4N = !h RKB
-        4H = to play, not worth slam try, 3 card support
-        4S = !c slam try (higher unbid suit, minor slam try)
-            4N = !c RKB
-        4N = to play
-        5C = to play, not worth slam try
-    4D = natural slam try, 4/5 card minor  (e.g. 5!h + 4/5 !d)
-        4H = to play, not worth slam try, 3 card support
-        4S = !h slam try (cheapest unbid suit, major slam try)
-            4N = !h RKB
-        4N = to play
-        5C = !d slam try (higher unbid suit, minor slam try)
-        5D = to play, not worth slam try
+    4CD = natural slam try, 4/5 card minor  (e.g. 5!h + 4/5 m)
+        others = see [Flag Bidding](#Flag Bidding)
     4H = NF, !h slam try
     5CDH = splinter
-3S = 5!ss + 2 !hs, 5--2--3--3 (so responder can bid 3!d !h transfer with 3!s and 5!h safely and fit find)
-    4CD = natural, second suit, knows of 8+ card minor fit
-        4HS = cue bid, minor slam try
-            4N = minor RKB
+3S = 5!ss + 2 !hs, usually 5--2--3--3 (so responder can bid 3!d !h transfer with 3!s and 5!h safely and fit find)
+    4CD = [Q-Minorwood](#Q-Minorwood)
     4H = NF, !h slam try
     4S = to play
     4N = quantitative
@@ -191,29 +165,12 @@ Accepting slam tries in general suggests values in the right place, controls and
 - if wish to sign off with 5/6!ss then risk playing 3N if opener has 5oM + 2!ss
 
 3S = NOT 5!hs and 2 !ss, else normal transfer completion
-    4C = natural slam try, 5!ss + 4/5!cs
-        4D = !s slam try (cheapest unbid suit, major slam try)
-            4N = !s RKB
-        4H = !c slam try (higher unbid suit, minor slam try)
-            4N = !c RKB
-        4S = to play, not worth slam try, 3 card support
-            4N = !s RKB
-        4N = to play
-        5C = to play, not worth slam try
-    4D = natural slam try, 5!ss + 4/5!ds
-        4H = !s slam try (cheapest unbid suit, major slam try)
-            4N = !s RKB
-        4S = to play, not worth slam try, 3 card support
-            5C = natural, 5--4--4--0 three suiter
-        4N = to play
-            5C = natural, 5--4--4--0 three suiter
-        5C = !d slam try (higher unbid suit, minor slam try)
-        5D = to play, not worth slam try
+    4CD = natural slam try, 5!ss + 4/5!cs
+        others = see [Flag Bidding](#Flag Bidding)
     4H = 5--5 majors, NF (would start with muppet stayman if 5--5 slam interest)
     4S = NF, !s slam try
 3N = 5!hs + 2 !ss, 2--5--3--3 (so responder can bid 3!h !s transfer with 3!h and 5!s safely and fit find)
-    4CD = natural, 5+ cards (note knows of 3 card support)
-        4x = cue bid
+    4CD = [Q-Minorwood](#Q-Minorwood)
     4H = to play
     4S = NF, !s slam try hand
     4N = quantitative

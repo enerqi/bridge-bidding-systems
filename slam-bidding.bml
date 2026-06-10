@@ -5,6 +5,7 @@
 Meta agreements and some slam finding conventions
 
 - [What is 4N?](#What is 4N?)
+- [Quantitative 4N Responses](#Quantitative 4N Responses)
 - [Q-Minorwood](#Q-Minorwood)
 - [Constrained Auto RKB](#Constrained Auto RKB)
 - [Flag Bidding](#Flag Bidding)
@@ -12,9 +13,6 @@ Meta agreements and some slam finding conventions
 - [Slam Convention Interference Defence](#Slam Convention Interference Defence)
 - [RKB 4N, General Major Keycarding](#RKB 4N)
 - [Redwood, General Minor Keycarding](#Redwood for minors)
-- [Baron over 4N Quantitative](#Baron over 4N Quantitative)
-- [Cue Opponents Suit in Competition is Still Redwood](#Cue Opponents Suit in Competition is Still Redwood)
-- [Jump Cuebid in Competition always a Splinter](#Jump Cuebid in Competition always a Splinter)
 - [Double Fit RKB](#Double Fit RKB)
 - [EKB Voidwood](#EKB Voidwood)
 - [Preempt RKB](#Preempt RKB)
@@ -22,6 +20,7 @@ Meta agreements and some slam finding conventions
 - [Free 5x Major Raise](#Free 5x Major Raise)
 - [5NT Pick a Small Slam](#5NT Pick a Small Slam)
 - [5NT v.s 6other in Competition](#5NT v.s 6other in Competition - Turbo Inspired)
+- [Jump Cuebid in Competition always a Splinter](#Jump Cuebid in Competition always a Splinter)
 - [Lightner Doubles](#Lightner Double of Opponents' Slam)
 - [Forcing Pass Auctions](#Forcing Pass Auctions)
 - [1HS Slam Tries](#1HS Slam Tries)
@@ -106,13 +105,18 @@ quantitative. However, 1S--2H--2S--3H--3S now leaves !ss as last bid major.
 - non-jump 4N with limited hand - natural, to play
 - 4 level jump interference after long natural major/minor (1!h/!s or 2!c/!d) - [RKB](#RKB 4N)
 
-*** Quantitative 4N Response
+** Quantitative 4N Responses
 
 Just bid 6 if accept right? That's the default, but we can give 5N more nuance - anywhere responder can have reasonable
-trick taking power / running suits but controls and hcp maybe light
+trick taking power / running suits but controls and hcp maybe light.
+
+We can also optionally look for a fit with up the line Baron bids of 4+ card suits, after which 5N can be a final place
+to play.
 
 4N = quantitative
   P = no
+  5x = optional Baron up the line suits
+    5N = (later) to play
   5N = yes, but I have only max 1 Ace
   6N = accept
 
@@ -194,7 +198,9 @@ use Redwood.
 - 4m bidder is the captain, potentially unlimited (which is assumed if jump bidding 4m!). If limited and seeking
   cooperation then 4m is more general slam try last train like before Redwood
 - nominally minor AGREED OR self JUMP 4m (re)bids showing good (often self-sufficient) hands
-- exception: flag bidding situations where expected to choose a suit without jump or prior agreement, e.g. 2C--2D--3S--4C
+- EXCEPTION: [Flag Bidding](#Flag Bidding) situations, a non jump 4m flag bid is Q-Minorwood by the ideal captain
+  (unlimited hand)
+- EXCEPTION: 2D--3C then further 4C rebid is assumed similar to jump 4m rebid quality
 
 
 ** Constrained Auto RKB
@@ -242,25 +248,30 @@ A less pressured flag bidding situation.
   depending on steps free
 
 Very unlikely there would be 2 free suits to bid. Auctions such as 1C--2D--3D--3S--4C (!d + !s two suiter opposite
-balanced GF) use either of the 2 free bids as implied cue bids because 3N is a natural possibility.
+balanced GF) use either of the 2 free bids as implied cue bids because 3N is a natural possibility. Her 4C is an implied
+cue bid. The balanced hand has at most 3 !ds. TODO update implied cue bid policy. Maybe Baron best on example instead of 3D if had !cs.
 
 Examples:
 
 2C--2D--3S = 6--5 !c + !s two suiter, flag bidder unlimited
     3N = natural, misfit
     4C = [Q-Minorwood](#Q-Minorwood), despite no prior agreement or jump, expected to choose a game
-    4D = !s flag
+    4D = !s flag (implies bad !hs here else might 4N direct)
     4H = after 2D shouldn't have amazing !hs, so control bid and !s flag, imply poor !ds
 
 2C--2N--3C--3S = 5--5+ !d + !s two suiter, opener wide-ish opening 10--15 hcp
     3N = misfit
-    4C = excellent 7+ suit, with 4H then a flag for excellent long !cs
+    4C = excellent 7+ suit
         4H = !c flag, Auto RKB as 3 steps space free before game
             4S = 1/4 keycards
             4N = 3/0 keycards
-            5C = 2 keycards
+            5C = 2 keycards no Q
     4D = natural flag, forcing
     4H = !s flag
+
+2M--2N--3N = 6--4 !s + !c preempt
+    4C = !c flag, [Q-Minorwood](#Q-Minorwood) despite no prior agreement or jump
+    4D/4oM = major slam try
 
 (1H)--2H--2N--3S = Michaels !s + !d two suiter with extras, flag bidder unlimited
     4C = !s flag as natural 4m free for the other suit
@@ -282,7 +293,8 @@ Examples:
 - 4N to play, it's a viable spot without a good fit
 - LOW flag<->LOW GAME, HIGH flag<->HIGH GAME, partner should captain
 - after flag the captaining bid is 4N Major RKB or NEXT FREE BID MINOR RKB
-- NORMAL RKB as bidder is limited/defined we can guess rough keycards before asking
+- only using NORMAL RKB instead of constrained because bidder is limited/defined we can guess their rough keycards
+  before asking, so unlikely to propel self to high
 
 The low flag<->low game, high flag<->high game policy prioritizes keeping 4N as major RKB (4M game lower than 5m game).
 
@@ -322,11 +334,11 @@ Examples:
 *** (2b) Flag Bidder Flattish Limited, Freak Responder
 
 - 6--5+ shapes where expected to play trumps
-- 4N is an extra flag if needed else, highest rank RKB
+- 4N is an extra flag
 
 1N--2N--3C--3S--3N--4H = freak 6--5 !d + !h hand with !s shortage (shortage showing implied slam try)
     4S = !h flag slam try, lower game
-    4N = !h RKB
+    4N = !d flag
 
 
 *** (3) Flag Bidder Not Bid or Unbalanced
@@ -393,14 +405,13 @@ Examples:
 (3D)--4D = majors bid two suiter
     4M = to play
     4N = !s RKB
-    5C = !h flag, only 2 steps before 5 Trumps, use [Constrained Auto RKB](#Constrained Auto RKB)
+    5D = !h flag, only 1 steps before 5 Trumps, use [Constrained Auto RKB](#Constrained Auto RKB)
 
 (3C)--4C = majors
-    4D = !h flag, room for Auto RKB responses
+    4D = natural
     4N = !s RKB
-    5C = !s support, EKB
+    5C = !h flag support, [Constrained Auto RKB](#Constrained Auto RKB)
 
-TODO often best flipped (3C)--4C vs 4D, but harder to remember
 
 ** Cue Bids
 
@@ -462,6 +473,7 @@ BUT takes some space...Every artificial ask replaces 1–2 natural cue bids
     implied trump suit must be 6+ decent suit
 what about when repeating a minor? 2d-3M-4c seems an exception
 
+1c-2d-3d-3s-4c seems like implied for spades (no diamond raise), but in theory big minor 2 suiter possible
 
 
 ....................
@@ -591,7 +603,7 @@ The Queen ask could be used even with the Q to find extra trumps. Follow ons are
 **** Choice of contract situations
 
 These are often major + minor situations. A choice is only a choice if the offered suit is lower than main RKB
-suit, otherwise correction would have to up a level
+suit, otherwise correction would have to go up a level
 
 When:
 
@@ -611,13 +623,13 @@ NOT when:
 **** When can sign off at 5 level
 
 5trump = no Q
-  6SuitSide = alternative contract offer
+  6-side = side suit, alternative contract offer
 5N = Q (or known 10+ card fit), something inconvenient (i.e. higher suit King, 3rd round lower control)
-    6other = [Specific Suit Ask](#Direct or Delayed Ask)
+    6-other = [Specific Suit Ask](#Direct or Delayed Ask)
 5x/6x = side K, have Q trumps (or known 10+ card fit)
-    6other = [Specific Suit Ask](#Direct or Delayed Ask)
+    6-other = [Specific Suit Ask](#Direct or Delayed Ask)
 6trump = Q (or known 10+ card fit), no good response to lower suit SSA - fast arrival
-6higher = Q + extra honours, AKQ+ (or KQJx+ if partner has Ace)
+6higher = Q + side suit extra honours, AKQ+ (or KQJx+ if partner has Ace)
 6N = Q + 3 Kings
 
 **** When forced to slam
@@ -625,12 +637,12 @@ NOT when:
 e.g. 5D--5H with !h trump (bidding on with 3 keycards)
 
 5x/6x = side K, have Q trumps (or known 10+ card fit)
-    6other = [Specific Suit Ask](#Direct or Delayed Ask)
+    6-other = [Specific Suit Ask](#Direct or Delayed Ask)
 5N = Q (or known 10+ card fit), nothing else biddable
-    6other = [Specific Suit Ask](#Direct or Delayed Ask)
+    6-other = [Specific Suit Ask](#Direct or Delayed Ask)
 6trump = no Q
-  6SideSuit = alternative contract offer
-6higher = Q + extra honours, AKQ+ (or KQJx+ if partner has Ace)
+  6-side = alternative contract offer
+6higher = Q + side suit extra honours, AKQ+ (or KQJx+ if partner has Ace)
 6N = Q + 3 Kings
 
 Note, in some Q ask versions 6N is 4--3--3--3 neither side K nor 3rd round control. Showing 3 Kings is similar to the
@@ -641,18 +653,16 @@ King Ask, which leaves 5N as only maybe having a 3rd round control.
 Gitelman style - show ask for specific outside kings up the line (not Goren/classical step response count of Kings).
 Also known as "SKA" - specific king ask, the 5N King Ask.
 
-- 5D for !c fit (4D Redwood + 1 level, a.k.a T+1 - Trump+1)
-- 5H for !d fit (4H Redwood + 1 level, T+1)
-- 5N for major fit (4N RKB + 1 level)
+- 5N for major fit (see Redwood for 4N minor king ask)
 
 Following on, any suit is a specific King request to bid grand (do you have this specific King?) optionally with more
 detailed responses (or just bid 7trumps if forget details).
 
 6x = lowest side K, 1 or 2 Kings
-    6other = [Second King Ask](#Second King Ask)
+    6-other = [Second King Ask](#Second King Ask)
 6slam = either no side K, or higher unbiddable one
-  6higher = [Second King Ask](#Second King Ask), with 6N signoff
-6higher = extra honours, e.g AKQ+ (or KQJx+ if partner has Ace)
+  6-higher = [Second King Ask](#Second King Ask), with 6N signoff
+6higher = side suit extra honours, e.g AKQ+ (or KQJx+ if partner has Ace)
   6N = to play
 6N = 3 Kings (not including K of trumps)
 7trump = counted 13 tricks (note 5N should have all keycards + Q trumps)
@@ -767,7 +777,9 @@ SPACE, e.g. 6D ask with !ss as trumps:
 
 ** Redwood for minors
 
-Nominally, 4!d/4!h as RKB for !cs/!ds after agreement, but we SKIP FIRST BID MAJORs.
+Redwood and general minor keycarding triggered by other bids.
+
+Nominally, 4!d/4!h as RKB for !cs/!ds after agreement, but we SKIP FIRST BID MAJORs and if possible keep a jump bid as a splinter.
 
 Special case when 4N is Redwood for !cs then swap to 30/14 responses.
 
@@ -779,29 +791,35 @@ Whilst explicit GF agreement before keycarding is always clearer, there are situ
 after non-agreement bids. These are not all technically called Redwood, but then skipping the first bid major to keycard
 in a higher suit is not really Redwood either.
 
-*** Jumping to 4D/4H when asker's suit is the Redwood suit
+*** Jumping to 4D/4H when asker's suit (not the agreed minor suit) is the Redwood suit
 
 Redwood iff:
 
-- we could have forced at a lower level in our suit (1!s--2!d--2!h--3!d then 3!h force instead of 4!h)
+- we could have forced at a lower level in our other suit (1!s--2!d--2!h--3!d then 3!h force instead of 4!h)
 
 *** Is the nominal Redwood suit ever a splinter?
 
-Redwood takes priority, but that still leaves situations where a jump to 4D/4H is a splinter and not Redwood. Remember
-that splinter bids in theory are somewhat limited, looking for cooperation, though could be made then just bid on.
+Redwood takes priority ONLY IF there's no obvious way to keycard, which leaves many situations where a jump to 4D/4H is
+a splinter and not Redwood. Remember that splinter bids in theory are somewhat limited, looking for cooperation, though
+could be made then just bid on.
 
-- not if our bid suit
-- not if partner's first bid suit
+- not a splinter if our bid suit (obviously)
+- not a splinter if partner's first bid suit (rarely good idea)
 
 Assuming the above two cases are true then:
 
-- either: if can slow force and agree trumps at a lower level (or already agreed) then jump can be splinter
+- When 4m is already [Q-Minorwood](#Q-Minorwood) then SPLINTER is PRIORITY
+
+That leaves the cases where Q-Minorwood is not available. Here...
+
+- either: if can SLOW FORCE and AGREE trumps at a lower level (or already agreed) then JUMP can still be SPLINTER
 - or: limited hand, just cannot reasonably take control (but is it clear what is limited enough)
 
 *** Q-Minorwood Note
 
 Includes example of no agreement before keycarding. Covered in [Q-Minorwood](#Q-Minorwood), with main points of interest
-being that the 4m bid is a jump. Single forcing raises to 4m are general slam tries.
+being that the 4m bid is a jump with the exception of flag bidding situations wherhe a single raise maybe Q-Minorwood.
+Other single forcing raises to 4m are general slam tries (often by more limited hands).
 
 - 2m rebid then 4m Q-Minorwood, 1H--1S--2D--4D, 1S--2C--2D--4D, 1D--2C--2D--4D, 1D--1S--2C--4m
 
@@ -813,12 +831,14 @@ keycard ask in one jump bid.
 
 - 2C--4D Q-Minorwood after NF 2m
 - 2D--4C CrossWood after NF 2m
-- NF natural 3m (not preempt) with known 6+ suit then Redwood (not in first bid major) by unlimited hand. Either
-  overcall etc. or non-competitive bidding
-- ???(optional) 2C overcall then 4D Redwood or keep as default above fit jump splinter
-- (impossible, natural systems only) jump raise of 2m response IFF unlimited, note 1M--2m--4m is limited not Q-Minorwood
 
-TODO ^^^^^^^^^^^^^^^^^^^
+Otherwise a jump Redwood may rarely be available - NF natural 3m (not preempt) in non-competitive auctions where there's
+no good force to setup to agree the minor before bidding Redwood.
+
+In competition, jumps are fit jumps or splinters, so would have to find a force/agreement and slow bid Redwood (e.g. HCR
+then later Redwood)
+
+(Impossible, natural systems only) jump raise of 2m response IFF unlimited, note 1M--2m--4m is limited not Q-Minorwood
 
 *** No agreement keycard after forcing 4C/4D simple Rebid opposite unlimited
 
@@ -839,8 +859,11 @@ Examples:
 - 1C--1H--3D--3S--4D - 4S 2nd responder suit is RKB
 - 1C--1H--3C--3H--4C - 4D/4S control bids, no RKB
 
+*** Competition - Cue Opponents Suit is Still Redwood
 
-*** King Ask Minor Fit
+E.g. 1S--(P)--2C--(3D)--4C--(P)--4D
+
+*** King Ask Minor Fit (Conditional)
 
 Rarely available 4N.
 
@@ -873,7 +896,6 @@ sideSuit = Queen showing
   6N = escape
 7trump = extra in some other form
 7N = count 13 tricks
-
 
 *** Queen Ask Minor Fit
 
@@ -913,17 +935,6 @@ Same as Major fit [Specific Suit Ask](#Direct or Delayed Ask). If not Queen ask,
 then it's an SSA.
 
 
-
-** Cue Opponents Suit in Competition is Still Redwood
-
-E.g. 1S--(P)--2C--(3D)--4C--(P)--4D
-
-** Baron over 4N Quantitative
-
-- instead of passing or bidding 6N, we can optionally look for a fit with up the line Baron bids of 4+ card suits
-- 5N can be a final place to play
-
-** Jump Cuebid in Competition always a Splinter
 
 ** Double Fit RKB
 
@@ -1156,6 +1167,7 @@ grand slam. Specifically, we have not been able to use 4N RKB bid as they have p
 - 5N shows an even number of keycards
 - 6x control shows an odd number of keycards (often this is the opponents suit)
 
+** Jump Cuebid in Competition always a Splinter
 
 ** Lightner Double of Opponents' Slam
 
