@@ -92,6 +92,21 @@ Both partners bidding a different major, which takes priority?
 You might argue that 1S--2H--2S--3H can force further and set !hs before bidding 4N, and therefore just treat 4N as
 quantitative. However, 1S--2H--2S--3H--3S now leaves !ss as last bid major.
 
+*** 1 Minor by 1 Partner Each
+
+Both partners bidding a different minor.
+
+- rare situations where 4m as Q-Minorwood not available for both the minors
+- 4m is Q-Minorwood where available
+- 4th or unbid suit is RKB for the other minor, a weird Redwood-like situation
+- 4N is quantitative
+
+2C--3C--3S = quasi natural game accept after 3C !d transfer
+    4C = NF natural, stop problems
+    4D = [Q-Minorwood](#Q-Minorwood)
+    4H = !c RKB
+    4S = extras 3 card raise, play suggestion, else try 5m
+
 *** Others 4N
 
 - Partner *never* bid - Takeout
@@ -200,6 +215,12 @@ use Redwood.
 - nominally minor AGREED OR self JUMP 4m (re)bids showing good (often self-sufficient) hands
 - EXCEPTION: [Flag Bidding](#Flag Bidding) situations, a non jump 4m flag bid is Q-Minorwood by the ideal captain
   (unlimited hand)
+
+Some other exceptions due to the high start level of 2C/2D openings, the rebid of responders minor is Q-Minorwood.
+
+- EXCEPTION: 2C--3C--3x--4m, 2C--3C--4C--4D
+- EXCEPTION: 2C--3H--3N--4C either view as constructive skipping 3N game (an exception) or as a flattish limited opener and had limited
+  space to check major before offering !c slam try (more normal Q-Minorwood situation)
 - EXCEPTION: 2D--3C then further 4C rebid is assumed similar to jump 4m rebid quality
 
 
@@ -244,7 +265,7 @@ A less pressured flag bidding situation.
 - bidding 4m naturally flags that suit, and may also be [Q-Minorwood](#Q-Minorwood) depedending on who is unlimited
 - the unbid suit flags the remaining suit
 - other bids natural, e.g. to play in partner's major or rebidding our own suit
-- after rebidding own suit instead of flagging, unbid suit flags it and either Constrained or Auto RKB followsd
+- after rebidding own suit instead of flagging, unbid suit flags it and either Constrained or Auto RKB follows
   depending on steps free
 
 Very unlikely there would be 2 free suits to bid. Auctions such as 1C--2D--3D--3S--4C (!d + !s two suiter opposite
@@ -845,12 +866,12 @@ then later Redwood)
 If a non-jump (simple) 4m rebidder shows a good suit (playable vs. singleton support) and there has been no agreement,
 but the other player is unlimited, then keycard maybe still possible.
 
-It is not a quantitative minorwood situation - there was neither agreement nor a jump rebid.
+It is not a quantitative minorwood situation - there was neither agreement, nor a jump rebid, nor an exception.
 
 - No unbid suits, then 4th suit RKB for the 4m minor
 - 1 unbid suit 4D rebid and when !cs is 4th suit, then 2nd other suit is RKB, otherwise...
 - 1 unbid suit, that suit is RKB for the 4m minor
-- 2 unbid suits, NO RKB, just control bids slam trying in the minor
+- 2 unbid suits, just control bids slam trying in the minor, NEXT STEP RKB
 - 4N TO PLAY
 
 Examples:
@@ -858,6 +879,10 @@ Examples:
 - 1C--1H--3C--3D--4C - 4th suit 4S is RKB
 - 1C--1H--3D--3S--4D - 4S 2nd responder suit is RKB
 - 1C--1H--3C--3H--4C - 4D/4S control bids, no RKB
+
+Note, the What is 4N [1 Minor by 1 Partner Each](#1 Minor by 1 Partner Each) specially covers the awkward case for both
+minors where one of the minor bids may not be forcing.
+
 
 *** Competition - Cue Opponents Suit is Still Redwood
 

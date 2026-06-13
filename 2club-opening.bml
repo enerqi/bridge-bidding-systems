@@ -19,9 +19,11 @@ Responding:
   the auction to the 3 level - pass can be safer though looking for a major can score better at match points
 - 2N includes some good GF major hands and the 3!c transfer bid is for any !d focussed hand. Most other
   *invitational plus hands* including the !c slam try use the *2!d enquiry*
-- Hands with one or both majors and invitational plus values can use 2!d but be willing to go to game despite potential
+- !d slam tries can be systemically difficult as the 3C !d transfer is nominally no major (hard to show one), whereas
+  after the 2D enquiry the follow on 3D bids are used as !c slam tries, therefore may have to go to 4D to try the suit
+- hands with one or both majors and invitational plus values can use 2!d but be willing to go to game despite potential
   misfits if opener is non-minimum
-- 2N can puppet to a 3!c preempt. 4!c is mixed. Again invitational !cs go via the 2!d enquiry
+- 2N can puppet to a 3!c preempt (or show 5--5+ GF). 4!c is mixed. Again invitational !cs go via the 2!d enquiry
 
 
 2C--
@@ -40,11 +42,18 @@ Responding:
         4C = 4 card support, 7--4
         4D/4oM = splinter
         4M = 4 card support, shot at game
-    2N = puppet, !c preempt OR some 5--5 GF
+    2N = puppet, !c preempt OR some 5--5+ GF
         3C = puppet
             P = !c preempt
-            3D = both majors 5--5 GF
-            3H = !hs + !ds 5--5 GF
+            3D = both majors 5--5+ GF
+                3M = set trumps
+                3N = misfit
+                4C = excellent 7+ suit
+                    4D = Redwood, !c flag unbid suit
+                    4M = extra length
+                    5C = to play
+                4D = artificial, both majors, !d shortage 6--3--3--1 / 6--4--3--0
+            3H = !hs + !ds 5--5+ GF
                 3S = !h slam try (not need as stop show)
                     3N = serious
                 4C = excellent 7+ suit
@@ -54,7 +63,9 @@ Responding:
                     5C = to play
                 4D = forcing, !d support
                 4H = to play
-            3S = !ss + !ds 5--5 GF, [Flag Bidding](#Flag Bidding)
+                4S = splinter, !d slam try
+                    4N = !d RKB
+            3S = !ss + !ds 5--5+ GF, [Flag Bidding](#Flag Bidding)
                 3N = misfit
                     4D = [Q-Minorwood](#Q-Minorwood), treating like flattish opener
                 4C = excellent 7+ suit
@@ -68,44 +79,95 @@ Responding:
                 5D = fast arrival
         3DHS = off-script, good 6--5 hand
     2N = (passed hand) natural invite ~10 hcp
-    3C = 6+ !ds, invite plus
+    3C = 6+ !ds, invite plus, maybe good !c support, no major showable
         3D = decline
-            P = weak hand, long !ds
+            P = minimal invite, long !ds
             3HS = quasi natural
+                3N = other major stop
+                4C = missing stop, NF invitational
+                4D = NF
+                    4M = rare confusing, control bid, implies weak in other major
+            4C = [Q-Minorwood](#Q-Minorwood), treating like flattish opener, construtive captaining
             4D = [Q-Minorwood](#Q-Minorwood)
-            4H = Redwood, !d RKB
-        3HS = quasi-natural, game values
-            4D = [Q-Minorwood](#Q-Minorwood)
-            4H = Redwood, !d RKB
+            4M = splinter, !c slam try
+        3M = quasi-natural, game values, maybe natural if bid again
+            3S = likely partial stop
+            4C = missing stop, NF invitational
+                4D = NF tolerance
+                    4M = 3 cards, try 4--3 fit maybe, else 5m
+                4M = 6!cs + 5M implied
+            4D = [Q-Minorwood](#Q-Minorwood), good !ds even v.s. xx/xxx
+                4H = reject, probably lacks Hx, lacks xxx
+            4M = extras 3 card raise, play suggestion, else try 5m
+            4oM = special !c RKB, leaving 4N quantitative
+            4N = quantitative
         3N = accept, something in majors
-        4C = good 7+ !c suit, forcing
-            4D = !c RKB
-            4HS = slam try
-            4N = [Double Fit RKB](#Double Fit RKB)
-        4D = strong 4+ card !d support
+            4C = [Q-Minorwood](#Q-Minorwood), treating like flattish opener, construtive captaining
+            4D = [Q-Minorwood](#Q-Minorwood)
+            4M = the 2 unbid suits, control bids, !c slam try
+                5DHS = have missing suit control, extra 1st round control
+                6C = (or above game) have missing control
+        4C = good 7+ !c suit, forcing (No agreement keycard after forcing 4!c/4!d...)
+            4D = !d [Q-Minorwood](#Q-Minorwood)
+            4M = the 2 unbid suits, control bids, !c slam try
+                5DHS = have missing suit control, extra 1st round control
+                6C = (or above game) have missing control
+            4N = to play
+        4D = natural constructive, either HHx + shortage OR minimum 4 card !d support not splintering
             4H = !d RKB
-            4N = [Double Fit RKB](#Double Fit RKB)
-        4HS = natural, 6--5 hand
+            4S = control bid, implying a !h weakness
+                4N = !d RKB
+            4N = rare, play suggestion
+        4M = splinter, !d slam try (alternative would be natural 6--5)
+            next = !d RKB
+        4N = !d RKB, freak max minor two suiter
+        5D = rare fast arrival, ~3--4 control points
     3C = (passed hand) preempt
     3DHS = (passed hand) fit jump
-    3D = 6+ !hs, invite plus OR 6!h + 4!s GF
+    3D = 6+ !hs, invite plus OR 6!h + 4!s GF, maybe good !c support
         3H = decline
             3S = 6!h + 4!s GF
-            4C = GF natural
-        3S = natural, will try 4H otherwise
+                4D = !s flag slam try (good !cs, good !ss, short !hs)
+            4C = [Q-Minorwood](#Q-Minorwood), flag bidding like
+        3S = natural
+            4C = [Q-Minorwood](#Q-Minorwood), flag bidding like tried !hs before !cs
+            4D = !s flag slam try
+            4H = very good !hs
+            4N = !s RKB
         3N = accept, no support
-        4S = freak 6--5
+            4C = [Q-Minorwood](#Q-Minorwood), treating like flattish opener, construtive captaining
+            4D = natural
+                4H = preference
+                4S = !d flag (not captain)
+                    4N = !d RKB
+            4N = !h RKB, on the basis that 2C + 3N is not really a NT hand and we need a !h RKB route, plus quantitative is quite tight on a misfit
+        4C = !c monster extras, max 1 loser opposite singleton
+            4D = !c RKB Redwood
+        4D = !h flag general slam try (good minor two suiter normally starts 1!d)
+        4H = fast arrival, natural
+        4S = void splinter, !h slam try
     3HS = (passed hand) 6--4 majors invitational
-    3H = 6+ !ss, invite plus
+    3H = 6+ !ss, invite plus, maybe good !c support
         3S = decline
+            4C = [Q-Minorwood](#Q-Minorwood), flag bidding like
         3N = accept, no support
-        4D = accept, control bid
+            4C = [Q-Minorwood](#Q-Minorwood), treating like flattish opener, construtive captaining
+        4C = excellent 7+ suit
+            4D = !c RKB Redwood
+        4D = !s flag general slam try (good minor two suiter normally starts 1!d)
         4H = rare natural, 6--5
+            4N = !h RKB
         4S = fast arrival
     3S = 6!s + 4!h GF
+        3N = to play
+        4C = excellent 7+ suit
+            4D = !c RKB Redwood
+        4D = !s flag slam try (!d find very unlikely, 3NT better)
+        4M = to play
+        4N = !s RKB, freak hand
     3N = to play, opener can bid on with lots shape and strength
     4C = mixed, not purely obstructive, opener can raise with good shape + extras
-    4D = Redwood for clubs
+    4D = Redwood for clubs (too high for Q-Minorwood)
     4HS = to play (passed hand = fit jump), opener can bid on with super fit and controls
     4N = quantitative (2!d enquiry often more informative though)
     5C = to play
@@ -152,29 +214,35 @@ Responding:
     2N = GF ASK, more suitable for declaring 3N
         3CD = !h/!s
             3M = (bid the shown major) major slam try
+            3oM = stop showing (implies !d weakness), maybe early control bid
             3N = to play
             4C = [Q-Minorwood](#Q-Minorwood)
-    3C = !c constructive raise
-    3D = !c slam try
-        3HS = shortness
+            4D = splinter, major slam try
+            4oM = (jump) splinter, major slam try
+    3C = !c constructive raise, NF
+    3D = !c slam trys
+        3HS = shortage
             3N = NF, opener can bid more with extra strength
             4D = Redwood
             4N = quantitative
         3N = !d shortage with !hs
         4C = !d shortage with !ss
-        3N = no shortness, not good for slam (fix must have a shortage)
+        3N = no shortage, not good for slam (fix must have a shortage)
             4D = Redwood
             4N = quantitative
-        4C = no shortness, good hand
+        4C = no shortage, good hand
             4D = Redwood
             4N = quantitative
         4D = short !d, good hand
             4N = Redwood
     3HS = 5 cards natural, GF
-        new = shortness and support
+        new = shortage, support
+        3N = misfit, unsure !d stop
+        4C = rare, 7--4 good !cs with other major
+            4D = !c RKB
+            4N = to play
     3N = to play, everything stopped
     4C = rare, [Q-Minorwood](#Q-Minorwood), often ask or prefer 3D slam try
-
 
 
 **** 2C--2D--2S
@@ -182,10 +250,36 @@ Responding:
 2S = no major, max with shortage OR minimum, not sub-minimum, with 2/3 top !c honours ("medium")
     2N = relay, ask
         3C = minimum with 2/3 top !c honours
-        3DHS = shortage, maximum
-            3H = 5 cards, forcing
-            4C = NF
+            3D = quasi natural GF, later rebid [Q-Minorwood](#Q-Minorwood)
+            3HS = quasi natural stop showing
+            4C = waiting, shortage ask (already quantified hand and Redwood free)
+            4D = Redwood
+        3D = shortage maximum
+            3HS = 5 cards, forcing
+                3N = misfit
+                4C = 7+ !cs
+                4D = !d control + major support
+                4M = raise, major support, no !d control
+            4C = NF, no stop for 3N
+            4D = Redwood !c RKB
+        3HS = shortage, maximum
+            3S = 5 cards, forcing
+                3N = misfit
+                4C = 7+ !cs
+                4D = !d control + major support
+                4S = raise, major support, no !d control
+            4C = NF, no stop for 3N
+            4D = [Q-Minorwood](#Q-Minorwood), may run to 4N or 5C after a reject step
+            4M = (shortage suit raise) special !c RKB
+            4oM = (only 4!h over 3!s) 5 carder, no stop usually, risks 5--2 fit
         3N = AKQxxxx, some shortage + side A/K control (semi-balanced bids 3N immediately over 2D)
+            4C = shortage ask
+                4x = shortage
+                    next = !c RKB
+            4D = Redwood
+            4HS = control bid
+                4N = !c RKB
+                5C = to play
     3C = sign off, was looking for major fit
     3D = !c slam try
         3HS = shortage
@@ -197,15 +291,18 @@ Responding:
             4D = Redwood
         4D = short !d, good hand
     3HS = 5 cards natural, GF
-        new = shortness and support
+        new = shortage and support
+        4C = extras, good 7+ !cs
+            4D = !c RKB
+            4N = to play
     3N = to play
     4C = rare, [Q-Minorwood](#Q-Minorwood), often ask or prefer 3D slam try
-    4D = Redwood
+    4D = rare, [Q-Minorwood](#Q-Minorwood), may run to 4N or 5C after a reject step
 
 
 **** 2C--2D--2N
 
-2N = semi-balanced good stops, medium ~12/13 hcp good !cs or max
+2N = semi-balanced good stops, either medium ~12/13 hcp good !cs or max
     3C = waiting, stop checking, some hole
     3D = !c slam try
         3HS = control, not shortage
@@ -213,6 +310,7 @@ Responding:
     3HS = 5 cards natural, GF
         new = control and support
     3N = to play, maybe even 5 card major with strong stoppers in others
+    4D = rare, [Q-Minorwood](#Q-Minorwood), may run to 4N after a reject step
     Game = to play
 
 
@@ -220,30 +318,27 @@ Responding:
 
 3C = no 4 card major, (sub)minimum, unless sub-minimum not 2 top 3 !c honours
     3D = !c slam try
-        3HS = shortness
-            3N = NF, opener can bid more with extra strength
+        3HS = shortage
+            3N = NF, opener can bid more with extra shape
             4D = Redwood
-        3N = no shortness or weaker !d shortness, not good for slam
+        3N = no shortage or weaker !d shortage, not good for slam
             4D = Redwood
-        4C = no shortness, 7 carder, probably subminimum in hcp
-        4D = !d shortness, 7 carder
+        4C = no shortage, 7 carder, probably subminimum in hcp
+        4D = !d shortage, 7 carder
             4H = cue
             4N = !c RKB
     3HS = natural 5 carder, GF
-        3S = stopper, unsure !d
+        new = shortage and support
+        3N = to play, stops maybe iffy
+        4C = 7 !cs, poor side stops
             4D = !c RKB
-        3N = to play
-            4D = !c RKB
-        4C = only xx support, 3N doubt
-            4D = !c RKB
-        4D = cue, major support
-        4M = to play
     3N = to play, maybe even 5 card major with strong stoppers in others
     4C = invite, bid with anything redeeming for a minimum hand
-    4D = rare, GF natural, probably 6!ds and a 4 card major
-        4HS = cue bid for !d
-            4N = delayed RKB for !d
-        4N = natural, short in !ds
+    4D = rare, [Q-Minorwood](#Q-Minorwood), probably 6+!ds and a 4 card major
+        4H = reject
+            4N/5m = to play
+    4HS = splinter, !c slam try
+        next = !c RKB
     4N = quantitative
     5CD = to play
 3D = 6--4+ extras
@@ -265,7 +360,6 @@ Responding:
     other = control bidding
 4DHS = 7--5, excellent playing strength, 2 top losers with !c as trumps, e.g. x/AKxxx/-/KQJ10xxx
     suit = cue, 1st round
-    4N = [Double Fit RKB](#Double Fit RKB)
 
 
 ** 2C Interference

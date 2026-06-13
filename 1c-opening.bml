@@ -543,9 +543,10 @@ Continuations are very similar to a modern precision majors first rebid style.
 !c transfer
 
 - when NF limited ~8--10 hcp denies a 4 card major
-- when GF we may have a 4 card major
+- when GF 12+ we may have a 4 card major
 - when GF 12+ hcp maybe 5--4 minors either longer
-- possibly 5--3--3--2 balanced, but can bid 1D (~8--9 hcp), 2D (14+ hcp 5--3--3--2)
+- NOT 5--3--3--2, use 1D (~8--9 hcp), 2D (10+--13 hcp) 2H (14+ hcp)
+- note 5--5+ or 5--4--3--1 minors ~9--11 uses 1C--2S
 
 2C = Weak NT, transfer accept
     P = limited ~8(9) hcp, (5)6+ !cs weakish (not worth 1!c--3!c)
@@ -558,111 +559,57 @@ Continuations are very similar to a modern precision majors first rebid style.
         4C = good 4+ support, good controls
     3C = invite, 6 carder, not worth initial 3!c response (1 honour flawed suitsuit quality)
     3DHS = 6--4 GF
-2C = (original, more relays) Weak NT, transfer accept
-    P = limited ~8--9 hcp
-    2D = GF, both minors 5--4+
-        2HS = fragment/stop
-        2N = natural
-        3CD = 4+ card support
-    2H = artificial GF, 5+ !cs + side 4 card major
-        2S = natural
-        2N = artificial !hs
-        3C = 3+ card support, no major
-        3D = 5 !ds
-        3HS = natural 5 card major, 5--3--3--2 (optional?)
-    2S = artificial GF, 6+ !cs, no side suit
-        2N = positive waiting
-            3C = waiting, no splinter or no slam interest
-            3DHS = shortage, slam try
-            3N = to play
-            4DHS = void splinter
-        3C = negative, usually 2 card support
-    2N = invite, (semi)balanced with !c suit worth showing
-        3HS = 5 carder
-    3C = invite, weakish suit, not worth initial 3!c response
-    3DHS = 6--4 GF
 2D = natural strong, 5+ suit
     2H = natural, 5--4+
         3S = splinter
-        4D = splinter
     2S = natural, 5--4+
-        4D = splinter
+        4H = splinter
     2N = waiting maybe 12+ seeing if support
     3C = natural often 8--11
+        4HS = delayed splinter, 3+ card !c support
+            next = !c RKB
     3D = support
     3HS = splinter
     3N = jump 3N ~13--14 hcp, not quite slam quantitative
+    4C = [Q-Minorwood](#Q-Minorwood), max 1 loser, some outside control
+    4HS = rare EKB, jump above splinter so agreeing !ds
+    4N = quantitative
 2H = natural strong, 5+ suit
     2S = natural
         4D = splinter
     2N = waiting maybe 12+ seeing if support or just short !hs NT suited
     3C = natural often 8--11
+        4DS = delayed splinter, 3+ card !c support
+            next = !c RKB
     3D = 12+ 5--4+ minors either way
     3H = 3+ cards
     3S = splinter
     3N = jump 3N ~13--14 hcp, not quite slam quantitative
-    4C = self-sufficient, max 1 loser, some outside control
+    4C = [Q-Minorwood](#Q-Minorwood), max 1 loser, some outside control
     4D = splinter
+    4H = fast arrival
+    4S = rare EKB, jump above splinter so agreeing !hs
+    4N = quantitative
 2S = natural strong, 5+ suit
     2N = waiting maybe 12+ seeing if support or just short !ss NT suited
     3C = natural often 8--11
+        4DH = delayed splinter, 3+ card !c support
+            next = !c RKB
     3D = 12+ 5--4+ minors either way
     3H = natural
         4D = implied cue
     3S = 3+ cards
     3N = jump 3N ~13--14 hcp, not quite slam quantitative
-    4C = self-sufficient, max 1 loser, some outside control
-    4D = splinter
+    4C = [Q-Minorwood](#Q-Minorwood), max 1 loser, some outside control
+    4DH = splinter
+    4S = fast arrival
+    4N = quantitative
 2N = catchall strong, waiting
 3C = support, strong hand
 3DHS = splinter, strong hand
 4D = self-sufficient suit, extras
 4HS = self-sufficient suit, (sub)minimum strong, max 2 CP outside main suit
 5D = rare likely 8 card suit, (sub)minimum strong, expect 3 keycards
-
-
-(alternative version with GF relay)
-
-2D = GF relay
-    2H = artificial, both minors 5--4+, 12+ extras
-        2S = ask
-            2N = 5--5 minors
-                3CD = set trumps
-                    3HS = shortage
-            3CD = 5 card longer suit with shortage
-                next = relay, shortage ask
-            3H = 5--4--2--2 longer !cs (2--2--4--5)
-            3S = 5--4--2--2 longer !ds (2--2--5--4)
-    2S = artificial, 5+ !cs + side 4 card major, ~11/12+ GF v.s initial weak NT
-        2N = ask
-            3C = 4 !hs, 5 !cs with shortage
-                3D = shortage ask
-                    3H = !d shortage
-                    3S = !s shortage
-            3D = 4 !ss, 5 !cs with shortage
-                3H = shortage ask
-                    3S = !d shortage
-                    3N = !h shortage
-            3HS = natural, no shortage
-    2N = artificial, 6+ !cs, 12+ hcp (or 7 cards slightly weaker)
-        3C = shortage ask
-            3D = no
-            3HS = major shortage
-            3N = !d shortage
-    3C = 6+ !cs, minimum 8--11 hcp, with shortage
-        3D = shortage ask
-            3HS = major shortage
-            3N = !d shortage
-    3D = limited ~8--11 hcp, 5+ !cs and 4+ !ds
-    3H = ~8--10, 5--3--3--2
-    3S = ~11--13, 5--3--3--2
-    3N = ~8--11, 6--3--2--2 (6 cards no shortage)
-    4C = self-sufficient, max 1 loser, some outside control
-2HS = good 6+ card suit
-    4C = self-sufficient, max 1 loser, some outside control
-2N = good 6+ !d suit
-    4C = self-sufficient, max 1 loser, some outside control
-
 
 **** Interference over 1C--1N
 
@@ -691,9 +638,10 @@ Continuations are very similar to a modern precision majors first rebid style.
 !d transfer
 
 - when NF limited ~8--10 hcp denies a 4 card major
-- when GF not 5!ds and 4!cs (starts with 1N !c transfer! for 12+ hcp 5--4 either way minor)
-- when GF we may have a 4 card major
+- when GF 12+ not 5!ds and 4!cs (starts with 1N !c transfer! for 12+ hcp 5--4 either way minor)
+- when GF 12+ we may have a 4 card major
 - NOT 5--3--3--2, use 1D (~8--9 hcp), 2D (10+--13 hcp) 2H (14+ hcp)
+- note 5--5+ or 5--4--3--1 minors ~9--11 uses 1C--2S
 
 2D = Weak NT, transfer accept
     P = limited ~8(9) hcp, (5)6+ !ds weakish (not worth 1!c--3!d)
@@ -711,58 +659,59 @@ Continuations are very similar to a modern precision majors first rebid style.
         4C = splinter
     2N = waiting maybe 12+ seeing if support or just short !hs NT suited
     3C = 8--11 5--4+ minors
+        3D = waiting, maybe missing other major stop
+        3M = natural
+        4m = [Q-Minorwood](#Q-Minorwood)
+        4S = delayed splinter, 3+ card !d support
+            4N = !d RKB
     3D = natural often 8--11
+        4S = delayed splinter, 3+ card !d support
+            4N = !d RKB
     3H = 3+ cards
     3S = splinter
+    3N = jump 3N ~13--14 hcp, not quite slam quantitative
     4C = splinter
-    4D = self-sufficient, max 1 loser, some outside control
+    4D = [Q-Minorwood](#Q-Minorwood), max 1 loser, some outside control
+    4H = fast arrival
+    4S = rare EKB, jump above splinter so agreeing !hs
+    4N = quantitative
 2S = natural strong, 5+ suit
     2N = waiting maybe 12+ seeing if support or just short !ss NT suited
         3x = natural
             4D = natural, NOT Q-Minorwood
     3C = 8--11 5--4+ minors
+        3D = waiting, maybe missing other major stop
+        3M = natural
+        4m = [Q-Minorwood](#Q-Minorwood)
+        4H = delayed splinter, 3+ card !d support
+            4S = (next despite opener's major) !d RKB
     3D = natural often 8--11
+        4H = delayed splinter, 3+ card !d support
+            4S = (next despite opener's major) !d RKB
     3H = natural
         4C = implied cue
     3S = 3+ cards
     3N = jump 3N ~13--14 hcp, not quite slam quantitative
-    4C = splinter
-    4D = self-sufficient, max 1 loser, some outside control
+    4CH = splinter
+    4D = [Q-Minorwood](#Q-Minorwood), max 1 loser, some outside control
+    4N = quantitative
 2N = catchall strong, waiting
-3C = good 6+ card suit
+3C = good 6+ card suit, a space constrained auction
+    3D = waiting, often stop checking
+    3HS = natural, !ds + major 5--4+
+        4m = [Q-Minorwood](#Q-Minorwood)
+        4oM = (if space below game) better last train like major raise
+        4M = natural 4 card support
+        4N = major RKB, enough extras + controls
+    3N = to play
+    4m = [Q-Minorwood](#Q-Minorwood)
+    4HS = splinter, !c slam try
+        next = !c RKB
 3D = support, strong
 3HS = splinter, strong
 4C = splinter, strong
 4HS = self-sufficient suit, (sub)minimum strong, max 2 CP outside main suit
 5C = rare likely 8 card suit, (sub)minimum strong, expect 3 keycards
-
-(alternative version with GF relay)
-
-2H = GF relay
-    2S = natural, 12+ hcp (use canapé with 8--11)
-    2N = !ds, 12+
-    3C = limited ~8--11 hcp, 5+ !ds and 4+ !cs (12+ GF can use 1N transfer)
-    3D = !ds, 8--11 with shortage
-        3M = natural 5 (6 bad) carder
-    3D = (alternative) !ds any 8--11 (so have room to show 5cM)
-        3HS = natural 5 (6 bad) carder
-        3N = to play
-        4C = shortage ask slam try? (unclear if they have shortage now)
-    3H = natural, 12+ hcp (use canapé with 8--11)
-    3H = (alternative) 12+ 6--4
-    3S = ??? not really need a 5--3--3--2 bid (was artificial, ~11--13, 5--3--3--2)
-    3S = ??? 6--4
-    3N = ~8--11, 6--3--2--2 (6 cards no shortage)
-    3N = (alternative) 5--4 with !hs?
-2S = good 6+ card suit
-    4D = self-sufficient, max 1 loser, some outside control
-2N = good 6+ !h suit
-    4D = self-sufficient, max 1 loser, some outside control
-3C = good 6+ card suit
-    bid = any
-        4D = !c RKB
-    4D = self-sufficient, max 1 loser, some outside control
-
 
 **** Interference over 1C--2C
 
