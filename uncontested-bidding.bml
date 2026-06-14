@@ -75,7 +75,6 @@ Other bids:
 
 ** 1D--1H
 
-Natural, 4+ cards, maybe longer minor canapé
 Natural, 4+ cards, maybe longer minor canapé with 5m--4!h GF or a weak longer minor not worth 2 level response
 
 1S = [exactly 4 !ss (always bid with 4 !ss), may have 3 card !h support (note 5!s--6!d open 1!s or open 1!d reverse to 2!s)](#1D--1H--1S)
@@ -99,13 +98,11 @@ Natural, 4+ cards, maybe longer minor canapé with 5m--4!h GF or a weak longer m
     4C = void ask, slam try
         4D = !c void
         4H = !s void
-    4D = !d tolerance (top Hx) or better, may prefer minor slam
+    4D = !d support (top Hx+), may prefer minor slam
+        4S = (next free) [Double Fit RKB](#Double Fit RKB)
     4H = to play
 4C = !c void-splinter, max 4 card !h raise
-    4D = artificial, [Double Fit RKB](#Double Fit RKB)
-    4H = to play
 4D = !d void-splinter, max 4 card !h raise
-    4H = to play
 4H = big support and shape, 1--6!d--5!h--1 max type hand
 
 
@@ -315,7 +312,7 @@ Natural, 4+ cards, maybe longer minor canapé with 5m--4!s GF or a weak longer m
     4C = void ask, slam try
         4D = !c void
         4H = !h void
-    4D = !d tolerance (top Hx) or better
+    4D = !d support (top Hx+) or better
         4H = [Double Fit RKB](#Double Fit RKB)
     4H = cue
     4S = to play
@@ -640,27 +637,10 @@ Invitational plus.
 3D = 4+!ds minimum (not medium), (semi)balanced, weak majors, includes 2--2--(5--4)
 3HS = 5+ !ds support splinter (an infrequent alternative is exactly 6!d--5M--1--1)
 3N = 4--4--4--1 maximum
-4C = !c void, 6/7!d + 5!h, maximum
-    4D = !d RKB, special case
-    4H = to play
-    4S = double fit RKB
-    5C = void cue
-    5D = to play
-4D = !c void, 6/7!d + 5!s, maximum
-    4H = !d RKB
-    4S = to play
-    4N = double fit RKB
-    5C = void cue
-    5D = to play
-4H = other major void, 6/7!d + 5!h, maximum
-    4S = double fit RKB
-    4N = !d RKB
-    5C = void cue
-    5D = to play
-4S = other major void, 6/7!d + 5!s, maximum
-    4N = double fit RKB
-    5C = void cue
-    5D = to play
+4C = !hs + !c void, 6/7!d + 5!h, maximum
+4D = !ss + !c void, 6/7!d + 5!s, maximum
+4H = natural with other major void, 6/7!d + 5!h, maximum
+4S = natural with other major void, 6/7!d + 5!s, maximum
 
 *** 1D--2D Interference
 
@@ -884,7 +864,7 @@ Invitational plus.
         (3S) = higher interference
             X = unlikely, values max, defensive
             4C = minors, max
-            4D = double fit showing
+            4D = fit non jump
             4H = guess
         2H = most hands, partner maybe weak
         2S = mini-splinter max
@@ -1513,17 +1493,9 @@ Responding:
     3S = !s values, stop
     4CD = !h slam try, long suit trick source, e.g. Kxx/Kx/xx/KQxxx hope !c honour support
 3S = best 6--5+ majors, still NF, rare as not opening 1!c e.g. KQJ10x/AQJxxx/x/x
-    4CD = cue, double fit, slam try
-3N = 7--5 !h/!s, e.g. KQ10xx/AKJxxxx/-/x
-    4CD = cue, double fit, slam try
-4C = 7--5 !hs + !cs
-    4D = double fit RKB
-    4S = !h RKB
-    4N = !d cue, looking for !s void
-4D = 7--5 !hs + !ds
-    4H = to play
-    4S = !h RKB
-    4N = double fit RKB
+3N = 7--5 !h/!s, e.g. KQ10xx/AKJxxxx/-/x, [Flag Bidding](#Flag Bidding) assume 1N bidder flattish
+4C = 7--5 !hs + !cs, [Flag Bidding](#Flag Bidding) assume 1N bidder flattish
+4D = 7--5 !hs + !ds, [Flag Bidding](#Flag Bidding) assume 1N bidder flattish
 4H = very long !hs, usual 8 (or 7 + shape), too strong for 4!h opening
 
 
@@ -2299,22 +2271,10 @@ Responding:
     4CD = slam try !h, control bid
 3S = natural invite long offensive suit, singleton support usually ok
     4CDH = !s slam try, long suit trick source, e.g. Kxx/Kx/xx/KQxxx
-3N = 7--5 !s/!h with more space to find a slam, but can also bid 4!h
-    4CD = cue, double fit, slam try
-        4N = double fit RKB
-    4HS = to play
-    4N = double fit RKB
-4C = 7--5 !ss + !cs
-    4D = double fit RKB
-    4S = sign off
-    4N = !d cue
-4D = 7--5 !ss + !ds
-    4H = double fit RKB
-    4S = sign off
-    4N = !h cue
-4H = 7--5 !ss + !hs
-    4S = sign off
-    4N = double fit RKB
+3N = (same as 4!h but lower, less memorable) 7--5 !ss + !hs, [Flag Bidding](#Flag Bidding)
+4C = 7--5 !ss + !cs, [Flag Bidding](#Flag Bidding) assume 1N bidder flattish
+4D = 7--5 !ss + !ds, [Flag Bidding](#Flag Bidding) assume 1N bidder flattish
+4H = 7--5 !ss + !hs, [Flag Bidding](#Flag Bidding) assume 1N bidder flattish
 4S = very long !ss, usual 8 (or 7 + shape), too strong for 4!s opening
 
 

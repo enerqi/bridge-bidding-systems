@@ -182,7 +182,7 @@ Stayman, promissory
                     4H = Hx/HH !h 5--2 tolerance, no good stop
                 3S = artificial 5--5 hand, unclear if slam interest
                     3N = good stops
-                        4C = slam try, inviting Double Fit RKB
+                        4C = slam try, suggesting Double Fit RKB follow on
                             4N = to play
                         4D = [Double Fit RKB](#Double Fit RKB), taking control
                         4H = excellent 5 carder, probably a void
@@ -203,6 +203,7 @@ Stayman, promissory
                 4S = serious quantitative (beyond game, not !s control)
                 4N = quantitative
             4C = double fit, min (2+Q+Q or 3)/6 keycards, unknown !d control
+                4D = [Double Fit RKB](#Double Fit RKB)
         3C = transfer, 4+ !ds, GF, later 4C set minor as trump, 4D RKB, 4S minor RKB if no 4D free
             3D = 2 card !h support, unsure 3N, maybe good minor support
                 3H = either 3--5--4--1, !c shortage OR 2--5--5--1 slam forcing
@@ -240,8 +241,8 @@ Stayman, promissory
             3N = other suits stopped
                 4S = serious quantitative (beyond game, not !s control)
                 4N = quantitative
-            4C = !c control, double fit, min (2+Q+Q or 3)/6 keycards
-            4D = double fit, no !c control, min (2+Q+Q or 3)/6 keycards
+            4C = N/A or (advanced, obscure) !c control, [Double Fit RKB](#Double Fit RKB), min (2+Q+Q or 3)/6 keycards, 4D no !c control if play this
+            4D = [Double Fit RKB](#Double Fit RKB), min (2+Q+Q or 3)/6 keycards
         3D = transfer, 6+ !hs, game invite OR slam invite including stronger splinter hand (minimum with fitting values ok)
             3H = reject invite
                 3S = !s shortage, slam try, stronger splinter (minimum with fitting values ok)
@@ -302,7 +303,7 @@ Stayman, promissory
                     4S = Hx/HH !s 5--2 tolerance, no good stop
                 3S = artificial 5--5 hand, unclear if slam interest
                     3N = good stops
-                        4C = slam try, inviting Double Fit RKB
+                        4C = slam try, suggesting Double Fit RKB follow on
                             4N = to play
                         4D = [Double Fit RKB](#Double Fit RKB), taking control
                         4S = excellent 5 carder, probably a void
@@ -322,7 +323,7 @@ Stayman, promissory
             3N = other suits stopped
                 4S = to play, probably 6--4
                 4N = quantitative
-            4C = double fit, min (2+Q+Q or 3)/6 keycards, unknown !d control
+            4C = [Double Fit RKB](#Double Fit RKB), min (2+Q+Q or 3)/6 keycards, unknown !d control
         3C = transfer, 4+ !ds, GF, later 4C set minor as trump, 4D RKB, 4S minor RKB if no 4D free
             3D = (1)2 card !s support, unsure 3N, maybe good minor support
                 3H = either 5--1--4--3, !h shortage or 5--1--5--2 slam forcing
@@ -363,8 +364,8 @@ Stayman, promissory
             3N = other suits stopped
                 4S = to play, probably 6--4
                 4N = quantitative
-            4C = !c control, double fit, min (2+Q+Q or 3)/6 keycards,
-            4D = double fit, no !c control, min (2+Q+Q or 3)/6 keycards
+            4C = N/A or (advanced, obscure) !c control, [Double Fit RKB](#Double Fit RKB), min (2+Q+Q or 3)/6 keycards, 4D no !c control if play this
+            4D = [Double Fit RKB](#Double Fit RKB), min (2+Q+Q or 3)/6 keycards
         3D = transfer, 5+ !hs, GF
             3H = only 2 card !s support, !h support guarantee
             3S = !s support, maybe also !h support

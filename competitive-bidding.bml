@@ -1082,7 +1082,7 @@ With limited strength may want to hide distribution information and just bid the
         3CD = N/A
         3HS = mixed raise, 4 trumps, 2 useful features (A, K or short in partner's suits), 10--12 total points
         3N = to play
-        4C = choose a major jump cue, later 4N double fit RKB
+        4C = choose a major jump cue, later 4N [Double Fit RKB](#Double Fit RKB)
         4HS = ambiguous, fast arrival
     2D = weak jump overcall
         2N = Vinny asking bid
@@ -1116,7 +1116,7 @@ With limited strength may want to hide distribution information and just bid the
             3M = better major
                 4HS = slam interest, encouraging RKB
         Major = natural, any level
-        4C = choose a major, later 4N double fit RKB
+        4C = choose a major, later 4N [Double Fit RKB](#Double Fit RKB)
     3DHS = normal preempt
         Cue = HCR
     3N = to play (extreme !h/!d shape by passed hand, e.g. x/QJ10xxx/KJ10xxx)
@@ -1374,7 +1374,7 @@ With limited strength may want to hide distribution information and just bid the
         3D = !s limit+ raise, 3+ card support, 3 useful features (A, K or short in partner's suits)
         3HS = mixed raise, 4 trumps, 2 useful features (A, K or short in partner's suits), ~10--12 total points
         3N = to play
-        4D = choose a major jump cue, later 4N double fit RKB
+        4D = choose a major jump cue, later 4N [Double Fit RKB](#Double Fit RKB)
         4HS = ambiguous, fast arrival
     2HS = weak, respond as [6 card weak two](#2HS Weak Openings)
         cue = partial stop asking (do not need HCR), or rarely slam try
@@ -1389,7 +1389,7 @@ With limited strength may want to hide distribution information and just bid the
     3D = majors, strong, 8+PT ~17+ hcp
         Major = natural, any level
         4C = cue, slam try
-        4D = choose a major, later 4N double fit RKB
+        4D = choose a major, later 4N [Double Fit RKB](#Double Fit RKB)
     3HS = normal preempt
         4D = HCR
     3N = to play (extreme !h/!c shape by passed hand, e.g. x/QJ10xxx/KJ10xxx)

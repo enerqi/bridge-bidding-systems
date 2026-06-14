@@ -195,7 +195,7 @@ can show the major shortage with both minors, but these auctions are rare
         4D = 4+ !ds, reasonable controls
             4H = !d RKB
         4HS = 3--3 minors, control bid, reasonable controls (showing a 5 card major is pointless)
-            next = double fit RKB (agreed suit is unclear at this level)
+            next = special case, [Double Fit RKB](#Double Fit RKB) (agreed suit is unclear at this level)
             5CD = to play
         4N = to play
         5D = 4+ card support, poor controls (e.g. max 6 CP with 20hcp NT)
