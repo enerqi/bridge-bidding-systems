@@ -225,7 +225,7 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
         4C = good !c support, likely lacking major controls
             4D = !c RKB Redwood
         4D = [RKB](#RKB 4N) Redwood for !cs, excellent hand (normally just bid 4!c)
-        4HS = void splinter, extras, 3+ Control Points, no other major control, e.g. xx/-/AKxxxx/KQ10xx
+        4HS = void-splinter, extras, 3+ Control Points, no other major control, e.g. xx/-/AKxxxx/KQ10xx
             next = !c RKB
     3D = preempt
     3H = natural major, GF, 6+ suit
@@ -234,9 +234,9 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
         4C = !h slam try (implied control bid rules, natural maybe better sometimes)
         4D = natural, nothing better to bid
         4H = natural, some support
-        4S = void splinter
+        4S = void-splinter
         4N = !h [RKB](#RKB 4N), excellent hand
-        5C = void splinter, 4+ Control Points, no other major control, e.g. xxx/AQxx/AKxxxx/-
+        5C = void-splinter, 4+ Control Points, no other major control, e.g. xxx/AQxx/AKxxxx/-
         5D = long strong suit
     3S = natural major, GF, 6+ suit
         3N = natural
@@ -245,7 +245,7 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
             4H = Redwood, by elimination (can't show !hs now)
         4H = cue bid for !s, note 6!s--5!h responder hands can start with a 2!s bid
         4N = [RKB](#RKB 4N) for !ss, excellent hand
-        5C = void splinter, 4+ Control Points, no other major control, e.g. AQxx/xxx/AKxxxx/-
+        5C = void-splinter, 4+ Control Points, no other major control, e.g. AQxx/xxx/AKxxxx/-
         5D = long strong suit
     3N = to play
         4C = extreme shape, e.g. 6!d--5!c--2--0  (probably weak as not opening 1!d)

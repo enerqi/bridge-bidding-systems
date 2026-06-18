@@ -4607,7 +4607,7 @@ If you play Gazilli after 1H--1S then the responses focus on the !s support. The
   3H = ~14--16, good 6+ suit
   3S = intermediate raise, some minor singleton
 
-A slightly more artificial improvement includes 16+ !s raises, allowing direct void splinters and a lighter
+A slightly more artificial improvement includes 16+ !s raises, allowing direct void-splinters and a lighter
 mini-splinter like 3S raise:
 
 1H--1S
@@ -4625,7 +4625,7 @@ mini-splinter like 3S raise:
     4CDH = singleton splinter, !ss agreed
     4S = to play
   3S = ~13--15 4 card support, some singleton (like a very good 2 raise)
-  4CD = void splinter, !ss agreed, ~14+
+  4CD = void-splinter, !ss agreed, ~14+
 
 * 2C Opening Includes 18--19 balanced
 
@@ -4817,7 +4817,7 @@ Simplest option is:
 - 3m jump rebid is natural with less than 3 card support
 
 More advanced can make 2N a two way bid that includes 16+ major support and flips the meaning of whether 2N or 3m shows
-3 card major support. By showing 16+ support some/all splinter rebids bids by opener are void splinters (powerful for
+3 card major support. By showing 16+ support some/all splinter rebids bids by opener are void-splinters (powerful for
 finding cheap slams) and the 3M raise is like an unknown mini-splinter raise (4 cards + singleton).
 
 As an extra complexity (not shown below), if the 2N bid includes any good 16+ jump minor rebid hand, including those
@@ -4851,11 +4851,11 @@ structure (but requires more relays/complexities over the reverse). As a benefit
   3C = 6 card minor jump rebid AND 3 card major support
     3H = to play
     4C = !c slam try
-  3D = partnership discussion, e.g. minimum void splinter or see [Jump Reverses](#Jump Reverses) very strong 3C rebid
+  3D = partnership discussion, e.g. minimum void-splinter or see [Jump Reverses](#Jump Reverses) very strong 3C rebid
   3H = ~13--15 4 card support, some singleton (like a very good 2 raise)
-  3S = void splinter
+  3S = void-splinter
   3N = discuss, usually limited but solid 7 trick minor hand with partial stops in the other two suits
-  4D = void splinter
+  4D = void-splinter
 
 1D--1H
   2S = natural GF
@@ -4881,9 +4881,9 @@ structure (but requires more relays/complexities over the reverse). As a benefit
     4C = control bid !h slam try
     4D = !d slam try
   3H = ~13--15 4 card support, some singleton (like a very good 2 raise)
-  3S = void splinter, alternatively see [Jump Reverses](#Jump Reverses) very strong 3D rebid
+  3S = void-splinter, alternatively see [Jump Reverses](#Jump Reverses) very strong 3D rebid
   3N = discuss, usually limited but solid 7 trick minor hand with partial stops in the other two suits
-  4C = void splinter
+  4C = void-splinter
   4D = usual, 6+!ds semi-solid or better, with 4!hs
 
 Similar structure for 1S responses.

@@ -14,8 +14,10 @@ class Honour(Enum):
     Jack = "Jack"
     Ten = "Ten"
 
+
 _RANKS = {Honour.Ace: 1, Honour.King: 2, Honour.Queen: 3, Honour.Jack: 4, Honour.Ten: 5}
 _TEXT = {Honour.Ace: "A", Honour.King: "K", Honour.Queen: "Q", Honour.Jack: "J", Honour.Ten: "T"}
+
 
 def honour_rank(hon: Honour) -> int:
     return _RANKS[hon]
@@ -411,6 +413,9 @@ def distribution_points(hand: Hand) -> Distribution_Points:
     total_suit = total
     total_nt = total_suit + sum(x for (x, _) in nt_only)
 
+    # responding vs opening 1n
+    # take off shortage values if nt?
+
     return Distribution_Points(total_suit=total_suit, total_nt=total_nt, tallies=tallies, nt_only=nt_only)
 
 
@@ -430,6 +435,8 @@ def hld(h_points: Honour_Points, l_points: Length_Points, d_points: Distribution
     total_opening_nt = l_points.total + h_points.total_opening + d_points.total_nt
     total_non_opening_suit = l_points.total + h_points.total_non_opening + d_points.total_suit
     total_non_opening_nt = l_points.total + h_points.total_non_opening + d_points.total_nt
+
+    # nt opener no shortage D points?
 
     return Starting_Points(
         H=h_points,
@@ -521,7 +528,7 @@ def opc_calculation(suit_args: list[str], verbose: bool = False) -> OPC_Summary:
     # fill in missing / implicit voids
     voids = 4 - len(suits)
     for _ in range(voids):
-        suits.append(SuitHolding(honours=[], xs=0))
+        suits.append(SuitHolding(honours=[], xs=SmallCardCount(0)))
 
     hand_text_summary = " ".join(str(s) for s in suits)
 
@@ -627,34 +634,49 @@ def render_summary(summary: OPC_Summary, include_trick_conversion: bool = True) 
     print("* Our hand in isolation\n", file=buffer)
     printer.pprint(summary.hld)
 
-    print("\n! Responder/Advancer only includes max 2 (L)ength points and the -1 4333 (D)istribution points, UNLESS opener/overcaller bids NT\n", file=buffer)
+    print(
+        "\n! Responder/Advancer only includes max 2 (L)ength points and the -1 4333 (D)istribution points, UNLESS opener/overcaller bids NT\n",
+        file=buffer,
+    )
 
     print("\n------------------------------------------------", file=buffer)
     print("* Overcalling Adjustments\n", file=buffer)
 
-    print("""Suit overcall Length changes
+    print(
+        """Suit overcall Length changes
     -1 for 3 cards in their suit
     -2 for 4 cards in their suit
     -3 for 5 cards in their suit
     +1 for singleton/void (in additional to existing (D)istribution points)
-    """, file=buffer)
+    """,
+        file=buffer,
+    )
 
-    print("""Suit overcall Honour changes
+    print(
+        """Suit overcall Honour changes
     -0.5 side or opponent's suit: isolated Jack
     -1 side or opponent's suit: isolated Kxx/Kxxx (3 or 4 card suit) ANY position
     -1 opponent's suit KQ sat UNDER
     +1 opponent's suit KQ sat OVER
-    """, file=buffer)
+    """,
+        file=buffer,
+    )
 
-    print("""NT overcall Length downgrades
+    print(
+        """NT overcall Length downgrades
     -1 for 4 cards in their suit
     -2 for 5 cards in their suit
-    """, file=buffer)
+    """,
+        file=buffer,
+    )
 
-    print("""NT overcall Honour downgrades
+    print(
+        """NT overcall Honour downgrades
     -1 isolated Kxx/Kxxx  (3 or 4 card suit)
     -0.5 isolated Jack
-    """, file=buffer)
+    """,
+        file=buffer,
+    )
 
     print("\n------------------------------------------------", file=buffer)
     print("* Calculations that depend on partner's hand\n", file=buffer)

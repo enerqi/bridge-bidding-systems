@@ -26,6 +26,7 @@ Meta agreements and some slam finding conventions
 - [1HS Slam Tries](#1HS Slam Tries)
 - [Serious 3NT](#Serious 3NT)
 - [Last Train](#Last Train)
+- [Splinters](#Splinters)
 
 ** General Strategy
 
@@ -214,7 +215,7 @@ use Redwood.
   cooperation then 4m is more general slam try last train like before Redwood
 - nominally minor AGREED OR self JUMP 4m (re)bids showing good (often self-sufficient) hands
 - EXCEPTION: [Flag Bidding](#Flag Bidding) situations, a non jump 4m flag bid is Q-Minorwood by the ideal captain
-  (unlimited hand)
+  (unlimited hand), e.g. 1H--1S--3C/3D, 1H--2D--3H--4D and other higher space consuming auctions
 
 Some other exceptions due to the high start level of 2C/2D openings, the rebid of responders minor is Q-Minorwood.
 
@@ -437,15 +438,17 @@ Examples:
 ** Cue Bids
 
 More Robson style - “first control bid is honour showing and the next is ambiguous”
-...but jump cue with a void, or use void splinters if possible
+...but jump cue with a void, or use void-splinters if possible
 ...maybe shortage asks, when not worried about overall controls
    when a clear purpose, so what situations make ruffing value or wasted honours important
    “If partner is short here, these cards are garbage”
 
-? void splinters instead of strict 2 tier
+? void-splinters instead of strict 2 tier
   e.g 1H--3S scroll bid, 3n where
       1H--3N !s void,
       1H--4CD void
+
+- 1st above game unless already shown
 
 
 
@@ -1303,6 +1306,69 @@ A 5x Last Train bids...
 
 - Higher pre-empted auctions, e.g. 1S--(2D)--4S--(5D)--5H showing offensive extras and good slam chance if partner has
   a couple of useful cards/controls.
+
+
+** Splinters
+
+Splinters are cooperative in nature (though in theory could splinter then override with a strong enough hand). The
+splinter bidder in an artificial weak-strong or strong club system shows something slightly better than the minimum they
+could have, e.g. a 1M--4x splinter on ~13--15 hcp instead of the absolute minimum game values. If one player wants to
+know if partner has splinter shape (a shortage) and a dead minimum they need something like serious 3N to force a
+control bid with that minimum.
+
+Note in natural systems with a wide ranging opener two tier splinters with e.g. 10--12 and 13--15 hcp make more sense
+than tiering on singleton vs. void (voids are significantly less frequent). Without two tier splinters in a natural
+system we would use the lower tier as it's more frequent - opener can have plenty of 18+ slam try hands that fit well
+opposite.
+
+Splinter bids typically have fairly evenly distributed strength amongst the side suits as otherwise a 2/1 GF bid
+of the strong suit maybe better (unless the strong suit is mostly self-sufficient).
+
+A *delayed* splinter is often a good 6-card suit with 3 card support, e.g. 1S--2D--2S--4C. However, a delayed splinter
+may have 4 card support. In either case a helping honour from partner maybe crucial. When a helping honour is held then
+great, otherwise it's extra important to ensure no wasted values in the splinter suit.
+
+Note, in most situations the splinter bid is the suit agreement (suit not agreed earlier).
+
+WITHOUT prior AGREEMENT (except 1M--5x) a splinter ABOVE GAME is always VOID splinter. It is NOT EKB. Outside of some
+competitive situations EKB requires prior agreement (again, except 1M--5x).
+
+Often there is some sort of two tier splintering option. General approach is...
+
+*** Two Tier By Unlimited Strong Club
+
+E.g. 1C--1M--3M artificial vs. 1C--1M--4m
+
+- lower splinter is hcp strength tiered to ~16--18, mild extras in some form, either singleton or void
+- higher splinter shows greater strength, ~19--21, either singleton or void
+
+
+*** Two Tier When in Game Force
+
+E.g. 1H--2D--3S/4S, 1H--2C--2H--3S/4S
+
+- lowest splinter is EITHER a singleton or sometimes a void splinter without strength to go above game
+- higher splinter is always a VOID
+
+If there's 2 tiers below game, e.g. 1S--2D--3H/4H then it's a clean singleton vs. void tiering. In the different
+situation of 1S--2H--4C/4D then opener may just not have the strength to void splinter to 5CD which bypasses game.
+
+
+*** Two Tier with Limited Values, Game Uncertain
+
+E.g 1D--1S--2N/3D+ and splinters by a limited opener (~11--15 hcp). Opener cannot be strong enough to GF on strength
+alone.
+
+- lower splinter below 3M when responder shows a major is a mini-splinter
+- higher splinter always a VOID
+
+*** Splinter Responses
+
+- For majors 4N or next step if higher is RKB
+- For minors next non-sign off step is RKB
+
+As splinters are cooperative, they can never be strong enough to force a keycard response (like EKB), hence next step or
+4N RKB even over high void splinters.
 
 
 ** LTC Aside
