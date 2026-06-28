@@ -2,6 +2,13 @@
 .include-deps.json
 __pycache__/
 *.html
+html/
 deal-simulations/parse-deal
 .ionide/
 bml.css
+
+.claude
+.codegraph
+.pytest*
+.ruff_cache
+.venv

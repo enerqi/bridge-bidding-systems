@@ -696,7 +696,7 @@ Original relays before some simplification over 1C--2C:
             3D = waiting, no splinter or no slam interest
             3HS = shortage, slam try
             3N = to play
-            4CHS = void splinter
+            4CHS = void-splinter
         3D = negative, usually 2 card support
     2N = invite, (semi)balanced, not worth initial 3!d response - 5 cards good, 6 cards poor suit
         3D = to play

@@ -2475,12 +2475,16 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
 - 3M Strong jump overcalls
 - Leaping michaels
 
+Advancing partner's single suited overcall:
+
+- new suit forcing, F1
+- 4N RKB. A HCR maybe used to control bid before hand
+
 (2D)
     X = both majors takeout
         any = [Weak 2D Lebensohl system](#Better Minor Lebensohl)
     2HS = natural, decent 5--6 card suit
         2N = natural
-        3x = NF, invitational, ~7--11, no support
         4CD = fit jump
     2N = natural, 16--18 balanced. Could have 4/5 card !h/!s, NT scheme follows.
     3C = natural
@@ -2514,7 +2518,6 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
         any = [Lebensohl system](#1NT Interference and Lebensohl)
     2S = natural
         2N = natural
-        3x = NF, invitational, ~7--11, no support
         4CD = fit jump
     2N = natural, 16-18 balanced. Could have 4/5 card !s, NT scheme follows.
     3CD = natural
@@ -2738,6 +2741,12 @@ X is majors takeout, NT is minors.
 
 - Normal takeout doubles, conservative opening bid values 12+, assumes ~7–9 hcp from partner
 
+Advancing partner's single suited overcall:
+
+- 4-over-4 or 5m game bid is NF play suggestion
+- simple-over-3 is natural, game forcing new suit
+- 4N RKB
+
 (3C)
     3N = natural, ~16+
       any = natural
@@ -2745,7 +2754,7 @@ X is majors takeout, NT is minors.
         4D = !h flag slam try
         4HS = to play
         4N = !s RKB
-        5C = EKB
+        5C = !s EKB
         5DHS = natural jump new suit, self-sufficient, slam interest
     4D = !ds + major, GF ~ 4 losers
         4H = pass/correct
@@ -2765,7 +2774,7 @@ X is majors takeout, NT is minors.
         4HS = to play
         4N = !c RKB, no known major, no space for Redwood
         5C = to play
-        5D = EKB
+        5D = !c EKB
         5HS = natural jump new suit, self-sufficient, slam interest
     4D = majors two suiter, GF ~ 4 losers
         4HS = to play
@@ -2790,19 +2799,19 @@ X is majors takeout, NT is minors.
         4S = to play
         5C = to play
         5D = natural jump new suit, self-sufficient, slam interest
-        5H = EKB
+        5H = !s EKB
     4D = !ds + !ss, NF non-leaping
         4H = !s slam try
         4S = to play
         5C = !d slam try
         5D = to play
-        5H = EKB
+        5H = !s EKB
     4H = GF, !ss + minor
         4S = to play
         4N = minor ask
             5HS = good !c/!d
         5CD = to play
-        5H = EKB
+        5H = !s EKB
         5S = !s slam try
     4S = to play
     4N = minors
@@ -2820,13 +2829,13 @@ X is majors takeout, NT is minors.
         4S = !c slam try
         5C = to play
         5D = natural jump new suit, self-sufficient, slam interest
-        5S = EKB
+        5S = !h EKB
     4D = !ds + !hs, NF non-leaping
         4H = to play
         4S = !h slam try
         5C = !d slam try
         5D = to play
-        5S = EKB
+        5S = !h EKB
     4H = to play
     4S = !hs + minor, ~3 losers
         5CD = to play
@@ -2869,6 +2878,11 @@ Same in 4th.
     4D = both majors, 5--5+
 
 * Opponents open 4CD preempt
+
+Advancing partner's single suited overcall:
+
+- 4-over-4 or 5m game is NF play suggestion
+- 4N RKB
 
 (4CD)
     X = takeout
@@ -2913,6 +2927,11 @@ Showing good !h/!s major preempt, maybe minimum opening values.
 
 - Double is more nebulous values
 
+Advancing partner's single suited overcall:
+
+- game is NF play suggestion
+- 4N RKB
+
 (4H)
     P = usually weak, maybe good defensively
     X = takeout
@@ -2931,4 +2950,4 @@ Showing good !h/!s major preempt, maybe minimum opening values.
 (5CD)
     X = values, expect to defend unless partner extra offense
     5x = natural
-    5N = lower suits takeout
+    5N = takeout, 2 suiter emphasis, may correct
