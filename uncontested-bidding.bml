@@ -1271,7 +1271,8 @@ Gazilli variant includes:
     3D = GF quasi-natural 4th suit (passed hand NF 6 card minor canapé)
     3H = natural, invitational, probably 5!ss + 3!hs
     3S = forcing
-    4CD = splinter !h support
+    4C = Q-Minorwood
+    4D = splinter !h support
     4HS = to play
     4N = RKB for !h
 
@@ -2540,7 +2541,7 @@ Kokish two way game tries:
 *** interference by 4th
 
 1S--(P)--2S--(Dbl) = takeout/interference
-    XX = values for 3H game try
+    XX = values for 3S game try
     3S = preemptive
     others = system on
 

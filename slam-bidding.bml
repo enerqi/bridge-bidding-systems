@@ -81,7 +81,7 @@ hand is more limited (though resopnder maybe unlimited).
 
 - two suits naturally supported, at least one major, or 5--5+ opposite known balanced hand - [Double Fit RKB](#Double Fit RKB)
 - raised or set suit - [RKB](#RKB 4N)
-- implied long excellent 6+ suit (eg. 3 level jump overcall) - [RKB](#RKB 4N)
+- implied long excellent 6+ suit (eg. 3 level jump overcall or 3M+ opening) - [RKB](#RKB 4N)
 
 *** 1 Major by 1 Partner Each
 
@@ -120,6 +120,7 @@ Both partners bidding a different minor.
 - NT natural bid raised (including "NT" bids by artificial means) - Quantitative
 - non-jump 4N with limited hand - natural, to play
 - 4 level jump interference after long natural major/minor (1!h/!s or 2!c/!d) - [RKB](#RKB 4N)
+- Opponent's open 2x/3x/4x preempt and partner overcalls - advancer [RKB](#RKB 4N)
 
 ** Quantitative 4N Responses
 
@@ -864,10 +865,10 @@ then later Redwood)
 
 (Impossible, natural systems only) jump raise of 2m response IFF unlimited, note 1M--2m--4m is limited not Q-Minorwood
 
-*** No agreement keycard after forcing 4C/4D simple Rebid opposite unlimited
+*** No agreement keycard after 4C/4D simple Rebid opposite unlimited
 
-If a non-jump (simple) 4m rebidder shows a good suit (playable vs. singleton support) and there has been no agreement,
-but the other player is unlimited, then keycard maybe still possible.
+If a non-jump (simple) 4m rebidder shows a good suit (playable vs. singleton support) or was bidding an implied fit and
+there has been no agreement, but the other player is unlimited, then keycard maybe still possible.
 
 It is not a quantitative minorwood situation - there was neither agreement, nor a jump rebid, nor an exception.
 
@@ -886,10 +887,11 @@ Examples:
 Note, the What is 4N [1 Minor by 1 Partner Each](#1 Minor by 1 Partner Each) specially covers the awkward case for both
 minors where one of the minor bids may not be forcing.
 
-
 *** Competition - Cue Opponents Suit is Still Redwood
 
 E.g. 1S--(P)--2C--(3D)--4C--(P)--4D
+
+- 1H--(2D)--X--(3D)--4C--(P)--4D. Follows "No agreement keycard after 4C/4D" logic
 
 *** King Ask Minor Fit (Conditional)
 
@@ -900,7 +902,7 @@ Rarely available 4N.
 
 NEVER 5N, which is a special [Extras Ask](#Extras Ask Minor Fit) - wants a significant extra
 
-Responses similar to 5N King ask after Major RKB:
+Responses similar to 5N King ask after Major RKB (when have 2+ keycards):
 
 - signoff = no
 - bid lowest King otherwise
