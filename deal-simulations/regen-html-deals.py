@@ -17,11 +17,11 @@ assert os.path.exists(output_directory) and os.path.isdir(output_directory), "No
 
 deal_count = int(args[1]) if len(args) > 1 else 48
 
-tcl_scripts = glob.glob("*.tcl")
+tcl_scripts = glob.glob("tcl-sims/*.tcl")
 script_count = 0
 for script in tcl_scripts:
     if "deal-utils" not in script:
-        out_file = os.path.splitext(script)[0] + ".html"
+        out_file = os.path.splitext(os.path.basename(script))[0] + ".html"
         out_file_path = os.path.join(output_directory, out_file)
         cmd = f"python run-deal.py --deal-count {deal_count} --deal-script-path {script} --html-output-path {out_file_path}"
 

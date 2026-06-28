@@ -58,8 +58,16 @@ def main():
 
     if not os.path.isfile(deal_script):
         deal_script_input = deal_script
-        deal_script = os.path.normpath(os.path.join(this_dir, deal_script))
-        if not os.path.isfile(deal_script):
+        # scripts now live in the tcl-sims/ subdirectory (next to this file); fall back to this_dir
+        # for older callers that passed a path relative to the deal-simulations root.
+        for candidate in (
+            os.path.join(this_dir, "tcl-sims", deal_script),
+            os.path.join(this_dir, deal_script),
+        ):
+            if os.path.isfile(candidate):
+                deal_script = os.path.normpath(candidate)
+                break
+        else:
             print(f"Deal script {deal_script_input} not found", file=sys.stderr)
             sys.exit(1)
 

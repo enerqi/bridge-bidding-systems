@@ -43,12 +43,37 @@ watch:
     watchexec --no-global-ignore --exts bml,css uv run doit
 
 # regenerate all deal simulations. Output html to web server
+[script("nu")]
 regen:
-    cd {{justfile_directory()}}/deal-simulations; uv run regen-html-deals.py w:/deals/
+    cd {{justfile_directory()}}/deal-simulations
+    uv run regen-html-deals.py w:/deals/
 
-# generate 48 deals for TCL_SCRIPT. Output to current dir as html.
+# regenerate all deal simulations via the norn engine (native, no deal.exe). Output html to
+# deal-simulations/html. COUNT deals per scenario (default 48).
+[script("nu")]
+regen-norn COUNT="48":
+    cd {{justfile_directory()}}/deal-simulations/odin-sims
+    just run --html-dir {{justfile_directory()}}/deal-simulations/html --count {{COUNT}}
+
+# regenerate a subset via the norn engine. NAMES is comma-separated (e.g. 1c-any,2c-opener). Output
+# html to deal-simulations/html. e.g. `just regen-norn-some 1c-any,2c-opener 100`
+[script("nu")]
+regen-norn-some NAMES COUNT="48":
+    cd {{justfile_directory()}}/deal-simulations/odin-sims
+    just run --html-dir {{justfile_directory()}}/deal-simulations/html --scenario {{NAMES}} --count {{COUNT}}
+
+# generate 48 deals for TCL_SCRIPT (a filename in deal-simulations/tcl-sims). Output to current dir as html.
+[script("nu")]
 run-scratch TCL_SCRIPT:
-    cd {{justfile_directory()}}/deal-simulations; uv run run-deal.py --deal-count 48 --deal-script-path {{justfile_directory()}}/deal-simulations/{{TCL_SCRIPT}} --html-output-path {{justfile_directory()}}/{{TCL_SCRIPT}}.html
+    cd {{justfile_directory()}}/deal-simulations
+    uv run run-deal.py --deal-count 48 --deal-script-path {{justfile_directory()}}/deal-simulations/tcl-sims/{{TCL_SCRIPT}} --html-output-path {{justfile_directory()}}/{{TCL_SCRIPT}}.html
+
+# norn equivalent of run-scratch: generate COUNT deals for one SCENARIO via the norn engine. Output
+# to current dir as <SCENARIO>.html.
+[script("nu")]
+run-norn SCENARIO COUNT="48":
+    cd {{justfile_directory()}}/deal-simulations/odin-sims
+    just run --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{justfile_directory()}}/{{SCENARIO}}.html
 
 # serve quiz app in dev mode
 quiz:
