@@ -4,8 +4,5 @@ target/
 # Compiled executables
 *.exe
 
-# parity harness scratch outputs (deal.exe candidate/verdict files)
-parity_*.txt
-
 # machine-specific editor config (absolute norn collection path) — generate with `just ols-config`
 ols.json

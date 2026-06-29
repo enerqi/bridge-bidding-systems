@@ -2,9 +2,8 @@ set windows-shell := ["nu", "-c"]
 set shell := ["bash", "-c"]
 
 # This project is a CONSUMER of the norn library: norn provides the hand-generation engine
-# (`norn:norn`) and the reusable scenario CLI framework (`norn:cli`); everything here (conditions/,
-# scenarios/, sim/, parity/) is this specific bidding system. norn is referenced as an Odin
-# collection.
+# (`norn:norn`) and the reusable scenario CLI framework (`norn:cli`); everything here (the `bidding`
+# package + `sim.odin`) is this specific bidding system. norn is referenced as an Odin collection.
 #
 # `norn_home` is the single source of truth for where the norn checkout lives: the NORN_HOME
 # environment variable if set, else `<home>/dev/norn` (just's `home_directory()` is cross-platform;
@@ -50,7 +49,6 @@ format:
 lint *args:
 	odin check bidding {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
 	odin check sim.odin -file {{norn}} -vet -vet-cast -strict-style {{args}}
-	odin check parity.odin -file {{norn}} -vet -vet-cast -strict-style {{args}}
 
 # run the deal generator (release). Pass CLI args through, e.g. `just run --scenario 1c-any -n 12`.
 run *args: mktarget_dirs
@@ -77,10 +75,6 @@ freq trials="1000000" *args: mktarget_dirs
 # run the bidding-system unit tests
 test *args: mktarget_dirs
 	odin test bidding {{norn}} -debug -file -microarch:native -show-timings -out:target/debug/test-bidding.exe {{args}}
-
-# build the parity candidate generator (see parity.tcl for the deal.exe side)
-parity *args: mktarget_dirs
-	odin run parity.odin -file {{norn}} -o:speed -out:target/release/parity.exe {{args}}
 
 # delete build artifacts
 clean:

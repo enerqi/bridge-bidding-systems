@@ -9,10 +9,11 @@ There are now **two engines** for this:
 
 - **Norn (native, default)** — this bidding system ported to Odin in `odin-sims/`, running on the
   [`norn`](file:///C:/Users/Enerqi/dev/norn) hand-generation library. No `deal.exe` needed, ~2–3×
-  faster, and it emits line / pretty / BBO-handviewer / full-HTML-page output directly. Verified
-  identical to `deal.exe` over 20000 random deals (see "Parity" below).
+  faster, and it emits line / pretty / BBO-handviewer / full-HTML-page output directly. The port was
+  verified identical to `deal.exe` over 20000 random deals (the parity harness used for that has since
+  been retired — the port is done).
 - **Legacy** — Thomas Andrews' `deal` (`F:\bin\deal319`) interpreting the Tcl condition scripts in
-  `tcl-sims/`. Kept as the cross-check ground truth and for ad-hoc Tcl experiments. See
+  `tcl-sims/`. Kept for posterity / ad-hoc Tcl experiments. See
   `~/dev/norn/deal319-reference.md` for engine internals, and `~/dev/norn/DESIGN.md` (Double-dummy
   section) for the not-yet-needed DDS FFI plan.
 
@@ -20,7 +21,7 @@ There are now **two engines** for this:
 
 | Path | What |
 |------|------|
-| `odin-sims/` | the **Norn consumer** — an Odin project. `bidding/` is one package (this system's predicates + the named-scenario registry); `sim.odin` is the generator/exporter program, `parity.odin` the deal.exe cross-check. Depends on the `norn` library via an Odin collection. |
+| `odin-sims/` | the **Norn consumer** — an Odin project. `bidding/` is one package (this system's predicates + the named-scenario registry); `sim.odin` is the generator/exporter program. Depends on the `norn` library via an Odin collection. |
 | `tcl-sims/` | the **legacy Tcl** — `deal-utils.tcl` (the ~85-proc predicate library) + ≈111 condition scripts (one situation each), plus the `run-deal.py` / `regen-html-deals.py` runners. |
 | `tcl-sims/run-deal.py` | legacy: run one `tcl-sims/` script → deals → HTML (handviewer iframes). |
 | `tcl-sims/regen-html-deals.py` | legacy: batch `run-deal.py` over every `tcl-sims/*.tcl`. |
@@ -37,7 +38,7 @@ just run-norn 2c-opener               # one scenario -> ./2c-opener.html
 ```
 
 Inside `odin-sims/` there is its own `just` for development: `just run --scenario 1c-any -n 12`,
-`just build`, `just test`, `just lint`, `just parity`. (`just ols-config` regenerates the editor's
+`just build`, `just test`, `just lint`. (`just ols-config` regenerates the editor's
 `ols.json` for the `norn:` collection; set `NORN_HOME` if the norn checkout isn't at `~/dev/norn`.)
 
 Legacy (deal.exe):
@@ -75,10 +76,6 @@ Properties that made the port faithful:
 - **Multi-seat conditions are common** — many test North (opener) *and* South (responder),
   occasionally East/West (fit, combined hcp). Norn predicates take the whole `Deal`, not one hand.
 
-## Parity
-
-`odin-sims/parity.odin` + `parity.tcl` are the cross-check: the Odin side generates N random deals
-and a per-deal accept/reject verdict; `deal.exe` runs the equivalent Tcl over the *same* deals; the
-two verdict streams must be byte-identical. Every predicate family was verified 20000/20000, and the
-hand-written scenario compositions spot-checked the same way. Run via `cd odin-sims && just parity`
-(then feed `parity_candidates.txt` to `deal.exe -i parity.tcl`).
+The port was validated against `deal.exe` with a parity harness (generate the same deals on both
+sides, diff the accept/reject verdict streams; verified 20000/20000). That harness has been retired
+now the port is complete; `tcl-sims/` is kept for posterity should a re-check ever be wanted.

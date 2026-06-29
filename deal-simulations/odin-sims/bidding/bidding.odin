@@ -6,13 +6,13 @@ package bidding
 
 	WHY THIS IS A PACKAGE (rather than folded into a program's `package main`)
 	------------------------------------------------------------------------
-	It is a reusable library consumed by MORE THAN ONE program: both `sim` (the deal generator /
-	HTML exporter) and `parity` (the deal.exe cross-check harness) import it. A package gives them a
-	single, separately-compiled unit with a clean `bidding.` qualifier — instead of duplicating the
-	predicates or coupling them into one binary. That is the Odin justification for a package: code
-	SHARED/linked across programs. (Were there only one program, this code would simply live in that
-	program's own `package main` files — in Odin you organize within a program by FILE, not by
-	carving taxonomy sub-packages like `conditions/` + `scenarios/`.)
+	It was written as a reusable library consumed by more than one program: `sim` (the deal generator
+	/ HTML exporter) plus the now-retired `parity` (deal.exe cross-check) harness both imported it. A
+	package gives a single, separately-compiled unit with a clean `bidding.` qualifier instead of
+	duplicating the predicates or coupling them into one binary — the Odin justification for a
+	package is code SHARED/linked across programs. Only `sim` consumes it today, but the boundary is
+	kept (cheap, and re-usable if another program is added). (Within a single program you organize by
+	FILE, not by carving taxonomy sub-packages like `conditions/` + `scenarios/`.)
 
 	It depends only on the `norn` library — the system-agnostic hand-generation engine (`norn:norn`)
 	and the reusable scenario CLI framework (`norn:cli`) — via `-collection:norn=...`. Everything
