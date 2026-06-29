@@ -5,7 +5,7 @@ package bidding
 
 	Single-hand overcalls (`is_1major_overcall`, `is_1d_takeout`, `has_both_majors_michaels`) plus the
 	two genuinely multi-seat predicates that read several hands of the deal at once. The latter take a
-	whole `norn.Deal_Summary` (rather than a single `norn.HandSummary`) because they reason about both sides — they
+	whole `norn.Deal_Summary` (rather than a single `norn.Hand_Summary`) because they reason about both sides — they
 	compose directly as a `norn.Predicate`.
 */
 
@@ -13,7 +13,7 @@ import "norn:norn"
 
 // A natural 1-major overcall: 8-16 with a 5+ major as the longest suit, not a 15-18 notrump.
 // (deal-utils `is_1major_overcall`.)
-is_1major_overcall :: proc(hand: norn.HandSummary) -> bool {
+is_1major_overcall :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	if points < 8 || points > 16 {
 		return false
@@ -39,7 +39,7 @@ is_1major_overcall :: proc(hand: norn.HandSummary) -> bool {
 
 // A 1D takeout-style action: 11+, short diamonds, not a 1-major overcall or 15-18 notrump.
 // (deal-utils `is_1d_takeout`.)
-is_1d_takeout :: proc(hand: norn.HandSummary) -> bool {
+is_1d_takeout :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.hcp(hand) < 11 {
 		return false
 	}
@@ -54,7 +54,7 @@ is_1d_takeout :: proc(hand: norn.HandSummary) -> bool {
 
 // A Michaels-style both-majors hand: 5-15 with 5+ cards in each major. (deal-utils
 // `has_both_majors_michaels`.)
-has_both_majors_michaels :: proc(hand: norn.HandSummary) -> bool {
+has_both_majors_michaels :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	if points < 5 || points > 15 {
 		return false

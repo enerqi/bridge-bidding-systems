@@ -43,162 +43,162 @@ hand_of :: proc(spades, hearts, diamonds, clubs: []norn.Rank) -> norn.Hand {
 // --- Shared hands (named for the salient feature, with shape/hcp in the comment). ---
 
 // 7-2-2-2, AKQJT98 spades, 10 hcp, 3 controls — a long solid major, a 3-major preempt.
-solid7_spades :: proc() -> norn.HandSummary {
+solid7_spades :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, K, Q, J, T, R9, R8}, {R2, R3}, {R2, R3}, {R2, R3}))
 }
 
 // 7-3-2-1, solid spades plus a side ace of diamonds, 14 hcp, 5 controls — a gambling 3NT.
-gambling3n :: proc() -> norn.HandSummary {
+gambling3n :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, K, Q, J, T, R9, R8}, {R2, R3, R4}, {A, R2}, {R2}))
 }
 
 // 4-4-4-1, 12 hcp, 3 controls — a Marmic.
-marmic12 :: proc() -> norn.HandSummary {
+marmic12 :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, K, R2, R3}, {Q, J, R5, R6}, {Q, R4, R5, R6}, {R2}))
 }
 
 // 6-5-1-1 majors, 19 hcp — a strong majors two-suiter.
-majors_6511 :: proc() -> norn.HandSummary {
+majors_6511 :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, K, Q, R4, R5, R6}, {A, K, Q, J, T}, {R2}, {R2}))
 }
 
 // 6-5-1-1 majors, 7 hcp — a weak/semi-positive majors two-suiter; also a Michaels hand.
-weak_majors_6511 :: proc() -> norn.HandSummary {
+weak_majors_6511 :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, R3, R4, R5, R6, R7}, {K, R5, R6, R7, R8}, {R2}, {R2}))
 }
 
 // 6-3-2-2 spades, 9 hcp (A Q) — a standard weak two in spades.
-weak2_spades :: proc() -> norn.HandSummary {
+weak2_spades :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, Q, R4, R5, R6, R7}, {R2, R3, R4}, {K, R3}, {R2, R3}))
 }
 
 // 5-4-2-2, five spades headed A K, 7 hcp — a 5-card-major weak two.
-weak2_5card_spades :: proc() -> norn.HandSummary {
+weak2_5card_spades :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, K, R4, R5, R6}, {R2, R3}, {R2, R3, R4, R5}, {R2, R3}))
 }
 
 // 6-3-2-2 diamonds, A-headed, 6 hcp — a generic weak 2D / weak red two.
-weak2_diamonds :: proc() -> norn.HandSummary {
+weak2_diamonds :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({R2, R3}, {R2, R3}, {A, R3, R4, R5, R6, R7}, {Q, R3, R4}))
 }
 
 // 5-5-2-1 both minors, 10 hcp, a heart singleton — the 2S "both minors" response shape.
-both_minors_5521 :: proc() -> norn.HandSummary {
+both_minors_5521 :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({R2, R3}, {R2}, {A, K, R4, R5, R6}, {Q, J, R4, R5, R6}))
 }
 
 // 6-4-2-1, diamonds long, heart singleton, 13 hcp — an unbalanced minor / 2D intermediate.
-unbal_diamond_6421 :: proc() -> norn.HandSummary {
+unbal_diamond_6421 :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({R2, R3}, {R2}, {A, K, Q, R5, R6, R7}, {A, R3, R4, R5}))
 }
 
 // 5-4-3-1, diamonds long, spade-headed, 12 hcp — an unbalanced 1D opener.
-unbal_1d_5431 :: proc() -> norn.HandSummary {
+unbal_1d_5431 :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({Q, R2, R3, R4}, {R2}, {A, K, R4, R5, R6}, {K, R3, R4}))
 }
 
 // 5-3-3-2, five hearts, 12 hcp — a 1-major opener.
-major_opener_1h :: proc() -> norn.HandSummary {
+major_opener_1h :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({Q, R2, R3}, {A, K, R4, R5, R6}, {K, R3, R4}, {R2, R3}))
 }
 
 // 5-3-3-2, five spades, 9 hcp — a light 1-major opener.
-light_major_1s :: proc() -> norn.HandSummary {
+light_major_1s :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, K, R4, R5, R6}, {R2, R3, R4}, {Q, R3, R4}, {R2, R3}))
 }
 
 // 4-3-3-3, no 4-card major, 10 hcp, 3 controls — a flat no-major positive (2H/2NT-ish).
-flat_no_major_10 :: proc() -> norn.HandSummary {
+flat_no_major_10 :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({K, R2, R3}, {Q, R2, R3}, {J, R2, R3}, {A, R2, R3, R4}))
 }
 
 // 6-4-2-1, clubs long, no major, 9 hcp — a non-flat no-major positive (2C/2D-ish).
-unbal_no_major_9 :: proc() -> norn.HandSummary {
+unbal_no_major_9 :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({R2, R3}, {R2}, {K, R3, R4, R5}, {A, Q, R4, R5, R6, R7}))
 }
 
 // 6-3-2-2 clubs, 12 hcp — a 2C (club one-suiter) opener.
-club_2c_opener :: proc() -> norn.HandSummary {
+club_2c_opener :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({Q, R2, R3}, {R2, R3}, {K, R3}, {A, K, R4, R5, R6, R7}))
 }
 
 // 4-4-1-4, 13 hcp — a 2D opener shape (also a Marmic pattern).
-diamond_2d_opener :: proc() -> norn.HandSummary {
+diamond_2d_opener :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, K, R3, R4}, {Q, R2, R3, R4}, {J}, {K, R3, R4, R5}))
 }
 
 // 7-2-2-2 clubs, KQ-headed (missing the ace), 5 hcp — a standard 3C 7-carder preempt.
-clubs_3c_7carder :: proc() -> norn.HandSummary {
+clubs_3c_7carder :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({R2, R3}, {R2, R3}, {R2, R3}, {K, Q, R4, R5, R6, R7, R8}))
 }
 
 // 6-3-2-2 spades, AKQJ-solid six, 10 hcp, 3 controls — a 3NT solid-suit response.
-solid6_spades :: proc() -> norn.HandSummary {
+solid6_spades :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, K, Q, J, R6, R7}, {R2, R3, R4}, {R2, R3}, {R2, R3}))
 }
 
 // 7-2-2-2 spades, AKQJ-solid seven, 10 hcp, 3 controls — a 4-major solid-suit response.
-solid7_akqj_spades :: proc() -> norn.HandSummary {
+solid7_akqj_spades :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, K, Q, J, R6, R7, R8}, {R2, R3}, {R2, R3}, {R2, R3}))
 }
 
 // 8-2-2-1 spades, AQJ-headed eight (missing the king), 7 hcp — a 4-of-a-minor solid response.
-eight_spades_aqj :: proc() -> norn.HandSummary {
+eight_spades_aqj :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, Q, J, R5, R6, R7, R8, R9}, {R2, R3}, {R2}, {R2, R3}))
 }
 
 // 6-3-2-2 clubs, A-headed, 4 hcp — a weak jump-shift candidate.
-wjs_clubs :: proc() -> norn.HandSummary {
+wjs_clubs :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({R2, R3}, {R2, R3}, {R2, R3, R4}, {A, R3, R4, R5, R6, R7}))
 }
 
 // 6-3-2-2 hearts, AJ-headed, 5 hcp — a semi-positive weak two in hearts.
-semipos_2h :: proc() -> norn.HandSummary {
+semipos_2h :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({R2, R3}, {A, J, R5, R6, R7, R8}, {R2, R3}, {R2, R3, R4}))
 }
 
 // 5-5-2-1, hearts and clubs, 13 hcp — a game-forcing hearts+minor two-suiter.
-gf_hearts_minor :: proc() -> norn.HandSummary {
+gf_hearts_minor :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({R2}, {A, K, R4, R5, R6}, {R2, R3}, {A, Q, R4, R5, R6}))
 }
 
 // 8-2-2-1 clubs, solid AKQJT, 10 hcp — an insane offensive preempt / shapely minor preempt.
-insane_preempt :: proc() -> norn.HandSummary {
+insane_preempt :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({R2, R3}, {R2, R3}, {R2}, {A, K, Q, J, T, R9, R8, R7}))
 }
 
 // 5-3-3-2, solid AKQ(JT) across the board, 0 half-losers — a powerhouse / 4NT opener.
-powerhouse :: proc() -> norn.HandSummary {
+powerhouse :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, K, Q, J, T}, {A, K, Q}, {A, K, Q}, {A, K}))
 }
 
 // 4-3-3-3, 13 hcp, balanced — a weak 1C / balanced 1NT response.
-balanced_13 :: proc() -> norn.HandSummary {
+balanced_13 :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, K, R2, R3}, {K, R2, R3}, {Q, R2, R3}, {J, R2, R3}))
 }
 
 // 4-3-3-3, no 4-card major, 9 hcp — a 1D negative response to 1C.
-neg_1d_response :: proc() -> norn.HandSummary {
+neg_1d_response :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, R2, R3}, {Q, R2, R3}, {R2, R3, R4}, {K, R2, R3, R4}))
 }
 
 // 4-4-3-2, four spades and four hearts, 7 hcp — a 4-4 majors hand.
-majors_44 :: proc() -> norn.HandSummary {
+majors_44 :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, R2, R3, R4}, {K, R2, R3, R4}, {R2, R3, R4}, {R2, R3}))
 }
 
 // 4-4-1-4, short diamonds, 14 hcp, no 5-card suit — a 1D takeout shape.
-takeout_1d :: proc() -> norn.HandSummary {
+takeout_1d :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, K, R4, R5}, {A, K, R4, R5}, {R2}, {K, R2, R3, R4}))
 }
 
 // 4-3-3-3, balanced 20 hcp — a 2NT opener.
-balanced_20 :: proc() -> norn.HandSummary {
+balanced_20 :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({A, K, R3}, {A, R3, R4}, {R2, R3, R4}, {A, K, Q, R4}))
 }
 
 // 4-3-3-3, 2 hcp — junk filler for multi-seat deals.
-junk :: proc() -> norn.HandSummary {
+junk :: proc() -> norn.Hand_Summary {
 	return norn.summarize(hand_of({Q, R2, R3, R4}, {R2, R3, R4}, {R2, R3, R4}, {R2, R3, R4}))
 }
 

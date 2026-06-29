@@ -4,14 +4,14 @@ package bidding
 	conditions_test.odin — unit tests for the bridge conditions.
 
 	Hands are built explicitly so each qualifying/non-qualifying case is unambiguous. Fixtures return
-	the `norn.HandSummary` index the predicates now consume (the raw cards are summarized once here).
+	the `norn.Hand_Summary` index the predicates now consume (the raw cards are summarized once here).
 */
 
 import "core:testing"
 import "norn:norn"
 
 // A flat 17-count (4-3-3-3): spades A K Q J, hearts A K x, rest low.
-flat_17 :: proc() -> norn.HandSummary {
+flat_17 :: proc() -> norn.Hand_Summary {
 	return norn.summarize(
 		norn.Hand {
 			norn.make_card(.Spades, .Ace),
@@ -32,7 +32,7 @@ flat_17 :: proc() -> norn.HandSummary {
 }
 
 // An unbalanced 16-count, 5-5-2-1: spades A K Q x x, hearts A K x x x, short minors.
-unbalanced_16 :: proc() -> norn.HandSummary {
+unbalanced_16 :: proc() -> norn.Hand_Summary {
 	return norn.summarize(
 		norn.Hand {
 			norn.make_card(.Spades, .Ace),

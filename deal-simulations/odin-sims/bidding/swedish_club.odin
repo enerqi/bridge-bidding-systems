@@ -12,32 +12,32 @@ package bidding
 import "norn:norn"
 
 // A 1NT response to 1C showing a Marmic (4-4-4-1) 12+. (deal-utils `is_1n_marmic_swedish_club_resp`.)
-is_1n_marmic_swedish_club_resp :: proc(hand: norn.HandSummary) -> bool {
+is_1n_marmic_swedish_club_resp :: proc(hand: norn.Hand_Summary) -> bool {
 	return is_marmic(hand) && norn.hcp(hand) >= 12
 }
 
 // The 2S "both minors" positive response: both minors with a major shortage, 9-11. (deal-utils
 // `is_2s_swedish_club_resp`.)
-is_2s_swedish_club_resp :: proc(hand: norn.HandSummary) -> bool {
+is_2s_swedish_club_resp :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	return both_minors(hand) && singleton_or_void_major(hand) && points >= 9 && points <= 11
 }
 
 // The 2C/2D positive: no side major, not flattish, 7-10. (deal-utils `is_2cd_swedish_club_resp`.)
-is_2cd_swedish_club_resp :: proc(hand: norn.HandSummary) -> bool {
+is_2cd_swedish_club_resp :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	return !has_side_major(hand) && !is_flattish(hand) && points >= 7 && points <= 10
 }
 
 // The 2H/2NT positive: no side major, flattish, 9-12. (deal-utils `is_2h_or_2n_swedish_club_resp`.)
-is_2h_or_2n_swedish_club_resp :: proc(hand: norn.HandSummary) -> bool {
+is_2h_or_2n_swedish_club_resp :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	return !has_side_major(hand) && is_flattish(hand) && points >= 9 && points <= 12
 }
 
 // The 1D negative-ish response to 1C: 0-9, not strong enough (or wrong-shaped) for the 1M / minor /
 // 2S / preempt / weak-two responses. (deal-utils `is_1d_swedish_club_resp`.)
-is_1d_swedish_club_resp :: proc(hand: norn.HandSummary) -> bool {
+is_1d_swedish_club_resp :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	if points > 9 {
 		return false
@@ -77,7 +77,7 @@ is_1d_swedish_club_resp :: proc(hand: norn.HandSummary) -> bool {
 
 // A minor-suit positive response to 1C: a 2S hand, or an 11+ unbalanced-minor / both-minors hand.
 // (deal-utils `is_minor_swedish_club_positive_response`.)
-is_minor_swedish_club_positive_response :: proc(hand: norn.HandSummary) -> bool {
+is_minor_swedish_club_positive_response :: proc(hand: norn.Hand_Summary) -> bool {
 	if is_2s_swedish_club_resp(hand) {
 		return true
 	}
@@ -89,7 +89,7 @@ is_minor_swedish_club_positive_response :: proc(hand: norn.HandSummary) -> bool 
 
 // A 1NT response showing an unbalanced minor 12+ (no side major, not a 2S hand, not balanced).
 // (deal-utils `is_1n_unbal_minor_swedish_club_resp`.)
-is_1n_unbal_minor_swedish_club_resp :: proc(hand: norn.HandSummary) -> bool {
+is_1n_unbal_minor_swedish_club_resp :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.hcp(hand) < 12 {
 		return false
 	}
@@ -100,7 +100,7 @@ is_1n_unbal_minor_swedish_club_resp :: proc(hand: norn.HandSummary) -> bool {
 }
 
 // The older balanced 1NT response: balanced 12+. (deal-utils `is_old_1n_bal_swedish_club_response`.)
-is_old_1n_bal_swedish_club_response :: proc(hand: norn.HandSummary) -> bool {
+is_old_1n_bal_swedish_club_response :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.hcp(hand) < 12 {
 		return false
 	}
@@ -109,7 +109,7 @@ is_old_1n_bal_swedish_club_response :: proc(hand: norn.HandSummary) -> bool {
 
 // Any of the 1NT responses (balanced, unbalanced-minor, or Marmic). (deal-utils
 // `is_any_1n_swedish_club_response`.)
-is_any_1n_swedish_club_response :: proc(hand: norn.HandSummary) -> bool {
+is_any_1n_swedish_club_response :: proc(hand: norn.Hand_Summary) -> bool {
 	return(
 		is_old_1n_bal_swedish_club_response(hand) ||
 		is_1n_unbal_minor_swedish_club_resp(hand) ||
@@ -119,7 +119,7 @@ is_any_1n_swedish_club_response :: proc(hand: norn.HandSummary) -> bool {
 
 // Exactly 3 control points and at most 12 hcp — the controlled, solid-suit profile the 3NT/4M
 // responses share. (deal-utils `eq_3_control_points_and_max_12_hcp`.)
-eq_3_control_points_and_max_12_hcp :: proc(hand: norn.HandSummary) -> bool {
+eq_3_control_points_and_max_12_hcp :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.controls(hand) != 3 {
 		return false
 	}
@@ -127,13 +127,13 @@ eq_3_control_points_and_max_12_hcp :: proc(hand: norn.HandSummary) -> bool {
 }
 
 // A solid AKQJ holding in `suit`. (deal-utils `AKQJ`: `Top4 == 4`.)
-is_akqj :: proc(hand: norn.HandSummary, suit: norn.Suit) -> bool {
+is_akqj :: proc(hand: norn.Hand_Summary, suit: norn.Suit) -> bool {
 	return norn.top_count(hand, suit, 4) == 4
 }
 
 // A 3NT response showing a totally solid (AKQJ) 6-card suit and no outside A/K. (deal-utils
 // `is_3n_swedish_club_resp`.)
-is_3n_swedish_club_resp :: proc(hand: norn.HandSummary) -> bool {
+is_3n_swedish_club_resp :: proc(hand: norn.Hand_Summary) -> bool {
 	if !eq_3_control_points_and_max_12_hcp(hand) {
 		return false
 	}
@@ -151,7 +151,7 @@ is_3n_swedish_club_resp :: proc(hand: norn.HandSummary) -> bool {
 // NOTE: the original's leading `if {![hcp $hand]>10}` guard is a no-op in Tcl (it parses as
 // `(!hcp) > 10`, never true), so it is intentionally omitted here — the 8-card-suit body is the
 // whole of the real test.
-is_4cd_swedish_club_response :: proc(hand: norn.HandSummary) -> bool {
+is_4cd_swedish_club_response :: proc(hand: norn.Hand_Summary) -> bool {
 	// A spade 8-bagger headed by AQJ or KQJ (missing one top honour), nothing else of note.
 	if norn.top_count(hand, .Spades, 4) != 4 &&
 	   (has_aqj(hand, .Spades) || has_kqj(hand, .Spades)) &&
@@ -174,7 +174,7 @@ is_4cd_swedish_club_response :: proc(hand: norn.HandSummary) -> bool {
 
 // A 4-of-a-major response showing a totally solid (AKQJ) 7-card major. (deal-utils
 // `is_4hs_swedish_club_response`.)
-is_4hs_swedish_club_response :: proc(hand: norn.HandSummary) -> bool {
+is_4hs_swedish_club_response :: proc(hand: norn.Hand_Summary) -> bool {
 	if !eq_3_control_points_and_max_12_hcp(hand) {
 		return false
 	}
@@ -186,7 +186,7 @@ is_4hs_swedish_club_response :: proc(hand: norn.HandSummary) -> bool {
 
 // A 3-level preempt response to 1C: at most 7 hcp and one of the preempt shapes. (deal-utils
 // `is_3x_preempt_swedish_club_response`.)
-is_3x_preempt_swedish_club_response :: proc(hand: norn.HandSummary) -> bool {
+is_3x_preempt_swedish_club_response :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.hcp(hand) > 7 {
 		return false
 	}
@@ -202,7 +202,7 @@ is_3x_preempt_swedish_club_response :: proc(hand: norn.HandSummary) -> bool {
 
 // A possible inverted diamond raise: 10+, no side major, 4+ diamonds. (deal-utils
 // `is_possible_inverted_diamond_raise`.)
-is_possible_inverted_diamond_raise :: proc(hand: norn.HandSummary) -> bool {
+is_possible_inverted_diamond_raise :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.hcp(hand) < 10 {
 		return false
 	}
@@ -214,7 +214,7 @@ is_possible_inverted_diamond_raise :: proc(hand: norn.HandSummary) -> bool {
 
 // A possible weak jump-shift response to 1D: sub-10 with a 6+ heart, spade or club suit. (deal-utils
 // `is_possible_wjs_1d_response`.)
-is_possible_wjs_1d_response :: proc(hand: norn.HandSummary) -> bool {
+is_possible_wjs_1d_response :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.hcp(hand) >= 10 {
 		return false
 	}
@@ -227,7 +227,7 @@ is_possible_wjs_1d_response :: proc(hand: norn.HandSummary) -> bool {
 
 // A possible splinter response to 1D: 13+, 6+ diamonds with a side singleton. (deal-utils
 // `is_possible_splinter_1d_response`.)
-is_possible_splinter_1d_response :: proc(hand: norn.HandSummary) -> bool {
+is_possible_splinter_1d_response :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.hcp(hand) < 13 {
 		return false
 	}
@@ -243,7 +243,7 @@ is_possible_splinter_1d_response :: proc(hand: norn.HandSummary) -> bool {
 
 // A possible diamond-preempt response to 1D: at most 10 hcp with 6+ diamonds. (deal-utils
 // `is_possible_diamond_preempt_1d_response`.)
-is_possible_diamond_preempt_1d_response :: proc(hand: norn.HandSummary) -> bool {
+is_possible_diamond_preempt_1d_response :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.hcp(hand) > 10 {
 		return false
 	}

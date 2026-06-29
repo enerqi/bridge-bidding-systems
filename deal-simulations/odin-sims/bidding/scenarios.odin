@@ -1006,7 +1006,7 @@ is_defence_vs_3s4s :: proc(b: norn.Deal_Summary) -> bool {
 
 // The high-preempt family for a single hand (used by `defence-vs-high-preempts` over E and W).
 @(private)
-any_high_preempt :: proc(h: norn.HandSummary) -> bool {
+any_high_preempt :: proc(h: norn.Hand_Summary) -> bool {
 	return(
 		is_minors_2n_preempt(h) ||
 		is_shapely_minor_preempt(h) ||
@@ -1019,7 +1019,7 @@ any_high_preempt :: proc(h: norn.HandSummary) -> bool {
 // The full preempt family for a single hand (used by `defense-vs-all-preempts` over E and W): the
 // high-preempt set plus the weak-two shapes.
 @(private)
-any_preempt :: proc(h: norn.HandSummary) -> bool {
+any_preempt :: proc(h: norn.Hand_Summary) -> bool {
 	return(
 		is_minors_2n_preempt(h) ||
 		is_shapely_minor_preempt(h) ||

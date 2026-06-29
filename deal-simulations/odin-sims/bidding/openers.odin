@@ -13,19 +13,19 @@ import "norn:norn"
 
 // A weak (13-15) balanced 1C opening — the limited natural side of the artificial 1C. (deal-utils
 // `is_weak_1c`.)
-is_weak_1c :: proc(hand: norn.HandSummary) -> bool {
+is_weak_1c :: proc(hand: norn.Hand_Summary) -> bool {
 	return nt5cM(hand, 13, 15)
 }
 
 // Any artificial 1C opening: the weak balanced one or the strong one. (deal-utils
 // `is_any_1c_opener`.)
-is_any_1c_opener :: proc(hand: norn.HandSummary) -> bool {
+is_any_1c_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	return is_weak_1c(hand) || is_strong_1c(hand)
 }
 
 // An unbalanced, limited (11-15) diamond opening: 4+ diamonds as the (co-)longest suit, not a hand
 // that belongs in 2C or the intermediate 2D. (deal-utils `is_1d_unbal_opener`.)
-is_1d_unbal_opener :: proc(hand: norn.HandSummary) -> bool {
+is_1d_unbal_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	if is_flattish(hand) {
 		return false
 	}
@@ -45,7 +45,7 @@ is_1d_unbal_opener :: proc(hand: norn.HandSummary) -> bool {
 
 // A 1D opening: the unbalanced diamond hand, OR a balanced 11-13 that is not a 1-major hand.
 // (deal-utils `is_1d_opener`.)
-is_1d_opener :: proc(hand: norn.HandSummary) -> bool {
+is_1d_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	if is_1d_unbal_opener(hand) {
 		return true
 	}
@@ -57,7 +57,7 @@ is_1d_opener :: proc(hand: norn.HandSummary) -> bool {
 
 // A limited (11-15) 1-major opening: a 5+ card major as longest suit, not a 13-15 balanced (1C)
 // hand and not a gambling 3NT. (deal-utils `is_1major_opener`.)
-is_1major_opener :: proc(hand: norn.HandSummary) -> bool {
+is_1major_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	if points < 11 || points > 15 {
 		return false
@@ -86,7 +86,7 @@ is_1major_opener :: proc(hand: norn.HandSummary) -> bool {
 
 // A light (9-11) 1-major opening — same shape rules as `is_1major_opener`, lower point band.
 // (deal-utils `is_light_1major_opener`.)
-is_light_1major_opener :: proc(hand: norn.HandSummary) -> bool {
+is_light_1major_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	if points < 9 || points > 11 {
 		return false
@@ -114,23 +114,23 @@ is_light_1major_opener :: proc(hand: norn.HandSummary) -> bool {
 }
 
 // A 16-18 balanced 1NT opening. (deal-utils `is_1nt_opener`.)
-is_1nt_opener :: proc(hand: norn.HandSummary) -> bool {
+is_1nt_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	return nt5cM(hand, 16, 18)
 }
 
 // A 19-20 balanced 2NT opening. (deal-utils `is_2nt_opener`.)
-is_2nt_opener :: proc(hand: norn.HandSummary) -> bool {
+is_2nt_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	return nt5cM(hand, 19, 20)
 }
 
 // The "Marmic" 4-4-4-1 shape. (deal-utils `is_marmic`.)
-is_marmic :: proc(hand: norn.HandSummary) -> bool {
+is_marmic :: proc(hand: norn.Hand_Summary) -> bool {
 	return has_pattern(hand, 4, 4, 4, 1)
 }
 
 // A club-based 2C opening: a 6+ club one-suiter, 11-15 (or a 10-point 7-card club suit), with no
 // other 6+ suit. (deal-utils `is_2c_opener`.)
-is_2c_opener :: proc(hand: norn.HandSummary) -> bool {
+is_2c_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	clublen := norn.club_length(hand)
 	min_7carder := points == 10 && clublen == 7
@@ -144,7 +144,7 @@ is_2c_opener :: proc(hand: norn.HandSummary) -> bool {
 
 // A diamond-based 2D opening: a 4-4-1-4 12-16, or a 4-4-0-5 / 4-3-1-5 / 3-4-1-5 11-15. (deal-utils
 // `is_2d_opener`.) `norn.shape` is in S-H-D-C order, matching deal's `[$hand shape]`.
-is_2d_opener :: proc(hand: norn.HandSummary) -> bool {
+is_2d_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	shdc := norn.shape(hand)
 	if shdc == ([norn.SUIT_COUNT]int{4, 4, 1, 4}) && points >= 12 && points <= 16 {
@@ -162,7 +162,7 @@ is_2d_opener :: proc(hand: norn.HandSummary) -> bool {
 
 // The intermediate (9-15) 2D opening: 6+ diamonds as the longest suit, no 5+ major, weaker hands
 // needing extra two-suited shape. (deal-utils `is_2d_intermediate_opener`.)
-is_2d_intermediate_opener :: proc(hand: norn.HandSummary) -> bool {
+is_2d_intermediate_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	if points < 9 || points > 15 {
 		return false
@@ -188,7 +188,7 @@ is_2d_intermediate_opener :: proc(hand: norn.HandSummary) -> bool {
 
 // A gambling-3NT opening: a long near-solid major (AK-headed plus a side ace, or AK twice over) in
 // an 8-14 hand with limited controls and not a 7-2-2-2. (deal-utils `is_3n_opener`.)
-is_3n_opener :: proc(hand: norn.HandSummary) -> bool {
+is_3n_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	if points < 8 || points > 14 {
 		return false
@@ -221,7 +221,7 @@ is_3n_opener :: proc(hand: norn.HandSummary) -> bool {
 // A standard prepared 1-minor opening (natural systems): 11-21, longest suit a minor (or balanced
 // without a 5-card major), excluding the 15-17 notrump and a flat 20+. (deal-utils
 // `opens_std_1minor_prepared`.)
-opens_std_1minor_prepared :: proc(hand: norn.HandSummary) -> bool {
+opens_std_1minor_prepared :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	if points < 11 || points > 21 {
 		return false
@@ -247,7 +247,7 @@ opens_std_1minor_prepared :: proc(hand: norn.HandSummary) -> bool {
 
 // A 3C/3D preempt in 1st/2nd seat: sub-opening, no side major, limited controls, with a tricky
 // (offensive) minor. (deal-utils `is_3cd_opener_1st2nd`.)
-is_3cd_opener_1st2nd :: proc(hand: norn.HandSummary) -> bool {
+is_3cd_opener_1st2nd :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.hcp(hand) > 11 {
 		return false
 	}
@@ -262,7 +262,7 @@ is_3cd_opener_1st2nd :: proc(hand: norn.HandSummary) -> bool {
 
 // A standard 3C/3D preempt on a 7-card minor: sub-opening, no side major, very limited controls, a
 // 7-card minor missing top honours with no other long minor. (deal-utils `is_standard_3cd_7carder`.)
-is_standard_3cd_7carder :: proc(hand: norn.HandSummary) -> bool {
+is_standard_3cd_7carder :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.hcp(hand) > 11 {
 		return false
 	}
