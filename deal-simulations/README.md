@@ -13,9 +13,7 @@ There are now **two engines** for this:
   verified identical to `deal.exe` over 20000 random deals (the parity harness used for that has since
   been retired — the port is done).
 - **Legacy** — Thomas Andrews' `deal` (`F:\bin\deal319`) interpreting the Tcl condition scripts in
-  `tcl-sims/`. Kept for posterity / ad-hoc Tcl experiments. See
-  `~/dev/norn/deal319-reference.md` for engine internals, and `~/dev/norn/DESIGN.md` (Double-dummy
-  section) for the not-yet-needed DDS FFI plan.
+  `tcl-sims/`. Kept for posterity / ad-hoc Tcl experiments.
 
 ## Layout
 
@@ -25,7 +23,6 @@ There are now **two engines** for this:
 | `tcl-sims/` | the **legacy Tcl** — `deal-utils.tcl` (the ~85-proc predicate library) + ≈111 condition scripts (one situation each), plus the `run-deal.py` / `regen-html-deals.py` runners. |
 | `tcl-sims/run-deal.py` | legacy: run one `tcl-sims/` script → deals → HTML (handviewer iframes). |
 | `tcl-sims/regen-html-deals.py` | legacy: batch `run-deal.py` over every `tcl-sims/*.tcl`. |
-| `html/` | generated HTML pages (output of the Norn `regen-norn` recipes). |
 
 ## Quick start (from the repo root, via `just`)
 
