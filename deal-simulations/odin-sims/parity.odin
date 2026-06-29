@@ -46,10 +46,10 @@ SCENARIOS :: []string {
 	"1d-then-1x-interference",
 }
 
-predicate :: proc(board: norn.Deal) -> bool {
+predicate :: proc(summary: norn.Deal_Summary) -> bool {
 	for name in SCENARIOS {
 		s, _ := cli.lookup(bidding.registry, name)
-		if s.predicate(board) {
+		if s.predicate(summary) {
 			return true
 		}
 	}
@@ -71,7 +71,7 @@ main :: proc() {
 		norn.render_deal_line(&candidates, board)
 		strings.write_byte(&candidates, '\n')
 		// One verdict digit per deal, same order as the candidates — diff this against deal.exe's.
-		if predicate(board) {
+		if predicate(norn.summarize_deal(board)) {
 			strings.write_string(&verdict, "1\n")
 			naccept += 1
 		} else {

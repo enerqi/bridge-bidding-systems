@@ -3,48 +3,53 @@ package bidding
 /*
 	conditions_test.odin — unit tests for the bridge conditions.
 
-	Hands are built explicitly so each qualifying/non-qualifying case is unambiguous.
+	Hands are built explicitly so each qualifying/non-qualifying case is unambiguous. Fixtures return
+	the `norn.HandSummary` index the predicates now consume (the raw cards are summarized once here).
 */
 
 import "core:testing"
 import "norn:norn"
 
 // A flat 17-count (4-3-3-3): spades A K Q J, hearts A K x, rest low.
-flat_17 :: proc() -> norn.Hand {
-	return norn.Hand {
-		norn.make_card(.Spades, .Ace),
-		norn.make_card(.Spades, .King),
-		norn.make_card(.Spades, .Queen),
-		norn.make_card(.Spades, .Jack),
-		norn.make_card(.Hearts, .Ace),
-		norn.make_card(.Hearts, .King),
-		norn.make_card(.Hearts, .Two),
-		norn.make_card(.Diamonds, .Two),
-		norn.make_card(.Diamonds, .Three),
-		norn.make_card(.Diamonds, .Four),
-		norn.make_card(.Clubs, .Two),
-		norn.make_card(.Clubs, .Three),
-		norn.make_card(.Clubs, .Four),
-	}
+flat_17 :: proc() -> norn.HandSummary {
+	return norn.summarize(
+		norn.Hand {
+			norn.make_card(.Spades, .Ace),
+			norn.make_card(.Spades, .King),
+			norn.make_card(.Spades, .Queen),
+			norn.make_card(.Spades, .Jack),
+			norn.make_card(.Hearts, .Ace),
+			norn.make_card(.Hearts, .King),
+			norn.make_card(.Hearts, .Two),
+			norn.make_card(.Diamonds, .Two),
+			norn.make_card(.Diamonds, .Three),
+			norn.make_card(.Diamonds, .Four),
+			norn.make_card(.Clubs, .Two),
+			norn.make_card(.Clubs, .Three),
+			norn.make_card(.Clubs, .Four),
+		},
+	)
 }
 
 // An unbalanced 16-count, 5-5-2-1: spades A K Q x x, hearts A K x x x, short minors.
-unbalanced_16 :: proc() -> norn.Hand {
-	return norn.Hand {
-		norn.make_card(.Spades, .Ace),
-		norn.make_card(.Spades, .King),
-		norn.make_card(.Spades, .Queen),
-		norn.make_card(.Spades, .Two),
-		norn.make_card(.Spades, .Three),
-		norn.make_card(.Hearts, .Ace),
-		norn.make_card(.Hearts, .King),
-		norn.make_card(.Hearts, .Four),
-		norn.make_card(.Hearts, .Five),
-		norn.make_card(.Hearts, .Six),
-		norn.make_card(.Diamonds, .Two),
-		norn.make_card(.Diamonds, .Three),
-		norn.make_card(.Clubs, .Two),
-	}
+unbalanced_16 :: proc() -> norn.HandSummary {
+	return norn.summarize(
+		norn.Hand {
+			norn.make_card(.Spades, .Ace),
+			norn.make_card(.Spades, .King),
+			norn.make_card(.Spades, .Queen),
+			norn.make_card(.Spades, .Two),
+			norn.make_card(.Spades, .Three),
+			norn.make_card(.Hearts, .Ace),
+			norn.make_card(.Hearts, .King),
+			norn.make_card(.Hearts, .Four),
+			norn.make_card(.Hearts, .Five),
+			norn.make_card(.Hearts, .Six),
+			norn.make_card(.Diamonds, .Two),
+			norn.make_card(.Diamonds, .Three),
+			norn.make_card(.Clubs, .Two),
+		},
+	)
 }
 
 @(test)
@@ -60,5 +65,9 @@ test_is_strong_1c :: proc(t: ^testing.T) {
 	// 17 flat -> does not (shown as a strong notrump instead).
 	testing.expect(t, !is_strong_1c(flat_17()), "flat 17 should not open strong 1C")
 	// Below 16 -> never.
-	testing.expect(t, !is_strong_1c(norn.Hand{}), "an empty/low hand is not a strong 1C")
+	testing.expect(
+		t,
+		!is_strong_1c(norn.summarize(norn.Hand{})),
+		"an empty/low hand is not a strong 1C",
+	)
 }

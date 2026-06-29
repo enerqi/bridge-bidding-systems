@@ -27,14 +27,14 @@ package bidding
 	  helpers.odin       small shared helpers (honour combos, notrump shape+range)
 	  scenarios.odin     the named-scenario registry ([]cli.Scenario)
 
-	Each condition takes a `norn.Hand` and returns whether it qualifies, so it composes directly into
+	Each condition takes a `norn.HandSummary` and returns whether it qualifies, so it composes directly into
 	a `norn.Predicate` over a `Deal` (typically applied to one seat).
 */
 
 import "norn:norn"
 
 // A "flattish" hand: balanced or semi-balanced. (deal-utils `flattish`.)
-is_flattish :: proc(hand: norn.Hand) -> bool {
+is_flattish :: proc(hand: norn.HandSummary) -> bool {
 	return norn.is_balanced(hand) || norn.is_semibalanced(hand)
 }
 
@@ -42,7 +42,7 @@ is_flattish :: proc(hand: norn.Hand) -> bool {
 //
 // 16+ high-card points; 21+ always qualifies, while 16–20 must be unbalanced (a flat 16–20 is
 // shown some other way, e.g. a strong notrump).
-is_strong_1c :: proc(hand: norn.Hand) -> bool {
+is_strong_1c :: proc(hand: norn.HandSummary) -> bool {
 	points := norn.hcp(hand)
 	if points < 16 {
 		return false

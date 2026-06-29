@@ -27,9 +27,10 @@ sim_name := "sim.exe"
 	-mkdir target/debug
 	-mkdir target/release
 
-# (re)generate ols.json from norn_home so the editor's Odin language server resolves the `norn:`
-# collection. ols.json is machine-specific (an absolute path) and gitignored — regenerate it after
+# ols.json is machine-specific (an absolute path) and gitignored — regenerate it after
 # cloning or when NORN_HOME changes:  NORN_HOME=/path/to/norn just ols-config
+#
+# (re)generate ols.json from norn_home so the editor's Odin language server resolves the `norn:` collection.
 [script("python")]
 ols-config:
 	import json
@@ -52,17 +53,24 @@ lint *args:
 	odin check parity.odin -file {{norn}} -vet -vet-cast -strict-style {{args}}
 
 # run the deal generator (release). Pass CLI args through, e.g. `just run --scenario 1c-any -n 12`.
-# The `--` separates the program's args from odin's own flags.
 run *args: mktarget_dirs
-	odin run sim.odin -file {{norn}} -o:speed -microarch:native -out:target/release/{{sim_name}} -- {{args}}
+	odin run sim.odin -file {{norn}} -keep-executable -o:speed -microarch:native -out:target/release/{{sim_name}} -- {{args}}
 
-# build the deal generator (release)
+# rerun the deal generator (release) without recompiling. Pass CLI args through, e.g. `just run --scenario 1c-any -n 12`.
+rerun *args: mktarget_dirs
+	target/release/{{sim_name}} {{args}}
+
+run_debug *args: mktarget_dirs
+	odin run sim.odin -file {{norn}} -microarch:native -out:target/debug/{{sim_name}} -- {{args}}
+
+# build the sim deal generator (release)
 build *args: mktarget_dirs
 	odin build sim.odin -file {{norn}} -o:speed -microarch:native -out:target/release/{{sim_name}} {{args}}
 
-# measure each scenario's acceptance frequency over N deals (no deals emitted); release build so a
-# big sample is fast. Every scenario by default, or pass `-S name[,name]` to restrict the subset.
-# e.g. `just freq` (1M, all), `just freq 5000000`, `just freq 1000000 -S 1c-any,2c-opener`.
+# Frequency test every scenario by default, or pass `-S name[,name]` to restrict the subset.
+# e.g. `just freq` (1M, -all), `just freq 5000000`, `just freq 1000000 -S 1c-any,2c-opener`.
+#
+# measure each scenario's acceptance frequency over N deals (no deals emitted)
 freq trials="1000000" *args: mktarget_dirs
 	odin run sim.odin -file {{norn}} -o:speed -microarch:native -out:target/release/{{sim_name}} -- --frequency {{trials}} {{args}}
 
