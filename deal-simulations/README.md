@@ -13,20 +13,18 @@ There are now **two engines** for this:
   identical to `deal.exe` over 20000 random deals (see "Parity" below).
 - **Legacy** — Thomas Andrews' `deal` (`F:\bin\deal319`) interpreting the Tcl condition scripts in
   `tcl-sims/`. Kept as the cross-check ground truth and for ad-hoc Tcl experiments. See
-  `deal-generator-notes.md`, and `~/dev/norn/deal319-reference.md` for engine internals.
+  `~/dev/norn/deal319-reference.md` for engine internals, and `~/dev/norn/DESIGN.md` (Double-dummy
+  section) for the not-yet-needed DDS FFI plan.
 
 ## Layout
 
 | Path | What |
 |------|------|
 | `odin-sims/` | the **Norn consumer** — an Odin project. `bidding/` is one package (this system's predicates + the named-scenario registry); `sim.odin` is the generator/exporter program, `parity.odin` the deal.exe cross-check. Depends on the `norn` library via an Odin collection. |
-| `tcl-sims/` | the **legacy Tcl** — `deal-utils.tcl` (the ~85-proc predicate library) + ≈111 condition scripts (one situation each). |
-| `run-deal.py` | legacy: run one `tcl-sims/` script → deals → HTML (handviewer iframes). |
-| `regen-html-deals.py` | legacy: batch `run-deal.py` over every `tcl-sims/*.tcl`. |
-| `2m-stats.py`, `55-minor-stats.py` | parse a generated `deals.txt` (line format) for distribution stats. |
-| `deals.txt` | a large sample of generated deals in line format (input to the stats scripts). |
+| `tcl-sims/` | the **legacy Tcl** — `deal-utils.tcl` (the ~85-proc predicate library) + ≈111 condition scripts (one situation each), plus the `run-deal.py` / `regen-html-deals.py` runners. |
+| `tcl-sims/run-deal.py` | legacy: run one `tcl-sims/` script → deals → HTML (handviewer iframes). |
+| `tcl-sims/regen-html-deals.py` | legacy: batch `run-deal.py` over every `tcl-sims/*.tcl`. |
 | `html/` | generated HTML pages (output of the Norn `regen-norn` recipes). |
-| `parse-deal/` | a Rust line-format parser (built output gitignored). |
 
 ## Quick start (from the repo root, via `just`)
 
@@ -45,8 +43,8 @@ Inside `odin-sims/` there is its own `just` for development: `just run --scenari
 Legacy (deal.exe):
 
 ```sh
-just regen                            # every tcl-sims script -> HTML on the web server
-just run-scratch 2c-opener.tcl        # one script -> ./2c-opener.tcl.html
+just _py-regen                        # every tcl-sims script -> HTML on the web server
+just _py-run-scratch 2c-opener.tcl    # one script -> ./2c-opener.tcl.html
 ```
 
 ## Condition idiom (legacy Tcl)

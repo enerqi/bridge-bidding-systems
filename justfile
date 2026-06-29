@@ -83,11 +83,11 @@ deploy-quiz:
 # regenerate all deal simulations. Output html to web server
 [script("nu")]
 _py-regen:
-    cd {{justfile_directory()}}/deal-simulations
+    cd {{justfile_directory()}}/deal-simulations/tcl-sims
     uv run regen-html-deals.py {{deals_output_dir}}
 
 # generate 48 deals for TCL_SCRIPT (a filename in deal-simulations/tcl-sims). Output to current dir as html.
 [script("nu")]
 _py-run-scratch TCL_SCRIPT:
-    cd {{justfile_directory()}}/deal-simulations
+    cd {{justfile_directory()}}/deal-simulations/tcl-sims
     uv run run-deal.py --deal-count 48 --deal-script-path {{justfile_directory()}}/deal-simulations/tcl-sims/{{TCL_SCRIPT}} --html-output-path {{justfile_directory()}}/{{TCL_SCRIPT}}.html

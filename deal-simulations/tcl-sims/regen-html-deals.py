@@ -5,9 +5,11 @@
 # ]
 # ///
 # Quick helper script to call run-deal.py on every tcl script in this directory and create an html page for each script
-# Assumes it is run from this `deal-simulations` directory
 # python regen-html-deals.py output-directory [deal-count=48]
 import glob, os, subprocess, sys
+
+this_dir = os.path.dirname(os.path.abspath(__file__))
+run_deal = os.path.join(this_dir, "run-deal.py")
 
 args = sys.argv[1:]
 
@@ -17,13 +19,13 @@ assert os.path.exists(output_directory) and os.path.isdir(output_directory), "No
 
 deal_count = int(args[1]) if len(args) > 1 else 48
 
-tcl_scripts = glob.glob("tcl-sims/*.tcl")
+tcl_scripts = glob.glob(os.path.join(this_dir, "*.tcl"))
 script_count = 0
 for script in tcl_scripts:
     if "deal-utils" not in script:
         out_file = os.path.splitext(os.path.basename(script))[0] + ".html"
         out_file_path = os.path.join(output_directory, out_file)
-        cmd = f"python run-deal.py --deal-count {deal_count} --deal-script-path {script} --html-output-path {out_file_path}"
+        cmd = f"python {run_deal} --deal-count {deal_count} --deal-script-path {script} --html-output-path {out_file_path}"
 
         # print(cmd)
         subprocess.check_call(cmd, shell=True)

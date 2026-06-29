@@ -58,11 +58,11 @@ def main():
 
     if not os.path.isfile(deal_script):
         deal_script_input = deal_script
-        # scripts now live in the tcl-sims/ subdirectory (next to this file); fall back to this_dir
-        # for older callers that passed a path relative to the deal-simulations root.
+        # scripts live next to this file (the tcl-sims/ directory); fall back to the parent
+        # deal-simulations root for older callers that passed a tcl-sims/-prefixed path.
         for candidate in (
-            os.path.join(this_dir, "tcl-sims", deal_script),
             os.path.join(this_dir, deal_script),
+            os.path.join(this_dir, os.pardir, deal_script),
         ):
             if os.path.isfile(candidate):
                 deal_script = os.path.normpath(candidate)
