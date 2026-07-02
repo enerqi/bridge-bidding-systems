@@ -19,6 +19,15 @@ regen-norn COUNT="48":
     cd {{justfile_directory()}}/deal-simulations/odin-sims
     just run --html-dir {{deals_output_dir}} --count {{COUNT}}
 
+# --dd variant of regen-norn: per-scenario double-dummy annotate/filter (scenarios registered in
+# sim.odin). DD scenarios export serially (solver isn't reentrant); the rest still pool.
+# ---
+# regenerate all deal simulations with double-dummy annotations. COUNT deals per scenario.
+[script("nu")]
+regen-norn-dd COUNT="48":
+    cd {{justfile_directory()}}/deal-simulations/odin-sims
+    just run --html-dir {{deals_output_dir}} --count {{COUNT}} --dd
+
 # regenerate all deal simulations without recompiling for any changes within odin-sims. Output html to deals_output_dir. COUNT deals per scenario.
 [script("nu")]
 rerun-regen-norn COUNT="48":
@@ -36,6 +45,14 @@ regen-norn-some NAMES COUNT="48":
 run-norn SCENARIO COUNT="48":
     cd {{justfile_directory()}}/deal-simulations/odin-sims
     just run --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{justfile_directory()}}/{{SCENARIO}}.html
+
+# --dd variant of run-norn: double-dummy annotate/filter for SCENARIO (if registered in sim.odin).
+# ---
+# generate COUNT deals for one SCENARIO with double-dummy annotations -> <SCENARIO>.html
+[script("nu")]
+run-norn-dd SCENARIO COUNT="48":
+    cd {{justfile_directory()}}/deal-simulations/odin-sims
+    just run --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{justfile_directory()}}/{{SCENARIO}}.html --dd
 
 # norn equivalent of py-run-scratch: generate COUNT deals for one SCENARIO via the norn engine. Output to current dir as <SCENARIO>.html
 [script("nu")]

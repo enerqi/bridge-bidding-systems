@@ -24,14 +24,54 @@ import "core:sync"
 import "core:time"
 
 import "bidding"
+import "dd"
 import "norn:cli"
+import "norn:norn"
 
-main :: proc() { 	// Operational setup before calling `main_program`
+// The program proper: bind this bidding system's scenario registry and its double-dummy hooks to
+// norn's reusable CLI driver, and run it. Separated from `main`, which is only operational setup
+// (logging, allocators, profiling). Returns the process exit code.
+run_sim :: proc() -> int {
+	// Double-dummy solver lifecycle: one-time init, teardown on return. Cheap when unused — nothing
+	// solves unless --dd is passed and a hook fires. See the `dd` package.
+	dd.init()
+	defer dd.shutdown()
 
-	// Exit code, set from main_program's return. Registered FIRST so this defer runs LAST — after
-	// all the cleanup defers below — then terminates the process. (Odin evaluates a deferred call's
-	// arguments at scope exit, so `exit_code` carries main_program's final value.) main_program
-	// itself never calls os.exit, so that operational teardown is never skipped.
+	// Per-scenario double-dummy filters (policy: which DD condition each scenario's survivors must
+	// also pass). Only scenarios listed here get a second stage under --dd; the rest are unfiltered.
+	// The filter *implementations* live in the `dd` package; this is just the name -> filter binding.
+	dd_filters := make(map[string]norn.Deal_Filter)
+	defer delete(dd_filters)
+	dd_filters["1major-game-force"] = dd.ns_makes_game
+	// dd_filters["1major-gf-3plus-card-support"] = dd.ns_makes_game
+	// dd_filters["1n-slam-try"] = dd.ns_makes_slam
+	// dd_filters["2c-any-slam-try"] = dd.ns_makes_slam
+	// dd_filters["slam-hands-32-plus-hcp"] = dd.ns_makes_slam
+
+	// Per-scenario double-dummy annotators (policy: which scenarios get the DD caption in their HTML).
+	// Per-scenario, not global, so under --dd the batch export still pools every scenario NOT listed
+	// here (annotators, like filters, make the scenario call DDS -> serial). List every scenario name
+	// to caption them all — they then serialise, each still parallel inside DDS. `dd.annotate` is the
+	// single uniform caption; a scenario could instead be given a bespoke annotator.
+	dd_annotators := make(map[string]norn.Deal_Annotator)
+	defer delete(dd_annotators)
+	dd_annotators["1major-game-force"] = dd.annotate
+	// dd_annotators["1n-slam-try"] = dd.annotate
+	// dd_annotators["2c-any-slam-try"] = dd.annotate
+	// dd_annotators["slam-hands-32-plus-hcp"] = dd.annotate
+
+	return cli.main_program(
+		bidding.registry,
+		cli.Gen_Hooks{dd_filters = dd_filters, dd_annotators = dd_annotators},
+	)
+}
+
+main :: proc() { 	// Operational setup only; program semantics live in `run_sim` above
+
+	// Exit code, set from run_sim's return. Registered FIRST so this defer runs LAST — after all the
+	// cleanup defers below — then terminates the process. (Odin evaluates a deferred call's arguments
+	// at scope exit, so `exit_code` carries run_sim's final value.) Neither run_sim nor the driver it
+	// calls invokes os.exit, so that operational teardown is never skipped.
 	exit_code := cli.EXIT_OK
 	defer os.exit(exit_code)
 
@@ -68,7 +108,8 @@ main :: proc() { 	// Operational setup before calling `main_program`
 		defer log_program_duration(start_time)
 	}
 
-	exit_code = cli.main_program(bidding.registry)
+	// (8) The program proper — everything above is operational setup. Semantics live in `run_sim`.
+	exit_code = run_sim()
 }
 
 /*
