@@ -133,6 +133,9 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 	have_par := dds.SidesParBin(res, &sides, .None) == .NO_FAULT
 	ns_par := &sides[dds.Side.NS]
 
+	// Per-hand summaries feed the naive combined-OPC figure in the par guide (see write_par_opc_guide).
+	ds := norn.summarize_deal(board)
+
 	// Also a full switch: the machine formats are unreachable here (filtered above) but listed so a
 	// newly added annotating format must add its own emission case rather than fall through silently.
 	switch format {
@@ -153,6 +156,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_par(builder, ns_par, have_par)
 		strings.write_string(builder, " &mdash; NS make:")
 		write_makeable(builder, res)
+		write_par_opc_guide(builder, ns_par, have_par, ds, " &middot; ")
 		strings.write_string(builder, "</div>")
 		// Machine-readable form: full trick table as a comment (strain x N/E/S/W).
 		strings.write_string(builder, "<!-- dd tricks[strain]NESW")
@@ -169,6 +173,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_par(builder, ns_par, have_par)
 		strings.write_string(builder, " - NS make:")
 		write_makeable(builder, res)
+		write_par_opc_guide(builder, ns_par, have_par, ds, "\n  ")
 
 	case .Pbn:
 		// Braces must NOT go through a printf format string — Odin's fmt reads `{` as an argument
@@ -177,6 +182,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_par(builder, ns_par, have_par)
 		strings.write_string(builder, "; NS make:")
 		write_makeable(builder, res)
+		write_par_opc_guide(builder, ns_par, have_par, ds, "; ")
 		strings.write_string(builder, " }")
 
 	case .Line, .Numeric, .Handviewer:
@@ -259,6 +265,153 @@ strain_label :: proc(strain: dds.Strain) -> string {
 		return "NT"
 	}
 	return "?"
+}
+
+// OPC "trick conversion" reference (docs: optimal_point_count.py TRICK_CONVERSIONS): for a contract
+// level and strain type, the three combined-partnership Optimal-Point-Count totals at which it makes
+// with a roughly ~40-45% / ~50-55% / ~60%+ chance (the slam and grand rows use higher success bands).
+// Thresholds are indexed by level; only 2..7 are populated (a level-1 contract is off the table). A
+// "+"-capped top threshold (levels 6/7) is stored as a large sentinel. `opc_make_band` reads these to
+// turn a combined total into one success band.
+OPC_LEVELS_MIN :: 2
+OPC_LEVELS_MAX :: 7
+OPC_TOP :: 99 // stand-in for the table's open-ended "+" top threshold
+
+@(private)
+OPC_NT_THRESHOLDS := [8][3]int {
+	2 = {22, 23, 24},
+	3 = {25, 26, 27},
+	4 = {28, 29, 30},
+	5 = {31, 32, 33},
+	6 = {33, 34, 35},
+	7 = {36, 37, OPC_TOP},
+}
+@(private)
+OPC_SUIT_THRESHOLDS := [8][3]int {
+	2 = {20, 21, 22},
+	3 = {23, 24, 25},
+	4 = {26, 27, 28},
+	5 = {29, 30, 31},
+	6 = {32, 33, 34},
+	7 = {35, 36, OPC_TOP},
+}
+@(private)
+OPC_SUCCESS_BANDS := [8][3]string {
+	2 = {"~40-45%", "~50-55%", "~60%+"},
+	3 = {"~40-45%", "~50-55%", "~60%+"},
+	4 = {"~40-45%", "~50-55%", "~60%+"},
+	5 = {"~40-45%", "~50-55%", "~60%+"},
+	6 = {"~50%", "~55-60%", "~65%+"},
+	7 = {"~70%", "~70-75%", "~75%+"},
+}
+// The success band for a combined OPC total `x` at `level`/strain: which of the level's three
+// thresholds `x` reaches (top band at/above the third). Below the FIRST (lowest listed) threshold the
+// table gives no figure — the contract is well against the odds on points — so we say "LOW" rather
+// than extrapolate a bogus percentage. `level` is assumed in OPC_LEVELS_MIN..MAX.
+@(private)
+opc_make_band :: proc(x: f32, level: int, is_nt: bool) -> string {
+	t := OPC_NT_THRESHOLDS[level] if is_nt else OPC_SUIT_THRESHOLDS[level]
+	bands := OPC_SUCCESS_BANDS[level]
+	switch {
+	case x >= f32(t[2]):
+		return bands[2]
+	case x >= f32(t[1]):
+		return bands[1]
+	case x >= f32(t[0]):
+		return bands[0]
+	}
+	return "LOW"
+}
+
+// Append the par contract's OPC make-estimate after `sep` (written once, before the first entry;
+// further entries joined with "; "). One entry per distinct (level, strain-type) among the MAKING par
+// contracts — a doubled sacrifice (underTricks > 0) has no "make" chance and a level-1 par is off the
+// table, so both are skipped, and identical contracts (e.g. par 4S and 4H) are de-duplicated. Each
+// entry reads `OPC total (naive) = X; make chance Y`, where X is the declaring side's combined OPC and
+// Y its success band from the reference table (or "LOW" when X is under the level's lowest threshold).
+//
+// X is the declaring side's true partnership OPC (norn `combined_opc`): the stronger hand opens, the
+// weaker responds with a capped base, then fit / misfit / semi-fit / wasted-honour / mirror adjustments
+// are applied over both hands, keyed by the par contract's strain. Writes nothing (and no `sep`) when
+// no par contract qualifies.
+@(private)
+write_par_opc_guide :: proc(
+	builder: ^strings.Builder,
+	m: ^dds.Par_Results_Master,
+	have: bool,
+	ds: norn.Deal_Summary,
+	sep: string,
+) {
+	if !have {
+		return
+	}
+	shown: [8][2]bool // [level][is_nt] already-emitted marker; levels 1..7, two strain types
+	wrote := false
+	for i in 0 ..< m.number {
+		c := m.contracts[i]
+		if c.underTricks > 0 {
+			continue // doubled sacrifice: nothing to "make"
+		}
+		level := int(c.level)
+		if level < OPC_LEVELS_MIN || level > OPC_LEVELS_MAX {
+			continue
+		}
+		is_nt := c.denom == .NT
+		ti := 1 if is_nt else 0
+		if shown[level][ti] {
+			continue
+		}
+		side, ok := declaring_pair(c.seats)
+		if !ok {
+			continue // no side -> can't state a combined total
+		}
+		shown[level][ti] = true
+		x := norn.combined_opc(ds[side[0]], ds[side[1]], denom_trump(c.denom))
+		band := opc_make_band(x, level, is_nt)
+		strings.write_string(builder, "; " if wrote else sep)
+		fmt.sbprintf(builder, "OPC total = %.1f; make chance %s", x, band)
+		wrote = true
+	}
+}
+
+// The two partners declaring a par contract, from its seat field: a single declarer or a partnership
+// both resolve to the N/S or E/W pair. ok=false should never happen (every contract has a side).
+@(private)
+declaring_pair :: proc(s: dds.Seat) -> (pair: [2]norn.Seat, ok: bool) {
+	switch s {
+	case .N, .S, .NS:
+		return {.North, .South}, true
+	case .E, .W, .EW:
+		return {.East, .West}, true
+	}
+	return {}, false
+}
+
+// "NS" or "EW" for a par contract's declaring side (partnership, whichever single seat declares).
+@(private)
+pair_label :: proc(s: dds.Seat) -> string {
+	#partial switch s {
+	case .E, .W, .EW:
+		return "EW"
+	}
+	return "NS"
+}
+
+// The trump suit for `combined_opc` from a par contract's denomination: the matching norn suit, or nil
+// for notrump (its shortage handling differs). NB dds.Contract_Denom and norn.Suit are distinct enums.
+@(private)
+denom_trump :: proc(d: dds.Contract_Denom) -> Maybe(norn.Suit) {
+	#partial switch d {
+	case .Spades:
+		return norn.Suit.Spades
+	case .Hearts:
+		return norn.Suit.Hearts
+	case .Diamonds:
+		return norn.Suit.Diamonds
+	case .Clubs:
+		return norn.Suit.Clubs
+	}
+	return nil // NT
 }
 
 // A `norn.Deal_Filter`: keep the board only if North-South can make a game double-dummy — 3NT (9
