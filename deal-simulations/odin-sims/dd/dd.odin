@@ -98,7 +98,8 @@ solve_table :: proc(board: norn.Deal) -> (table: ^dds.Table_Results, ok: bool) {
 // form valid for the active `format`. Annotation is format-specific by nature — an HTML caption
 // would corrupt a PBN tag or a machine-parsed line — so this switches on the format and emits
 // nothing for the machine formats whose grammar has no room for it:
-//   - Html    : a visible caption div (par + makeable contracts) plus a greppable trick-table comment
+//   - Html_Handviewer : a visible caption div (par + makeable contracts) plus a greppable trick-table comment
+//   - Html_Cards      : the same, as a `.par` caption the carousel pairs with its board (plus the comment)
 //   - Pretty  : a plain trailing "Par (NS): ..." line (the layout is human-facing already)
 //   - Pbn     : a PBN `{ ... }` inline comment (the only annotation PBN's grammar accepts)
 //   - Line / Numeric / Handviewer : nothing — these are consumed by parsers; any extra text breaks them
@@ -109,7 +110,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 	switch format {
 	case .Line, .Numeric, .Handviewer:
 		return // machine-parsed output: no annotation, skip the solve entirely
-	case .Html, .Pretty, .Pbn:
+	case .Html_Handviewer, .Html_Cards, .Pretty, .Pbn:
 	// annotated below
 	}
 
@@ -118,7 +119,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 	// declarer trick counts; the annotator needs all of them (it prints the whole grid + par).
 	res, ok := solve_table(board)
 	if !ok {
-		if format == .Html {
+		if format == .Html_Handviewer || format == .Html_Cards {
 			strings.write_string(builder, "<!-- dd error: solve failed -->")
 		}
 		return
@@ -135,13 +136,19 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 	// Also a full switch: the machine formats are unreachable here (filtered above) but listed so a
 	// newly added annotating format must add its own emission case rather than fall through silently.
 	switch format {
-	case .Html:
-		// Visible caption. Negative top margin tucks it under the iframe above (which carries a 4rem
-		// bottom margin); inline-styled so norn's page CSS needs no change.
-		strings.write_string(
-			builder,
-			`<div style="max-width:900px;margin:-3.5rem auto 0;text-align:center;color:#555;font-size:0.9rem">`,
-		)
+	case .Html_Handviewer, .Html_Cards:
+		// Visible caption. The two HTML formats wrap it differently: the iframe `Html_Handviewer` tucks
+		// the caption under the iframe above with a negative top margin (inline-styled so norn's page
+		// CSS needs no change); the `Html_Cards` carousel gives each caption a `.par` class its script
+		// pairs with the board above and its stylesheet already positions.
+		if format == .Html_Handviewer {
+			strings.write_string(
+				builder,
+				`<div style="max-width:900px;margin:-3.5rem auto 0;text-align:center;color:#555;font-size:0.9rem">`,
+			)
+		} else {
+			strings.write_string(builder, `<div class="par">`)
+		}
 		strings.write_string(builder, "Par: ")
 		write_par(builder, ns_par, have_par)
 		strings.write_string(builder, " &mdash; NS make:")

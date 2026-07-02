@@ -28,6 +28,22 @@ regen-norn-dd COUNT="48":
     cd {{justfile_directory()}}/deal-simulations/odin-sims
     just run --html-dir {{deals_output_dir}} --count {{COUNT}} --dd
 
+# card-carousel variant of regen-norn: self-rendered, offline HTML (no BBO iframe) — every scenario
+# is one page with a prev/next carousel of text-compass diagrams, a seat toggle, and a par toggle.
+# Add --dd (as regen-norn-cards-dd) for the par-score caption on scenarios that register an annotator.
+# ---
+# regenerate all deal simulations as offline card carousels. COUNT deals per scenario.
+[script("nu")]
+regen-norn-cards COUNT="48":
+    cd {{justfile_directory()}}/deal-simulations/odin-sims
+    just run --html-dir {{deals_output_dir}} --count {{COUNT}} --format html-cards
+
+# regenerate all deal simulations as offline card carousels WITH double-dummy par captions. COUNT deals per scenario.
+[script("nu")]
+regen-norn-cards-dd COUNT="48":
+    cd {{justfile_directory()}}/deal-simulations/odin-sims
+    just run --html-dir {{deals_output_dir}} --count {{COUNT}} --format html-cards --dd
+
 # regenerate all deal simulations without recompiling for any changes within odin-sims. Output html to deals_output_dir. COUNT deals per scenario.
 [script("nu")]
 rerun-regen-norn COUNT="48":
@@ -53,6 +69,21 @@ run-norn SCENARIO COUNT="48":
 run-norn-dd SCENARIO COUNT="48":
     cd {{justfile_directory()}}/deal-simulations/odin-sims
     just run --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{justfile_directory()}}/{{SCENARIO}}.html --dd
+
+# card-carousel variant of run-norn: one SCENARIO as a self-rendered offline card carousel. Add --dd
+# (run-norn-cards-dd) for par captions if the scenario registers an annotator in sim.odin.
+# ---
+# generate COUNT deals for one SCENARIO as an offline card carousel -> <SCENARIO>.html
+[script("nu")]
+run-norn-cards SCENARIO COUNT="48":
+    cd {{justfile_directory()}}/deal-simulations/odin-sims
+    just run --scenario {{SCENARIO}} --count {{COUNT}} --format html-cards --output {{justfile_directory()}}/{{SCENARIO}}.html
+
+# generate COUNT deals for one SCENARIO as an offline card carousel with double-dummy par -> <SCENARIO>.html
+[script("nu")]
+run-norn-cards-dd SCENARIO COUNT="48":
+    cd {{justfile_directory()}}/deal-simulations/odin-sims
+    just run --scenario {{SCENARIO}} --count {{COUNT}} --format html-cards --output {{justfile_directory()}}/{{SCENARIO}}.html --dd
 
 # norn equivalent of py-run-scratch: generate COUNT deals for one SCENARIO via the norn engine. Output to current dir as <SCENARIO>.html
 [script("nu")]
