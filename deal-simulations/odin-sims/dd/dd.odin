@@ -150,7 +150,10 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 				`<div style="max-width:900px;margin:-3.5rem auto 0;text-align:center;color:#555;font-size:0.9rem">`,
 			)
 		} else {
-			strings.write_string(builder, `<div class="par">`)
+			// Tag the caption with NS's par trick count so the card page can DEFAULT the per-board
+			// combo (CCA) slider to it (data attribute, ignored by everything but that script).
+			tgt := ns_par_target_tricks(ns_par, have_par, res)
+			fmt.sbprintf(builder, `<div class="par" data-target="%d">`, tgt)
 		}
 		strings.write_string(builder, "Par: ")
 		write_par(builder, ns_par, have_par)
@@ -188,6 +191,42 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 	case .Line, .Numeric, .Handviewer:
 	// unreachable: filtered out by the classifier switch above
 	}
+}
+
+// The trick count NS's par contract needs — the natural DEFAULT target for the card page's per-board
+// combo (CCA) slider. Prefer a MAKING par contract that NS declares (its `level + 6` tricks; the
+// highest if several qualify). When par is an EW contract (e.g. a doubled sacrifice against NS's game,
+// so `sides[NS]` lists the EW contract), fall back to NS's best MAKEABLE strain — the contract EW is
+// sacrificing over, i.e. the tricks NS would take. Clamped to 1..13; 9 (3NT/game) if all else fails.
+@(private)
+ns_par_target_tricks :: proc(m: ^dds.Par_Results_Master, have: bool, res: ^dds.Table_Results) -> int {
+	best := 0
+	if have {
+		for i in 0 ..< m.number {
+			c := m.contracts[i]
+			if c.underTricks > 0 {
+				continue // a sacrifice: not a making NS contract
+			}
+			#partial switch c.seats {
+			case .N, .S, .NS:
+				if t := int(c.level) + 6; t > best {
+					best = t
+				}
+			}
+		}
+	}
+	if best == 0 {
+		// No NS-declared making par contract: use NS's best makeable strain (max N/S declarer tricks).
+		for strain in dds.Strain {
+			if t := int(max(res.resTable[strain][.North], res.resTable[strain][.South])); t > best {
+				best = t
+			}
+		}
+	}
+	if best < 1 {
+		return 9
+	}
+	return clamp(best, 1, 13)
 }
 
 // One makeable contract: the highest level NS can make in a strain (level = the better of N/S

@@ -518,6 +518,52 @@ format_analysis :: proc(
 	return strings.to_string(b)
 }
 
+// --- Machine-readable distributions (for the interactive card page) ---------------------------
+
+// Emit the four per-suit trick distributions as a compact JSON object keyed by suit letter:
+//
+//	{"s":[p0,p1,...,p13],"h":[...],"d":[...],"c":[...]}
+//
+// Each array is the full 0..13 `p[k]` (trailing zeros beyond the suit's `max_tricks` included, so the
+// consumer needn't special-case lengths). This is the seam for the CLIENT-SIDE combo table: the card
+// page's script parses this, convolves the four suits, and renders the trick table + adjustable
+// P(>= target) live — so no table is baked server-side (unlike `format_analysis`, kept for the text
+// formats). Suit order s,h,d,c matches the card page's display order.
+write_suits_json :: proc(b: ^strings.Builder, a: ^Deal_Analysis) {
+	keys := [4]struct {
+		suit: norn.Suit,
+		key:  string,
+	}{{.Spades, "s"}, {.Hearts, "h"}, {.Diamonds, "d"}, {.Clubs, "c"}}
+
+	strings.write_byte(b, '{')
+	for e, i in keys {
+		if i > 0 {
+			strings.write_byte(b, ',')
+		}
+		fmt.sbprintf(b, `"%s":[`, e.key)
+		d := a.suits[e.suit]
+		for k in 0 ..= RANKS {
+			if k > 0 {
+				strings.write_byte(b, ',')
+			}
+			write_prob(b, d.p[k])
+		}
+		strings.write_byte(b, ']')
+	}
+	strings.write_byte(b, '}')
+}
+
+// A single probability as a compact JSON number: bare "0" for the (common) exact zeros, else the
+// shortest round-trippable form (`%g`). Values are all finite in [0,1], so this is always valid JSON.
+@(private)
+write_prob :: proc(b: ^strings.Builder, p: f64) {
+	if p <= 0 {
+		strings.write_string(b, "0")
+		return
+	}
+	fmt.sbprintf(b, "%g", p)
+}
+
 // A probability as a right-aligned integer percentage, or a dot when it is effectively zero (so the
 // meaningful cells stand out in the grid).
 @(private)
@@ -545,14 +591,16 @@ cell :: proc(b: ^strings.Builder, s: string) {
 // Deliberately INDEPENDENT of the DDS `dd` package — no solver, no par — so it can run without `--dd`.
 // Pair it with `dd.annotate` in the consumer (see sim.odin) to show BOTH the double-dummy par caption
 // and this make-chance guide. It emits only for the human-facing formats:
-//   - Html_Handviewer : the table in a <pre> block beneath the board
-//   - Html_Cards      : the table as a `.combo` sibling of the compass (the carousel groups it into
-//                       the slide; the norn card page styles `.combo` and folds it under the Par toggle)
-//   - Pretty          : the same table, after the layout
+//   - Html_Handviewer : the static text table in a <pre> block beneath the board
+//   - Html_Cards      : ONLY the raw per-suit distributions, as a `data-suits` JSON blob on a `.combo`
+//                       sibling of the compass; the norn card page's script convolves them client-side
+//                       and renders an interactive table with an adjustable P(>= target) (the carousel
+//                       groups the sibling into the slide and folds it under the Par toggle)
+//   - Pretty          : the static text table, after the layout
 //   - Line/Numeric/Handviewer/Pbn : nothing (machine-parsed, or no room in the grammar)
 //
-// `target = 0` is passed to `format_analysis` so no single make-chance line is highlighted — the >=k
-// row already lets the reader read off any level (including the dd par level shown just above).
+// For the text formats `target = 0` is passed to `format_analysis` so no single make-chance line is
+// highlighted — the >=k row lets the reader read off any level; the card page makes that interactive.
 annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Output_Format) {
 	// Full switch (no #partial), like dd.annotate: a newly added Output_Format must be classified
 	// here rather than silently skipped or corrupted.
@@ -564,10 +612,10 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 	}
 
 	a := analyse_deal_ns(board)
-	table := format_analysis(&a, 0, context.temp_allocator)
 
 	switch format {
 	case .Html_Handviewer:
+		table := format_analysis(&a, 0, context.temp_allocator)
 		strings.write_string(
 			builder,
 			`<div style="max-width:900px;margin:0 auto;color:#444;font-size:0.75rem"><pre style="display:inline-block;text-align:left">`,
@@ -576,11 +624,14 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		strings.write_string(builder, "</pre></div>")
 	case .Html_Cards:
 		// A `.combo` sibling after the `.compass` (and the dd `.par`). The card page's carousel script
-		// pulls every sibling up to the next board into the slide, and its stylesheet positions `.combo`.
-		strings.write_string(builder, `<div class="combo"><pre>`)
-		strings.write_string(builder, table)
-		strings.write_string(builder, "</pre></div>")
+		// pulls every sibling up to the next board into the slide. We emit ONLY the raw distributions
+		// (as a `data-suits` JSON blob); the page's script convolves them and renders the interactive
+		// trick table with an adjustable P(>= target). Nothing is baked server-side here.
+		strings.write_string(builder, `<div class="combo" data-suits='`)
+		write_suits_json(builder, &a)
+		strings.write_string(builder, `'></div>`)
 	case .Pretty:
+		table := format_analysis(&a, 0, context.temp_allocator)
 		strings.write_string(builder, "\n")
 		strings.write_string(builder, table)
 	case .Line, .Numeric, .Handviewer, .Pbn:
