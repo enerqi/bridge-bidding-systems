@@ -58,9 +58,11 @@ format:
 # lints the two library packages (`bidding`, `dd`) with -no-entry-point and the `sim.odin` single-file
 # program; `dd` and `sim` pull in the `dds` collection (the DDS boundary), `bidding` does not.
 # ---
-# type check + vet + strict style (bidding, dd, sim.odin)
+# type check + vet + strict style (bidding, combo, dd, sim.odin). `combo` (the naive card-combination
+# analyser) is solver-free like `bidding`, so it needs only the norn collection.
 lint *args:
 	odin check bidding {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
+	odin check combo {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
 	odin check dd {{norn}} {{dds}} -vet -vet-cast -strict-style -no-entry-point {{args}}
 	odin check sim.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style {{args}}
 
@@ -91,6 +93,10 @@ freq trials="1000000" *args: mktarget_dirs
 # run the bidding-system unit tests
 test *args: mktarget_dirs
 	odin test bidding {{norn}} -debug -file -microarch:native -show-timings -out:target/debug/test-bidding.exe {{args}}
+
+# run the card-combination analyser unit tests
+test-combo *args: mktarget_dirs
+	odin test combo {{norn}} -debug -microarch:native -show-timings -out:target/debug/test-combo.exe {{args}}
 
 # delete build artifacts
 clean:

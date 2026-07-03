@@ -24,9 +24,22 @@ import "core:sync"
 import "core:time"
 
 import "bidding"
+import "combo"
 import "dd"
 import "norn:cli"
 import "norn:norn"
+
+// The double-dummy par caption (dd) followed by the naive combined-holding trick table (combo). Both
+// are `norn.Deal_Annotator`s writing to the same builder; combo needs no DDS, so the combo half still
+// renders when a board reaches here. Registered for scenarios that want both (see `dd_annotators`).
+dd_and_combo_annotate :: proc(
+	builder: ^strings.Builder,
+	board: norn.Deal,
+	format: norn.Output_Format,
+) {
+	dd.annotate(builder, board, format)
+	combo.annotate(builder, board, format)
+}
 
 // The program proper: bind this bidding system's scenario registry and its double-dummy hooks to
 // norn's reusable CLI driver, and run it. Separated from `main`, which is only operational setup
@@ -55,7 +68,7 @@ run_sim :: proc() -> int {
 	// single uniform caption; a scenario could instead be given a bespoke annotator.
 	dd_annotators := make(map[string]norn.Deal_Annotator)
 	defer delete(dd_annotators)
-	dd_annotators["1major-game-force"] = dd.annotate
+	dd_annotators["1major-game-force"] = dd_and_combo_annotate
 	// dd_annotators["1n-slam-try"] = dd.annotate
 	// dd_annotators["2c-any-slam-try"] = dd.annotate
 	// dd_annotators["slam-hands-32-plus-hcp"] = dd.annotate
