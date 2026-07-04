@@ -91,22 +91,85 @@ test_fixed_beats_baseline :: proc(t: ^testing.T) {
 	testing.expectf(t, comb.value >= apply_objective(base, obj) - 1e-12, "best combination must beat baseline")
 }
 
-// The adaptive DP never underperforms the fixed combination, and matches it exactly for the linear
-// expected-tricks objective (no cross-suit interaction).
+// A FULL 13/13 deal (both hands 4-3-3-3, scattered honours) whose four per-suit MAX trick counts sum to
+// <= 13, so the joint 13-trick cap never bites. The joint adaptive DP (`optimal_adaptive_value`) needs a
+// full hand (East holds 13 of 26); this is the same "mirror" deal `joint_test` proves is cap-free, so its
+// linear-objective equality (below) holds exactly by linearity of expectation. (`finesse_hand` above is a
+// partial synthetic holding — fine for the independent `best_fixed_combination`, not for the joint DP.)
+@(private = "file")
+full_nocap_hand :: proc() -> (north, south: norn.Hand_Summary) {
+	north = norn.Hand_Summary {
+		suits = {
+			.Spades = mask(.Ace, .Seven, .Four, .Two),
+			.Hearts = mask(.Ace, .Eight, .Three),
+			.Diamonds = mask(.Ace, .Nine, .Five),
+			.Clubs = mask(.Ace, .Ten, .Six),
+		},
+	}
+	south = norn.Hand_Summary {
+		suits = {
+			.Spades = mask(.King, .Queen, .Nine, .Five),
+			.Hearts = mask(.King, .Seven, .Four),
+			.Diamonds = mask(.Queen, .Jack, .Six),
+			.Clubs = mask(.King, .Eight, .Four),
+		},
+	}
+	return
+}
+
+// The JOINT adaptive DP (`optimal_adaptive_value`) is never worse than a fixed line-per-suit combination
+// (adapting can only help), and for the LINEAR expected-tricks objective — when the 13-trick cap never
+// bites — it equals the sum of the best-mean line per suit (no cross-suit interaction, so nothing to
+// adapt). Both comparisons are made WITHIN the joint model on a full cap-free deal.
 @(test)
 test_adaptive_bounds_and_linear :: proc(t: ^testing.T) {
 	defer free_all(context.temp_allocator)
-	north, south := finesse_hand()
+	north, south := full_nocap_hand()
 
-	make_obj := objective_at_least(11)
-	fixed := best_fixed_combination(north, south, make_obj).value
+	// A joint fixed baseline: fold the all-top-down line in every suit under the joint constraint.
+	base_tables: [norn.Suit]Suit_Joint_Table
+	for suit in DISPLAY_SUITS {
+		base_tables[suit] = sd_line_joint_table(north.suits[suit], south.suits[suit], line_top_down)
+	}
+	base_total := joint_total(base_tables)
+
+	make_obj := objective_at_least(9)
+	fixed := apply_objective(base_total, make_obj)
 	adaptive := optimal_adaptive_value(north, south, make_obj)
-	testing.expectf(t, adaptive >= fixed - 1e-12, "adaptive %.4f must be >= fixed %.4f", adaptive, fixed)
+	testing.expectf(t, adaptive >= fixed - 1e-12, "adaptive %.4f must be >= the fixed top-down baseline %.4f", adaptive, fixed)
 
-	et := objective_expected_tricks()
-	fixed_et := best_fixed_combination(north, south, et).value
-	adaptive_et := optimal_adaptive_value(north, south, et)
-	testing.expectf(t, abs(adaptive_et - fixed_et) < 1e-9, "for E[tricks], adaptive %.4f should equal fixed %.4f", adaptive_et, fixed_et)
+	// For E[tricks] with no cap, the joint adaptive optimum equals the sum over suits of the best line's
+	// mean tricks (linearity of expectation; the joint length constraint reweights but does not shift any
+	// per-suit marginal mean, and with no cap the four means simply add).
+	adaptive_et := optimal_adaptive_value(north, south, objective_expected_tricks())
+	best_mean_sum := f64(0)
+	for suit in DISPLAY_SUITS {
+		best := f64(0)
+		for line in candidate_lines() {
+			m := expected_tricks(sd_line_distribution(north.suits[suit], south.suits[suit], line).p)
+			best = max(best, m)
+		}
+		best_mean_sum += best
+	}
+	testing.expectf(t, abs(adaptive_et - best_mean_sum) < 1e-9, "for E[tricks], adaptive %.6f should equal the sum of best-mean lines %.6f", adaptive_et, best_mean_sum)
+}
+
+// The card-page make curve (`adaptive_at_least_curve`, the joint adaptive optimum at every target) is a
+// valid cumulative curve: curve[0] == 1 (you always take at least 0 tricks), monotone non-increasing, and
+// every entry a probability in [0, 1].
+@(test)
+test_adaptive_curve_valid :: proc(t: ^testing.T) {
+	defer free_all(context.temp_allocator)
+	north, south := full_nocap_hand()
+	curve := adaptive_at_least_curve(north, south)
+
+	testing.expectf(t, abs(curve[0] - 1) < 1e-9, "curve[0] must be 1, got %.6f", curve[0])
+	prev := curve[0]
+	for k in 1 ..= RANKS {
+		testing.expectf(t, curve[k] >= -1e-12 && curve[k] <= 1 + 1e-12, "curve[%d] = %.6f out of [0,1]", k, curve[k])
+		testing.expectf(t, curve[k] <= prev + 1e-12, "curve not monotone at k=%d (%.6f > %.6f)", k, curve[k], prev)
+		prev = curve[k]
+	}
 }
 
 // The matchpoints objective (against a field distribution) scores in [0,1].
