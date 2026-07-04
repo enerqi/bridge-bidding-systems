@@ -64,6 +64,21 @@ package combo
 	entries and suit interaction (1 and 2). Modelling the hidden-information / single-dummy game (real
 	guessing, contract-directed defence) is a much larger undertaking — see the Phase-2 design notes.
 
+	WHY THE TOTAL READS HIGH — THE TEMPO / RACE-FOR-THE-LEAD CAVEAT (the practically important one).
+	Assumptions 1 + 2 together mean we let NS take ALL its tricks WITHOUT EVER SURRENDERING THE LEAD.
+	Real bridge is a race: to develop extra tricks NS usually has to LOSE THE LEAD FIRST (a failing
+	finesse, conceding an early round). The instant the defenders are on lead they CASH THEIR OWN
+	winners — and may beat the contract before NS ever runs its suits. Because we solve each suit in
+	isolation with free entries, a defender ace in the 4th suit is correctly counted as a defender trick
+	IN THAT SUIT (NS is not credited it), but the model NEVER lets that ace, or a whole defensive suit,
+	be cashed IN TEMPO while NS is still setting up — the cross-suit race simply does not exist here.
+	So the summed total is an UPPER BOUND that does not know who gets in first: a hand that reads "13
+	tricks" can really be fewer once the opponents grab the lead and cash. This is a property of the
+	MODEL (entries + independence), NOT of the vacant-space weighting — the joint-convolution fix
+	(COMBO_ANALYSER.md) does not address it; only whole-deal play with entries and a contract does, i.e.
+	`dd` par. When combo and par disagree on the total, PAR is the honest number; combo answers the
+	narrower "what tricks are even available in each suit", not "who wins the race for them".
+
 	================================================================================================
 	HOW A SINGLE SUIT IS SOLVED  ("double-dummy", "minimax")
 	================================================================================================
@@ -347,43 +362,59 @@ dd_tricks :: proc(north, east, south, west: u16) -> int {
 	return suit_dd_tricks(layout, &memo)
 }
 
-// --- Per-suit distribution over all E/W splits ------------------------------------------------
+// --- Per-suit joint table over all E/W splits -------------------------------------------------
 
-// The trick distribution for ONE suit, given NS's two holdings in it (North's and South's rank masks —
-// e.g. `north_summary.suits[.Hearts]` and the South equivalent). Enumerates every way the opponents'
-// cards split between East and West, solves each double-dummy, and weights it by the a-priori
-// vacant-space probability of that split (see the file header). The returned `p[]` sums to 1.
-suit_trick_distribution :: proc(north, south: u16) -> Suit_Trick_Dist {
+// The JOINT per-suit table: `count[a][k]` = the number of E/W splits in this suit where East holds
+// exactly `a` of the opponents' cards AND the double-dummy result is exactly `k` tricks. These are RAW
+// submask counts (each split weight 1), NOT vacant-space-weighted — the cross-suit combinatorics are
+// supplied later by `joint_total`, which folds the four suits under the true constraint "East holds 13
+// cards total". Keeping the East-length axis `a` (rather than collapsing straight to `p[k]`) is exactly
+// what lets that constraint be enforced across suits — the fix for the independence bias the old
+// per-suit-marginal-then-convolve path carried (see COMBO_ANALYSER.md joint-model notes).
+Suit_Joint_Table :: struct {
+	count:  [RANKS + 1][RANKS + 1]f64, // [east_len a][tricks k], raw split count
+	m:      int, // opponents' cards in the suit (= 13 - ns_len); a ranges 0..m
+	ns_len: int,
+}
+
+// Build the joint table for ONE suit from NS's two holdings, scoring each split double-dummy (the
+// Phase-1 census "ceiling"). Enumerates every submask of the opponents' cards as East's holding, exactly
+// like the old `suit_trick_distribution`, but tallies into `count[a][k]` instead of a vacant-space-
+// weighted marginal. Degenerate suits (NS void / NS holds all 13) still enumerate the length axis: a
+// void suit contributes 0 tricks but a WHOLE range of East lengths (`count[a][0] = C(13,a)`), which the
+// joint DP needs to keep East's total-length budget honest.
+suit_joint_table :: proc(north, south: u16) -> Suit_Joint_Table {
 	ns := north | south // NS's combined holding in the suit (the two hands are disjoint)
 	ns_len := card_count(ns)
 
-	dist: Suit_Trick_Dist
-	dist.max_tricks = ns_len
+	tbl: Suit_Joint_Table
+	tbl.ns_len = ns_len
+	tbl.m = RANKS - ns_len
 
-	// Degenerate: with no cards we take no tricks, with every card we take them all — no need to
-	// enumerate 2^13 splits to discover it.
+	// Degenerate shortcuts (avoid enumerating 2^13 splits). NS void: every split gives 0 tricks, so the
+	// only axis is East's length — `count[a][0] = C(m,a)`. NS holds the whole suit: one empty split, all
+	// 13 tricks.
 	if ns_len == 0 {
-		dist.p[0] = 1
-		return dist
+		for a in 0 ..= tbl.m {
+			tbl.count[a][0] = g_binom[tbl.m][a]
+		}
+		return tbl
 	}
 	if ns_len == RANKS {
-		dist.p[RANKS] = 1
-		return dist
+		tbl.count[0][RANKS] = 1
+		return tbl
 	}
 
 	missing := FULL_SUIT & ~ns // the opponents' cards in this suit
-	m := card_count(missing)
-	denom := g_binom[26][13] // total ways to fill East+West's 26 slots
-
 	memo := make(map[Suit_Layout]int)
 	defer delete(memo)
 
-	// Enumerate every submask of `missing` as East's holding (West gets the complement). This is the
-	// standard "iterate all submasks" loop: it visits `missing` first and 0 last, 2^m masks in all.
+	// Enumerate every submask of `missing` as East's holding (West gets the complement): visits `missing`
+	// first and 0 last, 2^m masks in all.
 	east := missing
 	for {
 		west := missing & ~east
-		a := card_count(east) // number of the m missing cards East holds
+		a := card_count(east)
 
 		layout: Suit_Layout
 		layout[SEAT_N] = north
@@ -392,25 +423,125 @@ suit_trick_distribution :: proc(north, south: u16) -> Suit_Trick_Dist {
 		layout[SEAT_W] = west
 
 		tricks := suit_dd_tricks(layout, &memo)
-		dist.p[tricks] += g_binom[26 - m][13 - a] // unnormalised vacant-space weight
+		tbl.count[a][tricks] += 1
 
 		if east == 0 {
 			break
 		}
 		east = (east - 1) & missing
 	}
+	return tbl
+}
 
+// Collapse a joint table to the per-suit MARGINAL trick distribution (the `p[k]` used for the per-suit
+// table rows). This re-applies the vacant-space weight the joint table deliberately left out: a split
+// with East holding `a` of the suit's `m` opponent cards has a-priori weight `C(26-m,13-a)/C(26,13)`
+// (the ways to fill East's other 13-a slots from the 26-m cards outside the suit). Summing that over the
+// count table reproduces exactly the hypergeometric marginal — the same number the old direct
+// enumeration produced, and provably the TRUE per-suit marginal of the joint model (linearity /
+// Vandermonde), so the per-suit view is unchanged by the joint fix; only the combined total changes.
+marginal_from_table :: proc(tbl: Suit_Joint_Table) -> Suit_Trick_Dist {
+	dist: Suit_Trick_Dist
+	dist.max_tricks = tbl.ns_len
+	denom := g_binom[26][13]
+	for a in 0 ..= tbl.m {
+		w := g_binom[26 - tbl.m][13 - a]
+		if w == 0 {
+			continue
+		}
+		for k in 0 ..= RANKS {
+			dist.p[k] += tbl.count[a][k] * w
+		}
+	}
 	for k in 0 ..= RANKS {
 		dist.p[k] /= denom
 	}
 	return dist
 }
 
+// The per-suit trick distribution, given NS's two holdings (North's and South's rank masks — e.g.
+// `north_summary.suits[.Hearts]` and the South equivalent). Thin wrapper: build the joint table and take
+// its marginal. The returned `p[]` sums to 1. (Kept as the public per-suit entry point; the combined
+// total no longer convolves these — see `joint_total`.)
+suit_trick_distribution :: proc(north, south: u16) -> Suit_Trick_Dist {
+	return marginal_from_table(suit_joint_table(north, south))
+}
+
+// --- The constrained joint convolution --------------------------------------------------------
+
+// Fold four per-suit joint tables into the EXACT combined trick distribution, under the two true
+// whole-deal constraints the old independent convolution ignored:
+//
+//   1. LENGTH — East holds exactly 13 of the 26 opponent cards. The DP carries East's running length
+//      `e` (0..13) across suits and keeps only the `e == 13` states at the end, so a split is counted
+//      iff East can still fit it. This forbids the jointly-impossible length combinations independence
+//      allowed (e.g. East long in two suits at once) and, crucially, correlates the suits: a layout with
+//      East long here is short there, exactly as in a real deal.
+//   2. TRICK CAP — NS take at most 13 tricks total. The running trick total `t` is clamped at 13 (the
+//      `min(t+k, 13)`). This is the SAME safety net the old `convolve` applied, still needed because the
+//      free-entry per-suit model can over-count tricks even for a single consistent deal (assumption 1);
+//      the joint fix removes the LENGTH error, not the free-entry one.
+//
+// Each full assignment with `e == 13` is exactly one of the C(26,13) equally-likely deals, so the raw
+// counts sum to C(26,13) at `e == 13` and normalising by it yields a proper distribution (always sums to
+// 1, no drop, no collapse). State `h[e][t]`; O(suits · 14^4) — trivial.
+//
+// PRECONDITION: the tables must come from a FULL 13-card partnership (NS holds 26 cards total, so the
+// opponents hold exactly 26 and East 13). Real deals always satisfy this; partial hands would make the
+// `e == 13` normalisation wrong (unlike the per-suit marginal, which is independent of the other suits).
+joint_total :: proc(tables: [norn.Suit]Suit_Joint_Table) -> [RANKS + 1]f64 {
+	h: [RANKS + 1][RANKS + 1]f64 // h[east_len][capped trick total]
+	h[0][0] = 1
+
+	for suit in norn.Suit {
+		tbl := tables[suit]
+		nh: [RANKS + 1][RANKS + 1]f64
+		for e in 0 ..= RANKS {
+			for t in 0 ..= RANKS {
+				hv := h[e][t]
+				if hv == 0 {
+					continue
+				}
+				for a in 0 ..= tbl.m {
+					if e + a > RANKS {
+						break // East cannot hold more than 13 cards total — prune
+					}
+					for k in 0 ..= RANKS {
+						c := tbl.count[a][k]
+						if c == 0 {
+							continue
+						}
+						nt := min(t + k, RANKS)
+						nh[e + a][nt] += hv * c
+					}
+				}
+			}
+		}
+		h = nh
+	}
+
+	denom := g_binom[26][13] // == sum over t of h[13][t]
+	total: [RANKS + 1]f64
+	for t in 0 ..= RANKS {
+		total[t] = h[RANKS][t] / denom
+	}
+	return total
+}
+
 // --- Combining suits --------------------------------------------------------------------------
 
 // Convolve two trick distributions: the distribution of the SUM of two independent trick counts.
-// `out[t] = sum over i+j=t of a[i]*b[j]`. Capped at RANKS (13) total tricks — NS can never take more
-// than 13, and the four suit lengths sum to exactly 13 so the cap is never actually binding.
+// `out[t] = sum over i+j=t of a[i]*b[j]`, with any total exceeding RANKS (13) CLAMPED onto index 13.
+//
+// The clamp is a safety net for the naive independence assumption. The four suits are folded as if
+// independent, so a strong NS is credited near-max tricks in EVERY suit at once and the running total
+// can exceed 13 — an impossible outcome (NS takes at most 13 tricks total). Earlier this overflow was
+// DROPPED (`j in 0..=RANKS-i`), which under-normalised the total (sum < 1, so P(>=0) < 1) and, for very
+// strong hands, collapsed the whole distribution toward zero. Clamping instead conserves all mass
+// (`sum(out)` stays == sum(a)*sum(b) == 1) with no division, and parks the impossible surplus on "NS
+// take all 13" — the correct ceiling for a hand that "wants" more than 13. This keeps the total a valid
+// probability distribution but does NOT correct the mean bias the independence introduces (the mass at
+// 13 is a crude stand-in); a constrained joint convolution is the proper fix — see COMBO_ANALYSER.md.
 @(private)
 convolve :: proc(a, b: [RANKS + 1]f64) -> [RANKS + 1]f64 {
 	out: [RANKS + 1]f64
@@ -418,8 +549,12 @@ convolve :: proc(a, b: [RANKS + 1]f64) -> [RANKS + 1]f64 {
 		if a[i] == 0 {
 			continue
 		}
-		for j in 0 ..= RANKS - i {
-			out[i + j] += a[i] * b[j]
+		for j in 0 ..= RANKS {
+			if b[j] == 0 {
+				continue
+			}
+			t := min(i + j, RANKS)
+			out[t] += a[i] * b[j]
 		}
 	}
 	return out
@@ -431,16 +566,29 @@ convolve :: proc(a, b: [RANKS + 1]f64) -> [RANKS + 1]f64 {
 analyse_ns :: proc(north, south: norn.Hand_Summary) -> Deal_Analysis {
 	a: Deal_Analysis
 
-	// Start the running total as a point mass at 0 tricks, then fold in each suit.
-	total: [RANKS + 1]f64
-	total[0] = 1
+	// Build each suit's joint (length × tricks) table once; the per-suit rows take its marginal, and the
+	// combined total is the CONSTRAINED joint convolution over the four tables (East holds 13 total, NS
+	// tricks capped at 13) — not an independent convolution of the four marginals. See `joint_total`.
+	tables: [norn.Suit]Suit_Joint_Table
 	for suit in norn.Suit {
-		d := suit_trick_distribution(north.suits[suit], south.suits[suit])
-		a.suits[suit] = d
-		total = convolve(total, d.p)
+		tbl := suit_joint_table(north.suits[suit], south.suits[suit])
+		tables[suit] = tbl
+		a.suits[suit] = marginal_from_table(tbl)
 	}
-	a.total = total
+	a.total = joint_total(tables)
 	return a
+}
+
+// The ACHIEVABLE single-dummy combined total for a partnership: the constrained joint convolution
+// (`joint_total`) of the four best-by-mean SD line tables (`sd_best_joint_table`). The single-dummy
+// companion to `analyse_ns`'s `total` (which is the double-dummy census). Baked for the card page so its
+// `tot`/`sd` rows honour the joint constraints rather than an independent convolution.
+sd_joint_total :: proc(north, south: norn.Hand_Summary) -> [RANKS + 1]f64 {
+	tables: [norn.Suit]Suit_Joint_Table
+	for suit in norn.Suit {
+		tables[suit] = sd_best_joint_table(north.suits[suit], south.suits[suit])
+	}
+	return joint_total(tables)
 }
 
 // Convenience wrapper: analyse the North-South pair of a whole dealt board.
@@ -674,30 +822,8 @@ describe_suit_line :: proc(north, south: u16, line_name: string, allocator := co
 	n_win := card_count(winners)
 
 	switch line_name {
-	case "finesse":
-		finesse_card := -1
-		if top_missing >= 0 {
-			for r := top_missing - 1; r >= 0; r -= 1 {
-				if combined & rank_bit(r) != 0 {finesse_card = r;break}
-			}
-		}
-		if finesse_card < 0 {
-			describe_cash(&b, combined, winners, top_missing, n_win, ns_len)
-		} else {
-			tops: u16
-			for r := 12; r > finesse_card; r -= 1 {tops |= combined & rank_bit(r)}
-			strings.write_string(&b, "Lead a low card toward your ")
-			if tops != 0 {
-				write_cards_desc(&b, tops)
-			} else {
-				strings.write_string(&b, "high cards")
-			}
-			strings.write_string(&b, ", then finesse: play the ")
-			strings.write_string(&b, RANK_NAMES[finesse_card])
-			strings.write_string(&b, ". It wins when the ")
-			strings.write_string(&b, RANK_NAMES[top_missing])
-			strings.write_string(&b, " sits with the opponent who plays before your high hand (about even money); if not, it loses.")
-		}
+	case "finesse", "finesse-other":
+		describe_finesse(&b, combined, winners, top_missing, n_win, ns_len)
 	case "duck-one":
 		strings.write_string(&b, "Duck the first round: play low from both hands and let the opponents win it. Then cash your winners")
 		if n_win > 0 {
@@ -706,10 +832,45 @@ describe_suit_line :: proc(north, south: u16, line_name: string, allocator := co
 			strings.write_string(&b, ")")
 		}
 		strings.write_string(&b, ". Ducking keeps a guard and can set up your long cards.")
+	case "duck-then-finesse":
+		strings.write_string(&b, "Duck the first round (play low from both hands), then take the finesse. ")
+		describe_finesse(&b, combined, winners, top_missing, n_win, ns_len)
+		strings.write_string(&b, " Ducking first keeps an entry so the finesse can be repeated.")
 	case:
 		describe_cash(&b, combined, winners, top_missing, n_win, ns_len)
 	}
 	return strings.to_string(b)
+}
+
+// Narrate the finesse line in terms of the actual cards: lead low toward the top cards and insert the
+// highest touching honour below the opponents best card. Falls back to a cash narration when NS holds no
+// card below the top missing rank (nothing to finesse with). Shared by the plain and compound finesse
+// cases. NO apostrophes / double quotes (single-quoted HTML attribute).
+@(private)
+describe_finesse :: proc(b: ^strings.Builder, combined, winners: u16, top_missing, n_win, ns_len: int) {
+	finesse_card := -1
+	if top_missing >= 0 {
+		for r := top_missing - 1; r >= 0; r -= 1 {
+			if combined & rank_bit(r) != 0 {finesse_card = r;break}
+		}
+	}
+	if finesse_card < 0 {
+		describe_cash(b, combined, winners, top_missing, n_win, ns_len)
+		return
+	}
+	tops: u16
+	for r := 12; r > finesse_card; r -= 1 {tops |= combined & rank_bit(r)}
+	strings.write_string(b, "Lead a low card toward your ")
+	if tops != 0 {
+		write_cards_desc(b, tops)
+	} else {
+		strings.write_string(b, "high cards")
+	}
+	strings.write_string(b, ", then finesse: play the ")
+	strings.write_string(b, RANK_NAMES[finesse_card])
+	strings.write_string(b, ". It wins when the ")
+	strings.write_string(b, RANK_NAMES[top_missing])
+	strings.write_string(b, " sits with the opponent who plays before your high hand (about even money); if not, it loses.")
 }
 
 // Emit the per-suit line NARRATIONS as a JSON array of strings (one per suit s,h,d,c), pairing each
@@ -835,14 +996,24 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		//   data-{ns,ew}-atl  = the adaptive optimum P(>= t) make curve (brick-4 DP over candidate lines)
 		// The page convolves the per-suit blobs and shows the CEILING vs ACHIEVABLE (the gap is the
 		// double-dummy tax), with the ADAPTIVE curve driving the "P(>= target)" readouts. Nothing baked.
+		// `data-{ns,ew}-tot`/`-totsd` are the BAKED combined totals from the constrained joint convolution
+		// (`joint_total`: East holds 13, tricks capped at 13) — census and single-dummy. The page uses
+		// these directly instead of convolving the per-suit marginals client-side (which was independent,
+		// so length-inconsistent). Per-suit `-sd`/`-atl`/`-lines`/`-tips` are unchanged.
 		ew := analyse_ns(ds[.East], ds[.West])
 		ns_atl := adaptive_at_least_curve(ds[.North], ds[.South])
 		ew_atl := adaptive_at_least_curve(ds[.East], ds[.West])
+		ns_totsd := sd_joint_total(ds[.North], ds[.South])
+		ew_totsd := sd_joint_total(ds[.East], ds[.West])
 
 		strings.write_string(builder, `<div class="combo" data-ns='`)
 		write_suits_json(builder, &a)
 		strings.write_string(builder, `' data-ns-sd='`)
 		write_suits_json_sd(builder, ds[.North], ds[.South])
+		strings.write_string(builder, `' data-ns-tot='`)
+		write_curve_json(builder, a.total)
+		strings.write_string(builder, `' data-ns-totsd='`)
+		write_curve_json(builder, ns_totsd)
 		strings.write_string(builder, `' data-ns-atl='`)
 		write_curve_json(builder, ns_atl)
 		strings.write_string(builder, `' data-ns-lines='`)
@@ -853,6 +1024,10 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_suits_json(builder, &ew)
 		strings.write_string(builder, `' data-ew-sd='`)
 		write_suits_json_sd(builder, ds[.East], ds[.West])
+		strings.write_string(builder, `' data-ew-tot='`)
+		write_curve_json(builder, ew.total)
+		strings.write_string(builder, `' data-ew-totsd='`)
+		write_curve_json(builder, ew_totsd)
 		strings.write_string(builder, `' data-ew-atl='`)
 		write_curve_json(builder, ew_atl)
 		strings.write_string(builder, `' data-ew-lines='`)

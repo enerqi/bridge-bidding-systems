@@ -90,6 +90,11 @@ build *args: mktarget_dirs
 freq trials="1000000" *args: mktarget_dirs
 	odin run sim.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/{{sim_name}} -- --frequency {{trials}} {{args}}
 
+# benchmark the combo package (Phase 1, Phase 2 lines/optimal, annotate end-to-end).
+# Override counts: just bench '-define:COUNT_SUIT=5000' '-define:COUNT_DEAL=500'
+bench *args: mktarget_dirs
+	odin run bench.odin -file {{norn}} -o:speed -microarch:native {{args}}
+
 # run the bidding-system unit tests
 test *args: mktarget_dirs
 	odin test bidding {{norn}} -debug -file -microarch:native -show-timings -out:target/debug/test-bidding.exe {{args}}

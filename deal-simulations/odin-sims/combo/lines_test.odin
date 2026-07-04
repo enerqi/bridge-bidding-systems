@@ -9,7 +9,10 @@ package combo
 	  * every candidate line yields a valid distribution;
 	  * on the classic AQ-opp-xx finesse, `line_finesse` beats `line_top_down` and `best_line` picks it;
 	  * the Pareto frontier is non-empty, internally non-dominated, and collapses to one line when the
-	    holding is solid (all lines coincide).
+	    holding is solid (all lines coincide);
+	  * the compound candidates are registered; `line_finesse_other` finesses the WRONG way on a one-way
+	    holding (a distinct, worse distribution); `line_duck_then_finesse` is a phased line that costs
+	    nothing on a solid holding (the duck cannot be overtaken).
 */
 
 import "core:testing"
@@ -101,4 +104,72 @@ test_pareto_collapses_when_solid :: proc(t: ^testing.T) {
 	front := pareto_lines(cands)
 	defer delete(front)
 	testing.expectf(t, len(front) == 1, "solid suit should collapse to one frontier line, got %d", len(front))
+}
+
+// The two compound candidates are registered (they must appear in `candidate_lines` for the DP,
+// `best_line`, and the card-page emit to pick them up).
+@(test)
+test_compound_lines_registered :: proc(t: ^testing.T) {
+	lines := candidate_lines()
+	have_other, have_dtf := false, false
+	for l in lines {
+		if l.name == "finesse-other" {have_other = true}
+		if l.name == "duck-then-finesse" {have_dtf = true}
+	}
+	testing.expect(t, have_other, "finesse-other should be a registered candidate")
+	testing.expect(t, have_dtf, "duck-then-finesse should be a registered candidate")
+}
+
+// On the one-way AQ-opp-xx, `line_finesse` leads TOWARD the AQ tenace; `line_finesse_other` leads the
+// other way (into the tenace), which is the wrong guess. So the two directions are DISTINCT and the
+// correct one takes strictly more tricks — i.e. exposing both directions gives the DP a real choice.
+@(test)
+test_finesse_other_is_distinct :: proc(t: ^testing.T) {
+	n := mask(.Ace, .Queen)
+	s := mask(.Three, .Two)
+	fin := sd_line_distribution(n, s, line_finesse)
+	oth := sd_line_distribution(n, s, line_finesse_other)
+
+	testing.expect(t, !dist_near_equal(fin, oth), "the two finesse directions should differ on a one-way holding")
+	testing.expectf(
+		t,
+		expected_tricks(fin.p) > expected_tricks(oth.p) + 1e-9,
+		"finessing toward the tenace (%.3f) should beat the wrong way (%.3f)",
+		expected_tricks(fin.p),
+		expected_tricks(oth.p),
+	)
+}
+
+// `line_duck_then_finesse` ducks round one then finesses. On a solid AKQ (opposite void) the duck cannot
+// be overtaken — the opponents hold nothing above the Queen — so the phased line still takes all three
+// tricks: the compound line costs nothing when there is nothing to lose, and its distribution is valid.
+@(test)
+test_duck_then_finesse_no_cost_when_solid :: proc(t: ^testing.T) {
+	d := sd_line_distribution(mask(.Ace, .King, .Queen), 0, line_duck_then_finesse)
+	sum := f64(0)
+	for k in 0 ..= RANKS {sum += d.p[k]}
+	testing.expectf(t, abs(sum - 1) < 1e-9, "distribution must sum to 1, got %v", sum)
+	testing.expectf(t, abs(expected_tricks(d.p) - 3) < 1e-9, "solid AKQ should still take 3 tricks, got %.4f", expected_tricks(d.p))
+}
+
+// The compound line EARNS its place: on AKJ7 opposite 63 (missing the queen and a fistful of spots),
+// conceding the first round before running the jack-finesse strictly out-scores every single-phase line
+// by mean tricks — so `best_line_by_mean` (which drives the card-page recommendation and the DP fallback)
+// actually selects "duck-then-finesse". Regression guard that the phased candidate is reachable, not dead
+// weight. (Holding surfaced by a random-holding sweep of all five candidates.)
+@(test)
+test_duck_then_finesse_selected_by_mean :: proc(t: ^testing.T) {
+	n := mask(.Ace, .King, .Jack, .Seven)
+	s := mask(.Six, .Three)
+	best := best_line_by_mean(n, s)
+	testing.expectf(t, best.name == "duck-then-finesse", "best line by mean was %q, want duck-then-finesse", best.name)
+
+	fin := sd_line_distribution(n, s, line_finesse)
+	testing.expectf(
+		t,
+		expected_tricks(best.dist.p) > expected_tricks(fin.p) + 1e-9,
+		"duck-then-finesse mean %.4f should beat plain finesse %.4f",
+		expected_tricks(best.dist.p),
+		expected_tricks(fin.p),
+	)
 }

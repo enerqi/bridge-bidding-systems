@@ -138,11 +138,13 @@ test_distribution_finesse_is_two_sided :: proc(t: ^testing.T) {
 // The combined total distribution stays normalised, and P(>=k) is a correct, monotone tail.
 @(test)
 test_combined_normalised_and_tail :: proc(t: ^testing.T) {
-	// A concrete pair of hands. North: solid-ish; South: filler. (Any legal 13/13 split works.)
+	// A concrete pair of hands. North: solid-ish; South: filler. MUST be a full 13/13 split — the joint
+	// convolution (`joint_total`) constrains East to exactly 13 of the 26 opponent cards, so partial hands
+	// would break normalisation. Real deals (`summarize_deal`) are always 13 cards.
 	north := norn.Hand_Summary {
 		suits = {
 			.Spades = mask(.Ace, .King, .Queen, .Two),
-			.Hearts = mask(.Ace, .King),
+			.Hearts = mask(.Ace, .King, .Three, .Two),
 			.Diamonds = mask(.Ace, .Five, .Four),
 			.Clubs = mask(.Seven, .Six),
 		},
@@ -152,7 +154,7 @@ test_combined_normalised_and_tail :: proc(t: ^testing.T) {
 			.Spades = mask(.Five, .Four, .Three),
 			.Hearts = mask(.Queen, .Jack, .Ten),
 			.Diamonds = mask(.King, .Six),
-			.Clubs = mask(.Eight, .Three, .Two),
+			.Clubs = mask(.Ace, .King, .Eight, .Three, .Two),
 		},
 	}
 	a := analyse_ns(north, south)

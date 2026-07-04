@@ -56,16 +56,19 @@ Sd_View :: struct {
 	rho_rank:     int, // rank the right-hand defender just played this trick, or -1 (e.g. on lead)
 	win_rank:     int, // highest rank played so far in the current trick (-1 if none)
 	win_ns:       bool, // is an NS seat currently winning the trick?
+	trick_no:     int, // 0-based index of the current trick in this suit (0 = first round)
 }
 
 // A deterministic declarer strategy for ONE suit. `lead` picks which hand leads and the card; it is
-// consulted at the start of every trick (free entries — declarer is always on lead). `partner` picks
-// the card for declarer's SECOND seat in the trick, after the intervening defender has played, so it
-// can react to the card on its right. Both must return a rank the named hand actually holds; the
+// consulted at the start of every trick (free entries — declarer is always on lead), and receives the
+// 0-based `trick_no` so PHASED (compound) lines can switch behaviour round by round (e.g. duck the
+// first, finesse after). `partner` picks the card for declarer's SECOND seat in the trick, after the
+// intervening defender has played, so it can react to the card on its right (and it too sees the
+// trick number via `Sd_View.trick_no`). Both must return a rank the named hand actually holds; the
 // evaluator falls back to that hand's lowest card if a line returns an illegal rank.
 Sd_Line :: struct {
 	name:    string,
-	lead:    proc(north, south, played: u16) -> (seat: int, rank: int),
+	lead:    proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int),
 	partner: proc(v: Sd_View) -> int,
 }
 
@@ -92,13 +95,14 @@ sd_deal_tricks :: proc(line: Sd_Line, north, south, east, west: u16) -> int {
 	hands[SEAT_S] = south
 	hands[SEAT_E] = east
 	hands[SEAT_W] = west
-	return sd_from_lead(line, hands)
+	return sd_from_lead(line, hands, 0)
 }
 
 // Position with declarer on lead: cash out the trivial cases, else consult the line for the lead and
-// play the trick.
+// play the trick. `trick_no` is the 0-based round index, threaded to the line so phased policies can
+// switch behaviour by round.
 @(private)
-sd_from_lead :: proc(line: Sd_Line, hands: Suit_Layout) -> int {
+sd_from_lead :: proc(line: Sd_Line, hands: Suit_Layout, trick_no: int) -> int {
 	ns := card_count(hands[SEAT_N]) + card_count(hands[SEAT_S])
 	if ns == 0 {
 		return 0 // no cards to lead: no more NS tricks
@@ -112,7 +116,7 @@ sd_from_lead :: proc(line: Sd_Line, hands: Suit_Layout) -> int {
 	}
 
 	played := FULL_SUIT & ~(hands[SEAT_N] | hands[SEAT_S] | hands[SEAT_E] | hands[SEAT_W])
-	seat, rank := line.lead(hands[SEAT_N], hands[SEAT_S], played)
+	seat, rank := line.lead(hands[SEAT_N], hands[SEAT_S], played, trick_no)
 	// Guard against a malformed line: the lead hand must be NS and actually hold the card.
 	if !is_ns(seat) || hands[seat] & rank_bit(rank) == 0 {
 		seat = SEAT_N if hands[SEAT_N] != 0 else SEAT_S
@@ -122,7 +126,7 @@ sd_from_lead :: proc(line: Sd_Line, hands: Suit_Layout) -> int {
 	next := hands
 	next[seat] &= ~rank_bit(rank)
 	order := [4]int{seat, (seat + 1) % 4, (seat + 2) % 4, (seat + 3) % 4}
-	return sd_trick(line, next, order, 1, seat, rank, rank)
+	return sd_trick(line, next, order, 1, seat, rank, rank, trick_no)
 }
 
 // One ply within a trick. `order` is the clockwise seat sequence, `idx` the number of seats that have
@@ -131,17 +135,17 @@ sd_from_lead :: proc(line: Sd_Line, hands: Suit_Layout) -> int {
 // their legal cards (double-dummy defence). When the trick completes, score it and recurse to the
 // next lead.
 @(private)
-sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat, win_rank, last_rank: int) -> int {
+sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat, win_rank, last_rank, trick_no: int) -> int {
 	if idx == 4 {
 		pt := 1 if is_ns(win_seat) else 0
-		return pt + sd_from_lead(line, hands)
+		return pt + sd_from_lead(line, hands, trick_no + 1)
 	}
 
 	seat := order[idx]
 	hold := hands[seat]
 	if hold == 0 {
 		// Void follows nothing; `last_rank` carries the previous actually-played card unchanged.
-		return sd_trick(line, hands, order, idx + 1, win_seat, win_rank, last_rank)
+		return sd_trick(line, hands, order, idx + 1, win_seat, win_rank, last_rank, trick_no)
 	}
 
 	if is_ns(seat) {
@@ -157,6 +161,7 @@ sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat
 			rho_rank = last_rank if !is_ns(rho) else -1,
 			win_rank = win_rank,
 			win_ns   = is_ns(win_seat),
+			trick_no = trick_no,
 		}
 		r := line.partner(v)
 		if hold & rank_bit(r) == 0 {
@@ -168,7 +173,7 @@ sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat
 		if r > win_rank {
 			ws, wr = seat, r
 		}
-		return sd_trick(line, next, order, idx + 1, ws, wr, r)
+		return sd_trick(line, next, order, idx + 1, ws, wr, r, trick_no)
 	}
 
 	// Defender seat: minimise NS tricks over every legal card.
@@ -184,7 +189,7 @@ sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat
 		if r > win_rank {
 			ws, wr = seat, r
 		}
-		v := sd_trick(line, next, order, idx + 1, ws, wr, r)
+		v := sd_trick(line, next, order, idx + 1, ws, wr, r, trick_no)
 		if v < best {
 			best = v
 		}
@@ -236,6 +241,63 @@ sd_line_distribution :: proc(north, south: u16, line: Sd_Line) -> Suit_Trick_Dis
 	return dist
 }
 
+// The JOINT (east_len × tricks) table for ONE suit under a FIXED single-dummy line — the achievable
+// companion to `suit_joint_table` (which is the double-dummy census). Same enumeration and raw-count
+// tallying, but each split is scored by playing `line` out against double-dummy defence. Feeds the
+// constrained joint convolution (`joint_total`) so the SD combined total honours "East holds 13" and the
+// 13-trick cap, exactly like the census total. Degenerate suits mirror `suit_joint_table`.
+sd_line_joint_table :: proc(north, south: u16, line: Sd_Line) -> Suit_Joint_Table {
+	ns := north | south
+	ns_len := card_count(ns)
+
+	tbl: Suit_Joint_Table
+	tbl.ns_len = ns_len
+	tbl.m = RANKS - ns_len
+
+	if ns_len == 0 {
+		for a in 0 ..= tbl.m {
+			tbl.count[a][0] = g_binom[tbl.m][a]
+		}
+		return tbl
+	}
+	if ns_len == RANKS {
+		tbl.count[0][RANKS] = 1
+		return tbl
+	}
+
+	missing := FULL_SUIT & ~ns
+	east := missing
+	for {
+		west := missing & ~east
+		a := card_count(east)
+		tricks := sd_deal_tricks(line, north, south, east, west)
+		tbl.count[a][tricks] += 1
+
+		if east == 0 {
+			break
+		}
+		east = (east - 1) & missing
+	}
+	return tbl
+}
+
+// The joint table for the best-by-mean candidate line on a holding — the SD line the card page recommends
+// and scores (`best_line_by_mean`). Picks the line, then builds its joint table, so the SD combined total
+// (`joint_total` over these) is coherent with the per-suit SD marginals and recommendations.
+sd_best_joint_table :: proc(north, south: u16) -> Suit_Joint_Table {
+	lines := candidate_lines()
+	best := lines[0]
+	best_mean := f64(-1)
+	for line in lines {
+		mn := expected_tricks(sd_line_distribution(north, south, line).p)
+		if mn > best_mean {
+			best_mean = mn
+			best = line
+		}
+	}
+	return sd_line_joint_table(north, south, best)
+}
+
 // The double-dummy tax for a suit under a given line: the mean tricks the line actually achieves
 // (single-dummy), the Phase-1 census mean (double-dummy ceiling), and the gap between them (>= 0).
 // A wide gap flags a guess-heavy suit (a finesse the line must commit to blind); a zero gap means the
@@ -258,7 +320,7 @@ sd_census_gap :: proc(north, south: u16, line: Sd_Line) -> (sd_mean, census_mean
 // lines (finesse, safety play, and the search that chooses among them) are the next increment.
 line_top_down :: Sd_Line {
 	name    = "top-down",
-	lead    = proc(north, south, played: u16) -> (seat: int, rank: int) {
+	lead    = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
 		if north == 0 {
 			return SEAT_S, highest_rank(south)
 		}

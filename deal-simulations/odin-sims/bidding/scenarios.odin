@@ -724,6 +724,9 @@ registry := []cli.Scenario {
 	},
 
 	// --- Slam-zone and balanced study hands ---
+	{"slam-makes-dd", "North-South combined opc >= 30", proc(b: norn.Deal_Summary) -> bool {
+			return norn.combined_opc(b[.North], b[.South], nil) >= 30
+		}},
 	{
 		"slam-hands-32-plus-hcp",
 		"North-South hold a combined 32+ hcp",

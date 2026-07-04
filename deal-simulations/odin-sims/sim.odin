@@ -56,6 +56,7 @@ run_sim :: proc() -> int {
 	dd_filters := make(map[string]norn.Deal_Filter)
 	defer delete(dd_filters)
 	dd_filters["1major-game-force"] = dd.ns_makes_game
+	dd_filters["slam-makes-dd"] = dd.ns_makes_slam
 	// dd_filters["1major-gf-3plus-card-support"] = dd.ns_makes_game
 	// dd_filters["1n-slam-try"] = dd.ns_makes_slam
 	// dd_filters["2c-any-slam-try"] = dd.ns_makes_slam
@@ -69,6 +70,7 @@ run_sim :: proc() -> int {
 	dd_annotators := make(map[string]norn.Deal_Annotator)
 	defer delete(dd_annotators)
 	dd_annotators["1major-game-force"] = dd_and_combo_annotate
+	dd_annotators["slam-makes-dd"] = dd_and_combo_annotate
 	// dd_annotators["1n-slam-try"] = dd.annotate
 	// dd_annotators["2c-any-slam-try"] = dd.annotate
 	// dd_annotators["slam-hands-32-plus-hcp"] = dd.annotate

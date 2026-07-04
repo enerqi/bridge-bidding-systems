@@ -7,17 +7,26 @@ package combo
 	generic blind lines — the strategic axes a declarer actually chooses among in a single suit — and
 	the machinery to compare them:
 
-	  * `line_top_down`   (in single_dummy.odin) — cash the highest card every trick; never finesse.
-	                       The "play for the drop" baseline.
-	  * `line_finesse`    — lead low toward the honour hand; the partner inserts the CHEAPEST card that
-	                       beats the right-hand defender (a finesse when they play low, a cover when
-	                       they play an honour). The "take the finesse" line.
-	  * `line_duck_one`   — concede the first round (both hands play low), then cash top-down. The
-	                       "duck to keep control / prepare a long suit" line.
+	  * `line_top_down`         (in single_dummy.odin) — cash the highest card every trick; never finesse.
+	                             The "play for the drop" baseline.
+	  * `line_finesse`          — lead low toward the honour hand; the partner inserts the CHEAPEST card
+	                             that beats the right-hand defender (a finesse when they play low, a cover
+	                             when they play an honour). The "take the finesse" line.
+	  * `line_duck_one`         — concede the first round (both hands play low), then cash top-down. The
+	                             "duck to keep control / prepare a long suit" line.
+	  * `line_finesse_other`    — the finesse taken the OTHER way (lead low toward the WEAKER honour
+	                             hand). On a two-way holding this is a genuinely different guess; the DP
+	                             picks whichever direction scores better (on a genuine two-way it just
+	                             exposes the guess, matching brick 3's finding).
+	  * `line_duck_then_finesse` — a COMPOUND line: duck the first round (both hands low), THEN finesse on
+	                             every later round. The canonical entry-preserving / rectify-the-count
+	                             manoeuvre that a single-phase line cannot express.
 
 	These are deliberately GENERIC heuristics (they apply to any holding), not the per-holding optimum —
 	finding that is brick 3 (the optimal single-dummy SEARCH). Their job here is to give brick 4's DP a
-	real, cheap set of alternatives to choose among.
+	real, cheap set of alternatives to choose among. Redundant candidates are harmless: `pareto_lines`
+	drops dominated lines and de-dups clones (e.g. `line_finesse_other` collapses into `line_finesse`
+	when the holding is one-way).
 
 	The comparison tools:
 	  * `suit_candidate_lines` evaluates every candidate on a holding -> a `Line_Result` per line.
@@ -37,9 +46,51 @@ Line_Result :: struct {
 }
 
 // The generic candidate lines, in a stable order. Returned by value (a small fixed array of constant
-// `Sd_Line`s) so callers needn't manage storage.
-candidate_lines :: proc() -> [3]Sd_Line {
-	return {line_top_down, line_finesse, line_duck_one}
+// `Sd_Line`s) so callers needn't manage storage. Adding a line here makes it flow automatically through
+// the DP (brick 4), `best_line`/`best_line_by_mean`, the Pareto frontier, and the card-page emit — no
+// other wiring; add a matching case in `describe_suit_line` (combo.odin) for its tooltip.
+candidate_lines :: proc() -> [5]Sd_Line {
+	return {line_top_down, line_finesse, line_duck_one, line_finesse_other, line_duck_then_finesse}
+}
+
+// --- shared line building blocks --------------------------------------------------------------
+
+// Lead low from the hand OPPOSITE `hon`, toward the honour hand (or from `hon` itself if its partner is
+// void). The core "run a finesse into the tenace" lead, shared by the finesse lines.
+@(private)
+finesse_lead_toward :: proc(north, south: u16, hon: int) -> (seat: int, rank: int) {
+	lead_seat := SEAT_S if hon == SEAT_N else SEAT_N
+	lead_hold := south if lead_seat == SEAT_S else north
+	if lead_hold == 0 {
+		lead_seat = hon
+		lead_hold = north if hon == SEAT_N else south
+	}
+	return lead_seat, lowest_rank(lead_hold)
+}
+
+// The finesse partner play: insert the CHEAPEST card that beats the right-hand defender (the finesse
+// when they played low, a cover when they played an honour); else play low. Shared by every finesse
+// line, including the finesse phase of `line_duck_then_finesse`.
+@(private)
+finesse_insert :: proc(v: Sd_View) -> int {
+	if v.rho_rank >= 0 {
+		m := v.own
+		for m != 0 {
+			r := lowest_rank(m)
+			m &= m - 1
+			if r > v.rho_rank {
+				return r // lowest card strictly above RHO — iterating low->high, first hit is cheapest
+			}
+		}
+	}
+	return lowest_rank(v.own)
+}
+
+// The seat holding the single highest NS card (the "strong" honour hand line_finesse leads toward);
+// its opposite is the weaker honour hand `line_finesse_other` attacks.
+@(private)
+strong_honour_seat :: proc(north, south: u16) -> int {
+	return SEAT_N if (north != 0 && (south == 0 || highest_rank(north) >= highest_rank(south))) else SEAT_S
 }
 
 // `line_finesse` — lead low toward the honour hand and insert the cheapest card that beats the
@@ -48,31 +99,48 @@ candidate_lines :: proc() -> [3]Sd_Line {
 // `line_top_down`.
 line_finesse :: Sd_Line {
 	name    = "finesse",
-	lead    = proc(north, south, played: u16) -> (seat: int, rank: int) {
-		// Honour hand = the seat holding the single highest NS card; lead low from the OTHER hand
-		// toward it (or from the honour hand itself if its partner is void).
-		hon := SEAT_N if (north != 0 && (south == 0 || highest_rank(north) >= highest_rank(south))) else SEAT_S
-		lead_seat := SEAT_S if hon == SEAT_N else SEAT_N
-		lead_hold := south if lead_seat == SEAT_S else north
-		if lead_hold == 0 {
-			lead_seat = hon
-			lead_hold = north if hon == SEAT_N else south
+	lead    = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
+		// Honour hand = the seat holding the single highest NS card; lead low toward it.
+		return finesse_lead_toward(north, south, strong_honour_seat(north, south))
+	},
+	partner = finesse_insert,
+}
+
+// `line_finesse_other` — the same finesse taken the OTHER way: lead low toward the WEAKER honour hand
+// (the seat NOT holding the single highest card). On a one-way holding this collapses to `line_finesse`
+// (and the Pareto frontier dedups it); on a two-way it is a genuinely different guess, so exposing both
+// directions lets the DP pick the better one — and on a true two-way it honestly surfaces the guess.
+line_finesse_other :: Sd_Line {
+	name    = "finesse-other",
+	lead    = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
+		hon := strong_honour_seat(north, south)
+		other := SEAT_S if hon == SEAT_N else SEAT_N
+		return finesse_lead_toward(north, south, other)
+	},
+	partner = finesse_insert,
+}
+
+// `line_duck_then_finesse` — a COMPOUND (phased) line: concede the first round (lead low, partner low),
+// THEN finesse toward the honour hand on every later round. Ducking once can rectify the count / keep an
+// entry for a repeated finesse — a manoeuvre no single-phase line can express. Uses the threaded
+// `trick_no` to switch phases (round 0 = duck, rounds >= 1 = finesse).
+line_duck_then_finesse :: Sd_Line {
+	name    = "duck-then-finesse",
+	lead    = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
+		if trick_no == 0 {
+			// First round: duck — lead low from a non-void hand.
+			if south != 0 {
+				return SEAT_S, lowest_rank(south)
+			}
+			return SEAT_N, lowest_rank(north)
 		}
-		return lead_seat, lowest_rank(lead_hold)
+		return finesse_lead_toward(north, south, strong_honour_seat(north, south))
 	},
 	partner = proc(v: Sd_View) -> int {
-		// Insert the cheapest card that beats the right-hand defender's card (the finesse / cover).
-		if v.rho_rank >= 0 {
-			m := v.own
-			for m != 0 {
-				r := lowest_rank(m)
-				m &= m - 1
-				if r > v.rho_rank {
-					return r // lowest card strictly above RHO — iterating low->high, first hit is cheapest
-				}
-			}
+		if v.trick_no == 0 {
+			return lowest_rank(v.own) // duck the first round: play low even if we could win
 		}
-		return lowest_rank(v.own)
+		return finesse_insert(v)
 	},
 }
 
@@ -81,7 +149,7 @@ line_finesse :: Sd_Line {
 // which is exactly why it is a distinct candidate for the frontier to keep or discard.
 line_duck_one :: Sd_Line {
 	name    = "duck-one",
-	lead    = proc(north, south, played: u16) -> (seat: int, rank: int) {
+	lead    = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
 		if played == 0 {
 			// First trick of the suit: lead low (duck) from a non-void hand.
 			if south != 0 {
