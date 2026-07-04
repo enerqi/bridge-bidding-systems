@@ -105,7 +105,10 @@ sd_from_lead :: proc(line: Sd_Line, hands: Suit_Layout) -> int {
 	}
 	ew := card_count(hands[SEAT_E]) + card_count(hands[SEAT_W])
 	if ew == 0 {
-		return ns // opponents exhausted: every remaining NS card wins
+		// Opponents exhausted: both NS hands still follow every trick, so two NS cards are spent per
+		// trick and the shorter hand's extra cards are wasted — max(len N, len S) tricks, not the sum
+		// (matching the same fix in Phase-1's `suit_dd_tricks`).
+		return max(card_count(hands[SEAT_N]), card_count(hands[SEAT_S]))
 	}
 
 	played := FULL_SUIT & ~(hands[SEAT_N] | hands[SEAT_S] | hands[SEAT_E] | hands[SEAT_W])
@@ -119,7 +122,7 @@ sd_from_lead :: proc(line: Sd_Line, hands: Suit_Layout) -> int {
 	next := hands
 	next[seat] &= ~rank_bit(rank)
 	order := [4]int{seat, (seat + 1) % 4, (seat + 2) % 4, (seat + 3) % 4}
-	return sd_trick(line, next, order, 1, seat, rank)
+	return sd_trick(line, next, order, 1, seat, rank, rank)
 }
 
 // One ply within a trick. `order` is the clockwise seat sequence, `idx` the number of seats that have
@@ -128,7 +131,7 @@ sd_from_lead :: proc(line: Sd_Line, hands: Suit_Layout) -> int {
 // their legal cards (double-dummy defence). When the trick completes, score it and recurse to the
 // next lead.
 @(private)
-sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat, win_rank: int) -> int {
+sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat, win_rank, last_rank: int) -> int {
 	if idx == 4 {
 		pt := 1 if is_ns(win_seat) else 0
 		return pt + sd_from_lead(line, hands)
@@ -137,11 +140,13 @@ sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat
 	seat := order[idx]
 	hold := hands[seat]
 	if hold == 0 {
-		return sd_trick(line, hands, order, idx + 1, win_seat, win_rank) // void follows nothing
+		// Void follows nothing; `last_rank` carries the previous actually-played card unchanged.
+		return sd_trick(line, hands, order, idx + 1, win_seat, win_rank, last_rank)
 	}
 
 	if is_ns(seat) {
-		// Declarer's partner seat: the line chooses, reacting to the card on its right.
+		// Declarer's partner seat: the line chooses, reacting to the card on its right. `rho_rank` is
+		// the right-hand defender's actual card (last played), so a finesse can insert against it.
 		rho := order[idx - 1]
 		v := Sd_View {
 			north    = hands[SEAT_N],
@@ -149,7 +154,7 @@ sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat
 			own      = hold,
 			played   = FULL_SUIT & ~(hands[SEAT_N] | hands[SEAT_S] | hands[SEAT_E] | hands[SEAT_W]),
 			seat     = seat,
-			rho_rank = win_rank if !is_ns(rho) else -1,
+			rho_rank = last_rank if !is_ns(rho) else -1,
 			win_rank = win_rank,
 			win_ns   = is_ns(win_seat),
 		}
@@ -163,7 +168,7 @@ sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat
 		if r > win_rank {
 			ws, wr = seat, r
 		}
-		return sd_trick(line, next, order, idx + 1, ws, wr)
+		return sd_trick(line, next, order, idx + 1, ws, wr, r)
 	}
 
 	// Defender seat: minimise NS tricks over every legal card.
@@ -179,7 +184,7 @@ sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat
 		if r > win_rank {
 			ws, wr = seat, r
 		}
-		v := sd_trick(line, next, order, idx + 1, ws, wr)
+		v := sd_trick(line, next, order, idx + 1, ws, wr, r)
 		if v < best {
 			best = v
 		}

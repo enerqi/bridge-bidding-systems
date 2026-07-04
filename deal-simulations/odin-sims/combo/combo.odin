@@ -251,7 +251,11 @@ suit_dd_tricks :: proc(layout: Suit_Layout, memo: ^map[Suit_Layout]int) -> int {
 	case ns_cards == 0:
 		result = 0 // nothing left to lead: no more tricks for us
 	case ew_cards == 0:
-		result = ns_cards // opponents exhausted: every remaining NS card is a winner
+		// Opponents exhausted: declarer cashes freely, but BOTH NS hands still follow every trick, so
+		// two NS cards are spent per trick and the extra cards of the shorter hand are wasted. The
+		// tricks left are therefore max(len N, len S), NOT their sum (which would double-count a suit
+		// running in both hands — a real overcount bug when opponents run out with NS cards in both).
+		result = max(card_count(layout[SEAT_N]), card_count(layout[SEAT_S]))
 	case:
 		// Declarer chooses which hand leads this trick (free entries). Try both, keep the better.
 		best := 0
