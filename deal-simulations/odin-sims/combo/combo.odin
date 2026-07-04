@@ -607,6 +607,143 @@ write_suits_lines_json :: proc(b: ^strings.Builder, north, south: norn.Hand_Summ
 	strings.write_byte(b, ']')
 }
 
+// Rank glyphs indexed by the 0..12 bit position (Two=0 .. Ace=12).
+@(private)
+RANK_NAMES := [13]string{"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"}
+
+// Write the held ranks of `m`, highest first, space-separated (e.g. "A K Q").
+@(private)
+write_cards_desc :: proc(b: ^strings.Builder, m: u16) {
+	first := true
+	for r := 12; r >= 0; r -= 1 {
+		if m & rank_bit(r) != 0 {
+			if !first {strings.write_byte(b, ' ')}
+			strings.write_string(b, RANK_NAMES[r])
+			first = false
+		}
+	}
+}
+
+// Narrate the "cash from the top" plan for a holding.
+@(private)
+describe_cash :: proc(b: ^strings.Builder, combined, winners: u16, top_missing, n_win, ns_len: int) {
+	if top_missing < 0 {
+		strings.write_string(b, "Cash from the top: ")
+		write_cards_desc(b, combined)
+		strings.write_string(b, " — every card is a winner.")
+	} else if n_win == 0 {
+		strings.write_string(b, "No sure winners here (the opponents hold the ")
+		strings.write_string(b, RANK_NAMES[top_missing])
+		strings.write_string(b, "). You lose the early rounds; you score only if the suit runs.")
+	} else {
+		strings.write_string(b, "Cash your winners from the top: ")
+		write_cards_desc(b, winners)
+		strings.write_string(b, ".")
+		if n_win < ns_len {
+			strings.write_string(b, " After those, the opponents ")
+			strings.write_string(b, RANK_NAMES[top_missing])
+			strings.write_string(b, " and lower take the rest.")
+		}
+	}
+}
+
+// A short, holding-aware narration of the recommended blind line for one suit — shown as a hover
+// tooltip on the card page. Best-effort: it describes the chosen heuristic (cash / finesse / duck) in
+// terms of the ACTUAL cards held. Deliberately uses NO apostrophes or double quotes (it is emitted
+// inside a single-quoted HTML attribute, as a JSON string).
+describe_suit_line :: proc(north, south: u16, line_name: string, allocator := context.temp_allocator) -> string {
+	b := strings.builder_make(allocator)
+	combined := north | south
+	ns_len := card_count(combined)
+	if ns_len == 0 {
+		strings.write_string(&b, "Void: no cards in this suit.")
+		return strings.to_string(b)
+	}
+
+	missing := FULL_SUIT & ~combined
+	top_missing := -1
+	for r := 12; r >= 0; r -= 1 {
+		if missing & rank_bit(r) != 0 {top_missing = r;break}
+	}
+	winners: u16 // your cards ranking above the opponents best card
+	if top_missing < 0 {
+		winners = combined
+	} else {
+		for r := 12; r > top_missing; r -= 1 {winners |= combined & rank_bit(r)}
+	}
+	n_win := card_count(winners)
+
+	switch line_name {
+	case "finesse":
+		finesse_card := -1
+		if top_missing >= 0 {
+			for r := top_missing - 1; r >= 0; r -= 1 {
+				if combined & rank_bit(r) != 0 {finesse_card = r;break}
+			}
+		}
+		if finesse_card < 0 {
+			describe_cash(&b, combined, winners, top_missing, n_win, ns_len)
+		} else {
+			tops: u16
+			for r := 12; r > finesse_card; r -= 1 {tops |= combined & rank_bit(r)}
+			strings.write_string(&b, "Lead a low card toward your ")
+			if tops != 0 {
+				write_cards_desc(&b, tops)
+			} else {
+				strings.write_string(&b, "high cards")
+			}
+			strings.write_string(&b, ", then finesse: play the ")
+			strings.write_string(&b, RANK_NAMES[finesse_card])
+			strings.write_string(&b, ". It wins when the ")
+			strings.write_string(&b, RANK_NAMES[top_missing])
+			strings.write_string(&b, " sits with the opponent who plays before your high hand (about even money); if not, it loses.")
+		}
+	case "duck-one":
+		strings.write_string(&b, "Duck the first round: play low from both hands and let the opponents win it. Then cash your winners")
+		if n_win > 0 {
+			strings.write_string(&b, " (")
+			write_cards_desc(&b, winners)
+			strings.write_string(&b, ")")
+		}
+		strings.write_string(&b, ". Ducking keeps a guard and can set up your long cards.")
+	case:
+		describe_cash(&b, combined, winners, top_missing, n_win, ns_len)
+	}
+	return strings.to_string(b)
+}
+
+// Emit the per-suit line NARRATIONS as a JSON array of strings (one per suit s,h,d,c), pairing each
+// with its recommended line (`best_line_by_mean`). The card page shows these as hover tooltips.
+write_suits_tips_json :: proc(b: ^strings.Builder, north, south: norn.Hand_Summary) {
+	keys := [4]struct {
+		suit: norn.Suit,
+		key:  string,
+	}{{.Spades, "s"}, {.Hearts, "h"}, {.Diamonds, "d"}, {.Clubs, "c"}}
+
+	strings.write_byte(b, '[')
+	for e, i in keys {
+		if i > 0 {
+			strings.write_byte(b, ',')
+		}
+		best := best_line_by_mean(north.suits[e.suit], south.suits[e.suit])
+		desc := describe_suit_line(north.suits[e.suit], south.suits[e.suit], best.name)
+		// JSON string; the narration contains no quotes/backslashes, but escape defensively.
+		strings.write_byte(b, '"')
+		for c in transmute([]u8)desc {
+			switch c {
+			case '"':
+				strings.write_string(b, "\\\"")
+			case '\\':
+				strings.write_string(b, "\\\\")
+			case:
+				strings.write_byte(b, c)
+			}
+		}
+		strings.write_byte(b, '"')
+	}
+	strings.write_byte(b, ']')
+}
+
 // Write a 0..13 curve (e.g. the adaptive P(>= t) make curve) as a compact JSON array `[c0,...,c13]`.
 write_curve_json :: proc(b: ^strings.Builder, curve: [RANKS + 1]f64) {
 	strings.write_byte(b, '[')
@@ -710,6 +847,8 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_curve_json(builder, ns_atl)
 		strings.write_string(builder, `' data-ns-lines='`)
 		write_suits_lines_json(builder, ds[.North], ds[.South])
+		strings.write_string(builder, `' data-ns-tips='`)
+		write_suits_tips_json(builder, ds[.North], ds[.South])
 		strings.write_string(builder, `' data-ew='`)
 		write_suits_json(builder, &ew)
 		strings.write_string(builder, `' data-ew-sd='`)
@@ -718,6 +857,8 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_curve_json(builder, ew_atl)
 		strings.write_string(builder, `' data-ew-lines='`)
 		write_suits_lines_json(builder, ds[.East], ds[.West])
+		strings.write_string(builder, `' data-ew-tips='`)
+		write_suits_tips_json(builder, ds[.East], ds[.West])
 		strings.write_string(builder, `'></div>`)
 		free_all(context.temp_allocator)
 	case .Pretty:
