@@ -58,6 +58,16 @@ objective_at_least :: proc(target: int) -> Objective {
 	return o
 }
 
+// IMPs (teams / rubber): the value is dominated by the make/fail CLIFF at the contract, with only a
+// small tilt for over/undertricks — so the line that maximises IMPs is essentially the SAFEST one that
+// maximises P(>= target). We model that directly as the make objective: `objective_imps(target)` is
+// `objective_at_least(target)`. (A full IMP-scaled score would need the contract level + vulnerability;
+// for LINE SELECTION it does not change the answer — safety first.) Contrast `objective_matchpoints`,
+// where beating the field on overtricks can be worth risking the contract.
+objective_imps :: proc(target: int) -> Objective {
+	return objective_at_least(target)
+}
+
 // Expected tricks: value = E[total]. A linear goal — no cross-suit interaction, so the best
 // combination is just the best-mean line in each suit and the adaptive DP equals the fixed one.
 objective_expected_tricks :: proc() -> Objective {
@@ -147,12 +157,11 @@ best_fixed_combination :: proc(north, south: norn.Hand_Summary, obj: Objective) 
 	return best
 }
 
-// The adaptive optimum: the residual-target DP value. Suits are played in `DISPLAY_SUITS` order and
-// each suit's line may depend on the tricks already taken. `h(i, a) = max_L sum_b P_L(b) h(i+1, a+b)`,
-// `h(4, a) = obj[a]`. Always >= `best_fixed_combination`'s value (adapting can only help).
-optimal_adaptive_value :: proc(north, south: norn.Hand_Summary, obj: Objective) -> f64 {
-	cand := gather_candidates(north, south, context.temp_allocator)
-
+// The residual-target DP over a fixed candidate set: `h(i, a) = max_L sum_b P_L(b) h(i+1, a+b)`,
+// `h(4, a) = obj[a]`, answer `h(0, 0)`. Each suit's line may depend on the tricks already taken
+// (adaptive), so this is >= any fixed line-per-suit combination.
+@(private)
+dp_value :: proc(cand: [4][]Line_Result, obj: Objective) -> f64 {
 	h := ([RANKS + 1]f64)(obj) // h(4, a) = w[a]
 	for i := 3; i >= 0; i -= 1 {
 		next: [RANKS + 1]f64
@@ -174,4 +183,23 @@ optimal_adaptive_value :: proc(north, south: norn.Hand_Summary, obj: Objective) 
 		h = next
 	}
 	return h[0]
+}
+
+// The adaptive optimum for one objective (gathers candidates, then runs the DP).
+optimal_adaptive_value :: proc(north, south: norn.Hand_Summary, obj: Objective) -> f64 {
+	cand := gather_candidates(north, south, context.temp_allocator)
+	return dp_value(cand, obj)
+}
+
+// The whole "best achievable P(>= t)" curve for t = 0..13 — the adaptive optimum of the make objective
+// at every target, computed with ONE candidate gather. `curve[t]` is the best chance of taking AT LEAST
+// `t` total tricks a blind declarer can arrange (>= the tail of any fixed combination). Monotone
+// non-increasing, `curve[0] = 1`. This is the objective/DP result the card page surfaces.
+adaptive_at_least_curve :: proc(north, south: norn.Hand_Summary) -> [RANKS + 1]f64 {
+	cand := gather_candidates(north, south, context.temp_allocator)
+	res: [RANKS + 1]f64
+	for t in 0 ..= RANKS {
+		res[t] = dp_value(cand, objective_at_least(t))
+	}
+	return res
 }

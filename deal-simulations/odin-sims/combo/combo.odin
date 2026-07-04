@@ -557,6 +557,68 @@ write_suits_json :: proc(b: ^strings.Builder, a: ^Deal_Analysis) {
 	strings.write_byte(b, '}')
 }
 
+// The Phase-2 ACHIEVABLE per-suit distributions, same JSON shape as `write_suits_json` but each suit's
+// `p[k]` comes from the best fixed single-dummy LINE by mean (`best_line_by_mean`, brick 2). Where
+// `write_suits_json` is the double-dummy CEILING (census, hindsight), this is a concrete blind line a
+// declarer can actually adopt; the card page shows both so the gap (the double-dummy tax) is visible.
+// (The optimal search `sd_optimal_distribution` is only better on long holdings — rare on a random
+// deal — and much slower, so the render path uses the candidate best-line, coherent with the DP curve.)
+write_suits_json_sd :: proc(b: ^strings.Builder, north, south: norn.Hand_Summary) {
+	keys := [4]struct {
+		suit: norn.Suit,
+		key:  string,
+	}{{.Spades, "s"}, {.Hearts, "h"}, {.Diamonds, "d"}, {.Clubs, "c"}}
+
+	strings.write_byte(b, '{')
+	for e, i in keys {
+		if i > 0 {
+			strings.write_byte(b, ',')
+		}
+		fmt.sbprintf(b, `"%s":[`, e.key)
+		best := best_line_by_mean(north.suits[e.suit], south.suits[e.suit])
+		for k in 0 ..= RANKS {
+			if k > 0 {
+				strings.write_byte(b, ',')
+			}
+			write_prob(b, best.dist.p[k])
+		}
+		strings.write_byte(b, ']')
+	}
+	strings.write_byte(b, '}')
+}
+
+// Write the per-suit RECOMMENDED blind line names as a JSON array `["s","h","d","c"]` (the best fixed
+// single-dummy line by mean per suit — `best_line_by_mean`, brick 2). Same suit order s,h,d,c as the
+// distribution blobs, so the card page can label each suit row with how to play it.
+write_suits_lines_json :: proc(b: ^strings.Builder, north, south: norn.Hand_Summary) {
+	keys := [4]struct {
+		suit: norn.Suit,
+		key:  string,
+	}{{.Spades, "s"}, {.Hearts, "h"}, {.Diamonds, "d"}, {.Clubs, "c"}}
+
+	strings.write_byte(b, '[')
+	for e, i in keys {
+		if i > 0 {
+			strings.write_byte(b, ',')
+		}
+		best := best_line_by_mean(north.suits[e.suit], south.suits[e.suit])
+		fmt.sbprintf(b, `"%s"`, best.name)
+	}
+	strings.write_byte(b, ']')
+}
+
+// Write a 0..13 curve (e.g. the adaptive P(>= t) make curve) as a compact JSON array `[c0,...,c13]`.
+write_curve_json :: proc(b: ^strings.Builder, curve: [RANKS + 1]f64) {
+	strings.write_byte(b, '[')
+	for k in 0 ..= RANKS {
+		if k > 0 {
+			strings.write_byte(b, ',')
+		}
+		write_prob(b, curve[k])
+	}
+	strings.write_byte(b, ']')
+}
+
 // A single probability as a compact JSON number: bare "0" for the (common) exact zeros, else the
 // shortest round-trippable form (`%g`). Values are all finite in [0,1], so this is always valid JSON.
 @(private)
@@ -615,7 +677,8 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 	// emitted below
 	}
 
-	a := analyse_deal_ns(board)
+	ds := norn.summarize_deal(board)
+	a := analyse_ns(ds[.North], ds[.South])
 
 	switch format {
 	case .Html_Handviewer:
@@ -628,12 +691,35 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		strings.write_string(builder, "</pre></div>")
 	case .Html_Cards:
 		// A `.combo` sibling after the `.compass` (and the dd `.par`). The card page's carousel script
-		// pulls every sibling up to the next board into the slide. We emit ONLY the raw distributions
-		// (as a `data-suits` JSON blob); the page's script convolves them and renders the interactive
-		// trick table with an adjustable P(>= target). Nothing is baked server-side here.
-		strings.write_string(builder, `<div class="combo" data-suits='`)
+		// pulls every sibling up to the next board into the slide. We emit, for BOTH partnerships
+		// (the page can flip N/S <-> E/W), three JSON blobs each:
+		//   data-{ns,ew}      = per-suit double-dummy CENSUS p[k]     (the ceiling / hindsight)
+		//   data-{ns,ew}-sd   = per-suit achievable single-dummy line p[k]  (a real blind line)
+		//   data-{ns,ew}-atl  = the adaptive optimum P(>= t) make curve (brick-4 DP over candidate lines)
+		// The page convolves the per-suit blobs and shows the CEILING vs ACHIEVABLE (the gap is the
+		// double-dummy tax), with the ADAPTIVE curve driving the "P(>= target)" readouts. Nothing baked.
+		ew := analyse_ns(ds[.East], ds[.West])
+		ns_atl := adaptive_at_least_curve(ds[.North], ds[.South])
+		ew_atl := adaptive_at_least_curve(ds[.East], ds[.West])
+
+		strings.write_string(builder, `<div class="combo" data-ns='`)
 		write_suits_json(builder, &a)
+		strings.write_string(builder, `' data-ns-sd='`)
+		write_suits_json_sd(builder, ds[.North], ds[.South])
+		strings.write_string(builder, `' data-ns-atl='`)
+		write_curve_json(builder, ns_atl)
+		strings.write_string(builder, `' data-ns-lines='`)
+		write_suits_lines_json(builder, ds[.North], ds[.South])
+		strings.write_string(builder, `' data-ew='`)
+		write_suits_json(builder, &ew)
+		strings.write_string(builder, `' data-ew-sd='`)
+		write_suits_json_sd(builder, ds[.East], ds[.West])
+		strings.write_string(builder, `' data-ew-atl='`)
+		write_curve_json(builder, ew_atl)
+		strings.write_string(builder, `' data-ew-lines='`)
+		write_suits_lines_json(builder, ds[.East], ds[.West])
 		strings.write_string(builder, `'></div>`)
+		free_all(context.temp_allocator)
 	case .Pretty:
 		table := format_analysis(&a, 0, context.temp_allocator)
 		strings.write_string(builder, "\n")
