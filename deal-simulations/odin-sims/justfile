@@ -95,6 +95,15 @@ freq trials="1000000" *args: mktarget_dirs
 bench *args: mktarget_dirs
 	odin run bench.odin -file {{norn}} -o:speed -microarch:native {{args}}
 
+# END-TO-END benchmark of ONE scenario's full pipeline (generate + DD filter + dd/combo annotate +
+# render), the compute behind `sim -S slam-makes-dd --count 48 --format html-cards --dd`, minus the file
+# write. Links DDS like sim. Knobs via -define, e.g.:
+#   just bench-e2e                                   (slam-makes-dd, count 48, 3 iters)
+#   just bench-e2e '-define:E2E_COUNT=24' '-define:E2E_ITERS=5'
+#   just bench-e2e '-define:COMBO_THREADS=false'     (time the serial combo path)
+bench-e2e *args: mktarget_dirs
+	odin run bench_e2e.odin -file {{norn}} {{dds}} -o:speed -microarch:native {{args}}
+
 # run the bidding-system unit tests
 test *args: mktarget_dirs
 	odin test bidding {{norn}} -debug -file -microarch:native -show-timings -out:target/debug/test-bidding.exe {{args}}

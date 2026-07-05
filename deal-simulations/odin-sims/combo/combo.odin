@@ -164,7 +164,9 @@ package combo
 
 import "base:intrinsics"
 import "core:fmt"
+import "core:mem"
 import "core:strings"
+import "core:thread"
 
 import "norn:norn"
 
@@ -173,6 +175,11 @@ import "norn:norn"
 // exactly the encoding of `norn.Hand_Summary.suits[suit]`, so NS holdings drop straight in.
 RANKS :: 13
 FULL_SUIT :: u16(1 << RANKS) - 1 // 0x1FFF: all 13 ranks present
+
+// Fan the four independent per-partnership work units of `annotate(.Html_Cards)` out across worker
+// threads (see `annotate`). Compile-time toggle: `-define:COMBO_THREADS=false` forces the serial path,
+// which must produce byte-identical output — the parity check for the threaded path.
+COMBO_THREADS :: #config(COMBO_THREADS, true)
 
 // Seat indices into a `[4]u16` per-suit layout, matching `norn.Seat` backing values exactly
 // (North=0, East=1, South=2, West=3, clockwise). NS = the even seats, EW = the odd ones.
@@ -899,13 +906,87 @@ sd_joint_total_of :: proc(ps: ^Partnership_Sd) -> [RANKS + 1]f64 {
 	return joint_total(tables)
 }
 
+// --- Parallel per-partnership work units (see `annotate`) --------------------------------------
+//
+// `annotate(.Html_Cards)` needs four things that share NO mutable state and can run at the same time:
+// the double-dummy CENSUS for each partnership (`analyse_ns`, NS and EW) and the single-dummy BUNDLE for
+// each (gather + best line + SD total + make curve). Every one reads only its two hand summaries plus the
+// read-only `g_binom` table, and writes only its own result — so we hand three of them to worker threads
+// and run the fourth on the calling thread. The results are all plain VALUES (fixed arrays; line names
+// are static string literals), so nothing points into a worker's scratch arena and the join hands the
+// whole result back safely. See PERFORMANCE.md §9.
+
+// Everything the card page's single-dummy blobs need for ONE partnership, all by value (no pointers into
+// the transient joint tables the worker allocated and freed).
+@(private)
+Sd_Bundle :: struct {
+	best_marg: [4]Suit_Trick_Dist, // per-suit best-line marginal → data-*-sd
+	best_name: [4]string, // per-suit recommended line name → data-*-lines / -tips
+	totsd:     [RANKS + 1]f64, // achievable single-dummy combined total → data-*-totsd
+	atl:       [RANKS + 1]f64, // adaptive P(>= t) make curve → data-*-atl
+}
+
+// Compute a partnership's whole single-dummy bundle: gather the candidate joint tables (Phase-2), pick the
+// best line per suit, and derive the SD total and the adaptive make curve. Allocates the transient tables
+// on `context.temp_allocator`; the RESULT copies out by value, so the caller is free to reset that arena
+// afterwards. Pure (no shared state) — safe to run on any thread with its own context.
+@(private)
+sd_bundle :: proc(north, south: norn.Hand_Summary) -> Sd_Bundle {
+	ps := build_partnership_sd(north, south, context.temp_allocator)
+	out: Sd_Bundle
+	out.best_marg = ps.best_marg
+	for i in 0 ..< 4 {
+		out.best_name[i] = ps.cand[i][ps.best_idx[i]].name
+	}
+	out.totsd = sd_joint_total_of(&ps)
+	out.atl = adaptive_curve_from(ps.cand)
+	return out
+}
+
+// Worker plumbing: a task carries its two input hands in and its result out; the worker proc reads
+// `thread.data` (a `^*_Task`), fills `.out`, and releases its own scratch arena before exiting.
+@(private)
+Census_Task :: struct {
+	north, south: norn.Hand_Summary,
+	out:          Deal_Analysis,
+}
+@(private)
+Sd_Task :: struct {
+	north, south: norn.Hand_Summary,
+	out:          Sd_Bundle,
+}
+
+@(private)
+census_worker :: proc(t: ^thread.Thread) {
+	task := (^Census_Task)(t.data)
+	// `analyse_ns` allocates only heap maps (freed internally) and stack values — no temp allocator use,
+	// so there is nothing thread-local to set up or release here.
+	task.out = analyse_ns(task.north, task.south)
+}
+
+@(private)
+sd_worker :: proc(t: ^thread.Thread) {
+	task := (^Sd_Task)(t.data)
+	// Point `context.temp_allocator` at a small arena backed by THIS worker's stack, rather than the
+	// thread's default temp arena. The only temp allocation is the candidate joint-table slices (~32 KB —
+	// the memo maps live on the heap), so 256 KB is ample. Being stack memory it is reclaimed when this
+	// proc returns, so a freshly-spawned worker leaves nothing behind — no per-thread temp arena to leak.
+	// `= ---` leaves the backing uninitialised (no 256 KB zeroing per spawn); arena allocations zero their
+	// own returned memory as needed.
+	backing: [256 * 1024]u8 = ---
+	arena: mem.Arena
+	mem.arena_init(&arena, backing[:])
+	context.temp_allocator = mem.arena_allocator(&arena)
+	task.out = sd_bundle(task.north, task.south)
+}
+
 // The Phase-2 ACHIEVABLE per-suit distributions, same JSON shape as `write_suits_json` but each suit's
 // `p[k]` is the best fixed single-dummy LINE by mean (brick 2), read from precomputed `ps.best_marg`.
 // Where `write_suits_json` is the double-dummy CEILING (census, hindsight), this is a concrete blind line
 // a declarer can actually adopt; the card page shows both so the gap (the double-dummy tax) is visible.
 // (The optimal search `sd_optimal_distribution` is only better on long holdings — rare on a random
 // deal — and much slower, so the render path uses the candidate best-line, coherent with the DP curve.)
-write_suits_json_sd :: proc(b: ^strings.Builder, ps: ^Partnership_Sd) {
+write_suits_json_sd :: proc(b: ^strings.Builder, sd: ^Sd_Bundle) {
 	keys := [4]string{"s", "h", "d", "c"}
 
 	strings.write_byte(b, '{')
@@ -914,7 +995,7 @@ write_suits_json_sd :: proc(b: ^strings.Builder, ps: ^Partnership_Sd) {
 			strings.write_byte(b, ',')
 		}
 		fmt.sbprintf(b, `"%s":[`, key)
-		p := ps.best_marg[i].p
+		p := sd.best_marg[i].p
 		for k in 0 ..= RANKS {
 			if k > 0 {
 				strings.write_byte(b, ',')
@@ -929,14 +1010,13 @@ write_suits_json_sd :: proc(b: ^strings.Builder, ps: ^Partnership_Sd) {
 // Write the per-suit RECOMMENDED blind line names as a JSON array `["s","h","d","c"]` (the best fixed
 // single-dummy line by mean per suit — `best_line_by_mean`, brick 2). Same suit order s,h,d,c as the
 // distribution blobs, so the card page can label each suit row with how to play it.
-write_suits_lines_json :: proc(b: ^strings.Builder, ps: ^Partnership_Sd) {
+write_suits_lines_json :: proc(b: ^strings.Builder, sd: ^Sd_Bundle) {
 	strings.write_byte(b, '[')
 	for i in 0 ..< 4 {
 		if i > 0 {
 			strings.write_byte(b, ',')
 		}
-		name := ps.cand[i][ps.best_idx[i]].name
-		fmt.sbprintf(b, `"%s"`, name)
+		fmt.sbprintf(b, `"%s"`, sd.best_name[i])
 	}
 	strings.write_byte(b, ']')
 }
@@ -1084,7 +1164,7 @@ describe_finesse :: proc(
 // with its recommended line (`best_line_by_mean`). The card page shows these as hover tooltips.
 write_suits_tips_json :: proc(
 	b: ^strings.Builder,
-	ps: ^Partnership_Sd,
+	sd: ^Sd_Bundle,
 	north, south: norn.Hand_Summary,
 ) {
 	strings.write_byte(b, '[')
@@ -1092,8 +1172,7 @@ write_suits_tips_json :: proc(
 		if i > 0 {
 			strings.write_byte(b, ',')
 		}
-		name := ps.cand[i][ps.best_idx[i]].name
-		desc := describe_suit_line(north.suits[suit], south.suits[suit], name)
+		desc := describe_suit_line(north.suits[suit], south.suits[suit], sd.best_name[i])
 		// JSON string; the narration contains no quotes/backslashes, but escape defensively.
 		strings.write_byte(b, '"')
 		for c in transmute([]u8)desc {
@@ -1182,10 +1261,10 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 	}
 
 	ds := norn.summarize_deal(board)
-	a := analyse_ns(ds[.North], ds[.South])
 
 	switch format {
 	case .Html_Handviewer:
+		a := analyse_ns(ds[.North], ds[.South])
 		table := format_analysis(&a, 0, context.temp_allocator)
 		strings.write_string(
 			builder,
@@ -1206,17 +1285,55 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		// (`joint_total`: East holds 13, tricks capped at 13) — census and single-dummy. The page uses
 		// these directly instead of convolving the per-suit marginals client-side (which was independent,
 		// so length-inconsistent). Per-suit `-sd`/`-atl`/`-lines`/`-tips` are unchanged.
-		ew := analyse_ns(ds[.East], ds[.West])
+		// The four heavy, independent work units (see the `Sd_Bundle` / worker section above): the census
+		// for each partnership and the single-dummy bundle for each. Under `COMBO_THREADS` three run on
+		// worker threads while this thread runs the fourth (NS census), then we join; otherwise all four
+		// run serially. Either way the results are plain values, so the writers below are identical.
+		ns_c := Census_Task {
+			north = ds[.North],
+			south = ds[.South],
+		}
+		ew_c := Census_Task {
+			north = ds[.East],
+			south = ds[.West],
+		}
+		ns_s := Sd_Task {
+			north = ds[.North],
+			south = ds[.South],
+		}
+		ew_s := Sd_Task {
+			north = ds[.East],
+			south = ds[.West],
+		}
 
-		// Phase-2 dedup (PERFORMANCE.md §2): evaluate each partnership's candidate lines ONCE, then read
-		// the SD total, the make curve, and every per-suit row (sd / lines / tips) off the shared result —
-		// instead of the four writers + curve + total each re-enumerating the same splits.
-		ns_sd := build_partnership_sd(ds[.North], ds[.South], context.temp_allocator)
-		ew_sd := build_partnership_sd(ds[.East], ds[.West], context.temp_allocator)
-		ns_atl := adaptive_curve_from(ns_sd.cand)
-		ew_atl := adaptive_curve_from(ew_sd.cand)
-		ns_totsd := sd_joint_total_of(&ns_sd)
-		ew_totsd := sd_joint_total_of(&ew_sd)
+		when COMBO_THREADS {
+			t_ew_c := thread.create(census_worker)
+			t_ns_s := thread.create(sd_worker)
+			t_ew_s := thread.create(sd_worker)
+			t_ew_c.data = &ew_c
+			t_ns_s.data = &ns_s
+			t_ew_s.data = &ew_s
+			thread.start(t_ew_c)
+			thread.start(t_ns_s)
+			thread.start(t_ew_s)
+			ns_c.out = analyse_ns(ns_c.north, ns_c.south) // this thread's share of the work while the others run
+			thread.join(t_ew_c)
+			thread.join(t_ns_s)
+			thread.join(t_ew_s)
+			thread.destroy(t_ew_c)
+			thread.destroy(t_ns_s)
+			thread.destroy(t_ew_s)
+		} else {
+			ns_c.out = analyse_ns(ns_c.north, ns_c.south)
+			ew_c.out = analyse_ns(ew_c.north, ew_c.south)
+			ns_s.out = sd_bundle(ns_s.north, ns_s.south)
+			ew_s.out = sd_bundle(ew_s.north, ew_s.south)
+		}
+
+		a := ns_c.out
+		ew := ew_c.out
+		ns_sd := ns_s.out
+		ew_sd := ew_s.out
 
 		strings.write_string(builder, `<div class="combo" data-ns='`)
 		write_suits_json(builder, &a)
@@ -1225,9 +1342,9 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		strings.write_string(builder, `' data-ns-tot='`)
 		write_curve_json(builder, a.total)
 		strings.write_string(builder, `' data-ns-totsd='`)
-		write_curve_json(builder, ns_totsd)
+		write_curve_json(builder, ns_sd.totsd)
 		strings.write_string(builder, `' data-ns-atl='`)
-		write_curve_json(builder, ns_atl)
+		write_curve_json(builder, ns_sd.atl)
 		strings.write_string(builder, `' data-ns-lines='`)
 		write_suits_lines_json(builder, &ns_sd)
 		strings.write_string(builder, `' data-ns-tips='`)
@@ -1239,9 +1356,9 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		strings.write_string(builder, `' data-ew-tot='`)
 		write_curve_json(builder, ew.total)
 		strings.write_string(builder, `' data-ew-totsd='`)
-		write_curve_json(builder, ew_totsd)
+		write_curve_json(builder, ew_sd.totsd)
 		strings.write_string(builder, `' data-ew-atl='`)
-		write_curve_json(builder, ew_atl)
+		write_curve_json(builder, ew_sd.atl)
 		strings.write_string(builder, `' data-ew-lines='`)
 		write_suits_lines_json(builder, &ew_sd)
 		strings.write_string(builder, `' data-ew-tips='`)
@@ -1249,6 +1366,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		strings.write_string(builder, `'></div>`)
 		free_all(context.temp_allocator)
 	case .Pretty:
+		a := analyse_ns(ds[.North], ds[.South])
 		table := format_analysis(&a, 0, context.temp_allocator)
 		strings.write_string(builder, "\n")
 		strings.write_string(builder, table)
