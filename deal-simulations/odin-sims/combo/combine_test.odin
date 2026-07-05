@@ -51,7 +51,8 @@ test_apply_objective_is_tail :: proc(t: ^testing.T) {
 	comb := best_fixed_combination(north, south, objective_at_least(10))
 	testing.expectf(
 		t,
-		abs(apply_objective(comb.total, objective_at_least(10)) - p_at_least(comb.total, 10)) < 1e-12,
+		abs(apply_objective(comb.total, objective_at_least(10)) - p_at_least(comb.total, 10)) <
+		1e-12,
 		"objective value should equal the P(>=10) tail",
 	)
 	sum := f64(0)
@@ -69,7 +70,12 @@ test_fixed_combination_picks_finesse :: proc(t: ^testing.T) {
 	north, south := finesse_hand()
 	comb := best_fixed_combination(north, south, objective_at_least(11))
 
-	testing.expectf(t, comb.lines[.Spades] == "finesse", "spades line should be the finesse, got %q", comb.lines[.Spades])
+	testing.expectf(
+		t,
+		comb.lines[.Spades] == "finesse",
+		"spades line should be the finesse, got %q",
+		comb.lines[.Spades],
+	)
 	testing.expect(t, comb.value > 0.4, "P(>=11) via the finesse should be roughly a half")
 }
 
@@ -88,7 +94,11 @@ test_fixed_beats_baseline :: proc(t: ^testing.T) {
 		d := sd_line_distribution(north.suits[suit], south.suits[suit], line_top_down)
 		base = convolve(base, d.p)
 	}
-	testing.expectf(t, comb.value >= apply_objective(base, obj) - 1e-12, "best combination must beat baseline")
+	testing.expectf(
+		t,
+		comb.value >= apply_objective(base, obj) - 1e-12,
+		"best combination must beat baseline",
+	)
 }
 
 // A FULL 13/13 deal (both hands 4-3-3-3, scattered honours) whose four per-suit MAX trick counts sum to
@@ -129,14 +139,24 @@ test_adaptive_bounds_and_linear :: proc(t: ^testing.T) {
 	// A joint fixed baseline: fold the all-top-down line in every suit under the joint constraint.
 	base_tables: [norn.Suit]Suit_Joint_Table
 	for suit in DISPLAY_SUITS {
-		base_tables[suit] = sd_line_joint_table(north.suits[suit], south.suits[suit], line_top_down)
+		base_tables[suit] = sd_line_joint_table(
+			north.suits[suit],
+			south.suits[suit],
+			line_top_down,
+		)
 	}
 	base_total := joint_total(base_tables)
 
 	make_obj := objective_at_least(9)
 	fixed := apply_objective(base_total, make_obj)
 	adaptive := optimal_adaptive_value(north, south, make_obj)
-	testing.expectf(t, adaptive >= fixed - 1e-12, "adaptive %.4f must be >= the fixed top-down baseline %.4f", adaptive, fixed)
+	testing.expectf(
+		t,
+		adaptive >= fixed - 1e-12,
+		"adaptive %.4f must be >= the fixed top-down baseline %.4f",
+		adaptive,
+		fixed,
+	)
 
 	// For E[tricks] with no cap, the joint adaptive optimum equals the sum over suits of the best line's
 	// mean tricks (linearity of expectation; the joint length constraint reweights but does not shift any
@@ -146,12 +166,20 @@ test_adaptive_bounds_and_linear :: proc(t: ^testing.T) {
 	for suit in DISPLAY_SUITS {
 		best := f64(0)
 		for line in candidate_lines() {
-			m := expected_tricks(sd_line_distribution(north.suits[suit], south.suits[suit], line).p)
+			m := expected_tricks(
+				sd_line_distribution(north.suits[suit], south.suits[suit], line).p,
+			)
 			best = max(best, m)
 		}
 		best_mean_sum += best
 	}
-	testing.expectf(t, abs(adaptive_et - best_mean_sum) < 1e-9, "for E[tricks], adaptive %.6f should equal the sum of best-mean lines %.6f", adaptive_et, best_mean_sum)
+	testing.expectf(
+		t,
+		abs(adaptive_et - best_mean_sum) < 1e-9,
+		"for E[tricks], adaptive %.6f should equal the sum of best-mean lines %.6f",
+		adaptive_et,
+		best_mean_sum,
+	)
 }
 
 // The card-page make curve (`adaptive_at_least_curve`, the joint adaptive optimum at every target) is a
@@ -166,8 +194,21 @@ test_adaptive_curve_valid :: proc(t: ^testing.T) {
 	testing.expectf(t, abs(curve[0] - 1) < 1e-9, "curve[0] must be 1, got %.6f", curve[0])
 	prev := curve[0]
 	for k in 1 ..= RANKS {
-		testing.expectf(t, curve[k] >= -1e-12 && curve[k] <= 1 + 1e-12, "curve[%d] = %.6f out of [0,1]", k, curve[k])
-		testing.expectf(t, curve[k] <= prev + 1e-12, "curve not monotone at k=%d (%.6f > %.6f)", k, curve[k], prev)
+		testing.expectf(
+			t,
+			curve[k] >= -1e-12 && curve[k] <= 1 + 1e-12,
+			"curve[%d] = %.6f out of [0,1]",
+			k,
+			curve[k],
+		)
+		testing.expectf(
+			t,
+			curve[k] <= prev + 1e-12,
+			"curve not monotone at k=%d (%.6f > %.6f)",
+			k,
+			curve[k],
+			prev,
+		)
 		prev = curve[k]
 	}
 }
@@ -184,5 +225,10 @@ test_matchpoints_in_unit_range :: proc(t: ^testing.T) {
 		field = convolve(field, suit_trick_distribution(north.suits[suit], south.suits[suit]).p)
 	}
 	comb := best_fixed_combination(north, south, objective_matchpoints(field))
-	testing.expectf(t, comb.value >= -1e-12 && comb.value <= 1 + 1e-12, "matchpoint value %.4f must be in [0,1]", comb.value)
+	testing.expectf(
+		t,
+		comb.value >= -1e-12 && comb.value <= 1 + 1e-12,
+		"matchpoint value %.4f must be in [0,1]",
+		comb.value,
+	)
 }

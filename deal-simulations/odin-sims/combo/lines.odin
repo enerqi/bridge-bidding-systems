@@ -90,7 +90,9 @@ finesse_insert :: proc(v: Sd_View) -> int {
 // its opposite is the weaker honour hand `line_finesse_other` attacks.
 @(private)
 strong_honour_seat :: proc(north, south: u16) -> int {
-	return SEAT_N if (north != 0 && (south == 0 || highest_rank(north) >= highest_rank(south))) else SEAT_S
+	return(
+		SEAT_N if (north != 0 && (south == 0 || highest_rank(north) >= highest_rank(south))) else SEAT_S \
+	)
 }
 
 // `line_finesse` — lead low toward the honour hand and insert the cheapest card that beats the
@@ -98,8 +100,8 @@ strong_honour_seat :: proc(north, south: u16) -> int {
 // cashing them; with nothing it just loses low. A well-defined blind line, the natural complement to
 // `line_top_down`.
 line_finesse :: Sd_Line {
-	name    = "finesse",
-	lead    = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
+	name = "finesse",
+	lead = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
 		// Honour hand = the seat holding the single highest NS card; lead low toward it.
 		return finesse_lead_toward(north, south, strong_honour_seat(north, south))
 	},
@@ -111,8 +113,8 @@ line_finesse :: Sd_Line {
 // (and the Pareto frontier dedups it); on a two-way it is a genuinely different guess, so exposing both
 // directions lets the DP pick the better one — and on a true two-way it honestly surfaces the guess.
 line_finesse_other :: Sd_Line {
-	name    = "finesse-other",
-	lead    = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
+	name = "finesse-other",
+	lead = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
 		hon := strong_honour_seat(north, south)
 		other := SEAT_S if hon == SEAT_N else SEAT_N
 		return finesse_lead_toward(north, south, other)
@@ -125,8 +127,8 @@ line_finesse_other :: Sd_Line {
 // entry for a repeated finesse — a manoeuvre no single-phase line can express. Uses the threaded
 // `trick_no` to switch phases (round 0 = duck, rounds >= 1 = finesse).
 line_duck_then_finesse :: Sd_Line {
-	name    = "duck-then-finesse",
-	lead    = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
+	name = "duck-then-finesse",
+	lead = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
 		if trick_no == 0 {
 			// First round: duck — lead low from a non-void hand.
 			if south != 0 {
@@ -148,8 +150,8 @@ line_duck_then_finesse :: Sd_Line {
 // once can strip the defenders' small cards / preserve a stopper; whether it gains is holding-specific,
 // which is exactly why it is a distinct candidate for the frontier to keep or discard.
 line_duck_one :: Sd_Line {
-	name    = "duck-one",
-	lead    = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
+	name = "duck-one",
+	lead = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
 		if played == 0 {
 			// First trick of the suit: lead low (duck) from a non-void hand.
 			if south != 0 {
@@ -257,7 +259,10 @@ best_line :: proc(north, south: u16, target: int) -> Line_Result {
 		if key > best_key + 1e-12 || (abs(key - best_key) <= 1e-12 && mean > best_mean) {
 			best_key = key
 			best_mean = mean
-			best = Line_Result{name = line.name, dist = dist}
+			best = Line_Result {
+				name = line.name,
+				dist = dist,
+			}
 		}
 	}
 	return best

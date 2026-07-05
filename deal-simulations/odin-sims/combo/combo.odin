@@ -363,14 +363,139 @@ dd_tricks :: proc(north, east, south, west: u16) -> int {
 	return suit_dd_tricks(layout, &memo)
 }
 
+// --- Equivalence-class split enumeration ------------------------------------------------------
+//
+// WHY THIS EXISTS (read before the code). To turn one suit into a trick distribution we must consider
+// every way the opponents' missing cards could be split between East and West and solve each — that is
+// the `east` loop the callers below run. With `m` missing cards there are 2^m such splits, and for a
+// 6- or 7-card suit that inner solve dominated the whole program's runtime (see PERFORMANCE.md §4.2).
+//
+// The saving insight is that MOST OF THOSE SPLITS PLAY OUT IDENTICALLY. A spot card in the opponents'
+// hands only matters for whether it beats one of OUR cards (or loses to one). If we hold NO card ranked
+// between two of the missing cards, then those two missing cards are INTERCHANGEABLE: it makes no
+// difference to the tricks taken which of the two East holds and which West holds — swapping them just
+// relabels cards that behave the same. So the missing cards fall into "equivalence BLOCKS": a block is a
+// run of missing ranks sitting next to each other with none of OUR cards wedged in between.
+//
+// Worked example — we hold A K Q 5 4 3 2 (so the opponents are missing J T 9 8 7 6). We have nothing
+// between the 6 and the J (our next cards up and down are the Q and the 5), so all six missing cards
+// J T 9 8 7 6 form ONE block: for trick-taking they are six identical tokens. What actually matters is
+// only HOW MANY of them East holds (0..6), not which ones. That turns 2^6 = 64 distinct splits into just
+// 7 cases. We solve one representative layout per case and multiply its result by how many of the 64
+// real splits it stands for. When there are several blocks (our spot cards interleave the opponents'),
+// we enumerate the count in each block independently — the product of the per-block choices.
+//
+// EXACTNESS. Every one of the 2^m real splits maps to exactly one (per-block count) pattern; all the
+// real splits behind a pattern give the SAME number of tricks AND leave East the same total length `a`
+// (so they carry the same vacant-space weight the callers apply). Counting a pattern `mult` times
+// therefore reproduces the old per-split sum term for term — the output is byte-identical, and `mult` is
+// a whole number so the arithmetic is exact. Worst case (our cards interleave EVERY gap, so every block
+// has size 1) there is one pattern per split and `mult` is always 1: identical to the old loop, never
+// slower. Best case (one big block) it collapses spectacularly, which is the common honour-heavy shape.
+//
+// `Split_Iter` walks the patterns one at a time (no allocation). Used by BOTH phases: `suit_joint_table`
+// (Phase-1 census) and `sd_line_joint_table` / `sd_line_distribution` (Phase-2 fixed line).
+@(private)
+Split_Iter :: struct {
+	blocks: [RANKS]u16, // each block's rank mask (a block = a run of adjacent missing cards, no NS card between)
+	sizes:  [RANKS]int, // how many cards are in each block
+	counts: [RANKS]int, // the pattern currently being visited: how many of each block's cards East holds
+	nblk:   int, // number of blocks
+	done:   bool, // set once every pattern has been visited
+}
+
+// Split the opponents' `missing` cards (= FULL_SUIT & ~ns) into equivalence blocks. Because `missing` has
+// a bit set for each opponent card and clear for each of OUR cards, a block is exactly a maximal run of
+// adjacent set bits (a stretch of missing ranks with no NS card — a cleared bit — interrupting it). A
+// void suit (`missing == 0`) yields zero blocks: one trivial pattern (East holds nothing), handled by
+// `split_iter_next`.
+@(private)
+split_iter_init :: proc(missing: u16) -> Split_Iter {
+	it: Split_Iter
+	m := missing
+	for m != 0 {
+		lo := int(intrinsics.count_trailing_zeros(m))
+		hi := lo
+		for hi + 1 < RANKS && (m & rank_bit(hi + 1)) != 0 {
+			hi += 1
+		}
+		mask: u16
+		for r in lo ..= hi {
+			mask |= rank_bit(r)
+		}
+		it.blocks[it.nblk] = mask
+		it.sizes[it.nblk] = hi - lo + 1
+		it.nblk += 1
+		m &= ~mask
+	}
+	return it
+}
+
+// The `k` highest cards of `mask` (callers guarantee k ≤ how many cards `mask` holds). Since a block's
+// cards are interchangeable, ANY k of them is a valid stand-in for "East holds k cards of this block";
+// we always pick the top k so the representative layout is built the same way every time.
+@(private)
+top_k_bits :: proc "contextless" (mask: u16, k: int) -> u16 {
+	out: u16
+	m := mask
+	for _ in 0 ..< k {
+		r := highest_rank(m)
+		out |= rank_bit(r)
+		m &= ~rank_bit(r)
+	}
+	return out
+}
+
+// Hand back the next pattern, or `ok == false` once they are all done. For the pattern we return a
+// representative East holding (the top `counts[b]` cards of each block), East's total length `a`, and
+// `mult` = how many of the real 2^m splits this one pattern stands for. `mult` is the product over blocks
+// of C(block size, East's count in it): the number of ways to choose WHICH cards of each block go to East
+// (all giving the same tricks). West simply gets whatever of `missing` East did not take.
+@(private)
+split_iter_next :: proc(it: ^Split_Iter) -> (east: u16, a: int, mult: f64, ok: bool) {
+	if it.done {
+		return 0, 0, 0, false
+	}
+	mult = 1
+	for b in 0 ..< it.nblk {
+		k := it.counts[b]
+		east |= top_k_bits(it.blocks[b], k)
+		a += k
+		mult *= g_binom[it.sizes[b]][k]
+	}
+	ok = true
+
+	// Step to the next pattern the way a car odometer rolls over: bump the first block's count; if it
+	// passed that block's size, reset it to 0 and carry into the next block; and so on. When the carry
+	// runs off the last block every combination has been visited. (A void suit has no blocks, so the very
+	// first step lands here and finishes after the single trivial pattern above.)
+	i := 0
+	for {
+		if i == it.nblk {
+			it.done = true
+			break
+		}
+		it.counts[i] += 1
+		if it.counts[i] <= it.sizes[i] {
+			break
+		}
+		it.counts[i] = 0
+		i += 1
+	}
+	return
+}
+
 // --- Per-suit joint table over all E/W splits -------------------------------------------------
 
 // The JOINT per-suit table: `count[a][k]` = the number of E/W splits in this suit where East holds
 // exactly `a` of the opponents' cards AND the double-dummy result is exactly `k` tricks. These are RAW
-// submask counts (each split weight 1), NOT vacant-space-weighted — the cross-suit combinatorics are
-// supplied later by `joint_total`, which folds the four suits under the true constraint "East holds 13
-// cards total". Keeping the East-length axis `a` (rather than collapsing straight to `p[k]`) is exactly
-// what lets that constraint be enforced across suits — the fix for the independence bias the old
+// concrete-split counts (a plain tally of the 2^m possible splits, each weight 1), NOT vacant-space-
+// weighted — the cross-suit combinatorics are supplied later by `joint_total`, which folds the four
+// suits under the true constraint "East holds 13 cards total". (The table is now filled via the
+// equivalence-class enumeration — see `Split_Iter` — so each entry is bumped by a whole pattern's
+// `mult` at once rather than one split at a time, but the totals are identical: still the exact split
+// count.) Keeping the East-length axis `a` (rather than collapsing straight to `p[k]`) is exactly what
+// lets that constraint be enforced across suits — the fix for the independence bias the old
 // per-suit-marginal-then-convolve path carried (see COMBO_ANALYSER.md joint-model notes).
 Suit_Joint_Table :: struct {
 	count:  [RANKS + 1][RANKS + 1]f64, // [east_len a][tricks k], raw split count
@@ -388,7 +513,10 @@ Suit_Joint_Table :: struct {
 // share one backing allocation instead of an alloc+free each. This proc `clear`s it on entry (each suit's
 // Suit_Layout space is independent — different suits share rank positions numerically, so entries must NOT
 // carry over). `nil` → make a throwaway internally (standalone callers). See `analyse_ns`.
-suit_joint_table :: proc(north, south: u16, memo_in: ^map[Suit_Layout]int = nil) -> Suit_Joint_Table {
+suit_joint_table :: proc(
+	north, south: u16,
+	memo_in: ^map[Suit_Layout]int = nil,
+) -> Suit_Joint_Table {
 	ns := north | south // NS's combined holding in the suit (the two hands are disjoint)
 	ns_len := card_count(ns)
 
@@ -423,12 +551,15 @@ suit_joint_table :: proc(north, south: u16, memo_in: ^map[Suit_Layout]int = nil)
 	}
 	defer if memo_in == nil {delete(local)}
 
-	// Enumerate every submask of `missing` as East's holding (West gets the complement): visits `missing`
-	// first and 0 last, 2^m masks in all.
-	east := missing
+	// Enumerate equivalence-class patterns of East's holding (one representative per pattern, weighted by
+	// `mult` = the concrete splits it stands for) instead of all 2^m submasks. See `Split_Iter`.
+	it := split_iter_init(missing)
 	for {
+		east, a, mult, ok := split_iter_next(&it)
+		if !ok {
+			break
+		}
 		west := missing & ~east
-		a := card_count(east)
 
 		layout: Suit_Layout
 		layout[SEAT_N] = north
@@ -437,12 +568,7 @@ suit_joint_table :: proc(north, south: u16, memo_in: ^map[Suit_Layout]int = nil)
 		layout[SEAT_W] = west
 
 		tricks := suit_dd_tricks(layout, memo)
-		tbl.count[a][tricks] += 1
-
-		if east == 0 {
-			break
-		}
-		east = (east - 1) & missing
+		tbl.count[a][tricks] += mult
 	}
 	return tbl
 }
@@ -639,11 +765,7 @@ expected_tricks :: proc(p: [RANKS + 1]f64) -> f64 {
 // Render an analysis as a text table: one row per suit giving P(exactly k tricks) as percentages,
 // then the combined total row and the cumulative P(>= k) tail. Caller owns the returned string
 // (allocated from `allocator`). `target` is highlighted in the tail line.
-format_analysis :: proc(
-	a: ^Deal_Analysis,
-	target: int,
-	allocator := context.allocator,
-) -> string {
+format_analysis :: proc(a: ^Deal_Analysis, target: int, allocator := context.allocator) -> string {
 	b := strings.builder_make(allocator)
 
 	// Column header: trick counts 0..13.
@@ -838,7 +960,11 @@ write_cards_desc :: proc(b: ^strings.Builder, m: u16) {
 
 // Narrate the "cash from the top" plan for a holding.
 @(private)
-describe_cash :: proc(b: ^strings.Builder, combined, winners: u16, top_missing, n_win, ns_len: int) {
+describe_cash :: proc(
+	b: ^strings.Builder,
+	combined, winners: u16,
+	top_missing, n_win, ns_len: int,
+) {
 	if top_missing < 0 {
 		strings.write_string(b, "Cash from the top: ")
 		write_cards_desc(b, combined)
@@ -863,7 +989,11 @@ describe_cash :: proc(b: ^strings.Builder, combined, winners: u16, top_missing, 
 // tooltip on the card page. Best-effort: it describes the chosen heuristic (cash / finesse / duck) in
 // terms of the ACTUAL cards held. Deliberately uses NO apostrophes or double quotes (it is emitted
 // inside a single-quoted HTML attribute, as a JSON string).
-describe_suit_line :: proc(north, south: u16, line_name: string, allocator := context.temp_allocator) -> string {
+describe_suit_line :: proc(
+	north, south: u16,
+	line_name: string,
+	allocator := context.temp_allocator,
+) -> string {
 	b := strings.builder_make(allocator)
 	combined := north | south
 	ns_len := card_count(combined)
@@ -875,7 +1005,7 @@ describe_suit_line :: proc(north, south: u16, line_name: string, allocator := co
 	missing := FULL_SUIT & ~combined
 	top_missing := -1
 	for r := 12; r >= 0; r -= 1 {
-		if missing & rank_bit(r) != 0 {top_missing = r;break}
+		if missing & rank_bit(r) != 0 {top_missing = r; break}
 	}
 	winners: u16 // your cards ranking above the opponents best card
 	if top_missing < 0 {
@@ -889,7 +1019,10 @@ describe_suit_line :: proc(north, south: u16, line_name: string, allocator := co
 	case "finesse", "finesse-other":
 		describe_finesse(&b, combined, winners, top_missing, n_win, ns_len)
 	case "duck-one":
-		strings.write_string(&b, "Duck the first round: play low from both hands and let the opponents win it. Then cash your winners")
+		strings.write_string(
+			&b,
+			"Duck the first round: play low from both hands and let the opponents win it. Then cash your winners",
+		)
 		if n_win > 0 {
 			strings.write_string(&b, " (")
 			write_cards_desc(&b, winners)
@@ -897,7 +1030,10 @@ describe_suit_line :: proc(north, south: u16, line_name: string, allocator := co
 		}
 		strings.write_string(&b, ". Ducking keeps a guard and can set up your long cards.")
 	case "duck-then-finesse":
-		strings.write_string(&b, "Duck the first round (play low from both hands), then take the finesse. ")
+		strings.write_string(
+			&b,
+			"Duck the first round (play low from both hands), then take the finesse. ",
+		)
 		describe_finesse(&b, combined, winners, top_missing, n_win, ns_len)
 		strings.write_string(&b, " Ducking first keeps an entry so the finesse can be repeated.")
 	case:
@@ -911,11 +1047,15 @@ describe_suit_line :: proc(north, south: u16, line_name: string, allocator := co
 // card below the top missing rank (nothing to finesse with). Shared by the plain and compound finesse
 // cases. NO apostrophes / double quotes (single-quoted HTML attribute).
 @(private)
-describe_finesse :: proc(b: ^strings.Builder, combined, winners: u16, top_missing, n_win, ns_len: int) {
+describe_finesse :: proc(
+	b: ^strings.Builder,
+	combined, winners: u16,
+	top_missing, n_win, ns_len: int,
+) {
 	finesse_card := -1
 	if top_missing >= 0 {
 		for r := top_missing - 1; r >= 0; r -= 1 {
-			if combined & rank_bit(r) != 0 {finesse_card = r;break}
+			if combined & rank_bit(r) != 0 {finesse_card = r; break}
 		}
 	}
 	if finesse_card < 0 {
@@ -934,12 +1074,19 @@ describe_finesse :: proc(b: ^strings.Builder, combined, winners: u16, top_missin
 	strings.write_string(b, RANK_NAMES[finesse_card])
 	strings.write_string(b, ". It wins when the ")
 	strings.write_string(b, RANK_NAMES[top_missing])
-	strings.write_string(b, " sits with the opponent who plays before your high hand (about even money); if not, it loses.")
+	strings.write_string(
+		b,
+		" sits with the opponent who plays before your high hand (about even money); if not, it loses.",
+	)
 }
 
 // Emit the per-suit line NARRATIONS as a JSON array of strings (one per suit s,h,d,c), pairing each
 // with its recommended line (`best_line_by_mean`). The card page shows these as hover tooltips.
-write_suits_tips_json :: proc(b: ^strings.Builder, ps: ^Partnership_Sd, north, south: norn.Hand_Summary) {
+write_suits_tips_json :: proc(
+	b: ^strings.Builder,
+	ps: ^Partnership_Sd,
+	north, south: norn.Hand_Summary,
+) {
 	strings.write_byte(b, '[')
 	for suit, i in DISPLAY_SUITS {
 		if i > 0 {

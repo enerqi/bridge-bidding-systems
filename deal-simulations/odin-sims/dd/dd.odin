@@ -199,7 +199,11 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 // so `sides[NS]` lists the EW contract), fall back to NS's best MAKEABLE strain — the contract EW is
 // sacrificing over, i.e. the tricks NS would take. Clamped to 1..13; 9 (3NT/game) if all else fails.
 @(private)
-ns_par_target_tricks :: proc(m: ^dds.Par_Results_Master, have: bool, res: ^dds.Table_Results) -> int {
+ns_par_target_tricks :: proc(
+	m: ^dds.Par_Results_Master,
+	have: bool,
+	res: ^dds.Table_Results,
+) -> int {
 	best := 0
 	if have {
 		for i in 0 ..< m.number {
@@ -218,7 +222,8 @@ ns_par_target_tricks :: proc(m: ^dds.Par_Results_Master, have: bool, res: ^dds.T
 	if best == 0 {
 		// No NS-declared making par contract: use NS's best makeable strain (max N/S declarer tricks).
 		for strain in dds.Strain {
-			if t := int(max(res.resTable[strain][.North], res.resTable[strain][.South])); t > best {
+			if t := int(max(res.resTable[strain][.North], res.resTable[strain][.South]));
+			   t > best {
 				best = t
 			}
 		}
@@ -507,7 +512,10 @@ ns_makes :: proc(res: ^dds.Table_Results, strain: dds.Strain, need: i32) -> bool
 //     ns_makes_4h :: proc(b: norn.Deal) -> bool { return ns_makes_strain(b, .Hearts, 10) }
 // and register that in sim.odin's dd_filters. Like every DDS call it assumes single-threaded use.
 ns_makes_strain :: proc(board: norn.Deal, strain: dds.Strain, tricks: i32) -> bool {
-	return declarer_makes(board, strain, .North, tricks) || declarer_makes(board, strain, .South, tricks)
+	return(
+		declarer_makes(board, strain, .North, tricks) ||
+		declarer_makes(board, strain, .South, tricks) \
+	)
 }
 
 // SolveBoard core for `ns_makes_strain`: does `declarer`'s side take `tricks`+ in `strain`? DDS's
@@ -516,7 +524,12 @@ ns_makes_strain :: proc(board: norn.Deal, strain: dds.Strain, tricks: i32) -> bo
 // declaring side's tricks are `13 - that`. This matches `resTable[strain][declarer]` exactly. (Using
 // TARGET_FIND_MAX; a `.One` + `target` solve could early-exit but complicates the make/beat logic.)
 @(private)
-declarer_makes :: proc(board: norn.Deal, strain: dds.Strain, declarer: dds.Hand, tricks: i32) -> bool {
+declarer_makes :: proc(
+	board: norn.Deal,
+	strain: dds.Strain,
+	declarer: dds.Hand,
+	tricks: i32,
+) -> bool {
 	dl: dds.Deal
 	dl.trump = strain
 	dl.first = dds.Hand((int(declarer) + 1) % 4) // opening leader = declarer's LHO

@@ -51,7 +51,12 @@ test_opt_no_guess_equals_census :: proc(t: ^testing.T) {
 	census := suit_trick_distribution(n, s)
 
 	testing.expect(t, exact, "a running holding with few missing cards should solve exactly")
-	testing.expectf(t, abs(dist.p[6] - 1) < 1e-9, "should take exactly 6 tricks, P(6) = %v", dist.p[6])
+	testing.expectf(
+		t,
+		abs(dist.p[6] - 1) < 1e-9,
+		"should take exactly 6 tricks, P(6) = %v",
+		dist.p[6],
+	)
 	testing.expectf(
 		t,
 		abs(expected_tricks(dist.p) - expected_tricks(census.p)) < 1e-9,
@@ -75,7 +80,13 @@ test_opt_within_bounds :: proc(t: ^testing.T) {
 	cand := best_candidate_mean(n, s)
 	census := expected_tricks(suit_trick_distribution(n, s).p)
 
-	testing.expectf(t, opt >= cand - 1e-9, "optimal %.3f must be >= best candidate %.3f", opt, cand)
+	testing.expectf(
+		t,
+		opt >= cand - 1e-9,
+		"optimal %.3f must be >= best candidate %.3f",
+		opt,
+		cand,
+	)
 	testing.expectf(t, opt <= census + 1e-9, "optimal %.3f must be <= census %.3f", opt, census)
 }
 
@@ -92,7 +103,13 @@ test_opt_two_way_guess_below_census :: proc(t: ^testing.T) {
 	census := expected_tricks(suit_trick_distribution(n, s).p)
 
 	testing.expect(t, exact, "should solve exactly")
-	testing.expectf(t, census - opt > 0.02, "blind optimum %.3f should trail census %.3f by a real guess", opt, census)
+	testing.expectf(
+		t,
+		census - opt > 0.02,
+		"blind optimum %.3f should trail census %.3f by a real guess",
+		opt,
+		census,
+	)
 }
 
 // A short holding (AQ opposite xx) has too many missing cards for the exact search; it must fall back
@@ -105,9 +122,20 @@ test_opt_falls_back_on_short_holding :: proc(t: ^testing.T) {
 	for k in 0 ..= RANKS {
 		sum += dist.p[k]
 	}
-	testing.expectf(t, abs(sum - 1) < 1e-9, "fallback distribution must still sum to 1, got %v", sum)
+	testing.expectf(
+		t,
+		abs(sum - 1) < 1e-9,
+		"fallback distribution must still sum to 1, got %v",
+		sum,
+	)
 	testing.expect(t, !exact, "a 9-missing holding should exceed the budget and fall back")
 	// Whatever the path, the mean cannot exceed the double-dummy census.
 	census := expected_tricks(suit_trick_distribution(mask(.Ace, .Queen), mask(.Three, .Two)).p)
-	testing.expectf(t, expected_tricks(dist.p) <= census + 1e-9, "fallback mean %.3f must be <= census %.3f", expected_tricks(dist.p), census)
+	testing.expectf(
+		t,
+		expected_tricks(dist.p) <= census + 1e-9,
+		"fallback mean %.3f must be <= census %.3f",
+		expected_tricks(dist.p),
+		census,
+	)
 }

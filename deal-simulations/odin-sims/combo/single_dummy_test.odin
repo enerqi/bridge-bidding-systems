@@ -89,8 +89,17 @@ test_sd_never_beats_census :: proc(t: ^testing.T) {
 // right per layout) averages ~1.5. The gap is the cost of the un-taken finesse.
 @(test)
 test_sd_top_down_leaves_finesse :: proc(t: ^testing.T) {
-	sd_mean, census_mean, gap := sd_census_gap(mask(.Ace, .Queen), mask(.Three, .Two), line_top_down)
-	testing.expectf(t, sd_mean >= 1 && sd_mean < 1.05, "top-down should take ~1 trick, got %.3f", sd_mean)
+	sd_mean, census_mean, gap := sd_census_gap(
+		mask(.Ace, .Queen),
+		mask(.Three, .Two),
+		line_top_down,
+	)
+	testing.expectf(
+		t,
+		sd_mean >= 1 && sd_mean < 1.05,
+		"top-down should take ~1 trick, got %.3f",
+		sd_mean,
+	)
 	testing.expectf(t, census_mean > 1.4, "census should average > 1.4, got %.3f", census_mean)
 	testing.expectf(t, gap > 0.35, "the un-taken finesse should cost > 0.35 tricks, got %.3f", gap)
 }
@@ -131,9 +140,28 @@ test_sd_finesse_line_recovers_census :: proc(t: ^testing.T) {
 	}
 
 	fin_mean, census_mean, gap := sd_census_gap(mask(.Ace, .Queen), mask(.Three, .Two), finesse)
-	top_mean := expected_tricks(sd_line_distribution(mask(.Ace, .Queen), mask(.Three, .Two), line_top_down).p)
+	top_mean := expected_tricks(
+		sd_line_distribution(mask(.Ace, .Queen), mask(.Three, .Two), line_top_down).p,
+	)
 
-	testing.expectf(t, gap >= -1e-9 && gap < 0.01, "finesse should capture ~all the census optimum, gap = %.4f", gap)
-	testing.expectf(t, fin_mean > top_mean + 0.3, "finesse (%.3f) should beat top-down (%.3f)", fin_mean, top_mean)
-	testing.expectf(t, abs(fin_mean - census_mean) < 0.01, "finesse %.3f should ~equal census %.3f", fin_mean, census_mean)
+	testing.expectf(
+		t,
+		gap >= -1e-9 && gap < 0.01,
+		"finesse should capture ~all the census optimum, gap = %.4f",
+		gap,
+	)
+	testing.expectf(
+		t,
+		fin_mean > top_mean + 0.3,
+		"finesse (%.3f) should beat top-down (%.3f)",
+		fin_mean,
+		top_mean,
+	)
+	testing.expectf(
+		t,
+		abs(fin_mean - census_mean) < 0.01,
+		"finesse %.3f should ~equal census %.3f",
+		fin_mean,
+		census_mean,
+	)
 }

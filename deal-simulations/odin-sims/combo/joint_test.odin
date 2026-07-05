@@ -78,7 +78,14 @@ test_vacant_space_marginal_is_exact_hypergeometric :: proc(t: ^testing.T) {
 			mean += f64(a) * p
 		}
 		testing.expectf(t, abs(total - 1) < 1e-9, "m=%d: marginal sums to %.12f, want 1", m, total)
-		testing.expectf(t, abs(mean - f64(m) / 2) < 1e-9, "m=%d: mean East count %.10f, want %.10f", m, mean, f64(m) / 2)
+		testing.expectf(
+			t,
+			abs(mean - f64(m) / 2) < 1e-9,
+			"m=%d: mean East count %.10f, want %.10f",
+			m,
+			mean,
+			f64(m) / 2,
+		)
 	}
 }
 
@@ -106,7 +113,12 @@ test_mirror_deal_total_is_exact :: proc(t: ^testing.T) {
 	}
 	a := analyse_ns(north, south)
 
-	testing.expectf(t, abs(total_mass(a.total) - 1) < 1e-9, "mirror total must stay normalised, got %.12f", total_mass(a.total))
+	testing.expectf(
+		t,
+		abs(total_mass(a.total) - 1) < 1e-9,
+		"mirror total must stay normalised, got %.12f",
+		total_mass(a.total),
+	)
 	testing.expectf(
 		t,
 		abs(expected_tricks(a.total) - sum_of_suit_means(a)) < 1e-9,
@@ -125,12 +137,26 @@ test_mirror_deal_total_is_exact :: proc(t: ^testing.T) {
 // length-constrained counts normalise correctly (Sum_{d+c=13} C(13,d)C(13,c) = C(26,13), Vandermonde).
 @(test)
 test_joint_length_constraint_and_cap :: proc(t: ^testing.T) {
-	north := norn.Hand_Summary{suits = {.Spades = FULL_SUIT, .Hearts = 0, .Diamonds = 0, .Clubs = 0}}
-	south := norn.Hand_Summary{suits = {.Spades = 0, .Hearts = FULL_SUIT, .Diamonds = 0, .Clubs = 0}}
+	north := norn.Hand_Summary {
+		suits = {.Spades = FULL_SUIT, .Hearts = 0, .Diamonds = 0, .Clubs = 0},
+	}
+	south := norn.Hand_Summary {
+		suits = {.Spades = 0, .Hearts = FULL_SUIT, .Diamonds = 0, .Clubs = 0},
+	}
 	a := analyse_ns(north, south)
 
-	testing.expectf(t, abs(total_mass(a.total) - 1) < 1e-9, "total must be normalised, got %.12f", total_mass(a.total))
-	testing.expectf(t, abs(a.total[RANKS] - 1) < 1e-9, "all mass must sit on 13 tricks (cap + length constraint), p[13]=%.12f", a.total[RANKS])
+	testing.expectf(
+		t,
+		abs(total_mass(a.total) - 1) < 1e-9,
+		"total must be normalised, got %.12f",
+		total_mass(a.total),
+	)
+	testing.expectf(
+		t,
+		abs(a.total[RANKS] - 1) < 1e-9,
+		"all mass must sit on 13 tricks (cap + length constraint), p[13]=%.12f",
+		a.total[RANKS],
+	)
 }
 
 // The residual free-entry model bias, now isolated from the (fixed) length bias. A very strong NS (top
@@ -160,11 +186,26 @@ test_strong_deal_is_capped :: proc(t: ^testing.T) {
 	a := analyse_ns(north, south)
 
 	suit_means := sum_of_suit_means(a)
-	testing.expectf(t, suit_means > 13, "precondition: per-suit means should over-sum (got %.4f)", suit_means)
+	testing.expectf(
+		t,
+		suit_means > 13,
+		"precondition: per-suit means should over-sum (got %.4f)",
+		suit_means,
+	)
 	// The joint total is a genuine probability distribution (no drop, no collapse).
-	testing.expectf(t, abs(total_mass(a.total) - 1) < 1e-9, "total must stay normalised, got %.12f", total_mass(a.total))
+	testing.expectf(
+		t,
+		abs(total_mass(a.total) - 1) < 1e-9,
+		"total must stay normalised, got %.12f",
+		total_mass(a.total),
+	)
 	// Physical bound: NS never take more than 13 tricks, so E[tot] <= 13 < the over-summing per-suit means.
-	testing.expectf(t, expected_tricks(a.total) <= 13 + 1e-9, "E[tot] %.6f must not exceed 13", expected_tricks(a.total))
+	testing.expectf(
+		t,
+		expected_tricks(a.total) <= 13 + 1e-9,
+		"E[tot] %.6f must not exceed 13",
+		expected_tricks(a.total),
+	)
 	testing.expectf(
 		t,
 		expected_tricks(a.total) < suit_means - 1e-6,

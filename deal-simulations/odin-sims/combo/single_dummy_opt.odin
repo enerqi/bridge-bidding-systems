@@ -151,7 +151,13 @@ canonical_plays :: proc "contextless" (hold, others: u16) -> u16 {
 // The optimal single-dummy trick distribution for a suit, and whether it is exact. When the exact
 // search exceeds its budget (typically short NS holdings with many missing cards), this falls back to
 // the best fixed candidate line (by mean) from brick 2 and returns `exact = false`.
-sd_optimal_distribution :: proc(north, south: u16, budget := DEFAULT_OPT_BUDGET) -> (dist: Suit_Trick_Dist, exact: bool) {
+sd_optimal_distribution :: proc(
+	north, south: u16,
+	budget := DEFAULT_OPT_BUDGET,
+) -> (
+	dist: Suit_Trick_Dist,
+	exact: bool,
+) {
 	ns := north | south
 	ns_len := card_count(ns)
 
@@ -217,7 +223,10 @@ best_line_by_mean :: proc(north, south: u16) -> Line_Result {
 		mn := expected_tricks(d.p)
 		if mn > best_mean {
 			best_mean = mn
-			best = Line_Result{name = line.name, dist = d}
+			best = Line_Result {
+				name = line.name,
+				dist = d,
+			}
 		}
 	}
 	return best
@@ -297,7 +306,13 @@ opt_solve :: proc(sv: ^Opt_Solver, n, s: u16, worlds: []Opt_World) -> Vec {
 // One ply within a trick. `idx` counts seats already played (leader = idx 1). Declarer seats maximise
 // (one card for the whole belief); defender seats minimise over the card-to-world assignment.
 @(private)
-opt_trick :: proc(sv: ^Opt_Solver, n, s: u16, worlds: []Opt_World, order: [4]int, idx, win_seat, win_rank: int) -> Vec {
+opt_trick :: proc(
+	sv: ^Opt_Solver,
+	n, s: u16,
+	worlds: []Opt_World,
+	order: [4]int,
+	idx, win_seat, win_rank: int,
+) -> Vec {
 	if sv.overflow {
 		return Vec{}
 	}
@@ -355,7 +370,13 @@ opt_trick :: proc(sv: ^Opt_Solver, n, s: u16, worlds: []Opt_World, order: [4]int
 // plays; worlds that play the same rank pool into one belief for declarer's future. We enumerate every
 // assignment and keep the one with the least mean.
 @(private)
-opt_defender :: proc(sv: ^Opt_Solver, n, s: u16, worlds: []Opt_World, order: [4]int, idx, win_seat, win_rank, seat: int) -> Vec {
+opt_defender :: proc(
+	sv: ^Opt_Solver,
+	n, s: u16,
+	worlds: []Opt_World,
+	order: [4]int,
+	idx, win_seat, win_rank, seat: int,
+) -> Vec {
 	// Partition into void worlds (fixed) and active worlds (choose a card). Active count is unbounded
 	// (a solid suit has many worlds but each with one forced play); only the ASSIGNMENT PRODUCT — the
 	// number of distinct card-to-world combinations we must enumerate — is capped.
@@ -406,7 +427,25 @@ opt_defender :: proc(sv: ^Opt_Solver, n, s: u16, worlds: []Opt_World, order: [4]
 	have := false
 	best_mean := f64(0)
 
-	assign_rec(sv, n, s, order, idx, win_seat, win_rank, seat, active[:], cands[:], chosen, 0, base, have_base, &best, &have, &best_mean)
+	assign_rec(
+		sv,
+		n,
+		s,
+		order,
+		idx,
+		win_seat,
+		win_rank,
+		seat,
+		active[:],
+		cands[:],
+		chosen,
+		0,
+		base,
+		have_base,
+		&best,
+		&have,
+		&best_mean,
+	)
 	if sv.overflow {
 		return Vec{}
 	}
@@ -488,7 +527,25 @@ assign_rec :: proc(
 		r := int(intrinsics.count_trailing_zeros(m))
 		m &= m - 1
 		chosen[i] = r
-		assign_rec(sv, n, s, order, idx, win_seat, win_rank, seat, active, cands, chosen, i + 1, base, have_base, best, have, best_mean)
+		assign_rec(
+			sv,
+			n,
+			s,
+			order,
+			idx,
+			win_seat,
+			win_rank,
+			seat,
+			active,
+			cands,
+			chosen,
+			i + 1,
+			base,
+			have_base,
+			best,
+			have,
+			best_mean,
+		)
 		if sv.overflow {
 			return
 		}

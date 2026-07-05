@@ -112,7 +112,11 @@ sd_key :: #force_inline proc "contextless" (hands: Suit_Layout, trick_no: int) -
 // converge once enough cards are gone — the same win Phase-1's memo gets. `nil` (external callers) makes a
 // throwaway memo good only within this one layout. The memo is valid ONLY for a fixed `line`: never share
 // it across lines (different pure function => different values); the two internal callers rebuild it.
-sd_deal_tricks :: proc(line: Sd_Line, north, south, east, west: u16, memo: ^map[u64]int = nil) -> int {
+sd_deal_tricks :: proc(
+	line: Sd_Line,
+	north, south, east, west: u16,
+	memo: ^map[u64]int = nil,
+) -> int {
 	hands := Suit_Layout{}
 	hands[SEAT_N] = north
 	hands[SEAT_S] = south
@@ -173,7 +177,13 @@ sd_from_lead :: proc(line: Sd_Line, hands: Suit_Layout, trick_no: int, memo: ^ma
 // their legal cards (double-dummy defence). When the trick completes, score it and recurse to the
 // next lead.
 @(private)
-sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat, win_rank, last_rank, trick_no: int, memo: ^map[u64]int) -> int {
+sd_trick :: proc(
+	line: Sd_Line,
+	hands: Suit_Layout,
+	order: [4]int,
+	idx, win_seat, win_rank, last_rank, trick_no: int,
+	memo: ^map[u64]int,
+) -> int {
 	if idx == 4 {
 		pt := 1 if is_ns(win_seat) else 0
 		return pt + sd_from_lead(line, hands, trick_no + 1, memo)
@@ -194,7 +204,10 @@ sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat
 			north    = hands[SEAT_N],
 			south    = hands[SEAT_S],
 			own      = hold,
-			played   = FULL_SUIT & ~(hands[SEAT_N] | hands[SEAT_S] | hands[SEAT_E] | hands[SEAT_W]),
+			played   = FULL_SUIT & ~(hands[SEAT_N] |
+					hands[SEAT_S] |
+					hands[SEAT_E] |
+					hands[SEAT_W]),
 			seat     = seat,
 			rho_rank = last_rank if !is_ns(rho) else -1,
 			win_rank = win_rank,
@@ -264,17 +277,17 @@ sd_line_distribution :: proc(north, south: u16, line: Sd_Line) -> Suit_Trick_Dis
 	memo := make(map[u64]int)
 	defer delete(memo)
 
-	east := missing
+	// Equivalence-class enumeration (see `Split_Iter` in combo.odin): one representative per pattern,
+	// weighted by `mult` concrete splits — all sharing the same East length `a`, hence the same weight.
+	it := split_iter_init(missing)
 	for {
-		west := missing & ~east
-		a := card_count(east)
-		tricks := sd_deal_tricks(line, north, south, east, west, &memo)
-		dist.p[tricks] += g_binom[26 - m][13 - a]
-
-		if east == 0 {
+		east, a, mult, ok := split_iter_next(&it)
+		if !ok {
 			break
 		}
-		east = (east - 1) & missing
+		west := missing & ~east
+		tricks := sd_deal_tricks(line, north, south, east, west, &memo)
+		dist.p[tricks] += mult * g_binom[26 - m][13 - a]
 	}
 
 	for k in 0 ..= RANKS {
@@ -293,7 +306,11 @@ sd_line_distribution :: proc(north, south: u16, line: Sd_Line) -> Suit_Trick_Dis
 // entries from a previous line/suit must not carry over. `nil` → throwaway (standalone callers). Within one
 // call it is still shared across all E/W splits (valid because `line` is fixed for this loop). See
 // `gather_candidate_tables`.
-sd_line_joint_table :: proc(north, south: u16, line: Sd_Line, memo_in: ^map[u64]int = nil) -> Suit_Joint_Table {
+sd_line_joint_table :: proc(
+	north, south: u16,
+	line: Sd_Line,
+	memo_in: ^map[u64]int = nil,
+) -> Suit_Joint_Table {
 	ns := north | south
 	ns_len := card_count(ns)
 
@@ -324,17 +341,17 @@ sd_line_joint_table :: proc(north, south: u16, line: Sd_Line, memo_in: ^map[u64]
 	}
 	defer if memo_in == nil {delete(local)}
 
-	east := missing
+	// Equivalence-class enumeration (see `Split_Iter` in combo.odin): `count` tallies concrete splits, so
+	// each representative contributes its full multiplicity `mult`.
+	it := split_iter_init(missing)
 	for {
-		west := missing & ~east
-		a := card_count(east)
-		tricks := sd_deal_tricks(line, north, south, east, west, memo)
-		tbl.count[a][tricks] += 1
-
-		if east == 0 {
+		east, a, mult, ok := split_iter_next(&it)
+		if !ok {
 			break
 		}
-		east = (east - 1) & missing
+		west := missing & ~east
+		tricks := sd_deal_tricks(line, north, south, east, west, memo)
+		tbl.count[a][tricks] += mult
 	}
 	return tbl
 }
@@ -377,8 +394,8 @@ sd_census_gap :: proc(north, south: u16, line: Sd_Line) -> (sd_mean, census_mean
 // well-defined blind line, useful as a baseline and to exercise the evaluator. Optimal / smarter
 // lines (finesse, safety play, and the search that chooses among them) are the next increment.
 line_top_down :: Sd_Line {
-	name    = "top-down",
-	lead    = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
+	name = "top-down",
+	lead = proc(north, south, played: u16, trick_no: int) -> (seat: int, rank: int) {
 		if north == 0 {
 			return SEAT_S, highest_rank(south)
 		}
