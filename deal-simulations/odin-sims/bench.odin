@@ -295,7 +295,9 @@ main :: proc() {
 	time.benchmark(opt_p2_opt_6m)
 	time.benchmark(opt_p2_opt_8m)
 	time.benchmark(opt_adaptive_curve)
+	combo.profile_reset() // capture annotate's phase split (only populated when built -define:COMBO_PROFILE=true)
 	time.benchmark(opt_annotate)
+	prof := combo.profile_read()
 
 	NS :: f64(1e0) // ns/op scale factor (nanoseconds, no division)
 	US :: f64(1e3) // µs/op
@@ -320,6 +322,19 @@ main :: proc() {
 	fmt.println("--- Deal level ---")
 	report("adaptive-curve (NS only)", opt_adaptive_curve, "ms/deal", MS)
 	report("annotate / Html_Cards", opt_annotate, "ms/deal", MS)
+
+	// annotate phase split (only when built -define:COMBO_PROFILE=true; else all zero). Proportions of the
+	// three phases scaled by the measured ms/deal — shows the serial main-thread tail vs the parallel phase.
+	prof_total := prof[0] + prof[1] + prof[2]
+	if prof_total > 0 {
+		ann_ms0 := f64(time.duration_nanoseconds(opt_annotate.duration)) / f64(COUNT_DEAL) / 1e6
+		labels := [3]string{"parallel (16 suit-tasks)", "assemble (finish_* + DP)", "json (write_*)"}
+		fmt.println("  annotate phase split (COMBO_PROFILE):")
+		for lab, k in labels {
+			frac := f64(prof[k]) / f64(prof_total)
+			fmt.printfln("    %-26s %5.1f%%  %6.2f ms/deal", lab, frac * 100, frac * ann_ms0)
+		}
+	}
 
 	// Derived ratios that motivate the §2 redundancy fix in PERFORMANCE.md.
 	p2_sd_us := f64(time.duration_nanoseconds(opt_p2_sd_6m.duration)) / f64(COUNT_SUIT) / 1e3

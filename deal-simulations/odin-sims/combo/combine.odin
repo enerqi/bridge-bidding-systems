@@ -202,19 +202,27 @@ Line_Joint :: struct {
 gather_candidate_tables :: proc(
 	north, south: norn.Hand_Summary,
 	allocator := context.allocator,
+	memo_in: ^map[u64]int = nil,
 ) -> [4][]Line_Joint {
 	out: [4][]Line_Joint
 	lines := candidate_lines()
 	// One scratch map reused (cleared per call) across all 4×5 line evaluations — collapses what was an
-	// alloc+free per joint table into a single backing allocation for the whole gather.
-	memo := make(map[u64]int)
-	defer delete(memo)
+	// alloc+free per joint table into a single backing allocation for the whole gather. `memo_in` (optional)
+	// supplies a persistent, `clear()`-reused map so a threaded caller allocates nothing across deals; when
+	// `nil` a throwaway is made. `sd_line_joint_table` clears on entry per (suit,line), so reuse is exact.
+	local: map[u64]int
+	memo := memo_in
+	if memo == nil {
+		local = make(map[u64]int)
+		memo = &local
+	}
+	defer if memo_in == nil {delete(local)}
 	for suit, i in DISPLAY_SUITS {
 		lj := make([]Line_Joint, len(lines), allocator)
 		for line, j in lines {
 			lj[j] = Line_Joint {
 				name = line.name,
-				tbl  = sd_line_joint_table(north.suits[suit], south.suits[suit], line, &memo),
+				tbl  = sd_line_joint_table(north.suits[suit], south.suits[suit], line, memo),
 			}
 		}
 		out[i] = lj

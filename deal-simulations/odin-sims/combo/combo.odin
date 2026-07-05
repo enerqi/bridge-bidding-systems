@@ -166,6 +166,8 @@ import "base:intrinsics"
 import "core:fmt"
 import "core:mem"
 import "core:strings"
+import "core:sync"
+import si "core:sys/info"
 import "core:thread"
 
 import "norn:norn"
@@ -710,19 +712,37 @@ convolve :: proc(a, b: [RANKS + 1]f64) -> [RANKS + 1]f64 {
 // The full analysis for a deal, from NS's seats. Pass the two partners' `Hand_Summary` (as produced
 // by `norn.summarize` / `norn.summarize_deal`). Computes each suit's distribution and convolves the
 // four into the total.
-analyse_ns :: proc(north, south: norn.Hand_Summary) -> Deal_Analysis {
-	a: Deal_Analysis
-
+// `memo_in` (optional) lets a caller supply a persistent, `clear()`-reused minimax memo so this proc allocates
+// nothing on the heap across deals (see the per-worker thread-local memo in `annotate`). When `nil`, a throwaway
+// map is made/freed as before. The memo is a pure cache (`suit_joint_table` clears it on entry per suit), so
+// supplying a reused map is byte-identical to a fresh one.
+analyse_ns :: proc(north, south: norn.Hand_Summary, memo_in: ^map[Suit_Layout]int = nil) -> Deal_Analysis {
 	// Build each suit's joint (length × tricks) table once; the per-suit rows take its marginal, and the
 	// combined total is the CONSTRAINED joint convolution over the four tables (East holds 13 total, NS
 	// tricks capped at 13) — not an independent convolution of the four marginals. See `joint_total`.
 	tables: [norn.Suit]Suit_Joint_Table
-	memo := make(map[Suit_Layout]int) // one scratch map reused (cleared) across the 4 suits
-	defer delete(memo)
+	local: map[Suit_Layout]int // one scratch map reused (cleared) across the 4 suits
+	memo := memo_in
+	if memo == nil {
+		local = make(map[Suit_Layout]int)
+		memo = &local
+	}
+	defer if memo_in == nil {delete(local)}
 	for suit in norn.Suit {
-		tbl := suit_joint_table(north.suits[suit], south.suits[suit], &memo)
-		tables[suit] = tbl
-		a.suits[suit] = marginal_from_table(tbl)
+		tables[suit] = suit_joint_table(north.suits[suit], south.suits[suit], memo)
+	}
+	return finish_census(tables)
+}
+
+// Assemble a `Deal_Analysis` from the four already-built per-suit joint tables: each suit's row is that
+// table's marginal (the exact hypergeometric), the total is the constrained joint convolution. Split out so
+// the threaded render path (which builds the four tables on separate worker tasks) and `analyse_ns` share the
+// identical assembly — the parity seam. See PERFORMANCE.md §9.4.
+@(private)
+finish_census :: proc(tables: [norn.Suit]Suit_Joint_Table) -> Deal_Analysis {
+	a: Deal_Analysis
+	for suit in norn.Suit {
+		a.suits[suit] = marginal_from_table(tables[suit])
 	}
 	a.total = joint_total(tables)
 	return a
@@ -855,9 +875,9 @@ write_suits_json :: proc(b: ^strings.Builder, a: ^Deal_Analysis) {
 // Every Html_Cards writer below needs the SAME per-suit single-dummy candidate evaluation: the best line
 // by mean (its name, its marginal, its joint table) plus every candidate's joint table for the adaptive
 // DP. Computed independently they enumerated the 2^m E/W splits ~5× per suit (across `sd_joint_total`,
-// `write_suits_json_sd`/`_lines`/`_tips`, and `adaptive_at_least_curve`). `build_partnership_sd` does it
-// ONCE; the writers read from it. The `[4]` axis is DISPLAY_SUITS order (s,h,d,c) — the same order every
-// writer walks — so per-suit indices line up with the writers' `keys` arrays.
+// `write_suits_json_sd`/`_lines`/`_tips`, and `adaptive_at_least_curve`). One gather (`gather_candidate_tables`)
+// + `pick_partnership_sd` does it ONCE; the writers read from the resulting `Partnership_Sd`. The `[4]` axis is
+// DISPLAY_SUITS order (s,h,d,c) — the same order every writer walks — so per-suit indices line up with `keys`.
 //
 // PARITY: deriving each suit's row from its joint table (`marginal_from_table`) is byte-identical to the
 // old `sd_line_distribution` path — both sum the SAME per-split integer weights (all partial sums
@@ -868,17 +888,14 @@ Partnership_Sd :: struct {
 	best_marg: [4]Suit_Trick_Dist, // that line's marginal trick distribution (the data-*-sd row)
 }
 
-// Evaluate a partnership's four suits ONCE: build every candidate line's joint table, then pick the
-// best-by-mean line per suit and cache its marginal. Everything the Html_Cards writers emit derives from
-// this. Picks identically to `best_line_by_mean`/`sd_best_joint_table` (same candidate order, first-wins
-// on ties, means equal by the parity note above). `cand` is on `allocator` (temp in the render path).
+// Pick the best-by-mean line per suit from ALREADY-GATHERED candidate tables, caching its index + marginal.
+// Picks identically to `best_line_by_mean`/`sd_best_joint_table` (same candidate order, first-wins on ties,
+// means equal by the parity note above). Split from the gather so the threaded render path (which gathers the
+// per-suit candidate tables on separate worker tasks) shares this pick with the serial path — the parity seam.
 @(private)
-build_partnership_sd :: proc(
-	north, south: norn.Hand_Summary,
-	allocator := context.temp_allocator,
-) -> Partnership_Sd {
+pick_partnership_sd :: proc(cand: [4][]Line_Joint) -> Partnership_Sd {
 	ps: Partnership_Sd
-	ps.cand = gather_candidate_tables(north, south, allocator)
+	ps.cand = cand
 	for i in 0 ..< 4 {
 		best_mean := f64(-1)
 		for lj, j in ps.cand[i] {
@@ -894,9 +911,26 @@ build_partnership_sd :: proc(
 	return ps
 }
 
+// Assemble a partnership's whole `Sd_Bundle` (the four card-page single-dummy blobs, all by value) from its
+// already-gathered candidate joint tables: pick the best line per suit, then derive the SD total and adaptive
+// make curve. Shared by `sd_bundle` (serial gather) and the threaded render path (per-suit gather tasks), so
+// both emit byte-identical JSON.
+@(private)
+finish_sd :: proc(cand: [4][]Line_Joint) -> Sd_Bundle {
+	ps := pick_partnership_sd(cand)
+	out: Sd_Bundle
+	out.best_marg = ps.best_marg
+	for i in 0 ..< 4 {
+		out.best_name[i] = ps.cand[i][ps.best_idx[i]].name
+	}
+	out.totsd = sd_joint_total_of(&ps)
+	out.atl = adaptive_curve_from(ps.cand)
+	return out
+}
+
 // The ACHIEVABLE single-dummy combined total from precomputed per-partnership data: the constrained joint
 // convolution (`joint_total`) of the four best-by-mean SD line joint tables. The deduped counterpart of
-// `sd_joint_total` — reuses the tables `build_partnership_sd` already built instead of re-enumerating.
+// `sd_joint_total` — reuses the tables the partnership gather already built instead of re-enumerating.
 @(private)
 sd_joint_total_of :: proc(ps: ^Partnership_Sd) -> [RANKS + 1]f64 {
 	tables: [norn.Suit]Suit_Joint_Table
@@ -906,15 +940,155 @@ sd_joint_total_of :: proc(ps: ^Partnership_Sd) -> [RANKS + 1]f64 {
 	return joint_total(tables)
 }
 
-// --- Parallel per-partnership work units (see `annotate`) --------------------------------------
+// --- Parallel work: persistent pool (see `annotate`) -------------------------------------------
 //
-// `annotate(.Html_Cards)` needs four things that share NO mutable state and can run at the same time:
-// the double-dummy CENSUS for each partnership (`analyse_ns`, NS and EW) and the single-dummy BUNDLE for
-// each (gather + best line + SD total + make curve). Every one reads only its two hand summaries plus the
-// read-only `g_binom` table, and writes only its own result — so we hand three of them to worker threads
-// and run the fourth on the calling thread. The results are all plain VALUES (fixed arrays; line names
-// are static string literals), so nothing points into a worker's scratch arena and the join hands the
-// whole result back safely. See PERFORMANCE.md §9.
+// `annotate(.Html_Cards)` decomposes into 16 independent per-SUIT units (see `Suit_Census_Task`/`Suit_Sd_Task`
+// below): the double-dummy census suit and the single-dummy candidate gather, for each of the 4 suits × 2
+// partnerships. Every unit reads only its two suit holdings plus the read-only `g_binom` table and writes its
+// own by-value result, so they run concurrently with no shared state.
+//
+// PERSISTENT POOL (PERFORMANCE.md §9.4 / §10 #1). The units run on a process-lifetime `thread.Pool` created
+// ONCE (lazily, `g_pool_once`) and reused for every deal — the pre-pool path spawned fresh OS threads per deal
+// (~144 across a 48-deal batch). Completion is a per-deal `sync.Wait_Group` (NOT `pool_finish`, which tears the
+// pool down — it calls `pool_join`). `annotate` is the pool's sole user and runs serially (norn serializes
+// annotated scenarios, §9.1), so exactly the tasks one deal adds are ever in flight.
+@(private)
+g_pool: thread.Pool
+@(private)
+g_pool_once: sync.Once
+@(private)
+g_pool_started: bool // set by init_pool; gates shutdown so it is a no-op when the pool was never used
+
+// The most pool workers we ever need = the fine-grained task count per deal (8 census + 8 SD suits). Sizing to
+// this lets every task of one deal run concurrently; more workers would only ever idle.
+POOL_MAX_WORKERS :: 16
+
+// One-time pool bring-up (via `g_pool_once`): workers = min(physical cores, `POOL_MAX_WORKERS`), started and
+// idle-blocked on the pool semaphore until `annotate` feeds them. They live until `shutdown` (or process exit);
+// see PERFORMANCE.md §9.4.
+@(private)
+init_pool :: proc() {
+	workers := POOL_MAX_WORKERS
+	if physical, _, ok := si.cpu_core_count(); ok {
+		workers = min(max(physical, 1), POOL_MAX_WORKERS)
+	}
+	thread.pool_init(&g_pool, context.allocator, workers)
+	thread.pool_start(&g_pool)
+	g_pool_started = true
+}
+
+// A worker's two persistent memo maps, registered (under `g_scratch_mutex`) the first time that thread runs a
+// task so `shutdown` can free them from the main thread. Freeing a heap allocation is not thread-affine, so the
+// main thread can `delete` a (now-dead) worker's maps after `pool_join`. The map STRUCTS are thread-local; only
+// their heap backing is freed here. See PERFORMANCE.md §8.2.
+@(private)
+Scratch_Reg :: struct {
+	census: ^map[Suit_Layout]int,
+	sd:     ^map[u64]int,
+}
+@(private)
+g_scratch_regs: [dynamic]Scratch_Reg
+@(private)
+g_scratch_mutex: sync.Mutex
+
+// --- Optional phase profiling (`-define:COMBO_PROFILE=true`, default off) -----------------------
+//
+// Splits `annotate(.Html_Cards)`'s per-deal cost into three phases so the serial main-thread tail can be seen
+// against the parallel suit phase (PERFORMANCE.md §9.4 / §10 priority 1): [0] PARALLEL = dispatch + wait on the
+// 16 suit-tasks; [1] ASSEMBLE = `finish_census`×2 + `finish_sd`×2 (the joint DPs) on the caller; [2] JSON = the
+// `write_*` string building. Accumulates raw CPU cycles across calls (proportions, not calibrated time); the
+// bench reads them via `profile_read` and scales by the measured ms/deal. Zero cost when off: `prof_now` folds
+// to a constant 0 and `prof_add` to nothing, so the timestamps are still "used" (no unused-var error).
+COMBO_PROFILE :: #config(COMBO_PROFILE, false)
+@(private)
+g_prof: [3]i64 // cumulative cycles: [parallel, assemble, json] (read_cycle_counter is i64)
+
+@(private)
+prof_now :: #force_inline proc() -> i64 {
+	when COMBO_PROFILE {
+		return intrinsics.read_cycle_counter()
+	} else {
+		return 0
+	}
+}
+
+@(private)
+prof_add :: #force_inline proc(a, b, c, d: i64) {
+	when COMBO_PROFILE {
+		g_prof[0] += b - a
+		g_prof[1] += c - b
+		g_prof[2] += d - c
+	}
+}
+
+// Reset / read the phase-cycle accumulators (the bench brackets its annotate loop with these).
+profile_reset :: proc() {g_prof = {}}
+profile_read :: proc() -> [3]i64 {return g_prof}
+
+// Stop and free the persistent pool + every worker's memo maps. Optional — safe to skip (the OS reclaims it all
+// at exit) — but a leak-checked build (sim's tracking allocator) wants the allocations released, so the CLI calls
+// this before finalising. No-op if the pool was never started (non-threaded build, or no Html_Cards deal ran).
+// Order matters: `pool_join` first so the workers are dead and no longer touch their thread-local memos.
+shutdown :: proc() {
+	when COMBO_THREADS {
+		if g_pool_started {
+			thread.pool_join(&g_pool)
+			for reg in g_scratch_regs {
+				delete(reg.census^)
+				delete(reg.sd^)
+			}
+			delete(g_scratch_regs)
+			g_scratch_regs = nil
+			thread.pool_destroy(&g_pool)
+			g_pool_started = false
+		}
+	}
+}
+
+// Per-worker persistent scratch (PERFORMANCE.md §8.2 / §10 #2). Each pool worker — and the calling thread — owns,
+// in THREAD-LOCAL storage, a per-deal TEMP arena (candidate slices, reset each deal) backed by a fixed BSS array,
+// plus the two minimax memo maps on the heap — created once and then `clear()`-reused (never deleted) across every
+// deal that worker handles. So after warmup a deal does ZERO heap allocation for combo (the old path made/deleted
+// 4 maps + a stack arena per deal); the only per-thread heap objects are the two memo maps' backing, freed once by
+// `shutdown`. The memos are pure caches that `suit_joint_table`/`sd_line_joint_table` clear on entry, so reuse is
+// byte-identical to a fresh map. The temp arena is bounded (candidate tables ~32 KB ≪ 256 KB); the memos stay on
+// the heap rather than a fixed arena so they can grow without a size ceiling (an undersized arena silently drops
+// memo entries → correct but slow — a real regression that bit an earlier revision).
+TLS_TEMP_SIZE :: 256 * 1024
+@(private)
+@(thread_local)
+tls_ready: bool
+@(private)
+@(thread_local)
+tls_temp_arena: mem.Arena
+@(private)
+@(thread_local)
+tls_temp_backing: [TLS_TEMP_SIZE]u8
+@(private)
+@(thread_local)
+tls_memo_census: map[Suit_Layout]int
+@(private)
+@(thread_local)
+tls_memo_sd: map[u64]int
+
+// Lazily initialise this thread's scratch (BSS temp arena + both heap memo maps on first use, registered for
+// `shutdown`) and hand back pointers to the two persistent memos plus the temp-arena allocator. The CALLER must
+// assign the returned allocator to `context.temp_allocator` in its OWN scope (setting it inside here would not
+// propagate — Odin gives each proc its own `context` copy) and reset it with `mem.free_all(context.temp_allocator)`
+// after the deal; the arena + memos persist for the next deal this thread handles.
+@(private)
+worker_scratch :: proc() -> (census: ^map[Suit_Layout]int, sd: ^map[u64]int, alloc: mem.Allocator) {
+	if !tls_ready {
+		mem.arena_init(&tls_temp_arena, tls_temp_backing[:])
+		tls_memo_census = make(map[Suit_Layout]int)
+		tls_memo_sd = make(map[u64]int)
+		tls_ready = true
+		sync.mutex_lock(&g_scratch_mutex)
+		append(&g_scratch_regs, Scratch_Reg{&tls_memo_census, &tls_memo_sd})
+		sync.mutex_unlock(&g_scratch_mutex)
+	}
+	return &tls_memo_census, &tls_memo_sd, mem.arena_allocator(&tls_temp_arena)
+}
 
 // Everything the card page's single-dummy blobs need for ONE partnership, all by value (no pointers into
 // the transient joint tables the worker allocated and freed).
@@ -926,58 +1100,67 @@ Sd_Bundle :: struct {
 	atl:       [RANKS + 1]f64, // adaptive P(>= t) make curve → data-*-atl
 }
 
-// Compute a partnership's whole single-dummy bundle: gather the candidate joint tables (Phase-2), pick the
-// best line per suit, and derive the SD total and the adaptive make curve. Allocates the transient tables
-// on `context.temp_allocator`; the RESULT copies out by value, so the caller is free to reset that arena
-// afterwards. Pure (no shared state) — safe to run on any thread with its own context.
+// Compute a partnership's whole single-dummy bundle: gather the candidate joint tables (Phase-2) then assemble
+// (pick best line per suit, SD total, adaptive curve). Serial path; the threaded render path gathers per-suit
+// on the pool and calls `finish_sd` directly. Allocates the transient tables on `context.temp_allocator`; the
+// RESULT copies out by value, so the caller is free to reset that arena afterwards.
 @(private)
-sd_bundle :: proc(north, south: norn.Hand_Summary) -> Sd_Bundle {
-	ps := build_partnership_sd(north, south, context.temp_allocator)
-	out: Sd_Bundle
-	out.best_marg = ps.best_marg
-	for i in 0 ..< 4 {
-		out.best_name[i] = ps.cand[i][ps.best_idx[i]].name
+sd_bundle :: proc(north, south: norn.Hand_Summary, memo_in: ^map[u64]int = nil) -> Sd_Bundle {
+	cand := gather_candidate_tables(north, south, context.temp_allocator, memo_in)
+	return finish_sd(cand)
+}
+
+// The number of candidate lines per suit (`candidate_lines` returns `[N_CANDIDATE_LINES]Sd_Line`); the SD
+// per-suit task writes exactly this many `Line_Joint`s by value.
+N_CANDIDATE_LINES :: 5
+
+// --- Fine-grained per-SUIT worker tasks (see `annotate`) ---------------------------------------
+//
+// The coarse 4-unit split (census ×2, SD bundle ×2) was capped by its longest unit — one SD bundle's four
+// serial suit-gathers. Splitting to the SUIT level (8 census + 8 SD = 16 independent tasks per deal) makes the
+// critical path ONE suit, letting >4 cores engage. Each `thread.Task_Proc` reads `task.data`, runs on this
+// worker's thread-local scratch (`worker_scratch` — its own memo maps + temp arena), writes `.out` BY VALUE
+// (fixed-size `Suit_Joint_Table` / `[N]Line_Joint`, line names are static literals — nothing points into the
+// worker's arena), then signals the deal's `Wait_Group`. The results are assembled on the calling thread via
+// the shared `finish_census`/`finish_sd` seams, so the output is byte-identical to the serial path. See
+// PERFORMANCE.md §9.4.
+@(private)
+Suit_Census_Task :: struct {
+	north, south: u16, // one suit's NS holdings
+	out:          Suit_Joint_Table,
+	wg:           ^sync.Wait_Group,
+}
+@(private)
+Suit_Sd_Task :: struct {
+	north, south: u16,
+	out:          [N_CANDIDATE_LINES]Line_Joint,
+	wg:           ^sync.Wait_Group,
+}
+
+@(private)
+suit_census_task :: proc(t: thread.Task) {
+	task := (^Suit_Census_Task)(t.data)
+	census, _, alloc := worker_scratch()
+	context.temp_allocator = alloc
+	task.out = suit_joint_table(task.north, task.south, census)
+	mem.free_all(context.temp_allocator) // reset the arena; backing + memos persist for the next deal
+	sync.wait_group_done(task.wg)
+}
+
+@(private)
+suit_sd_task :: proc(t: thread.Task) {
+	task := (^Suit_Sd_Task)(t.data)
+	_, sd, alloc := worker_scratch()
+	context.temp_allocator = alloc
+	lines := candidate_lines()
+	for line, j in lines {
+		task.out[j] = Line_Joint {
+			name = line.name,
+			tbl  = sd_line_joint_table(task.north, task.south, line, sd),
+		}
 	}
-	out.totsd = sd_joint_total_of(&ps)
-	out.atl = adaptive_curve_from(ps.cand)
-	return out
-}
-
-// Worker plumbing: a task carries its two input hands in and its result out; the worker proc reads
-// `thread.data` (a `^*_Task`), fills `.out`, and releases its own scratch arena before exiting.
-@(private)
-Census_Task :: struct {
-	north, south: norn.Hand_Summary,
-	out:          Deal_Analysis,
-}
-@(private)
-Sd_Task :: struct {
-	north, south: norn.Hand_Summary,
-	out:          Sd_Bundle,
-}
-
-@(private)
-census_worker :: proc(t: ^thread.Thread) {
-	task := (^Census_Task)(t.data)
-	// `analyse_ns` allocates only heap maps (freed internally) and stack values — no temp allocator use,
-	// so there is nothing thread-local to set up or release here.
-	task.out = analyse_ns(task.north, task.south)
-}
-
-@(private)
-sd_worker :: proc(t: ^thread.Thread) {
-	task := (^Sd_Task)(t.data)
-	// Point `context.temp_allocator` at a small arena backed by THIS worker's stack, rather than the
-	// thread's default temp arena. The only temp allocation is the candidate joint-table slices (~32 KB —
-	// the memo maps live on the heap), so 256 KB is ample. Being stack memory it is reclaimed when this
-	// proc returns, so a freshly-spawned worker leaves nothing behind — no per-thread temp arena to leak.
-	// `= ---` leaves the backing uninitialised (no 256 KB zeroing per spawn); arena allocations zero their
-	// own returned memory as needed.
-	backing: [256 * 1024]u8 = ---
-	arena: mem.Arena
-	mem.arena_init(&arena, backing[:])
-	context.temp_allocator = mem.arena_allocator(&arena)
-	task.out = sd_bundle(task.north, task.south)
+	mem.free_all(context.temp_allocator)
+	sync.wait_group_done(task.wg)
 }
 
 // The Phase-2 ACHIEVABLE per-suit distributions, same JSON shape as `write_suits_json` but each suit's
@@ -1285,55 +1468,72 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		// (`joint_total`: East holds 13, tricks capped at 13) — census and single-dummy. The page uses
 		// these directly instead of convolving the per-suit marginals client-side (which was independent,
 		// so length-inconsistent). Per-suit `-sd`/`-atl`/`-lines`/`-tips` are unchanged.
-		// The four heavy, independent work units (see the `Sd_Bundle` / worker section above): the census
-		// for each partnership and the single-dummy bundle for each. Under `COMBO_THREADS` three run on
-		// worker threads while this thread runs the fourth (NS census), then we join; otherwise all four
-		// run serially. Either way the results are plain values, so the writers below are identical.
-		ns_c := Census_Task {
-			north = ds[.North],
-			south = ds[.South],
-		}
-		ew_c := Census_Task {
-			north = ds[.East],
-			south = ds[.West],
-		}
-		ns_s := Sd_Task {
-			north = ds[.North],
-			south = ds[.South],
-		}
-		ew_s := Sd_Task {
-			north = ds[.East],
-			south = ds[.West],
-		}
+		// The four partnership results (census + single-dummy bundle for NS and EW). Under `COMBO_THREADS`
+		// each is decomposed to the SUIT level and the 16 per-suit tasks run on the persistent pool, then the
+		// calling thread assembles them via `finish_census`/`finish_sd`; otherwise all four run serially. Both
+		// paths go through the same assembly seams, so the writers below see byte-identical values.
+		a, ew: Deal_Analysis
+		ns_sd, ew_sd: Sd_Bundle
+
+		prof_a := prof_now() // phase profiling (COMBO_PROFILE): a=start, b=after parallel, c=after assemble, d=after JSON
+		prof_b: i64
 
 		when COMBO_THREADS {
-			t_ew_c := thread.create(census_worker)
-			t_ns_s := thread.create(sd_worker)
-			t_ew_s := thread.create(sd_worker)
-			t_ew_c.data = &ew_c
-			t_ns_s.data = &ns_s
-			t_ew_s.data = &ew_s
-			thread.start(t_ew_c)
-			thread.start(t_ns_s)
-			thread.start(t_ew_s)
-			ns_c.out = analyse_ns(ns_c.north, ns_c.south) // this thread's share of the work while the others run
-			thread.join(t_ew_c)
-			thread.join(t_ns_s)
-			thread.join(t_ew_s)
-			thread.destroy(t_ew_c)
-			thread.destroy(t_ns_s)
-			thread.destroy(t_ew_s)
-		} else {
-			ns_c.out = analyse_ns(ns_c.north, ns_c.south)
-			ew_c.out = analyse_ns(ew_c.north, ew_c.south)
-			ns_s.out = sd_bundle(ns_s.north, ns_s.south)
-			ew_s.out = sd_bundle(ew_s.north, ew_s.south)
-		}
+			sync.once_do(&g_pool_once, init_pool)
 
-		a := ns_c.out
-		ew := ew_c.out
-		ns_sd := ns_s.out
-		ew_sd := ew_s.out
+			// 8 census suit-tasks (NS + EW, one per suit) + 8 SD suit-tasks. Each writes its result by value
+			// into these arrays; nothing is shared, so no locking beyond the completion `Wait_Group`.
+			ns_ct, ew_ct: [norn.Suit]Suit_Census_Task
+			ns_st, ew_st: [4]Suit_Sd_Task
+
+			wg: sync.Wait_Group
+			sync.wait_group_add(&wg, 16)
+			for suit in norn.Suit {
+				ns_ct[suit] = {north = ds[.North].suits[suit], south = ds[.South].suits[suit], wg = &wg}
+				ew_ct[suit] = {north = ds[.East].suits[suit], south = ds[.West].suits[suit], wg = &wg}
+			}
+			for suit, i in DISPLAY_SUITS {
+				ns_st[i] = {north = ds[.North].suits[suit], south = ds[.South].suits[suit], wg = &wg}
+				ew_st[i] = {north = ds[.East].suits[suit], south = ds[.West].suits[suit], wg = &wg}
+			}
+			for suit in norn.Suit {
+				thread.pool_add_task(&g_pool, context.allocator, suit_census_task, &ns_ct[suit])
+				thread.pool_add_task(&g_pool, context.allocator, suit_census_task, &ew_ct[suit])
+			}
+			for i in 0 ..< 4 {
+				thread.pool_add_task(&g_pool, context.allocator, suit_sd_task, &ns_st[i])
+				thread.pool_add_task(&g_pool, context.allocator, suit_sd_task, &ew_st[i])
+			}
+			sync.wait_group_wait(&wg)
+			// Drain the pool's done list so `tasks_done` does not grow across the batch (results are already
+			// in the task structs by value).
+			for {
+				_, ok := thread.pool_pop_done(&g_pool)
+				if !ok {break}
+			}
+			prof_b = prof_now() // end of the parallel suit phase
+
+			// Assemble on this thread (cheap: marginals + the joint DP). `cand` slices view the per-suit task
+			// outputs (stack arrays, live until the writers finish) in DISPLAY_SUITS order.
+			ns_tables, ew_tables: [norn.Suit]Suit_Joint_Table
+			for suit in norn.Suit {
+				ns_tables[suit] = ns_ct[suit].out
+				ew_tables[suit] = ew_ct[suit].out
+			}
+			a = finish_census(ns_tables)
+			ew = finish_census(ew_tables)
+			ns_cand := [4][]Line_Joint{ns_st[0].out[:], ns_st[1].out[:], ns_st[2].out[:], ns_st[3].out[:]}
+			ew_cand := [4][]Line_Joint{ew_st[0].out[:], ew_st[1].out[:], ew_st[2].out[:], ew_st[3].out[:]}
+			ns_sd = finish_sd(ns_cand)
+			ew_sd = finish_sd(ew_cand)
+		} else {
+			prof_b = prof_now() // serial: no parallel phase; all compute lands in ASSEMBLE
+			a = analyse_ns(ds[.North], ds[.South])
+			ew = analyse_ns(ds[.East], ds[.West])
+			ns_sd = sd_bundle(ds[.North], ds[.South])
+			ew_sd = sd_bundle(ds[.East], ds[.West])
+		}
+		prof_c := prof_now() // end of assemble; JSON writing follows
 
 		strings.write_string(builder, `<div class="combo" data-ns='`)
 		write_suits_json(builder, &a)
@@ -1364,6 +1564,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		strings.write_string(builder, `' data-ew-tips='`)
 		write_suits_tips_json(builder, &ew_sd, ds[.East], ds[.West])
 		strings.write_string(builder, `'></div>`)
+		prof_add(prof_a, prof_b, prof_c, prof_now()) // parallel / assemble / JSON split
 		free_all(context.temp_allocator)
 	case .Pretty:
 		a := analyse_ns(ds[.North], ds[.South])

@@ -115,6 +115,9 @@ main :: proc() { 	// Operational setup only; program semantics live in `run_sim`
 		context.allocator = alloc_interface
 		defer tracking_allocator_finalise(tracking_allocator)
 	}
+	// (5b) Release combo's persistent worker pool before the leak check (LIFO: registered after the tracking
+	// finalise defer, so it runs first). No-op unless an Html_Cards deal spun the pool up. See combo/combo.odin.
+	defer combo.shutdown()
 	// (6) Logger setup to stdout
 	context.logger = make_logging_context()
 	defer destroy_logging_context()
