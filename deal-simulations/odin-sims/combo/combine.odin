@@ -196,12 +196,16 @@ Line_Joint :: struct {
 gather_candidate_tables :: proc(north, south: norn.Hand_Summary, allocator := context.allocator) -> [4][]Line_Joint {
 	out: [4][]Line_Joint
 	lines := candidate_lines()
+	// One scratch map reused (cleared per call) across all 4×5 line evaluations — collapses what was an
+	// alloc+free per joint table into a single backing allocation for the whole gather.
+	memo := make(map[u64]int)
+	defer delete(memo)
 	for suit, i in DISPLAY_SUITS {
 		lj := make([]Line_Joint, len(lines), allocator)
 		for line, j in lines {
 			lj[j] = Line_Joint {
 				name = line.name,
-				tbl  = sd_line_joint_table(north.suits[suit], south.suits[suit], line),
+				tbl  = sd_line_joint_table(north.suits[suit], south.suits[suit], line, &memo),
 			}
 		}
 		out[i] = lj
@@ -297,6 +301,14 @@ optimal_adaptive_value :: proc(north, south: norn.Hand_Summary, obj: Objective) 
 // PRECONDITION: full 13-card hands (see `dp_value_joint`).
 adaptive_at_least_curve :: proc(north, south: norn.Hand_Summary) -> [RANKS + 1]f64 {
 	cand := gather_candidate_tables(north, south, context.temp_allocator)
+	return adaptive_curve_from(cand)
+}
+
+// The make curve from ALREADY-GATHERED candidate joint tables — the reusable core of
+// `adaptive_at_least_curve`, split out so the render path (`annotate`) can share ONE gather of the
+// tables across the curve, the SD total, and the per-suit rows instead of re-gathering (PERFORMANCE.md §2).
+@(private)
+adaptive_curve_from :: proc(cand: [4][]Line_Joint) -> [RANKS + 1]f64 {
 	res: [RANKS + 1]f64
 	for t in 0 ..= RANKS {
 		res[t] = dp_value_joint(cand, objective_at_least(t))

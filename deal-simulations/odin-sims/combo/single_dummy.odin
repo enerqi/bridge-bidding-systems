@@ -86,33 +86,69 @@ highest_rank :: proc "contextless" (m: u16) -> int {
 
 // --- the fixed-line game driver ---------------------------------------------------------------
 
+// The memo key for a declarer-on-lead position: the whole four-hand layout plus the trick index. At a
+// lead point the fixed line is a pure function of PUBLIC state, and the public state is exactly (the four
+// holdings, this trick number) — so the eventual NS tricks depend on nothing else, and two E/W splits
+// that reach the SAME full layout at the SAME trick take the same value. The layout uses 13 rank bits per
+// hand (4×13 = 52) and trick_no ≤ 12 fits the next 4 bits, so the key packs losslessly into one u64
+// (faster to hash than a padded struct, and no uninitialised padding bytes to destabilise the hash).
+@(private)
+sd_key :: #force_inline proc "contextless" (hands: Suit_Layout, trick_no: int) -> u64 {
+	return(
+		u64(hands[SEAT_N]) |
+		(u64(hands[SEAT_S]) << 13) |
+		(u64(hands[SEAT_E]) << 26) |
+		(u64(hands[SEAT_W]) << 39) |
+		(u64(u32(trick_no)) << 52) \
+	)
+}
+
 // NS tricks taken in the suit when declarer follows `line` and the defenders play double-dummy
 // (perfect, minimising), for ONE fully known layout. Free entries: `line.lead` chooses the leading
 // hand and card every trick; declarer is never forced to lead from the "wrong" hand.
-sd_deal_tricks :: proc(line: Sd_Line, north, south, east, west: u16) -> int {
+//
+// `memo` caches lead-point positions (see `sd_key`). Passing a SHARED memo across the many E/W splits of
+// one line evaluation (`sd_line_distribution` / `sd_line_joint_table`) collapses the positions that
+// converge once enough cards are gone — the same win Phase-1's memo gets. `nil` (external callers) makes a
+// throwaway memo good only within this one layout. The memo is valid ONLY for a fixed `line`: never share
+// it across lines (different pure function => different values); the two internal callers rebuild it.
+sd_deal_tricks :: proc(line: Sd_Line, north, south, east, west: u16, memo: ^map[u64]int = nil) -> int {
 	hands := Suit_Layout{}
 	hands[SEAT_N] = north
 	hands[SEAT_S] = south
 	hands[SEAT_E] = east
 	hands[SEAT_W] = west
-	return sd_from_lead(line, hands, 0)
+	if memo != nil {
+		return sd_from_lead(line, hands, 0, memo)
+	}
+	m := make(map[u64]int)
+	defer delete(m)
+	return sd_from_lead(line, hands, 0, &m)
 }
 
 // Position with declarer on lead: cash out the trivial cases, else consult the line for the lead and
 // play the trick. `trick_no` is the 0-based round index, threaded to the line so phased policies can
 // switch behaviour by round.
 @(private)
-sd_from_lead :: proc(line: Sd_Line, hands: Suit_Layout, trick_no: int) -> int {
-	ns := card_count(hands[SEAT_N]) + card_count(hands[SEAT_S])
-	if ns == 0 {
+sd_from_lead :: proc(line: Sd_Line, hands: Suit_Layout, trick_no: int, memo: ^map[u64]int) -> int {
+	nn := card_count(hands[SEAT_N])
+	sn := card_count(hands[SEAT_S])
+	if nn + sn == 0 {
 		return 0 // no cards to lead: no more NS tricks
 	}
-	ew := card_count(hands[SEAT_E]) + card_count(hands[SEAT_W])
-	if ew == 0 {
+	if card_count(hands[SEAT_E]) + card_count(hands[SEAT_W]) == 0 {
 		// Opponents exhausted: both NS hands still follow every trick, so two NS cards are spent per
 		// trick and the shorter hand's extra cards are wasted — max(len N, len S) tricks, not the sum
 		// (matching the same fix in Phase-1's `suit_dd_tricks`).
-		return max(card_count(hands[SEAT_N]), card_count(hands[SEAT_S]))
+		return max(nn, sn)
+	}
+
+	// Terminals returned above (cheap, uncached, like Phase 1). Everything below is a genuine lead
+	// position keyed by (layout, trick_no) — memoise it so the converged positions shared across the
+	// E/W splits are solved once.
+	key := sd_key(hands, trick_no)
+	if v, ok := memo[key]; ok {
+		return v
 	}
 
 	played := FULL_SUIT & ~(hands[SEAT_N] | hands[SEAT_S] | hands[SEAT_E] | hands[SEAT_W])
@@ -126,7 +162,9 @@ sd_from_lead :: proc(line: Sd_Line, hands: Suit_Layout, trick_no: int) -> int {
 	next := hands
 	next[seat] &= ~rank_bit(rank)
 	order := [4]int{seat, (seat + 1) % 4, (seat + 2) % 4, (seat + 3) % 4}
-	return sd_trick(line, next, order, 1, seat, rank, rank, trick_no)
+	result := sd_trick(line, next, order, 1, seat, rank, rank, trick_no, memo)
+	memo[key] = result
+	return result
 }
 
 // One ply within a trick. `order` is the clockwise seat sequence, `idx` the number of seats that have
@@ -135,17 +173,17 @@ sd_from_lead :: proc(line: Sd_Line, hands: Suit_Layout, trick_no: int) -> int {
 // their legal cards (double-dummy defence). When the trick completes, score it and recurse to the
 // next lead.
 @(private)
-sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat, win_rank, last_rank, trick_no: int) -> int {
+sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat, win_rank, last_rank, trick_no: int, memo: ^map[u64]int) -> int {
 	if idx == 4 {
 		pt := 1 if is_ns(win_seat) else 0
-		return pt + sd_from_lead(line, hands, trick_no + 1)
+		return pt + sd_from_lead(line, hands, trick_no + 1, memo)
 	}
 
 	seat := order[idx]
 	hold := hands[seat]
 	if hold == 0 {
 		// Void follows nothing; `last_rank` carries the previous actually-played card unchanged.
-		return sd_trick(line, hands, order, idx + 1, win_seat, win_rank, last_rank, trick_no)
+		return sd_trick(line, hands, order, idx + 1, win_seat, win_rank, last_rank, trick_no, memo)
 	}
 
 	if is_ns(seat) {
@@ -173,7 +211,7 @@ sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat
 		if r > win_rank {
 			ws, wr = seat, r
 		}
-		return sd_trick(line, next, order, idx + 1, ws, wr, r, trick_no)
+		return sd_trick(line, next, order, idx + 1, ws, wr, r, trick_no, memo)
 	}
 
 	// Defender seat: minimise NS tricks over every legal card.
@@ -189,7 +227,7 @@ sd_trick :: proc(line: Sd_Line, hands: Suit_Layout, order: [4]int, idx, win_seat
 		if r > win_rank {
 			ws, wr = seat, r
 		}
-		v := sd_trick(line, next, order, idx + 1, ws, wr, r, trick_no)
+		v := sd_trick(line, next, order, idx + 1, ws, wr, r, trick_no, memo)
 		if v < best {
 			best = v
 		}
@@ -222,11 +260,15 @@ sd_line_distribution :: proc(north, south: u16, line: Sd_Line) -> Suit_Trick_Dis
 	m := card_count(missing)
 	denom := g_binom[26][13]
 
+	// One memo shared across every E/W split (valid because `line` is fixed for this whole loop).
+	memo := make(map[u64]int)
+	defer delete(memo)
+
 	east := missing
 	for {
 		west := missing & ~east
 		a := card_count(east)
-		tricks := sd_deal_tricks(line, north, south, east, west)
+		tricks := sd_deal_tricks(line, north, south, east, west, &memo)
 		dist.p[tricks] += g_binom[26 - m][13 - a]
 
 		if east == 0 {
@@ -246,7 +288,12 @@ sd_line_distribution :: proc(north, south: u16, line: Sd_Line) -> Suit_Trick_Dis
 // tallying, but each split is scored by playing `line` out against double-dummy defence. Feeds the
 // constrained joint convolution (`joint_total`) so the SD combined total honours "East holds 13" and the
 // 13-trick cap, exactly like the census total. Degenerate suits mirror `suit_joint_table`.
-sd_line_joint_table :: proc(north, south: u16, line: Sd_Line) -> Suit_Joint_Table {
+// `memo_in` (optional): a caller-owned scratch map REUSED across the many (line × suit) evaluations of a
+// gather so they share one backing allocation. `clear`ed on entry — the lead-point values are per-line, so
+// entries from a previous line/suit must not carry over. `nil` → throwaway (standalone callers). Within one
+// call it is still shared across all E/W splits (valid because `line` is fixed for this loop). See
+// `gather_candidate_tables`.
+sd_line_joint_table :: proc(north, south: u16, line: Sd_Line, memo_in: ^map[u64]int = nil) -> Suit_Joint_Table {
 	ns := north | south
 	ns_len := card_count(ns)
 
@@ -266,11 +313,22 @@ sd_line_joint_table :: proc(north, south: u16, line: Sd_Line) -> Suit_Joint_Tabl
 	}
 
 	missing := FULL_SUIT & ~ns
+
+	local: map[u64]int
+	memo := memo_in
+	if memo == nil {
+		local = make(map[u64]int)
+		memo = &local
+	} else {
+		clear(memo)
+	}
+	defer if memo_in == nil {delete(local)}
+
 	east := missing
 	for {
 		west := missing & ~east
 		a := card_count(east)
-		tricks := sd_deal_tricks(line, north, south, east, west)
+		tricks := sd_deal_tricks(line, north, south, east, west, memo)
 		tbl.count[a][tricks] += 1
 
 		if east == 0 {

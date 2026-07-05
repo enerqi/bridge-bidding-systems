@@ -254,42 +254,43 @@ is_ns :: proc "contextless" (seat: int) -> bool {
 // because declarer always regains the lead — so the four-mask layout is a sound memo key.
 @(private)
 suit_dd_tricks :: proc(layout: Suit_Layout, memo: ^map[Suit_Layout]int) -> int {
-	if v, ok := memo[layout]; ok {
-		return v
+	// Terminal positions FIRST, before touching the memo. The minimax bottoms out at these constantly
+	// (every line eventually exhausts one side), and each is one popcount to (re)compute — far cheaper
+	// than a map lookup + insert. Caching them would flood the memo with trivia and pay map traffic for
+	// nothing; only the genuine (non-terminal) minimax positions are worth memoising.
+	nn := card_count(layout[SEAT_N])
+	sn := card_count(layout[SEAT_S])
+	if nn + sn == 0 {
+		return 0 // nothing left to lead: no more tricks for us
 	}
-
-	ns_cards := card_count(layout[SEAT_N]) + card_count(layout[SEAT_S])
-	ew_cards := card_count(layout[SEAT_E]) + card_count(layout[SEAT_W])
-
-	result: int
-	switch {
-	case ns_cards == 0:
-		result = 0 // nothing left to lead: no more tricks for us
-	case ew_cards == 0:
+	if card_count(layout[SEAT_E]) + card_count(layout[SEAT_W]) == 0 {
 		// Opponents exhausted: declarer cashes freely, but BOTH NS hands still follow every trick, so
 		// two NS cards are spent per trick and the extra cards of the shorter hand are wasted. The
 		// tricks left are therefore max(len N, len S), NOT their sum (which would double-count a suit
 		// running in both hands — a real overcount bug when opponents run out with NS cards in both).
-		result = max(card_count(layout[SEAT_N]), card_count(layout[SEAT_S]))
-	case:
-		// Declarer chooses which hand leads this trick (free entries). Try both, keep the better.
-		best := 0
-		for leader in ([2]int{SEAT_N, SEAT_S}) {
-			if layout[leader] == 0 {
-				continue // can't lead from a hand void in the suit
-			}
-			// Clockwise play order starting at the leader: leader, +1, +2, +3 (mod 4).
-			order := [4]int{leader, (leader + 1) % 4, (leader + 2) % 4, (leader + 3) % 4}
-			v := play_card(layout, order, 0, -1, -1, memo)
-			if v > best {
-				best = v
-			}
-		}
-		result = best
+		return max(nn, sn)
 	}
 
-	memo[layout] = result
-	return result
+	if v, ok := memo[layout]; ok {
+		return v
+	}
+
+	// Declarer chooses which hand leads this trick (free entries). Try both, keep the better.
+	best := 0
+	for leader in ([2]int{SEAT_N, SEAT_S}) {
+		if layout[leader] == 0 {
+			continue // can't lead from a hand void in the suit
+		}
+		// Clockwise play order starting at the leader: leader, +1, +2, +3 (mod 4).
+		order := [4]int{leader, (leader + 1) % 4, (leader + 2) % 4, (leader + 3) % 4}
+		v := play_card(layout, order, 0, -1, -1, memo)
+		if v > best {
+			best = v
+		}
+	}
+
+	memo[layout] = best
+	return best
 }
 
 // One ply of the within-trick minimax. `order` is the clockwise seat sequence for this trick;
@@ -383,7 +384,11 @@ Suit_Joint_Table :: struct {
 // weighted marginal. Degenerate suits (NS void / NS holds all 13) still enumerate the length axis: a
 // void suit contributes 0 tricks but a WHOLE range of East lengths (`count[a][0] = C(13,a)`), which the
 // joint DP needs to keep East's total-length budget honest.
-suit_joint_table :: proc(north, south: u16) -> Suit_Joint_Table {
+// `memo_in` (optional): a caller-owned scratch map REUSED across suits so the 8 census tables of a deal
+// share one backing allocation instead of an alloc+free each. This proc `clear`s it on entry (each suit's
+// Suit_Layout space is independent — different suits share rank positions numerically, so entries must NOT
+// carry over). `nil` → make a throwaway internally (standalone callers). See `analyse_ns`.
+suit_joint_table :: proc(north, south: u16, memo_in: ^map[Suit_Layout]int = nil) -> Suit_Joint_Table {
 	ns := north | south // NS's combined holding in the suit (the two hands are disjoint)
 	ns_len := card_count(ns)
 
@@ -406,8 +411,17 @@ suit_joint_table :: proc(north, south: u16) -> Suit_Joint_Table {
 	}
 
 	missing := FULL_SUIT & ~ns // the opponents' cards in this suit
-	memo := make(map[Suit_Layout]int)
-	defer delete(memo)
+
+	// Reuse the caller's scratch map if given (cleared, so no stale cross-suit entries), else a throwaway.
+	local: map[Suit_Layout]int
+	memo := memo_in
+	if memo == nil {
+		local = make(map[Suit_Layout]int)
+		memo = &local
+	} else {
+		clear(memo)
+	}
+	defer if memo_in == nil {delete(local)}
 
 	// Enumerate every submask of `missing` as East's holding (West gets the complement): visits `missing`
 	// first and 0 last, 2^m masks in all.
@@ -422,7 +436,7 @@ suit_joint_table :: proc(north, south: u16) -> Suit_Joint_Table {
 		layout[SEAT_E] = east
 		layout[SEAT_W] = west
 
-		tricks := suit_dd_tricks(layout, &memo)
+		tricks := suit_dd_tricks(layout, memo)
 		tbl.count[a][tricks] += 1
 
 		if east == 0 {
@@ -570,8 +584,10 @@ analyse_ns :: proc(north, south: norn.Hand_Summary) -> Deal_Analysis {
 	// combined total is the CONSTRAINED joint convolution over the four tables (East holds 13 total, NS
 	// tricks capped at 13) — not an independent convolution of the four marginals. See `joint_total`.
 	tables: [norn.Suit]Suit_Joint_Table
+	memo := make(map[Suit_Layout]int) // one scratch map reused (cleared) across the 4 suits
+	defer delete(memo)
 	for suit in norn.Suit {
-		tbl := suit_joint_table(north.suits[suit], south.suits[suit])
+		tbl := suit_joint_table(north.suits[suit], south.suits[suit], &memo)
 		tables[suit] = tbl
 		a.suits[suit] = marginal_from_table(tbl)
 	}
@@ -705,30 +721,83 @@ write_suits_json :: proc(b: ^strings.Builder, a: ^Deal_Analysis) {
 	strings.write_byte(b, '}')
 }
 
+// --- Per-partnership shared SD data (Phase-2 dedup, PERFORMANCE.md §2) -------------------------
+//
+// Every Html_Cards writer below needs the SAME per-suit single-dummy candidate evaluation: the best line
+// by mean (its name, its marginal, its joint table) plus every candidate's joint table for the adaptive
+// DP. Computed independently they enumerated the 2^m E/W splits ~5× per suit (across `sd_joint_total`,
+// `write_suits_json_sd`/`_lines`/`_tips`, and `adaptive_at_least_curve`). `build_partnership_sd` does it
+// ONCE; the writers read from it. The `[4]` axis is DISPLAY_SUITS order (s,h,d,c) — the same order every
+// writer walks — so per-suit indices line up with the writers' `keys` arrays.
+//
+// PARITY: deriving each suit's row from its joint table (`marginal_from_table`) is byte-identical to the
+// old `sd_line_distribution` path — both sum the SAME per-split integer weights (all partial sums
+// ≤ C(26,13) ≈ 1.04e7, exact in f64), then divide by the same denom. Same line chosen, same numbers.
+Partnership_Sd :: struct {
+	cand:      [4][]Line_Joint, // every candidate line's joint table per suit (drives the adaptive DP)
+	best_idx:  [4]int, // index into cand[i] of the best-by-mean line (the recommended blind line)
+	best_marg: [4]Suit_Trick_Dist, // that line's marginal trick distribution (the data-*-sd row)
+}
+
+// Evaluate a partnership's four suits ONCE: build every candidate line's joint table, then pick the
+// best-by-mean line per suit and cache its marginal. Everything the Html_Cards writers emit derives from
+// this. Picks identically to `best_line_by_mean`/`sd_best_joint_table` (same candidate order, first-wins
+// on ties, means equal by the parity note above). `cand` is on `allocator` (temp in the render path).
+@(private)
+build_partnership_sd :: proc(
+	north, south: norn.Hand_Summary,
+	allocator := context.temp_allocator,
+) -> Partnership_Sd {
+	ps: Partnership_Sd
+	ps.cand = gather_candidate_tables(north, south, allocator)
+	for i in 0 ..< 4 {
+		best_mean := f64(-1)
+		for lj, j in ps.cand[i] {
+			marg := marginal_from_table(lj.tbl)
+			mn := expected_tricks(marg.p)
+			if mn > best_mean {
+				best_mean = mn
+				ps.best_idx[i] = j
+				ps.best_marg[i] = marg
+			}
+		}
+	}
+	return ps
+}
+
+// The ACHIEVABLE single-dummy combined total from precomputed per-partnership data: the constrained joint
+// convolution (`joint_total`) of the four best-by-mean SD line joint tables. The deduped counterpart of
+// `sd_joint_total` — reuses the tables `build_partnership_sd` already built instead of re-enumerating.
+@(private)
+sd_joint_total_of :: proc(ps: ^Partnership_Sd) -> [RANKS + 1]f64 {
+	tables: [norn.Suit]Suit_Joint_Table
+	for suit, i in DISPLAY_SUITS {
+		tables[suit] = ps.cand[i][ps.best_idx[i]].tbl
+	}
+	return joint_total(tables)
+}
+
 // The Phase-2 ACHIEVABLE per-suit distributions, same JSON shape as `write_suits_json` but each suit's
-// `p[k]` comes from the best fixed single-dummy LINE by mean (`best_line_by_mean`, brick 2). Where
-// `write_suits_json` is the double-dummy CEILING (census, hindsight), this is a concrete blind line a
-// declarer can actually adopt; the card page shows both so the gap (the double-dummy tax) is visible.
+// `p[k]` is the best fixed single-dummy LINE by mean (brick 2), read from precomputed `ps.best_marg`.
+// Where `write_suits_json` is the double-dummy CEILING (census, hindsight), this is a concrete blind line
+// a declarer can actually adopt; the card page shows both so the gap (the double-dummy tax) is visible.
 // (The optimal search `sd_optimal_distribution` is only better on long holdings — rare on a random
 // deal — and much slower, so the render path uses the candidate best-line, coherent with the DP curve.)
-write_suits_json_sd :: proc(b: ^strings.Builder, north, south: norn.Hand_Summary) {
-	keys := [4]struct {
-		suit: norn.Suit,
-		key:  string,
-	}{{.Spades, "s"}, {.Hearts, "h"}, {.Diamonds, "d"}, {.Clubs, "c"}}
+write_suits_json_sd :: proc(b: ^strings.Builder, ps: ^Partnership_Sd) {
+	keys := [4]string{"s", "h", "d", "c"}
 
 	strings.write_byte(b, '{')
-	for e, i in keys {
+	for key, i in keys {
 		if i > 0 {
 			strings.write_byte(b, ',')
 		}
-		fmt.sbprintf(b, `"%s":[`, e.key)
-		best := best_line_by_mean(north.suits[e.suit], south.suits[e.suit])
+		fmt.sbprintf(b, `"%s":[`, key)
+		p := ps.best_marg[i].p
 		for k in 0 ..= RANKS {
 			if k > 0 {
 				strings.write_byte(b, ',')
 			}
-			write_prob(b, best.dist.p[k])
+			write_prob(b, p[k])
 		}
 		strings.write_byte(b, ']')
 	}
@@ -738,19 +807,14 @@ write_suits_json_sd :: proc(b: ^strings.Builder, north, south: norn.Hand_Summary
 // Write the per-suit RECOMMENDED blind line names as a JSON array `["s","h","d","c"]` (the best fixed
 // single-dummy line by mean per suit — `best_line_by_mean`, brick 2). Same suit order s,h,d,c as the
 // distribution blobs, so the card page can label each suit row with how to play it.
-write_suits_lines_json :: proc(b: ^strings.Builder, north, south: norn.Hand_Summary) {
-	keys := [4]struct {
-		suit: norn.Suit,
-		key:  string,
-	}{{.Spades, "s"}, {.Hearts, "h"}, {.Diamonds, "d"}, {.Clubs, "c"}}
-
+write_suits_lines_json :: proc(b: ^strings.Builder, ps: ^Partnership_Sd) {
 	strings.write_byte(b, '[')
-	for e, i in keys {
+	for i in 0 ..< 4 {
 		if i > 0 {
 			strings.write_byte(b, ',')
 		}
-		best := best_line_by_mean(north.suits[e.suit], south.suits[e.suit])
-		fmt.sbprintf(b, `"%s"`, best.name)
+		name := ps.cand[i][ps.best_idx[i]].name
+		fmt.sbprintf(b, `"%s"`, name)
 	}
 	strings.write_byte(b, ']')
 }
@@ -875,19 +939,14 @@ describe_finesse :: proc(b: ^strings.Builder, combined, winners: u16, top_missin
 
 // Emit the per-suit line NARRATIONS as a JSON array of strings (one per suit s,h,d,c), pairing each
 // with its recommended line (`best_line_by_mean`). The card page shows these as hover tooltips.
-write_suits_tips_json :: proc(b: ^strings.Builder, north, south: norn.Hand_Summary) {
-	keys := [4]struct {
-		suit: norn.Suit,
-		key:  string,
-	}{{.Spades, "s"}, {.Hearts, "h"}, {.Diamonds, "d"}, {.Clubs, "c"}}
-
+write_suits_tips_json :: proc(b: ^strings.Builder, ps: ^Partnership_Sd, north, south: norn.Hand_Summary) {
 	strings.write_byte(b, '[')
-	for e, i in keys {
+	for suit, i in DISPLAY_SUITS {
 		if i > 0 {
 			strings.write_byte(b, ',')
 		}
-		best := best_line_by_mean(north.suits[e.suit], south.suits[e.suit])
-		desc := describe_suit_line(north.suits[e.suit], south.suits[e.suit], best.name)
+		name := ps.cand[i][ps.best_idx[i]].name
+		desc := describe_suit_line(north.suits[suit], south.suits[suit], name)
 		// JSON string; the narration contains no quotes/backslashes, but escape defensively.
 		strings.write_byte(b, '"')
 		for c in transmute([]u8)desc {
@@ -1001,15 +1060,21 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		// these directly instead of convolving the per-suit marginals client-side (which was independent,
 		// so length-inconsistent). Per-suit `-sd`/`-atl`/`-lines`/`-tips` are unchanged.
 		ew := analyse_ns(ds[.East], ds[.West])
-		ns_atl := adaptive_at_least_curve(ds[.North], ds[.South])
-		ew_atl := adaptive_at_least_curve(ds[.East], ds[.West])
-		ns_totsd := sd_joint_total(ds[.North], ds[.South])
-		ew_totsd := sd_joint_total(ds[.East], ds[.West])
+
+		// Phase-2 dedup (PERFORMANCE.md §2): evaluate each partnership's candidate lines ONCE, then read
+		// the SD total, the make curve, and every per-suit row (sd / lines / tips) off the shared result —
+		// instead of the four writers + curve + total each re-enumerating the same splits.
+		ns_sd := build_partnership_sd(ds[.North], ds[.South], context.temp_allocator)
+		ew_sd := build_partnership_sd(ds[.East], ds[.West], context.temp_allocator)
+		ns_atl := adaptive_curve_from(ns_sd.cand)
+		ew_atl := adaptive_curve_from(ew_sd.cand)
+		ns_totsd := sd_joint_total_of(&ns_sd)
+		ew_totsd := sd_joint_total_of(&ew_sd)
 
 		strings.write_string(builder, `<div class="combo" data-ns='`)
 		write_suits_json(builder, &a)
 		strings.write_string(builder, `' data-ns-sd='`)
-		write_suits_json_sd(builder, ds[.North], ds[.South])
+		write_suits_json_sd(builder, &ns_sd)
 		strings.write_string(builder, `' data-ns-tot='`)
 		write_curve_json(builder, a.total)
 		strings.write_string(builder, `' data-ns-totsd='`)
@@ -1017,13 +1082,13 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		strings.write_string(builder, `' data-ns-atl='`)
 		write_curve_json(builder, ns_atl)
 		strings.write_string(builder, `' data-ns-lines='`)
-		write_suits_lines_json(builder, ds[.North], ds[.South])
+		write_suits_lines_json(builder, &ns_sd)
 		strings.write_string(builder, `' data-ns-tips='`)
-		write_suits_tips_json(builder, ds[.North], ds[.South])
+		write_suits_tips_json(builder, &ns_sd, ds[.North], ds[.South])
 		strings.write_string(builder, `' data-ew='`)
 		write_suits_json(builder, &ew)
 		strings.write_string(builder, `' data-ew-sd='`)
-		write_suits_json_sd(builder, ds[.East], ds[.West])
+		write_suits_json_sd(builder, &ew_sd)
 		strings.write_string(builder, `' data-ew-tot='`)
 		write_curve_json(builder, ew.total)
 		strings.write_string(builder, `' data-ew-totsd='`)
@@ -1031,9 +1096,9 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		strings.write_string(builder, `' data-ew-atl='`)
 		write_curve_json(builder, ew_atl)
 		strings.write_string(builder, `' data-ew-lines='`)
-		write_suits_lines_json(builder, ds[.East], ds[.West])
+		write_suits_lines_json(builder, &ew_sd)
 		strings.write_string(builder, `' data-ew-tips='`)
-		write_suits_tips_json(builder, ds[.East], ds[.West])
+		write_suits_tips_json(builder, &ew_sd, ds[.East], ds[.West])
 		strings.write_string(builder, `'></div>`)
 		free_all(context.temp_allocator)
 	case .Pretty:
