@@ -766,6 +766,73 @@ analyse_deal_ns :: proc(board: norn.Deal) -> Deal_Analysis {
 	return analyse_ns(ds[.North], ds[.South])
 }
 
+// The two partnerships, as `Seat` sets — the only valid "known" pairs for a 2-hand (declarer + dummy)
+// board, since declarer and dummy are always partners.
+NS_SIDE :: bit_set[norn.Seat]{.North, .South}
+EW_SIDE :: bit_set[norn.Seat]{.East, .West}
+
+// Resolve the two `Hand_Summary`s of a `Parsed_Board`'s fully-known partnership — the shared front
+// end for the 2-hand (declarer + dummy) entry points below. `ok` is false unless EXACTLY one
+// partnership is known: `known == {N,S}` or `{E,W}`. A 4-hand board (both sides known) is rejected on
+// purpose — route those through `analyse_deal_ns`, which fixes the declaring side as N/S; these procs
+// exist for the ambiguous 2-hand case where the known pair IS the side to analyse. A lone hand or a
+// non-partnership pair is also false.
+@(private)
+parsed_board_partnership :: proc(
+	board: norn.Parsed_Board,
+) -> (
+	a, b: norn.Hand_Summary,
+	side: bit_set[norn.Seat],
+	ok: bool,
+) {
+	switch board.known {
+	case NS_SIDE:
+		return norn.summarize(board.deal[.North]), norn.summarize(board.deal[.South]), NS_SIDE, true
+	case EW_SIDE:
+		return norn.summarize(board.deal[.East]), norn.summarize(board.deal[.West]), EW_SIDE, true
+	}
+	return {}, {}, {}, false
+}
+
+// Analyse the known partnership of a `Parsed_Board` — the DOUBLE-DUMMY census entry point for the
+// 2-hand (declarer + dummy) flow, where a PBN tag (from `norn.parse_pbn_deal`) specifies exactly two
+// hands. The combo model needs only the two partners' holdings (the defenders' 26 cards stay unknown,
+// split over every E/W layout), so no full deal is required. Returns the census analysis (the per-suit
+// / combined trick CEILING), the side analysed, and `ok` (see `parsed_board_partnership`).
+analyse_parsed_board :: proc(
+	board: norn.Parsed_Board,
+) -> (
+	a: Deal_Analysis,
+	side: bit_set[norn.Seat],
+	ok: bool,
+) {
+	n, s, resolved, k := parsed_board_partnership(board)
+	if !k {
+		return {}, {}, false
+	}
+	return analyse_ns(n, s), resolved, true
+}
+
+// The SINGLE-DUMMY companion to `analyse_parsed_board`: the achievable-play bundle for the known
+// partnership (per-suit best-line marginals, recommended line names, the SD combined total, and the
+// adaptive P(>= t) make curve — everything the card page's blue `sd`/`>=sd` rows show). Same known-side
+// resolution and `ok` contract. Together the two give the DD ceiling vs SD achievable for a 2-hand
+// board with no full deal / no DDS par. Uses `context.temp_allocator` internally (result copies out by
+// value, so the caller may reset that arena afterwards — see `sd_bundle`).
+sd_bundle_parsed_board :: proc(
+	board: norn.Parsed_Board,
+) -> (
+	sd: Sd_Bundle,
+	side: bit_set[norn.Seat],
+	ok: bool,
+) {
+	n, s, resolved, k := parsed_board_partnership(board)
+	if !k {
+		return {}, {}, false
+	}
+	return sd_bundle(n, s), resolved, true
+}
+
 // The probability of taking AT LEAST `target` tricks, from any trick distribution's `p[]` (a per-suit
 // `Suit_Trick_Dist.p` or the combined `Deal_Analysis.total`). This is the headline "chance of making
 // the contract" figure; `target` defaults sensibly to the double-dummy par level (package `dd`).
@@ -959,8 +1026,9 @@ g_pool_once: sync.Once
 @(private)
 g_pool_started: bool // set by init_pool; gates shutdown so it is a no-op when the pool was never used
 
-// The most pool workers we ever need = the fine-grained task count per deal (8 census + 8 SD suits). Sizing to
-// this lets every task of one deal run concurrently; more workers would only ever idle.
+// The most pool workers we ever need = the fine-grained per-deal task count (8 census + 8 SD suit-tasks; the
+// 1A assemble phase's 2 finish_sd tasks run in a separate phase, never concurrent with the 16). Sizing to this
+// lets every task of one deal run concurrently; more workers would only ever idle.
 POOL_MAX_WORKERS :: 16
 
 // One-time pool bring-up (via `g_pool_once`): workers = min(physical cores, `POOL_MAX_WORKERS`), started and
@@ -996,8 +1064,9 @@ g_scratch_mutex: sync.Mutex
 //
 // Splits `annotate(.Html_Cards)`'s per-deal cost into three phases so the serial main-thread tail can be seen
 // against the parallel suit phase (PERFORMANCE.md §9.4 / §10 priority 1): [0] PARALLEL = dispatch + wait on the
-// 16 suit-tasks; [1] ASSEMBLE = `finish_census`×2 + `finish_sd`×2 (the joint DPs) on the caller; [2] JSON = the
-// `write_*` string building. Accumulates raw CPU cycles across calls (proportions, not calibrated time); the
+// 16 suit-tasks; [1] ASSEMBLE = `finish_census`×2 on the caller overlapped with the two pooled `finish_sd` joint
+// DPs (§10 #1A), until join; [2] JSON = the `write_*` string building. Accumulates raw CPU cycles across calls
+// (proportions, not calibrated time); the
 // bench reads them via `profile_read` and scales by the measured ms/deal. Zero cost when off: `prof_now` folds
 // to a constant 0 and `prof_add` to nothing, so the timestamps are still "used" (no unused-var error).
 COMBO_PROFILE :: #config(COMBO_PROFILE, false)
@@ -1100,8 +1169,8 @@ worker_scratch :: proc() -> (census: ^map[Suit_Layout]int, sd: ^map[u64]int, all
 }
 
 // Everything the card page's single-dummy blobs need for ONE partnership, all by value (no pointers into
-// the transient joint tables the worker allocated and freed).
-@(private)
+// the transient joint tables the worker allocated and freed). Public: it is the return type of the
+// 2-hand entry point `sd_bundle_parsed_board`, consumed by the `pbn_analyse` driver.
 Sd_Bundle :: struct {
 	best_marg: [4]Suit_Trick_Dist, // per-suit best-line marginal → data-*-sd
 	best_name: [4]string, // per-suit recommended line name → data-*-lines / -tips
@@ -1132,7 +1201,9 @@ N_CANDIDATE_LINES :: 5
 // (fixed-size `Suit_Joint_Table` / `[N]Line_Joint`, line names are static literals — nothing points into the
 // worker's arena), then signals the deal's `Wait_Group`. The results are assembled on the calling thread via
 // the shared `finish_census`/`finish_sd` seams, so the output is byte-identical to the serial path. See
-// PERFORMANCE.md §9.4.
+// PERFORMANCE.md §9.4. (§10 #1B — merging census+SD into 8 coarser tasks — was tried and MEASURED SLOWER:
+// 9.1 → ~11 ms. The coarser task serialises census+SD and removes the scheduler slack that hides their
+// imbalance; the pool mutex was NOT the bottleneck 1B assumed. Reverted — the fine 16-task split stands.)
 @(private)
 Suit_Census_Task :: struct {
 	north, south: u16, // one suit's NS holdings
@@ -1168,6 +1239,31 @@ suit_sd_task :: proc(t: thread.Task) {
 			tbl  = sd_line_joint_table(task.north, task.south, line, sd),
 		}
 	}
+	mem.free_all(context.temp_allocator)
+	sync.wait_group_done(task.wg)
+}
+
+// ASSEMBLE-phase task (PERFORMANCE.md §10 #1A): one partnership's whole `finish_sd` — the two
+// `adaptive_curve_from` joint DPs are the serial-tail bottleneck, and NS vs EW are independent, so
+// running each on the pool overlaps them (~5.2 ms serial → ~2.6 ms) while the caller does the cheap
+// census assembles. `cand` views the caller's per-suit `Suit_Sd_Task.out` stack arrays (live until the
+// caller joins). `finish_sd` is a pure stack DP over `cand` (no shared state) so the result is identical
+// to the serial call — the `-define:COMBO_THREADS=false` parity gate covers it.
+@(private)
+Sd_Finish_Task :: struct {
+	cand: [4][]Line_Joint,
+	out:  Sd_Bundle,
+	wg:   ^sync.Wait_Group,
+}
+
+@(private)
+sd_finish_task :: proc(t: thread.Task) {
+	task := (^Sd_Finish_Task)(t.data)
+	// finish_sd's DP is stack-only, but set the worker's temp arena defensively (a helper could allocate)
+	// and to keep this thread off the shared process temp allocator.
+	_, _, alloc := worker_scratch()
+	context.temp_allocator = alloc
+	task.out = finish_sd(task.cand)
 	mem.free_all(context.temp_allocator)
 	sync.wait_group_done(task.wg)
 }
@@ -1522,19 +1618,35 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 			}
 			prof_b = prof_now() // end of the parallel suit phase
 
-			// Assemble on this thread (cheap: marginals + the joint DP). `cand` slices view the per-suit task
-			// outputs (stack arrays, live until the writers finish) in DISPLAY_SUITS order.
+			// Assemble. `cand`/`*_tables` view the per-suit task outputs (stack arrays, live until this scope
+			// ends) in DISPLAY_SUITS / suit order. The two `finish_sd` calls carry the joint-DP cost (§10 #1A),
+			// and NS vs EW are independent, so dispatch BOTH to the pool and run the cheap `finish_census` pair
+			// on this thread meanwhile — overlapping the two ~2.6 ms adaptive curves instead of serialising them.
 			ns_tables, ew_tables: [norn.Suit]Suit_Joint_Table
 			for suit in norn.Suit {
 				ns_tables[suit] = ns_ct[suit].out
 				ew_tables[suit] = ew_ct[suit].out
 			}
-			a = finish_census(ns_tables)
-			ew = finish_census(ew_tables)
 			ns_cand := [4][]Line_Joint{ns_st[0].out[:], ns_st[1].out[:], ns_st[2].out[:], ns_st[3].out[:]}
 			ew_cand := [4][]Line_Joint{ew_st[0].out[:], ew_st[1].out[:], ew_st[2].out[:], ew_st[3].out[:]}
-			ns_sd = finish_sd(ns_cand)
-			ew_sd = finish_sd(ew_cand)
+
+			wg2: sync.Wait_Group
+			sync.wait_group_add(&wg2, 2)
+			ns_sdt := Sd_Finish_Task{cand = ns_cand, wg = &wg2}
+			ew_sdt := Sd_Finish_Task{cand = ew_cand, wg = &wg2}
+			thread.pool_add_task(&g_pool, context.allocator, sd_finish_task, &ns_sdt)
+			thread.pool_add_task(&g_pool, context.allocator, sd_finish_task, &ew_sdt)
+
+			a = finish_census(ns_tables) // cheap; runs under the two pooled SD assembles
+			ew = finish_census(ew_tables)
+
+			sync.wait_group_wait(&wg2)
+			for {
+				_, ok := thread.pool_pop_done(&g_pool)
+				if !ok {break}
+			}
+			ns_sd = ns_sdt.out
+			ew_sd = ew_sdt.out
 		} else {
 			prof_b = prof_now() // serial: no parallel phase; all compute lands in ASSEMBLE
 			a = analyse_ns(ds[.North], ds[.South])

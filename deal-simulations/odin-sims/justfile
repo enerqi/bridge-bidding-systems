@@ -65,6 +65,7 @@ lint *args:
 	odin check combo {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
 	odin check dd {{norn}} {{dds}} -vet -vet-cast -strict-style -no-entry-point {{args}}
 	odin check sim.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style {{args}}
+	odin check pbn_analyse.odin -file {{norn}} -vet -vet-cast -strict-style {{args}}
 
 # run the deal generator (release). Pass CLI args through, e.g. `just run --scenario 1c-any -n 12`.
 run *args: mktarget_dirs
@@ -81,6 +82,13 @@ run_debug *args: mktarget_dirs
 # build the sim deal generator (release)
 build *args: mktarget_dirs
 	odin build sim.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/{{sim_name}} {{args}}
+
+# 2-hand (declarer + dummy) card-combination advisor: read a PBN [Deal] tag and print the combo
+# analysis (double-dummy census + achievable single-dummy) for the known partnership. No DDS needed.
+# e.g. just analyse-pbn '[Deal "N:AKQ32.AK2.A32.A32 - Q.QJT98.KQJ.KQJT -"]'  (add --target 9 to highlight a level)
+# Reads a PBN string arg, a --file <path>, or stdin (so `hand-ocr ... | pbn_analyse` works).
+analyse-pbn *args: mktarget_dirs
+	odin run pbn_analyse.odin -file {{norn}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe -- {{args}}
 
 # Frequency test every scenario by default, or pass `-S name[,name]` to restrict the subset.
 # e.g. `just freq` (1M, -all), `just freq 5000000`, `just freq 1000000 -S 1c-any,2c-opener`.

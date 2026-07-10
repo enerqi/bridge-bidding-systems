@@ -28,6 +28,52 @@ mask :: proc(ranks: ..norn.Rank) -> u16 {
 	return m
 }
 
+// The 2-hand (declarer + dummy) entry: a PBN tag with two known partners parses and analyses. N holds
+// all 13 spades and S all 13 hearts — a degenerate but valid board — so each of those suits is 13
+// certain tricks and the combined total caps at 13.
+@(test)
+test_analyse_parsed_board_two_hand :: proc(t: ^testing.T) {
+	board, perr := norn.parse_pbn_deal(`N:AKQJT98765432... - .AKQJT98765432.. -`)
+	testing.expect_value(t, perr, norn.Pbn_Parse_Error.None)
+
+	a, side, ok := analyse_parsed_board(board)
+	testing.expect(t, ok, "known N/S partnership should analyse")
+	testing.expect_value(t, side, NS_SIDE)
+
+	testing.expect(t, a.suits[.Spades].p[RANKS] > 0.999, "all spades -> 13 tricks certain")
+	testing.expect(t, a.suits[.Hearts].p[RANKS] > 0.999, "all hearts -> 13 tricks certain")
+	testing.expect(t, a.total[RANKS] > 0.999, "combined total caps at 13")
+
+	sum := f64(0)
+	for v in a.total {
+		sum += v
+	}
+	testing.expect(t, abs(sum - 1) < 1e-9, "total distribution normalised")
+}
+
+// A board with only one known hand is not a full partnership, so the analysis is refused.
+@(test)
+test_analyse_parsed_board_rejects_non_partnership :: proc(t: ^testing.T) {
+	board, _ := norn.parse_pbn_deal(`N:AKQJT98765432... - - -`)
+	_, _, ok := analyse_parsed_board(board)
+	testing.expect(t, !ok, "single known hand is not a full partnership")
+}
+
+// The single-dummy companion resolves the same known partnership and produces a valid bundle. With N
+// all spades and S all hearts (both solid running suits), the achievable SD total also caps at 13 —
+// no finesse needed, so SD matches the census ceiling here.
+@(test)
+test_sd_bundle_parsed_board_two_hand :: proc(t: ^testing.T) {
+	board, perr := norn.parse_pbn_deal(`N:AKQJT98765432... - .AKQJT98765432.. -`)
+	testing.expect_value(t, perr, norn.Pbn_Parse_Error.None)
+
+	sd, side, ok := sd_bundle_parsed_board(board)
+	testing.expect(t, ok, "known N/S partnership should produce an SD bundle")
+	testing.expect_value(t, side, NS_SIDE)
+	testing.expect(t, sd.totsd[RANKS] > 0.999, "solid suits -> achievable SD total caps at 13")
+	testing.expect(t, sd.atl[0] > 0.999, "P(>= 0) is certain")
+}
+
 // Solve a fully-specified layout with a throwaway memo (tests don't share one).
 @(private = "file")
 dd :: proc(n, e, s, w: u16) -> int {
