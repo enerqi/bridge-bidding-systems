@@ -1,0 +1,97 @@
+[project]
+name = "hand-ocr"
+version = "0.1.0"
+description = "Bridge hand-diagram image -> PBN/LIN deal text"
+readme = "README.md"
+requires-python = "==3.14.*"
+dependencies = [
+    "docopt>=0.6.2",
+]
+
+[project.optional-dependencies]
+# heavy / platform-touchy vision stack, kept out of the base install so the
+# model+PBN spine and its tests run with just docopt. Install with:
+#   uv sync --extra vision        (geometry + template recognition)
+#   uv sync --extra vision --extra ocr   (+ PaddleOCR fallback for noisy input)
+vision = [
+    "opencv-python-headless>=4.10",
+    "numpy>=2.0",
+]
+ocr = [
+    "paddleocr>=2.7",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.15",
+    "ty>=0.0.31",  # beta
+]
+
+[tool.uv]
+# an application (script tool), not a distributable package -> no build backend
+package = false
+
+[tool.ty]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+
+[tool.ruff.lint]
+select = [
+    "A",        # flake8-builtins — shadowing builtins (`id`, `type`, `list` as parameter / variable names)
+    "ANN",      # flake8-annotations — missing type annotations on public functions/methods (see ANN401 ignore)
+    "ARG",      # flake8-unused-arguments — unused function/method/lambda args
+    "B",        # flake8-bugbear — likely bugs / design flaws (mutable default args, B008, B904 raise-from, etc.)
+    "BLE",      # flake8-blind-except — bare `except:` / `except Exception:` without re-raise or logging
+    "C4",       # flake8-comprehensions — wasteful list/set/dict comprehensions and generator misuse
+    "E",        # pycodestyle errors — PEP 8 errors (whitespace, indentation, statement separation)
+    "EM",       # flake8-errmsg — exception message must be variable, not literal/f-string inside `raise`
+    "F",        # Pyflakes — unused imports/vars, undefined names, redefinitions
+    "FLY",      # flynt — static `str.join`/`%`-format/`.format` → f-string
+    "I001",     # isort — import block sort/group order (only the "unsorted" rule, not the broader I)
+    "ISC",      # flake8-implicit-str-concat — catch accidental adjacent-string-literal concatenation
+    "N",        # pep8-naming — class CamelCase, function snake_case, constant SCREAMING_SNAKE
+    "PERF",     # Perflint — `.append` in loops vs list-comp, unnecessary list() in `any()`/`all()`, etc.
+    "PGH004",   # pygrep-hooks — ban blanket `# noqa` (require specific code)
+    "PIE",      # flake8-pie — misc anti-patterns (unnecessary dict/list/pass, duplicate class fields)
+    "PT",       # flake8-pytest-style — pytest idioms (parametrize tuples, fixture scope, raises usage)
+    "PTH",      # flake8-use-pathlib — prefer `pathlib.Path` over `os.path` / `os.makedirs` / `open(...)`
+    "Q",        # flake8-quotes — consistent quote style (matches `ruff format`)
+    "RET",      # flake8-return — unnecessary `else` after return, redundant `return None`, etc.
+    "RSE",      # flake8-raise — unnecessary parens on `raise Foo()`
+    "RUF",      # Ruff-specific — extras the Ruff team owns (RUF005 list-concat, RUF012 mutable class attrs, etc.)
+    "S",        # flake8-bandit — security smells (eval, pickle, hardcoded passwords, subprocess shell=True)
+    "SIM",      # flake8-simplify — collapse `if-else` ternaries, `dict.get`, contextlib.suppress, etc.
+    "SLF",      # flake8-self — access to `_private` members from outside the owning class
+    "T10",      # flake8-debugger — leftover `breakpoint()` / `pdb.set_trace()`
+    "T20",      # flake8-print — leftover `print()` / `pprint()` (see per-file-ignore for the CLI entry point)
+    "TRY",      # tryceratops — exception-handling smells (long try blocks, raise-from, abstract-raise)
+    "UP",       # pyupgrade — modernise syntax for `target-version` (typing.Optional → `| None`, super(), f-strings)
+    "W",        # pycodestyle warnings — trailing whitespace, blank-line newlines, etc.
+    "YTT",      # flake8-2020 — incorrect `sys.version` / `sys.version_info` comparisons
+]
+ignore = [
+    "S101",     # flake8-bandit — keep `assert` statements; we use them as sanity checks, not just test scaffolding.
+    "TRY002",   # tryceratops — "create your own exception type". Generic errors are fine for library-internal raises.
+    "TRY003",   # tryceratops — "avoid long messages outside the exception class". Long readable messages at the
+                #     raise site are more useful than a class hierarchy that hides them.
+    "EM101",    # flake8-errmsg — string literal in `raise`. These are placeholder stub / validation messages read
+    "EM102",    #     once by a human; assigning each to a local first is noise here. (Pairs with TRY003 above.)
+    "ISC001",   # flake8-implicit-str-concat — fights `ruff format`; let the formatter own single-line concat.
+    "ANN401",   # flake8-annotations — allow `typing.Any` at the vision boundary (opencv arrays are untyped).
+]
+
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]           # imports not at top of file
+"hand-ocr.py" = ["T20", "ANN"]     # the CLI entry point prints to stdout by design; light annotations
+"tools/*" = ["T20", "ANN", "INP001"]  # bootstrap scripts print progress; not an importable package
+"tests/*" = ["S101", "ANN", "ARG001", "SLF001"]  # asserts + loose annotations are fine in tests
