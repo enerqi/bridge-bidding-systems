@@ -977,10 +977,11 @@ init_pool :: proc() {
 	g_pool_started = true
 }
 
-// A worker's two persistent memo maps, registered (under `g_scratch_mutex`) the first time that thread runs a
-// task so `shutdown` can free them from the main thread. Freeing a heap allocation is not thread-affine, so the
-// main thread can `delete` a (now-dead) worker's maps after `pool_join`. The map STRUCTS are thread-local; only
-// their heap backing is freed here. See PERFORMANCE.md §8.2.
+// Pointers to a worker's two persistent memo maps, registered (under `g_scratch_mutex`) the first time that
+// thread runs a task so `shutdown` can free them from the main thread. Both the map HEADER and its backing live
+// on the heap (the thread-local only holds these pointers — see the tls_memo_* note), so after `pool_join` has
+// terminated the workers the main thread frees them safely; nothing dereferences a dead thread's TLS. Freeing a
+// heap allocation is not thread-affine, so cross-thread free is fine. See PERFORMANCE.md §8.2.
 @(private)
 Scratch_Reg :: struct {
 	census: ^map[Suit_Layout]int,
@@ -1034,8 +1035,10 @@ shutdown :: proc() {
 		if g_pool_started {
 			thread.pool_join(&g_pool)
 			for reg in g_scratch_regs {
-				delete(reg.census^)
+				delete(reg.census^) // free the map backing
+				free(reg.census) // then the heap-resident map header itself (see tls_memo_* note)
 				delete(reg.sd^)
+				free(reg.sd)
 			}
 			delete(g_scratch_regs)
 			g_scratch_regs = nil
@@ -1064,12 +1067,18 @@ tls_temp_arena: mem.Arena
 @(private)
 @(thread_local)
 tls_temp_backing: [TLS_TEMP_SIZE]u8
+// The two memo maps are held on the HEAP, the thread-local only owning a POINTER to each (not the map
+// header itself). This matters at teardown: `thread.pool_join` terminates the worker OS threads, which
+// destroys their thread-local storage — so `shutdown` must not read a map header out of a dead thread's
+// TLS to find its backing. Heap-resident headers stay valid for the main thread to free after the join
+// (the registered pointer value is captured once and never changes). A TLS-resident header would be
+// freed with the thread and dereferencing it in `shutdown` is a use-after-free (a real crash on join).
 @(private)
 @(thread_local)
-tls_memo_census: map[Suit_Layout]int
+tls_memo_census: ^map[Suit_Layout]int
 @(private)
 @(thread_local)
-tls_memo_sd: map[u64]int
+tls_memo_sd: ^map[u64]int
 
 // Lazily initialise this thread's scratch (BSS temp arena + both heap memo maps on first use, registered for
 // `shutdown`) and hand back pointers to the two persistent memos plus the temp-arena allocator. The CALLER must
@@ -1080,14 +1089,14 @@ tls_memo_sd: map[u64]int
 worker_scratch :: proc() -> (census: ^map[Suit_Layout]int, sd: ^map[u64]int, alloc: mem.Allocator) {
 	if !tls_ready {
 		mem.arena_init(&tls_temp_arena, tls_temp_backing[:])
-		tls_memo_census = make(map[Suit_Layout]int)
-		tls_memo_sd = make(map[u64]int)
+		tls_memo_census = new(map[Suit_Layout]int) // heap header (see the tls_memo_* note above), zero-value == empty map
+		tls_memo_sd = new(map[u64]int)
 		tls_ready = true
 		sync.mutex_lock(&g_scratch_mutex)
-		append(&g_scratch_regs, Scratch_Reg{&tls_memo_census, &tls_memo_sd})
+		append(&g_scratch_regs, Scratch_Reg{tls_memo_census, tls_memo_sd})
 		sync.mutex_unlock(&g_scratch_mutex)
 	}
-	return &tls_memo_census, &tls_memo_sd, mem.arena_allocator(&tls_temp_arena)
+	return tls_memo_census, tls_memo_sd, mem.arena_allocator(&tls_temp_arena)
 }
 
 // Everything the card page's single-dummy blobs need for ONE partnership, all by value (no pointers into

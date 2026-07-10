@@ -6,3 +6,5 @@ target/
 
 # machine-specific editor config (absolute norn collection path) — generate with `just ols-config`
 ols.json
+
+.playwright*

@@ -159,7 +159,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_par(builder, ns_par, have_par)
 		strings.write_string(builder, " &mdash; NS make:")
 		write_makeable(builder, res)
-		write_par_opc_guide(builder, ns_par, have_par, ds, " &middot; ")
+		write_par_opc_guide(builder, ns_par, have_par, ds, " &middot; ", true)
 		strings.write_string(builder, "</div>")
 		// Machine-readable form: full trick table as a comment (strain x N/E/S/W).
 		strings.write_string(builder, "<!-- dd tricks[strain]NESW")
@@ -176,7 +176,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_par(builder, ns_par, have_par)
 		strings.write_string(builder, " - NS make:")
 		write_makeable(builder, res)
-		write_par_opc_guide(builder, ns_par, have_par, ds, "\n  ")
+		write_par_opc_guide(builder, ns_par, have_par, ds, "\n  ", false)
 
 	case .Pbn:
 		// Braces must NOT go through a printf format string — Odin's fmt reads `{` as an argument
@@ -185,7 +185,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_par(builder, ns_par, have_par)
 		strings.write_string(builder, "; NS make:")
 		write_makeable(builder, res)
-		write_par_opc_guide(builder, ns_par, have_par, ds, "; ")
+		write_par_opc_guide(builder, ns_par, have_par, ds, "; ", false)
 		strings.write_string(builder, " }")
 
 	case .Line, .Numeric, .Handviewer:
@@ -385,6 +385,7 @@ write_par_opc_guide :: proc(
 	have: bool,
 	ds: norn.Deal_Summary,
 	sep: string,
+	html: bool,
 ) {
 	if !have {
 		return
@@ -410,12 +411,82 @@ write_par_opc_guide :: proc(
 			continue // no side -> can't state a combined total
 		}
 		shown[level][ti] = true
-		x := norn.combined_opc(ds[side[0]], ds[side[1]], denom_trump(c.denom))
-		band := opc_make_band(x, level, is_nt)
+		br := norn.combined_opc_breakdown(ds[side[0]], ds[side[1]], denom_trump(c.denom))
+		band := opc_make_band(br.total, level, is_nt)
 		strings.write_string(builder, "; " if wrote else sep)
-		fmt.sbprintf(builder, "OPC total = %.1f; make chance %s", x, band)
+		strings.write_string(builder, "OPC total = ")
+		// In HTML the figure is a dotted-underlined <abbr>: hovering shows the per-adjustment breakdown
+		// (opener/responder bases plus each fit / misfit / honour / ruffing / mirror term). Plain text
+		// formats (Pretty/Pbn) just print the number.
+		if html {
+			strings.write_string(builder, `<abbr style="text-decoration:underline dotted;cursor:help" title="`)
+			write_opc_breakdown_title(builder, br)
+			fmt.sbprintf(builder, `">%.1f</abbr>`, br.total)
+		} else {
+			fmt.sbprintf(builder, "%.1f", br.total)
+		}
+		fmt.sbprintf(builder, "; make chance %s", band)
 		wrote = true
 	}
+}
+
+// The hover-tooltip text for an OPC breakdown — the full reference render_summary detail, one item per
+// line (title-attribute newlines render as tooltip line breaks). The two bases show their H/L/D split,
+// then every labelled adjustment entry ("<suit> <signed value> <reason>"), closing with the total:
+//
+//   opener 19.5 = H 12.0 + L 4.0 + D 3.5
+//   responder 12.0 = H 10.0 + L 2.0 + D 0.0
+//   S -2.0 singleton opp long
+//   H +1.0 Kx/Qx/Jx/JT opp long
+//   ... = 25.5
+//
+// Suit glyphs (norn.suit_glyph) are UTF-8; the card pages declare <meta charset=utf-8>, so they render
+// in the native tooltip. The whole-hand mirror entry has no suit.
+@(private)
+write_opc_breakdown_title :: proc(builder: ^strings.Builder, br: norn.Opc_Breakdown) {
+	fmt.sbprintf(
+		builder,
+		"opener %.1f = H %.1f + L %.1f + D %.1f",
+		br.opener_base,
+		br.opener_h,
+		br.opener_l,
+		br.opener_d,
+	)
+	fmt.sbprintf(
+		builder,
+		"\nresponder %.1f = H %.1f + L %.1f + D %.1f",
+		br.responder_base,
+		br.responder_h,
+		br.responder_l,
+		br.responder_d,
+	)
+	for i in 0 ..< br.n_entries {
+		e := br.entries[i]
+		strings.write_string(builder, "\n")
+		if e.has_suit {
+			strings.write_string(builder, norn.suit_glyph(e.suit))
+			strings.write_string(builder, " ")
+		}
+		fmt.sbprintf(builder, "%+.1f %s", e.value, opc_entry_phrase(e))
+	}
+	fmt.sbprintf(builder, "\n= %.1f", br.total)
+}
+
+// The reason phrase for a breakdown entry — norn's reason text, except a fit is narrated by its combined
+// length (value 1/2/3 -> 8/9/10+ -card fit) which the flat reason label cannot carry.
+@(private)
+opc_entry_phrase :: proc(e: norn.Opc_Entry) -> string {
+	if e.reason == .Fit {
+		switch e.value {
+		case 1:
+			return "8-card fit"
+		case 2:
+			return "9-card fit"
+		case:
+			return "10+card fit"
+		}
+	}
+	return norn.opc_reason_text(e.reason)
 }
 
 // The two partners declaring a par contract, from its seat field: a single declarer or a partnership
