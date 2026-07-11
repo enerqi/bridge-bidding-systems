@@ -199,6 +199,25 @@ def _box_rows(box_gray: Any) -> list[list[Any]]:
 
     ordered_rows = [sorted((comps[i] for i in g), key=lambda c: c[0]) for g in groups]  # each left-to-right
 
+    # Drop neighbour-board bleed: a multi-board tile is cropped wider than a cell so
+    # each board's outer (E/W) hands fit, which also pulls in stray glyphs from the
+    # adjacent board at the far edge. A real hand is one contiguous x-run; a bled
+    # glyph sits past a wide horizontal gap (~4x the small inter-rank gap). Keep each
+    # row's largest run (ties -> leftmost, the suit side, so a lone-suit run is kept).
+    def keep_main_run(row: list[tuple[int, int, int, int, float]]) -> list[tuple[int, int, int, int, float]]:
+        if len(row) < 2:
+            return row
+        runs: list[list[tuple[int, int, int, int, float]]] = [[row[0]]]
+        for c in row[1:]:
+            prev = runs[-1][-1]
+            if c[0] - (prev[0] + prev[2]) > median_h * 2.5:
+                runs.append([c])
+            else:
+                runs[-1].append(c)
+        return max(runs, key=len)
+
+    ordered_rows = [keep_main_run(row) for row in ordered_rows]
+
     # Reference widths for splitting touching glyphs. Ranks are the non-leftmost
     # components (leftmost is the suit symbol); the suit glyph is a touch wider.
     rank_ws = [c[2] for row in ordered_rows for c in row[1:]]
