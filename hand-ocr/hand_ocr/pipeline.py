@@ -19,7 +19,7 @@ from .model import SEATS, Deal, DealError
 from .preprocess import normalise
 
 
-def _tile_to_deal(tile: Tile, first: str) -> Deal:
+def _read_tile(tile: Tile, first: str) -> Deal:
     mode = detect_mode(tile)
     if mode is Mode.ROWS:
         from .rows import read_rows  # lazy: vision extras
@@ -32,6 +32,25 @@ def _tile_to_deal(tile: Tile, first: str) -> Deal:
     clusters = segment(tile.image)
     hands = recognise(clusters)
     return Deal(hands={seat: hands.get(seat) for seat in SEATS}, first=first)
+
+
+def _tile_to_deal(tile: Tile, first: str) -> Deal:
+    """Read one tile, containing any reader failure to this tile.
+
+    A reader stage (mode detect, compass anchor, segmentation, recognition) can
+    raise on an unsupported layout -- e.g. a RealBridge/print grid with no
+    BridgeWebs compass. Propagating would abort the whole page for one bad panel,
+    breaking the multi-board promise. Instead we swallow the exception and return
+    an all-unknown Deal tagged with the failing stage, so every board still
+    reports a result the CLI can flag for manual fix."""
+    try:
+        return _read_tile(tile, first)
+    except Exception as e:  # noqa: BLE001 - reader is best-effort per tile; any failure is contained
+        return Deal(
+            hands=dict.fromkeys(SEATS),
+            first=first,
+            note=f"reader failed ({type(e).__name__}: {e})",
+        )
 
 
 def image_to_deals(image_path: str, first: str = "N") -> list[Deal]:

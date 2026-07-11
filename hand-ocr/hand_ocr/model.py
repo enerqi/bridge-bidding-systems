@@ -97,6 +97,10 @@ class Deal:
     board: int | None = None
     dealer: str | None = None  # seat char
     vul: str | None = None  # PBN vulnerability: None | NS | EW | All
+    # set by the pipeline when a reader stage failed on this tile: the deal is
+    # returned all-unknown (rather than raising and sinking the whole page) and
+    # this records which stage broke so the CLI can flag it for manual fix.
+    note: str | None = None
 
     def known(self) -> dict[str, Hand]:
         return {seat: h for seat, h in self.hands.items() if h is not None}

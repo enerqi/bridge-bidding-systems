@@ -68,7 +68,7 @@ program handles both.
 | **uv** (astral) | dependency + environment manager | repo standard; `pyproject.toml` here defines deps |
 | **OpenCV** (`cv2`) | image processing | the standard library for reading pixels, finding shapes, colour masks |
 | **NumPy** | fast numeric arrays | OpenCV images *are* NumPy arrays; we do array maths on them |
-| **PaddleOCR** *(optional)* | text recognition fallback | only needed for genuinely noisy/photographed input; heavy, so optional |
+| **PaddleOCR** *(optional)* | text recognition fallback | only for hypothetical noisy/photographed input — none exists or is expected; heavy, so optional and unscheduled |
 | **docopt** | command-line parsing | the usage text *is* the parser; matches sibling scripts in this repo |
 | **ruff** (astral) | linter + formatter | one tool for both; 120-column style shared with the repo |
 | **ty** (astral) | type checker | catches type mistakes; astral's fast checker |
@@ -148,10 +148,11 @@ and needs no training data. (Machine-learning OCR is only the *fallback* for
 genuinely messy input.)
 
 1. **Preprocess** (`preprocess.py`). Load the image; convert to grayscale.
-   For clean screenshots this is nearly a no-op. For a photographed/scanned
-   picture it would also *deskew* (straighten a tilted image) and reduce noise.
-   *Algorithm:* threshold to find the page/text, measure its dominant angle,
-   rotate back.
+   All real inputs are clean digital renders, so this is nearly a no-op. A
+   *deskew* step (straighten a tilted image, reduce noise) is designed for the
+   hypothetical photographed/scanned case, but no such input exists or is
+   expected — it stays a stub. *Algorithm, if ever needed:* threshold to find
+   the page/text, measure its dominant angle, rotate back.
 
 2. **Split into tiles** (`detect.py`). Find the repeated rectangular board
    panels. *Algorithm:* find contours (outlines) of panel-sized rectangles; a

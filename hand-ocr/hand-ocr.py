@@ -66,11 +66,16 @@ def main() -> None:
     exit_code = 0
     blocks = []
     for i, deal in enumerate(deals):
+        label = f"deal {i + 1}" if len(deals) > 1 else "deal"
+        if deal.note is not None:
+            # a contained reader failure: the tile produced no cards (see pipeline)
+            print(f"unread {label} (flag for manual fix): {deal.note}", file=sys.stderr)
+            exit_code = 2
+            continue
         try:
             deal.validate()
             blocks.append(_emit(deal, fmt))
         except DealError as e:
-            label = f"deal {i + 1}" if len(deals) > 1 else "deal"
             print(f"invalid {label} (flag for manual fix): {e}", file=sys.stderr)
             exit_code = 2
     if blocks:

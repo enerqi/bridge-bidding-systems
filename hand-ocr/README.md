@@ -1,9 +1,9 @@
 # hand-ocr
 
 Bridge hand-diagram **image → parsed deal text**. Ingests a raster screenshot
-(app screenshot from BBO / Funbridge / IntoBridge, or a photo/scan of a printed
-diagram — everything becomes a PNG) and emits **PBN** (canonical) or **LIN**
-(view). Complements the existing pipeline: `odin-sims` *generates* deals, the
+(app screenshot from BBO / IntoBridge, or a digitally rendered print-style
+diagram — every input is a clean digital PNG; photographed/scanned input is
+**not** expected) and emits **PBN** (canonical) or **LIN** (view). Complements the existing pipeline: `odin-sims` *generates* deals, the
 norn HTML UX *displays* them, `hand-ocr` *ingests* them from images.
 
 ## Why PBN is canonical, LIN is only a view
@@ -69,12 +69,14 @@ The fork is **glyph consistency**, not file type:
 
 | Source | Glyphs | Backend |
 |---|---|---|
-| App screenshot | pixel-identical per app | template / tiny classifier — near 100%, no training data |
-| Printed → photo/scan | arbitrary font, skew, noise | PaddleOCR fallback |
+| Digital render (screenshot / print-style) | pixel-identical per source | template / tiny classifier — near 100%, no training data |
+| Photo/scan (hypothetical — no such input expected) | arbitrary font, skew, noise | PaddleOCR fallback (stub, unscheduled) |
 
 Suit is always the 4-way glyph classifier (no OCR). Rank tries the template and
 falls back to OCR per card when confidence is low → source detection automatic,
-no user flag.
+no user flag. In practice every real input is a digital render, so the template
+path is the whole story; the OCR fallback stays a stub unless photographed
+input ever actually appears.
 
 ```
 raster ─▶ normalise (deskew/denoise; no-op on clean screenshots)
@@ -101,9 +103,11 @@ raster ─▶ normalise (deskew/denoise; no-op on clean screenshots)
   vary (`3x4`=12 boards, `4x5`=18, `5x6`≈30), **compact ranks + "T"**, often
   low resolution. Fixtures for arbitrary-grid tiling + scale-tolerant reading.
 
-"printed" here = a print-*style* layout rendered digitally, NOT a photo/scan.
-No photographed sample yet — the deskew path (`preprocess.estimate_skew`) is
-designed but untested against real camera noise.
+"printed" here = a print-*style* layout **rendered digitally** — a screenshot
+of print output, NOT a photo/scan. Photographed/scanned input is out of scope
+(none exists or is expected); the deskew path (`preprocess.estimate_skew`) and
+the PaddleOCR fallback remain designed-but-unscheduled stubs for that
+hypothetical only.
 
 ## Status
 
@@ -185,15 +189,8 @@ just run fixtures/bridgewebs-4-2.png --format pbn
 
 ## Next (implementation order)
 
-ROWS is the easier first win (clean synthetic renders, always 4 hands, positional
-suit) and covers BridgeWebs + RealBridge at once:
-
-1. `detect.split_tiles` + `detect_mode` (compass-square vs card-baize).
-2. `rows.find_centre_box` + `hand_row_crops` + rank reading → full ROWS deal;
-   validate against `bridgewebs-4*` and `realbridge-4-results`.
-3. `rows.read_metadata` (Dlr/Vul/board) → PBN tags.
-4. CARDS: `segment.find_card_cells` + `cluster_hands` + `read_seat_badges`,
-   then `recognize.classify_suit` + `TemplateBackend` atlas for BBO.
-5. IntoBridge: second rank atlas + 4-colour palette prior.
-6. `preprocess` deskew + `recognize.OcrBackend` (PaddleOCR) for the eventual
-   printed→photo path.
+See **`PLAN.md`** for the current reviewed plan (state assessment, architecture
+verdict, priority order). Summary: per-tile error containment → suit-quadruple
+anchor (unblocks realbridge + print-* without per-source geometry) → Mode CARDS
+(BBO, then IntoBridge). Deskew + PaddleOCR fallback are out of scope — no
+photographed input exists or is expected.
