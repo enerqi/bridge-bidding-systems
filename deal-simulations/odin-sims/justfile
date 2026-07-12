@@ -91,7 +91,8 @@ build *args: mktarget_dirs
 # e.g. just analyse-pbn '[Deal "N:AKQ32.AK2.A32.A32 - Q.QJT98.KQJ.KQJT -"]'  (add --target 9 to highlight a level)
 # e.g. just analyse-pbn --sample 400 '[Deal "N:... - ... -"]'                  (auto-pick the contract)
 # e.g. just analyse-pbn --sample 400 --contract 3NT --html out.html '[Deal "N:... - ... -"]'
-# Reads a PBN string arg, a --file <path>, or stdin (so `hand-ocr ... | pbn_analyse` works).
+# Reads a PBN string arg, a --file <path>, or stdin (so `hand-ocr ... | pbn_analyse` works). A --file /
+# stdin holding SEVERAL [Deal] tags renders as one carousel page (text: a report per board).
 analyse-pbn *args: mktarget_dirs
 	odin run pbn_analyse.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe -- {{args}}
 

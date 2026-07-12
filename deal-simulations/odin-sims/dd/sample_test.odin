@@ -126,6 +126,48 @@ test_best_contract_prefers_value :: proc(t: ^testing.T) {
 	testing.expect(t, !e_ok)
 }
 
+// Lead sub-grids (live lead picker): one pass produces the base grid AND per-(defender,card) sub-grids.
+// The base must match a plain sample_grid on the same seed; a card sub-grid must condition like the
+// equivalent Held_Card run — here West holds the spade K (onside) vs East (offside) flips 7NT.
+@(test)
+test_lead_grids :: proc(t: ^testing.T) {
+	init()
+	board, _ := norn.parse_pbn_deal(`[Deal "N:AQJ2.AKQ.AKQ.J32 - 543.432.432.AKQ4 -"]`)
+	lg := new(Lead_Grids)
+	defer free(lg)
+	ok := sample_lead_grids(board, {.North, .South}, 200, lg, 9)
+	testing.expect(t, ok)
+	testing.expect_value(t, lg.n, 200)
+
+	// Base equals the standalone grid (same seed, same sampling).
+	base, _ := sample_grid(board, {.North, .South}, 200, 9)
+	for strain in dds.Strain {
+		for k in 0 ..< 14 {
+			testing.expect_value(t, lg.base.hist[strain][k], base.hist[strain][k])
+		}
+	}
+
+	ks := int(norn.make_card(.Spades, .King))
+	west := lg.seat[norn.Seat.West][ks]
+	east := lg.seat[norn.Seat.East][ks]
+	testing.expect(t, west.n > 0 && east.n > 0)
+	testing.expect_value(t, west.n + east.n, 200) // the K sits with exactly one defender each deal
+
+	// 7NT (13 tricks): onside with West -> mostly makes; offside with East -> mostly not.
+	tail :: proc(h: [14]int, need: int) -> int {
+		s := 0
+		for k in need ..< 14 {
+			s += h[k]
+		}
+		return s
+	}
+	w_pct := f64(tail(west.hist[.NT], 13)) / f64(west.n)
+	e_pct := f64(tail(east.hist[.NT], 13)) / f64(east.n)
+	// The spade-K location swings the grand slam hard one way (which defender is favourable depends on
+	// declarer/leader geometry); the point is the large conditioning swing.
+	testing.expectf(t, abs(w_pct - e_pct) > 0.4, "K location should swing 7NT: West %.2f vs East %.2f", w_pct, e_pct)
+}
+
 // SAMPLING VARIETY (the documented claim): the constrained deal `sample_grid` draws from puts the
 // defenders' suit splits in proportion to their a-priori (hypergeometric) probability — it does not
 // hand-pick splits. We replicate the engine's exact sampling step here (build the predeal from the two
@@ -200,7 +242,7 @@ test_constrained_sampling_conditions :: proc(t: ^testing.T) {
 	free_grid, ok1 := sample_grid(board, {.North, .South}, 300, 3)
 	testing.expect(t, ok1)
 
-	cons := []Card_Constraint{{seat = .East, suit = .Spades, min = 0, max = 0}}
+	cons := Sample_Constraints{shape = {{seat = .East, suit = .Spades, min = 0, max = 0}}}
 	con_grid, ok2 := sample_grid(board, {.North, .South}, 300, 3, cons)
 	testing.expect(t, ok2)
 	testing.expect_value(t, con_grid.n, 300)
@@ -222,9 +264,41 @@ test_constrained_impossible_fails :: proc(t: ^testing.T) {
 	init()
 	// 4 spades are missing; asking one defender to hold 5 is impossible.
 	board, _ := norn.parse_pbn_deal(`[Deal "N:AKQJ8.A2.A32.A32 - T732.KQ3.K54.K54 -"]`)
-	cons := []Card_Constraint{{seat = .West, suit = .Spades, min = 5, max = 13}}
+	cons := Sample_Constraints{shape = {{seat = .West, suit = .Spades, min = 5, max = 13}}}
 	_, ok := sample_grid(board, {.North, .South}, 10, 1, cons)
 	testing.expect(t, !ok)
+}
+
+// Held-card (opening lead) constraint: conditioning on a defender holding a specific missing honour must
+// (a) keep only layouts where that seat has it, and (b) move the make-% vs unconstrained — the classic
+// "the finesse works iff the king is onside" swing. North holds AQJ2 and leads are toward it, so the
+// spade king is onside when WEST holds it (West plays before North's tenace) and offside with East;
+// forcing it to one defender vs the other flips a grand slam's chance.
+@(test)
+test_held_card_conditions :: proc(t: ^testing.T) {
+	init()
+	board, _ := norn.parse_pbn_deal(`[Deal "N:AQJ2.AKQ.AKQ.J32 - 543.432.432.AKQ4 -"]`)
+	ks := norn.make_card(.Spades, .King)
+
+	// West holds the K -> onside -> grand slam cold.
+	west_k := Sample_Constraints{held = {{seat = .West, card = ks}}}
+	gw, okw := sample_grid(board, {.North, .South}, 150, 3, west_k)
+	testing.expect(t, okw)
+	rw := result_for(gw, Contract{level = 7, strain = .NT})
+
+	// East holds the K -> offside -> grand slam off.
+	east_k := Sample_Constraints{held = {{seat = .East, card = ks}}}
+	ge, oke := sample_grid(board, {.North, .South}, 150, 3, east_k)
+	testing.expect(t, oke)
+	re := result_for(ge, Contract{level = 7, strain = .NT})
+
+	testing.expectf(
+		t,
+		rw.make_pct > re.make_pct + 40,
+		"K onside/West (%.0f%%) should dwarf K offside/East (%.0f%%) for 7NT",
+		rw.make_pct,
+		re.make_pct,
+	)
 }
 
 // Exact probability East holds `k` of `m` missing cards when 26 unknown cards split 13-13:

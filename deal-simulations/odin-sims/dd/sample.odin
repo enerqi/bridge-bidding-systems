@@ -160,7 +160,7 @@ contract_label :: proc(c: Contract) -> string {
 
 // One inference about a DEFENDER's shape: their card count in `suit` must lie in [min, max] (inclusive).
 // A void is {max = 0}; a known 6-card suit is {min = 6, max = 6}; "5+" is {min = 5, max = 13}. Built from
-// bidding / opening-lead / show-out inferences the user supplies. A slice of these is the constraint set.
+// bidding / show-out inferences the user supplies.
 Card_Constraint :: struct {
 	seat: norn.Seat,
 	suit: norn.Suit,
@@ -168,15 +168,36 @@ Card_Constraint :: struct {
 	max:  int,
 }
 
+// One inference that a specific card sits with a specific DEFENDER — the opening lead (the leader holds
+// the card led) or any card seen. Conditions the sample on where that exact card lies.
+Held_Card :: struct {
+	seat: norn.Seat,
+	card: norn.Card,
+}
+
+// The full set of defender inferences to condition a sample on: suit-length bounds (`shape`) and
+// specific-card locations (`held`). Empty = unconstrained. Passed to sample_grid; enforced by reject
+// sampling (see there).
+Sample_Constraints :: struct {
+	shape: []Card_Constraint,
+	held:  []Held_Card,
+}
+
+// True if there is nothing to condition on (so the reject loop can be skipped entirely).
+@(private)
+constraints_empty :: proc(c: Sample_Constraints) -> bool {
+	return len(c.shape) == 0 && len(c.held) == 0
+}
+
 // Per sampled deal, how many random redeals we try to hit the constraints before giving up (see
 // sample_grid). A void or a modest length restriction is satisfied by a good fraction of random deals, so
 // this is generous; an impossible / near-impossible set trips it and fails cleanly.
 SAMPLE_MAX_REDEAL :: 5000
 
-// Does `board`'s dealt cards satisfy every constraint? (Counts the seat's cards in the suit.)
+// Does `board`'s dealt cards satisfy every constraint (shape bounds AND card locations)?
 @(private)
-satisfies :: proc(board: norn.Deal, cons: []Card_Constraint) -> bool {
-	for c in cons {
+satisfies :: proc(board: norn.Deal, cons: Sample_Constraints) -> bool {
+	for c in cons.shape {
 		n := 0
 		for card in board[c.seat] {
 			if norn.card_suit(card) == c.suit {
@@ -187,6 +208,14 @@ satisfies :: proc(board: norn.Deal, cons: []Card_Constraint) -> bool {
 			return false
 		}
 	}
+	held_loop: for h in cons.held {
+		for card in board[h.seat] {
+			if card == h.card {
+				continue held_loop
+			}
+		}
+		return false // the required card is not with the required seat
+	}
 	return true
 }
 
@@ -196,13 +225,13 @@ satisfies :: proc(board: norn.Deal, cons: []Card_Constraint) -> bool {
 // solved with `dds.CalcDDtable` (the whole 5-strain × 4-declarer grid in one call) and each strain's
 // best-of-pair declarer trick count is tallied into `hist[strain]`. `seed` makes the sample reproducible.
 //
-// `constraints` (nil / empty = none) are DEFENDER-shape inferences (voids, known suit lengths from the
-// bidding or the lead): only layouts satisfying ALL of them are kept, by REJECT SAMPLING — deal
-// uniformly, discard inconsistent layouts. This yields a uniform draw over the constrained set, i.e. the
-// correct conditional distribution GIVEN the inferences (still a-priori-weighted, just conditioned), so a
-// finesse's success rate, splits, and honour locations all shift to their post-inference odds. Each
-// constraint should name a defender seat (the two seats NOT in `side`); constraining a known seat is
-// pointless (it is fixed by the predeal) but harmless.
+// `constraints` (empty = none) are DEFENDER inferences — suit-length bounds (voids/lengths from the
+// bidding) and specific-card locations (the opening lead, any card seen): only layouts satisfying ALL of
+// them are kept, by REJECT SAMPLING — deal uniformly, discard inconsistent layouts. This yields a uniform
+// draw over the constrained set, i.e. the correct conditional distribution GIVEN the inferences (still
+// a-priori-weighted, just conditioned), so a finesse's success rate, splits, and honour locations all
+// shift to their post-inference odds. Each constraint should name a defender seat (the two seats NOT in
+// `side`); constraining a known seat is pointless (it is fixed by the predeal) but harmless.
 //
 // ok=false if `side` is not exactly a fully-known partnership, n_samples <= 0, DDS fails, or the
 // constraints are so tight that a sample could not be found within SAMPLE_MAX_REDEAL redeals.
@@ -211,7 +240,7 @@ sample_grid :: proc(
 	side: bit_set[norn.Seat],
 	n_samples: int,
 	seed: u64 = 0,
-	constraints: []Card_Constraint = nil,
+	constraints: Sample_Constraints = {},
 ) -> (
 	result: Grid_Result,
 	ok: bool,
@@ -256,9 +285,10 @@ sample_grid :: proc(
 		// inferences hold. No constraints -> the first deal always passes (cap never bites).
 		layout: norn.Deal
 		found := false
+		unconstrained := constraints_empty(constraints)
 		for _ in 0 ..< SAMPLE_MAX_REDEAL {
 			layout = norn.deal_board_predealt(pd)
-			if len(constraints) == 0 || satisfies(layout, constraints) {
+			if unconstrained || satisfies(layout, constraints) {
 				found = true
 				break
 			}
@@ -281,6 +311,119 @@ sample_grid :: proc(
 	return result, true
 }
 
+// One card's sub-sample: over the layouts where a chosen DEFENDER (the opening leader) holds this card,
+// `hist[strain][k]` is that leader's-partner-opposite DECLARER's trick tally (single declarer, since a
+// known lead fixes the declarer) and `n` the sub-sample size. `n < grid n` (only some layouts put the
+// card with that defender), so the make-% off it carries a wider ± — bake `n` so that is honest.
+Lead_Card_Hist :: struct {
+	hist: [dds.Strain][14]int,
+	n:    int,
+}
+
+// The whole-board make-% grid PLUS every opening-lead-conditioned sub-grid, from ONE sample pass. `base`
+// is the unconditioned BEST-OF-PAIR grid (== sample_grid; no lead known, so the pair declares from its
+// better side). `seat[D][card]` (only the two DEFENDER seats populated, indexed by `int(card)`) is the
+// sub-grid conditioned on defender D holding that exact card = "the opening lead was that card, from D";
+// because a known lead fixes the leader and hence the DECLARER (= D's pair-partner-opposite), those use
+// that SINGLE declarer's tricks, not best-of-pair. Derived by FILTERING the solved samples (each records
+// who holds every card), so no extra solves: the card page bakes these and a lead picker switches among
+// them instantly. NB the CLI `--lead` (Held_Card via sample_grid) is a more general card-location
+// constraint that keeps best-of-pair; this opening-lead model is stricter/honester.
+Lead_Grids :: struct {
+	base: Grid_Result,
+	seat: [norn.Seat][52]Lead_Card_Hist,
+	n:    int,
+}
+
+// Sample the base grid AND all opening-lead sub-grids in one pass into `out` (see Lead_Grids). Same
+// args/guards as `sample_grid`; `side` names the known pair, so the two DEFENDER seats (the others) get
+// card sub-grids. `out` is caller-provided (it is ~118 KB — too big to return by value without risking a
+// deep-call stack overflow, so it is written through a pointer and zeroed here first).
+sample_lead_grids :: proc(
+	board: norn.Parsed_Board,
+	side: bit_set[norn.Seat],
+	n_samples: int,
+	out: ^Lead_Grids,
+	seed: u64 = 0,
+	constraints: Sample_Constraints = {},
+) -> (
+	ok: bool,
+) {
+	out^ = {}
+	a, b: norn.Seat
+	if .North in side {
+		a, b = .North, .South
+	} else if .East in side {
+		a, b = .East, .West
+	} else {
+		return false
+	}
+	if (board.known & side) != side || n_samples <= 0 {
+		return false
+	}
+	defenders := bit_set[norn.Seat]{.North, .East, .South, .West} - side
+
+	pd: norn.Predeal
+	for seat in ([2]norn.Seat{a, b}) {
+		for k in 0 ..< norn.HAND_SIZE {
+			norn.predeal_add(&pd, seat, board.deal[seat][k])
+		}
+	}
+	if valid, _ := norn.predeal_validate(pd); !valid {
+		return false
+	}
+
+	state: rand.Xoshiro256_Random_State
+	context.random_generator = norn.seeded_xoshiro(&state, seed)
+	ha, hb := dds.Hand(int(a)), dds.Hand(int(b))
+	unconstrained := constraints_empty(constraints)
+
+	tbl: dds.Table_Results
+	for _ in 0 ..< n_samples {
+		layout: norn.Deal
+		found := false
+		for _ in 0 ..< SAMPLE_MAX_REDEAL {
+			layout = norn.deal_board_predealt(pd)
+			if unconstrained || satisfies(layout, constraints) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+		if dds.CalcDDtable(to_table_deal(layout), &tbl) != .NO_FAULT {
+			return false
+		}
+		// Base grid: best-of-pair tricks per strain (no lead known -> the pair declares from its better side).
+		for strain in dds.Strain {
+			tk := clamp(max(int(tbl.resTable[strain][ha]), int(tbl.resTable[strain][hb])), 0, 13)
+			out.base.hist[strain][tk] += 1
+		}
+		// Lead sub-grids: a known opening lead fixes the LEADER, hence the DECLARER (leader = declarer's
+		// LHO, so declarer = leader's RHO = (leader+3)%4, always the leader's pair partner). So each
+		// defender's card sub-grids use THAT declarer's tricks (single declarer), not best-of-pair — the
+		// honest "you are declarer and this was led" number.
+		for d in defenders {
+			decl := dds.Hand((int(d) + 3) % 4)
+			dtks: [dds.Strain]int
+			for strain in dds.Strain {
+				dtks[strain] = clamp(int(tbl.resTable[strain][decl]), 0, 13)
+			}
+			for card in layout[d] {
+				ci := int(card)
+				out.seat[d][ci].n += 1
+				for strain in dds.Strain {
+					out.seat[d][ci].hist[strain][dtks[strain]] += 1
+				}
+			}
+		}
+	}
+	out.base.n = n_samples
+	out.n = n_samples
+	return true
+}
+
 // Monte-Carlo make-probability for one `contract` declared by `side` — a thin one-strain read of
 // `sample_grid` (see it for the sampling method and guards). ok mirrors sample_grid.
 sample_contract :: proc(
@@ -289,7 +432,7 @@ sample_contract :: proc(
 	contract: Contract,
 	n_samples: int,
 	seed: u64 = 0,
-	constraints: []Card_Constraint = nil,
+	constraints: Sample_Constraints = {},
 ) -> (
 	Sample_Result,
 	bool,

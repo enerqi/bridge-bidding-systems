@@ -32,6 +32,10 @@ package main
 	  --len <seat>:<suit>:<n|n-m|n+>
 	                         Defender suit-length inference: exactly n, the range n..m, or n+ cards.
 	                         Repeatable. e.g. --len W:H:6 (West has six hearts), --len E:C:0-1.
+	  --lead <seat>:<card>   The opening lead / a seen card: that defender holds the exact card (rank-first,
+	                         e.g. W:KH = West holds/led the king of hearts). Conditions the make-% on the
+	                         card's location — the classic "finesse works iff the king is onside" swing.
+	                         Repeatable. Alias: --card.
 	  --html <out.html>      Write the interactive card page (declarer + dummy shown, defenders face-down,
 	                         CCA overlay). With --sample the page also bakes the sampled grid for its green
 	                         whole-hand verdict + contract picker.
@@ -60,6 +64,7 @@ run :: proc() -> int {
 
 	args, arg_err := parse_args(os.args[1:])
 	defer delete(args.constraints)
+	defer delete(args.held)
 	if arg_err != "" {
 		fmt.eprintln("pbn_analyse:", arg_err)
 		fmt.eprintln(
@@ -69,115 +74,245 @@ run :: proc() -> int {
 			"                   [--sample <deals> [--contract <e.g. 4H>] [--seed <n>]]",
 		)
 		fmt.eprintln(
-			"                   [--void <seat>:<suit>] [--len <seat>:<suit>:<n|n-m|n+>] ['<PBN deal tag>']",
+			"                   [--void <seat>:<suit>] [--len <seat>:<suit>:<n|n-m|n+>] [--lead <seat>:<card>]",
 		)
+		fmt.eprintln("                   ['<PBN deal tag>']")
 		return 2
 	}
 	if strings.trim_space(args.text) == "" {
 		fmt.eprintln("pbn_analyse: no PBN input (pass a string, --file, or pipe via stdin)")
 		return 2
 	}
-	board, perr := norn.parse_pbn_deal(args.text)
-	if perr != .None {
-		fmt.eprintfln("pbn_analyse: could not parse PBN deal: %v", perr)
+	// Parse ALL [Deal] tags in the input (a hand-ocr session can hold several); a single bare `N:...`
+	// value is one board. Multiple boards render as one carousel page / a text report per board.
+	boards, berr := parse_boards(args.text)
+	defer delete(boards)
+	if berr != .None {
+		fmt.eprintfln("pbn_analyse: could not parse PBN deal: %v", berr)
+		return 1
+	}
+	if len(boards) == 0 {
+		fmt.eprintln("pbn_analyse: no [Deal] tag found in the input")
+		return 1
+	}
+	multi := len(boards) > 1
+	// Constraints name specific seats/cards of ONE board, so they are meaningless across a set.
+	if multi && (len(args.constraints) > 0 || len(args.held) > 0) {
+		fmt.eprintln(
+			"pbn_analyse: --void/--len/--lead condition a specific board, so they need a SINGLE board input",
+		)
 		return 1
 	}
 
-	a, side, ok := combo.analyse_parsed_board(board)
-	if !ok {
-		fmt.eprintln(
-			"pbn_analyse: need exactly one fully-known partnership (declarer + dummy) — a 2-hand",
-		)
-		fmt.eprintln(
-			"             PBN with the two defenders written '-'. A full 4-hand deal is not a 2-hand advisor input.",
-		)
-		return 1
-	}
-	sd, _, _ := combo.sd_bundle_parsed_board(board)
-
-	// Optional DDS-sampling whole-hand verdict (the honest make-%). Needs a strain, so it fires only
-	// when --sample and --contract are both given. We sample the FULL contract grid (one DDS solve per
-	// layout gives every strain/level), so the CLI verdict reads one contract off it and the html bake
-	// carries the whole grid for the page's contract picker. `have_sample` gates the report + bake.
-	grid: dd.Grid_Result
+	// --contract applies to every board (empty -> auto-pick per board). Parse it once, fail fast.
 	contract: dd.Contract
-	have_sample := false
-	auto_contract := false
-	if args.sample > 0 {
-		// Parse an explicit --contract first (fail fast before spending solves); an empty --contract is
-		// resolved AFTER sampling by picking the best contract off the grid.
-		if args.contract != "" {
-			c, c_ok := dd.parse_contract(args.contract)
-			if !c_ok {
-				fmt.eprintfln("pbn_analyse: could not parse --contract %q (expected e.g. 4H, 3NT)", args.contract)
-				return 1
-			}
-			contract = c
-		}
-		// Constraints must name a DEFENDER (a seat not in the known partnership) — the known hands are
-		// fixed by the predeal, so a constraint on them is a user error.
-		defenders := bit_set[norn.Seat]{.North, .East, .South, .West} - side
-		for con in args.constraints {
-			if con.seat not_in defenders {
-				fmt.eprintfln(
-					"pbn_analyse: --void/--len seat %v is a KNOWN hand, not a defender; constrain only %v",
-					con.seat,
-					defenders,
-				)
-				return 1
-			}
-		}
-		dd.init()
-		defer dd.shutdown()
-		g, s_ok := dd.sample_grid(board, side, args.sample, args.seed, args.constraints[:])
-		if !s_ok {
-			fmt.eprintln(
-				"pbn_analyse: DDS sampling failed (constraints may be impossible for these hands)",
-			)
+	has_contract := false
+	if args.contract != "" {
+		c, c_ok := dd.parse_contract(args.contract)
+		if !c_ok {
+			fmt.eprintfln("pbn_analyse: could not parse --contract %q (expected e.g. 4H, 3NT)", args.contract)
 			return 1
 		}
-		grid, have_sample = g, true
-		if args.contract == "" {
-			bc, bc_ok := dd.best_contract(grid)
-			if !bc_ok {
-				fmt.eprintln("pbn_analyse: could not pick a contract from the sample")
-				return 1
-			}
-			contract, auto_contract = bc, true
+		contract, has_contract = c, true
+	}
+
+	// DDS lifecycle: init once around all boards' sampling. The shutdown defer must sit at RUN scope (not
+	// inside the if-block, or it would fire immediately after init — before any board samples).
+	sampling := args.sample > 0
+	if sampling {
+		dd.init()
+	}
+	defer {
+		if sampling {
+			dd.shutdown()
 		}
 	}
 
 	if args.html_path != "" {
-		sim: ^dd.Grid_Result = &grid if have_sample else nil
-		if werr := write_html_page(args.html_path, board, &sd, side, args.target, sim, contract);
-		   werr != "" {
+		if werr := write_html(args.html_path, boards[:], &args, contract, has_contract); werr != "" {
 			fmt.eprintln("pbn_analyse:", werr)
 			return 1
 		}
-		fmt.eprintfln("wrote %s", args.html_path)
+		fmt.eprintfln("wrote %s (%d board%s)", args.html_path, len(boards), "" if len(boards) == 1 else "s")
 		return 0
 	}
 
+	for board, i in boards {
+		if i > 0 {
+			fmt.printfln("\n%s", strings.repeat("=", 74, context.temp_allocator))
+		}
+		if multi {
+			fmt.printfln("Board %d of %d\n", i + 1, len(boards))
+		}
+		report_board(board, &args, contract, has_contract)
+	}
+	return 0
+}
+
+// One board's DDS-sample results (empty when --sample is off or the board is not a 2-hand advisor input).
+// `leads` is heap-allocated (~118 KB — kept off the stack); the caller frees it with `board_sample_free`.
+Board_Sample :: struct {
+	have:     bool,
+	grid:     dd.Grid_Result,
+	leads:    ^dd.Lead_Grids,
+	contract: dd.Contract,
+	auto:     bool, // contract was auto-picked (no --contract)
+}
+
+// Release a Board_Sample's heap grids (no-op when sampling was off).
+board_sample_free :: proc(bs: ^Board_Sample) {
+	if bs.leads != nil {
+		free(bs.leads)
+		bs.leads = nil
+	}
+}
+
+// Sample one board if --sample is on: validate any constraints against THIS board's defenders, run the
+// lead grids, and resolve the contract (explicit or auto). Returns have=false with "" when sampling is
+// off; a non-empty error message on a hard failure.
+sample_board :: proc(
+	board: norn.Parsed_Board,
+	side: bit_set[norn.Seat],
+	args: ^Args,
+	contract: dd.Contract,
+	has_contract: bool,
+) -> (
+	bs: Board_Sample,
+	err: string,
+) {
+	if args.sample <= 0 {
+		return {}, ""
+	}
+	defenders := bit_set[norn.Seat]{.North, .East, .South, .West} - side
+	for con in args.constraints {
+		if con.seat not_in defenders {
+			return {}, fmt.tprintf("--void/--len seat %v is a known hand, not a defender", con.seat)
+		}
+	}
+	for h in args.held {
+		if h.seat not_in defenders {
+			return {}, fmt.tprintf("--lead seat %v is a known hand, not a defender", h.seat)
+		}
+		if is_known_card(board, h.card) {
+			return {}, "--lead card is already in a known hand (only defenders' unknown cards can be led)"
+		}
+	}
+	cons := dd.Sample_Constraints{shape = args.constraints[:], held = args.held[:]}
+	lg := new(dd.Lead_Grids)
+	if !dd.sample_lead_grids(board, side, args.sample, lg, args.seed, cons) {
+		free(lg)
+		return {}, "DDS sampling failed (constraints may be impossible for these hands)"
+	}
+	bs.leads = lg
+	bs.grid = lg.base
+	bs.have = true
+	if has_contract {
+		bs.contract = contract
+	} else {
+		bc, bc_ok := dd.best_contract(bs.grid)
+		if !bc_ok {
+			return {}, "could not pick a contract from the sample"
+		}
+		bs.contract, bs.auto = bc, true
+	}
+	return bs, ""
+}
+
+// Text report for one board: the combo census + SD summary, and (with --sample) the simulated verdict.
+report_board :: proc(
+	board: norn.Parsed_Board,
+	args: ^Args,
+	contract: dd.Contract,
+	has_contract: bool,
+) {
+	a, side, ok := combo.analyse_parsed_board(board)
+	if !ok {
+		fmt.eprintln(
+			"pbn_analyse: not a 2-hand advisor board — need exactly one fully-known partnership (declarer +",
+		)
+		fmt.eprintln("             dummy), the two defenders written '-'.")
+		return
+	}
+	sd, _, _ := combo.sd_bundle_parsed_board(board)
+
+	bs, serr := sample_board(board, side, args, contract, has_contract)
+	defer board_sample_free(&bs)
+	if serr != "" {
+		fmt.eprintln("pbn_analyse:", serr)
+	}
+
 	print_report(&a, &sd, side, args.target)
-	if have_sample {
-		sample := dd.result_for(grid, contract)
-		print_sample_verdict(&a, &sd, &sample, auto_contract)
-		if len(args.constraints) > 0 {
+	if bs.have {
+		sample := dd.result_for(bs.grid, bs.contract)
+		print_sample_verdict(&a, &sd, &sample, bs.auto)
+		if len(args.constraints) > 0 || len(args.held) > 0 {
 			fmt.print("  (sampled only layouts where")
-			for con, i in args.constraints {
+			first := true
+			for con in args.constraints {
 				fmt.printf(
 					"%s %v %s %d-%d",
-					" " if i == 0 else ",",
+					" " if first else ",",
 					con.seat,
 					suit_word(con.suit),
 					con.min,
 					con.max,
 				)
+				first = false
+			}
+			for h in args.held {
+				fmt.printf("%s %v holds %s", " " if first else ",", h.seat, card_word(h.card))
+				first = false
 			}
 			fmt.println(")")
 		}
 	}
-	return 0
+}
+
+// Parse every `[Deal]` tag in `text` into a board (a hand-ocr session may carry several). Each `[Deal`
+// occurrence is parsed from its position (parse_pbn_deal reads the first tag it finds). With NO `[Deal`
+// tag the whole input is treated as a single bare `N:...` value. Returns the first parse error hit.
+parse_boards :: proc(text: string) -> (boards: [dynamic]norn.Parsed_Board, err: norn.Pbn_Parse_Error) {
+	idx := strings.index(text, "[Deal")
+	if idx < 0 {
+		b, e := norn.parse_pbn_deal(text)
+		if e != .None {
+			return nil, e
+		}
+		append(&boards, b)
+		return boards, .None
+	}
+	for idx >= 0 {
+		b, e := norn.parse_pbn_deal(text[idx:])
+		if e != .None {
+			delete(boards)
+			return nil, e
+		}
+		append(&boards, b)
+		next := strings.index(text[idx + 5:], "[Deal")
+		if next < 0 {
+			break
+		}
+		idx = idx + 5 + next
+	}
+	return boards, .None
+}
+
+// Is `card` held by one of the board's KNOWN seats (declarer or dummy)? Such a card cannot be a
+// defender's lead. (A known hand has 13 real cards; unspecified seats hold none of the real deck here.)
+is_known_card :: proc(board: norn.Parsed_Board, card: norn.Card) -> bool {
+	for seat in board.known {
+		for c in board.deal[seat] {
+			if c == card {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// Readable card label, rank-first: "KH", "TS". (norn.Card prints as a raw number under %v.)
+card_word :: proc(c: norn.Card) -> string {
+	return fmt.tprintf("%c%c", norn.rank_char(norn.card_rank(c)), norn.suit_letter(norn.card_suit(c)))
 }
 
 // Suit name for the constraint note.
@@ -239,6 +374,7 @@ Args :: struct {
 	contract:    string,
 	seed:        u64,
 	constraints: [dynamic]dd.Card_Constraint, // defender-shape inferences from --void / --len
+	held:        [dynamic]dd.Held_Card,       // specific-card locations from --lead / --card
 }
 
 // Split the argv tail into an `Args` and an error message ("" == ok). `--file` wins over positionals;
@@ -320,6 +456,16 @@ parse_args :: proc(args: []string) -> (out: Args, err: string) {
 			}
 			append(&out.constraints, c)
 			i += 2
+		case "--lead", "--card":
+			if i + 1 >= len(args) {
+				return out, "--lead needs a <seat>:<card>, e.g. W:KH"
+			}
+			h, h_ok := parse_lead_spec(args[i + 1])
+			if !h_ok {
+				return out, fmt.tprintf("--lead %q is not <seat>:<card> (card rank-first, e.g. KH, TS)", args[i + 1])
+			}
+			append(&out.held, h)
+			i += 2
 		case:
 			append(&positionals, arg)
 			i += 1
@@ -391,6 +537,21 @@ parse_len_spec :: proc(s: string) -> (c: dd.Card_Constraint, ok: bool) {
 		return {}, false
 	}
 	return dd.Card_Constraint{seat = seat, suit = suit, min = lo, max = hi}, true
+}
+
+// Parse a `--lead <seat>:<card>` spec into a Held_Card (that defender holds/led the card). The card is
+// rank-first (norn convention): "KH" = king of hearts, "TS" = ten of spades.
+parse_lead_spec :: proc(s: string) -> (h: dd.Held_Card, ok: bool) {
+	parts := strings.split(strings.trim_space(s), ":", context.temp_allocator)
+	if len(parts) != 2 || len(parts[0]) != 1 {
+		return {}, false
+	}
+	seat, seat_ok := norn.seat_from_letter(parts[0][0])
+	card, card_ok := norn.parse_card(parts[1])
+	if !seat_ok || !card_ok {
+		return {}, false
+	}
+	return dd.Held_Card{seat = seat, card = card}, true
 }
 
 // Resolve a seat letter (N/E/S/W) and a suit letter (S/H/D/C) to their norn enums.
@@ -478,53 +639,82 @@ print_report :: proc(a: ^combo.Deal_Analysis, sd: ^combo.Sd_Bundle, side: bit_se
 // toggle shows the known-side analysis whichever way it is flipped (there is only one known side). The
 // slider target is seeded via a hidden `.par[data-target]` (no DDS par exists with two hands).
 //
-// When `sim` is non-nil (--sample given), the same hidden `.par` div also carries a `data-sim` blob: the
-// full DDS-sampled contract grid (per-strain trick distributions + sample count), which the card page's
-// contract picker reads to show the green whole-hand make-% verdict for any strain/level. `contract` is
-// the driver's --contract, baked as the picker's default. Returns "" on success, else an error message.
-write_html_page :: proc(
+// Write the interactive card page for ALL `boards` (one carousel). One page shell wraps every board; each
+// board renders its compass + hidden `.par` (target/sim/leads bakes) + `.combo` blob (see
+// render_board_body). A board that is not a valid 2-hand input gets a small note and the run continues.
+// Returns "" on success, else an error message.
+write_html :: proc(
 	path: string,
-	board: norn.Parsed_Board,
-	sd: ^combo.Sd_Bundle,
-	side: bit_set[norn.Seat],
-	target: int,
-	sim: ^dd.Grid_Result,
+	boards: []norn.Parsed_Board,
+	args: ^Args,
 	contract: dd.Contract,
+	has_contract: bool,
 ) -> string {
 	b := strings.builder_make()
 	defer strings.builder_destroy(&b)
 
-	norn.render_page_prologue(&b, .Html_Cards, "Two-hand advisor (declarer + dummy)")
-	norn.render_deal_html_cards(&b, board.deal, false, board.known)
-
-	// Seed the CCA target slider. Prefer the contract level (level+6 tricks) when sampling, else the
-	// user's --target, else a sensible default = the achievable single-dummy expected total.
-	tgt := target
-	if sim != nil && tgt <= 0 {
-		tgt = clamp(contract.level + 6, 1, 13)
+	title := "Two-hand advisor (declarer + dummy)"
+	norn.render_page_prologue(&b, .Html_Cards, title)
+	for board in boards {
+		render_board_body(&b, board, args, contract, has_contract)
 	}
-	if tgt <= 0 {
-		tgt = clamp(int(combo.expected_tricks(sd.totsd) + 0.5), 1, 13)
-	}
-	strings.write_string(&b, "\n<div class=\"par\"")
-	fmt.sbprintf(&b, " data-target=\"%d\"", tgt)
-	if sim != nil {
-		strings.write_string(&b, " data-sim='")
-		write_sim_json(&b, sim, contract)
-		strings.write_string(&b, "'")
-	}
-	strings.write_string(&b, " hidden></div>\n")
-
-	// The `.combo` blob (per-suit census + single-dummy + adaptive curve). combo.annotate reads a full
-	// Deal; feed it the known pair duplicated into both sides (see the proc doc).
-	combo.annotate(&b, synth_deal(board, side), .Html_Cards)
-
 	norn.render_page_epilogue(&b, .Html_Cards)
 
 	if werr := os.write_entire_file(path, transmute([]u8)strings.to_string(b)); werr != nil {
 		return fmt.tprintf("could not write %q: %v", path, werr)
 	}
 	return ""
+}
+
+// Render ONE board into the page builder `b`: the declarer+dummy compass (defenders face-down), a hidden
+// `.par` div carrying the CCA slider target and — when --sample is on — the `data-sim` contract grid and
+// `data-sim-leads` opening-lead sub-grids, then the `.combo` analysis blob. combo.annotate reads a full
+// Deal, so it is fed the known pair duplicated into both sides (synth_deal). A non-2-hand board writes a
+// note instead. Prints (does not fail the page) on a per-board sampling error.
+render_board_body :: proc(
+	b: ^strings.Builder,
+	board: norn.Parsed_Board,
+	args: ^Args,
+	contract: dd.Contract,
+	has_contract: bool,
+) {
+	_, side, ok := combo.analyse_parsed_board(board)
+	if !ok {
+		strings.write_string(b, `<div class="par">Not a 2-hand board (need declarer + dummy, defenders '-').</div>`)
+		return
+	}
+	sd, _, _ := combo.sd_bundle_parsed_board(board)
+
+	bs, serr := sample_board(board, side, args, contract, has_contract)
+	defer board_sample_free(&bs)
+	if serr != "" {
+		fmt.eprintln("pbn_analyse:", serr)
+	}
+
+	norn.render_deal_html_cards(b, board.deal, false, board.known)
+
+	// Seed the CCA target slider. Prefer the contract level (level+6 tricks) when sampling, else the
+	// user's --target, else a sensible default = the achievable single-dummy expected total.
+	tgt := args.target
+	if bs.have && tgt <= 0 {
+		tgt = clamp(bs.contract.level + 6, 1, 13)
+	}
+	if tgt <= 0 {
+		tgt = clamp(int(combo.expected_tricks(sd.totsd) + 0.5), 1, 13)
+	}
+	strings.write_string(b, "\n<div class=\"par\"")
+	fmt.sbprintf(b, " data-target=\"%d\"", tgt)
+	if bs.have {
+		strings.write_string(b, " data-sim='")
+		write_sim_json(b, &bs.grid, bs.contract)
+		strings.write_string(b, "'")
+		strings.write_string(b, " data-sim-leads='")
+		write_leads_json(b, bs.leads, side)
+		strings.write_string(b, "'")
+	}
+	strings.write_string(b, " hidden></div>\n")
+
+	combo.annotate(b, synth_deal(board, side), .Html_Cards)
 }
 
 // Bake the DDS-sampled contract grid as JSON for the card page's contract picker:
@@ -538,6 +728,13 @@ write_sim_json :: proc(b: ^strings.Builder, sim: ^dd.Grid_Result, contract: dd.C
 	// reference (see dd.odin's PBN-comment note), so only value fields go through sbprintf.
 	strings.write_byte(b, '{')
 	fmt.sbprintf(b, `"n":%d,"lvl":%d,"strain":"%s","g":`, sim.n, contract.level, strain_key(contract.strain))
+	write_g_object(b, sim.hist, sim.n)
+	strings.write_byte(b, '}')
+}
+
+// Write the `g` object — the five per-strain NORMALISED trick distributions p[k] (k=0..13) — for a
+// histogram grid divided by sample count `n`. Shared by the contract grid and the lead sub-grids.
+write_g_object :: proc(b: ^strings.Builder, hist: [dd.Strain][14]int, n: int) {
 	strings.write_byte(b, '{')
 	keyed := [5]struct {
 		key:    string,
@@ -548,17 +745,71 @@ write_sim_json :: proc(b: ^strings.Builder, sim: ^dd.Grid_Result, contract: dd.C
 			strings.write_byte(b, ',')
 		}
 		fmt.sbprintf(b, `"%s":[`, e.key)
-		hist := sim.hist[e.strain]
+		h := hist[e.strain]
 		for k in 0 ..< 14 {
 			if k > 0 {
 				strings.write_byte(b, ',')
 			}
-			// Normalised probability, 4 dp (enough for a %; keeps the blob compact).
-			fmt.sbprintf(b, "%.4f", f64(hist[k]) / f64(sim.n))
+			fmt.sbprintf(b, "%.4f", f64(h[k]) / f64(n))
 		}
 		strings.write_byte(b, ']')
 	}
+	strings.write_byte(b, '}')
+}
+
+// Bake the opening-lead sub-grids for the page's lead picker:
+//   {"n":400,"seats":{"E":{"KS":{"n":210,"g":{...}}, ...},"W":{...}}}
+// Per DEFENDER seat (uppercase letter), a map card-label -> {sub-sample n, per-strain distribution g}
+// over the layouts where that defender holds the card (== "the opening lead was that card, from that
+// defender"). The client reads make-% = g[strain] tail at level+6 and the honest ± from the sub-n. Only
+// cards actually seen (n>0) are emitted. Single-quoted attribute host: double quotes only, no escaping.
+write_leads_json :: proc(b: ^strings.Builder, leads: ^dd.Lead_Grids, side: bit_set[norn.Seat]) {
+	defenders := bit_set[norn.Seat]{.North, .East, .South, .West} - side
+	strings.write_byte(b, '{')
+	fmt.sbprintf(b, `"n":%d,"seats":`, leads.n)
+	strings.write_byte(b, '{')
+	first_seat := true
+	for d in defenders {
+		if !first_seat {
+			strings.write_byte(b, ',')
+		}
+		first_seat = false
+		fmt.sbprintf(b, `"%c":`, seat_letter(d))
+		strings.write_byte(b, '{')
+		first_card := true
+		for ci in 0 ..< 52 {
+			lc := leads.seat[d][ci]
+			if lc.n == 0 {
+				continue
+			}
+			if !first_card {
+				strings.write_byte(b, ',')
+			}
+			first_card = false
+			fmt.sbprintf(b, `"%s":`, card_word(norn.Card(ci)))
+			strings.write_byte(b, '{')
+			fmt.sbprintf(b, `"n":%d,"g":`, lc.n)
+			write_g_object(b, lc.hist, lc.n)
+			strings.write_byte(b, '}')
+		}
+		strings.write_byte(b, '}')
+	}
 	strings.write_string(b, "}}")
+}
+
+// Uppercase seat letter for a norn.Seat (the lead-blob JSON keys).
+seat_letter :: proc(s: norn.Seat) -> u8 {
+	switch s {
+	case .North:
+		return 'N'
+	case .East:
+		return 'E'
+	case .South:
+		return 'S'
+	case .West:
+		return 'W'
+	}
+	return '?'
 }
 
 // The card page's lowercase strain key for a dds.Strain.
