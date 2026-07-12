@@ -24,7 +24,7 @@ def _read_tile(tile: Tile, first: str) -> Deal:
     if mode is Mode.ROWS:
         from .rows import read_rows  # lazy: vision extras
 
-        return read_rows(tile.image)
+        return read_rows(tile.image, atlas_name=tile.atlas)
     # Mode.CARDS
     from .recognize import recognise  # lazy: vision extras
     from .segment import segment

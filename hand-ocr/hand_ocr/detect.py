@@ -35,6 +35,7 @@ class Tile:
 
     image: Any  # grayscale (or colour) crop of one board
     origin: tuple[int, int]  # (x, y) of the tile in the source image
+    atlas: str | None = None  # recognition-atlas hint (e.g. "print"); None = auto-pick
 
 
 # compass coverage above this fraction => a CARDS baize (or unknown), not a ROWS
@@ -43,6 +44,12 @@ _GRID_GREEN_CEILING = 0.20
 # min blob area to count as a compass bar; well above the red suit-symbol glyphs
 # that the red half of `compass_mask` also picks up.
 _MIN_COMPASS_BLOB = 1500
+
+# board-frame tiling (club-print grids have no compass but draw each board in a
+# ruled rectangle). A frame's area as a fraction of the page, and its aspect.
+_FRAME_AREA_LO, _FRAME_AREA_HI = 0.02, 0.25
+_FRAME_ASPECT_LO, _FRAME_ASPECT_HI = 0.5, 2.2
+_FRAME_MIN_COUNT = 4  # need a real grid, not one stray rectangle
 
 
 def _cluster_1d(values: list[float], min_gap: float) -> list[float]:
@@ -57,6 +64,48 @@ def _cluster_1d(values: list[float], min_gap: float) -> list[float]:
         else:
             groups[-1].append(v)
     return [sum(g) / len(g) for g in groups]
+
+
+def _frame_tiles(image: Any) -> list[Tile]:
+    """Tile a compass-less print grid by its ruled board rectangles.
+
+    Club-print output (`print-*`) has no compass, but draws each board in a
+    black-bordered box. We find those frames as rectangular contours of roughly
+    uniform, board-sized area, dedupe the nested double borders, and return one
+    Tile per frame in reading order tagged for the print atlas. Returns [] when
+    no plausible uniform grid of frames is present (so single boards and the
+    card views fall through to the whole-image path)."""
+    import cv2
+    import numpy as np
+
+    h, w = image.shape[:2]
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) if image.ndim == 3 else image
+    _, binv = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY_INV)
+    contours, _ = cv2.findContours(binv, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+
+    rects: list[tuple[int, int, int, int]] = []
+    for c in contours:
+        x, y, bw, bh = cv2.boundingRect(c)
+        area = bw * bh
+        if _FRAME_AREA_LO * w * h < area < _FRAME_AREA_HI * w * h and _FRAME_ASPECT_LO < bw / bh < _FRAME_ASPECT_HI:
+            rects.append((x, y, bw, bh))
+    # dedupe the concentric inner/outer border of each box (near-identical rects)
+    rects.sort(key=lambda r: -r[2] * r[3])
+    kept: list[tuple[int, int, int, int]] = []
+    for r in rects:
+        if not any(abs(r[0] - k[0]) < 15 and abs(r[1] - k[1]) < 15 and abs(r[2] - k[2]) < 15 for k in kept):
+            kept.append(r)
+    if len(kept) < _FRAME_MIN_COUNT:
+        return []
+    # require a genuine grid: frame sizes must be uniform (rules out a lone box
+    # plus stray rectangles). Median-relative spread under ~15%.
+    ws, hs = np.array([r[2] for r in kept]), np.array([r[3] for r in kept])
+    if ws.std() > 0.15 * float(np.median(ws)) or hs.std() > 0.15 * float(np.median(hs)):
+        return []
+    # reading order: top-to-bottom by row band (half a frame height), then left-to-right
+    band = float(np.median(hs)) * 0.5
+    kept.sort(key=lambda r: (round(r[1] / band), r[0]))
+    return [Tile(image=image[y : y + bh, x : x + bw], origin=(x, y), atlas="print") for (x, y, bw, bh) in kept]
 
 
 def split_tiles(image: Any) -> list[Tile]:
@@ -85,12 +134,12 @@ def split_tiles(image: Any) -> list[Tile]:
     n, _, stats, centroids = cv2.connectedComponentsWithStats(mask, connectivity=8)
     pts = [centroids[i] for i in range(1, n) if stats[i, cv2.CC_STAT_AREA] > _MIN_COMPASS_BLOB]
     if not pts:
-        return [Tile(image=image, origin=(0, 0))]
+        return _frame_tiles(image) or [Tile(image=image, origin=(0, 0))]  # no compass: try print frames
 
     col_centres = _cluster_1d([p[0] for p in pts], w * 0.12)
     row_centres = _cluster_1d([p[1] for p in pts], h * 0.12)
     if len(col_centres) * len(row_centres) <= 1:
-        return [Tile(image=image, origin=(0, 0))]  # single board -> whole image
+        return _frame_tiles(image) or [Tile(image=image, origin=(0, 0))]  # single board / print grid
 
     def _spacing(centres: list[float], full: int) -> float:
         diffs = [b - a for a, b in pairwise(centres)]

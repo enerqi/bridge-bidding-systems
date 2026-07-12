@@ -38,7 +38,10 @@ from .model import SEATS, SUITS, Deal, DealError, Hand
 
 # where the shipped per-source atlases live (see tools/build_atlas.py)
 _ATLAS_ROOT = Path(__file__).resolve().parent / "atlas"
-DEFAULT_ATLAS = "bridgewebs"
+DEFAULT_ATLAS = "bridgewebs"  # compass anchor => BridgeWebs render
+# atlas used when the hands were located by the compass-less suit-quadruple
+# anchor (RealBridge results, and — until it gets its own — the print grids).
+ANCHOR_ATLAS = "realbridge"
 
 # component filters: ignore specks and thin noise when splitting a row into glyphs
 _MIN_AREA, _MIN_W, _MIN_H = 10, 3, 6
@@ -105,6 +108,57 @@ def _hand_boxes(compass: tuple[int, int, int, int]) -> dict[str, tuple[int, int,
         "W": r(minx - 1.30 * w, miny - 0.05 * h, minx - 0.10 * w, maxy + 0.05 * h),
         "E": r(maxx + 0.10 * w, miny - 0.05 * h, maxx + 1.30 * w, maxy + 0.05 * h),
     }
+
+
+def _hand_boxes_from_stacks(stacks: list[Any], img_w: int) -> dict[str, tuple[int, int, int, int]]:
+    """Four hand boxes from suit-quadruple `HandStack`s (the compass-less path).
+
+    A single board is a cross of four stacks: assign seats by relative position
+    -- top -> N, bottom -> S, left -> W, right -> E. Each box starts just left of
+    the suit glyph and spans the stack's four rows; its right edge stops at the
+    nearest stack to the right that shares the row band (so a neighbour hand's
+    ranks are not pulled in), else a generous cap that `_box_rows`' bleed filter
+    trims. Raises unless exactly four hands with an unambiguous seat each."""
+    if len(stacks) != 4:
+        raise RuntimeError(f"suit anchor found {len(stacks)} hands, need 4")
+    seats = {
+        "N": min(stacks, key=lambda s: s.centre[1]),
+        "S": max(stacks, key=lambda s: s.centre[1]),
+        "W": min(stacks, key=lambda s: s.centre[0]),
+        "E": max(stacks, key=lambda s: s.centre[0]),
+    }
+    if len({id(s) for s in seats.values()}) != 4:
+        raise RuntimeError("ambiguous seat geometry from suit anchor")
+
+    boxes: dict[str, tuple[int, int, int, int]] = {}
+    for seat, s in seats.items():
+        x0 = max(0, int(s.left - s.pitch * 0.35))
+        y0, y1 = max(0, int(s.top)), int(s.bottom)
+        # right edge: nearest stack to the right whose rows overlap this one
+        x1 = img_w
+        for o in stacks:
+            if o is s or o.left <= s.left + s.pitch:
+                continue
+            if o.top < y1 and o.bottom > y0:  # shares the vertical band
+                x1 = min(x1, int(o.left - s.pitch * 0.3))
+        x1 = min(x1, int(s.left + s.pitch * 7))  # generous cap; bleed filter trims the rest
+        boxes[seat] = (x0, y0, max(x0 + 1, x1), y1)
+    return boxes
+
+
+def _seat_boxes(img_bgr: Any) -> tuple[dict[str, tuple[int, int, int, int]], str]:
+    """Four hand boxes plus which anchor produced them ("compass" | "anchor").
+
+    Tries the BridgeWebs green/red compass first (the verified fast path that
+    also supplies vulnerability metadata); on its absence falls back to the
+    source-independent suit-quadruple anchor. The source tag lets the caller
+    pick the matching recognition atlas."""
+    try:
+        return _hand_boxes(_compass_bbox(img_bgr)), "compass"
+    except RuntimeError:
+        from .anchor import find_hand_stacks
+
+        return _hand_boxes_from_stacks(find_hand_stacks(img_bgr), img_bgr.shape[1]), "anchor"
 
 
 def _cluster_rows(centres_y: list[float], gap: float) -> list[list[int]]:
@@ -259,17 +313,11 @@ def _box_rows(box_gray: Any) -> list[list[Any]]:
     return kept[:4] + [[]] * (4 - len(kept))  # exactly four (S,H,D,C)
 
 
-def hand_row_glyphs(img_bgr: Any) -> dict[str, list[list[Any]]]:
-    """seat -> 4 rows (S,H,D,C) -> list of normalised rank-glyph images.
-
-    Pure geometry + segmentation, no recognition. Separated out so the atlas
-    bootstrap (which knows the labels) and the recogniser share it."""
-    import cv2
-
-    gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
+def _glyphs_from_boxes(gray: Any, boxes: dict[str, tuple[int, int, int, int]]) -> dict[str, list[list[Any]]]:
+    """seat box -> 4 rows of normalised rank-glyph images, per seat."""
     ih, iw = gray.shape[:2]
     out: dict[str, list[list[Any]]] = {}
-    for seat, (x0, y0, x1, y1) in _hand_boxes(_compass_bbox(img_bgr)).items():
+    for seat, (x0, y0, x1, y1) in boxes.items():
         # clamp to image bounds: on a tightly-cropped multi-board tile the derived
         # offsets can spill past the edge, which would make an empty/negative slice
         x0, y0 = max(0, x0), max(0, y0)
@@ -279,17 +327,37 @@ def hand_row_glyphs(img_bgr: Any) -> dict[str, list[list[Any]]]:
     return out
 
 
-def read_rows(img_bgr: Any, atlas: Any = None) -> Deal:
-    """A ROWS tile -> full Deal. `atlas` defaults to the shipped BridgeWebs atlas.
+def hand_row_glyphs(img_bgr: Any) -> dict[str, list[list[Any]]]:
+    """seat -> 4 rows (S,H,D,C) -> list of normalised rank-glyph images.
+
+    Pure geometry + segmentation, no recognition. Separated out so the atlas
+    bootstrap (which knows the labels) and the recogniser share it. Uses the
+    compass anchor when present, else the suit-quadruple anchor."""
+    import cv2
+
+    boxes, _ = _seat_boxes(img_bgr)
+    return _glyphs_from_boxes(cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY), boxes)
+
+
+def read_rows(img_bgr: Any, atlas: Any = None, atlas_name: str | None = None) -> Deal:
+    """A ROWS tile -> full Deal.
 
     Suit is positional (row index -> SUITS); each row's ranks come from matching
-    its glyphs against the atlas. `model` normalises "10"->"T" and validates."""
+    its glyphs against an atlas. Atlas selection: an explicit `atlas` object wins;
+    else `atlas_name` (the tile's hint, e.g. "print") names a shipped atlas; else
+    it is auto-picked by anchor source -- the BridgeWebs atlas for a compass
+    board, the RealBridge atlas for a suit-quadruple board. `model` normalises
+    "10"->"T" and validates."""
+    import cv2
+
     from .atlas import Atlas
 
+    boxes, source = _seat_boxes(img_bgr)
     if atlas is None:
-        atlas = Atlas.load(_ATLAS_ROOT / DEFAULT_ATLAS)
+        name = atlas_name or (DEFAULT_ATLAS if source == "compass" else ANCHOR_ATLAS)
+        atlas = Atlas.load(_ATLAS_ROOT / name)
 
-    per_seat = hand_row_glyphs(img_bgr)
+    per_seat = _glyphs_from_boxes(cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY), boxes)
     hands: dict[str, Hand | None] = dict.fromkeys(SEATS)
     for seat, rows in per_seat.items():
         ranks = {suit: "".join(atlas.match(g)[0] for g in glyphs) for suit, glyphs in zip(SUITS, rows, strict=True)}

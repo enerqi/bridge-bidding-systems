@@ -9,8 +9,11 @@ covered many times over, so the atlas ends up complete.
 Run (from hand-ocr/, needs the vision extra):
     uv run python tools/build_atlas.py fixtures/bridgewebs-4-2.png hand_ocr/atlas/bridgewebs
 
-The default board labels below describe `bridgewebs-4-2.png` (board 1), rank
-glyph sequences per hand in suit order S, H, D, C, ten written "10".
+The labelled boards below are keyed by fixture stem; the right one is chosen
+from the input filename. Each is a single board's rank glyph sequences per hand
+in suit order S, H, D, C, ten written "10". A compass source (BridgeWebs) is
+segmented via the compass anchor; a compass-less source (RealBridge, print) via
+the suit-quadruple anchor -- both go through `hand_row_glyphs` transparently.
 """
 
 from __future__ import annotations
@@ -23,12 +26,30 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from hand_ocr.atlas import Atlas
 from hand_ocr.rows import hand_row_glyphs
 
-# board 1 of bridgewebs-4-2.png; per seat, four rows in suit order S,H,D,C
-LABELLED_BOARD = {
-    "N": ["A105", "A64", "K92", "A953"],
-    "W": ["KJ94", "9752", "QJ10", "106"],
-    "E": ["8763", "KQ", "A8764", "QJ"],
-    "S": ["Q2", "J1083", "53", "K8742"],
+# per fixture stem: one board's four rows per seat, suit order S,H,D,C, ten="10"
+LABELLED_BOARDS = {
+    # board 1 of bridgewebs-4-2.png (compass anchor)
+    "bridgewebs-4-2": {
+        "N": ["A105", "A64", "K92", "A953"],
+        "W": ["KJ94", "9752", "QJ10", "106"],
+        "E": ["8763", "KQ", "A8764", "QJ"],
+        "S": ["Q2", "J1083", "53", "K8742"],
+    },
+    # realbridge-4-results.png, board 5 (suit-quadruple anchor)
+    "realbridge-4-results": {
+        "N": ["872", "Q10863", "J53", "104"],
+        "W": ["K643", "94", "82", "KQ632"],
+        "E": ["Q1095", "AK75", "AQ4", "AJ"],
+        "S": ["AJ", "J2", "K10976", "9875"],
+    },
+    # print-3x4-format.png, board 1 (frame-tiled; same deal as bridgewebs board 1
+    # but ten is drawn compact "T", not "10")
+    "print-3x4-format": {
+        "N": ["AT5", "A64", "K92", "A953"],
+        "W": ["KJ94", "9752", "QJT", "T6"],
+        "E": ["8763", "KQ", "A8764", "QJ"],
+        "S": ["Q2", "JT83", "53", "K8742"],
+    },
 }
 
 
@@ -40,17 +61,29 @@ def main() -> None:
         raise SystemExit(2)
     image_path, out_dir = sys.argv[1], sys.argv[2]
 
+    stem = Path(image_path).stem
+    if stem not in LABELLED_BOARDS:
+        print(f"no labelled board for {stem!r}; known: {sorted(LABELLED_BOARDS)}", file=sys.stderr)
+        raise SystemExit(2)
+    labelled = LABELLED_BOARDS[stem]
+
     img = cv2.imread(image_path)
     if img is None:
         print(f"cannot read {image_path!r}", file=sys.stderr)
         raise SystemExit(2)
 
-    per_seat = hand_row_glyphs(img)
+    # labelled board is the first board in reading order; on a multi-board grid
+    # tile the page and take board 1, so segmentation matches the pipeline.
+    from hand_ocr.detect import split_tiles
+
+    tiles = split_tiles(img)
+    board = tiles[0].image if len(tiles) > 1 else img
+    per_seat = hand_row_glyphs(board)
     exemplars: dict[str, list] = {}
     kept = skipped = 0
     for seat, rows in per_seat.items():
         for r, glyphs in enumerate(rows):
-            label = LABELLED_BOARD[seat][r]
+            label = labelled[seat][r]
             if len(glyphs) != len(label):
                 print(f"  skip {seat} row{r}: segmented {len(glyphs)} glyphs, expected {len(label)} ({label})")
                 skipped += 1

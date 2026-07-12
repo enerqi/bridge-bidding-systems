@@ -24,6 +24,12 @@ FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
 FIXTURE = FIXTURES / "bridgewebs-4-2.png"
 
 
+def _read(name: str):
+    img = cv2.imread(str(FIXTURES / name))
+    assert img is not None, f"missing fixture {name}"
+    return read_rows(img)
+
+
 def _valid_boards(name: str) -> tuple[int, int]:
     img = cv2.imread(str(FIXTURES / name))
     assert img is not None, f"missing fixture {name}"
@@ -77,3 +83,38 @@ def test_grid_valid_board_floor(name, min_valid, total):
     ok, n = _valid_boards(name)
     assert n == total, f"{name}: split into {n} tiles, expected {total}"
     assert ok >= min_valid, f"{name}: only {ok}/{n} boards valid, expected >= {min_valid}"
+
+
+# ---- compass-less path (suit-quadruple anchor) ----------------------------
+
+
+@pytest.fixture(scope="module")
+def realbridge():
+    return _read("realbridge-4-results.png")
+
+
+@pytest.mark.parametrize(
+    ("seat", "expected"),
+    [
+        ("N", "872.QT863.J53.T4"),
+        ("E", "QT95.AK75.AQ4.AJ"),
+        ("S", "AJ.J2.KT976.9875"),
+        ("W", "K643.94.82.KQ632"),
+    ],
+)
+def test_realbridge_hand_read_exactly(realbridge, seat, expected):
+    # no compass at all: hands are found by the colour-quadruple anchor, ranks
+    # by the RealBridge atlas (ten "10" -> "T"). All four hands exact.
+    assert realbridge.hands[seat].to_pbn() == expected
+
+
+def test_realbridge_deal_validates(realbridge):
+    realbridge.validate()
+
+
+def test_print_grid_frame_tiles():
+    # club-print grid has no compass; it is tiled by its ruled board frames.
+    img = cv2.imread(str(FIXTURES / "print-3x4-format.png"))
+    tiles = split_tiles(img)
+    assert len(tiles) == 12, f"expected 12 framed boards, got {len(tiles)}"
+    assert all(t.atlas == "print" for t in tiles), "frame tiles must carry the print atlas hint"

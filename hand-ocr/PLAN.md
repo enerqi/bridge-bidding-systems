@@ -8,6 +8,33 @@ fixture sweep. Pair with `README.md` (status detail) and `ARCHITECTURE.md`
 
 ## Progress log
 
+- **2026-07-12 (session 3).** Anchor wired to deals; RealBridge + print atlases.
+  - *Seat assignment + wiring* — `rows._hand_boxes_from_stacks` turns the
+    anchor's `HandStack`s into the four seat boxes (N top / S bottom / W left /
+    E right by geometry); `rows._seat_boxes` tries the compass first and falls
+    back to the anchor. `read_rows` picks the atlas by source (+ an explicit
+    `atlas_name` hint). **RealBridge `realbridge-4-results.png` now reads 4/4
+    EXACT and validates** — first compass-less deal. No compass-path regression
+    (bridgewebs 1, 3x3 6/9, multi-table 5/6 unchanged).
+  - *RealBridge atlas* — built from board 5 via `tools/build_atlas.py`
+    (generalised to a per-fixture `LABELLED_BOARDS` map; multi-board sources
+    tiled first, board 1 used).
+  - *Print grid tiling* — club-print grids have no compass but ruled board
+    rectangles; `detect._frame_tiles` tiles by those frames (uniform-size
+    contour grid), tagging each tile for the print atlas. **`print-3x4-format`
+    now tiles 12/12 boards** (was a crash). Threaded via a new `Tile.atlas`
+    hint.
+  - *Print atlas + a real bug fix* — added a print atlas (ten drawn compact
+    "T"). Building it surfaced a latent bug: `atlas.ATLAS_LABELS` lacked `T`, so
+    `Atlas.load` silently dropped every `T_*.png` (BridgeWebs only ever used
+    "10", so it never bit). Added `T`; RealBridge/print T glyphs now load.
+  - *Print recognition still 0/12 valid* — after the T fix, recognition is
+    correct where segmentation is (board 1: W,E rows exact), but `_box_rows`
+    over/under-segments the tiny compact glyphs (e.g. ♦K92 → "A36K", short S
+    rows), so no board hits a clean 13. This is the plan's low-res segmentation
+    tail (step 5) — deliberately not chased (coupled-knob risk to the working
+    paths). Pins added: RealBridge 4/4 exact, print tiles == 12. 30 tests pass.
+
 - **2026-07-11 (session 2).** Steps 1-2 done; step 3's core brick landed.
   - *Step 1 housekeeping* — docs corrected (`ARCHITECTURE.md` §7, `README.md`
     test count); `keep_main_run` already committed.
@@ -133,22 +160,24 @@ The big unlock. Progress:
    `HandStack` (left edge + four S,H,D,C row centres + pitch) per hand.
    Validated in `tests/test_anchor.py` (realbridge 4/4, print-3x4 48/48,
    bridgewebs preserved 4/4).
-3. **NEXT — Seat assignment**: 4 stacks per board → compass positions by
-   relative geometry (N top, S bottom, W left, E right within the board's stack
-   cluster); realbridge-replay's red name badges only if geometry ambiguous.
-4. **NEXT — wire + atlas**: consume `HandStack` boxes in `read_rows` (replacing
-   `_compass_bbox` when it raises), validate on `realbridge-4-results.png`
-   first, build its atlas via `tools/build_atlas.py`. Anchoring alone yields
-   flagged deals until the RealBridge atlas exists (bridgewebs atlas mismatches
-   the font).
-5. Then the **primary payoff**: `print-*` grids. Cluster `HandStack`s into
-   boards → grid inference in `split_tiles` (compass-less tiling); own atlas.
-   Low-res (`print-4x5`/`5x6`) needs upscale-before-mask first — the colour
-   mask shatters the tiny glyphs (a morphological close is a net loss).
+3. ~~Seat assignment~~ — DONE. `rows._hand_boxes_from_stacks`: N top / S bottom
+   / W left / E right by stack geometry; `_seat_boxes` = compass-first, anchor
+   fallback.
+4. ~~Wire + RealBridge atlas~~ — DONE. `read_rows` consumes anchor boxes when
+   `_compass_bbox` raises and picks the atlas by source. **`realbridge-4-results`
+   4/4 exact + validates.** Atlas built via generalised `build_atlas.py`.
+5. **Print grids — tiling DONE, recognition is the open tail.** `print-3x4`
+   tiles 12/12 via `detect._frame_tiles` (ruled board rectangles; no compass
+   needed) + a print atlas is shipped. BUT 0/12 validate: `_box_rows`
+   over/under-segments the tiny compact glyphs. Needs low-res segmentation
+   tuning (and, for `print-4x5`/`5x6`, upscale-before-mask — the anchor colour
+   mask still shatters their glyphs, so they don't even tile). This is the
+   diminishing-returns tail; left deliberately for later.
 6. Then `realbridge-replay*.png` (own font, spaced "10", big glyphs > anchor's
    `_H_MAX` cap — relax it with that source's atlas).
 
-Compass path stays untouched for BridgeWebs.
+Compass path stays untouched for BridgeWebs. NB `atlas.ATLAS_LABELS` now
+includes `T` (was silently dropping compact-ten glyphs on load).
 
 ### 4. Mode CARDS (`segment.py` + `recognize.py`)
 

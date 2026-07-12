@@ -35,8 +35,9 @@ from typing import Any
 GLYPH_W, GLYPH_H = 20, 28
 
 # labels that a filename encodes; PNGs are "<label>_<n>.png". Digits 0/1 exist
-# because ten is drawn "10" (two glyphs); model.py folds "10" -> "T" later.
-ATLAS_LABELS = set("AKQJ0123456789")
+# because some sources draw ten as "10" (two glyphs; model.py folds "10" -> "T").
+# Compact sources (club prints) draw ten as a single "T" glyph, so T is a label.
+ATLAS_LABELS = set("AKQJT0123456789")
 
 
 def normalise_glyph(binary_crop: Any) -> Any:
