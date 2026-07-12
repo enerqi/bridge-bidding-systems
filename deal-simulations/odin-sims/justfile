@@ -65,7 +65,7 @@ lint *args:
 	odin check combo {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
 	odin check dd {{norn}} {{dds}} -vet -vet-cast -strict-style -no-entry-point {{args}}
 	odin check sim.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style {{args}}
-	odin check pbn_analyse.odin -file {{norn}} -vet -vet-cast -strict-style {{args}}
+	odin check pbn_analyse.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style {{args}}
 
 # run the deal generator (release). Pass CLI args through, e.g. `just run --scenario 1c-any -n 12`.
 run *args: mktarget_dirs
@@ -84,11 +84,16 @@ build *args: mktarget_dirs
 	odin build sim.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/{{sim_name}} {{args}}
 
 # 2-hand (declarer + dummy) card-combination advisor: read a PBN [Deal] tag and print the combo
-# analysis (double-dummy census + achievable single-dummy) for the known partnership. No DDS needed.
+# analysis (double-dummy census + achievable single-dummy) for the known partnership. Add
+# `--sample <deals>` for the DDS-sampling whole-hand make-% verdict (links DDS); `--contract 4H` is
+# OPTIONAL (best contract auto-picked if omitted). `--html <out>` writes the interactive card page
+# (with the green verdict band + contract picker when sampling).
 # e.g. just analyse-pbn '[Deal "N:AKQ32.AK2.A32.A32 - Q.QJT98.KQJ.KQJT -"]'  (add --target 9 to highlight a level)
+# e.g. just analyse-pbn --sample 400 '[Deal "N:... - ... -"]'                  (auto-pick the contract)
+# e.g. just analyse-pbn --sample 400 --contract 3NT --html out.html '[Deal "N:... - ... -"]'
 # Reads a PBN string arg, a --file <path>, or stdin (so `hand-ocr ... | pbn_analyse` works).
 analyse-pbn *args: mktarget_dirs
-	odin run pbn_analyse.odin -file {{norn}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe -- {{args}}
+	odin run pbn_analyse.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe -- {{args}}
 
 # Frequency test every scenario by default, or pass `-S name[,name]` to restrict the subset.
 # e.g. `just freq` (1M, -all), `just freq 5000000`, `just freq 1000000 -S 1c-any,2c-opener`.
@@ -119,6 +124,12 @@ test *args: mktarget_dirs
 # run the card-combination analyser unit tests
 test-combo *args: mktarget_dirs
 	odin test combo {{norn}} -debug -microarch:native -show-timings -out:target/debug/test-combo.exe {{args}}
+
+# run the double-dummy / DDS-sampling unit tests (links the DDS solver via the dds collection).
+# Forced single-threaded: DDS shares process-global transposition tables and is NOT reentrant, so
+# concurrent test procs would corrupt each other's solves.
+test-dd *args: mktarget_dirs
+	odin test dd {{norn}} {{dds}} -debug -microarch:native -define:ODIN_TEST_THREADS=1 -show-timings -out:target/debug/test-dd.exe {{args}}
 
 # delete build artifacts
 clean:
