@@ -158,18 +158,60 @@ contract_label :: proc(c: Contract) -> string {
 	return fmt.tprintf("%d%s", c.level, strain_label(c.strain))
 }
 
+// One inference about a DEFENDER's shape: their card count in `suit` must lie in [min, max] (inclusive).
+// A void is {max = 0}; a known 6-card suit is {min = 6, max = 6}; "5+" is {min = 5, max = 13}. Built from
+// bidding / opening-lead / show-out inferences the user supplies. A slice of these is the constraint set.
+Card_Constraint :: struct {
+	seat: norn.Seat,
+	suit: norn.Suit,
+	min:  int,
+	max:  int,
+}
+
+// Per sampled deal, how many random redeals we try to hit the constraints before giving up (see
+// sample_grid). A void or a modest length restriction is satisfied by a good fraction of random deals, so
+// this is generous; an impossible / near-impossible set trips it and fails cleanly.
+SAMPLE_MAX_REDEAL :: 5000
+
+// Does `board`'s dealt cards satisfy every constraint? (Counts the seat's cards in the suit.)
+@(private)
+satisfies :: proc(board: norn.Deal, cons: []Card_Constraint) -> bool {
+	for c in cons {
+		n := 0
+		for card in board[c.seat] {
+			if norn.card_suit(card) == c.suit {
+				n += 1
+			}
+		}
+		if n < c.min || n > c.max {
+			return false
+		}
+	}
+	return true
+}
+
 // Monte-Carlo the full make-% grid for the known partnership `side` (one of NS_SIDE / EW_SIDE — the two
 // seats named in `side` must both be in `board.known`), over `n_samples` constrained deals. See the file
 // header for HOW the sampled layouts get their (correct, a-priori-weighted) variety. Each layout is
 // solved with `dds.CalcDDtable` (the whole 5-strain × 4-declarer grid in one call) and each strain's
 // best-of-pair declarer trick count is tallied into `hist[strain]`. `seed` makes the sample reproducible.
 //
-// ok=false if `side` is not exactly a fully-known partnership, n_samples <= 0, or DDS fails.
+// `constraints` (nil / empty = none) are DEFENDER-shape inferences (voids, known suit lengths from the
+// bidding or the lead): only layouts satisfying ALL of them are kept, by REJECT SAMPLING — deal
+// uniformly, discard inconsistent layouts. This yields a uniform draw over the constrained set, i.e. the
+// correct conditional distribution GIVEN the inferences (still a-priori-weighted, just conditioned), so a
+// finesse's success rate, splits, and honour locations all shift to their post-inference odds. Each
+// constraint should name a defender seat (the two seats NOT in `side`); constraining a known seat is
+// pointless (it is fixed by the predeal) but harmless.
+//
+// ok=false if `side` is not exactly a fully-known partnership, n_samples <= 0, DDS fails, or the
+// constraints are so tight that a sample could not be found within SAMPLE_MAX_REDEAL redeals.
 sample_grid :: proc(
 	board: norn.Parsed_Board,
 	side: bit_set[norn.Seat],
 	n_samples: int,
 	seed: u64 = 0,
+	constraints: []Card_Constraint = nil,
 ) -> (
 	result: Grid_Result,
 	ok: bool,
@@ -210,7 +252,21 @@ sample_grid :: proc(
 
 	tbl: dds.Table_Results
 	for _ in 0 ..< n_samples {
-		td := to_table_deal(norn.deal_board_predealt(pd))
+		// Draw a constrained layout by reject sampling: deal uniformly, redeal until the defender-shape
+		// inferences hold. No constraints -> the first deal always passes (cap never bites).
+		layout: norn.Deal
+		found := false
+		for _ in 0 ..< SAMPLE_MAX_REDEAL {
+			layout = norn.deal_board_predealt(pd)
+			if len(constraints) == 0 || satisfies(layout, constraints) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return {}, false // constraints unsatisfiable within the redeal budget
+		}
+		td := to_table_deal(layout)
 		if dds.CalcDDtable(td, &tbl) != .NO_FAULT {
 			return {}, false
 		}
@@ -233,11 +289,12 @@ sample_contract :: proc(
 	contract: Contract,
 	n_samples: int,
 	seed: u64 = 0,
+	constraints: []Card_Constraint = nil,
 ) -> (
 	Sample_Result,
 	bool,
 ) {
-	grid, ok := sample_grid(board, side, n_samples, seed)
+	grid, ok := sample_grid(board, side, n_samples, seed, constraints)
 	if !ok {
 		return {}, false
 	}

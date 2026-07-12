@@ -187,6 +187,46 @@ test_sample_split_distribution_matches_apriori :: proc(t: ^testing.T) {
 	testing.expectf(t, math.abs(mean - f64(MISSING) / 2) < 0.05, "mean East length %.3f", mean)
 }
 
+// Constrained sampling: a void constraint keeps only layouts where the named defender is void, so the
+// make-% conditions on that inference. We force East void in spades (4 missing spades → all with West)
+// and check (a) it still samples, and (b) the spade make-% differs from the unconstrained run — the
+// finesse math changes when the missing honours are known to sit with one defender.
+@(test)
+test_constrained_sampling_conditions :: proc(t: ^testing.T) {
+	init()
+	// NS hold 9 spades (AKQJ8 + T732), 4 missing incl. the spade tricks that a finesse decides.
+	board, _ := norn.parse_pbn_deal(`[Deal "N:AKQJ8.A2.A32.A32 - T732.KQ3.K54.K54 -"]`)
+
+	free_grid, ok1 := sample_grid(board, {.North, .South}, 300, 3)
+	testing.expect(t, ok1)
+
+	cons := []Card_Constraint{{seat = .East, suit = .Spades, min = 0, max = 0}}
+	con_grid, ok2 := sample_grid(board, {.North, .South}, 300, 3, cons)
+	testing.expect(t, ok2)
+	testing.expect_value(t, con_grid.n, 300)
+
+	// The two spade distributions should not be identical — conditioning on the void shifts them.
+	same := true
+	for k in 0 ..< 14 {
+		if free_grid.hist[.Spades][k] != con_grid.hist[.Spades][k] {
+			same = false
+			break
+		}
+	}
+	testing.expect(t, !same)
+}
+
+// An impossible constraint (a defender needs more of a suit than exists) fails cleanly, not hangs.
+@(test)
+test_constrained_impossible_fails :: proc(t: ^testing.T) {
+	init()
+	// 4 spades are missing; asking one defender to hold 5 is impossible.
+	board, _ := norn.parse_pbn_deal(`[Deal "N:AKQJ8.A2.A32.A32 - T732.KQ3.K54.K54 -"]`)
+	cons := []Card_Constraint{{seat = .West, suit = .Spades, min = 5, max = 13}}
+	_, ok := sample_grid(board, {.North, .South}, 10, 1, cons)
+	testing.expect(t, !ok)
+}
+
 // Exact probability East holds `k` of `m` missing cards when 26 unknown cards split 13-13:
 // C(m,k)·C(26-m,13-k)/C(26,13).
 @(private = "file")

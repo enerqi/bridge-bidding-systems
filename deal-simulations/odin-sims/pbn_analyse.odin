@@ -26,6 +26,12 @@ package main
 	                         (max expected score over the sample) is auto-picked. With --html it is the
 	                         contract picker's default; the viewer can change strain/level live.
 	  --seed <n>             Seed the sample RNG (reproducible; default 0).
+	  --void <seat>:<suit>   Defender-shape inference: that defender holds NO cards in the suit (from the
+	                         bidding / a show-out). Repeatable. e.g. --void E:S. Only samples consistent
+	                         layouts are kept, so the make-% conditions on what you know.
+	  --len <seat>:<suit>:<n|n-m|n+>
+	                         Defender suit-length inference: exactly n, the range n..m, or n+ cards.
+	                         Repeatable. e.g. --len W:H:6 (West has six hearts), --len E:C:0-1.
 	  --html <out.html>      Write the interactive card page (declarer + dummy shown, defenders face-down,
 	                         CCA overlay). With --sample the page also bakes the sampled grid for its green
 	                         whole-hand verdict + contract picker.
@@ -53,13 +59,17 @@ run :: proc() -> int {
 	defer combo.shutdown() // free combo's worker pool if the HTML annotate spun it up (no-op otherwise)
 
 	args, arg_err := parse_args(os.args[1:])
+	defer delete(args.constraints)
 	if arg_err != "" {
 		fmt.eprintln("pbn_analyse:", arg_err)
 		fmt.eprintln(
 			"usage: pbn_analyse [--file <path>] [--target <n>] [--html <out.html>]",
 		)
 		fmt.eprintln(
-			"                   [--sample <deals> [--contract <e.g. 4H>] [--seed <n>]] ['<PBN deal tag>']",
+			"                   [--sample <deals> [--contract <e.g. 4H>] [--seed <n>]]",
+		)
+		fmt.eprintln(
+			"                   [--void <seat>:<suit>] [--len <seat>:<suit>:<n|n-m|n+>] ['<PBN deal tag>']",
 		)
 		return 2
 	}
@@ -104,11 +114,26 @@ run :: proc() -> int {
 			}
 			contract = c
 		}
+		// Constraints must name a DEFENDER (a seat not in the known partnership) — the known hands are
+		// fixed by the predeal, so a constraint on them is a user error.
+		defenders := bit_set[norn.Seat]{.North, .East, .South, .West} - side
+		for con in args.constraints {
+			if con.seat not_in defenders {
+				fmt.eprintfln(
+					"pbn_analyse: --void/--len seat %v is a KNOWN hand, not a defender; constrain only %v",
+					con.seat,
+					defenders,
+				)
+				return 1
+			}
+		}
 		dd.init()
 		defer dd.shutdown()
-		g, s_ok := dd.sample_grid(board, side, args.sample, args.seed)
+		g, s_ok := dd.sample_grid(board, side, args.sample, args.seed, args.constraints[:])
 		if !s_ok {
-			fmt.eprintln("pbn_analyse: DDS sampling failed")
+			fmt.eprintln(
+				"pbn_analyse: DDS sampling failed (constraints may be impossible for these hands)",
+			)
 			return 1
 		}
 		grid, have_sample = g, true
@@ -137,8 +162,37 @@ run :: proc() -> int {
 	if have_sample {
 		sample := dd.result_for(grid, contract)
 		print_sample_verdict(&a, &sd, &sample, auto_contract)
+		if len(args.constraints) > 0 {
+			fmt.print("  (sampled only layouts where")
+			for con, i in args.constraints {
+				fmt.printf(
+					"%s %v %s %d-%d",
+					" " if i == 0 else ",",
+					con.seat,
+					suit_word(con.suit),
+					con.min,
+					con.max,
+				)
+			}
+			fmt.println(")")
+		}
 	}
 	return 0
+}
+
+// Suit name for the constraint note.
+suit_word :: proc(s: norn.Suit) -> string {
+	switch s {
+	case .Spades:
+		return "spades"
+	case .Hearts:
+		return "hearts"
+	case .Diamonds:
+		return "diamonds"
+	case .Clubs:
+		return "clubs"
+	}
+	return "?"
 }
 
 // The green "honest verdict" rung: the whole-hand simulated make-%, plus a reconciliation strip showing
@@ -178,12 +232,13 @@ print_sample_verdict :: proc(
 // whole-hand verdict (which needs a `contract`, e.g. "4H"); `target` highlights a make column in the
 // combo census.
 Args :: struct {
-	text:      string,
-	target:    int,
-	html_path: string,
-	sample:    int,
-	contract:  string,
-	seed:      u64,
+	text:        string,
+	target:      int,
+	html_path:   string,
+	sample:      int,
+	contract:    string,
+	seed:        u64,
+	constraints: [dynamic]dd.Card_Constraint, // defender-shape inferences from --void / --len
 }
 
 // Split the argv tail into an `Args` and an error message ("" == ok). `--file` wins over positionals;
@@ -245,6 +300,26 @@ parse_args :: proc(args: []string) -> (out: Args, err: string) {
 			}
 			out.seed = n
 			i += 2
+		case "--void":
+			if i + 1 >= len(args) {
+				return out, "--void needs a <seat>:<suit>, e.g. E:S"
+			}
+			c, c_ok := parse_void_spec(args[i + 1])
+			if !c_ok {
+				return out, fmt.tprintf("--void %q is not <seat>:<suit> (seat E/W or N/S, suit S/H/D/C)", args[i + 1])
+			}
+			append(&out.constraints, c)
+			i += 2
+		case "--len":
+			if i + 1 >= len(args) {
+				return out, "--len needs a <seat>:<suit>:<n|n-m|n+>, e.g. W:H:6"
+			}
+			c, c_ok := parse_len_spec(args[i + 1])
+			if !c_ok {
+				return out, fmt.tprintf("--len %q is not <seat>:<suit>:<n|n-m|n+>", args[i + 1])
+			}
+			append(&out.constraints, c)
+			i += 2
 		case:
 			append(&positionals, arg)
 			i += 1
@@ -265,6 +340,70 @@ parse_args :: proc(args: []string) -> (out: Args, err: string) {
 	}
 	out.text = read_stdin()
 	return out, ""
+}
+
+// Parse a `--void <seat>:<suit>` spec into a Card_Constraint (that seat holds ZERO of the suit).
+parse_void_spec :: proc(s: string) -> (c: dd.Card_Constraint, ok: bool) {
+	parts := strings.split(strings.trim_space(s), ":", context.temp_allocator)
+	if len(parts) != 2 {
+		return {}, false
+	}
+	seat, suit, sk := seat_suit(parts[0], parts[1])
+	if !sk {
+		return {}, false
+	}
+	return dd.Card_Constraint{seat = seat, suit = suit, min = 0, max = 0}, true
+}
+
+// Parse a `--len <seat>:<suit>:<spec>` where <spec> is `n` (exactly n), `n-m` (n..m), or `n+` (n..13).
+parse_len_spec :: proc(s: string) -> (c: dd.Card_Constraint, ok: bool) {
+	parts := strings.split(strings.trim_space(s), ":", context.temp_allocator)
+	if len(parts) != 3 {
+		return {}, false
+	}
+	seat, suit, sk := seat_suit(parts[0], parts[1])
+	if !sk {
+		return {}, false
+	}
+	spec := parts[2]
+	lo, hi: int
+	if strings.has_suffix(spec, "+") {
+		n, n_ok := strconv.parse_int(spec[:len(spec) - 1])
+		if !n_ok {
+			return {}, false
+		}
+		lo, hi = n, 13
+	} else if idx := strings.index_byte(spec, '-'); idx >= 0 {
+		a, a_ok := strconv.parse_int(spec[:idx])
+		b, b_ok := strconv.parse_int(spec[idx + 1:])
+		if !a_ok || !b_ok {
+			return {}, false
+		}
+		lo, hi = a, b
+	} else {
+		n, n_ok := strconv.parse_int(spec)
+		if !n_ok {
+			return {}, false
+		}
+		lo, hi = n, n
+	}
+	if lo < 0 || hi > 13 || lo > hi {
+		return {}, false
+	}
+	return dd.Card_Constraint{seat = seat, suit = suit, min = lo, max = hi}, true
+}
+
+// Resolve a seat letter (N/E/S/W) and a suit letter (S/H/D/C) to their norn enums.
+seat_suit :: proc(seat_s, suit_s: string) -> (seat: norn.Seat, suit: norn.Suit, ok: bool) {
+	if len(seat_s) != 1 || len(suit_s) != 1 {
+		return {}, {}, false
+	}
+	st, st_ok := norn.seat_from_letter(seat_s[0])
+	su, su_ok := norn.suit_from_letter(suit_s[0])
+	if !st_ok || !su_ok {
+		return {}, {}, false
+	}
+	return st, su, true
 }
 
 // Read all of stdin into a string (for `hand-ocr ... | pbn_analyse`). Best-effort: stops at EOF or any
