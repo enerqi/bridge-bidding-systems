@@ -38,6 +38,8 @@ GLYPH_W, GLYPH_H = 20, 28
 # because some sources draw ten as "10" (two glyphs; model.py folds "10" -> "T").
 # Compact sources (club prints) draw ten as a single "T" glyph, so T is a label.
 ATLAS_LABELS = set("AKQJT0123456789")
+# suit-symbol labels for the Mode-CARDS suit atlas (one glyph per card)
+SUIT_LABELS = set("SHDC")
 
 
 def normalise_glyph(binary_crop: Any) -> Any:
@@ -93,8 +95,12 @@ class Atlas:
                 cv2.imwrite(str(d / f"{label}_{n}.png"), (np.clip(ex, 0, 1) * 255).astype(np.uint8))
 
     @classmethod
-    def load(cls, atlas_dir: str | Path) -> Atlas:
-        """Load an atlas directory written by `save`."""
+    def load(cls, atlas_dir: str | Path, labels: set[str] = ATLAS_LABELS) -> Atlas:
+        """Load an atlas directory written by `save`.
+
+        `labels` is the accepted label set; defaults to the rank alphabet. A
+        suit atlas (Mode CARDS) passes SUIT_LABELS instead, since S/H/D/C are
+        not ranks."""
         import cv2
         import numpy as np
 
@@ -102,7 +108,7 @@ class Atlas:
         exemplars: dict[str, list[Any]] = {}
         for png in sorted(d.glob("*.png")):
             label = png.stem.split("_", 1)[0]
-            if label not in ATLAS_LABELS:
+            if label not in labels:
                 continue
             img = cv2.imread(str(png), cv2.IMREAD_GRAYSCALE)
             if img is None:

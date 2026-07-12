@@ -111,47 +111,47 @@ hypothetical only.
 
 ## Status
 
+Full history + next step: see `PLAN.md`. Snapshot (2026-07-12): **39 tests**;
+every fixture either produces a deal or **soft-fails** (flagged partial), none
+crash.
+
 - **Done & tested:** model layer — `Deal`/`Hand`, PBN(+Board/Dealer/Vul tags) +
   LIN emit, validation (`hand_ocr/model.py`). Runs with no vision deps.
-- **Mode ROWS (BridgeWebs) — working end to end** (`rows.py`, `atlas.py`,
-  `detect.py`, `preprocess.py`): image → compass anchor → hand boxes → row/glyph
-  segmentation → template-atlas recognition → validated `Deal`. On
-  `bridgewebs-4-2.png` **all four hands read exactly** and the deal validates as
-  a legal 52-card deal. Shipped atlas `hand_ocr/atlas/bridgewebs/` (built by
-  `tools/build_atlas.py`). Segmentation is connected-components over the whole
-  hand box, clustered into rows by y-centre (robust to uneven row spacing).
-  Per row the leftmost component is the suit symbol; a component wider than a
-  lone suit / single rank is treated as **touching glyphs and split at ink
-  valleys** (`_maybe_split`), which recovers the common `<suit>Q…` merge where a
-  black ♠/♣ symbol fuses with the first rank (both black) into one blob.
-- **Multi-table tiling — working** (`detect.split_tiles`): clusters the
-  compass centroids into the board grid and yields one tile per board. The
-  compass is coloured by **vulnerability** (green = not vul, red = vul), so the
-  mask accepts both hues (`rows.compass_mask`); the central-compass filter lets
-  full-cell crops ignore neighbours. `bridgewebs-4-3x3-multi*.png` → 9 boards
-  each, no crash (bad boards flagged, not fatal).
-- **15 tests** (11 spine + 4 ROWS; ROWS auto-skip without opencv).
-- **Still stubbed:** `segment` (Mode CARDS), `preprocess` deskew,
-  `recognize.OcrBackend` fallback.
+- **Mode ROWS — three sources.**
+  - *BridgeWebs (compass)* — end to end: compass anchor → hand boxes → row/glyph
+    segmentation → template-atlas recognition. `bridgewebs-4-2.png` all four
+    hands exact + validates. Multi-table grids tile via clustered compass
+    centroids; `3x3-multi` **6/9**, `…-part2` **3/9**, `…-multi-table` **5/6**.
+  - *RealBridge results (compass-less)* — `hand_ocr/anchor.py` locates hands by
+    their vertical **black-red-red-black** suit-glyph colour quadruple (no
+    compass, no suit atlas); `rows._hand_boxes_from_stacks` seats them by
+    geometry. `realbridge-4-results.png` **4/4 exact + validates**.
+  - *Club-print grids* — tiled by ruled board rectangles (`detect._frame_tiles`,
+    no compass): `print-3x4-format.png` **12/12 boards tiled** + a `print` atlas
+    ships, but recognition is 0/12 valid (glyphs too small — segmentation tail).
+- **Mode CARDS — BBO strips + grids.** N/S horizontal strips divide into cards
+  by rank-glyph pitch; W/E fanned grids are separate white card components
+  (isolated at a higher white threshold, since the grey seat-label bar bridges
+  the bottom row), each read rank (atlas) + suit (4-way atlas).
+  `bridge-base-4-hand-large.png` reads **4/4 exact + validates** (first complete
+  CARDS deal); `bridge-base-2-hand-large.png` N+S exact (W/E card-backs → `-`).
+  Atlas `hand_ocr/atlas/bbo/`, harvested from all 52 cards (adds ten glyphs).
+- **Shipped atlases:** `atlas/{bridgewebs,realbridge,print}` (ROWS ranks),
+  `atlas/bbo/{rank,suit}` (CARDS), built by `tools/build_atlas.py` /
+  `tools/build_cards_atlas.py`.
 
-### Known limitations (next fixes)
-- **Grid reads are segmentation-bound, not scale-bound.** Measured: a 3×3 tile's
-  compass is ~95px vs the atlas board's ~102px (factor ~1.07), and scale-
-  augmenting the atlas gave **zero** extra valid boards — so the earlier "cross-
-  scale drift" theory was wrong. The real blocker was suit/rank glyph *merges*;
-  after the `_maybe_split` fix the grids validate `bridgewebs-4-3x3-multi.png`
-  **6/9**, `…-part2.png` **3/9**, `…-multi-table.png` **5/6** (atlas board still
-  4/4). Residual failures are (a) borderline merges where a wide rank fuses with
-  the suit symbol just under the lone-suit width threshold (e.g. red ♦+9 → the 9
-  is dropped), and (b) single-glyph recognition confusions that collide as
-  duplicate cards. (b) is where a genuinely richer atlas (tile-derived exemplars)
-  would help — but it needs per-tile labels, not a rescale.
-- **Genuinely small/low-res fixtures still blocked upstream:** the club-print
-  grids (`print-*.png`) carry **no green compass** (green fraction ~0.01), so
-  they never reach recognition — they need a compass-less anchor first.
-- **ROWS geometry is per-source:** RealBridge *replay* (`realbridge-replay*.png`)
-  has NO compass — hands in a 3×3 cell grid with red seat badges — so it needs a
-  different anchor and its own atlas. `_compass_bbox` is BridgeWebs-specific.
+### Known limitations (next fixes — priority in `PLAN.md`)
+- **IntoBridge CARDS** unread: 4-colour deck + **rotated seats** (top can be
+  West) → needs the N/E/S/W seat-badge reader (`read_seat_badges`, still a stub)
+  and its own atlas.
+- **Cross-scale:** a smaller render of the atlas's source can shatter/mis-read
+  glyphs (BBO `4-hand-{small,very-small}` tens → `bad rank '0'`; ROWS
+  `print-4x5`/`5x6`). Fix = same-scale atlas / upscale-before-match, not
+  rescaling exemplars (that theory was disproven).
+- **RealBridge replay** (`realbridge-replay*.png`): big-font glyphs exceed the
+  anchor's `_H_MAX` cap — relax it and add that source's atlas.
+- **Still stubbed (unscheduled):** `preprocess` deskew and the `paddleocr` OCR
+  fallback — all real input is clean digital renders, so neither is on the plan.
 
 ## Project setup
 
@@ -189,8 +189,8 @@ just run fixtures/bridgewebs-4-2.png --format pbn
 
 ## Next (implementation order)
 
-See **`PLAN.md`** for the current reviewed plan (state assessment, architecture
-verdict, priority order). Summary: per-tile error containment → suit-quadruple
-anchor (unblocks realbridge + print-* without per-source geometry) → Mode CARDS
-(BBO, then IntoBridge). Deskew + PaddleOCR fallback are out of scope — no
-photographed input exists or is expected.
+See **`PLAN.md`** ("Next step") for the reviewed plan. Done so far: containment
+→ suit-quadruple anchor (RealBridge 4/4, print grids tiled) → Mode CARDS BBO
+strips **and W/E grids** (4-hand-large 4/4 exact + validates). **Next:
+IntoBridge** (seat-badge reader + atlas), then cross-scale atlases. Deskew +
+PaddleOCR remain out of scope — no photographed input exists or is expected.

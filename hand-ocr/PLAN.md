@@ -1,12 +1,76 @@
 # hand-ocr — plan
 
-State review + forward plan, written 2026-07-11 after re-running the full
-fixture sweep. Pair with `README.md` (status detail) and `ARCHITECTURE.md`
-(pipeline walkthrough).
+State review + forward plan. Started 2026-07-11; see the Progress log for the
+per-session updates (latest first). Pair with `README.md` (status detail) and
+`ARCHITECTURE.md` (pipeline walkthrough).
+
+---
+
+## Next step (start here)
+
+**BBO W/E grids — DONE (session 5).** `bridge-base-4-hand-large` now reads 4/4
+exact + validates. Key correction to the plan below: a W/E grid is **not** a
+merged blob — its cards are separated by green gaps, so each card is its own
+white component once the white threshold is raised to 235 (at the strip
+threshold 200 the grey seat-label bar bridges the bottom row). See `_card_comps`
+/ `_grid_cards` in `segment.py`.
+
+**Recommended next: IntoBridge** (bigger): 4-colour deck + **rotated seats**, so
+`read_seat_badges` (still a stub) must read the N/E/S/W circle, and a new
+`atlas/intobridge` is needed (ten drawn "10"). Suit can come from colour here.
+
+**Cross-scale** — `bridge-base-2-hand-small` N/S now read exact (the grid-
+enriched atlas fixed the ♠/♣ mix-up), but `bridge-base-4-hand-{small,very-small}`
+still soft-fail: tens shatter (`bad rank '0'` — the "1" glyph drops, leaving a
+lone "0") at the small scale. Build a same-scale atlas or add scale robustness.
+
+See §4 (Mode CARDS) and §3.5-3.6 (ROWS print / replay) below for the full list.
 
 ---
 
 ## Progress log
+
+- **2026-07-12 (session 5).** Mode CARDS — BBO W/E grids. `bridge-base-4-hand-
+  large` reads **4/4 exact + validates** (first complete CARDS deal).
+  - *Segmentation.* Corrected the plan's premise: a W/E grid is **not** a merged
+    blob. Its cards are separated by green gaps and each is its own portrait
+    white component (~72×145) — but only above the seat-label bar's grey, which
+    at the strip threshold (200) bridges the bottom row into one blob. A higher
+    threshold (`_CARD_WHITE_THR=235`) isolates every card. New `_card_comps`
+    (individual cards, both strips and grids) + `_grid_cards` (grid cards =
+    comps not inside a strip blob and not in the central x-band — the trick /
+    played cards live at the table centre; e.g. the 2-hand view's two ♦J).
+    `cluster_hands` now emits W (left) / E (right) grid clusters too.
+  - *Atlas.* The old `atlas/bbo` had **no `1`/`0`** exemplars (the 2-hand deal
+    has no tens), so every grid "10" misread ("10"→"J6"). `build_cards_atlas.py`
+    now also harvests the W/E grids (`_reading_order`: suit rows top-to-bottom,
+    BBO stacks them ♥♠♦♣; each row L→R), giving all 52 cards → `1`,`0` + richer
+    suit exemplars. Rebuilt.
+  - *Bonus.* The grid-enriched suit atlas also fixed `bridge-base-2-hand-small`:
+    its N/S strips now read **exact** (was a ♠/♣ mix-up). Pinned.
+  - *Not yet.* `bridge-base-4-hand-{small,very-small}` still soft-fail (tens
+    shatter at small scale → `bad rank '0'`); IntoBridge unchanged (needs seat
+    badges). No hard crashes anywhere. 39 tests pass (was 34).
+
+- **2026-07-12 (session 4).** Mode CARDS — first working slice (BBO strips).
+  - Real `segment.py` + `recognize.py` (were stubs). Insight: face-up cards
+    render as ONE merged white blob per hand (`_hand_blobs`), not per card. A
+    horizontal N/S strip is divided into cards by rank-glyph column pitch
+    (`_strip_cards`); each card = rank glyph(s) over a suit symbol, read by
+    `recognize` against a per-app rank atlas + a 4-way suit atlas
+    (`atlas/bbo/{rank,suit}`, built by `tools/build_cards_atlas.py`). Border/
+    suit-bleed rejected by a size+aspect glyph filter. `atlas.py` gained a
+    `labels` arg on `load` + `SUIT_LABELS` (suit atlas holds S/H/D/C, not ranks).
+  - **BBO 2-hand `bridge-base-2-hand-large` reads N + S EXACT and validates**;
+    W/E are card backs → no blob → unknown → PBN `-` (the declarer+dummy case,
+    exactly why PBN is canonical). 4-hand-large N/S exact too. First CARDS deals.
+    Pinned in `tests/test_cards.py`. 34 tests pass.
+  - **Not yet:** W/E **grids** (fanned/blocky, not strips) yield no cells → those
+    seats stay unknown; `intobridge-*` (4-colour, seats **rotated** so position
+    fails — needs the seat badge; `read_seat_badges` still a stub); and
+    **cross-scale** — `bridge-base-2-hand-small` mis-reads ♠/♣ because the atlas
+    is built at the large render's scale. Seat is currently position-based
+    (BBO-correct only).
 
 - **2026-07-12 (session 3).** Anchor wired to deals; RealBridge + print atlases.
   - *Seat assignment + wiring* — `rows._hand_boxes_from_stacks` turns the
@@ -62,28 +126,30 @@ fixture sweep. Pair with `README.md` (status detail) and `ARCHITECTURE.md`
 
 ---
 
-## Where we are (verified 2026-07-11)
+## Where we are (verified 2026-07-12, sessions 2-5 applied)
 
-19 tests pass. Fixture sweep (`uv run --extra vision python hand-ocr.py <img>`):
+39 tests pass. Fixture sweep (`uv run --extra vision python hand-ocr.py <img>`):
 
 | Fixture group | Result |
 |---|---|
-| `bridgewebs-4{,-2}.png` singles | 1/1 each — all four hands **exact**, deal validates |
-| `bridgewebs-4-3x3-multi.png` (9 boards) | 6/9 valid |
-| `bridgewebs-4-3x3-multi-part2.png` (9 boards) | 3/9 valid |
-| `bridgewebs-4-multi-table.png` (6 boards) | 5/6 valid |
-| `realbridge-4-results.png` | **crash** — `_compass_bbox` finds no BridgeWebs compass |
-| `realbridge-replay*.png` (2) | crash — layout has no compass at all |
-| `print-*.png` grids (4) | **crash** — `split_tiles` needs green compass to tile |
-| CARDS: `bridge-base-*`, `intobridge-*` (9) | crash — `segment.py` still a stub |
+| `bridgewebs-4{,-2}.png` singles | 1/1 each — four hands **exact**, validates (compass) |
+| `bridgewebs-4-3x3-multi.png` (9) | 6/9 valid |
+| `bridgewebs-4-3x3-multi-part2.png` (9) | 3/9 valid |
+| `bridgewebs-4-multi-table.png` (6) | 5/6 valid |
+| `realbridge-4-results.png` | **4/4 exact + validates** (compass-less suit anchor + RealBridge atlas) |
+| `print-3x4-format.png` (12) | tiles **12/12** (frame anchor); recognition 0/12 valid (low-res seg tail) |
+| `print-4x5`/`5x6` grids | partial tiling; glyphs too small to anchor/segment — deferred |
+| `realbridge-replay*.png` (2) | soft-fail — big-font glyphs exceed anchor `_H_MAX`; own atlas TODO |
+| CARDS `bridge-base-2-hand-large` | **N+S exact + validates**; W/E card-backs → `-` |
+| CARDS `bridge-base-4-hand-large` | **4/4 exact + validates** (N/S strips + W/E grids) |
+| CARDS `bridge-base-2-hand-small` | **N/S exact** (grid-enriched atlas fixed the ♠/♣ mix-up); W/E card-backs → `-` |
+| CARDS `bridge-base-4-hand-{small,very-small}` | soft-fail — tens shatter at small scale (`bad rank '0'`) |
+| CARDS `intobridge-*` (5) | soft-fail — 4-colour + rotated seats need the seat-badge reader |
 
-So 15 of 22 fixtures produce nothing, and every one of those dies with a
-traceback rather than a flagged partial result.
-
-Uncommitted diff: `rows._box_rows` neighbour-bleed filter (`keep_main_run`).
-A/B-tested by stashing: grid numbers identical with and without (6/3/5), so it
-is a metric no-op — but it removes genuinely phantom glyphs (stray ink from the
-adjacent board pulled in by the wide E/W tile crop), so it stays.
+Every non-green cell now **soft-fails** (flagged partial), not a traceback
+(session-2 containment). Session 2-4 code is committed; sessions 4-5 leave the
+`atlas/{realbridge,print,bbo}` dirs untracked (bbo rebuilt this session) plus the
+session-5 `segment.py` / `build_cards_atlas.py` / `test_cards.py` diffs.
 
 ## Architecture verdict
 
@@ -179,18 +245,27 @@ The big unlock. Progress:
 Compass path stays untouched for BridgeWebs. NB `atlas.ATLAS_LABELS` now
 includes `T` (was silently dropping compact-ten glyphs on load).
 
-### 4. Mode CARDS (`segment.py` + `recognize.py`)
+### 4. Mode CARDS (`segment.py` + `recognize.py`) — BBO strips + grids DONE
 
-Biggest functional gap: 9 fixtures at 0%. Design already specified in the
-module docstrings and README (mini-card white rectangles on baize; rank+suit
-read at the top-left index corner; hands by spatial cluster; seat from the
-N/E/S/W badge, never position; BBO 2-colour vs IntoBridge 4-colour; face-down
-hands → PBN `-`). Steps: `find_card_cells` → `cluster_hands` →
-`read_seat_badges` → suit 4-way glyph classify → rank atlas per app (BBO
-first, then IntoBridge).
+**Done:** BBO horizontal strips **and** W/E grids. `segment` finds merged-white
+strips (divided by card pitch) and individual grid card components (`_card_comps`
+at threshold 235, minus strip cards and central trick cards); `recognize` reads
+rank (atlas) + suit (4-way atlas) per card. `bridge-base-4-hand-large` reads
+**4/4 exact + validates**; `bridge-base-2-hand-large` N/S exact (W/E face-down →
+`-`). Atlas `atlas/bbo/{rank,suit}` via `build_cards_atlas.py`, now harvesting
+all 52 cards (strips + grids), so ten glyphs (`1`,`0`) and every suit are
+covered.
 
-Independent of step 3 — order 3 ↔ 4 by which sources are actually needed
-first (diagram/print ingestion vs app screenshots).
+**Remaining:**
+- **IntoBridge** — 4-colour deck + **rotated seats** (top can be West), so
+  position fails: must implement `read_seat_badges` (the N/E/S/W circle) and
+  build an IntoBridge atlas. Suit could come from colour here.
+- **Cross-scale** — `bridge-base-2-hand-small` now reads N/S exact, but
+  `bridge-base-4-hand-{small,very-small}` still fail: tens shatter at small scale
+  (`bad rank '0'`). Build a same-scale atlas or add scale robustness.
+- Seat is position-based (BBO-only correct) until `read_seat_badges` lands.
+
+Independent of step 3 — order by which sources are actually needed first.
 
 ### 5. Only if 9/9 grids become necessary
 

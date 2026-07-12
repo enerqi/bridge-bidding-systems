@@ -217,15 +217,27 @@ genuinely messy input.)
 
 ## 7. Current status (what's real vs. planned)
 
-- **Done and tested:** the whole text/format core (`model.py`) — building deals,
-  validation, PBN (+ metadata tags) and LIN output — with 11 unit tests that run
-  without any vision libraries.
-- **Verified by hand:** Mode ROWS *geometry* — green-compass detection and the
-  four hand-box placements are proven on a real fixture.
-- **Stubbed, with precise contracts:** the remaining vision steps (`detect`,
-  `segment`, `rows` glyph reading, `recognize`, `preprocess`). Each has a
-  docstring describing exactly what it must do; the optional vision libraries are
-  imported lazily so nothing breaks until you actually run the image path.
+Snapshot 2026-07-12 (34 tests). See `PLAN.md` for the full per-session log and
+next step; `README.md` §Status for the fixture-by-fixture result.
 
-Implementation continues Mode-ROWS-first (cleanest fixtures, always four hands),
-then Mode CARDS, then the OCR fallback for eventual photographed input.
+- **Done and tested:** the text/format core (`model.py`) — deals, validation,
+  PBN (+ metadata tags), LIN — with no vision libraries.
+- **Mode ROWS — working on three sources:** BridgeWebs (green/red **compass**
+  anchor; single boards exact, multi-table grids mostly valid), RealBridge
+  results (compass-less **suit-quadruple anchor** in `anchor.py`; 4/4 exact), and
+  club-print grids (tiled by ruled **board frames** in `detect._frame_tiles`;
+  tiling done, low-res recognition still weak). Recognition is a per-source
+  template **atlas** (`atlas/{bridgewebs,realbridge,print}`).
+- **Mode CARDS — BBO strips + grids:** N/S horizontal strips merge into one
+  white blob per hand, divided by card pitch; W/E fanned **grids** are separate
+  white card components (isolated at a higher white threshold; the grey seat-
+  label bar bridges the bottom row otherwise). Each card is read rank+suit
+  against `atlas/bbo` (harvested from all 52 cards). BBO 4-hand reads **4/4 exact
+  + validates**; face-down hands → `-`.
+- **Not yet:** **IntoBridge** (4-colour + rotated seats → needs
+  `read_seat_badges`), cross-scale atlases (small-render tens shatter), and the
+  RealBridge *replay* layout. `preprocess` deskew + the PaddleOCR fallback stay
+  documented stubs (no photographed input is expected).
+
+Everything degrades safely: a stage that cannot read a tile returns an
+all-unknown deal tagged with the failing stage (`Deal.note`), never a crash.
