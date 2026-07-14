@@ -89,3 +89,59 @@ def test_bbo_two_hand_small_strips_exact(seat, expected):
     deal = image_to_deals(str(FIXTURES / "bridge-base-2-hand-small.png"))[0]
     assert deal.hands[seat] is not None, f"{seat} not read"
     assert deal.hands[seat].to_pbn() == expected
+
+
+@pytest.mark.parametrize(
+    ("seat", "expected"),
+    [
+        ("N", "432.432.Q432.KQJ"),
+        ("S", "AQJ.QJ9876.5.A32"),
+        ("W", "765.KT5.KJT9.T98"),
+        ("E", "KT98.A.A876.7654"),
+    ],
+)
+def test_bbo_four_hand_small_exact(seat, expected):
+    # cross-scale: the smaller 4-hand render reads all four exact against the
+    # large atlas -- whole-rank matching stopped the tens shattering at this scale
+    deal = image_to_deals(str(FIXTURES / "bridge-base-4-hand-small.png"))[0]
+    assert deal.hands[seat] is not None, f"{seat} not read"
+    assert deal.hands[seat].to_pbn() == expected
+
+
+# --- IntoBridge: 4-colour deck (suit from colour), rotated seats (read from the
+# N/E/S/W badge), gapless card grids (one merged blob split by suit glyph). ---
+
+
+@pytest.fixture(scope="module")
+def intobridge_four_hand():
+    deals = image_to_deals(str(FIXTURES / "intobridge-4-hand-large.png"))
+    assert len(deals) == 1, f"expected 1 deal, got {len(deals)}"
+    return deals[0]
+
+
+@pytest.mark.parametrize(
+    ("seat", "expected"),
+    [
+        ("N", "T653.AJ8.8.87632"),  # right-side grid; seat is West by screen position -> badge says North
+        ("E", "KQ74.753.KJ962.4"),  # bottom strip
+        ("S", "A2.QT92.74.QJT95"),  # left-side grid
+        ("W", "J98.K64.AQT53.AK"),  # top strip
+    ],
+)
+def test_intobridge_four_hand_exact(intobridge_four_hand, seat, expected):
+    assert intobridge_four_hand.hands[seat] is not None, f"{seat} not read"
+    assert intobridge_four_hand.hands[seat].to_pbn() == expected
+
+
+def test_intobridge_four_hand_validates(intobridge_four_hand):
+    intobridge_four_hand.validate()  # complete legal deal, seats correctly de-rotated by the badges
+
+
+@pytest.mark.parametrize(("seat", "expected"), [("E", "KQ74.753.KJ962.4"), ("W", "J98.K64.AQT53.AK")])
+def test_intobridge_two_hand_declarer_dummy(seat, expected):
+    # declarer + dummy view: only E/W face-up (badges seat them right); N/S hidden -> '-'
+    deal = image_to_deals(str(FIXTURES / "intobridge-2-hand-large.png"))[0]
+    assert deal.hands[seat] is not None, f"{seat} not read"
+    assert deal.hands[seat].to_pbn() == expected
+    assert deal.hands["N"] is None
+    assert deal.hands["S"] is None

@@ -44,6 +44,17 @@ _CARD_WHITE_THR = 235
 _CARD_AREA_MIN = 0.001  # one mini-card's white area, as a fraction of the image
 _CARD_ASPECT_LO, _CARD_ASPECT_HI = 0.3, 0.75  # a portrait mini-card (strip ~0.67, grid ~0.5)
 _CENTRE_BAND = 0.15  # half-width of the central x zone (trick/played cards live here, not hands)
+# merged-grid (IntoBridge) detection: its W/E/N/S fans have NO gaps between cards,
+# so a whole hand is ONE portrait white blob of four stacked suit rows.
+_MERGED_ASPECT_LO, _MERGED_ASPECT_HI = 0.45, 0.9  # a few cards wide, four rows tall (~0.76); not a thin UI bar
+_MERGED_H_MIN = 0.28  # tall (spans four suit rows), as a fraction of image height
+_MERGED_W_MIN = 0.12  # and several cards wide, as a fraction of image width
+# a merged-grid card cell, framed on its suit glyph, expressed in card-pitch units:
+_GRID_TOP_ABOVE_SUIT = 1.08  # cell top sits this many pitches above the suit-glyph centre
+_GRID_CARD_H = 1.44  # cell height in pitches (rank digits on top, suit below)
+# seat-badge circles (IntoBridge): a white letter (N/E/S/W) on a dark disc
+_BADGE_H_LO, _BADGE_H_HI = 0.03, 0.05  # letter height as a fraction of image height
+_BADGE_X_MAX = 0.88  # ignore the right-hand results panel's avatar badges
 
 
 @dataclass
@@ -170,6 +181,74 @@ def _card_comps(bgr: Any) -> list[tuple[int, int, int, int]]:
     return comps
 
 
+def _is_merged_grid(blob: tuple[int, int, int, int], img_h: int, img_w: int) -> bool:
+    """A fully-merged (gapless) grid hand: a tall, several-cards-wide portrait
+    white blob (excludes thin vertical UI bars and small overlays)."""
+    _, _, bw, bh = blob
+    return _MERGED_ASPECT_LO < bw / bh < _MERGED_ASPECT_HI and bh > _MERGED_H_MIN * img_h and bw > _MERGED_W_MIN * img_w
+
+
+def _height_split(heights: list[float]) -> float:
+    """Split value between two height clusters (tall rank digits vs short suit
+    symbols): the midpoint of the largest gap in the sorted heights."""
+    if len(heights) < 2:
+        return (heights[0] + 1) if heights else 1.0
+    return max((heights[i + 1] - heights[i], (heights[i + 1] + heights[i]) / 2) for i in range(len(heights) - 1))[1]
+
+
+def _card_pitch(suits: list[tuple[float, float, float, float]]) -> float:
+    """Card pitch = median nearest right-neighbour x-gap between suit glyphs that
+    share a row (one suit per card, evenly spaced)."""
+    import numpy as np
+
+    med_h = float(np.median([s[1] for s in suits]))
+    gaps = []
+    for a in suits:
+        right = [b[2] - a[2] for b in suits if b[2] - a[2] > 0 and abs(b[3] - a[3]) < med_h * 1.2]
+        if right:
+            gaps.append(min(right))
+    return float(np.median(gaps)) if gaps else med_h * 2.1
+
+
+def _merged_grid_cards(bgr: Any, blob: tuple[int, int, int, int]) -> list[CardCell]:
+    """Divide a fully-merged grid hand (IntoBridge fan) into card cells.
+
+    The cards touch with no gaps, so the hand is one white blob of four stacked
+    suit rows. Each card carries exactly ONE suit symbol -- a short, ~square
+    coloured glyph below its taller rank digit(s) -- so we split the glyphs into
+    a tall (rank) and a short (suit) class by height, then anchor a card cell on
+    every suit glyph. Anchoring on the suit (one per card) is robust to the
+    two-glyph "10"; the cell is framed so the rank sits in `recognize`'s rank
+    band and the suit in its suit band."""
+    import cv2
+
+    x, y, bw, bh = blob
+    gray = cv2.cvtColor(bgr[y : y + bh, x : x + bw], cv2.COLOR_BGR2GRAY)
+    _, ink = cv2.threshold(gray, 180, 255, cv2.THRESH_BINARY_INV)
+    n, _, stats, cent = cv2.connectedComponentsWithStats(ink, connectivity=8)
+    comps = []
+    for i in range(1, n):
+        gw, gh = int(stats[i, cv2.CC_STAT_WIDTH]), int(stats[i, cv2.CC_STAT_HEIGHT])
+        area = int(stats[i, cv2.CC_STAT_AREA])
+        if area > _GLYPH_MIN_AREA and _GLYPH_MIN_H < gh < 0.25 * bh:  # 0.25*bh drops the merged card-body blob
+            comps.append((float(gw), float(gh), float(cent[i, 0]), float(cent[i, 1])))
+    if not comps:
+        return []
+    thr = _height_split(sorted(c[1] for c in comps))
+    suits = [c for c in comps if c[1] < thr and 0.65 < c[0] / c[1] < 1.6]
+    if not suits:
+        return []
+    pitch = _card_pitch(suits)
+    half, top_off, card_h, cw = pitch / 2.0, int(_GRID_TOP_ABOVE_SUIT * pitch), int(_GRID_CARD_H * pitch), int(pitch)
+    cells = []
+    for _, _, sx, sy in suits:
+        cx0 = max(0, int(sx - half))
+        top = max(0, int(sy) - top_off)
+        crop = bgr[y + top : y + top + card_h, x + cx0 : x + cx0 + cw]
+        cells.append(CardCell(bbox=(x + cx0, y + top, cw, card_h), index_image=crop))
+    return cells
+
+
 def _grid_cards(bgr: Any, strips: list[tuple[int, int, int, int]]) -> list[CardCell]:
     """CardCells for the fanned/blocky W/E grid hands.
 
@@ -203,11 +282,18 @@ def _group_grid_by_seat(cells: list[CardCell], w: int) -> list[tuple[str, list[C
 def find_card_cells(bgr: Any) -> list[CardCell]:
     """Detect mini-card cells across all face-up hands (Mode CARDS).
 
-    Strips (N/S) are divided by card pitch; fanned W/E grids are split into their
-    individual card components. A face-down hand yields no white cards, so that
-    seat stays unknown (PBN '-') rather than wrong."""
-    strips = [b for b in _hand_blobs(bgr) if _is_strip(b)]
+    Strips (N/S) are divided by card pitch; fanned grids are split into cards two
+    ways -- BBO's gapped grids as individual white components (`_grid_cards`),
+    IntoBridge's gapless fans as one merged blob divided by suit glyph
+    (`_merged_grid_cards`). A face-down hand yields no white cards, so that seat
+    stays unknown (PBN '-') rather than wrong."""
+    h, w = bgr.shape[:2]
+    blobs = _hand_blobs(bgr)
+    strips = [b for b in blobs if _is_strip(b)]
     cells = [cell for blob in strips for cell in _strip_cards(bgr, blob)]
+    for blob in blobs:
+        if _is_merged_grid(blob, h, w):
+            cells += _merged_grid_cards(bgr, blob)
     cells += _grid_cards(bgr, strips)
     return cells
 
@@ -246,13 +332,47 @@ def cluster_hands(bgr: Any, cells: list[CardCell]) -> list[HandCluster]:
     return clusters
 
 
-def read_seat_badges(bgr: Any, clusters: list[HandCluster]) -> None:  # pragma: no cover - future work
-    """Set `cluster.seat` from the N/E/S/W badge nearest each cluster.
+def _seat_badge_glyphs(bgr: Any) -> list[tuple[float, float, Any]]:
+    """Find the seat-badge letters. Each badge is a white letter (N/E/S/W) on a
+    dark disc, so it thresholds as a small ~square white blob sitting on the dark
+    table (card glyphs are dark on white, not white). Returns (cx, cy, glyph) for
+    each, the glyph normalised for atlas matching. The right-hand results panel's
+    avatar badges are smaller and excluded by `_BADGE_X_MAX`."""
+    import cv2
 
-    Not yet needed for BBO (seat comes from position, which BBO respects). This
-    is required for IntoBridge, which rotates seats. TODO: locate the lettered
-    circle adjacent to each hand and classify the letter (4-way)."""
-    raise NotImplementedError
+    from .atlas import normalise_glyph
+
+    h, w = bgr.shape[:2]
+    gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY) if bgr.ndim == 3 else bgr
+    _, white = cv2.threshold(gray, _CARD_WHITE_THR, 255, cv2.THRESH_BINARY)
+    n, _, stats, cent = cv2.connectedComponentsWithStats(white, connectivity=8)
+    out = []
+    for i in range(1, n):
+        x, y, bw, bh, area = (int(stats[i, k]) for k in range(5))
+        if not (_BADGE_H_LO * h < bh < _BADGE_H_HI * h and 0.6 < bw / bh < 1.4):
+            continue
+        if float(cent[i, 0]) > _BADGE_X_MAX * w or area < 0.35 * bw * bh:
+            continue
+        glyph = normalise_glyph(white[y : y + bh, x : x + bw])
+        if glyph is not None:
+            out.append((float(cent[i, 0]), float(cent[i, 1]), glyph))
+    return out
+
+
+def read_seat_badges(bgr: Any, clusters: list[HandCluster], seat_atlas: Any) -> None:
+    """Set each `cluster.seat` from the N/E/S/W badge nearest its centroid.
+
+    Required for IntoBridge, which ROTATES seats (the top hand may be West), so
+    screen position is not the seat -- the lettered badge beside each hand is.
+    BBO needs none of this (position is the seat). The badge letter is read
+    against `seat_atlas` (an N/E/S/W exemplar set)."""
+    badges = _seat_badge_glyphs(bgr)
+    if not badges:
+        return
+    for cluster in clusters:
+        cx, cy = cluster.centroid
+        _, _, glyph = min(badges, key=lambda b: (b[0] - cx) ** 2 + (b[1] - cy) ** 2)
+        cluster.seat = seat_atlas.match(glyph)[0]
 
 
 def segment(bgr: Any) -> list[HandCluster]:

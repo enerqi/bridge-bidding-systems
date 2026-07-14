@@ -26,11 +26,14 @@ def _read_tile(tile: Tile, first: str) -> Deal:
 
         return read_rows(tile.image, atlas_name=tile.atlas)
     # Mode.CARDS
-    from .recognize import recognise  # lazy: vision extras
-    from .segment import segment
+    from .recognize import SEAT_BADGE_APPS, detect_app, load_seat_atlas, recognise  # lazy: vision extras
+    from .segment import read_seat_badges, segment
 
     clusters = segment(tile.image)
-    hands = recognise(clusters)
+    app = detect_app(clusters)
+    if app in SEAT_BADGE_APPS:  # rotated seats -> read the N/E/S/W badge, not screen position
+        read_seat_badges(tile.image, clusters, load_seat_atlas(app))
+    hands = recognise(clusters, app)
     return Deal(hands={seat: hands.get(seat) for seat in SEATS}, first=first)
 
 

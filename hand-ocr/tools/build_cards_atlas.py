@@ -1,18 +1,24 @@
-"""Bootstrap a Mode-CARDS rank + suit atlas from a hand-labelled play view.
+"""Bootstrap a Mode-CARDS atlas from a hand-labelled play view.
 
 Given an app screenshot whose hands we know, reuse the exact card segmentation
 the recogniser uses, then save each card's upper-band glyph under its rank label
-and its lower-band symbol under its suit label. Two atlases result:
+and its lower-band symbol under its suit label. Up to three atlases result:
     atlas/<app>/rank   (rank glyphs A K Q J T 9..2, ten as "10")
     atlas/<app>/suit   (suit symbols S H D C)
+    atlas/<app>/seat   (seat-badge letters N E S W -- only where the app rotates
+                        seats and carries badges, i.e. IntoBridge)
 
 Run (from hand-ocr/, needs the vision extra):
     uv run python tools/build_cards_atlas.py fixtures/bridge-base-4-hand-large.png bbo
+    uv run python tools/build_cards_atlas.py fixtures/intobridge-4-hand-large.png intobridge
 
-Labels below are per fixture stem, per seat, as two aligned left-to-right
-strings: the rank of each card and its suit (S/H/D/C). A card whose upper band
-does not segment into exactly its rank's glyph count is skipped (the rest of the
-alphabet is covered many times over).
+Hands are harvested through `cluster_hands`, which keys each hand by SCREEN
+position (N=top, S=bottom, W=left, E=right). IntoBridge rotates the true seats,
+so the labels below are given per *position* (top/bottom/left/right) -- the atlas
+stores glyph->label pairs only, the seat is irrelevant to it. Labels are two
+aligned strings in the hand's reading order (strips left-to-right; grids by suit
+row top-to-bottom, each row left-to-right), ten written "10". A card whose upper
+band does not segment into exactly its rank's glyph count is skipped.
 """
 
 from __future__ import annotations
@@ -23,35 +29,35 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from hand_ocr.atlas import Atlas
-from hand_ocr.recognize import rank_glyphs, suit_glyph
-from hand_ocr.segment import (
-    CardCell,
-    _grid_cards,
-    _group_grid_by_seat,
-    _hand_blobs,
-    _is_strip,
-    _seat_by_position,
-    _strip_cards,
-)
+from hand_ocr.recognize import rank_image, suit_glyph
+from hand_ocr.segment import CardCell, HandCluster, _seat_badge_glyphs, cluster_hands, find_card_cells
 
-# per fixture stem: seat -> (ranks, suits) in the seat's reading order, ten
-# written "10". N/S are horizontal strips read left-to-right; W/E are grids read
-# by suit row top-to-bottom (BBO stacks the rows red/black-alternating: hearts,
-# spades, diamonds, clubs), each row left-to-right, matching `_reading_order`.
+# per fixture stem: position seat (N=top/S=bottom/W=left/E=right) -> (ranks, suits)
 LABELLED_HANDS = {
     "bridge-base-4-hand-large": {
         "N": ("432432Q432KQJ", "HHHSSSDDDDCCC"),
         "S": ("QJ9876AQJ5A32", "HHHHHHSSSDCCC"),
-        "W": ("K1057 65KJ109 1098".replace(" ", ""), "HHHSSSDDDDCCC"),
+        "W": ("K105765KJ1091098", "HHHSSSDDDDCCC"),
         "E": ("AK1098A8767654", "HSSSSDDDDCCCC"),
     },
+    "intobridge-4-hand-large": {
+        "N": ("AQ1053J98K64AK", "DDDDDSSSHHHCC"),  # top = West's cards
+        "S": ("KJ962KQ747534", "DDDDDSSSSHHHC"),  # bottom = East's cards
+        "W": ("74A2Q1092QJ1095", "DDSSHHHHCCCCC"),  # left = South's cards
+        "E": ("810653AJ887632", "DSSSSHHHCCCCC"),  # right = North's cards
+    },
+}
+
+# per fixture stem: geometric badge position -> the seat letter drawn on it. Only
+# apps that rotate seats (IntoBridge) carry badges and need a seat atlas.
+LABELLED_SEATS = {
+    "intobridge-4-hand-large": {"top": "W", "bottom": "E", "left": "S", "right": "N"},
 }
 
 
 def _reading_order(cells: list[CardCell]) -> list[CardCell]:
-    """Grid cells in suit-row reading order: rows top-to-bottom, each row
-    left-to-right. Rows sit ~a card-height apart, so a coarse y bucket separates
-    them while keeping a row's cards together."""
+    """Cells in reading order: rows top-to-bottom, each row left-to-right. A
+    single-row strip collapses to plain left-to-right (all one row bucket)."""
     return sorted(cells, key=lambda c: (round(c.bbox[1] / (c.bbox[3] * 0.5)), c.bbox[0]))
 
 
@@ -67,6 +73,21 @@ def _split_ranks(ranks: str) -> list[str]:
             out.append(ranks[i])
             i += 1
     return out
+
+
+def _build_seat_atlas(img, positions: dict[str, str]) -> Atlas:
+    """Label the four badge letters by geometry: topmost badge is `top`, etc."""
+    badges = _seat_badge_glyphs(img)
+    if len(badges) != 4:
+        print(f"  seat atlas: found {len(badges)} badges, expected 4 -- skipping")
+        return Atlas({})
+    by_y = sorted(badges, key=lambda b: b[1])
+    by_x = sorted(badges, key=lambda b: b[0])
+    picked = {"top": by_y[0], "bottom": by_y[-1], "left": by_x[0], "right": by_x[-1]}
+    seat_ex: dict[str, list] = {}
+    for where, seat in positions.items():
+        seat_ex.setdefault(seat, []).append(picked[where][2])
+    return Atlas(seat_ex)
 
 
 def main() -> None:
@@ -92,40 +113,41 @@ def main() -> None:
     suit_ex: dict[str, list] = {}
     counts = {"kept": 0, "skipped": 0}
 
-    def harvest(seat: str, cells: list) -> None:
+    def harvest(cluster: HandCluster) -> None:
+        seat = cluster.seat
+        if seat not in labelled:
+            return
         ranks, suits = _split_ranks(labelled[seat][0]), list(labelled[seat][1])
+        cells = _reading_order(cluster.cells)
         if len(cells) != len(ranks):
             print(f"  {seat}: segmented {len(cells)} cards, expected {len(ranks)} -- skipping hand")
             return
         for cell, rank, suit in zip(cells, ranks, suits, strict=True):
-            rgs = rank_glyphs(cell)
+            ri = rank_image(cell)  # whole-rank image, labelled by the full token ("10", "K", ...)
             sg = suit_glyph(cell)
-            if len(rgs) != len(rank) or sg is None:
-                print(f"  skip {seat} card {rank}{suit}: {len(rgs)} rank glyphs, suit={sg is not None}")
+            if ri is None or sg is None:
+                print(f"  skip {seat} card {rank}{suit}: rank={ri is not None}, suit={sg is not None}")
                 counts["skipped"] += 1
                 continue
-            for g, ch in zip(rgs, rank, strict=True):
-                rank_ex.setdefault(ch, []).append(g)
+            rank_ex.setdefault(rank, []).append(ri)
             suit_ex.setdefault(suit, []).append(sg)
             counts["kept"] += 1
 
-    strips = [b for b in _hand_blobs(img) if _is_strip(b)]
-    for blob in strips:  # N/S horizontal strips, cards left-to-right
-        seat = _seat_by_position(blob, img.shape[:2])
-        if seat in labelled:
-            harvest(seat, _strip_cards(img, blob))
-    for seat, side_cells in _group_grid_by_seat(_grid_cards(img, strips), img.shape[1]):  # W/E grids
-        if seat in labelled:
-            harvest(seat, _reading_order(side_cells))
+    for cluster in cluster_hands(img, find_card_cells(img)):
+        harvest(cluster)
 
-    kept, skipped = counts["kept"], counts["skipped"]
     out = Path(__file__).resolve().parents[1] / "hand_ocr" / "atlas" / app
     Atlas(rank_ex).save(out / "rank")
     Atlas(suit_ex).save(out / "suit")
-    print(
-        f"wrote {out}: {kept} cards -> rank classes {sorted(rank_ex)}, "
-        f"suit classes {sorted(suit_ex)} ({skipped} cards skipped)"
+    msg = (
+        f"wrote {out}: {counts['kept']} cards -> rank classes {sorted(rank_ex)}, "
+        f"suit classes {sorted(suit_ex)} ({counts['skipped']} cards skipped)"
     )
+    if stem in LABELLED_SEATS:
+        seat_atlas = _build_seat_atlas(img, LABELLED_SEATS[stem])
+        seat_atlas.save(out / "seat")
+        msg += f"; seat classes {sorted(seat_atlas.exemplars)}"
+    print(msg)
 
 
 if __name__ == "__main__":

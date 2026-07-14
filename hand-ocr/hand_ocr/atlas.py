@@ -38,6 +38,9 @@ GLYPH_W, GLYPH_H = 20, 28
 # because some sources draw ten as "10" (two glyphs; model.py folds "10" -> "T").
 # Compact sources (club prints) draw ten as a single "T" glyph, so T is a label.
 ATLAS_LABELS = set("AKQJT0123456789")
+# whole-rank labels for the Mode-CARDS rank atlas: a card's rank is matched as
+# ONE image (see recognize.rank_image), so "10" is a single label, not "1"+"0".
+RANK_LABELS = {"A", "K", "Q", "J", "T", "10", "9", "8", "7", "6", "5", "4", "3", "2"}
 # suit-symbol labels for the Mode-CARDS suit atlas (one glyph per card)
 SUIT_LABELS = set("SHDC")
 
