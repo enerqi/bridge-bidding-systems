@@ -138,11 +138,17 @@ Text table (Handviewer/Pretty) = one row/suit of P(exactly k)%, an `E[tr]` mean 
 
 ```
 cd deal-simulations/odin-sims
-just test-combo                       # 38 tests (Phase 1 + Phase 2 bricks 1-4 + Option A lines + joint-model census/SD/adaptive coverage)
-just lint                             # bidding + combo + dd + sim
+just test-combo                       # 41 combo tests (Phase 1 + Phase 2 bricks 1-4 + Option A + joint model)
+just test-dd                          # 11 dd tests (DDS-sampling; forced single-thread — DDS not reentrant)
+just lint                             # bidding + combo + dd + sim + pbn_analyse
 odin build sim.odin -file -collection:norn=~/dev/norn -collection:dds=~/dev/odin-dds -o:speed -out:target/release/sim.exe
 ./target/release/sim.exe -S 1major-game-force -n 3 -f pretty --dd --seed 42     # see dd par + combo table
 ./target/release/sim.exe -S 1major-game-force -n 3 -f html-cards --dd --seed 7 -o out.html
+# 2-hand advisor (declarer + dummy). Sampling needs the dds collection (the recipe links it):
+just analyse-pbn --sample 400 '[Deal "N:AQJ2.AKQ.AKQ.J32 - 543.432.432.AKQ4 -"]'          # text, auto-contract
+just analyse-pbn --sample 400 --html out.html '[Deal "N:... - ... -"]'                     # interactive page
+just analyse-pbn --sample 400 --contract 4S --void E:H --lead W:AC '[Deal "N:... - ... -"]' # conditioned (single board)
+just analyse-pbn --file session.pbn --sample 400 --html out.html                           # multi-board carousel
 ```
 **Playwright verify gotcha:** playwright blocks `file://`. Serve the html:
 `python -m http.server 8733 --directory <dir>` then navigate `http://127.0.0.1:8733/…`. Verified this
@@ -309,10 +315,52 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
         IMPs/MPs unregressed in-browser. 38 combo tests pass (rewrote `test_adaptive_bounds_and_linear` to a
         full cap-free hand, added `test_adaptive_curve_valid`).
 
-## ★ NEXT MAJOR LINE OF WORK — the 2-hand (declarer + dummy) advisor
+## ★ the 2-hand (declarer + dummy) advisor — LARGELY COMPLETE (status 2026-07-12)
 
-**This is the headline next project for combo.** Everything above (Phase 1, Phase 2 bricks 1–4, the
-joint model) is COMPLETE and shipped; what follows is the next direction of work, not polish.
+> **READ THIS FIRST (next-session handoff).** This section was "the headline next project"; it is now
+> mostly BUILT. Current state:
+>
+> **DONE + verified (in-browser + tests):**
+> - **2-hand input**: PBN reader (`norn/pbn.odin` `parse_pbn_deal`/`Parsed_Board`), `combo.analyse_parsed_board`
+>   + `sd_bundle_parsed_board`, CLI `pbn_analyse.odin`, face-down partial render.
+> - **DDS-sampling engine** (`dd/sample.odin`): the honest whole-hand make-% (the 2-hand "par" combo lacks).
+>   `sample_grid` (one `CalcDDtable`/layout → every contract), `sample_contract`, `sample_lead_grids`,
+>   `best_contract`, constrained sampling (`Sample_Constraints{shape, held}` via reject sampling).
+> - **Card page UI** (`norn/render.odin`, CCA overlay): green **whole-hand verdict band**, **contract
+>   picker** (♠♥♦♣NT + trick slider), **opening-lead picker** (`data-sim-leads`, single-declarer), the
+>   reconciliation strip, help paragraphs. Guarded so normal sim/dd pages are unchanged.
+> - **CLI** (`pbn_analyse`): `--sample [--contract|auto] [--seed] [--void|--len|--lead] [--html] [--file|stdin]`,
+>   **multi-board** carousel (every `[Deal]` tag → one page / a report per board).
+> - Tests: combo 41, bidding 19, **dd 11**, norn 97; all lints clean; sim leak-clean.
+>
+> **NOT DONE (the remaining work, in priority order):**
+> 1. **Achievable single-dummy** — the honest "a human misguesses" number BELOW the DD-census ceiling
+>    (all sampling is currently per-layout double-dummy = a ceiling). Whole-deal POMDP; the one big item.
+>    **SPIKED 2026-07-13 (`dd/pimc.odin` + `dd/pimc_test.odin`) — do NOT productionise as-is; see the
+>    "PIMC spike findings" block below.** A minimal PIMC play-out (blind declarer, DD defenders) was
+>    built and measured: (a) COST ~22–56 s/board single-thread (11k–27k DDS solves), 50–500× the
+>    ceiling's 0.1–1 s — breaks the instant-bake model unless batched via `SolveAllBoards`; (b) QUALITY —
+>    naive PIMC UNDERSHOOTS (procrastination on DD-value ties: a cold slam reads 80–86%, not 100%), so its
+>    raw gap is a pessimistic floor, not the honest achievable, until a context-aware play heuristic is
+>    added. Conclusion: full PIMC is a genuine multi-week engine (batching + a play heuristic), not a
+>    quick win. Prefer the **misguess-tax estimator** (cheap approximation) or **ship the ceiling as-is**
+>    (labelled a ceiling, which is what serious tools report). **DECIDED: next session builds the
+>    misguess-tax estimator — see "NEXT SESSION — misguess-tax estimator" in the PIMC spike findings
+>    subsection below; start with candidate design #1 (per-layout DD-vs-fixed-guess delta).**
+> 2. **Option C** — entry-aware / reference-library narratable per-suit lines (Track 1 below; narration,
+>    not realism, since DDS-sampling now covers realism). Incremental on combo.
+> 3. Minor: a golden test for the baked `data-sim*` JSON shape (eyeball-only today); optional per-declarer
+>    base-grid selector (the lead picker already fixes declarer, so low value).
+>
+> **Uncommitted at handoff:** norn `render.odin`; odin-sims `dd/sample.odin`, `dd/sample_test.odin`,
+> `pbn_analyse.odin`, `justfile`, this doc. Build/verify commands unchanged (see "Dev / test commands"
+> and the justfile: `just test-dd` / `test-combo`, `just analyse-pbn …`).
+>
+> The detailed, dated build log for all of the above is in the "Suggested build order" subsection's
+> nested bullets further down. The prose below predates the build and describes the design/rationale.
+
+**Original framing (design rationale, pre-build).** Everything above (Phase 1, Phase 2 bricks 1–4, the
+joint model) is COMPLETE and shipped; what follows was the next direction of work.
 
 **Why now.** A separate `hand-ocr` feature will produce not only full 4-hand deals but — importantly —
 **declarer + dummy only**: two hands, 26 cards known, the other 26 split unknown between the defenders.
@@ -464,6 +512,79 @@ entries/squeezes/tempo baked in per solve — far better than combo's per-suit c
 achievable SINGLE-DUMMY number (ONE fixed blind strategy across all samples) is a whole-deal POMDP,
 much harder. Ship the DD-census make-% as the honest ceiling (what serious tools report as "X% over N
 simulations"); the achievable-SD refinement is a later, optional step.
+
+#### PIMC spike findings (2026-07-13) — `dd/pimc.odin`, `dd/pimc_test.odin`
+
+The achievable-SD "later step" was SPIKED to measure it before committing. `pimc.odin` is a minimal
+PIMC (Perfect-Information Monte-Carlo) play-out — the industry estimator (GIB/Jack): the two known hands
+are declarer+dummy; each outer sample deals the unknown 26 to the defenders (constrained, reusing the
+`sample.odin` predeal path); the deal is then PLAYED OUT with a **blind declarer** (at each of declarer's
+own plays it samples K worlds consistent with what it can see — the outstanding cards are known, only the
+E/W split is hidden; it `SolveBoard`s each and votes the best-mean card) against **double-dummy
+defenders** (they see the true world — a conservative lower bound on achievable). It is NOT wired to any
+output; it exists only for these two numbers, and is deliberately left as the simplest correct baseline.
+
+**Cost (the wall).** Declarer makes 26 plays/deal, so cost ≈ `n_outer·(26·K + 26)` DDS solves. Measured
+at ~**2.1 ms/solve single-thread**: 3NT board, n=60 K=8 → **11,024 solves, 22 s/board**; n=100 K=12 →
+**26,690 solves, 56 s/board**. sample.odin's ceiling is **1 solve/layout, 0.1–1 s/board** → PIMC is
+**50–500× heavier**. It CANNOT ride the "instant baked" model as-is. The only route to a bakeable
+~5–10 s/board is batching the K inner solves through `dds.SolveAllBoards` (200/call, multithreaded inside
+DDS) — a real harness, not a knob. And you can't just shrink K/n: quality degrades (below).
+
+**Quality (the surprise).** Naive PIMC UNDERSHOOTS the truth. On a COLD 6S slam (ceiling 100%, 15 top
+tricks, makes 12 on every break) it read **80–86%**, mean **11.7–11.8** — the blind declarer throws a
+trick it never should. Cause: DD-value TIES. Every double-dummy-equivalent line scores the same, so
+cashing a winner and passively conceding tie; the blind declarer procrastinates and bleeds the 15→12
+margin until it can't recover. A crude global tie-break (prefer the higher card = cash top-down) recovered
+the slam to **92%** but made the 3NT board WORSE (85%→73%) — the right tie-break is context-dependent
+(cash when cashing, duck when ducking), i.e. a genuine play heuristic, not a one-liner. So the spike's
+raw gaps (3NT 100→85, cold 100→86) are a **pessimistic FLOOR inflated by procrastination**, not the
+honest achievable — the real number sits higher, between this floor and the ceiling.
+
+**Verdict.** Full PIMC is BOTH expensive (needs `SolveAllBoards` batching) AND finicky (needs a
+context-aware play heuristic to not undershoot) — a multi-week engine, not the "later, optional step" the
+prose above implies. Cheaper alternatives now look better: a **misguess-tax estimator** (ceiling minus
+the expected loss at the identifiable blind two-way decisions — no play-out, no procrastination
+pathology, export-cheap, approximate) or simply **shipping the DD-census ceiling labelled as a ceiling**
+(what serious tools report). Recommendation: do not build full PIMC now; keep `pimc.odin` as the
+reference/measurement harness. Tests: `just test-dd` (15, incl. 4 PIMC — `test_pimc_measure` prints the
+cost/gap; the cold-slam test asserts only the undershoot direction). Uncommitted at handoff.
+
+#### NEXT SESSION — misguess-tax estimator (design starting points)
+
+**Goal.** A cheap, export-friendly achievable-SD number that sits BELOW the DDS ceiling by (an estimate
+of) the tricks a blind declarer loses to guesses double-dummy gets free — WITHOUT a full play-out (no
+procrastination pathology, no `SolveAllBoards` harness). Approximate but honest-direction; a 4th
+reconciliation rung `ceiling · blind(combo-SD) · simulated(DDS ceiling) · achievable(tax)`.
+
+**What already exists to reuse (don't rebuild):**
+- `dd/sample.odin` `sample_grid` — the per-layout DDS census (the ceiling), already baked as `data-sim`.
+- combo's per-suit **blind SD** (`best_line_by_mean`, the blue `sd`/`≥sd` rows) — already a per-suit
+  misguess estimate under FREE ENTRIES; the reconciliation strip already shows `ceiling · blind ·
+  simulated`. The tax number is essentially "make-% under blind play", which combo approximates per-suit.
+- `dd/pimc.odin` helpers (play-out, `build_deal`, `same_side`, sampling) if a bounded play-out is wanted.
+
+**Three candidate designs, cheapest first (pick/prototype next session):**
+1. **Per-layout DD-vs-fixed-guess delta (cheapest, pure sampling).** In `sample_grid`'s existing loop,
+   for the chosen strain, alongside the DD max, also compute tricks when declarer commits to ONE fixed
+   guess policy — e.g. solve with the key two-way finesse forced one way (via a `SolveBoard` from a
+   position that has pre-committed the guess, or simpler: take min over the two "which defender holds the
+   missing honour" strata). The make-% under the committed policy, averaged, is a floor; averaging the
+   BETTER of the two commit directions per HAND (not per layout) ≈ achievable. One extra solve/layout at
+   most → stays ~1–2× the ceiling cost, not 50×.
+2. **Analytic two-way-guess census (no extra solves).** Enumerate the identifiable blind two-way guesses
+   in the two known hands (missing Q with a two-way finesse, a key K to locate, guarded honours) — combo
+   already reasons per-suit — and dock the ceiling by `Σ P(guess wrong) × P(that trick is the setting
+   trick)`. Hardest part is "is this trick pivotal", which the sampled trick histogram (`hist[strain]`)
+   gives: the tax bites only where the make margin is 0 (exactly `need` tricks). Cheap, most approximate.
+3. **Bounded PIMC with a play heuristic (most faithful, most work).** Salvage `pimc.odin` by adding the
+   context-aware tie-break the spike showed is needed (cash when cashing / duck when ducking), then batch
+   via `SolveAllBoards`. This is the "real" achievable but is the multi-week path the spike advised
+   against for now — listed for completeness.
+
+Start with **#1** (reuses the sampling loop, bounded cost, sidesteps the tie pathology because each
+layout is still a clean DD solve). Validate against the spike's `test_pimc_measure` boards (3NT two-way
+guess: expect the tax to land the achievable meaningfully below 100 but ABOVE PIMC's pessimistic 85).
 
 This is still a **new engine, not an extension of combo**, but the bake reframing makes it **cheaper and
 lower-risk than first framed** (reuses norn deal-gen + dd's DDS binding). combo stays the fast,
@@ -658,6 +779,12 @@ DDS-sampling is what makes the 2-hand view analytically first-class (its own "pa
      any sampling → segfault); moved to `run()` scope. Verified in-browser: a 2-board file → 2 slides,
      Board 1 auto-3NT 44% / Board 2 auto-6NT 100%, each its own picker + lead menu (53 opts; board 1
      correctly omits K♠ = a known card), nav switches the CCA. 11 dd + 97 norn tests, lint clean.
+   - **REJECT-SAMPLING BUDGET raised 5000 → 50000 (2026-07-12).** A verification sweep found COMPOUND rare
+     constraints (e.g. `--void E:H --lead W:AC` ≈ 0.1% of deals) exhausted the 5k per-sample redeal cap and
+     failed ~2% of samples → the whole run errored. The common case (unconstrained / single void/length)
+     finds a match on try 1, so a big cap is free there; 50k makes anything down to ~0.05% robust while a
+     genuinely impossible set still terminates fast (~0.1 s) and fails cleanly. Error message reworded to
+     "too rare or impossible". Verified: `--void E:H --lead W:AC` now samples (4S 0%, both conditions noted).
    - **AUTO-CONTRACT DONE (2026-07-12).** `--contract` is now OPTIONAL: omit it and `dd.best_contract(grid)`
      picks the contract maximising EXPECTED SCORE = P(make) × `contract_score` (neutral/undoubled; rewards
      making often AND being worth bidding — a cold 3NT beats 2NT, a 55% game beats a 95% part-score, a

@@ -190,9 +190,12 @@ constraints_empty :: proc(c: Sample_Constraints) -> bool {
 }
 
 // Per sampled deal, how many random redeals we try to hit the constraints before giving up (see
-// sample_grid). A void or a modest length restriction is satisfied by a good fraction of random deals, so
-// this is generous; an impossible / near-impossible set trips it and fails cleanly.
-SAMPLE_MAX_REDEAL :: 5000
+// sample_grid). The COMMON case finds a match on the first try (unconstrained, or a single void/length),
+// so a big cap costs nothing there — it only lets COMPOUND rare conditions through (e.g. a void AND a
+// specific card ≈ 0.1% of deals, which a 5k cap failed ~2% of samples on, tanking the whole run). At 50k
+// the per-sample miss probability is negligible for anything down to ~0.05%; a genuinely impossible set
+// still terminates (50k × n_samples deals) and fails cleanly.
+SAMPLE_MAX_REDEAL :: 50000
 
 // Does `board`'s dealt cards satisfy every constraint (shape bounds AND card locations)?
 @(private)

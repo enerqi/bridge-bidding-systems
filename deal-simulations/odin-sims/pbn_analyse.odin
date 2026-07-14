@@ -201,7 +201,7 @@ sample_board :: proc(
 	lg := new(dd.Lead_Grids)
 	if !dd.sample_lead_grids(board, side, args.sample, lg, args.seed, cons) {
 		free(lg)
-		return {}, "DDS sampling failed (constraints may be impossible for these hands)"
+		return {}, "DDS sampling failed — the constraints are too rare or impossible for these hands (could not draw enough consistent deals)"
 	}
 	bs.leads = lg
 	bs.grid = lg.base
