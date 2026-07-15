@@ -177,11 +177,13 @@ genuinely messy input.)
    - *Recognise each glyph* with **template matching** (§ below).
 
 5. **Mode CARDS reading** (`segment.py` + `recognize.py`):
-   - *Find the card rectangles* (white rounded shapes on green) and crop each
-     card's top-left "index" corner.
-   - *Group cards into hands* by table region; read the seat badge per group.
-   - *Per card:* classify the suit symbol (4-way shape match) and the rank glyph
-     (template match), colour used as a cross-check.
+   - *Find the cards* (white shapes on green) and split each hand into cards
+     (strip pitch, or grid components / merged-blob suit glyphs).
+   - *Group cards into hands* by table region; seat by position (BBO) or by the
+     N/E/S/W badge nearest each group (IntoBridge, which rotates seats).
+   - *Per card:* split it into rank/suit bands by ink profile, match the whole
+     rank region against the rank atlas, and read the suit by shape (BBO) or by
+     colour (IntoBridge's 4-colour deck).
 
 6. **Template matching** (the recogniser, `recognize.py`). The alphabet is tiny —
    `A K Q J T 9 8 7 6 5 4 3 2` plus four suit symbols. We keep a small **atlas**
@@ -217,7 +219,7 @@ genuinely messy input.)
 
 ## 7. Current status (what's real vs. planned)
 
-Snapshot 2026-07-12 (34 tests). See `PLAN.md` for the full per-session log and
+Snapshot 2026-07-14 (62 tests). See `PLAN.md` for the full per-session log and
 next step; `README.md` §Status for the fixture-by-fixture result.
 
 - **Done and tested:** the text/format core (`model.py`) — deals, validation,
@@ -228,16 +230,19 @@ next step; `README.md` §Status for the fixture-by-fixture result.
   club-print grids (tiled by ruled **board frames** in `detect._frame_tiles`;
   tiling done, low-res recognition still weak). Recognition is a per-source
   template **atlas** (`atlas/{bridgewebs,realbridge,print}`).
-- **Mode CARDS — BBO strips + grids:** N/S horizontal strips merge into one
-  white blob per hand, divided by card pitch; W/E fanned **grids** are separate
-  white card components (isolated at a higher white threshold; the grey seat-
-  label bar bridges the bottom row otherwise). Each card is read rank+suit
-  against `atlas/bbo` (harvested from all 52 cards). BBO 4-hand reads **4/4 exact
-  + validates**; face-down hands → `-`.
-- **Not yet:** **IntoBridge** (4-colour + rotated seats → needs
-  `read_seat_badges`), cross-scale atlases (small-render tens shatter), and the
-  RealBridge *replay* layout. `preprocess` deskew + the PaddleOCR fallback stay
-  documented stubs (no photographed input is expected).
+- **Mode CARDS — BBO + IntoBridge (full-scale renders):** N/S strips split by
+  card pitch. Grids come two ways: BBO's are gapped, so each card is its own
+  white component; IntoBridge's are gapless, so a hand is one merged blob split
+  by suit glyph. Suit is read by shape (BBO, 2-colour) or **colour** (IntoBridge,
+  4-colour); seat by position (BBO) or the N/E/S/W **badge** (IntoBridge, which
+  rotates seats -- `read_seat_badges`). Rank is matched whole (`rank_image`) with
+  rank/suit bands found per card from the ink profile (`_card_bands`). Both
+  `bridge-base-4-hand-large` and `intobridge-4-hand-large` read **4/4 exact +
+  validates**; face-down / hidden hands → `-`.
+- **Not yet:** the cross-scale / low-res tail -- small + cramped CARDS renders
+  (two IntoBridge ones misrouted to ROWS by `detect_mode`) and the RealBridge
+  *replay* layout. `preprocess` deskew + the PaddleOCR fallback stay documented
+  stubs (no photographed input is expected).
 
 Everything degrades safely: a stage that cannot read a tile returns an
 all-unknown deal tagged with the failing stage (`Deal.note`), never a crash.

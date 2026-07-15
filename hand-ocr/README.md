@@ -111,7 +111,8 @@ hypothetical only.
 
 ## Status
 
-Full history + next step: see `PLAN.md`. Snapshot (2026-07-12): **39 tests**;
+Full history + next step: see `PLAN.md`. Snapshot (2026-07-14): **62 tests**
+(incl. a PBN-sidecar regression harness pinning every exact-read fixture);
 every fixture either produces a deal or **soft-fails** (flagged partial), none
 crash.
 
@@ -129,25 +130,28 @@ crash.
   - *Club-print grids* — tiled by ruled board rectangles (`detect._frame_tiles`,
     no compass): `print-3x4-format.png` **12/12 boards tiled** + a `print` atlas
     ships, but recognition is 0/12 valid (glyphs too small — segmentation tail).
-- **Mode CARDS — BBO strips + grids.** N/S horizontal strips divide into cards
-  by rank-glyph pitch; W/E fanned grids are separate white card components
-  (isolated at a higher white threshold, since the grey seat-label bar bridges
-  the bottom row), each read rank (atlas) + suit (4-way atlas).
-  `bridge-base-4-hand-large.png` reads **4/4 exact + validates** (first complete
-  CARDS deal); `bridge-base-2-hand-large.png` N+S exact (W/E card-backs → `-`).
-  Atlas `hand_ocr/atlas/bbo/`, harvested from all 52 cards (adds ten glyphs).
+- **Mode CARDS — BBO + IntoBridge (full-scale renders).**
+  - *BBO* (2-colour, seats by position): N/S strips split by pitch, W/E gapped
+    grids as separate white components. `bridge-base-4-hand-large.png` **4/4
+    exact + validates**; 2-hand and the smaller renders exact too.
+  - *IntoBridge* (4-colour, **rotated** seats, gapless grids): the grid is one
+    merged blob split by suit glyph; suit read from **colour**; seat from the
+    N/E/S/W **badge** (`read_seat_badges`). `intobridge-4-hand-large.png` **4/4
+    exact + validates**, `intobridge-2-hand-large.png` E/W exact.
+  - *Recognition* matches the whole rank region as one image (`rank_image`, so
+    "10"/split-"K" need no per-glyph split) and finds each card's rank/suit bands
+    from its ink profile (`_card_bands`). Atlases in `hand_ocr/atlas/{bbo,
+    intobridge}` (rank, suit, and for IntoBridge a seat-letter atlas).
 - **Shipped atlases:** `atlas/{bridgewebs,realbridge,print}` (ROWS ranks),
-  `atlas/bbo/{rank,suit}` (CARDS), built by `tools/build_atlas.py` /
-  `tools/build_cards_atlas.py`.
+  `atlas/bbo/{rank,suit}` + `atlas/intobridge/{rank,suit,seat}` (CARDS), built by
+  `tools/build_atlas.py` / `tools/build_cards_atlas.py`.
 
 ### Known limitations (next fixes — priority in `PLAN.md`)
-- **IntoBridge CARDS** unread: 4-colour deck + **rotated seats** (top can be
-  West) → needs the N/E/S/W seat-badge reader (`read_seat_badges`, still a stub)
-  and its own atlas.
-- **Cross-scale:** a smaller render of the atlas's source can shatter/mis-read
-  glyphs (BBO `4-hand-{small,very-small}` tens → `bad rank '0'`; ROWS
-  `print-4x5`/`5x6`). Fix = same-scale atlas / upscale-before-match, not
-  rescaling exemplars (that theory was disproven).
+- **Cross-scale / low-res CARDS:** the smaller / cramped renders still fail —
+  `intobridge-2-hand-small` mis-segments a seat, `bridge-base-4-hand-very-small`
+  is too small, and `intobridge-{4-hand-small,cramped}` are misrouted to ROWS by
+  `detect_mode`. Same theme as the ROWS `print-4x5`/`5x6` tail. Fix = same-scale
+  atlas / upscale-before-match, not rescaling exemplars (that was disproven).
 - **RealBridge replay** (`realbridge-replay*.png`): big-font glyphs exceed the
   anchor's `_H_MAX` cap — relax it and add that source's atlas.
 - **Still stubbed (unscheduled):** `preprocess` deskew and the `paddleocr` OCR
@@ -191,6 +195,7 @@ just run fixtures/bridgewebs-4-2.png --format pbn
 
 See **`PLAN.md`** ("Next step") for the reviewed plan. Done so far: containment
 → suit-quadruple anchor (RealBridge 4/4, print grids tiled) → Mode CARDS BBO
-strips **and W/E grids** (4-hand-large 4/4 exact + validates). **Next:
-IntoBridge** (seat-badge reader + atlas), then cross-scale atlases. Deskew +
-PaddleOCR remain out of scope — no photographed input exists or is expected.
+strips + grids → **IntoBridge** (colour suit, badge seats, merged grids;
+4-hand-large 4/4 exact + validates). **Next:** the cross-scale / low-res tail
+(small + cramped CARDS renders, plus the ROWS print grids). Deskew + PaddleOCR
+remain out of scope — no photographed input exists or is expected.

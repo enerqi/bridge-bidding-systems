@@ -168,10 +168,24 @@ def detect_mode(tile: Tile) -> Mode:
     compass square at its centre, whereas a CARDS play view spreads green over
     the whole baize. We mask the compass-green hue and test whether the green
     forms a *compact central* cluster (ROWS) rather than a large spread (CARDS).
+
+    Green alone misroutes a *cropped* CARDS view with no baize showing (e.g. a
+    tight IntoBridge grid) to ROWS. So in the low-green branch we confirm ROWS
+    with the universal suit-row anchor: a real ROWS diagram yields hand stacks,
+    a card grid yields none -- those are CARDS after all.
     """
     from .rows import compass_mask
 
     mask = compass_mask(tile.image)
     compass_fraction = float(mask.mean()) / 255.0
-    # ROWS: compass is a few percent of the image; CARDS baize is a large fraction.
-    return Mode.ROWS if compass_fraction < 0.20 else Mode.CARDS
+    # CARDS baize is a large green fraction; a small fraction is ROWS *or* a
+    # baize-less cropped CARDS grid -- disambiguate by the suit-row anchor.
+    if compass_fraction >= 0.20:
+        return Mode.CARDS
+    try:
+        from .anchor import find_hand_stacks
+
+        # no suit-row stacks -> a baize-less cropped card grid, not a ROWS diagram
+        return Mode.ROWS if find_hand_stacks(tile.image) else Mode.CARDS
+    except Exception:  # noqa: BLE001 - anchor is best-effort; on any failure keep the low-green default (ROWS)
+        return Mode.ROWS

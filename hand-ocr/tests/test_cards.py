@@ -87,8 +87,9 @@ def test_bbo_two_hand_small_strips_exact(seat, expected):
     # cross-scale guard: the small render's N/S strips read exact against the
     # large-scale atlas once it carries grid suit exemplars (fixed a ♠/♣ mix-up)
     deal = image_to_deals(str(FIXTURES / "bridge-base-2-hand-small.png"))[0]
-    assert deal.hands[seat] is not None, f"{seat} not read"
-    assert deal.hands[seat].to_pbn() == expected
+    hand = deal.hands[seat]
+    assert hand is not None, f"{seat} not read"
+    assert hand.to_pbn() == expected
 
 
 @pytest.mark.parametrize(
@@ -104,8 +105,9 @@ def test_bbo_four_hand_small_exact(seat, expected):
     # cross-scale: the smaller 4-hand render reads all four exact against the
     # large atlas -- whole-rank matching stopped the tens shattering at this scale
     deal = image_to_deals(str(FIXTURES / "bridge-base-4-hand-small.png"))[0]
-    assert deal.hands[seat] is not None, f"{seat} not read"
-    assert deal.hands[seat].to_pbn() == expected
+    hand = deal.hands[seat]
+    assert hand is not None, f"{seat} not read"
+    assert hand.to_pbn() == expected
 
 
 # --- IntoBridge: 4-colour deck (suit from colour), rotated seats (read from the
@@ -141,7 +143,8 @@ def test_intobridge_four_hand_validates(intobridge_four_hand):
 def test_intobridge_two_hand_declarer_dummy(seat, expected):
     # declarer + dummy view: only E/W face-up (badges seat them right); N/S hidden -> '-'
     deal = image_to_deals(str(FIXTURES / "intobridge-2-hand-large.png"))[0]
-    assert deal.hands[seat] is not None, f"{seat} not read"
-    assert deal.hands[seat].to_pbn() == expected
+    hand = deal.hands[seat]
+    assert hand is not None, f"{seat} not read"
+    assert hand.to_pbn() == expected
     assert deal.hands["N"] is None
     assert deal.hands["S"] is None
