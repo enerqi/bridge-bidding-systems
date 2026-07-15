@@ -157,6 +157,8 @@ Board_Sample :: struct {
 	leads:    ^dd.Lead_Grids,
 	contract: dd.Contract,
 	auto:     bool, // contract was auto-picked (no --contract)
+	tax:      dd.Tax_Result, // the misguess-tax achievable-SD estimate for `contract` (valid iff tax_ok)
+	tax_ok:   bool,
 }
 
 // Release a Board_Sample's heap grids (no-op when sampling was off).
@@ -215,6 +217,10 @@ sample_board :: proc(
 		}
 		bs.contract, bs.auto = bc, true
 	}
+	// Achievable single-dummy (the misguess-tax 4th rung) for the resolved contract. Same board/seed/
+	// constraints as the ceiling sample; an extra CalcDDtable pass (no lead sub-grids), cheap vs the lead
+	// grids above. A failure just drops the achievable rung — the ceiling verdict still stands.
+	bs.tax, bs.tax_ok = dd.misguess_tax(board, side, bs.contract, args.sample, args.seed, cons)
 	return bs, ""
 }
 
@@ -244,7 +250,7 @@ report_board :: proc(
 	print_report(&a, &sd, side, args.target)
 	if bs.have {
 		sample := dd.result_for(bs.grid, bs.contract)
-		print_sample_verdict(&a, &sd, &sample, bs.auto)
+		print_sample_verdict(&a, &sd, &sample, bs.auto, bs.tax, bs.tax_ok)
 		if len(args.constraints) > 0 || len(args.held) > 0 {
 			fmt.print("  (sampled only layouts where")
 			first := true
@@ -337,6 +343,8 @@ print_sample_verdict :: proc(
 	sd: ^combo.Sd_Bundle,
 	s: ^dd.Sample_Result,
 	auto_contract: bool,
+	tax: dd.Tax_Result,
+	tax_ok: bool,
 ) {
 	label := dd.contract_label(dd.Contract{level = s.level, strain = s.strain}) // temp-allocated
 	fmt.println("\nWhole-hand (simulated) — the honest whole-deal verdict:")
@@ -351,6 +359,17 @@ print_sample_verdict :: proc(
 		s.n,
 		s.mean_tricks,
 	)
+	// The achievable (misguess-tax) rung: the ceiling docked by the dominant blind two-way guess. Only
+	// shown when the estimator ran AND found a guess to tax; a guess-free board's achievable == ceiling,
+	// so the extra line would just repeat the headline.
+	if tax_ok && tax.n_pivots > 0 {
+		fmt.printfln(
+			"  achievable (blind play) %.0f%%   ·   taxed %.0f pts by the %s guess",
+			tax.achievable_pct,
+			tax.tax_pts,
+			card_word(tax.pivots[0].card),
+		)
+	}
 	fmt.printfln(
 		"  reconciliation:  ceiling %.2f (combo DD)  >  blind %.2f (combo SD)  >  simulated %.2f (DDS whole-hand)",
 		combo.expected_tricks(a.total),
@@ -360,7 +379,8 @@ print_sample_verdict :: proc(
 	fmt.println(
 		"  (per-layout double-dummy census: a ceiling that already bakes in entries/squeezes/tempo per",
 	)
-	fmt.println("   solve — far tighter than combo's per-suit sums. See COMBO_ANALYSER.md Track 2.)")
+	fmt.println("   solve — far tighter than combo's per-suit sums; achievable docks it for the blind guess.")
+	fmt.println("   See COMBO_ANALYSER.md Track 2.)")
 }
 
 // Parsed command line: the PBN text plus the analysis options. `sample` > 0 turns on the DDS-sampling
@@ -706,7 +726,7 @@ render_board_body :: proc(
 	fmt.sbprintf(b, " data-target=\"%d\"", tgt)
 	if bs.have {
 		strings.write_string(b, " data-sim='")
-		write_sim_json(b, &bs.grid, bs.contract)
+		write_sim_json(b, &bs.grid, bs.contract, bs.tax, bs.tax_ok)
 		strings.write_string(b, "'")
 		strings.write_string(b, " data-sim-leads='")
 		write_leads_json(b, bs.leads, side)
@@ -723,11 +743,31 @@ render_board_body :: proc(
 // make-% for (strain, level) as the tail sum at level+6 and stderr from `n`. `lvl`/`strain` preselect
 // the picker at the driver's --contract. Single-quoted attribute host (see write_html_page), so the
 // JSON uses only double quotes — no escaping needed.
-write_sim_json :: proc(b: ^strings.Builder, sim: ^dd.Grid_Result, contract: dd.Contract) {
+write_sim_json :: proc(
+	b: ^strings.Builder,
+	sim: ^dd.Grid_Result,
+	contract: dd.Contract,
+	tax: dd.Tax_Result,
+	tax_ok: bool,
+) {
 	// Braces must be written literally — Odin's fmt reads `{` in a format string as an argument
 	// reference (see dd.odin's PBN-comment note), so only value fields go through sbprintf.
 	strings.write_byte(b, '{')
-	fmt.sbprintf(b, `"n":%d,"lvl":%d,"strain":"%s","g":`, sim.n, contract.level, strain_key(contract.strain))
+	fmt.sbprintf(b, `"n":%d,"lvl":%d,"strain":"%s"`, sim.n, contract.level, strain_key(contract.strain))
+	// The achievable (misguess-tax) rung for this baked contract: the make-% under blind play plus the
+	// dominant two-way guess. Emitted only when a guess was found; the client shows the rung only when the
+	// picker sits on this exact (strain, level), since the tax is contract-specific and unconditioned by
+	// any opening lead.
+	if tax_ok && tax.n_pivots > 0 {
+		fmt.sbprintf(
+			b,
+			`,"ach":%.1f,"taxpts":%.1f,"pvt":"%s"`,
+			tax.achievable_pct,
+			tax.tax_pts,
+			card_word(tax.pivots[0].card),
+		)
+	}
+	strings.write_string(b, `,"g":`)
 	write_g_object(b, sim.hist, sim.n)
 	strings.write_byte(b, '}')
 }

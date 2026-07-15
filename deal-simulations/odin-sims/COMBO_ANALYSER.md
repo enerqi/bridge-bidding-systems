@@ -331,12 +331,23 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
 >   reconciliation strip, help paragraphs. Guarded so normal sim/dd pages are unchanged.
 > - **CLI** (`pbn_analyse`): `--sample [--contract|auto] [--seed] [--void|--len|--lead] [--html] [--file|stdin]`,
 >   **multi-board** carousel (every `[Deal]` tag → one page / a report per board).
-> - Tests: combo 41, bidding 19, **dd 11**, norn 97; all lints clean; sim leak-clean.
+> - Tests: combo 41, bidding 19, **dd 21** (incl. 4 PIMC spike + 7 misguess-tax), norn 97; all lints
+>   clean; sim leak-clean.
 >
 > **NOT DONE (the remaining work, in priority order):**
 > 1. **Achievable single-dummy** — the honest "a human misguesses" number BELOW the DD-census ceiling
 >    (all sampling is currently per-layout double-dummy = a ceiling). Whole-deal POMDP; the one big item.
->    **SPIKED 2026-07-13 (`dd/pimc.odin` + `dd/pimc_test.odin`) — do NOT productionise as-is; see the
+>    **MISGUESS-TAX ESTIMATOR (candidate #1) BUILT 2026-07-14 (`dd/tax.odin` + `dd/tax_test.odin`) and
+>    WIRED 2026-07-15** — geometric two-way-guess identification + a −1-on-misguess strata tax, reuses
+>    sample.odin's loop with no extra solves. Validated: docks a real two-way Q (3NT ceiling 71% →
+>    achievable 36%, tax 35) yet keeps the spike's cold slam/3NT boards at 100% where naive PIMC undershot
+>    to 80/94. See "misguess-tax estimator — CANDIDATE #1 BUILT" below. **WIRED: 4th reconciliation rung
+>    now shows in `pbn_analyse` text ("achievable (blind play) 36% · taxed 35 pts by the QS guess") AND on
+>    the card page green band ("· achievable 36% playing blind (Q♠ guess, −35)"). Baked into `data-sim` as
+>    `ach`/`taxpts`/`pvt`; `sample_board` computes `bs.tax`/`bs.tax_ok` once, shown only on the exact
+>    baked (strain, level) with no lead condition + only when a guess exists (guess-free → achievable ==
+>    ceiling, rung suppressed). Help modal updated. dd 21 tests pass, lint clean.** DONE.
+>    **Prior spike 2026-07-13 (`dd/pimc.odin` + `dd/pimc_test.odin`) — do NOT productionise as-is; see the
 >    "PIMC spike findings" block below.** A minimal PIMC play-out (blind declarer, DD defenders) was
 >    built and measured: (a) COST ~22–56 s/board single-thread (11k–27k DDS solves), 50–500× the
 >    ceiling's 0.1–1 s — breaks the instant-bake model unless batched via `SolveAllBoards`; (b) QUALITY —
@@ -550,7 +561,59 @@ pathology, export-cheap, approximate) or simply **shipping the DD-census ceiling
 reference/measurement harness. Tests: `just test-dd` (15, incl. 4 PIMC — `test_pimc_measure` prints the
 cost/gap; the cold-slam test asserts only the undershoot direction). Uncommitted at handoff.
 
-#### NEXT SESSION — misguess-tax estimator (design starting points)
+#### misguess-tax estimator — CANDIDATE #1 BUILT (2026-07-14), `dd/tax.odin` + `dd/tax_test.odin`
+
+**Status: DONE (library level), NOT yet wired to the card page / CLI.** Candidate #1 (the per-layout
+DD-vs-fixed-guess delta) is implemented as `misguess_tax(board, side, contract, n_samples, seed,
+constraints) -> (Tax_Result, ok)`. It reuses sample.odin's exact sampling loop (same reject-sampling
+constraints, seeded RNG, ONE CalcDDtable/layout — **no extra solves**, ~1× the ceiling cost).
+
+**How it landed (differs slightly from the sketch below — read this).**
+- **Guess identification is GEOMETRIC, from the two known hands, not from the DD grid.** Key realisation
+  during the build: a genuine two-way finesse is *invisible* in the DD strata — double-dummy always
+  guesses right, so E[tricks | honour with West] == E[tricks | honour with East]. You CANNOT detect the
+  guess by stratifying the solved grid; you must read the *tenace geometry*. `two_way_guess_pivots`
+  flags a missing honour C (Jack..King) iff (a) declarer holds BOTH immediate neighbours C+1 and C-1 (a
+  tight tenace that traps C — excludes "solid tops" like AKQ-missing-J, whose lower neighbour is a
+  defender card), AND (b) EACH declaring hand holds a card ranked above C (finessable from either side →
+  genuinely two-way, not a forced one-way finesse).
+- **Why only TWO-WAY guesses.** A one-way (forced) finesse is NOT a guess — declarer just takes it and
+  wins exactly when the DD solver does — so the −1-on-misguess penalty would over-tax it. Restricting to
+  two-way tenaces is what keeps a COLD contract cold (the estimator's whole advantage over naive PIMC).
+- **The tax model (−1 on a wrong two-way guess is EXACT for a clean two-way finesse):** per pivot, split
+  the sampled DD tricks by which defender holds C; committing to finesse toward defender d makes when
+  C∈d and t≥need, OR when C∈other but t≥need+1 (an overtrick survives the one-trick misguess). Achievable
+  facing that guess = the better commit direction; board achievable = ceiling docked by the DOMINANT
+  guess (lowest committed make-%). Multiple independent guesses would compound — v1 reports the single
+  worst (matches the "single dominant two-way guess" framing). The −1 only bites at the knife edge
+  (t==need), so a non-pivotal flagged guess is self-correctingly untaxed.
+
+**Validated against the PIMC spike's boards (`test-dd`, 7 new tests, 21 total, lint clean):**
+- **Two-way guess board `N:AJ54.AK2.A32.AK3 - KT32.543.654.542`, 3NT** (spades AJ54/KT32 miss Q9876, a
+  two-way Q deciding the 9th trick): ceiling **71%**, achievable **36%**, tax **35 pts**, sole pivot =
+  ♠Q. The blind declarer is right ~half the time — a real, sane tax. (This board is NOT stone cold: the
+  whole-hand DD ceiling is ~71–80%, because some Q-with-length layouts beat even the two-way finesse.)
+- **Cold slam `…6S` and cold 3NT `…AK32.AK2.A432.A2…`** (the spike's undershoot boards): **no two-way
+  tenace flagged → achievable == ceiling == 100%, tax 0.** This is the headline win: naive PIMC
+  UNDERSHOT these to 80% / 94% via DD-tie procrastination; the misguess-tax estimator keeps them cold.
+- Ceiling matches `sample_contract` exactly (shared loop); seed-reproducible; achievable ≤ ceiling always.
+
+**KNOWN LIMITATIONS / conservative by design.** Guesses looser than a tight two-sided tenace (e.g. AJ
+missing KQ — two adjacent missing honours) are NOT flagged → left untaxed (slightly optimistic, but
+deliberately kept ABOVE PIMC's pessimistic floor rather than risk over-taxing). Only the single dominant
+guess is docked (compounding guesses under-taxed). The −1 penalty assumes a clean one-trick finesse loss.
+
+**WIRED 2026-07-15.** (1) DONE — `sample_board` computes `bs.tax` via `misguess_tax` (same board/seed/
+constraints, one extra CalcDDtable pass, cheap vs the lead grids); `print_sample_verdict` prints the
+achievable rung; `write_sim_json` bakes `ach`/`taxpts`/`pvt` into `data-sim`; `render.odin` `simBand`
+shows "· achievable N% playing blind (Q♠ guess, −tax)" on the exact baked (strain, level) with no lead
+condition, and only when a guess exists. Help modal explains it. **REMAINING:** (2) OPTIONAL: broaden
+guess geometry (looser tenaces, key-K location) if validation on more boards shows systematic
+over-optimism; (3) the analytic candidate #2 / full PIMC #3 remain the fallbacks if the tax proves too
+crude; (4) OPTIONAL golden test for the baked `data-sim` JSON shape (eyeball-verified today) — same
+gap the doc's minor item #3 already tracks.
+
+<details><summary>Original design sketch (pre-build) — kept for the candidate #2/#3 fallbacks</summary>
 
 **Goal.** A cheap, export-friendly achievable-SD number that sits BELOW the DDS ceiling by (an estimate
 of) the tricks a blind declarer loses to guesses double-dummy gets free — WITHOUT a full play-out (no
@@ -590,6 +653,8 @@ This is still a **new engine, not an extension of combo**, but the bake reframin
 lower-risk than first framed** (reuses norn deal-gen + dd's DDS binding). combo stays the fast,
 solver-free per-suit view that *explains each suit's technique*; the DDS sampler is the whole-hand view
 that gives the honest make-%.
+
+</details>
 
 ### Option C vs DDS-sampling — the trade (read before picking)
 
