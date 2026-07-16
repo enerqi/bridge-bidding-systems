@@ -28,6 +28,27 @@ class DealError(ValueError):
     """Structural problem in a parsed deal (bad card, dup, wrong count)."""
 
 
+# Duplicate boards fix dealer and vulnerability by board number alone (the same
+# rotation every club/online session uses), so both follow for free once the
+# board number is read -- no separate dealer/vul recognition needed.
+_VUL_CYCLE = (
+    "None", "NS", "EW", "All",  # boards 1-4
+    "NS", "EW", "All", "None",  # boards 5-8
+    "EW", "All", "None", "NS",  # boards 9-12
+    "All", "None", "NS", "EW",  # boards 13-16
+)  # fmt: skip
+
+
+def dealer_for_board(board: int) -> str:
+    """Dealer seat for a duplicate board number: 1->N, 2->E, 3->S, 4->W, repeat."""
+    return SEATS[(board - 1) % 4]
+
+
+def vul_for_board(board: int) -> str:
+    """PBN vulnerability for a duplicate board number (standard 16-board cycle)."""
+    return _VUL_CYCLE[(board - 1) % 16]
+
+
 def normalise_rank(token: str) -> str:
     token = _RANK_ALIASES.get(token, token.upper())
     if token not in RANKS:
@@ -97,6 +118,10 @@ class Deal:
     board: int | None = None
     dealer: str | None = None  # seat char
     vul: str | None = None  # PBN vulnerability: None | NS | EW | All
+    # contract result, read from a replay info box's second line (e.g. "4!cX-3 W").
+    contract: str | None = None  # level+strain+doubling, PBN form: "4CX", "3NT"
+    declarer: str | None = None  # seat char
+    result: int | None = None  # total tricks won by declarer (PBN convention, 0-13)
     # set by the pipeline when a reader stage failed on this tile: the deal is
     # returned all-unknown (rather than raising and sinking the whole page) and
     # this records which stage broke so the CLI can flag it for manual fix.
@@ -141,6 +166,12 @@ class Deal:
             lines.append(f'[Dealer "{self.dealer}"]')
         if self.vul is not None:
             lines.append(f'[Vulnerable "{self.vul}"]')
+        if self.contract is not None:
+            lines.append(f'[Contract "{self.contract}"]')
+        if self.declarer is not None:
+            lines.append(f'[Declarer "{self.declarer}"]')
+        if self.result is not None:
+            lines.append(f'[Result "{self.result}"]')
         lines.append(self.to_pbn())
         return "\n".join(lines)
 

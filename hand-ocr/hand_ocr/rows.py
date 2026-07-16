@@ -34,7 +34,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from .model import SEATS, SUITS, Deal, DealError, Hand
+from .model import SEATS, SUITS, Deal, DealError, Hand, dealer_for_board, vul_for_board
 
 # where the shipped per-source atlases live (see tools/build_atlas.py)
 _ATLAS_ROOT = Path(__file__).resolve().parent / "atlas"
@@ -271,6 +271,26 @@ def _box_rows(box_gray: Any) -> list[list[Any]]:
     comps = [c for c in comps if c[3] >= 0.5 * ref_h]
 
     median_h = float(np.median([c[3] for c in comps]))
+
+    # Drop a detached right-hand block sharing the hand's box. On a club-print cell
+    # the N/S hand sits left of that board's double-dummy trick table (and "Optimum"
+    # text); the anchor's generous right cap pulls those in, and because their rows
+    # sit at different y they interleave with the suit rows and wreck the clustering.
+    # A hand is one tight left x-run (all suit rows share a left edge); the table is a
+    # separate run past a wide horizontal gap. Keep the run with the most glyphs.
+    # (Per-row `keep_main_run` below can't fix this -- the interleave happens first.)
+    by_x = sorted(comps, key=lambda c: c[0])
+    x_runs: list[list[tuple[int, int, int, int, float]]] = [[by_x[0]]]
+    for c in by_x[1:]:
+        prev = x_runs[-1][-1]
+        if c[0] - (prev[0] + prev[2]) > median_h * 2.5:
+            x_runs.append([c])
+        else:
+            x_runs[-1].append(c)
+    if len(x_runs) > 1:
+        keep = {id(c) for c in max(x_runs, key=len)}
+        comps = [c for c in comps if id(c) in keep]
+
     groups = _cluster_rows([c[4] for c in comps], median_h * 0.6)
     groups.sort(key=lambda g: min(comps[i][4] for i in g))  # top-to-bottom
 
@@ -320,7 +340,8 @@ def _box_rows(box_gray: Any) -> list[list[Any]]:
         else:
             col = _col_ink(binimg, (fx, fy, fw, fh))
             lo, hi = int(suit_w * 0.7), min(fw - 2, int(suit_w * 1.6))
-            cut = lo + int(min(range(hi - lo), key=lambda k: col[lo + k])) if hi > lo else int(suit_w)
+            # cut the suit off at the lowest-ink column in [lo, hi) (the gap after it)
+            cut = lo + int(np.argmin(col[lo:hi])) if hi > lo else int(suit_w)
             rank_boxes = _maybe_split((fx + cut, fy, fw - cut, fh), binimg, glyph_w)
         for x, y, w, h, _cy in ordered[1:]:
             rank_boxes.extend(_maybe_split((x, y, w, h), binimg, glyph_w))
@@ -383,12 +404,15 @@ def read_rows(img_bgr: Any, atlas: Any = None, atlas_name: str | None = None) ->
     from .atlas import Atlas
 
     boxes, source = _seat_boxes(img_bgr)
+    # RealBridge *replay*: anchor-located board on a green baize (results has none).
+    # The baize test also gates the info-box metadata read below.
+    is_replay = source == "anchor" and float(compass_mask(img_bgr).mean()) / 255.0 >= 0.20
     if atlas is None:
         if atlas_name:
             name = atlas_name
         elif source == "compass":
             name = DEFAULT_ATLAS
-        elif float(compass_mask(img_bgr).mean()) / 255.0 >= 0.20:
+        elif is_replay:
             name = REPLAY_ATLAS  # anchor board on a green baize -> RealBridge replay
         else:
             name = ANCHOR_ATLAS  # anchor board, no baize -> RealBridge results / print
@@ -405,5 +429,28 @@ def read_rows(img_bgr: Any, atlas: Any = None, atlas_name: str | None = None) ->
             # '0'); leave the hand unknown so the board still yields a Deal that
             # validation flags, instead of aborting the whole page.
             hands[seat] = None
-    # metadata (dealer/vul/board) not yet read from the diagram text; default first=N
-    return Deal(hands=hands, first="N")
+
+    # Metadata: replay carries a "Bd <n>, Dlr <seat>" info box. Read just the board
+    # number (via the same atlas); dealer, vulnerability and the PBN "first" seat
+    # then follow deterministically from the duplicate rotation. Best-effort -- an
+    # unreadable box leaves first=N with no tags.
+    board = dealer = vul = None
+    contract = declarer = None
+    result = None
+    first = "N"
+    if is_replay:
+        from .meta import read_board_number, read_contract
+
+        board = read_board_number(img_bgr, atlas)
+        if board is not None:
+            dealer = dealer_for_board(board)
+            vul = vul_for_board(board)
+            first = dealer
+        # info-box line 2: contract / declarer / result (independent of the board)
+        contract_meta = read_contract(img_bgr, atlas, boxes)
+        if contract_meta is not None:
+            contract, declarer, result = contract_meta
+    return Deal(
+        hands=hands, first=first, board=board, dealer=dealer, vul=vul,
+        contract=contract, declarer=declarer, result=result,
+    )  # fmt: skip

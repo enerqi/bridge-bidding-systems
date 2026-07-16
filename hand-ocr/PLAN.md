@@ -32,16 +32,122 @@ All soft-fail; none crash. Same cross-scale theme as the ROWS low-res tail.
 `tests/test_regression.py` pin all nine exact-read fixtures end to end (add a
 sidecar when a new fixture reads exact). See "Fixture coverage" below.
 
-**Pick next session from:** (a) RealBridge *replay* layout — feature, own font +
-atlas, relax the anchor `_H_MAX` cap (§3.6); (b) the cross-scale / low-res tail
-above + ROWS print-grid recognition (§3.5) — hard, repeatedly deferred, low
-value. (~~(c) `detect_mode` tweak~~ — DONE session 7.)
+**RealBridge replay — DONE (session 8).** Both `realbridge-replay-{1,2-nonvul}`
+read **4/4 exact + validate**. Needed a scale-robust anchor (big glyphs amid
+small UI text), routing past the baize (white-card test), a compass false-positive
+guard, badge/frame rejection in the row segmenter, positional void rows, and a
+dedicated `realbridge-replay` atlas. Details in the progress log + §3.6.
+
+**Replay metadata — DONE (session 9).** Replay boards emit the full tag block —
+`[Board]/[Dealer]/[Vulnerable]` (from the OCR'd board number + duplicate
+rotation) **and `[Contract]/[Declarer]/[Result]`** (from the info box's second
+line). `first` follows the dealer. See the progress log for how the contract line
+is parsed (live-harvested suit + seat atlases, geometric doubling/sign).
+
+**Pick next session from:** (b) the cross-scale / low-res tail above + ROWS
+print-grid recognition (§3.5) — hard, repeatedly deferred, low value. (~~(a)
+RealBridge replay~~ DONE session 8; ~~(c) `detect_mode` tweak~~ DONE session 7;
+~~replay board + contract metadata~~ DONE session 9.)
 
 See §4 (Mode CARDS) and §3.5-3.6 (ROWS print / replay) below for the full list.
 
 ---
 
 ## Progress log
+
+- **2026-07-16 (session 10).** Print-grid low-res tail — first structural win.
+  Club-print cells embed a double-dummy trick table + "Optimum" text to the
+  *right* of the N/S hands; the anchor's generous right cap pulled those into the
+  hand box, and because their rows sit at different y they interleaved with the
+  suit rows and wrecked the row clustering (dropping/duplicating whole suit rows
+  — e.g. board 1 lost S's entire clubs row and split N's diamonds). Fix: a
+  **box-wide horizontal-bleed filter** in `rows._box_rows` — before row
+  clustering, keep only the largest contiguous x-run (the hand is one tight left
+  block; the table is a detached right block past a wide gap). `keep_main_run`
+  couldn't fix this: it trims per-row, but the interleave corrupts clustering
+  first. Result: **print-3x4 board 1 now reads 4/4 EXACT** (same deal as
+  bridgewebs board 1, different render); print-3x4 **0 → 3 valid boards**, no
+  regression on the four working sources (all 84 tests green). The remaining
+  print failures are the irreducible tiny-glyph over/under-segmentation tail
+  (coupled-knob territory — deliberately not chased). Also simplified a convoluted
+  suit-cut line (`np.argmin` over a slice) that fixed a latent ty diagnostic.
+  Tests +5 (84): 4 print-board-1 exact + 1 print valid-floor (≥3/12).
+
+- **2026-07-16 (session 9, part 2).** Contract line → `[Contract]/[Declarer]/
+  [Result]`. The info box's second line (`4!cX-3 W`, `3!d = S`) parses positionally
+  as `level · suit · doubling · sign · result · declarer`:
+  - *level* + any *result digits* reuse the replay rank atlas (digits).
+  - *strain* matches a **suit atlas harvested live from the hands** (every hand
+    writes all four suit glyphs as row-leftmost, order S,H,D,C → `_harvest_suit_atlas`,
+    ♣→C/♦→D at 0.99); no suit match ⇒ NT (best-effort, no fixture).
+  - *declarer* matches a **seat atlas harvested live from the auction-table
+    header** (`W N E S`, fixed order → `_harvest_seat_atlas`; cross-scale but the
+    right letter wins ~0.8). Live harvest beats a shipped atlas here: both suit and
+    seat glyphs are always present + positionally known, so it self-adapts to render.
+  - *doubling* + *sign* are **geometric**, no atlas — a square full-height
+    non-digit glyph is an `X`; thin horizontal bars are the `=`/`-`(/`+`) sign
+    (`=` made ⇒ result = 6+level; `-N` ⇒ −N; `+N` ⇒ +N). Result is PBN total
+    tricks. Covers the glyphs the two fixtures show (XX/NT/+ degrade gracefully to
+    a dropped tag).
+  - Result: replay-1 → `4CX`/W/7; replay-2 → `3D`/S/9 (match the boxes). +0 net
+    test count (asserts fold into the 2 `test_meta` cases + the model tags test);
+    still 79. Ruff + ty clean. `meta.py` refactored to share `_info_binary` /
+    `_line_bands` / `_line_comps` between the board- and contract-readers.
+
+- **2026-07-16 (session 9).** Board metadata (Board/Dealer/Vulnerable) for
+  RealBridge *replay* — the deferred replay follow-up. Both replay fixtures now
+  emit `[Board]/[Dealer]/[Vulnerable]` and set the PBN `first` seat from the
+  dealer. Key idea: **dealer and vulnerability are pure functions of the board
+  number** (standard duplicate rotation), so only the board *number* is OCR'd; no
+  fragile letter- or vul-badge-colour recognition. Pieces:
+  - `model.py`: `dealer_for_board` (1→N,2→E,3→S,4→W) + `vul_for_board` (16-board
+    cycle: 13→All, 1→None).
+  - `meta.py` (new): locate the pale-yellow info panel (top-left; a tightened
+    yellow mask with R≥G excludes the lime-green hand cells so the panel doesn't
+    merge with the baize), isolate its first text line, OCR the board number
+    against the *same* replay atlas. A rank-only atlas suffices because letters
+    (B/d/D/l/r/N) are forced onto rank templates and score ≤0.75 while true
+    digits score ~1.0 — keep only conf ≥ 0.9 digit matches.
+  - `rows.read_rows`: an `is_replay` flag (anchor source + baize) now gates both
+    atlas selection and the metadata read; sets board/dealer/vul/first.
+  - CLI already emitted `to_pbn_tags`, so tags surface automatically. Deal lines
+    unchanged (both boards deal N → first stays N) so the PBN sidecars still pass.
+  - *Tests.* +4 (79 total): 2 pure-rotation (`test_model`), 2 end-to-end replay
+    metadata (`test_meta`). Ruff + ty clean. Result: replay-1 → Board 13/Dlr
+    N/Vul All; replay-2 → Board 1/Dlr N/Vul None (both match the fixture boxes).
+
+- **2026-07-15 (session 8).** RealBridge *replay* layout — the last ROWS source.
+  Both `realbridge-replay-1` (vul) and `realbridge-replay-2-nonvul` read **4/4
+  exact + validate**. Six coordinated pieces, each validated against the full
+  fixture set (no regression; BridgeWebs grids actually *improved* — 3x3-part2
+  3→8/9, multi-table 5→6/6, a side benefit of the scale filter):
+  - *Scale-robust anchor* (`anchor.py`). Replay mixes big hand glyphs with small
+    red UI text, which broke the global-median scale model. Fix: widen the size
+    window (45→70), a **dominant-scale filter** (drop comps < 0.55×p75 red
+    height) so UI text no longer skews the median, a wider pitch ceiling
+    (2.4→3.4× glyph height for the generous line spacing), and a
+    **pitch-consistency** post-filter (keep stacks within [0.7,1.4]× median
+    pitch, dropping the bidding-table stack). replay 4/4; every prior count
+    unchanged.
+  - *Routing* (`detect.py`). Replay sits on baize (green ~0.30) so green alone
+    said CARDS. A high-green tile is now ROWS only with ≥4 anchor stacks AND few
+    pure-white card faces (`_white_card_fraction`: bright + unsaturated; replay's
+    tinted panels don't count) -- separates replay from BBO/IntoBridge play views.
+  - *Compass false-positive guard* (`rows._compass_bbox`). Replay's central baize
+    trick area matched the compass hue and returned a bogus box; reject a
+    "compass" spanning >0.5 of the tile so we fall through to the anchor.
+  - *Row segmenter robustness* (`rows._box_rows`). (1) reject non-glyph blobs --
+    frame/borders taller than half the box, wide-thin rules (aspect >6, a badge
+    underline); (2) the same **dominant-scale component filter** so a seat-name
+    badge's small text can't poison `median_h` (which scales the row clustering
+    and glyph splitting); (3) when a clean crop yields exactly four rows, keep
+    them **positionally** so a void suit stays aligned to S,H,D,C instead of
+    shifting later suits up.
+  - *Atlas* (`build_atlas.py` + `atlas/realbridge-replay/`). New labelled board
+    (replay-1); selected in `read_rows` for an anchor board on a baize
+    (`REPLAY_ATLAS`), results/print stay on `realbridge`.
+  - *Tests.* +13 (75 total): 2 anchor counts, 9-case `test_detect` routing map,
+    2 regression sidecars (`fixtures/expected/realbridge-replay-*.pbn`).
 
 - **2026-07-15 (session 7).** `detect_mode` routing tweak. The green-fraction
   discriminator assumed CARDS always shows abundant baize, so a *cropped* card
@@ -186,9 +292,9 @@ See §4 (Mode CARDS) and §3.5-3.6 (ROWS print / replay) below for the full list
 
 ---
 
-## Where we are (verified 2026-07-14, sessions 2-6 applied)
+## Where we are (verified 2026-07-15, sessions 2-8 applied)
 
-62 tests pass. Fixture sweep (`uv run --extra vision python hand-ocr.py <img>`):
+75 tests pass. Fixture sweep (`uv run --extra vision python hand-ocr.py <img>`):
 
 | Fixture group | Result |
 |---|---|
@@ -199,7 +305,7 @@ See §4 (Mode CARDS) and §3.5-3.6 (ROWS print / replay) below for the full list
 | `realbridge-4-results.png` | **4/4 exact + validates** (compass-less suit anchor + RealBridge atlas) |
 | `print-3x4-format.png` (12) | tiles **12/12** (frame anchor); recognition 0/12 valid (low-res seg tail) |
 | `print-4x5`/`5x6` grids | partial tiling; glyphs too small to anchor/segment — deferred |
-| `realbridge-replay*.png` (2) | soft-fail — big-font glyphs exceed anchor `_H_MAX`; own atlas TODO |
+| `realbridge-replay*.png` (2) | **4/4 exact + validates** (scale-robust anchor, baize routing, own atlas) |
 | CARDS `bridge-base-2-hand-large` | **N+S exact + validates**; W/E card-backs → `-` |
 | CARDS `bridge-base-4-hand-large` | **4/4 exact + validates** (N/S strips + W/E grids) |
 | CARDS `bridge-base-{2-hand-small,4-hand-small}` | **exact** (cross-scale now works: 2-hand N/S, 4-hand 4/4) |
@@ -302,8 +408,11 @@ The big unlock. Progress:
    tuning (and, for `print-4x5`/`5x6`, upscale-before-mask — the anchor colour
    mask still shatters their glyphs, so they don't even tile). This is the
    diminishing-returns tail; left deliberately for later.
-6. Then `realbridge-replay*.png` (own font, spaced "10", big glyphs > anchor's
-   `_H_MAX` cap — relax it with that source's atlas).
+6. ~~Then `realbridge-replay*.png`~~ — **DONE (session 8).** Both read 4/4 exact +
+   validate. The `_H_MAX` cap was relaxed *and* the anchor made scale-robust
+   (dominant-scale + pitch-consistency filters) for the mixed big-glyph/small-UI
+   render; baize routing via a white-card test; own `realbridge-replay` atlas.
+   See the session-8 progress log.
 
 Compass path stays untouched for BridgeWebs. NB `atlas.ATLAS_LABELS` now
 includes `T` (was silently dropping compact-ten glyphs on load).

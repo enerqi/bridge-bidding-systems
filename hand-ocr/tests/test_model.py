@@ -13,7 +13,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from hand_ocr.model import Deal, DealError, Hand, _normalise_suit_ranks
+from hand_ocr.model import Deal, DealError, Hand, _normalise_suit_ranks, dealer_for_board, vul_for_board
 
 
 def test_rank_normalisation_orders_and_maps_ten():
@@ -31,6 +31,18 @@ def test_bad_rank_rejected():
 def test_dup_rank_in_suit_rejected():
     with pytest.raises(DealError):
         _normalise_suit_ranks("AA")
+
+
+def test_dealer_rotation_by_board():
+    assert [dealer_for_board(b) for b in (1, 2, 3, 4, 5, 13)] == ["N", "E", "S", "W", "N", "N"]
+
+
+def test_vulnerability_cycle_by_board():
+    # standard 16-board duplicate rotation; 13 -> All, 1 -> None, wraps at 17
+    assert vul_for_board(1) == "None"
+    assert vul_for_board(4) == "All"
+    assert vul_for_board(13) == "All"
+    assert [vul_for_board(b) for b in range(1, 5)] == [vul_for_board(b) for b in range(17, 21)]
 
 
 def _full_deal() -> Deal:
@@ -87,11 +99,15 @@ def test_lin_requires_all_four_hands():
 def test_pbn_tags_emits_metadata_when_present():
     d = _full_deal()
     d.board, d.dealer, d.vul = 1, "N", "None"
+    d.contract, d.declarer, d.result = "4CX", "W", 7
     tags = d.to_pbn_tags()
     assert '[Board "1"]' in tags
     assert '[Dealer "N"]' in tags
     assert '[Vulnerable "None"]' in tags
-    assert tags.strip().endswith(d.to_pbn())
+    assert '[Contract "4CX"]' in tags
+    assert '[Declarer "W"]' in tags
+    assert '[Result "7"]' in tags
+    assert tags.strip().endswith(d.to_pbn())  # Deal tag stays last
 
 
 def test_pbn_tags_omits_absent_metadata():
