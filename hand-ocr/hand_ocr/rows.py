@@ -45,6 +45,12 @@ ANCHOR_ATLAS = "realbridge"
 # RealBridge *replay* is also anchor-located but renders on a green baize with a
 # bigger font; distinguished from results by that baize (see read_rows).
 REPLAY_ATLAS = "realbridge-replay"
+# Club prints come at two scales: the regular ~12px-glyph grid ("print") and a
+# high-res "zoomed" export (~20-24px). Same layout, different glyph size, so each
+# needs its own same-render atlas; read_rows picks by measured glyph height.
+PRINT_ATLAS = "print"
+PRINT_ZOOMED_ATLAS = "print-zoomed"
+_PRINT_ZOOM_MIN_H = 16.0  # median glyph height at/above which the zoomed atlas wins
 
 # component filters: ignore specks and thin noise when splitting a row into glyphs
 _MIN_AREA, _MIN_W, _MIN_H = 10, 3, 6
@@ -378,6 +384,29 @@ def _glyphs_from_boxes(gray: Any, boxes: dict[str, tuple[int, int, int, int]]) -
     return out
 
 
+def _median_glyph_height(gray: Any, boxes: dict[str, tuple[int, int, int, int]]) -> float:
+    """Median connected-component height across the hand boxes -- a cheap glyph-scale
+    estimate used to choose between the regular and high-res print atlases."""
+    import cv2
+    import numpy as np
+
+    ih, iw = gray.shape[:2]
+    hs: list[int] = []
+    for x0, y0, x1, y1 in boxes.values():
+        x0, y0, x1, y1 = max(0, x0), max(0, y0), min(iw, x1), min(ih, y1)
+        crop = gray[y0:y1, x0:x1]
+        if crop.size == 0:
+            continue
+        _, binimg = cv2.threshold(crop, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+        n, _, stats, _ = cv2.connectedComponentsWithStats(binimg, connectivity=8)
+        hs += [
+            int(stats[i, cv2.CC_STAT_HEIGHT])
+            for i in range(1, n)
+            if stats[i, cv2.CC_STAT_AREA] > _MIN_AREA and stats[i, cv2.CC_STAT_HEIGHT] >= _MIN_H
+        ]
+    return float(np.median(hs)) if hs else 0.0
+
+
 def hand_row_glyphs(img_bgr: Any) -> dict[str, list[list[Any]]]:
     """seat -> 4 rows (S,H,D,C) -> list of normalised rank-glyph images.
 
@@ -404,6 +433,7 @@ def read_rows(img_bgr: Any, atlas: Any = None, atlas_name: str | None = None) ->
     from .atlas import Atlas
 
     boxes, source = _seat_boxes(img_bgr)
+    gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
     # RealBridge *replay*: anchor-located board on a green baize (results has none).
     # The baize test also gates the info-box metadata read below.
     is_replay = source == "anchor" and float(compass_mask(img_bgr).mean()) / 255.0 >= 0.20
@@ -416,9 +446,13 @@ def read_rows(img_bgr: Any, atlas: Any = None, atlas_name: str | None = None) ->
             name = REPLAY_ATLAS  # anchor board on a green baize -> RealBridge replay
         else:
             name = ANCHOR_ATLAS  # anchor board, no baize -> RealBridge results / print
+        # A "print" grid comes in two glyph scales; pick the matching-render atlas
+        # (the regular atlas systematically misreads the high-res "zoomed" export).
+        if name == PRINT_ATLAS and _median_glyph_height(gray, boxes) >= _PRINT_ZOOM_MIN_H:
+            name = PRINT_ZOOMED_ATLAS
         atlas = Atlas.load(_ATLAS_ROOT / name)
 
-    per_seat = _glyphs_from_boxes(cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY), boxes)
+    per_seat = _glyphs_from_boxes(gray, boxes)
     hands: dict[str, Hand | None] = dict.fromkeys(SEATS)
     for seat, rows in per_seat.items():
         ranks = {suit: "".join(atlas.match(g)[0] for g in glyphs) for suit, glyphs in zip(SUITS, rows, strict=True)}

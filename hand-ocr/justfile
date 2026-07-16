@@ -55,3 +55,7 @@ build-atlas image="fixtures/bridgewebs-4-2.png" out="hand_ocr/atlas/bridgewebs":
 # parse an image -> deal text, e.g. `just run fixtures/bridgewebs-4-2.png --format pbn` (needs the vision extra)
 run image *args:
     uv run python hand-ocr.py {{image}} {{args}}
+
+# sweep every fixture (or a glob) -> one valid/total status line each; the per-session eyeball check (needs the vision extra)
+sweep *paths:
+    uv run --extra vision python tools/sweep.py {{paths}}

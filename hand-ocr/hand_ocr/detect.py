@@ -89,11 +89,19 @@ def _frame_tiles(image: Any) -> list[Tile]:
         area = bw * bh
         if _FRAME_AREA_LO * w * h < area < _FRAME_AREA_HI * w * h and _FRAME_ASPECT_LO < bw / bh < _FRAME_ASPECT_HI:
             rects.append((x, y, bw, bh))
-    # dedupe the concentric inner/outer border of each box (near-identical rects)
+    # dedupe every box drawn as more than one rectangle (concentric inner/outer
+    # borders, or a border + a slightly-inset fill) by SHARED CENTRE: such frames
+    # share a centre to within a few px, while neighbouring boards are a full frame
+    # apart, so a centre gap under a fifth of the frame is the same board. (Matching
+    # on size alone missed borders whose widths differed by >15px -> a duplicate
+    # tile for one board.) Largest first, so the outer frame is the one kept.
     rects.sort(key=lambda r: -r[2] * r[3])
     kept: list[tuple[int, int, int, int]] = []
     for r in rects:
-        if not any(abs(r[0] - k[0]) < 15 and abs(r[1] - k[1]) < 15 and abs(r[2] - k[2]) < 15 for k in kept):
+        cx, cy = r[0] + r[2] / 2, r[1] + r[3] / 2
+        if not any(
+            abs(cx - (k[0] + k[2] / 2)) < 0.2 * r[2] and abs(cy - (k[1] + k[3] / 2)) < 0.2 * r[3] for k in kept
+        ):
             kept.append(r)
     if len(kept) < _FRAME_MIN_COUNT:
         return []

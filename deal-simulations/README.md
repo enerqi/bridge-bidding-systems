@@ -38,6 +38,29 @@ Inside `odin-sims/` there is its own `just` for development: `just run --scenari
 `just build`, `just test`, `just lint`. (`just ols-config` regenerates the editor's
 `ols.json` for the `norn:` collection; set `NORN_HOME` if the norn checkout isn't at `~/dev/norn`.)
 
+### Analyse a real hand (photo / PBN → interactive advisor)
+
+Separate from the scenario generator, `odin-sims/` has a **2-hand (declarer + dummy) advisor**: give it a
+deal and it produces an interactive card page showing how likely each contract is to make, the best line
+per suit, and where a blind guess costs you. Run these from inside `odin-sims/`:
+
+```sh
+# From a PHOTO/screenshot of a hand diagram (uses the sibling hand-ocr project):
+just ocr-analyse hand.png                 # -> hand.html  (open it in a browser)
+just ocr-pbn hand.png                     # just print the recognised PBN, don't analyse
+
+# From a PBN deal you already have (a string, a file, or piped in):
+just analyse-pbn --sample 400 '[Deal "N:AKQ32.AK2.A32.A32 - Q.QJT98.KQJ.KQJT -"]'
+just analyse-pbn --sample 400 --file board.pbn --html out.html
+```
+
+A **PBN** deal marks the two unknown defender hands with `-` (that is the declarer+dummy case the advisor
+is built for). A standard multi-board `.pbn` file works too — every `[Deal]` tag becomes one board in a
+carousel; the other tags (`[Board]`, `[Dealer]`, …) are ignored. **LIN files are not read** (LIN can only
+express a complete four-hand deal; use PBN). The card page has a built-in **Help "?"** button explaining
+every number in plain terms. A real photo needs hand-ocr's vision extra once: `(cd ../../hand-ocr && just
+sync-vision)`.
+
 Legacy (deal.exe):
 
 ```sh

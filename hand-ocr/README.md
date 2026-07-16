@@ -97,8 +97,9 @@ raster ─▶ normalise (deskew/denoise; no-op on clean screenshots)
 - `bridgewebs-*` / `realbridge-*` = suit-row diagrams (Mode ROWS), spaced ranks
   + "10"; `bridgewebs-4-multi-table.png` is a 6-board grid;
   `bridgewebs-4-3x3-multi*.png` are 3x3 = 9-board grids (tiling fixtures).
-- `realbridge-replay*.png` = a DIFFERENT ROWS sub-layout: no compass, hands in a
-  3x3 cell grid with red seat badges; own font. Not yet handled.
+- `realbridge-replay*.png` = a DIFFERENT ROWS sub-layout: no compass, hands on
+  green baize with red seat badges; own font. **Handled** — 4/4 exact + full
+  metadata (see Status).
 - `print-*` = club-printout suit-row grids (Mode ROWS, multi-deal): grid dims
   vary (`3x4`=12 boards, `4x5`=18, `5x6`≈30), **compact ranks + "T"**, often
   low resolution. Fixtures for arbitrary-grid tiling + scale-tolerant reading.
@@ -111,10 +112,10 @@ hypothetical only.
 
 ## Status
 
-Full history + next step: see `PLAN.md`. Snapshot (2026-07-14): **62 tests**
-(incl. a PBN-sidecar regression harness pinning every exact-read fixture);
-every fixture either produces a deal or **soft-fails** (flagged partial), none
-crash.
+Full history + next step: see `PLAN.md`; live per-fixture results: **`just
+sweep`**. Snapshot (2026-07-16): **87 tests** (incl. a PBN-sidecar regression
+harness pinning 11 exact-read fixtures); every fixture either produces a deal or
+**soft-fails** (flagged partial), none crash.
 
 - **Done & tested:** model layer — `Deal`/`Hand`, PBN(+Board/Dealer/Vul tags) +
   LIN emit, validation (`hand_ocr/model.py`). Runs with no vision deps.
@@ -122,14 +123,20 @@ crash.
   - *BridgeWebs (compass)* — end to end: compass anchor → hand boxes → row/glyph
     segmentation → template-atlas recognition. `bridgewebs-4-2.png` all four
     hands exact + validates. Multi-table grids tile via clustered compass
-    centroids; `3x3-multi` **6/9**, `…-part2` **3/9**, `…-multi-table` **5/6**.
+    centroids; `3x3-multi` **6/9**, `…-part2` **9/9**, `…-multi-table` **6/6**.
   - *RealBridge results (compass-less)* — `hand_ocr/anchor.py` locates hands by
     their vertical **black-red-red-black** suit-glyph colour quadruple (no
     compass, no suit atlas); `rows._hand_boxes_from_stacks` seats them by
     geometry. `realbridge-4-results.png` **4/4 exact + validates**.
+  - *RealBridge replay (baize, no compass)* — big hand glyphs amid small UI text;
+    a scale-robust anchor + white-card routing + own `realbridge-replay` atlas.
+    Both `realbridge-replay-*.png` **4/4 exact + validate**, and emit the **full
+    metadata block** (Board/Dealer/Vulnerable from the board number + duplicate
+    rotation; Contract/Declarer/Result parsed from the info box).
   - *Club-print grids* — tiled by ruled board rectangles (`detect._frame_tiles`,
-    no compass): `print-3x4-format.png` **12/12 boards tiled** + a `print` atlas
-    ships, but recognition is 0/12 valid (glyphs too small — segmentation tail).
+    no compass). Recognition is **resolution-bound**: high-res "zoomed" exports
+    read well (`print-4x5-zoomed-format-high` **8/8**), regular ~12px grids only
+    partly (`print-3x4-format` board 1 exact, 3/12 overall — segmentation tail).
 - **Mode CARDS — BBO + IntoBridge (full-scale renders).**
   - *BBO* (2-colour, seats by position): N/S strips split by pitch, W/E gapped
     grids as separate white components. `bridge-base-4-hand-large.png` **4/4
@@ -147,13 +154,11 @@ crash.
   `tools/build_atlas.py` / `tools/build_cards_atlas.py`.
 
 ### Known limitations (next fixes — priority in `PLAN.md`)
-- **Cross-scale / low-res CARDS:** the smaller / cramped renders still fail —
-  `intobridge-2-hand-small` mis-segments a seat, `bridge-base-4-hand-very-small`
-  is too small, and `intobridge-{4-hand-small,cramped}` are misrouted to ROWS by
-  `detect_mode`. Same theme as the ROWS `print-4x5`/`5x6` tail. Fix = same-scale
-  atlas / upscale-before-match, not rescaling exemplars (that was disproven).
-- **RealBridge replay** (`realbridge-replay*.png`): big-font glyphs exceed the
-  anchor's `_H_MAX` cap — relax it and add that source's atlas.
+- **Cross-scale / low-res CARDS:** `intobridge-2-hand-small` and `-4-hand-small`
+  still mis-segment a seat. Same theme as the ROWS `print-4x5`/`5x6` regular-grid
+  tail. Fix = same-scale atlas / upscale-before-match, not rescaling exemplars
+  (that was disproven). The resolution lever is proven for prints: high-res
+  exports read exact where regular ~12px grids can't (session 11).
 - **Still stubbed (unscheduled):** `preprocess` deskew and the `paddleocr` OCR
   fallback — all real input is clean digital renders, so neither is on the plan.
 
@@ -170,8 +175,9 @@ just test            # model/PBN/LIN/validation tests (no vision deps)
 just qa              # ruff check + ruff format + ty check (120 cols)
 ```
 
-See `ARCHITECTURE.md` for a plain-language walkthrough (pipeline, libraries,
-algorithms).
+New to the project? **`TUTORIAL.md`** is a from-scratch, plain-language walkthrough
+(bridge basics → what the tool does → how each step works → the tools/tech it
+uses). `ARCHITECTURE.md` is the tighter pipeline/library/algorithm reference.
 
 ## Run
 
@@ -181,9 +187,13 @@ just demo                       # partial deal -> PBN with '-'
 just demo --format=lin          # errors: LIN needs 4 hands
 # equivalently: uv run hand-ocr.py --demo
 
-# real image (once vision stages land)
+# real image
 just sync-vision
 just run fixtures/bridgewebs-4-2.png --format pbn
+
+# run EVERY fixture and print one valid/total status line each (the eyeball check)
+just sweep
+just sweep fixtures/print-*        # or just a glob
 ```
 
 > **Python 3.14 caveat:** PaddleOCR wheels lag CPython releases and may not
@@ -194,8 +204,9 @@ just run fixtures/bridgewebs-4-2.png --format pbn
 ## Next (implementation order)
 
 See **`PLAN.md`** ("Next step") for the reviewed plan. Done so far: containment
-→ suit-quadruple anchor (RealBridge 4/4, print grids tiled) → Mode CARDS BBO
-strips + grids → **IntoBridge** (colour suit, badge seats, merged grids;
-4-hand-large 4/4 exact + validates). **Next:** the cross-scale / low-res tail
-(small + cramped CARDS renders, plus the ROWS print grids). Deskew + PaddleOCR
-remain out of scope — no photographed input exists or is expected.
+→ suit-quadruple anchor (RealBridge 4/4, print grids tiled) → Mode CARDS BBO +
+**IntoBridge** (colour suit, badge seats, merged grids) → **RealBridge replay**
+4/4 + full metadata → the print **resolution lever** (high-res exports read
+exact). **Remaining** is the diminishing-returns tail: cross-scale small/cramped
+CARDS renders and regular low-res print grids (segmentation-bound). Deskew +
+PaddleOCR stay out of scope — no photographed input exists or is expected.

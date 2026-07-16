@@ -75,8 +75,8 @@ def test_full_deal_validates(deal):
     ("name", "min_valid", "total"),
     [
         ("bridgewebs-4-3x3-multi.png", 6, 9),
-        ("bridgewebs-4-3x3-multi-part2.png", 3, 9),
-        ("bridgewebs-4-multi-table.png", 5, 6),
+        ("bridgewebs-4-3x3-multi-part2.png", 9, 9),  # grid atlas -> all 9 valid
+        ("bridgewebs-4-multi-table.png", 6, 6),
     ],
 )
 def test_grid_valid_board_floor(name, min_valid, total):
@@ -112,6 +112,30 @@ def test_print_grid_valid_board_floor():
     ok, n = _valid_boards("print-3x4-format.png")
     assert n == 12
     assert ok >= 3, f"only {ok}/12 print boards valid, expected >= 3"
+
+
+# High-res ("zoomed") print exports: ~20-24px glyphs (vs ~12px regular). read_rows
+# auto-selects the same-render `print-zoomed` atlas by glyph scale; this is the
+# resolution lever -- print-4x5 goes from 0/18 at 7px to a full read at 20px.
+@pytest.mark.parametrize(
+    ("name", "min_valid", "total"),
+    [
+        ("print-4x5-zoomed-format-high.png", 8, 8),  # all boards exact at high res
+        ("print-3x4-format-zoomed.png", 5, 6),
+    ],
+)
+def test_highres_print_valid_floor(name, min_valid, total):
+    ok, n = _valid_boards(name)
+    assert n == total, f"{name}: {n} tiles, expected {total}"
+    assert ok >= min_valid, f"{name}: only {ok}/{n} valid, expected >= {min_valid}"
+
+
+def test_html_print_screenshot_valid_floor():
+    # an HTML-rendered print page (green compass, white background): a different
+    # render served by the combined-render bridgewebs atlas, no routing needed.
+    ok, n = _valid_boards("print-3xn-format-html.png")
+    assert n == 6
+    assert ok >= 5, f"only {ok}/6 html-print boards valid, expected >= 5"
 
 
 # ---- compass-less path (suit-quadruple anchor) ----------------------------

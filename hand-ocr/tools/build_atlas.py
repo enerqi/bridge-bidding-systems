@@ -50,6 +50,24 @@ LABELLED_BOARDS = {
         "E": ["8763", "KQ", "A8764", "QJ"],
         "S": ["Q2", "JT83", "53", "K8742"],
     },
+    # board 1 of bridgewebs-4-3x3-multi.png (a 3x3 grid tile -- SAME deal as
+    # bridgewebs-4-2 board 1 but rendered at the smaller grid scale, ten "10").
+    # Gives grid tiles a same-render atlas, curing the standalone-atlas confusion.
+    "bridgewebs-4-3x3-multi": {
+        "N": ["A105", "A64", "K92", "A953"],
+        "W": ["KJ94", "9752", "QJ10", "106"],
+        "E": ["8763", "KQ", "A8764", "QJ"],
+        "S": ["Q2", "J1083", "53", "K8742"],
+    },
+    # board 1 of print-5x6-format-zoomed.png -- a HIGH-RES ("zoomed") club-print
+    # grid (~22px glyphs vs the ~12px regular print). Its own same-render atlas
+    # (the 12px "print" atlas misreads these larger glyphs). Ten "10", void = "".
+    "print-5x6-format-zoomed": {
+        "N": ["A1095", "7", "J83", "109653"],
+        "W": ["Q842", "1042", "KQ4", "AJ2"],
+        "E": ["", "AQJ986", "A97652", "K"],
+        "S": ["KJ763", "K53", "10", "Q874"],
+    },
     # realbridge-replay-1.png (big-font cross diagram; suit-quadruple anchor,
     # ten written "10"; a void suit row is the empty string)
     "realbridge-replay-1": {
@@ -64,41 +82,46 @@ LABELLED_BOARDS = {
 def main() -> None:
     import cv2
 
-    if len(sys.argv) != 3:
-        print("usage: build_atlas.py <image> <out_atlas_dir>", file=sys.stderr)
-        raise SystemExit(2)
-    image_path, out_dir = sys.argv[1], sys.argv[2]
-
-    stem = Path(image_path).stem
-    if stem not in LABELLED_BOARDS:
-        print(f"no labelled board for {stem!r}; known: {sorted(LABELLED_BOARDS)}", file=sys.stderr)
-        raise SystemExit(2)
-    labelled = LABELLED_BOARDS[stem]
-
-    img = cv2.imread(image_path)
-    if img is None:
-        print(f"cannot read {image_path!r}", file=sys.stderr)
-        raise SystemExit(2)
-
-    # labelled board is the first board in reading order; on a multi-board grid
-    # tile the page and take board 1, so segmentation matches the pipeline.
     from hand_ocr.detect import split_tiles
 
-    tiles = split_tiles(img)
-    board = tiles[0].image if len(tiles) > 1 else img
-    per_seat = hand_row_glyphs(board)
+    if len(sys.argv) < 3:
+        print("usage: build_atlas.py <image> [<image> ...] <out_atlas_dir>", file=sys.stderr)
+        raise SystemExit(2)
+    *image_paths, out_dir = sys.argv[1:]
+
+    # Merge every labelled board into one atlas. Passing several renders of the
+    # same source (e.g. a standalone board + a grid tile) builds a multi-render
+    # atlas: nearest-exemplar then matches whichever render a query came from, so
+    # no per-render routing is needed downstream.
     exemplars: dict[str, list] = {}
     kept = skipped = 0
-    for seat, rows in per_seat.items():
-        for r, glyphs in enumerate(rows):
-            label = labelled[seat][r]
-            if len(glyphs) != len(label):
-                print(f"  skip {seat} row{r}: segmented {len(glyphs)} glyphs, expected {len(label)} ({label})")
-                skipped += 1
-                continue
-            for glyph, ch in zip(glyphs, label, strict=True):
-                exemplars.setdefault(ch, []).append(glyph)
-                kept += 1
+    for image_path in image_paths:
+        stem = Path(image_path).stem
+        if stem not in LABELLED_BOARDS:
+            print(f"no labelled board for {stem!r}; known: {sorted(LABELLED_BOARDS)}", file=sys.stderr)
+            raise SystemExit(2)
+        labelled = LABELLED_BOARDS[stem]
+
+        img = cv2.imread(image_path)
+        if img is None:
+            print(f"cannot read {image_path!r}", file=sys.stderr)
+            raise SystemExit(2)
+
+        # labelled board is the first board in reading order; on a multi-board grid
+        # tile the page and take board 1, so segmentation matches the pipeline.
+        tiles = split_tiles(img)
+        board = tiles[0].image if len(tiles) > 1 else img
+        per_seat = hand_row_glyphs(board)
+        for seat, rows in per_seat.items():
+            for r, glyphs in enumerate(rows):
+                label = labelled[seat][r]
+                if len(glyphs) != len(label):
+                    print(f"  skip {stem} {seat} row{r}: {len(glyphs)} glyphs, expected {len(label)} ({label})")
+                    skipped += 1
+                    continue
+                for glyph, ch in zip(glyphs, label, strict=True):
+                    exemplars.setdefault(ch, []).append(glyph)
+                    kept += 1
 
     atlas = Atlas(exemplars)
     atlas.save(out_dir)
