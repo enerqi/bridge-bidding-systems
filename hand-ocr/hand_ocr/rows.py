@@ -42,6 +42,9 @@ DEFAULT_ATLAS = "bridgewebs"  # compass anchor => BridgeWebs render
 # atlas used when the hands were located by the compass-less suit-quadruple
 # anchor (RealBridge results, and — until it gets its own — the print grids).
 ANCHOR_ATLAS = "realbridge"
+# RealBridge *replay* is also anchor-located but renders on a green baize with a
+# bigger font; distinguished from results by that baize (see read_rows).
+REPLAY_ATLAS = "realbridge-replay"
 
 # component filters: ignore specks and thin noise when splitting a row into glyphs
 _MIN_AREA, _MIN_W, _MIN_H = 10, 3, 6
@@ -88,6 +91,11 @@ def _compass_bbox(img_bgr: Any) -> tuple[int, int, int, int]:
     miny = min(y for _, y, _, _ in boxes)
     maxx = max(x + bw for x, _, bw, _ in boxes)
     maxy = max(y + bh for _, y, _, bh in boxes)
+    # A real compass is small (<=~0.26x0.18 of the tile). A big central green
+    # region -- e.g. RealBridge replay's baize trick area -- is not a compass;
+    # reject it so we fall through to the suit-quadruple anchor.
+    if (maxx - minx) > 0.5 * w or (maxy - miny) > 0.5 * h:
+        raise RuntimeError("central green region too large to be a compass")
     return minx, miny, maxx, maxy
 
 
@@ -234,18 +242,33 @@ def _box_rows(box_gray: Any) -> list[list[Any]]:
 
     from .atlas import normalise_glyph
 
+    box_h = box_gray.shape[0]
     _, binimg = cv2.threshold(box_gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
     n, _, stats, centroids = cv2.connectedComponentsWithStats(binimg, connectivity=8)
+    # Reject frame/border blobs that are not glyphs (they would otherwise split
+    # into phantom glyphs on a RealBridge replay panel): a rank row is at most ~1/4
+    # of the box height, so anything taller than half the box is a vertical frame;
+    # a rank run is at most ~7 glyphs wide (aspect ~4.5), so a much wider-than-tall
+    # bar (aspect > 6) is a horizontal rule -- e.g. a seat-name badge's underline.
     comps = [
         (int(stats[i, cv2.CC_STAT_LEFT]), int(stats[i, cv2.CC_STAT_TOP]),
          int(stats[i, cv2.CC_STAT_WIDTH]), int(stats[i, cv2.CC_STAT_HEIGHT]), float(centroids[i, 1]))
         for i in range(1, n)
         if stats[i, cv2.CC_STAT_AREA] > _MIN_AREA
         and stats[i, cv2.CC_STAT_WIDTH] >= _MIN_W
-        and stats[i, cv2.CC_STAT_HEIGHT] >= _MIN_H
+        and _MIN_H <= stats[i, cv2.CC_STAT_HEIGHT] <= 0.5 * box_h
+        and stats[i, cv2.CC_STAT_WIDTH] <= 6 * stats[i, cv2.CC_STAT_HEIGHT]
     ]  # fmt: skip
     if not comps:
         return [[], [], [], []]
+
+    # Dominant-scale filter: rank/suit glyphs are the big, repeated components, so
+    # drop any far shorter than the 75th-percentile height. This removes seat-name
+    # badge text (small) before it can poison the median height that the row
+    # clustering and touching-glyph splitting are scaled from. Uniform-height
+    # sources keep every component.
+    ref_h = float(np.percentile([c[3] for c in comps], 75))
+    comps = [c for c in comps if c[3] >= 0.5 * ref_h]
 
     median_h = float(np.median([c[3] for c in comps]))
     groups = _cluster_rows([c[4] for c in comps], median_h * 0.6)
@@ -309,8 +332,15 @@ def _box_rows(box_gray: Any) -> list[list[Any]]:
                 glyphs.append(glyph)
         rows.append(glyphs)
 
-    kept = [r for r in rows if r] or rows  # prefer non-empty rows if noise added blanks
-    return kept[:4] + [[]] * (4 - len(kept))  # exactly four (S,H,D,C)
+    # Every hand shows all four suit glyphs (a void is "<suit> -"), so a clean
+    # crop yields exactly four rows; keep them positionally, empties included, so a
+    # void suit stays aligned to S,H,D,C (dropping it would shift later suits up).
+    if len(rows) == 4:
+        return rows
+    # Otherwise noise added or removed a row: fall back to keeping the non-empty
+    # rows (a blank row is more likely stray ink than a real void here).
+    kept = [r for r in rows if r] or rows
+    return kept[:4] + [[]] * (4 - len(kept))
 
 
 def _glyphs_from_boxes(gray: Any, boxes: dict[str, tuple[int, int, int, int]]) -> dict[str, list[list[Any]]]:
@@ -354,7 +384,14 @@ def read_rows(img_bgr: Any, atlas: Any = None, atlas_name: str | None = None) ->
 
     boxes, source = _seat_boxes(img_bgr)
     if atlas is None:
-        name = atlas_name or (DEFAULT_ATLAS if source == "compass" else ANCHOR_ATLAS)
+        if atlas_name:
+            name = atlas_name
+        elif source == "compass":
+            name = DEFAULT_ATLAS
+        elif float(compass_mask(img_bgr).mean()) / 255.0 >= 0.20:
+            name = REPLAY_ATLAS  # anchor board on a green baize -> RealBridge replay
+        else:
+            name = ANCHOR_ATLAS  # anchor board, no baize -> RealBridge results / print
         atlas = Atlas.load(_ATLAS_ROOT / name)
 
     per_seat = _glyphs_from_boxes(cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY), boxes)

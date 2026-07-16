@@ -33,6 +33,8 @@ def _count(name: str) -> int:
     ("name", "hands"),
     [
         ("realbridge-4-results.png", 4),  # single board, no compass at all
+        ("realbridge-replay-1.png", 4),  # big-font baize cross; scale-robust anchor
+        ("realbridge-replay-2-nonvul.png", 4),
         ("print-3x4-format.png", 48),  # 12-board club-print grid, compass-less
         ("bridgewebs-4.png", 4),  # compass source: must NOT over-count off the DD grid
         ("bridgewebs-4-2.png", 4),

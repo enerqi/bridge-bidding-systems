@@ -30,14 +30,20 @@ Verified hand counts (clean-resolution renders): `realbridge-4-results` 4/4,
 `print-3x4-format` 48/48, and `bridgewebs-4` still 4/4 (the three stray red
 pairs from its DD grid are rejected by the black-neighbour test).
 
+Scale robustness: sources render at very different glyph sizes, and some mix
+scales within one image (RealBridge replay has big hand glyphs alongside small
+bidding-table text). So the size window is generous, and a *dominant-scale
+filter* keeps only components near the big, repeated hand glyphs before the
+median-relative geometry runs; a *pitch-consistency* pass then drops any
+surviving off-scale false stack. This carries `realbridge-replay` (4/4 hands)
+with no change to the uniform-scale counts below.
+
 Known limitation -- low resolution: the two densest print grids
 (`print-4x5`, `print-5x6`) render the suit glyphs so small that the red mask
 shatters each into sub-pixel fragments, so the pair detector under-counts.
 A morphological close trades fragmentation for merging adjacent black digits
 and is a net loss; the real fix is upscaling the tile before masking, which
 belongs with the per-source low-res atlas work (see PLAN step 5), not here.
-Big-font sources (`realbridge-replay`) exceed `_H_MAX` and need that cap
-relaxed once their atlas is on the table (PLAN step 3.6).
 
 Vision imported lazily so importing this module stays dependency-free.
 """
@@ -47,16 +53,28 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-# suit-glyph component size window (pixels). Excludes specks and merged blobs;
-# also excludes very large glyphs (RealBridge replay) -- see the module note.
+# suit-glyph component size window (pixels). Excludes specks and merged blobs.
+# The upper bound is generous enough to admit big-font sources (RealBridge
+# replay glyphs run to ~60px); replay's small red UI text is discarded not by
+# this window but by the dominant-scale filter below -- see the module note.
 _AREA_MIN = 25
-_W_MIN, _W_MAX = 5, 45
-_H_MIN, _H_MAX = 6, 45
+_W_MIN, _W_MAX = 5, 70
+_H_MIN, _H_MAX = 6, 70
+
+# dominant-scale filter: hand suit glyphs are the big, repeated cluster, so keep
+# only components at least this fraction of the 75th-percentile red height. This
+# drops contaminating small UI text (replay's bidding table) that would skew the
+# median scale; uniform-scale sources (every glyph one size) are unaffected.
+_SCALE_KEEP = 0.55
 
 # vertical red-pair geometry, all relative to the median glyph height:
-_PITCH_LO, _PITCH_HI = 0.7, 2.4  # heart->diamond row gap, as a multiple of glyph height
+_PITCH_LO, _PITCH_HI = 0.7, 3.4  # heart->diamond row gap, as a multiple of glyph height
 _X_TOL = 0.7  # left-edge alignment tolerance, ditto
 _Y_TOL = 0.6  # black-neighbour row-centre tolerance, as a multiple of the pitch
+# a board's hands share one row pitch; keep only stacks within this band of the
+# median stack pitch, dropping an off-scale false stack (e.g. replay's bidding
+# table, pitch ~0.5x the hands'). Uniform multi-board pages are unaffected.
+_PITCH_CLUSTER_LO, _PITCH_CLUSTER_HI = 0.7, 1.4
 
 
 @dataclass
@@ -130,6 +148,14 @@ def find_hand_stacks(img_bgr: Any) -> list[HandStack]:
     if not reds:
         return []
 
+    # dominant-scale filter: discard components far below the big repeated hand
+    # glyphs (small UI text), so the median scale below reflects the hands only.
+    min_h = _SCALE_KEEP * float(np.percentile([c[3] for c in reds], 75))
+    reds = [c for c in reds if c[3] >= min_h]
+    blacks = [c for c in blacks if c[3] >= min_h]
+    if not reds:
+        return []
+
     med_h = float(np.median([c[3] for c in reds]))
     pitch_lo, pitch_hi = med_h * _PITCH_LO, med_h * _PITCH_HI
     x_tol = med_h * _X_TOL
@@ -157,4 +183,9 @@ def find_hand_stacks(img_bgr: Any) -> list[HandStack]:
             stacks.append(
                 HandStack(left=left, rows_y=(spade_y, heart[5], diamond[5], club_y), pitch=pitch)
             )
-    return stacks
+    if not stacks:
+        return stacks
+    # pitch-consistency: a board's hands share one row pitch; drop any off-scale
+    # false stack (e.g. replay's smaller-pitch bidding table).
+    med_pitch = float(np.median([s.pitch for s in stacks]))
+    return [s for s in stacks if _PITCH_CLUSTER_LO * med_pitch <= s.pitch <= _PITCH_CLUSTER_HI * med_pitch]

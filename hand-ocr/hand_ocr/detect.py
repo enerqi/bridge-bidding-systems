@@ -161,31 +161,54 @@ def split_tiles(image: Any) -> list[Tile]:
     return tiles
 
 
+# a card play-view shows pure-white card faces over this fraction of the tile;
+# below it, a green-baize tile with a full suit-row board is a RealBridge replay
+# diagram (text on tinted panels, no white cards).
+_WHITE_CARD_MAX = 0.12
+
+
+def _white_card_fraction(bgr: Any) -> float:
+    """Fraction of the tile that is pure white card face -- bright AND unsaturated.
+
+    Real BBO/IntoBridge cards are white (v>235, s<30); a ROWS diagram's tinted
+    baize panels (RealBridge replay's light green/blue) are bright but saturated,
+    so they do not count. Separates a card play view from a suit-row diagram that
+    happens to share a green baize."""
+    import cv2
+
+    if bgr.ndim != 3:
+        return float((bgr > 235).mean())
+    hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
+    white = (hsv[:, :, 2] > 235) & (hsv[:, :, 1] < 30)
+    return float(white.mean())
+
+
 def detect_mode(tile: Tile) -> Mode:
     """Classify a tile as CARDS or ROWS.
 
-    Discriminator: a ROWS diagram has the small green NORTH/EAST/SOUTH/WEST
-    compass square at its centre, whereas a CARDS play view spreads green over
-    the whole baize. We mask the compass-green hue and test whether the green
-    forms a *compact central* cluster (ROWS) rather than a large spread (CARDS).
+    A green baize alone does not decide it: both a CARDS play view and a RealBridge
+    *replay* suit-row diagram sit on baize. The tell is card faces -- a play view
+    shows pure-white cards, replay shows text on tinted panels. So a high-green
+    tile is ROWS only when it has few white cards AND a full board of suit-row
+    anchor stacks (replay); otherwise it is a CARDS play view.
 
-    Green alone misroutes a *cropped* CARDS view with no baize showing (e.g. a
-    tight IntoBridge grid) to ROWS. So in the low-green branch we confirm ROWS
-    with the universal suit-row anchor: a real ROWS diagram yields hand stacks,
-    a card grid yields none -- those are CARDS after all.
+    A low-green tile is a ROWS diagram (white/light page) *unless* the anchor finds
+    no stacks at all -- then it is a baize-less *cropped* CARDS grid (e.g. a tight
+    IntoBridge grid), which the green test would otherwise misroute to ROWS.
     """
     from .rows import compass_mask
 
-    mask = compass_mask(tile.image)
-    compass_fraction = float(mask.mean()) / 255.0
-    # CARDS baize is a large green fraction; a small fraction is ROWS *or* a
-    # baize-less cropped CARDS grid -- disambiguate by the suit-row anchor.
-    if compass_fraction >= 0.20:
-        return Mode.CARDS
+    compass_fraction = float(compass_mask(tile.image).mean()) / 255.0
     try:
         from .anchor import find_hand_stacks
 
-        # no suit-row stacks -> a baize-less cropped card grid, not a ROWS diagram
-        return Mode.ROWS if find_hand_stacks(tile.image) else Mode.CARDS
-    except Exception:  # noqa: BLE001 - anchor is best-effort; on any failure keep the low-green default (ROWS)
-        return Mode.ROWS
+        n_stacks = len(find_hand_stacks(tile.image))
+    except Exception:  # noqa: BLE001 - anchor is best-effort; fall back to the green-only test
+        n_stacks = None
+
+    if compass_fraction >= 0.20:
+        is_replay = (n_stacks or 0) >= 4 and _white_card_fraction(tile.image) < _WHITE_CARD_MAX
+        return Mode.ROWS if is_replay else Mode.CARDS
+    if n_stacks == 0:
+        return Mode.CARDS  # low green + no stacks -> baize-less cropped card grid
+    return Mode.ROWS

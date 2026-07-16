@@ -50,6 +50,14 @@ LABELLED_BOARDS = {
         "E": ["8763", "KQ", "A8764", "QJ"],
         "S": ["Q2", "JT83", "53", "K8742"],
     },
+    # realbridge-replay-1.png (big-font cross diagram; suit-quadruple anchor,
+    # ten written "10"; a void suit row is the empty string)
+    "realbridge-replay-1": {
+        "N": ["Q104", "AKJ963", "Q1097", ""],
+        "W": ["A873", "854", "", "AKQ1097"],
+        "E": ["62", "Q72", "AKJ653", "84"],
+        "S": ["KJ95", "10", "842", "J6532"],
+    },
 }
 
 
