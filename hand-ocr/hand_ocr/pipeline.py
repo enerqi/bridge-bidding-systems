@@ -14,6 +14,8 @@ Vision stages are stubbed; this wires the seams and the multi-deal flow.
 
 from __future__ import annotations
 
+from typing import Any
+
 from .detect import Mode, Tile, detect_mode, split_tiles
 from .model import SEATS, Deal, DealError
 from .preprocess import normalise
@@ -56,21 +58,24 @@ def _tile_to_deal(tile: Tile, first: str) -> Deal:
         )
 
 
-def image_to_deals(image_path: str, first: str = "N") -> list[Deal]:
-    """image path -> one Deal per board found (in reading order).
+def image_to_deals(source: str | Any, first: str = "N") -> list[Deal]:
+    """image source -> one Deal per board found (in reading order).
+
+    `source` is a path (str) or an already-decoded BGR array (e.g. from the
+    clipboard, see `preprocess.grab_clipboard`); `normalise` handles both.
 
     Deals are returned unvalidated: a misread board produces an illegal deal,
     and dropping/raising here would sink a whole multi-board page for one bad
     panel. The caller validates each deal and surfaces failures for manual fix
     (see `Deal.validate` and the CLI)."""
-    image = normalise(image_path)
+    image = normalise(source)
     return [_tile_to_deal(tile, first) for tile in split_tiles(image)]
 
 
-def image_to_deal(image_path: str, first: str = "N") -> Deal:
+def image_to_deal(source: str | Any, first: str = "N") -> Deal:
     """Convenience for single-board images. Raises if the image holds more than
     one deal -- use `image_to_deals` for multi-table views."""
-    deals = image_to_deals(image_path, first=first)
+    deals = image_to_deals(source, first=first)
     if len(deals) != 1:
         raise DealError(f"expected 1 deal, found {len(deals)}; use image_to_deals")
     return deals[0]

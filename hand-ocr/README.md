@@ -191,6 +191,10 @@ just demo --format=lin          # errors: LIN needs 4 hands
 just sync-vision
 just run fixtures/bridgewebs-4-2.png --format pbn
 
+# straight from the OS clipboard (screenshot a diagram, then:) — no temp file.
+# Windows/macOS work out of the box; Linux needs xclip/wl-paste on PATH.
+just clip --format pbn          # = uv run python hand-ocr.py --clipboard --format pbn
+
 # run EVERY fixture and print one valid/total status line each (the eyeball check)
 just sweep
 just sweep fixtures/print-*        # or just a glob

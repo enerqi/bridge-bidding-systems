@@ -56,6 +56,11 @@ build-atlas image="fixtures/bridgewebs-4-2.png" out="hand_ocr/atlas/bridgewebs":
 run image *args:
     uv run python hand-ocr.py {{image}} {{args}}
 
+# read the hand diagram straight from the OS clipboard (screenshot -> deal text, no temp file).
+# Windows/macOS work out of the box; Linux needs xclip/wl-paste on PATH. e.g. `just clip --format lin` (needs the vision extra)
+clip *args:
+    uv run python hand-ocr.py --clipboard {{args}}
+
 # sweep every fixture (or a glob) -> one valid/total status line each; the per-session eyeball check (needs the vision extra)
 sweep *paths:
     uv run --extra vision python tools/sweep.py {{paths}}

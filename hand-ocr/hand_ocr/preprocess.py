@@ -50,12 +50,41 @@ def load_bgr(image_path: str) -> Any:
     return img
 
 
-def normalise(image_path: str) -> Any:
-    """image path -> a BGR image ready for tiling/segmentation.
+def grab_clipboard() -> Any:
+    """Read the OS clipboard image as a 3-channel BGR array (pipeline-ready).
 
-    For the clean digital renders we handle today this is just `load_bgr`
-    (screenshots are already axis-aligned and high-contrast). The deskew /
-    denoise branch for photographed input lands here later via `estimate_skew`;
-    keeping it a single seam means callers never change.
+    Windows/macOS return an image directly; Linux needs an xclip/wl-paste binary
+    on PATH (Pillow shells out to it). `grabclipboard` returns None when the
+    clipboard holds no image, and a list[str] of paths when files are copied
+    (Explorer/Finder) -- both are surfaced as a clear error rather than a crash.
     """
-    return load_bgr(image_path)
+    try:
+        from PIL import ImageGrab
+    except ImportError as e:  # pragma: no cover - env dependent
+        raise RuntimeError("Pillow not installed; install the 'vision' extra to read the clipboard") from e
+    import numpy as np
+
+    grabbed = ImageGrab.grabclipboard()
+    if grabbed is None:
+        raise RuntimeError("clipboard holds no image (copy a hand diagram first)")
+    if isinstance(grabbed, list):
+        # same clipboard-failure class as the empty case, not a type-contract error
+        raise RuntimeError(f"clipboard holds file paths, not an image: {grabbed!r}; pass the path as <image>")  # noqa: TRY004
+    cv2 = _cv2()
+    rgb = np.array(grabbed.convert("RGB"))
+    return cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
+
+
+def normalise(source: Any) -> Any:
+    """image source -> a BGR image ready for tiling/segmentation.
+
+    `source` is either a path (str, read from disk) or an already-decoded BGR
+    array (e.g. from `grab_clipboard`), so clipboard and file ingest share the
+    same downstream seam. For the clean digital renders we handle today this is
+    just a load (screenshots are already axis-aligned and high-contrast). The
+    deskew / denoise branch for photographed input lands here later via
+    `estimate_skew`; keeping it a single seam means callers never change.
+    """
+    if isinstance(source, str):
+        return load_bgr(source)
+    return source

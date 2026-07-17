@@ -16,6 +16,9 @@ dependencies = [
 vision = [
     "opencv-python-headless>=4.10",
     "numpy>=2.0",
+    # clipboard ingest (ImageGrab). Windows/macOS work out of the box; Linux
+    # needs an xclip/wl-paste binary on PATH for grabclipboard.
+    "pillow>=10.0",
 ]
 ocr = [
     "paddleocr>=2.7",

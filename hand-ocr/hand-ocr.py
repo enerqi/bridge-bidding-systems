@@ -13,10 +13,12 @@ Bridge hand-diagram image -> PBN (canonical) or LIN (view) deal text.
 
 Usage:
     hand-ocr <image> [--first=<seat>] [--format=<fmt>]
+    hand-ocr --clipboard [--first=<seat>] [--format=<fmt>]
     hand-ocr --demo [--format=<fmt>]
 
 Options:
     <image>            path to a raster hand diagram (screenshot or scan)
+    --clipboard        read the image from the OS clipboard instead of a path
     --first=<seat>     PBN 'first' seat: N/E/S/W [default: N]
     --format=<fmt>     output format: pbn | lin [default: pbn]
     --demo             skip vision; emit a hardcoded sample deal (spine check)
@@ -61,7 +63,13 @@ def main() -> None:
     else:
         from hand_ocr.pipeline import image_to_deals  # lazy: needs vision extras
 
-        deals = image_to_deals(args["<image>"], first=first)  # one per board found
+        if args["--clipboard"]:
+            from hand_ocr.preprocess import grab_clipboard
+
+            source = grab_clipboard()  # BGR array; raises with a clear message if empty
+        else:
+            source = args["<image>"]
+        deals = image_to_deals(source, first=first)  # one per board found
 
     exit_code = 0
     blocks = []
