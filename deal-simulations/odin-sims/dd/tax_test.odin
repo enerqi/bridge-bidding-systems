@@ -89,6 +89,37 @@ test_tax_cold_3nt_untaxed :: proc(t: ^testing.T) {
 	testing.expect_value(t, res.tax_pts, 0.0)
 }
 
+// TWO independent blind two-way guesses compound. Spades are solid trumps (AKQJ.. opp T9.. — no guess);
+// hearts AJ4/KT3 and diamonds AJ4/KT3 are each a two-way queen. At 6S (need 12) the DD ceiling is a cold
+// 100% but there is NO cushion — misguessing EITHER queen drops a trick and fails, so a blind declarer makes
+// only when BOTH guesses are right. The joint best-policy achievable must therefore land near ~25-30%, well
+// BELOW the ~50% that each guess's marginal reports and that a single-worst-pivot view would have shown.
+// (Measured seed 7, n=300: ceiling 100.0, achievable 30.0, tax 70.0.)
+@(test)
+test_tax_two_guesses_compound :: proc(t: ^testing.T) {
+	init()
+	board, err := norn.parse_pbn_deal(`[Deal "N:AKQJ4.AJ4.AJ4.A2 - T9832.KT3.KT3.43 -"]`)
+	testing.expect_value(t, err, norn.Pbn_Parse_Error.None)
+
+	c, _ := parse_contract("6S")
+	res, ok := misguess_tax(board, {.North, .South}, c, 300, 7)
+	testing.expect(t, ok)
+
+	testing.expect_value(t, res.n_pivots, 2) // the two red queens, spades are solid
+	testing.expect(t, res.ceiling_pct >= 95.0) // cold double-dummy
+	testing.expect(t, res.achievable_pct >= 20.0 && res.achievable_pct <= 40.0) // ~both-right, not single-guess
+	testing.expect(t, res.tax_pts >= 55.0) // two knife-edge guesses cost far more than one
+
+	// Both pivots are red queens, and EACH marginal (that guess alone) is a ~50/50 that sits WELL ABOVE the
+	// joint achievable — i.e. compounding strictly lowered the board number below the single worst guess.
+	for i in 0 ..< res.n_pivots {
+		suit := norn.card_suit(res.pivots[i].card)
+		testing.expect(t, suit == .Hearts || suit == .Diamonds)
+		testing.expect_value(t, norn.card_rank(res.pivots[i].card), norn.Rank.Queen)
+		testing.expect(t, res.pivots[i].achievable > res.achievable_pct + 10.0)
+	}
+}
+
 // The ceiling the tax estimator computes must MATCH sample_contract's make-% exactly (same board, seed,
 // n): they share the sampling loop, so this guards against the tax pass drifting from the census ceiling.
 @(test)
@@ -139,5 +170,56 @@ test_tax_pivot_geometry :: proc(t: ^testing.T) {
 		board, _ := norn.parse_pbn_deal(`[Deal "N:AKQ2.AK3.A32.A32 - 543.QJ2.KQ4.KQ54 -"]`)
 		_, n := two_way_guess_pivots(board.deal, .North, .South)
 		testing.expect_value(t, n, 0)
+	}
+	// A KING is NEVER a two-way guess: it would need the Ace ABOVE it in BOTH hands, which is impossible.
+	// Even AQ2 opp JT9 — the king is trapped and there are cards on both sides — is a ONE-way finesse (lead
+	// toward AQ only), so it stays unflagged. This is the ceiling of the geometry, not a gap.
+	{
+		board, _ := norn.parse_pbn_deal(`[Deal "N:AQ2.AK2.AK2.AK32 - JT9.543.543.QJ54 -"]`)
+		_, n := two_way_guess_pivots(board.deal, .North, .South)
+		testing.expect_value(t, n, 0)
+	}
+}
+
+// Two genuine two-way guesses in the SAME suit are BOTH flagged and are genuinely independent: spades K9
+// opp AJ is missing Q AND T, and declarer's J sits BETWEEN them, so each is a separate finesse whose
+// misguess costs its own trick. The tight-tenace geometry GUARANTEES a declarer card separates any two
+// same-suit pivots (adjacent missing honours fail the neighbour test), so the joint model's additive
+// -1-per-misguess is exact here — no same-suit interaction to special-case.
+@(test)
+test_tax_same_suit_double_pivot :: proc(t: ^testing.T) {
+	board, err := norn.parse_pbn_deal(`[Deal "N:K9.AKQ2.AKQ2.A32 - AJ.543.543.KQJ54 -"]`)
+	testing.expect_value(t, err, norn.Pbn_Parse_Error.None)
+	pivots, n := two_way_guess_pivots(board.deal, .North, .South)
+	testing.expect_value(t, n, 2)
+
+	seen_q, seen_t := false, false
+	for i in 0 ..< n {
+		testing.expect_value(t, norn.card_suit(pivots[i]), norn.Suit.Spades)
+		#partial switch norn.card_rank(pivots[i]) {
+		case .Queen:
+			seen_q = true
+		case .Ten:
+			seen_t = true
+		}
+	}
+	testing.expect(t, seen_q && seen_t)
+}
+
+// Textbook single-missing-honour two-way queens are all caught: AJ opp KT and its variants (a card above
+// the queen in BOTH hands, both immediate neighbours held). This pins the geometry's intended coverage.
+@(test)
+test_tax_pivot_catalogue :: proc(t: ^testing.T) {
+	cases := []string {
+		`[Deal "N:AJ2.AK2.AK2.A432 - KT3.543.543.KQJ5 -"]`, // AJ opp KT: two-way Q
+		`[Deal "N:AJ9.AK2.AK2.A432 - KT3.543.543.KQJ5 -"]`, // AJ9 opp KT3: two-way Q
+		`[Deal "N:KJ2.AK2.AK2.A432 - AT3.543.543.KQJ5 -"]`, // KJ opp AT: two-way Q (roles swapped)
+	}
+	for pbn in cases {
+		board, err := norn.parse_pbn_deal(pbn)
+		testing.expect_value(t, err, norn.Pbn_Parse_Error.None)
+		pivots, n := two_way_guess_pivots(board.deal, .North, .South)
+		testing.expect_value(t, n, 1)
+		testing.expect_value(t, pivots[0], norn.make_card(.Spades, .Queen))
 	}
 }

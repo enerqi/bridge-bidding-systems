@@ -132,6 +132,31 @@ test-combo *args: mktarget_dirs
 test-dd *args: mktarget_dirs
 	odin test dd {{norn}} {{dds}} -debug -microarch:native -define:ODIN_TEST_THREADS=1 -show-timings -out:target/debug/test-dd.exe {{args}}
 
+# OCR a bridge hand-diagram IMAGE to a PBN [Deal] tag (declarer+dummy uses '-' for the unknown hands; a
+# full 4-hand diagram emits all four), printed to stdout. Bridges to the sibling hand-ocr project (uv). A
+# real image needs hand-ocr's vision extra:  (cd ../../hand-ocr && just sync-vision).
+# <image> may be `--clipboard` to read straight from the OS clipboard (screenshot, no temp file).
+# e.g. `just ocr-pbn hand.png` or `just ocr-pbn hand.png --first E` or `just ocr-pbn --clipboard`
+ocr-pbn image *args:
+	uv run --project ../../hand-ocr python ../../hand-ocr/hand-ocr.py {{image}} --format pbn {{args}}
+
+# OCR a hand-diagram IMAGE straight to the interactive card page: image -> PBN -> pbn_analyse with the
+# DDS-sampling advisor + CCA/DD features. Writes <image-basename>.html (override with --html); samples 400
+# deals by default (override with --sample). Extra flags pass through to pbn_analyse (e.g. --contract 3NT).
+# `just ocr-analyse --demo` runs hand-ocr's sample deal end-to-end (plumbing check, no vision deps needed).
+# <image> may be `--clipboard` to read straight from the OS clipboard (screenshot -> card page, no temp file).
+# e.g. `just ocr-analyse hand.png` ; `just ocr-analyse hand.png --contract 3NT --seed 7` ; `just ocr-analyse --clipboard`
+ocr-analyse image *args: mktarget_dirs
+	odin build pbn_analyse.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe
+	uv run --no-project python tools/ocr_analyse.py {{image}} {{args}}
+
+# golden test for the card page's data-sim JSON contract: build pbn_analyse, run it on a fixed board+seed,
+# and diff the emitted `data-sim='...'` against tests/golden/. Guards write_sim_json (incl. the misguess-tax
+# ach/taxpts/pvt rung) from silently drifting out of sync with render.odin's simBand parser.
+test-golden: mktarget_dirs
+	odin build pbn_analyse.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe
+	uv run --no-project python tests/golden_sim_json.py
+
 # delete build artifacts
 clean:
 	rm -rf target

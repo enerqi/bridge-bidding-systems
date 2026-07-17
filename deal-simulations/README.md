@@ -40,9 +40,11 @@ Inside `odin-sims/` there is its own `just` for development: `just run --scenari
 
 ### Analyse a real hand (photo / PBN → interactive advisor)
 
-Separate from the scenario generator, `odin-sims/` has a **2-hand (declarer + dummy) advisor**: give it a
-deal and it produces an interactive card page showing how likely each contract is to make, the best line
-per suit, and where a blind guess costs you. Run these from inside `odin-sims/`:
+Separate from the scenario generator, `odin-sims/` turns any deal into an interactive card page. Give it a
+**declarer + dummy** (two hands, defenders unknown) and it acts as a **2-hand advisor** — how likely each
+contract is to make (from sampling the unknown defenders), the best line per suit, and where a blind guess
+costs you. Give it a **complete four-hand deal** and it shows the **exact double-dummy** result (par + what
+each side can make) plus the per-suit CCA tables. Run these from inside `odin-sims/`:
 
 ```sh
 # From a PHOTO/screenshot of a hand diagram (uses the sibling hand-ocr project):
@@ -54,8 +56,9 @@ just analyse-pbn --sample 400 '[Deal "N:AKQ32.AK2.A32.A32 - Q.QJT98.KQJ.KQJT -"]
 just analyse-pbn --sample 400 --file board.pbn --html out.html
 ```
 
-A **PBN** deal marks the two unknown defender hands with `-` (that is the declarer+dummy case the advisor
-is built for). A standard multi-board `.pbn` file works too — every `[Deal]` tag becomes one board in a
+A **PBN** deal either marks the two unknown defender hands with `-` (the declarer+dummy advisor case) or
+lists all four hands (the exact double-dummy case) — the tool picks the right mode per board. A standard
+multi-board `.pbn` file works too — every `[Deal]` tag becomes one board in a
 carousel; the other tags (`[Board]`, `[Dealer]`, …) are ignored. **LIN files are not read** (LIN can only
 express a complete four-hand deal; use PBN). The card page has a built-in **Help "?"** button explaining
 every number in plain terms. A real photo needs hand-ocr's vision extra once: `(cd ../../hand-ocr && just

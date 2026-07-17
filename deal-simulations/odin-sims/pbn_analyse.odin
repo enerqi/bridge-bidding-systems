@@ -116,14 +116,23 @@ run :: proc() -> int {
 		contract, has_contract = c, true
 	}
 
-	// DDS lifecycle: init once around all boards' sampling. The shutdown defer must sit at RUN scope (not
-	// inside the if-block, or it would fire immediately after init — before any board samples).
-	sampling := args.sample > 0
-	if sampling {
+	// DDS lifecycle: init once if ANY board needs the solver — either --sample (2-hand advisor) OR a
+	// fully-known 4-hand deal (exact double-dummy via dd.annotate). The shutdown defer must sit at RUN scope
+	// (not inside the if-block, or it would fire immediately after init — before any board solves).
+	needs_dds := args.sample > 0
+	if !needs_dds {
+		for board in boards {
+			if board_fully_known(board) {
+				needs_dds = true
+				break
+			}
+		}
+	}
+	if needs_dds {
 		dd.init()
 	}
 	defer {
-		if sampling {
+		if needs_dds {
 			dd.shutdown()
 		}
 	}
@@ -225,6 +234,24 @@ sample_board :: proc(
 }
 
 // Text report for one board: the combo census + SD summary, and (with --sample) the simulated verdict.
+// True iff all four hands are present — a complete deal, not the declarer+dummy (2-hand) advisor input.
+// Such a board takes the EXACT double-dummy path (dd.annotate solves the actual deal) rather than the
+// DDS-sampling advisor (which models the unknown defenders).
+board_fully_known :: proc(board: norn.Parsed_Board) -> bool {
+	return board.known == {.North, .East, .South, .West}
+}
+
+// Text report for a fully-known 4-hand deal: the layout, then the EXACT double-dummy verdict (par +
+// NS-makeable, from dd.annotate solving the actual deal — no sampling, no ceiling/achievable gap), then the
+// per-partnership combo (CCA) census. Uses the temp allocator; the whole block prints at once.
+report_full_deal :: proc(board: norn.Parsed_Board) {
+	b := strings.builder_make(context.temp_allocator)
+	norn.render_deal_pretty(&b, board.deal)
+	dd.annotate(&b, board.deal, .Pretty)
+	combo.annotate(&b, board.deal, .Pretty)
+	fmt.println(strings.to_string(b))
+}
+
 report_board :: proc(
 	board: norn.Parsed_Board,
 	args: ^Args,
@@ -233,6 +260,10 @@ report_board :: proc(
 ) {
 	a, side, ok := combo.analyse_parsed_board(board)
 	if !ok {
+		if board_fully_known(board) {
+			report_full_deal(board)
+			return
+		}
 		fmt.eprintln(
 			"pbn_analyse: not a 2-hand advisor board — need exactly one fully-known partnership (declarer +",
 		)
@@ -274,11 +305,18 @@ report_board :: proc(
 	}
 }
 
-// Parse every `[Deal]` tag in `text` into a board (a hand-ocr session may carry several). Each `[Deal`
-// occurrence is parsed from its position (parse_pbn_deal reads the first tag it finds). With NO `[Deal`
-// tag the whole input is treated as a single bare `N:...` value. Returns the first parse error hit.
+// The `[Deal` tag opener, including the space + quote that START its value: `[Deal "`. Matching this
+// (rather than bare `[Deal`) is what keeps a standard `.pbn` file's `[Dealer "..."]` and `[Declarer
+// "..."]` tags — which share the `[Deal` prefix — from being mistaken for deals.
+@(private = "file")
+DEAL_TAG :: `[Deal "`
+
+// Parse every `[Deal "..."]` tag in `text` into a board (a hand-ocr session or a `.pbn` file may carry
+// several). Each occurrence is parsed from its position (parse_pbn_deal reads the first tag it finds), so
+// all other PBN tags ([Board]/[Dealer]/[Vulnerable]/...) are ignored. With NO `[Deal "` tag the whole input
+// is treated as a single bare `N:...` value. Returns the first parse error hit.
 parse_boards :: proc(text: string) -> (boards: [dynamic]norn.Parsed_Board, err: norn.Pbn_Parse_Error) {
-	idx := strings.index(text, "[Deal")
+	idx := strings.index(text, DEAL_TAG)
 	if idx < 0 {
 		b, e := norn.parse_pbn_deal(text)
 		if e != .None {
@@ -294,11 +332,11 @@ parse_boards :: proc(text: string) -> (boards: [dynamic]norn.Parsed_Board, err: 
 			return nil, e
 		}
 		append(&boards, b)
-		next := strings.index(text[idx + 5:], "[Deal")
+		next := strings.index(text[idx + len(DEAL_TAG):], DEAL_TAG)
 		if next < 0 {
 			break
 		}
-		idx = idx + 5 + next
+		idx = idx + len(DEAL_TAG) + next
 	}
 	return boards, .None
 }
@@ -673,7 +711,20 @@ write_html :: proc(
 	b := strings.builder_make()
 	defer strings.builder_destroy(&b)
 
+	// Title reflects the input: all full 4-hand deals -> exact double-dummy analysis; all 2-hand -> the
+	// advisor; a mix -> a neutral label.
+	n_full := 0
+	for board in boards {
+		if board_fully_known(board) {
+			n_full += 1
+		}
+	}
 	title := "Two-hand advisor (declarer + dummy)"
+	if n_full == len(boards) {
+		title = "Bridge deal analysis (double-dummy + CCA)"
+	} else if n_full > 0 {
+		title = "Bridge deal analysis"
+	}
 	norn.render_page_prologue(&b, .Html_Cards, title)
 	for board in boards {
 		render_board_body(&b, board, args, contract, has_contract)
@@ -684,6 +735,102 @@ write_html :: proc(
 		return fmt.tprintf("could not write %q: %v", path, werr)
 	}
 	return ""
+}
+
+// Render a fully-known 4-hand deal into the page builder `b`: all four hands face-up, then the EXACT
+// double-dummy caption (`dd.annotate` Html_Cards: the `.par` div with par + NS-makeable + the CCA slider's
+// `data-target`, from ONE solve of the actual deal), then the per-partnership combo (CCA) census for BOTH
+// sides (`combo.annotate` on the real deal). No `data-sim`: with the deal known, double-dummy is the exact
+// verdict — there is no sampling ceiling to show and no misguess-tax rung (that models unknown defenders).
+// This is exactly the sim card-page flow (dd.annotate then combo.annotate) for a board fed as PBN.
+render_full_deal_body :: proc(
+	b: ^strings.Builder,
+	board: norn.Parsed_Board,
+	args: ^Args,
+	contract: dd.Contract,
+	has_contract: bool,
+) {
+	norn.render_deal_html_cards(b, board.deal, false, board.known)
+	dd.annotate(b, board.deal, .Html_Cards)
+	// Exact double-dummy grids (one per side) so the card page's contract picker + trick slider come alive
+	// on the known deal (spikes at each strain's DD tricks; the band relabels to "double-dummy (exact)").
+	// Carried on its own hidden element — dd.annotate owns the `.par` div — which render.odin reads as the
+	// board's data-sim source. With `--sample` we ALSO bake the BLIND advisor per side (sample_board ignores
+	// the known defenders and randomises the other 26, i.e. "play it as if you can't see all four hands"),
+	// so the page can toggle exact ↔ blind for either partnership. solve_table is cached (dd.annotate's).
+	if ns_grid, ew_grid, ok := dd.exact_grids(board.deal); ok {
+		strings.write_string(b, `<div class="sim-exact" hidden data-sim='`)
+		write_exact_sim_json(b, &ns_grid, &ew_grid)
+		strings.write_string(b, `'`)
+		if args.sample > 0 {
+			strings.write_string(b, ` data-sim-blind='`)
+			write_blind_sides_json(b, board, args, contract, has_contract)
+			strings.write_string(b, `'`)
+		}
+		strings.write_string(b, `></div>`)
+	}
+	strings.write_string(b, `<div class="cca-meta" data-known="all" hidden></div>`)
+	combo.annotate(b, board.deal, .Html_Cards)
+}
+
+// Bake the BLIND (DDS-sampled) advisor grids for BOTH partnerships of a known deal: `{"ns":<sim>,"ew":<sim>}`
+// where each `<sim>` is the same shape write_sim_json emits for a 2-hand board (n/lvl/strain/g plus the
+// misguess-tax ach/taxpts/pvt). sample_board treats the named side as declarer+dummy and randomises the
+// other 26 cards, so this is exactly "how would this side fare playing blind". A side that fails to sample
+// is emitted as null.
+write_blind_sides_json :: proc(
+	b: ^strings.Builder,
+	board: norn.Parsed_Board,
+	args: ^Args,
+	contract: dd.Contract,
+	has_contract: bool,
+) {
+	strings.write_byte(b, '{')
+	bs_ns, _ := sample_board(board, combo.NS_SIDE, args, contract, has_contract)
+	defer board_sample_free(&bs_ns)
+	strings.write_string(b, `"ns":`)
+	if bs_ns.have {
+		write_sim_json(b, &bs_ns.grid, bs_ns.contract, bs_ns.tax, bs_ns.tax_ok)
+	} else {
+		strings.write_string(b, "null")
+	}
+	bs_ew, _ := sample_board(board, combo.EW_SIDE, args, contract, has_contract)
+	defer board_sample_free(&bs_ew)
+	strings.write_string(b, `,"ew":`)
+	if bs_ew.have {
+		write_sim_json(b, &bs_ew.grid, bs_ew.contract, bs_ew.tax, bs_ew.tax_ok)
+	} else {
+		strings.write_string(b, "null")
+	}
+	strings.write_byte(b, '}')
+}
+
+// Bake the EXACT double-dummy grids (one per partnership) as a `data-sim` blob with `exact:true`, so the
+// verdict band shows "double-dummy (exact): N♠ makes/fails" (no sampled ±, no guess tax) and FOLLOWS the
+// N/S↔E/W toggle — `ns`/`ew` each carry that side's per-strain spike grid. `lvl`/`strain` preselect the
+// picker at NS's best-making contract (most tricks; ties -> NT by iteration order).
+write_exact_sim_json :: proc(b: ^strings.Builder, ns_grid, ew_grid: ^dd.Grid_Result) {
+	best_strain := dd.Strain.NT
+	best_tricks := 0
+	for st in dd.Strain {
+		for k := 13; k >= 0; k -= 1 {
+			if ns_grid.hist[st][k] > 0 {
+				if k > best_tricks {
+					best_tricks = k
+					best_strain = st
+				}
+				break
+			}
+		}
+	}
+	lvl := clamp(best_tricks - 6, 1, 7)
+	strings.write_byte(b, '{')
+	fmt.sbprintf(b, `"n":1,"exact":true,"lvl":%d,"strain":"%s"`, lvl, strain_key(best_strain))
+	strings.write_string(b, `,"ns":`)
+	write_g_object(b, ns_grid.hist, ns_grid.n)
+	strings.write_string(b, `,"ew":`)
+	write_g_object(b, ew_grid.hist, ew_grid.n)
+	strings.write_byte(b, '}')
 }
 
 // Render ONE board into the page builder `b`: the declarer+dummy compass (defenders face-down), a hidden
@@ -700,6 +847,10 @@ render_board_body :: proc(
 ) {
 	_, side, ok := combo.analyse_parsed_board(board)
 	if !ok {
+		if board_fully_known(board) {
+			render_full_deal_body(b, board, args, contract, has_contract)
+			return
+		}
 		strings.write_string(b, `<div class="par">Not a 2-hand board (need declarer + dummy, defenders '-').</div>`)
 		return
 	}
@@ -712,6 +863,8 @@ render_board_body :: proc(
 	}
 
 	norn.render_deal_html_cards(b, board.deal, false, board.known)
+	// The real known side, so the CCA panel locks its toggle here (the other side is this pair duplicated).
+	fmt.sbprintf(b, `<div class="cca-meta" data-known="%s" hidden></div>`, side_key(side))
 
 	// Seed the CCA target slider. Prefer the contract level (level+6 tricks) when sampling, else the
 	// user's --target, else a sensible default = the achievable single-dummy expected total.
@@ -731,6 +884,14 @@ render_board_body :: proc(
 		strings.write_string(b, " data-sim-leads='")
 		write_leads_json(b, bs.leads, side)
 		strings.write_string(b, "'")
+		// Per-suit blind two-way GUESS notes (Option C1 narration): the misguess-tax pivots keyed by suit,
+		// merged client-side into that suit's line tooltip. Only when a guess actually COSTS something at
+		// this contract (a cushioned/non-pivotal guess has nothing to narrate).
+		if bs.tax_ok && tax_has_narratable_guess(bs.tax) {
+			strings.write_string(b, " data-sim-guess='")
+			write_sim_guess_json(b, side, bs.tax)
+			strings.write_string(b, "'")
+		}
 	}
 	strings.write_string(b, " hidden></div>\n")
 
@@ -770,6 +931,61 @@ write_sim_json :: proc(
 	strings.write_string(b, `,"g":`)
 	write_g_object(b, sim.hist, sim.n)
 	strings.write_byte(b, '}')
+}
+
+// Bake the per-suit blind two-way GUESS notes for the card page's tooltip merge (Option C1 narration):
+//   {"side":"ns","suits":{"s":{"card":"QS","tax":35}}}
+// `side` is the declaring partnership (ns/ew) the tax pivots belong to — the client appends the guess
+// clause to a suit's line tooltip only while the CCA view shows THAT side. Per suit the DOMINANT pivot
+// wins (pivots are sorted dominant-first), so a suit with two guesses (Q and T) narrates the costlier one;
+// `tax` is that pivot's MARGINAL cost = the ceiling docked to this guess alone, rounded. Single-quoted
+// attribute host, so double quotes only; braces are written literally (fmt reads `{` in a format string
+// as an argument reference — see write_sim_json).
+// True iff some blind two-way guess costs at least 1% at this contract — i.e. the guess map would carry a
+// suit. Gates the `data-sim-guess` attribute so a board whose guesses are all cushioned (non-pivotal) emits
+// nothing rather than an empty object.
+tax_has_narratable_guess :: proc(tax: dd.Tax_Result) -> bool {
+	for i in 0 ..< tax.n_pivots {
+		if tax.ceiling_pct - tax.pivots[i].achievable >= 1 {
+			return true
+		}
+	}
+	return false
+}
+
+write_sim_guess_json :: proc(b: ^strings.Builder, side: bit_set[norn.Seat], tax: dd.Tax_Result) {
+	strings.write_byte(b, '{')
+	sk := "ns"
+	if side == combo.EW_SIDE {
+		sk = "ew"
+	}
+	fmt.sbprintf(b, `"side":"%s",`, sk)
+	strings.write_string(b, `"suits":`)
+	strings.write_byte(b, '{')
+	seen: bit_set[norn.Suit]
+	first := true
+	for i in 0 ..< tax.n_pivots {
+		card := tax.pivots[i].card
+		suit := norn.card_suit(card)
+		if suit in seen {
+			continue // dominant pivot for this suit already emitted
+		}
+		marg := tax.ceiling_pct - tax.pivots[i].achievable
+		if marg < 1 {
+			continue // this guess is cushioned at this contract (costs ~0) — no story to tell
+		}
+		seen += {suit}
+		if !first {
+			strings.write_byte(b, ',')
+		}
+		first = false
+		fmt.sbprintf(b, `"%s":`, suit_key(suit))
+		strings.write_byte(b, '{')
+		fmt.sbprintf(b, `"card":"%s","tax":%.0f`, card_word(card), marg)
+		strings.write_byte(b, '}')
+	}
+	strings.write_byte(b, '}') // close suits
+	strings.write_byte(b, '}') // close root
 }
 
 // Write the `g` object — the five per-strain NORMALISED trick distributions p[k] (k=0..13) — for a
@@ -850,6 +1066,31 @@ seat_letter :: proc(s: norn.Seat) -> u8 {
 		return 'W'
 	}
 	return '?'
+}
+
+// The card page's side key for the KNOWN partnership: "ns" or "ew". Baked per board so the CCA panel can
+// lock its N/S↔E/W toggle to the real known side (a 2-hand board's other side is the known pair duplicated
+// + mislabelled — meaningless to show).
+side_key :: proc(side: bit_set[norn.Seat]) -> string {
+	if side == combo.EW_SIDE {
+		return "ew"
+	}
+	return "ns"
+}
+
+// The card page's lowercase suit key for a norn.Suit (the per-suit table row keys s/h/d/c).
+suit_key :: proc(s: norn.Suit) -> string {
+	switch s {
+	case .Spades:
+		return "s"
+	case .Hearts:
+		return "h"
+	case .Diamonds:
+		return "d"
+	case .Clubs:
+		return "c"
+	}
+	return "s"
 }
 
 // The card page's lowercase strain key for a dds.Strain.

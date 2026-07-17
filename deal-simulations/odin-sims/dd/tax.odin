@@ -27,9 +27,14 @@ package dd
 	     and the achievable facing THAT guess is the better of the two commit directions (max over d). The
 	     -1 only bites at the knife edge (t==need); a contract with an overtrick to spare survives a
 	     misguess, so a non-pivotal guess is self-correctingly untaxed.
-	  4. The board's achievable = ceiling docked by the DOMINANT guess (the pivot with the LOWEST committed
-	     make-%). Multiple independent guesses would compound (true achievable a touch lower); v1 reports
-	     the single worst, matching the doc's "single dominant two-way guess" framing.
+	  4. The board's achievable = the make-% of the BEST fixed blind commit POLICY across ALL pivots jointly.
+	     A policy fixes a finesse direction for every guess; on a layout it misguesses the pivots whose
+	     trapped honour sits the wrong way, each costing -1 trick (additive), so the layout makes iff
+	     t - (#misguessed) ≥ need. We take the policy maximising the make fraction (2^n_pivots policies, n
+	     tiny). This COMPOUNDS independent guesses — two knife-edge two-way finesses on a cold ceiling drop
+	     it to ~25%, not the ~50% a single-worst view would report. With one pivot it is exactly step 3; with
+	     none, achievable == ceiling. `pivots[i].achievable` still reports each guess's MARGINAL make-% (that
+	     guess alone, others assumed right) for labelling, dominant (lowest-marginal) first.
 
 	This is APPROXIMATE but honest-DIRECTION: achievable ≤ ceiling always (a commit can only lose vs
 	peeking), and the tax is the gap the entry/tempo/guess help already warns about in words. It gives the
@@ -41,6 +46,7 @@ package dd
 	Single-threaded, like every DDS call here (DDS shares process-global transposition tables).
 */
 
+import "base:intrinsics"
 import "core:math/rand"
 
 import dds "dds:."
@@ -110,14 +116,19 @@ has_above :: proc(mask: u16, r: int) -> bool {
 	return false
 }
 
-// Identify the blind TWO-WAY guesses in the two known hands: a defender-held honour C (rank Jack..King)
+// Identify the blind TWO-WAY guesses in the two known hands: a defender-held honour C (rank Ten..King)
 // that declarer can finesse EITHER way. Geometry:
 //   * combined: declarer holds BOTH immediate neighbours of C (C+1 and C-1) — a tight tenace that traps C
 //     (this excludes "solid tops" like AKQ missing J, where the card just below J is a defender card), AND
 //   * per-hand: EACH declaring hand holds a card ranked above C — so declarer can lead toward a trap from
 //     either side, i.e. the guess is genuinely two-way rather than a single forced finesse.
-// The Ace is never a target (nothing outranks it); adjacent missing honours (e.g. missing KQ together) fail
-// the neighbour test and are conservatively left untaxed. Returns the pivot CARDS (up to TAX_MAX_PIVOTS).
+// The floor is the TEN: a two-way finesse for the ten (declarer holding the J and 9 around it, with a card
+// above in both hands — e.g. K9 opp AJ, missing QT) is a genuine binary guess, and it is the case that
+// yields two INDEPENDENT same-suit pivots (Q and T, separated by the held J). Deeper cards (a two-way for
+// the nine) are essentially never a trick-deciding guess, so the range stops at the ten. The Ace is never a
+// target (nothing outranks it); a King is never two-way (it would need the Ace above it in BOTH hands);
+// adjacent missing honours (e.g. missing KQ together) fail the neighbour test and are left untaxed. Returns
+// the pivot CARDS (up to TAX_MAX_PIVOTS).
 @(private)
 two_way_guess_pivots :: proc(deal: norn.Deal, a, b: norn.Seat) -> (out: [TAX_MAX_PIVOTS]norn.Card, n: int) {
 	combined := side_suit_masks(deal, a, b)
@@ -125,7 +136,7 @@ two_way_guess_pivots :: proc(deal: norn.Deal, a, b: norn.Seat) -> (out: [TAX_MAX
 		held := combined[suit]
 		ha := hand_suit_mask(deal[a], suit)
 		hb := hand_suit_mask(deal[b], suit)
-		for r in int(norn.Rank.Jack) ..= int(norn.Rank.King) {
+		for r in int(norn.Rank.Ten) ..= int(norn.Rank.King) {
 			bit := u16(1) << u16(r)
 			if held & bit != 0 {
 				continue // declarer holds C -> not a defender card, no guess
@@ -222,6 +233,10 @@ misguess_tax :: proc(
 	need := contract.level + 6
 	ceiling_hist: [14]int
 	total_tricks := 0
+	// joint_hist[combo][t]: layouts whose pivot-holder pattern is `combo` (bit i = defender holding pivot i)
+	// and whose DD trick count is t. Feeds the best-policy joint achievable (step 4). Sized for the full cap
+	// but only the low 2^n_pivots combos are ever touched.
+	joint_hist: [1 << TAX_MAX_PIVOTS][14]int
 
 	tbl: dds.Table_Results
 	for _ in 0 ..< n_samples {
@@ -244,11 +259,15 @@ misguess_tax :: proc(
 		tk := clamp(max(int(tbl.resTable[strain][ha]), int(tbl.resTable[strain][hb])), 0, 13)
 		ceiling_hist[tk] += 1
 		total_tricks += tk
-		// Split each pivot's tricks by which defender holds the trapped honour this layout.
+		// Split each pivot's tricks by which defender holds the trapped honour this layout, and build the
+		// joint holder-pattern for the best-policy achievable.
+		combo := 0
 		for i in 0 ..< n_pivots {
 			holder := defender_holding(layout, defs, tracks[i].card)
 			tracks[i].hist[holder][tk] += 1
+			combo |= holder << uint(i)
 		}
+		joint_hist[combo][tk] += 1
 	}
 
 	result.n = n_samples
@@ -263,17 +282,18 @@ misguess_tax :: proc(
 	}
 	result.ceiling_pct = f64(ceiling_make) / f64(n_samples) * 100
 
-	// Achievable = ceiling docked by the dominant guess. With no guesses, nothing to dock.
-	result.achievable_pct = result.ceiling_pct
+	// Per-pivot MARGINAL make-% (each guess alone, for labelling) ...
 	for i in 0 ..< n_pivots {
-		ach := committed_make_pct(tracks[i].hist, need, n_samples)
 		result.pivots[i] = Tax_Pivot {
 			card       = tracks[i].card,
-			achievable = ach,
+			achievable = committed_make_pct(tracks[i].hist, need, n_samples),
 		}
-		if ach < result.achievable_pct {
-			result.achievable_pct = ach
-		}
+	}
+	// ... and the board achievable = the best fixed blind policy across ALL pivots jointly (step 4). With no
+	// guesses there is nothing to commit, so it stays at the ceiling.
+	result.achievable_pct = result.ceiling_pct
+	if n_pivots > 0 {
+		result.achievable_pct = joint_achievable_pct(joint_hist[:], n_pivots, need, n_samples)
 	}
 	result.n_pivots = n_pivots
 	sort_pivots_dominant_first(result.pivots[:n_pivots])
@@ -314,6 +334,31 @@ committed_make_pct :: proc(hist: [2][14]int, need, n: int) -> f64 {
 	commit_toward_0 := right0 + spare1 // right when C∈d0, survives misguess when C∈d1
 	commit_toward_1 := right1 + spare0
 	best := max(commit_toward_0, commit_toward_1)
+	return f64(best) / f64(n) * 100
+}
+
+// The JOINT achievable make-% over all pivots (step 4): the best fixed blind commit policy. A policy is an
+// n-bit mask fixing a finesse direction per pivot; on a layout with holder-pattern `combo` it misguesses the
+// pivots where the committed direction differs (popcount(combo XOR policy)), each -1 trick, so the layout
+// makes iff t ≥ need + misguesses. Returns the make fraction of the best policy. 2^n policies × 2^n combos,
+// n ≤ TAX_MAX_PIVOTS and in practice a handful, so this is trivial.
+@(private = "file")
+joint_achievable_pct :: proc(joint: [][14]int, n_pivots, need, n: int) -> f64 {
+	combos := 1 << uint(n_pivots)
+	best := 0
+	for policy in 0 ..< combos {
+		make := 0
+		for combo in 0 ..< combos {
+			mis := intrinsics.count_ones(combo ~ policy)
+			thr := need + mis
+			for k in thr ..< 14 {
+				make += joint[combo][k]
+			}
+		}
+		if make > best {
+			best = make
+		}
+	}
 	return f64(best) / f64(n) * 100
 }
 

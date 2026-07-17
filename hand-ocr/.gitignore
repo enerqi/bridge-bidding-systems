@@ -9,3 +9,6 @@ __pycache__/
 .ruff_cache/
 .pytest_cache/
 .ty_cache/
+
+# Claude Code local state (per-checkout; not shared)
+.claude/

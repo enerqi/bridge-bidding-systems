@@ -449,6 +449,27 @@ sample_contract :: proc(
 
 // Extract the one-contract Sample_Result from a computed grid (no solving). The card page bakes the whole
 // grid and does this read client-side per picked contract; the CLI does it once here.
+// Grid_Results for a FULLY-KNOWN deal — ONE per partnership. Each strain's histogram is a single SPIKE at
+// that side's double-dummy trick count (the better of its two declarers), n=1. There is nothing to sample —
+// the deal is known — so this is the EXACT double-dummy census, letting the card page's contract picker +
+// trick slider act as a live double-dummy explorer that follows the N/S↔E/W toggle. One solve for both
+// sides, reusing solve_table's per-board cache (dd.annotate has usually just solved this same deal). ok
+// mirrors solve_table (DDS must succeed).
+exact_grids :: proc(deal: norn.Deal) -> (ns: Grid_Result, ew: Grid_Result, ok: bool) {
+	res, rok := solve_table(deal)
+	if !rok {
+		return {}, {}, false
+	}
+	ns.n, ew.n = 1, 1
+	for st in dds.Strain {
+		nst := max(int(res.resTable[st][dds.Hand.North]), int(res.resTable[st][dds.Hand.South]))
+		ewt := max(int(res.resTable[st][dds.Hand.East]), int(res.resTable[st][dds.Hand.West]))
+		ns.hist[st][clamp(nst, 0, 13)] = 1
+		ew.hist[st][clamp(ewt, 0, 13)] = 1
+	}
+	return ns, ew, true
+}
+
 result_for :: proc(grid: Grid_Result, contract: Contract) -> (r: Sample_Result) {
 	r.n = grid.n
 	r.hist = grid.hist[contract.strain]

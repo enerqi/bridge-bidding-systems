@@ -333,3 +333,35 @@ test_sample_rejects_unknown_side :: proc(t: ^testing.T) {
 	_, ok := sample_contract(board, {.East, .West}, c, 50, 1)
 	testing.expect(t, !ok)
 }
+
+// exact_grids on a FULLY-KNOWN deal is the double-dummy census as spikes, ONE grid per side: each strain's
+// histogram has a single unit at that side's DD trick count, n=1. Cross-checks against solve_table so the
+// two never drift, and that NS + EW tricks in a suit are complementary (13 - the other side, less trumps
+// split — so just assert each matches its own resTable max).
+@(test)
+test_exact_grids_spikes :: proc(t: ^testing.T) {
+	init()
+	board, err := norn.parse_pbn_deal(`[Deal "N:AKQ4.KJ3.AQ5.T87 T87.T98.JT9.KJ96 J932.AQ4.K87.AQ2 65.7652.6432.543"]`)
+	testing.expect_value(t, err, norn.Pbn_Parse_Error.None)
+
+	ns, ew, ok := exact_grids(board.deal)
+	testing.expect(t, ok)
+	testing.expect_value(t, ns.n, 1)
+	testing.expect_value(t, ew.n, 1)
+
+	res, rok := solve_table(board.deal)
+	testing.expect(t, rok)
+	for st in dds.Strain {
+		ns_sum, ns_spike, ew_sum, ew_spike := 0, -1, 0, -1
+		for k in 0 ..< 14 {
+			ns_sum += ns.hist[st][k];if ns.hist[st][k] > 0 {ns_spike = k}
+			ew_sum += ew.hist[st][k];if ew.hist[st][k] > 0 {ew_spike = k}
+		}
+		testing.expect_value(t, ns_sum, 1) // exactly one spike per strain, each side
+		testing.expect_value(t, ew_sum, 1)
+		testing.expect_value(t, ns_spike, max(int(res.resTable[st][dds.Hand.North]), int(res.resTable[st][dds.Hand.South])))
+		testing.expect_value(t, ew_spike, max(int(res.resTable[st][dds.Hand.East]), int(res.resTable[st][dds.Hand.West])))
+	}
+	// This deal: NS take 12 in spades (6S makes), matching the makeable list.
+	testing.expect_value(t, ns.hist[dds.Strain.Spades][12], 1)
+}

@@ -4,6 +4,39 @@ Per-suit **trick-chance tables** for the North-South pair + a combined **P(≥ t
 next to the DDS par as a make-chance guide. Source doc: `Naive card combination analyser.md`.
 Inspiration: <https://bridge.esmarkkappel.dk/main/main.html> (a much simpler version of it).
 
+> ## ★★ NEXT-SESSION HANDOFF (2026-07-16)
+>
+> The 2-hand advisor + the image/PBN pipeline are feature-complete. This session shipped: misguess-tax
+> **(2b) joint-compounding** + **Ten..King geometry** + same-suit; **golden test** (`just test-golden`,
+> pins `data-sim` + `data-sim-guess`); **Option C1** narratable guess clause in the per-suit tooltip;
+> the **hand-ocr pipeline** (`just ocr-analyse`/`ocr-pbn`, `tools/ocr-analyse.sh`); a **`parse_boards`
+> `[Dealer]`/`[Declarer]` false-match bugfix**; **4-hand (Stage B1)** exact-DD deals; the **exact-DD
+> contract explorer (Stage B2)** on full deals; and the README
+> **layman quickstart (Stage C)**. Tests: combo 41, dd 25, norn 97; lints + golden clean. See the dated
+> sections below (search "DONE 2026-07-16").
+>
+> **NEXT (pick up here), in priority order:**
+> 1. **Stage B2 — DONE 2026-07-16.** Full 4-hand deals now drive a live EXACT double-dummy explorer:
+>    `dd.exact_grid(deal)` builds a `Grid_Result` spiked at each strain's NS DD trick count (n=1);
+>    `render_full_deal_body` bakes it via `write_exact_sim_json` (`{n:1,exact:true,lvl,strain,g}`,
+>    preselecting NS's best-making contract) onto a hidden `.sim-exact` div — dd.annotate owns `.par`, so
+>    the grid rides its own element and render.odin now reads `el._sim` from any `[data-sim]` in the slide.
+>    `simBand` gates on `sim.exact`: "Double-dummy (exact): N♠ makes/fails", no ±/deal-count, no tax rung,
+>    recon says "double-dummy" not "simulated". 2-hand path untouched (browser-verified both). Test
+>    `test_exact_grid_spikes` (dd 25). See "Stage B2" DONE section below.
+> 2. **Fuller layman USER GUIDE (Stage C+).** The README "Analyse a real hand" quickstart is in; a
+>    standalone `USING.md` (screenshots of the card page, what each row/colour/band means in plain terms,
+>    the photo workflow) would help non-devs. The in-app Help "?" modal already covers the numbers. Low
+>    urgency — only if a real end user needs onboarding.
+> 3. **Misguess-tax fallbacks #2/#3** (analytic estimator / full PIMC) — only if the tax proves too crude
+>    on real boards. **Option C2 (reference library) / C3 (entry model)** stay demoted (DDS covers realism).
+>
+> **Verify commands:** `just lint`, `just test-combo` (41), `just test-dd` (25, ~3 min single-thread),
+> `just test-golden`, `just ocr-analyse --demo` (pipeline plumbing). Browser: serve a page via
+> `python -m http.server` (file:// is blocked) + playwright. **Uncommitted at handoff** (user manages
+> commits): norn `render.odin`; odin-sims `dd/tax*.odin`, `dd/sample*.odin`, `pbn_analyse.odin`, `justfile`,
+> `tools/ocr-analyse.sh`, `tests/golden*`, this doc; `deal-simulations/README.md`.
+
 **Phase 1 AND Track 1 (the interactive client-side redesign) are DONE** — built, vetted, tested, wired,
 and eyeballed in-browser. **Phase 2 (real single-dummy lines) is COMPLETE — all four bricks built + tested:** brick 1 (fixed-line
 evaluator, `combo/single_dummy.odin`), brick 2 (candidate-line generator + Pareto/best-line,
@@ -331,10 +364,10 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
 >   reconciliation strip, help paragraphs. Guarded so normal sim/dd pages are unchanged.
 > - **CLI** (`pbn_analyse`): `--sample [--contract|auto] [--seed] [--void|--len|--lead] [--html] [--file|stdin]`,
 >   **multi-board** carousel (every `[Deal]` tag → one page / a report per board).
-> - Tests: combo 41, bidding 19, **dd 21** (incl. 4 PIMC spike + 7 misguess-tax), norn 97; all lints
->   clean; sim leak-clean.
+> - Tests: combo 41, bidding 19, **dd 24** (incl. 4 PIMC spike + 10 misguess-tax), norn 97; all lints
+>   clean; sim leak-clean. Plus `just test-golden` (exe-level data-sim / data-sim-guess fixture diff).
 >
-> **NOT DONE (the remaining work, in priority order):**
+> **REMAINING (all the priority items below are now DONE — 2026-07-16):**
 > 1. **Achievable single-dummy** — the honest "a human misguesses" number BELOW the DD-census ceiling
 >    (all sampling is currently per-layout double-dummy = a ceiling). Whole-deal POMDP; the one big item.
 >    **MISGUESS-TAX ESTIMATOR (candidate #1) BUILT 2026-07-14 (`dd/tax.odin` + `dd/tax_test.odin`) and
@@ -346,7 +379,11 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
 >    the card page green band ("· achievable 36% playing blind (Q♠ guess, −35)"). Baked into `data-sim` as
 >    `ach`/`taxpts`/`pvt`; `sample_board` computes `bs.tax`/`bs.tax_ok` once, shown only on the exact
 >    baked (strain, level) with no lead condition + only when a guess exists (guess-free → achievable ==
->    ceiling, rung suppressed). Help modal updated. dd 21 tests pass, lint clean.** DONE.
+>    ceiling, rung suppressed). Help modal updated.** DONE. **(2b) COMPOUNDING FIX + GEOMETRY BROADEN
+>    2026-07-16:** board achievable is now the best fixed blind commit POLICY across ALL pivots jointly
+>    (`joint_achievable_pct` — compounds independent knife-edge guesses, two-pivot 6S board → joint ~30% vs
+>    single-worst ~50%); pivot range broadened Jack..King → **Ten..King** (real two-way ten finesse +
+>    same-suit doubles). dd **24** tests pass, lint clean.
 >    **Prior spike 2026-07-13 (`dd/pimc.odin` + `dd/pimc_test.odin`) — do NOT productionise as-is; see the
 >    "PIMC spike findings" block below.** A minimal PIMC play-out (blind declarer, DD defenders) was
 >    built and measured: (a) COST ~22–56 s/board single-thread (11k–27k DDS solves), 50–500× the
@@ -358,14 +395,19 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
 >    (labelled a ceiling, which is what serious tools report). **DECIDED: next session builds the
 >    misguess-tax estimator — see "NEXT SESSION — misguess-tax estimator" in the PIMC spike findings
 >    subsection below; start with candidate design #1 (per-layout DD-vs-fixed-guess delta).**
-> 2. **Option C** — entry-aware / reference-library narratable per-suit lines (Track 1 below; narration,
->    not realism, since DDS-sampling now covers realism). Incremental on combo.
-> 3. Minor: a golden test for the baked `data-sim*` JSON shape (eyeball-only today); optional per-declarer
->    base-grid selector (the lead picker already fixes declarer, so low value).
+> 2. **Option C narratable lines — C1 DONE 2026-07-16.** Per-suit line tooltip now names the blind two-way
+>    guess + its marginal cost ("Blind two-way guess for the Q♠ — a misguess costs about 34%"). combo stays
+>    SOLVER-FREE: pbn_analyse bakes `data-sim-guess` on the `.par` div, render.odin merges it into the suit
+>    tip client-side, gated to the declaring side. Browser-verified. C2 (reference library) / C3 (entry
+>    model) demoted off the critical path — DDS-sampling already covers realism. See "Option C — C1 ... DONE".
+> 3. **Golden test — DONE 2026-07-16.** `just test-golden` diffs the baked `data-sim` AND `data-sim-guess`
+>    against `tests/golden/` (byte-stable via the seeded RNG). Optional per-declarer base-grid selector
+>    stays low value (the lead picker already fixes declarer).
 >
-> **Uncommitted at handoff:** norn `render.odin`; odin-sims `dd/sample.odin`, `dd/sample_test.odin`,
-> `pbn_analyse.odin`, `justfile`, this doc. Build/verify commands unchanged (see "Dev / test commands"
-> and the justfile: `just test-dd` / `test-combo`, `just analyse-pbn …`).
+> **Uncommitted at handoff:** norn `render.odin`; odin-sims `dd/tax.odin`, `dd/tax_test.odin`,
+> `dd/sample.odin`, `dd/sample_test.odin`, `pbn_analyse.odin`, `justfile`, `tests/golden-sim-json.sh`,
+> `tests/golden/*`, this doc. Build/verify commands unchanged (see "Dev / test commands" and the justfile:
+> `just test-dd` / `test-combo` / `test-golden`, `just analyse-pbn …`).
 >
 > The detailed, dated build log for all of the above is in the "Suggested build order" subsection's
 > nested bullets further down. The prose below predates the build and describes the design/rationale.
@@ -573,22 +615,42 @@ constraints, seeded RNG, ONE CalcDDtable/layout — **no extra solves**, ~1× th
   during the build: a genuine two-way finesse is *invisible* in the DD strata — double-dummy always
   guesses right, so E[tricks | honour with West] == E[tricks | honour with East]. You CANNOT detect the
   guess by stratifying the solved grid; you must read the *tenace geometry*. `two_way_guess_pivots`
-  flags a missing honour C (Jack..King) iff (a) declarer holds BOTH immediate neighbours C+1 and C-1 (a
+  flags a missing honour C (**Ten..King**) iff (a) declarer holds BOTH immediate neighbours C+1 and C-1 (a
   tight tenace that traps C — excludes "solid tops" like AKQ-missing-J, whose lower neighbour is a
   defender card), AND (b) EACH declaring hand holds a card ranked above C (finessable from either side →
   genuinely two-way, not a forced one-way finesse).
+- **Geometry range = Ten..King (broadened from Jack..King 2026-07-16).** The floor is the TEN: a two-way
+  finesse for the ten (declarer holding J and 9 around it, a card above in both hands — e.g. K9 opp AJ
+  missing QT) is a genuine binary guess, and it is the ONLY shape that yields two INDEPENDENT same-suit
+  pivots (Q and T, separated by the held J). Deeper (a two-way nine) is essentially never trick-deciding,
+  so the range stops at the ten. Enumerated boundary (tests `test_tax_pivot_geometry` /
+  `test_tax_pivot_catalogue`): every textbook single-missing-honour two-way for J/Q is caught; a KING is
+  NEVER two-way (needs the Ace above it in BOTH hands — impossible), so even AQ-opp-JT9 is correctly a
+  one-way; missing-KQ / drop-vs-finesse percentage plays are NOT binary misguesses and stay untaxed
+  (taxing them would corrupt cold contracts, and there is no single-dummy ground truth here to validate a
+  looser filter against). The tight-tenace + above-in-both-hands filter thus captures exactly the set of
+  genuine binary two-way guesses.
+- **Same-suit multi-guess needs no special handling.** When a suit has two pivots (Q and T), the tight-
+  neighbour geometry GUARANTEES a declarer card (the J) sits between them — adjacent missing honours fail
+  the neighbour test — so they are independent finesses whose misguesses cost their own tricks. The joint
+  model's additive −1-per-misguess is therefore exact for same-suit pivots, same as cross-suit ones
+  (`test_tax_same_suit_double_pivot`).
 - **Why only TWO-WAY guesses.** A one-way (forced) finesse is NOT a guess — declarer just takes it and
   wins exactly when the DD solver does — so the −1-on-misguess penalty would over-tax it. Restricting to
   two-way tenaces is what keeps a COLD contract cold (the estimator's whole advantage over naive PIMC).
 - **The tax model (−1 on a wrong two-way guess is EXACT for a clean two-way finesse):** per pivot, split
   the sampled DD tricks by which defender holds C; committing to finesse toward defender d makes when
   C∈d and t≥need, OR when C∈other but t≥need+1 (an overtrick survives the one-trick misguess). Achievable
-  facing that guess = the better commit direction; board achievable = ceiling docked by the DOMINANT
-  guess (lowest committed make-%). Multiple independent guesses would compound — v1 reports the single
-  worst (matches the "single dominant two-way guess" framing). The −1 only bites at the knife edge
-  (t==need), so a non-pivotal flagged guess is self-correctingly untaxed.
+  facing that guess = the better commit direction (still reported per-pivot as `pivots[i].achievable`).
+  **Board achievable = the best fixed blind commit POLICY across ALL pivots jointly (2b, DONE 2026-07-16):**
+  each layout records the holder-pattern over every pivot; a policy fixes a direction per guess and a
+  layout makes iff `t − #misguessed ≥ need` (each wrong guess −1, additive); take the policy with the best
+  make fraction (2^n_pivots policies, n tiny — `joint_achievable_pct`). This COMPOUNDS independent guesses:
+  two knife-edge two-way finesses on a cold ceiling drop it to ~25%, not the ~50% the single-worst view
+  reported. Reduces to the single-pivot formula at n=1; achievable == ceiling at n=0. The −1 only bites at
+  the knife edge (t==need), so a non-pivotal flagged guess is self-correctingly untaxed.
 
-**Validated against the PIMC spike's boards (`test-dd`, 7 new tests, 21 total, lint clean):**
+**Validated against the PIMC spike's boards (`test-dd`, 24 total incl. compound + geometry-catalogue + same-suit, lint clean):**
 - **Two-way guess board `N:AJ54.AK2.A32.AK3 - KT32.543.654.542`, 3NT** (spades AJ54/KT32 miss Q9876, a
   two-way Q deciding the 9th trick): ceiling **71%**, achievable **36%**, tax **35 pts**, sole pivot =
   ♠Q. The blind declarer is right ~half the time — a real, sane tax. (This board is NOT stone cold: the
@@ -600,8 +662,10 @@ constraints, seeded RNG, ONE CalcDDtable/layout — **no extra solves**, ~1× th
 
 **KNOWN LIMITATIONS / conservative by design.** Guesses looser than a tight two-sided tenace (e.g. AJ
 missing KQ — two adjacent missing honours) are NOT flagged → left untaxed (slightly optimistic, but
-deliberately kept ABOVE PIMC's pessimistic floor rather than risk over-taxing). Only the single dominant
-guess is docked (compounding guesses under-taxed). The −1 penalty assumes a clean one-trick finesse loss.
+deliberately kept ABOVE PIMC's pessimistic floor rather than risk over-taxing). Multiple pivotal guesses
+now COMPOUND correctly (2b, best-policy joint — see above); the residual approximation is the additive
+−1-per-misguess assumption (two guesses in the SAME suit may not lose independent tricks). The −1 penalty
+assumes a clean one-trick finesse loss.
 
 **WIRED 2026-07-15.** (1) DONE — `sample_board` computes `bs.tax` via `misguess_tax` (same board/seed/
 constraints, one extra CalcDDtable pass, cheap vs the lead grids); `print_sample_verdict` prints the
@@ -610,8 +674,34 @@ shows "· achievable N% playing blind (Q♠ guess, −tax)" on the exact baked (
 condition, and only when a guess exists. Help modal explains it. **REMAINING:** (2) OPTIONAL: broaden
 guess geometry (looser tenaces, key-K location) if validation on more boards shows systematic
 over-optimism; (3) the analytic candidate #2 / full PIMC #3 remain the fallbacks if the tax proves too
-crude; (4) OPTIONAL golden test for the baked `data-sim` JSON shape (eyeball-verified today) — same
-gap the doc's minor item #3 already tracks.
+crude; (4) DONE 2026-07-16 — golden test for the baked `data-sim` JSON shape: `just test-golden` builds
+pbn_analyse, runs it on a fixed board+seed (the two-way ♠Q 3NT board, `--sample 120 --seed 7`), and diffs
+the emitted `data-sim='...'` against `tests/golden/two_way_q_3nt.datasim.json` (seeded xoshiro makes it
+byte-stable). Guards `write_sim_json` — incl. the `ach`/`taxpts`/`pvt` tax rung — from drifting out of
+sync with render.odin's `simBand` parser. Regenerate the fixture after an intentional format change (recipe
+in `tests/golden-sim-json.sh` header).
+
+**BOARD-MATRIX VALIDATION 2026-07-15 (7 boards, --sample 400 --seed 7 unless noted).** No systematic
+over-optimism found; the one soft spot is the already-documented compounding case.
+
+| board | geometry / contract | ceiling | achievable | tax | pivot | verdict |
+|---|---|---|---|---|---|---|
+| A | two-way ♠Q, thin 3NT (`AJ54.AK2.A32.AK3 / KT32.543.654.542`) | 74% | 37% | 37 | ♠Q | ✓ sane; seed-stable 37–41% over seeds 1/7/42/99 |
+| B | two-way ♠J, knife 3NT (`AQT4… / K932…`) | 100% | 50% | 50 | ♠J | ✓ whole contract rides the one guess → 50/50 |
+| C | TWO two-way Q (♠+♥), cushioned 3NT (E[tr] 9.76) | 100% | 88% | 12 | ♠Q | ⚠ docks the DOMINANT guess only → optimistic; true achievable lower (both Qs guessable). Mild here because the cushion absorbs one misguess |
+| D | two-way ♠Q but low need, 1NT | 100% | 100% | 0 | ♠Q | ✓ overtrick cushion self-corrects the misguess (non-pivotal → untaxed) |
+| E | one-way K finesse (`AQ2… / 543…`) | 100% | — | — | none | ✓ 0 pivots (forced finesse is not a guess) |
+| F | solid AKQ missing J, 6S | 100% | — | — | none | ✓ 0 pivots |
+| K | AQ opp JT, missing K (`AQ32… / JT54…`) | — | — | — | none | ✓ a King is NEVER two-way (would need the Ace above it in BOTH hands — impossible), correctly not flagged |
+
+Takeaways: single-guess boards are accurate + seed-stable; the cushion logic works (D, partial C);
+controls (E/F/K) yield no false positives. The one gap this matrix found — **compounding** (N independent
+pivotal guesses docked as if only the worst existed) — is now **FIXED (2b, DONE 2026-07-16)** by the joint
+best-policy achievable. New knife-edge two-pivot board `N:AKQJ4.AJ4.AJ4.A2 - T9832.KT3.KT3.43`, 6S (solid
+♠ trumps + two-way ♥Q AND ♦Q, no cushion): ceiling **100%**, each guess's marginal ~**50%**, joint
+achievable **~30%** (both queens must be right), tax **70** — the single-worst view would have wrongly
+reported ~50%. `test_tax_two_guesses_compound` (`test-dd`, now 24 tests, lint clean) pins it. Board C's
+mild under-tax is likewise resolved by the joint model.
 
 <details><summary>Original design sketch (pre-build) — kept for the candidate #2/#3 fallbacks</summary>
 
@@ -951,6 +1041,88 @@ bridge sources publish the known optimal line + expected tricks for every canoni
 - Effort: LARGE — sourcing/encoding the reference (watch data licensing if scraping), topology
   canonicalisation, entry-parameterised line selection, and reconciling with the convolution/DP. Weeks,
   a project of its own. Examine it once Option A's curated set stops being enough.
+
+### hand-ocr pipeline + 4-hand deals DONE 2026-07-16
+
+**Image / PBN → card page pipeline (Stage A).** `just ocr-analyse <image>` (→ `<base>.html`) and `just
+ocr-pbn <image>` bridge the sibling **hand-ocr** project (uv/Python, `../../hand-ocr`) to pbn_analyse via
+`tools/ocr-analyse.sh` (runs `uv run --project ../../hand-ocr python hand-ocr.py … | pbn_analyse.exe`).
+`just ocr-analyse --demo` plumbing-tests it end-to-end (no vision deps). pbn_analyse reads a PBN string,
+`--file`, or stdin, multi-board. **Bug fixed:** `parse_boards` matched bare `[Deal`, which also caught a
+`.pbn` file's `[Dealer]`/`[Declarer]` tags → spurious duplicate boards; now matches `[Deal "` (`DEAL_TAG`).
+**LIN is not read** (no reader; LIN can only express a complete deal — use PBN, whose `-` marks unknown
+hands the 2-hand advisor needs).
+
+**4-hand deals (Stage B1).** A fully-known PBN deal now takes the EXACT double-dummy path instead of
+bailing "Not a 2-hand board": `board_fully_known` → `render_full_deal_body` (HTML) / `report_full_deal`
+(text) reuse the sim card-page flow — `norn.render_deal_html_cards` (4 hands face-up) + `dd.annotate`
+(one `CalcDDtable` of the ACTUAL deal → the `.par` caption: par + NS-makeable + the CCA slider
+`data-target`) + `combo.annotate` on the real deal (both partnerships' CCA). DDS is inited when any
+board is full (not only `--sample`). Page title reflects content (advisor / "Bridge deal analysis
+(double-dummy + CCA)" / mixed). Verified: text (`Par: NS 990 [6NT NS] — NS make: 6NT 6S 5H 5C 5D`) + HTML
+(4 hands face-up, both-sides CCA, exact `.par`, 0 JS errors). Golden + lints clean.
+
+**Stage B2 — exact-DD contract explorer on full deals DONE 2026-07-16.** The B1 page rendered par +
+makeable + CCA but the ♠♥♦♣NT picker, trick slider, and green band stayed dark (they only wake for a
+`data-sim` grid). Now `dd.exact_grid(deal)` (`dd/sample.odin`) returns a `Grid_Result` whose every strain
+is a SPIKE at the NS double-dummy trick count (`max(resTable[strain][N|S])`), `n=1` — the exact census, no
+sampling; it reuses `solve_table`'s per-board cache (`dd.annotate` just solved the same deal).
+`render_full_deal_body` bakes it via `write_exact_sim_json` (`{"n":1,"exact":true,"lvl","strain","g"}`,
+preselecting NS's best-making contract) onto a hidden **`.sim-exact`** div — `dd.annotate` owns the `.par`,
+so the grid rides its own element and `render.odin` now reads `el._sim` from ANY `[data-sim]` in the slide
+(2-hand `.par` or full-deal `.sim-exact`). `simBand` gates on `sim.exact`: shows "Double-dummy (exact):
+N♠ **makes/fails** (known deal, both defenders visible)", NO sampling ± / deal count, NO misguess-tax rung
+(both defenders visible), and the recon strip reads "double-dummy" not "simulated". The picker + slider now
+explore any contract's exact DD result and line it up against the per-level CCA rows. 2-hand path fully
+untouched (browser-verified both: full-deal 6♠ makes / 7NT fails / 6NT makes; 2-hand still "simulated 72%
+± · achievable 37% (Q♠ guess −35)"). Test `test_exact_grid_spikes` (dd now **25**). Golden + lints clean.
+
+### Option C — C1 (narration only) DONE 2026-07-16
+
+**SHIPPED.** The per-suit line tooltip now names the blind two-way guess and its cost. `pbn_analyse.odin`
+bakes `data-sim-guess='{"side":"ns","suits":{"s":{"card":"QS","tax":34}}}'` on the hidden `.par` div
+(`write_sim_guess_json` + `tax_has_narratable_guess` gate + `suit_key`), keyed by suit, DOMINANT pivot per
+suit, `tax` = that guess's MARGINAL cost (ceiling − pivot.achievable, rounded); suits whose guess is
+cushioned (marginal < 1) are omitted, and the whole attr is dropped when nothing is narratable.
+`render.odin` reads it into `el._simGuess` and, in `ctTableHTML`, appends "Blind two-way guess for the
+Q♠ — a misguess costs about 34%." to that suit's `data-tip` — but ONLY while the CCA view shows the
+declaring side (`guess.side === ccaSide`). combo stays SOLVER-FREE (the dd→UI bridge lives entirely in
+pbn_analyse + render, never combo). Browser-verified (playwright): ♠ row carries the clause, ♥/♦/♣ clean,
+EW side suppresses it, 0 JS errors (favicon only). Golden `just test-golden` now pins BOTH `data-sim` and
+`data-sim-guess` (`tests/golden/two_way_q_3nt.simguess.json`). Lints clean.
+
+**Original committed plan (for reference):**
+
+**Reframing (decided).** Option C originally bundled TWO realism deliverables — an entry-aware line model
+and a provably-optimal suit-combination REFERENCE LIBRARY. **DDS-sampling already fixed the realism**
+(sins 1+2+3, whole-hand — see the "Option C vs DDS-sampling" trade table: C's "surviving justification is
+narration, not realism"). So the committed scope is **narration only**. The reference library (now C2) and
+entry model (now C3) are demoted to low-ROI options, OFF the critical path.
+
+**The gap C1 closes.** The per-suit `line` column + `data-{ns,ew}-tips` tooltip narrate the combo
+HEURISTIC line ("finesse the Q") with NO hint that that suit carries a blind two-way guess the misguess-
+tax already priced. The user reads "finesse the Q" and cannot tell it is the 50/50 costing the contract
+35%. C1 ties the pretty prose to the validated tax so narration and numbers tell ONE story.
+
+**C1 stages (small, ~1 session, no new correctness risk — grounded in already-validated tax pivots +
+already-tested combo describers):**
+1. **Thread tax → per-suit render.** `Board_Sample` already carries `bs.tax`/`bs.tax_ok`. Pass the pivot
+   set into the per-suit annotation path at the `combo.annotate` call site in `pbn_analyse.odin` (~line
+   737), or overlay after it. `tax.pivots[i].card` names the guessed suit(s) and `tax.tax_pts` the cost.
+2. **Append a guess clause** in/around `describe_suit_line` (`combo/combo.odin:1360`) for any suit holding
+   a tax pivot: e.g. "— blind two-way guess (~50/50); a misguess taxes the contract N%". Reuse the pivot
+   card + `tax_pts`. Keep the NO-apostrophe / NO-double-quote rule (tips live in single-quoted HTML attrs).
+3. **Emit.** Bake the clause into the existing `data-{ns,ew}-tips` strings server-side (simplest, no client
+   change); the render.odin tooltip (`.cca-tip`) shows it for free. (Alt: a parallel `data-*-guess` attr
+   the client merges — only if server-side bake is awkward.)
+4. **Tests.** combo/lines test: the describer includes the guess clause IFF a pivot sits in that suit, and
+   omits it otherwise (no false clause on guess-free suits). Extend `just test-golden` with a TIPS fixture
+   on the two-way ♠Q board so the narration string is pinned byte-for-byte like `data-sim` already is.
+
+**Explicitly NOT in C1:** the reference library (C2 — LARGE, licensing, realism now redundant → pursue
+only for a teaching-grade "textbook optimal line is X" oracle); entry-aware line selection (C3 — medium,
+realism redundant, per-suit entry budget is the cross-suit fudge DDS does correctly); Option B tree/
+conditional narration (honest but fuzzy to render, partial coverage). These stay parked above.
 
 ## Phase-1 bug fixed while building brick 3 (affects shipped output)
 
