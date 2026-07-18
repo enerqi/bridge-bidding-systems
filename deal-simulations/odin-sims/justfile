@@ -22,6 +22,12 @@ dds_home := env_var_or_default("DDS_HOME", replace(home_directory(), "\\", "/") 
 dds := "-collection:dds=" + dds_home
 sim_name := "sim.exe"
 
+# hand-ocr is a SEPARATE sibling repo (image -> PBN/LIN; uv/Python). HAND_OCR_DIR overrides the default
+# checkout location, mirroring norn_home/dds_home. `export` re-exports it as an env var so the `ocr-analyse`
+# recipe's `ocr_analyse.py` reads the SAME value (just variables are not environment variables otherwise) --
+# the path lives in one place across just and Python.
+export HAND_OCR_DIR := env_var_or_default("HAND_OCR_DIR", replace(home_directory(), "\\", "/") + "/dev/bridge-hand-ocr")
+
 # ensure the build artifacts directory exists
 [unix]
 @mktarget_dirs:
@@ -56,10 +62,10 @@ format:
 	odinfmt -w .
 
 # lints the two library packages (`bidding`, `dd`) with -no-entry-point and the `sim.odin` single-file
-# program; `dd` and `sim` pull in the `dds` collection (the DDS boundary), `bidding` does not.
+# program; `dd` and `sim` pull in the `dds` collection (the DDS boundary), `bidding` does not. `combo`
+# (the naive card-combination analyser) is solver-free like `bidding`, so it needs only the norn collection.
 # ---
-# type check + vet + strict style (bidding, combo, dd, sim.odin). `combo` (the naive card-combination
-# analyser) is solver-free like `bidding`, so it needs only the norn collection.
+# type check + vet + strict style (bidding, combo, dd, sim.odin)
 lint *args:
 	odin check bidding {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
 	odin check combo {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
@@ -83,18 +89,25 @@ run_debug *args: mktarget_dirs
 build *args: mktarget_dirs
 	odin build sim.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/{{sim_name}} {{args}}
 
-# 2-hand (declarer + dummy) card-combination advisor: read a PBN [Deal] tag and print the combo
-# analysis (double-dummy census + achievable single-dummy) for the known partnership. Add
-# `--sample <deals>` for the DDS-sampling whole-hand make-% verdict (links DDS); `--contract 4H` is
-# OPTIONAL (best contract auto-picked if omitted). `--html <out>` writes the interactive card page
-# (with the green verdict band + contract picker when sampling).
-# e.g. just analyse-pbn '[Deal "N:AKQ32.AK2.A32.A32 - Q.QJT98.KQJ.KQJT -"]'  (add --target 9 to highlight a level)
-# e.g. just analyse-pbn --sample 400 '[Deal "N:... - ... -"]'                  (auto-pick the contract)
-# e.g. just analyse-pbn --sample 400 --contract 3NT --html out.html '[Deal "N:... - ... -"]'
-# Reads a PBN string arg, a --file <path>, or stdin (so `hand-ocr ... | pbn_analyse` works). A --file /
+# read a deal and print the combo analysis (double-dummy census + achievable single-dummy) for the
+# known partnership. The deal may be a PBN [Deal] tag / bare N:... value, a bridge-site hand URL
+# (BBO/IntoBridge `...?lin=...`), or a bare LIN `md|...` record. Add `--sample <deals>` for the
+# DDS-sampling whole-hand make-% verdict (links DDS); `--contract 4H` is OPTIONAL (best contract
+# auto-picked if omitted). `--html <out>` writes the interactive card page (green verdict band +
+# contract picker when sampling).
+# e.g. just analyse-deal '[Deal "N:AKQ3.AK2.A32.A32 - QJT98.QJT.KQ.KQJ -"]'  (add --target 9 to highlight a level)
+# e.g. just analyse-deal 'https://play.intobridge.com/hand?lin=...'            (paste a hand URL; single-quote it)
+# e.g. just analyse-deal --sample 400 '[Deal "N:... - ... -"]'                 (auto-pick the contract)
+# e.g. just analyse-deal --sample 400 --contract 3NT --html out.html '[Deal "N:... - ... -"]'
+# Reads a string arg, a --file <path>, or stdin (so `hand-ocr ... | pbn_analyse` works). A --file /
 # stdin holding SEVERAL [Deal] tags renders as one carousel page (text: a report per board).
-analyse-pbn *args: mktarget_dirs
+# ---
+# 2-hand (declarer + dummy) card-combination advisor: deal (PBN / LIN URL) -> combo analysis (+ optional --sample verdict / --html card page)
+analyse-deal *args: mktarget_dirs
 	odin run pbn_analyse.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe -- {{args}}
+
+# deprecated alias for `analyse-deal` (recipe was PBN-only before it learned LIN)
+alias analyse-pbn := analyse-deal
 
 # Frequency test every scenario by default, or pass `-S name[,name]` to restrict the subset.
 # e.g. `just freq` (1M, -all), `just freq 5000000`, `just freq 1000000 -S 1c-any,2c-opener`.
@@ -104,17 +117,19 @@ analyse-pbn *args: mktarget_dirs
 freq trials="1000000" *args: mktarget_dirs
 	odin run sim.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/{{sim_name}} -- --frequency {{trials}} {{args}}
 
-# benchmark the combo package (Phase 1, Phase 2 lines/optimal, annotate end-to-end).
 # Override counts: just bench '-define:COUNT_SUIT=5000' '-define:COUNT_DEAL=500'
+# ---
+# benchmark the combo package (Phase 1, Phase 2 lines/optimal, annotate end-to-end)
 bench *args: mktarget_dirs
 	odin run bench.odin -file {{norn}} -o:speed -microarch:native {{args}}
 
-# END-TO-END benchmark of ONE scenario's full pipeline (generate + DD filter + dd/combo annotate +
-# render), the compute behind `sim -S slam-makes-dd --count 48 --format html-cards --dd`, minus the file
-# write. Links DDS like sim. Knobs via -define, e.g.:
+# the compute behind `sim -S slam-makes-dd --count 48 --format html-cards --dd`, minus the file write.
+# Links DDS like sim. Knobs via -define, e.g.:
 #   just bench-e2e                                   (slam-makes-dd, count 48, 3 iters)
 #   just bench-e2e '-define:E2E_COUNT=24' '-define:E2E_ITERS=5'
 #   just bench-e2e '-define:COMBO_THREADS=false'     (time the serial combo path)
+# ---
+# END-TO-END benchmark of ONE scenario's full pipeline (generate + DD filter + dd/combo annotate + render)
 bench-e2e *args: mktarget_dirs
 	odin run bench_e2e.odin -file {{norn}} {{dds}} -o:speed -microarch:native {{args}}
 
@@ -126,33 +141,40 @@ test *args: mktarget_dirs
 test-combo *args: mktarget_dirs
 	odin test combo {{norn}} -debug -microarch:native -show-timings -out:target/debug/test-combo.exe {{args}}
 
-# run the double-dummy / DDS-sampling unit tests (links the DDS solver via the dds collection).
 # Forced single-threaded: DDS shares process-global transposition tables and is NOT reentrant, so
 # concurrent test procs would corrupt each other's solves.
+# ---
+# run the double-dummy / DDS-sampling unit tests (links the DDS solver via the dds collection)
 test-dd *args: mktarget_dirs
 	odin test dd {{norn}} {{dds}} -debug -microarch:native -define:ODIN_TEST_THREADS=1 -show-timings -out:target/debug/test-dd.exe {{args}}
 
-# OCR a bridge hand-diagram IMAGE to a PBN [Deal] tag (declarer+dummy uses '-' for the unknown hands; a
-# full 4-hand diagram emits all four), printed to stdout. Bridges to the sibling hand-ocr project (uv). A
-# real image needs hand-ocr's vision extra:  (cd ../../hand-ocr && just sync-vision).
+# declarer+dummy uses '-' for the unknown hands; a full 4-hand diagram emits all four. Bridges to the
+# sibling hand-ocr repo (uv), at HAND_OCR_DIR (default ~/dev/bridge-hand-ocr). A real image needs
+# hand-ocr's vision extra there: (cd "$HAND_OCR_DIR" && just sync-vision).
 # <image> may be `--clipboard` to read straight from the OS clipboard (screenshot, no temp file).
 # e.g. `just ocr-pbn hand.png` or `just ocr-pbn hand.png --first E` or `just ocr-pbn --clipboard`
+# ---
+# OCR a bridge hand-diagram IMAGE to a PBN [Deal] tag, printed to stdout
 ocr-pbn image *args:
-	uv run --project ../../hand-ocr python ../../hand-ocr/hand-ocr.py {{image}} --format pbn {{args}}
+	uv run --project {{HAND_OCR_DIR}} python {{HAND_OCR_DIR}}/hand-ocr.py {{image}} --format pbn {{args}}
 
-# OCR a hand-diagram IMAGE straight to the interactive card page: image -> PBN -> pbn_analyse with the
-# DDS-sampling advisor + CCA/DD features. Writes <image-basename>.html (override with --html); samples 400
-# deals by default (override with --sample). Extra flags pass through to pbn_analyse (e.g. --contract 3NT).
+# image -> PBN -> pbn_analyse with the DDS-sampling advisor + CCA/DD features. Writes
+# <image-basename>.html (override with --html); samples 400 deals by default (override with --sample).
+# Extra flags pass through to pbn_analyse (e.g. --contract 3NT).
 # `just ocr-analyse --demo` runs hand-ocr's sample deal end-to-end (plumbing check, no vision deps needed).
 # <image> may be `--clipboard` to read straight from the OS clipboard (screenshot -> card page, no temp file).
 # e.g. `just ocr-analyse hand.png` ; `just ocr-analyse hand.png --contract 3NT --seed 7` ; `just ocr-analyse --clipboard`
+# ---
+# OCR a hand-diagram IMAGE straight to the interactive card page
 ocr-analyse image *args: mktarget_dirs
 	odin build pbn_analyse.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe
 	uv run --no-project python tools/ocr_analyse.py {{image}} {{args}}
 
-# golden test for the card page's data-sim JSON contract: build pbn_analyse, run it on a fixed board+seed,
-# and diff the emitted `data-sim='...'` against tests/golden/. Guards write_sim_json (incl. the misguess-tax
-# ach/taxpts/pvt rung) from silently drifting out of sync with render.odin's simBand parser.
+# build pbn_analyse, run it on a fixed board+seed, and diff the emitted `data-sim='...'` against
+# tests/golden/. Guards write_sim_json (incl. the misguess-tax ach/taxpts/pvt rung) from silently
+# drifting out of sync with render.odin's simBand parser.
+# ---
+# golden test for the card page's data-sim JSON contract
 test-golden: mktarget_dirs
 	odin build pbn_analyse.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe
 	uv run --no-project python tests/golden_sim_json.py

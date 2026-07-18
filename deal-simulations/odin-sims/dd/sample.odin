@@ -490,6 +490,46 @@ result_for :: proc(grid: Grid_Result, contract: Contract) -> (r: Sample_Result) 
 	return
 }
 
+// The KILLING opening lead for `contract`: over the already-sampled opening-lead sub-grids, the defender
+// card whose sub-grid yields the LOWEST make-% (the lead that beats the contract most often). Returns that
+// card, its make-%, the sub-sample size `n` (a rare card has few samples → a wider ±, so it is reported for
+// the caller to gauge), and the unconditioned baseline make-%. `ok` is false when no sub-grid clears
+// `min_n` (guards tiny-n noise). Only DEFENDER seats (not in `side`) carry sub-grids. Pure reducer over the
+// grids `sample_lead_grids` already filled — no extra solves. (Aids plan D.)
+worst_lead :: proc(
+	leads: ^Lead_Grids,
+	contract: Contract,
+	side: bit_set[norn.Seat],
+	min_n := 20,
+) -> (
+	card: norn.Card,
+	make_pct: f64,
+	n: int,
+	base_pct: f64,
+	ok: bool,
+) {
+	base_pct = result_for(leads.base, contract).make_pct
+	defenders := bit_set[norn.Seat]{.North, .East, .South, .West} - side
+	worst := 101.0 // above any real percentage, so the first qualifying card replaces it
+	for d in defenders {
+		for ci in 0 ..< 52 {
+			lc := leads.seat[d][ci]
+			if lc.n < min_n {
+				continue // too few samples for an honest make-% off this card
+			}
+			r := result_for(Grid_Result{n = lc.n, hist = lc.hist}, contract)
+			if r.make_pct < worst {
+				worst = r.make_pct
+				card = norn.Card(ci)
+				n = lc.n
+				ok = true
+			}
+		}
+	}
+	make_pct = worst
+	return
+}
+
 // The best contract to suggest from a sampled grid, when the user gave no --contract: the strain+level
 // maximising EXPECTED SCORE = P(make) × the (neutral, undoubled) making score. This is a "what would you
 // bid" proxy — it rewards a contract for both making OFTEN and being WORTH bidding (the game/slam bonus

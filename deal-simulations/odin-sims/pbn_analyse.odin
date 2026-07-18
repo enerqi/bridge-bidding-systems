@@ -10,10 +10,15 @@ package main
 	(combo enumerates every E/W split), which is exactly the declarer+dummy situation.
 
 	Input (in priority order):
-	  1. `--file <path>` / `-f <path>` — read the PBN from a file (the whole file is scanned for a
+	  1. `--file <path>` / `-f <path>` — read the deal from a file (the whole file is scanned for a
 	     `[Deal "..."]` tag).
-	  2. positional args — joined with spaces and parsed as the PBN string / bare `N:...` value.
-	  3. otherwise — read the PBN from stdin (so `hand-ocr ... | pbn_analyse` works).
+	  2. positional args — joined with spaces and parsed as the deal string.
+	  3. otherwise — read the deal from stdin (so `hand-ocr ... | pbn_analyse` works).
+
+	The deal string may be PBN (a `[Deal "..."]` tag or a bare `N:...` value) OR a LIN deal from a
+	bridge site: paste a whole BBO / IntoBridge hand URL (`...?lin=pn|...|md|...`) — the `lin=` query
+	parameter is extracted and percent-decoded — or a bare LIN record (`...md|...`). The `md|` deal is
+	read; the auction and play are ignored. LIN input is always one whole board.
 
 	Options:
 	  --target <n> / -t <n>  Highlight the P(>= n) make column (default 0 = no highlight). No DDS par is
@@ -40,8 +45,9 @@ package main
 	                         CCA overlay). With --sample the page also bakes the sampled grid for its green
 	                         whole-hand verdict + contract picker.
 
-	Build/run (from the odin-sims dir): see the justfile `analyse-pbn` recipe, e.g.
-	  just analyse-pbn '[Deal "N:AKQ.. ... - -"]'
+	Build/run (from the odin-sims dir): see the justfile `analyse-deal` recipe, e.g.
+	  just analyse-deal '[Deal "N:AKQ.. ... - -"]'
+	  just analyse-deal 'https://play.intobridge.com/hand?lin=...'   (a pasted bridge-site hand URL)
 	The raw form:
 	  odin run pbn_analyse.odin -file -collection:norn=C:/Users/Enerqi/dev/norn -- --target 9 '<PBN>'
 */
@@ -76,23 +82,24 @@ run :: proc() -> int {
 		fmt.eprintln(
 			"                   [--void <seat>:<suit>] [--len <seat>:<suit>:<n|n-m|n+>] [--lead <seat>:<card>]",
 		)
-		fmt.eprintln("                   ['<PBN deal tag>']")
+		fmt.eprintln("                   ['<PBN deal tag | LIN record | bridge-site hand URL>']")
 		return 2
 	}
 	if strings.trim_space(args.text) == "" {
-		fmt.eprintln("pbn_analyse: no PBN input (pass a string, --file, or pipe via stdin)")
+		fmt.eprintln("pbn_analyse: no deal input (pass a PBN/LIN string, --file, or pipe via stdin)")
 		return 2
 	}
-	// Parse ALL [Deal] tags in the input (a hand-ocr session can hold several); a single bare `N:...`
-	// value is one board. Multiple boards render as one carousel page / a text report per board.
-	boards, berr := parse_boards(args.text)
+	// Resolve the input to boards. PBN input may hold several `[Deal]` tags (a hand-ocr session, a
+	// `.pbn` file) — one board each; LIN input (a bridge-site URL or bare `md|` record) is one board.
+	// Multiple boards render as one carousel page / a text report per board.
+	boards, berr := resolve_boards(args.text)
 	defer delete(boards)
-	if berr != .None {
-		fmt.eprintfln("pbn_analyse: could not parse PBN deal: %v", berr)
+	if berr != "" {
+		fmt.eprintln("pbn_analyse:", berr)
 		return 1
 	}
 	if len(boards) == 0 {
-		fmt.eprintln("pbn_analyse: no [Deal] tag found in the input")
+		fmt.eprintln("pbn_analyse: no deal found in the input")
 		return 1
 	}
 	multi := len(boards) > 1
@@ -271,6 +278,10 @@ report_board :: proc(
 		return
 	}
 	sd, _, _ := combo.sd_bundle_parsed_board(board)
+	advice, _, _ := combo.suit_combo_advice_parsed_board(board)
+	defer for ad in advice {
+		delete(ad.cands)
+	}
 
 	bs, serr := sample_board(board, side, args, contract, has_contract)
 	defer board_sample_free(&bs)
@@ -278,10 +289,18 @@ report_board :: proc(
 		fmt.eprintln("pbn_analyse:", serr)
 	}
 
-	print_report(&a, &sd, side, args.target)
+	// If sampling ran, the whole-hand simulated E[total] is the honest cross-check for the naive
+	// census — thread it into the caveat so the over-count is named right where the warning lives.
+	sim_total: Maybe(f64)
+	sample: dd.Sample_Result
 	if bs.have {
-		sample := dd.result_for(bs.grid, bs.contract)
-		print_sample_verdict(&a, &sd, &sample, bs.auto, bs.tax, bs.tax_ok)
+		sample = dd.result_for(bs.grid, bs.contract)
+		sim_total = sample.mean_tricks
+	}
+
+	print_report(&a, &sd, advice, side, args.target, sim_total)
+	if bs.have {
+		print_sample_verdict(&a, &sd, &sample, bs.auto, bs.tax, bs.tax_ok, bs.leads, side, bs.contract)
 		if len(args.constraints) > 0 || len(args.held) > 0 {
 			fmt.print("  (sampled only layouts where")
 			first := true
@@ -303,6 +322,91 @@ report_board :: proc(
 			fmt.println(")")
 		}
 	}
+}
+
+// Resolve raw input text to boards, dispatching on format. LIN input — a bridge-site hand URL
+// (`...?lin=...`) or a bare LIN record (`...md|...`) — is routed to the LIN reader; everything else is
+// treated as PBN. Returns an error MESSAGE ("" == ok) rather than a typed error, since the two readers
+// have distinct error enums. LIN yields exactly one board; PBN may yield several.
+resolve_boards :: proc(text: string) -> (boards: [dynamic]norn.Parsed_Board, errmsg: string) {
+	is_url_lin := strings.contains(text, "lin=")
+	// A bare LIN record has an `md|` token and no `[Deal "` tag (which would mark it as PBN).
+	is_bare_lin := !is_url_lin && strings.contains(text, "md|") && !strings.contains(text, DEAL_TAG)
+
+	if is_url_lin || is_bare_lin {
+		lin_str := text
+		if is_url_lin {
+			lin_str = lin_query_param(text, context.temp_allocator)
+		}
+		b, e := norn.parse_lin_deal(lin_str)
+		if e != .None {
+			return nil, fmt.tprintf("could not parse LIN deal: %v", e)
+		}
+		append(&boards, b)
+		return boards, ""
+	}
+
+	b, e := parse_boards(text)
+	if e != .None {
+		return nil, fmt.tprintf("could not parse PBN deal: %v", e)
+	}
+	return b, ""
+}
+
+// Extract the `lin=` query-parameter value from a URL (or any string containing `lin=`) and
+// percent-decode it. The value runs to the next `&` (start of the next query parameter) or the end of
+// the string — LIN's own `|` separators are part of the value, not query delimiters. Returns "" when
+// there is no `lin=` (which parse_lin_deal then reports as a missing `md` tag). Allocates on `alloc`.
+lin_query_param :: proc(text: string, alloc := context.allocator) -> string {
+	li := strings.index(text, "lin=")
+	if li < 0 {
+		return ""
+	}
+	rest := text[li + len("lin="):]
+	if amp := strings.index_byte(rest, '&'); amp >= 0 {
+		rest = rest[:amp]
+	}
+	return url_decode(rest, alloc)
+}
+
+// Percent-decode a URL query value: `%XX` -> the byte, `+` -> space, everything else verbatim. A `%`
+// not followed by two hex digits is passed through literally (real LIN URLs are well-formed; this just
+// avoids losing data on a malformed one). Allocates the result on `alloc`.
+url_decode :: proc(s: string, alloc := context.allocator) -> string {
+	b := strings.builder_make(alloc)
+	i := 0
+	for i < len(s) {
+		c := s[i]
+		if c == '%' && i + 2 < len(s) {
+			hi, hi_ok := hex_nibble(s[i + 1])
+			lo, lo_ok := hex_nibble(s[i + 2])
+			if hi_ok && lo_ok {
+				strings.write_byte(&b, hi << 4 | lo)
+				i += 3
+				continue
+			}
+		}
+		if c == '+' {
+			strings.write_byte(&b, ' ')
+		} else {
+			strings.write_byte(&b, c)
+		}
+		i += 1
+	}
+	return strings.to_string(b)
+}
+
+// Value of a single hex digit (0-9, a-f, A-F). ok = false on any other byte.
+hex_nibble :: proc(c: u8) -> (v: u8, ok: bool) {
+	switch c {
+	case '0' ..= '9':
+		return c - '0', true
+	case 'a' ..= 'f':
+		return c - 'a' + 10, true
+	case 'A' ..= 'F':
+		return c - 'A' + 10, true
+	}
+	return 0, false
 }
 
 // The `[Deal` tag opener, including the space + quote that START its value: `[Deal "`. Matching this
@@ -383,6 +487,9 @@ print_sample_verdict :: proc(
 	auto_contract: bool,
 	tax: dd.Tax_Result,
 	tax_ok: bool,
+	leads: ^dd.Lead_Grids,
+	side: bit_set[norn.Seat],
+	contract: dd.Contract,
 ) {
 	label := dd.contract_label(dd.Contract{level = s.level, strain = s.strain}) // temp-allocated
 	fmt.println("\nWhole-hand (simulated) — the honest whole-deal verdict:")
@@ -397,6 +504,20 @@ print_sample_verdict :: proc(
 		s.n,
 		s.mean_tricks,
 	)
+	// D. Worst opening lead: the defender card that beats the contract most often, over the already-sampled
+	// lead sub-grids. Only surfaced when it costs something material vs the baseline (a killing lead worth
+	// warning about); a rare lead's sub-sample `n` is shown so its wider ± is honest.
+	if leads != nil {
+		if card, wpct, wn, base_pct, ok := dd.worst_lead(leads, contract, side); ok && base_pct-wpct >= 3 {
+			fmt.printfln(
+				"  Worst opening lead: %s -> %.0f%% (vs %.0f%% average, %d deals) — plan for it.",
+				card_word(card),
+				wpct,
+				base_pct,
+				wn,
+			)
+		}
+	}
 	// The achievable (misguess-tax) rung: the ceiling docked by the dominant blind two-way guess. Only
 	// shown when the estimator ran AND found a guess to tax; a guess-free board's achievable == ceiling,
 	// so the extra line would just repeat the headline.
@@ -408,12 +529,10 @@ print_sample_verdict :: proc(
 			card_word(tax.pivots[0].card),
 		)
 	}
-	fmt.printfln(
-		"  reconciliation:  ceiling %.2f (combo DD)  >  blind %.2f (combo SD)  >  simulated %.2f (DDS whole-hand)",
-		combo.expected_tricks(a.total),
-		combo.expected_tricks(sd.totsd),
-		s.mean_tricks,
-	)
+	fmt.println("  reconciliation:")
+	fmt.printfln("    naive ceiling %.2f (DD census)", combo.expected_tricks(a.total))
+	fmt.printfln("    naive blind   %.2f (SD census)", combo.expected_tricks(sd.totsd))
+	fmt.printfln("    simulated     %.2f (DDS whole-hand)", s.mean_tricks)
 	fmt.println(
 		"  (per-layout double-dummy census: a ceiling that already bakes in entries/squeezes/tempo per",
 	)
@@ -642,15 +761,341 @@ read_stdin :: proc() -> string {
 	return strings.to_string(sb)
 }
 
-// Print the census table plus a single-dummy summary for the analysed partnership.
-print_report :: proc(a: ^combo.Deal_Analysis, sd: ^combo.Sd_Bundle, side: bit_set[norn.Seat], target: int) {
+// A. Winner/loser count + trick gap (aids plan A). Guaranteed top tricks = the sum of each suit's
+// recommended-line FLOOR (`combo.sure_tricks` — the tricks every E/W split concedes); the gap to `target`
+// is what must be DEVELOPED. Develop-from suits are those whose best line AVERAGES more than its floor (a
+// finesse/duck that gains when it works), ranked by that surplus. Pure combo data (floor + best-line
+// mean), no DDS — a canonical winner/loser teaching count layered on the census.
+print_winner_count :: proc(sd: ^combo.Sd_Bundle, target: int) {
+	letters := [4]string{"S", "H", "D", "C"} // Sd_Bundle order is S H D C
+	floors: [4]int
+	means: [4]f64
+	guaranteed := 0
+	for i in 0 ..< 4 {
+		floors[i] = combo.sure_tricks(sd.best_marg[i].p)
+		means[i] = combo.expected_tricks(sd.best_marg[i].p)
+		guaranteed += floors[i]
+	}
+
+	fmt.printf("\nTop tricks (guaranteed): %d  (", guaranteed)
+	for i in 0 ..< 4 {
+		fmt.printf("%s%s%d", " " if i > 0 else "", letters[i], floors[i])
+	}
+	fmt.println(")")
+
+	// No contract level in view (no --target / annotator) → just the count above; there is no gap to size.
+	if target < 1 || target > 13 {
+		return
+	}
+	gap := target - guaranteed
+	if gap <= 0 {
+		fmt.printfln("  Need %d → already guaranteed; cash your top tricks.", target)
+		return
+	}
+
+	// Rank the develop-from suits by surplus (best-line mean over its guaranteed floor), descending.
+	order := [4]int{0, 1, 2, 3}
+	for i in 1 ..< 4 {
+		j := i
+		for j > 0 &&
+		    (means[order[j]] - f64(floors[order[j]])) > (means[order[j - 1]] - f64(floors[order[j - 1]])) {
+			order[j], order[j - 1] = order[j - 1], order[j]
+			j -= 1
+		}
+	}
+
+	fmt.printf("  Need %d → develop %d more.", target, gap)
+	any := false
+	for oi in order {
+		surplus := means[oi] - f64(floors[oi])
+		if surplus < 0.05 {
+			continue // no meaningful extra available by developing this suit
+		}
+		fmt.printf("%s %s %s (+%.1f)", " Sources:" if !any else " ·", letters[oi], sd.best_name[oi], surplus)
+		any = true
+	}
+	if !any {
+		fmt.print("  No suit develops extra tricks — the gap needs tempo/entries the naive model can't see.")
+	}
+	fmt.println()
+}
+
+// B. Suit-combination odds per line (aids plan B). For each suit that carries a real DECISION (a named
+// pattern, or candidate lines whose means genuinely differ), list the distinct lines with their
+// decision-relevant odds: E[tricks] and the chance of REACHING the extra trick over the line's guaranteed
+// floor. The pattern note (combo `combination_note`) names the standard combination and mirrors the blind
+// two-way guess the misguess tax prices. Pure combo data — no DDS.
+print_combination_odds :: proc(advice: [4]combo.Suit_Combo_Advice) {
+	letters := [4]string{"S", "H", "D", "C"} // DISPLAY_SUITS / Sd_Bundle order
+	header := false
+	for i in 0 ..< 4 {
+		ad := advice[i]
+		if !combination_is_decision(ad) {
+			continue // a solid/void suit or one with a single dominant line — nothing to weigh up
+		}
+		if !header {
+			fmt.println("\nSuit combinations (per-line odds — the guess each line hinges on):")
+			header = true
+		}
+		fmt.printf("  %s", letters[i])
+		if ad.note != "" {
+			fmt.printf("   [%s]", ad.note)
+		}
+		fmt.println()
+
+		// Emit each DISTINCT candidate once, highest mean first. Duplicate distributions (finesse ==
+		// finesse-other on a one-way holding) collapse to a single line. cands is tiny (<= N_CANDIDATE_LINES),
+		// so the repeated linear scans cost nothing. `pivotal` = the extra trick over this line's guaranteed
+		// floor (what it is playing FOR); its reach % is the odds the line hinges on.
+		done: [combo.N_CANDIDATE_LINES]bool
+		emitted: [combo.N_CANDIDATE_LINES]bool
+		for _ in 0 ..< len(ad.cands) {
+			pick := -1
+			for ls, j in ad.cands {
+				if done[j] {
+					continue
+				}
+				if pick < 0 || ls.mean > ad.cands[pick].mean {
+					pick = j
+				}
+			}
+			if pick < 0 {
+				break
+			}
+			done[pick] = true
+			ls := ad.cands[pick]
+			dup := false
+			for j in 0 ..< len(ad.cands) {
+				if emitted[j] && abs(ad.cands[j].mean - ls.mean) < 1e-3 && ad.cands[j].floor == ls.floor {
+					dup = true
+					break
+				}
+			}
+			if dup {
+				continue // a near-identical line is already shown for this suit
+			}
+			emitted[pick] = true
+			piv := ls.floor + 1
+			if piv <= ls.dist.max_tricks && combo.p_reach(ls.dist.p, piv) < 0.999 {
+				fmt.printfln(
+					"      %-16s E %.2f  ·  %.0f%% to reach %d",
+					ls.name,
+					ls.mean,
+					100 * combo.p_reach(ls.dist.p, piv),
+					piv,
+				)
+			} else {
+				fmt.printfln("      %-16s E %.2f  ·  guaranteed %d", ls.name, ls.mean, ls.floor)
+			}
+		}
+	}
+}
+
+// A suit is worth a combination block when it names a standard pattern OR its candidate lines' means
+// genuinely differ (a real choice between lines) — not a solid runner or a void where every line coincides.
+combination_is_decision :: proc(ad: combo.Suit_Combo_Advice) -> bool {
+	if ad.note != "" {
+		return true
+	}
+	lo, hi := 99.0, -1.0
+	for ls in ad.cands {
+		lo = min(lo, ls.mean)
+		hi = max(hi, ls.mean)
+	}
+	return hi-lo > 0.10
+}
+
+// C. Safety play / min-variance line (aids plan C). Where a suit's best line BY MEAN differs from its best
+// line BY FLOOR — the high-mean line risks tricks the safety line locks in — show the trade. C3: if the
+// tricks guaranteed ELSEWHERE plus this suit's safety floor already meet `target`, say so — you don't need
+// the overtrick, so take the safety line. Pure combo data.
+print_safety :: proc(advice: [4]combo.Suit_Combo_Advice, target: int) {
+	letters := [4]string{"S", "H", "D", "C"}
+	// Total guaranteed across suits from the best-by-mean lines (same basis as the winner count).
+	total_floor := 0
+	for i in 0 ..< 4 {
+		ad := advice[i]
+		total_floor += ad.cands[ad.best_mean_idx].floor
+	}
+	header := false
+	for i in 0 ..< 4 {
+		ad := advice[i]
+		mean_line := ad.cands[ad.best_mean_idx]
+		floor_line := ad.cands[ad.best_floor_idx]
+		if ad.best_mean_idx == ad.best_floor_idx || floor_line.floor <= mean_line.floor {
+			continue // no distinct safety line, or it guarantees no more than the max-mean line
+		}
+		// GATE (aids plan C): the cheap candidate-line floors are pessimistic — the generic finesse plays
+		// mechanically and can throw a trick optimal play would keep (e.g. AKJ98: `finesse` floors at 1,
+		// but cashing A K then finessing floors at 2). That is NOT a real safety trade. Verify with the
+		// OPTIMAL blind-line search: only a genuine trade when even the mean-maximising line's own floor
+		// falls short of the safety floor. When the exact search overflows we can't verify, so stay silent.
+		opt, exact := combo.sd_optimal_distribution(ad.north_holding, ad.south_holding)
+		opt_floor := combo.sure_tricks(opt.p)
+		if !exact || opt_floor >= floor_line.floor {
+			continue // optimal play already secures the safety floor (or unverifiable) — no real trade
+		}
+		if !header {
+			fmt.println("\nSafety plays (most tricks vs guaranteed floor):")
+			header = true
+		}
+		fmt.printfln(
+			"  %s  max: %s (E %.2f, but %d if it loses)  ·  safety: %s (guaranteed %d)",
+			letters[i],
+			mean_line.name,
+			mean_line.mean,
+			opt_floor, // honest downside: the best max-expectation line's guaranteed floor, not the mechanical one
+			floor_line.name,
+			floor_line.floor,
+		)
+		if target >= 1 && target <= 13 {
+			elsewhere := total_floor - mean_line.floor
+			if elsewhere + floor_line.floor >= target {
+				fmt.printfln(
+					"       -> %d guaranteed elsewhere + %d here = %d >= %d: take the safety line, you don't need the overtrick.",
+					elsewhere,
+					floor_line.floor,
+					elsewhere + floor_line.floor,
+					target,
+				)
+			}
+		}
+	}
+}
+
+// A cheap "where do I start" sketch (PROTOTYPE). Rank the four suits by their single-dummy expected
+// tricks (trick-source strength) and tag each recommended line's role — cash / finesse-guess /
+// duck-develop — then point trick 1 at the strongest suit that must be DEVELOPED, since finesses and
+// ducks want to happen early (while entries and trump control hold) whereas sure winners can wait.
+//
+// This is a per-suit HEURISTIC built entirely from combo data (no DDS solves). It is NOT a sound
+// whole-hand line: a correct blind plan is the PIMC problem — expensive, and it undershoots (Monte-
+// Carlo single-dummy suffers strategy fusion; see COMBO_ANALYSER.md), so the honest whole-hand number
+// stays the simulated verdict. Read this as a starting pointer, not a play engine.
+print_priority_sketch :: proc(sd: ^combo.Sd_Bundle) {
+	letters := [4]string{"S", "H", "D", "C"} // Sd_Bundle order is S H D C
+	means: [4]f64
+	for i in 0 ..< 4 {
+		means[i] = combo.expected_tricks(sd.best_marg[i].p)
+	}
+	// Order the suit indices by expected tricks, descending (insertion sort; only four elements).
+	order := [4]int{0, 1, 2, 3}
+	for i in 1 ..< 4 {
+		j := i
+		for j > 0 && means[order[j]] > means[order[j - 1]] {
+			order[j], order[j - 1] = order[j - 1], order[j]
+			j -= 1
+		}
+	}
+
+	fmt.println("\nSuit-priority sketch (naive heuristic — where to start, not a whole-hand plan):")
+	develop_best := -1
+	develop_best_mean := -1.0
+	for oi in order {
+		role, develop := line_role(sd.best_name[oi])
+		fmt.printfln("  %s  ~%.1f tricks   %-17s (%s)", letters[oi], means[oi], role, sd.best_name[oi])
+		if develop && means[oi] > develop_best_mean {
+			develop_best, develop_best_mean = oi, means[oi]
+		}
+	}
+	if develop_best >= 0 {
+		fmt.printfln(
+			"  Trick 1: start %s — it must be developed (finesse/duck), so do it early while entries hold;",
+			letters[develop_best],
+		)
+		fmt.println("           cash your solid winners later.")
+	} else {
+		fmt.println("  Trick 1: cash your winners top-down — no suit needs an early guess.")
+	}
+	fmt.println("  (Naive per-suit ordering; the honest whole-hand number is the simulated verdict.)")
+}
+
+// Classify a combo single-dummy line name into a human role phrase and whether it needs DEVELOPING
+// (a finesse to guess or a duck to concede — do early) vs a solid cash (can wait).
+line_role :: proc(name: string) -> (role: string, develop: bool) {
+	switch {
+	case strings.has_prefix(name, "finesse"):
+		return "finesse - guess", true
+	case strings.has_prefix(name, "duck"), name == "ducking":
+		return "develop by duck", true
+	case name == "top-down":
+		return "cash top winners", false
+	}
+	return name, false
+}
+
+// F. Entry / timing warnings (LEARNER_AIDS_PLAN.md F) — a CRUDE, clearly-flagged heuristic. The naive
+// model assumes FREE ENTRIES; this partly walks that back by warning when a suit's recommended finesse
+// must be led from one hand more than once (a REPEATED finesse) but that hand has too few outside
+// entries to get back there for each attempt. It is NOT a real entry analysis (that needs the whole-hand
+// play): the entry count under-reads (high cards only, no ruffing/long-card entries), so the check is
+// conservative and printed under a loud HEURISTIC banner. Combo geometry only — no DDS.
+print_entry_warnings :: proc(
+	sd: ^combo.Sd_Bundle,
+	advice: [4]combo.Suit_Combo_Advice,
+	side: bit_set[norn.Seat],
+) {
+	letters := [4]string{"S", "H", "D", "C"} // Sd_Bundle / advice order is S H D C
+	ns := side == combo.NS_SIDE
+	seat_name := [2]string{ns ? "North" : "East", ns ? "South" : "West"} // [SEAT_N slot, SEAT_S slot]
+	north_suits, south_suits: [4]u16
+	for i in 0 ..< 4 {
+		north_suits[i] = advice[i].north_holding
+		south_suits[i] = advice[i].south_holding
+	}
+
+	header := false
+	for i in 0 ..< 4 {
+		if !strings.has_prefix(sd.best_name[i], "finesse") {
+			continue // only a finesse creates a repeated-lead entry demand; cashes lead from anywhere
+		}
+		n, s := advice[i].north_holding, advice[i].south_holding
+		needed := combo.finesse_leads_needed(n, s)
+		if needed < 2 {
+			continue // a single finesse rarely has an entry problem; only flag a REPEATED finesse
+		}
+		lead_seat := combo.finesse_leading_seat(n, s)
+		hand_suits := north_suits if lead_seat == combo.SEAT_N else south_suits
+		entries := combo.sure_side_entries(hand_suits, i)
+		if entries >= needed - 1 {
+			continue // enough outside entries to return to the leading hand for each repeat
+		}
+		if !header {
+			fmt.println("\nEntry / timing check (HEURISTIC — the naive model assumes free entries):")
+			header = true
+		}
+		who := seat_name[0] if lead_seat == combo.SEAT_N else seat_name[1]
+		fmt.printfln(
+			"  %s  the finesse is led from %s and wants ~%d leads there, but %s has only %d outside entr%s — repeating it may fail (an entry problem the free-entry model ignores).",
+			letters[i],
+			who,
+			needed,
+			who,
+			entries,
+			"y" if entries == 1 else "ies",
+		)
+	}
+}
+
+// Print the census table plus a single-dummy summary for the analysed partnership. When `sim_total`
+// is set (sampling ran), the caveat names the whole-hand simulated E[total] as the honest cross-check
+// and the gap below the naive blind sum — instead of the "no DDS par to cross-check" wording, which
+// only holds when sampling is off.
+print_report :: proc(
+	a: ^combo.Deal_Analysis,
+	sd: ^combo.Sd_Bundle,
+	advice: [4]combo.Suit_Combo_Advice,
+	side: bit_set[norn.Seat],
+	target: int,
+	sim_total: Maybe(f64) = nil,
+) {
 	side_name := side == combo.NS_SIDE ? "N/S" : "E/W"
 	fmt.printfln("Card-combination analysis for %s (declarer + dummy); defenders unknown.\n", side_name)
 
 	// Double-dummy census table (the trick ceiling). format_analysis allocates from context.allocator.
 	table := combo.format_analysis(a, target)
 	defer delete(table)
-	fmt.println("Double-dummy census (per-layout optimum ceiling):")
+	fmt.println("Double-dummy census (naive per-suit ceiling):")
 	fmt.println(table)
 
 	// Headline make chances at the target, DD ceiling vs SD achievable.
@@ -681,13 +1126,32 @@ print_report :: proc(a: ^combo.Deal_Analysis, sd: ^combo.Sd_Bundle, side: bit_se
 			combo.expected_tricks(sd.best_marg[idx].p),
 		)
 	}
+	print_winner_count(sd, target)
+	print_combination_odds(advice)
+	print_safety(advice, target)
+	print_priority_sketch(sd)
+	print_entry_warnings(sd, advice, side)
+
 	fmt.println(
 		"\nNote: the naive model assumes free entries and independent suits, so totals are an upper",
 	)
-	fmt.println(
-		"bound (no tempo race, no squeezes/endplays). With only two hands there is no DDS par to",
-	)
-	fmt.println("cross-check it against. See COMBO_ANALYSER.md.")
+	if st, ok := sim_total.?; ok {
+		blind := combo.expected_tricks(sd.totsd)
+		fmt.println(
+			"bound (no tempo race, no squeezes/endplays). The whole-hand DDS simulation below is the",
+		)
+		fmt.printfln(
+			"honest cross-check: %.2f tricks vs this naive %.2f blind sum — the %.2f-trick gap is the over-count.",
+			st,
+			blind,
+			blind - st,
+		)
+	} else {
+		fmt.println(
+			"bound (no tempo race, no squeezes/endplays). With only two hands there is no DDS par to",
+		)
+		fmt.println("cross-check it against. See COMBO_ANALYSER.md.")
+	}
 }
 
 // Write a self-contained interactive card page for the 2-hand board: the declarer+dummy compass with

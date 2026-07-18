@@ -61,8 +61,8 @@ lists all four hands (the exact double-dummy case) — the tool picks the right 
 multi-board `.pbn` file works too — every `[Deal]` tag becomes one board in a
 carousel; the other tags (`[Board]`, `[Dealer]`, …) are ignored. **LIN files are not read** (LIN can only
 express a complete four-hand deal; use PBN). The card page has a built-in **Help "?"** button explaining
-every number in plain terms. A real photo needs hand-ocr's vision extra once: `(cd ../../hand-ocr && just
-sync-vision)`.
+every number in plain terms. A real photo needs hand-ocr's vision extra once: `(cd "$HAND_OCR_DIR" && just
+sync-vision)` (hand-ocr is a separate sibling repo; `HAND_OCR_DIR` defaults to `~/dev/bridge-hand-ocr`).
 
 Legacy (deal.exe):
 

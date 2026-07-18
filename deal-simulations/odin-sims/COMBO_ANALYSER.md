@@ -178,10 +178,11 @@ odin build sim.odin -file -collection:norn=~/dev/norn -collection:dds=~/dev/odin
 ./target/release/sim.exe -S 1major-game-force -n 3 -f pretty --dd --seed 42     # see dd par + combo table
 ./target/release/sim.exe -S 1major-game-force -n 3 -f html-cards --dd --seed 7 -o out.html
 # 2-hand advisor (declarer + dummy). Sampling needs the dds collection (the recipe links it):
-just analyse-pbn --sample 400 '[Deal "N:AQJ2.AKQ.AKQ.J32 - 543.432.432.AKQ4 -"]'          # text, auto-contract
-just analyse-pbn --sample 400 --html out.html '[Deal "N:... - ... -"]'                     # interactive page
-just analyse-pbn --sample 400 --contract 4S --void E:H --lead W:AC '[Deal "N:... - ... -"]' # conditioned (single board)
-just analyse-pbn --file session.pbn --sample 400 --html out.html                           # multi-board carousel
+just analyse-deal --sample 400 '[Deal "N:AQJ2.AKQ.AKQ.J32 - 543.432.432.AKQ4 -"]'          # text, auto-contract
+just analyse-deal --sample 400 --html out.html '[Deal "N:... - ... -"]'                     # interactive page
+just analyse-deal --sample 400 --contract 4S --void E:H --lead W:AC '[Deal "N:... - ... -"]' # conditioned (single board)
+just analyse-deal --file session.pbn --sample 400 --html out.html                           # multi-board carousel
+just analyse-deal 'https://play.intobridge.com/hand?lin=...'                                # paste a BBO/IntoBridge hand URL (LIN)
 ```
 **Playwright verify gotcha:** playwright blocks `file://`. Serve the html:
 `python -m http.server 8733 --directory <dir>` then navigate `http://127.0.0.1:8733/…`. Verified this
@@ -407,7 +408,7 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
 > **Uncommitted at handoff:** norn `render.odin`; odin-sims `dd/tax.odin`, `dd/tax_test.odin`,
 > `dd/sample.odin`, `dd/sample_test.odin`, `pbn_analyse.odin`, `justfile`, `tests/golden-sim-json.sh`,
 > `tests/golden/*`, this doc. Build/verify commands unchanged (see "Dev / test commands" and the justfile:
-> `just test-dd` / `test-combo` / `test-golden`, `just analyse-pbn …`).
+> `just test-dd` / `test-combo` / `test-golden`, `just analyse-deal …`).
 >
 > The detailed, dated build log for all of the above is in the "Suggested build order" subsection's
 > nested bullets further down. The prose below predates the build and describes the design/rationale.
@@ -455,7 +456,7 @@ is a fixed `[Seat]Hand` of `[13]Card` (a partial board was not representable), a
    adaptive make curve `atl` — the card page's blue `sd`/`>=sd` rows), sharing the `parsed_board_partnership`
    resolver. So both the DD ceiling and the SD achievable now compute end-to-end from a 2-hand PBN. 3
    combo tests (41 total pass). **CLI driver DONE (2026-07-10):** `odin-sims/pbn_analyse.odin` — a
-   standalone `-file` program (like `sim.odin`/`bench.odin`), recipe `just analyse-pbn`. Reads a PBN
+   standalone `-file` program (like `sim.odin`/`bench.odin`), recipe `just analyse-deal`. Reads a PBN
    from a positional arg, `--file <path>`, or stdin (`hand-ocr … | pbn_analyse`), runs
    `parse_pbn_deal` → `analyse_parsed_board` + `sd_bundle_parsed_board`, and prints the DD census table
    (`format_analysis`) plus an SD summary: `P(>= target)` DD-vs-SD, `E[tot]` DD/SD, and the recommended
@@ -848,7 +849,7 @@ DDS-sampling is what makes the 2-hand view analytically first-class (its own "pa
      E[tricks] simulated) + a **reconciliation strip** `ceiling X (combo DD) > blind Y (combo SD) >
      simulated Z (DDS whole-hand)` — the entry/tempo/independence tax shown as the gap. `dd/sample_test.odin`
      (5 tests: parse, cold-slam=100%, hopeless<25%, seed-reproducible, rejects-unknown-side); `just test-dd`
-     (forced `ODIN_TEST_THREADS=1` — DDS not reentrant). `pbn_analyse`/`dd` lint + the `analyse-pbn` recipe
+     (forced `ODIN_TEST_THREADS=1` — DDS not reentrant). `pbn_analyse`/`dd` lint + the `analyse-deal` recipe
      now link the `dds` collection. Verified live: 6S cold hand → 100%; 20-HCP 4S → 2%, mean 8.80,
      reconciliation 8.93 > 8.82 > 8.80.
    - **GRID REFRAME (2026-07-11):** the core is now `sample_grid` (per layout ONE `dds.CalcDDtable` returns
@@ -1045,8 +1046,9 @@ bridge sources publish the known optimal line + expected tricks for every canoni
 ### hand-ocr pipeline + 4-hand deals DONE 2026-07-16
 
 **Image / PBN → card page pipeline (Stage A).** `just ocr-analyse <image>` (→ `<base>.html`) and `just
-ocr-pbn <image>` bridge the sibling **hand-ocr** project (uv/Python, `../../hand-ocr`) to pbn_analyse via
-`tools/ocr-analyse.sh` (runs `uv run --project ../../hand-ocr python hand-ocr.py … | pbn_analyse.exe`).
+ocr-pbn <image>` bridge the sibling **hand-ocr** repo (uv/Python, at `$HAND_OCR_DIR`, default
+`~/dev/bridge-hand-ocr`) to pbn_analyse via `tools/ocr_analyse.py` (runs `uv run --project "$HAND_OCR_DIR"
+python hand-ocr.py … | pbn_analyse.exe`).
 `just ocr-analyse --demo` plumbing-tests it end-to-end (no vision deps). pbn_analyse reads a PBN string,
 `--file`, or stdin, multi-board. **Bug fixed:** `parse_boards` matched bare `[Deal`, which also caught a
 `.pbn` file's `[Dealer]`/`[Declarer]` tags → spurious duplicate boards; now matches `[Deal "` (`DEAL_TAG`).

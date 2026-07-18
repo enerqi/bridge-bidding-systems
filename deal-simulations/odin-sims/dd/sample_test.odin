@@ -324,6 +324,32 @@ choose :: proc(n, r: int) -> f64 {
 // A 4-hand board (both partnerships known) is not a valid 2-hand advisor input for one call, but
 // sampling `side` is still well-defined; the guard we DO enforce is that `side` must be fully known.
 // Passing a side with an unknown seat must fail.
+// worst_lead (aids plan D) finds the KILLING opening lead. On a spade-finesse board the K-of-spades
+// location swings 7NT hard, so some defender card's opening-lead sub-grid must make MATERIALLY less than
+// the unconditioned average. Pure reducer over the already-sampled lead grids.
+@(test)
+test_worst_lead :: proc(t: ^testing.T) {
+	init()
+	board, _ := norn.parse_pbn_deal(`[Deal "N:AQJ2.AKQ.AKQ.J32 - 543.432.432.AKQ4 -"]`)
+	lg := new(Lead_Grids)
+	defer free(lg)
+	ok := sample_lead_grids(board, {.North, .South}, 300, lg, 9)
+	testing.expect(t, ok)
+
+	con := Contract{level = 7, strain = .NT}
+	card, wpct, n, base_pct, found := worst_lead(lg, con, {.North, .South})
+	testing.expect(t, found)
+	testing.expect(t, n >= 20) // the reported worst lead cleared the min-n guard
+	testing.expectf(
+		t,
+		base_pct - wpct > 10,
+		"worst lead %v should trail base: %.1f%% vs %.1f%%",
+		card,
+		wpct,
+		base_pct,
+	)
+}
+
 @(test)
 test_sample_rejects_unknown_side :: proc(t: ^testing.T) {
 	init()

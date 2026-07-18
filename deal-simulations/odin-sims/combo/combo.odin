@@ -833,6 +833,68 @@ sd_bundle_parsed_board :: proc(
 	return sd_bundle(n, s), resolved, true
 }
 
+// --- G1: read-only per-suit candidate view (aids plan groundwork) -----------------------------
+//
+// `Sd_Bundle` carries only the RECOMMENDED (best-by-mean) line per suit — enough for the card page. The
+// teaching aids B (suit-combination odds per line) and C (safety / min-variance line) need to compare ALL
+// candidates per suit, so this exposes them as a small by-value summary. Kept SEPARATE from `Sd_Bundle`
+// (and from the threaded render path) on purpose: the HTML golden pins `Sd_Bundle`'s fields, and these
+// slices live on the caller's allocator — so widening the bundle is avoided until B/C wire to HTML.
+
+// One candidate single-dummy line with the two teaching summaries B/C read off its achieved distribution:
+// `mean` = E[tricks], `floor` = guaranteed tricks (`sure_tricks`). `dist` is the full marginal for any
+// finer question (e.g. `p_reach` at the pivotal trick).
+Line_Summary :: struct {
+	name:  string,
+	dist:  Suit_Trick_Dist,
+	mean:  f64,
+	floor: int,
+}
+
+// Every candidate line per suit for a known partnership, each summarised (mean + guaranteed floor), in
+// DISPLAY_SUITS order (s,h,d,c) — so index `i` lines up with `Sd_Bundle.best_marg[i]` and the text
+// report's per-suit rows. The read-only candidate view (aids plan G1) the text advisor's B/C blocks
+// consume. Caller owns the four returned slices (allocated from `allocator`).
+suit_line_summaries :: proc(
+	north, south: norn.Hand_Summary,
+	allocator := context.allocator,
+) -> [4][]Line_Summary {
+	out: [4][]Line_Summary
+	for suit, i in DISPLAY_SUITS {
+		lrs := suit_candidate_lines(north.suits[suit], south.suits[suit], allocator)
+		defer delete(lrs, allocator)
+		sums := make([]Line_Summary, len(lrs), allocator)
+		for lr, j in lrs {
+			sums[j] = Line_Summary {
+				name  = lr.name,
+				dist  = lr.dist,
+				mean  = expected_tricks(lr.dist.p),
+				floor = sure_tricks(lr.dist.p),
+			}
+		}
+		out[i] = sums
+	}
+	return out
+}
+
+// Parsed-board wrapper for `suit_line_summaries` — same known-side resolution and `ok` contract as
+// `sd_bundle_parsed_board` (exactly one fully-known partnership). The G1 entry point for the 2-hand text
+// advisor.
+line_summaries_parsed_board :: proc(
+	board: norn.Parsed_Board,
+	allocator := context.allocator,
+) -> (
+	cands: [4][]Line_Summary,
+	side: bit_set[norn.Seat],
+	ok: bool,
+) {
+	n, s, resolved, k := parsed_board_partnership(board)
+	if !k {
+		return {}, {}, false
+	}
+	return suit_line_summaries(n, s, allocator), resolved, true
+}
+
 // The probability of taking AT LEAST `target` tricks, from any trick distribution's `p[]` (a per-suit
 // `Suit_Trick_Dist.p` or the combined `Deal_Analysis.total`). This is the headline "chance of making
 // the contract" figure; `target` defaults sensibly to the double-dummy par level (package `dd`).
@@ -852,6 +914,28 @@ expected_tricks :: proc(p: [RANKS + 1]f64) -> f64 {
 		sum += f64(k) * p[k]
 	}
 	return sum
+}
+
+// The GUARANTEED floor of a trick distribution: the smallest `k` with `p[k] > 0` — the tricks the
+// holding takes in even its WORST layout (every E/W split yields at least this many). The teaching
+// counterpart of `expected_tricks` (the mean) and `p_at_least` (the make tail): "sure winners" for the
+// winner/loser count (aids plan A) and the safety-play floor (C). A degenerate all-zero `p` → 0.
+// (The `p[k]` come from exact integer weights ÷ a fixed denom, so a truly-empty count stays exactly 0.0
+// and a populated one is well clear of it — a plain `> 0` needs no epsilon.)
+sure_tricks :: proc(p: [RANKS + 1]f64) -> int {
+	for k in 0 ..= RANKS {
+		if p[k] > 0 {
+			return k
+		}
+	}
+	return 0
+}
+
+// P(reach AT LEAST `k` tricks) — a named alias of `p_at_least` for the line-odds blocks (aids plan B/C),
+// which talk in "the chance this line reaches the pivotal trick". Same value; the name reads better next
+// to `sure_tricks`/`expected_tricks` in that vocabulary.
+p_reach :: proc(p: [RANKS + 1]f64, k: int) -> f64 {
+	return p_at_least(p, k)
 }
 
 // --- Human-readable report --------------------------------------------------------------------
@@ -1478,6 +1562,47 @@ write_suits_tips_json :: proc(
 	strings.write_byte(b, ']')
 }
 
+// Per-suit combination PATTERN notes (aids plan B) as a JSON array of strings in DISPLAY_SUITS order —
+// e.g. `["two-way finesse — guess ...","","",""]`. The card page appends each to that suit's line tooltip.
+// Purely combo geometry (`combination_note`), so it needs no --sample. The phrases carry no quotes or
+// backslashes, but are escaped defensively (they sit in a single-quoted HTML attribute as JSON strings).
+write_suits_notes_json :: proc(b: ^strings.Builder, north, south: norn.Hand_Summary) {
+	strings.write_byte(b, '[')
+	for suit, i in DISPLAY_SUITS {
+		if i > 0 {
+			strings.write_byte(b, ',')
+		}
+		note := combination_note(north.suits[suit], south.suits[suit])
+		strings.write_byte(b, '"')
+		for c in transmute([]u8)note {
+			switch c {
+			case '"':
+				strings.write_string(b, "\\\"")
+			case '\\':
+				strings.write_string(b, "\\\\")
+			case:
+				strings.write_byte(b, c)
+			}
+		}
+		strings.write_byte(b, '"')
+	}
+	strings.write_byte(b, ']')
+}
+
+// Per-suit GUARANTEED floor (aids plan A) as a JSON int array `[f_s,f_h,f_d,f_c]` in DISPLAY_SUITS order:
+// the recommended blind line's sure tricks (`sure_tricks` of `best_marg`). The card page sums these for the
+// winner count and the gap to the slider target.
+write_suits_floor_json :: proc(b: ^strings.Builder, sd: ^Sd_Bundle) {
+	strings.write_byte(b, '[')
+	for i in 0 ..< 4 {
+		if i > 0 {
+			strings.write_byte(b, ',')
+		}
+		fmt.sbprintf(b, "%d", sure_tricks(sd.best_marg[i].p))
+	}
+	strings.write_byte(b, ']')
+}
+
 // Write a 0..13 curve (e.g. the adaptive P(>= t) make curve) as a compact JSON array `[c0,...,c13]`.
 write_curve_json :: proc(b: ^strings.Builder, curve: [RANKS + 1]f64) {
 	strings.write_byte(b, '[')
@@ -1670,6 +1795,10 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_suits_lines_json(builder, &ns_sd)
 		strings.write_string(builder, `' data-ns-tips='`)
 		write_suits_tips_json(builder, &ns_sd, ds[.North], ds[.South])
+		strings.write_string(builder, `' data-ns-notes='`)
+		write_suits_notes_json(builder, ds[.North], ds[.South])
+		strings.write_string(builder, `' data-ns-floor='`)
+		write_suits_floor_json(builder, &ns_sd)
 		strings.write_string(builder, `' data-ew='`)
 		write_suits_json(builder, &ew)
 		strings.write_string(builder, `' data-ew-sd='`)
@@ -1684,6 +1813,10 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_suits_lines_json(builder, &ew_sd)
 		strings.write_string(builder, `' data-ew-tips='`)
 		write_suits_tips_json(builder, &ew_sd, ds[.East], ds[.West])
+		strings.write_string(builder, `' data-ew-notes='`)
+		write_suits_notes_json(builder, ds[.East], ds[.West])
+		strings.write_string(builder, `' data-ew-floor='`)
+		write_suits_floor_json(builder, &ew_sd)
 		strings.write_string(builder, `'></div>`)
 		prof_add(prof_a, prof_b, prof_c, prof_now()) // parallel / assemble / JSON split
 		free_all(context.temp_allocator)
