@@ -47,7 +47,7 @@ package dd
 */
 
 import "base:intrinsics"
-import "core:math/rand"
+import "core:slice"
 
 import dds "dds:."
 import "norn:norn"
@@ -224,10 +224,7 @@ misguess_tax :: proc(
 		tracks[i].card = pivot_cards[i]
 	}
 
-	state: rand.Xoshiro256_Random_State
-	context.random_generator = norn.seeded_xoshiro(&state, seed)
 	ha, hb := dds.Hand(int(a)), dds.Hand(int(b))
-	unconstrained := constraints_empty(constraints)
 
 	strain := contract.strain
 	need := contract.level + 6
@@ -238,23 +235,15 @@ misguess_tax :: proc(
 	// but only the low 2^n_pivots combos are ever touched.
 	joint_hist: [1 << TAX_MAX_PIVOTS][14]int
 
-	tbl: dds.Table_Results
-	for _ in 0 ..< n_samples {
-		layout: norn.Deal
-		found := false
-		for _ in 0 ..< SAMPLE_MAX_REDEAL {
-			layout = norn.deal_board_predealt(pd)
-			if unconstrained || satisfies(layout, constraints) {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return {}, false
-		}
-		if dds.CalcDDtable(to_table_deal(layout), &tbl) != .NO_FAULT {
-			return {}, false
-		}
+	// Same constrained layouts as the ceiling sample (identical seed), DD-solved as a parallel batch.
+	layouts, tables, sok := sample_solved(pd, n_samples, seed, constraints)
+	if !sok {
+		return {}, false
+	}
+	defer delete(layouts)
+	defer delete(tables)
+	for tbl, si in tables {
+		layout := layouts[si]
 		// Best of the two pair members declaring, matching sample_grid's ceiling exactly.
 		tk := clamp(max(int(tbl.resTable[strain][ha]), int(tbl.resTable[strain][hb])), 0, 13)
 		ceiling_hist[tk] += 1
@@ -363,18 +352,8 @@ joint_achievable_pct :: proc(joint: [][14]int, n_pivots, need, n: int) -> f64 {
 }
 
 // Order the pivots by achievable make-% ASCENDING (dominant guess — the one that hurts most — first), so
-// pivots[0] is the guess that set `achievable_pct`. Selection sort; the slice is tiny (≤ TAX_MAX_PIVOTS).
+// pivots[0] is the guess that set `achievable_pct`. The slice is tiny (≤ TAX_MAX_PIVOTS).
 @(private = "file")
 sort_pivots_dominant_first :: proc(pivots: []Tax_Pivot) {
-	for i in 0 ..< len(pivots) {
-		lo := i
-		for j in i + 1 ..< len(pivots) {
-			if pivots[j].achievable < pivots[lo].achievable {
-				lo = j
-			}
-		}
-		if lo != i {
-			pivots[i], pivots[lo] = pivots[lo], pivots[i]
-		}
-	}
+	slice.sort_by(pivots, proc(a, b: Tax_Pivot) -> bool {return a.achievable < b.achievable})
 }

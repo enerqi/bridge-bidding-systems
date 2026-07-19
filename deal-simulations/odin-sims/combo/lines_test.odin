@@ -15,9 +15,28 @@ package combo
 	    nothing on a solid holding (the duck cannot be overtaken).
 */
 
+import "core:strings"
 import "core:testing"
 
 import "norn:norn"
+
+// A finesse-family recommendation on solid honours (no real tenace) is relabelled and narrated as the CASH it
+// actually is — never a bogus "finesse the 7" on AKQ — while a genuine honour finesse is left untouched.
+@(test)
+test_finesse_relabelled_when_no_tenace :: proc(t: ^testing.T) {
+	// KQ opposite A 7 4 3 -> combined AKQ743: the only card below the top missing (J) is a spot -> no finesse.
+	solid_n, solid_s := mask(.King, .Queen), mask(.Ace, .Seven, .Four, .Three)
+	testing.expect(t, !holding_has_real_finesse(solid_n, solid_s))
+	testing.expect_value(t, display_line_name(solid_n, solid_s, "finesse-other"), "top-down")
+	testing.expect_value(t, display_line_name(solid_n, solid_s, "duck-then-finesse"), "duck-one")
+	tip := describe_suit_line(solid_n, solid_s, "finesse-other")
+	testing.expect(t, !strings.contains(tip, "finesse")) // narrated as a cash, not a finesse
+
+	// AK opposite J T 2 -> combined AKJT2, missing Q: the J is a real honour finesse card, so it stays a finesse.
+	real_n, real_s := mask(.Ace, .King), mask(.Jack, .Ten, .Two)
+	testing.expect(t, holding_has_real_finesse(real_n, real_s))
+	testing.expect_value(t, display_line_name(real_n, real_s, "finesse"), "finesse")
+}
 
 @(private = "file")
 mask :: proc(ranks: ..norn.Rank) -> u16 {

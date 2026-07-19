@@ -222,6 +222,94 @@ satisfies :: proc(board: norn.Deal, cons: Sample_Constraints) -> bool {
 	return true
 }
 
+// --- batched sampling: generate the constrained layouts, then DD-solve them through DDS's OWN thread pool.
+// One `CalcDDtable`-per-layout serial loop leaves every core but one idle; DDS instead parallelises a BATCH
+// internally via `CalcAllTables`. That is the only safe way to multithread DDS — its transposition tables
+// are process-global, so we must never call the solver from our own threads (see dd.odin). Splitting layout
+// GENERATION (pure seeded RNG) from SOLVING keeps the draw sequence — hence every tally — byte-identical to
+// the old loop, so this is a pure speedup. All three sampling passes below funnel through `sample_solved`.
+
+// Hard per-call cap on DD tables for CalcAllTables; DDS spreads a chunk this size across its pool.
+@(private)
+SOLVE_BATCH :: dds.MAXNOOFTABLES
+
+// Reject-sample `n` constrained layouts with a seeded RNG into `out` (len == n). Identical draw order to the
+// old one-at-a-time loop (solving never touched the RNG), so results stay byte-stable. false if some sample
+// could not be drawn within SAMPLE_MAX_REDEAL redeals (constraints too tight).
+@(private)
+generate_layouts :: proc(pd: norn.Predeal, n: int, seed: u64, cons: Sample_Constraints, out: []norn.Deal) -> bool {
+	state: rand.Xoshiro256_Random_State
+	context.random_generator = norn.seeded_xoshiro(&state, seed)
+	unconstrained := constraints_empty(cons)
+	for i in 0 ..< n {
+		found := false
+		for _ in 0 ..< SAMPLE_MAX_REDEAL {
+			layout := norn.deal_board_predealt(pd)
+			if unconstrained || satisfies(layout, cons) {
+				out[i] = layout
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+	return true
+}
+
+// DD-solve every layout, filling `out[i]` (len == len(layouts)) with that layout's full 5-strain × 4-declarer
+// grid — the same content CalcDDtable produced per layout, just computed a chunk at a time. Each CalcAllTables
+// call solves up to SOLVE_BATCH layouts spread across DDS's thread pool. The all-false trumpFilter keeps every
+// strain; `nil` par pointer with NO_PAR_CALC skips par scoring. false on any DDS fault.
+@(private)
+solve_layouts :: proc(layouts: []norn.Deal, out: []dds.Table_Results) -> bool {
+	filter: [dds.Strain]b32 // all false -> DDS computes every denomination
+	i := 0
+	for i < len(layouts) {
+		chunk := min(SOLVE_BATCH, len(layouts) - i)
+		deals: dds.Table_Deals
+		deals.noOfTables = i32(chunk)
+		for j in 0 ..< chunk {
+			deals.deals[j] = to_table_deal(layouts[i + j])
+		}
+		res: dds.Tables_Res
+		if dds.CalcAllTables(&deals, dds.NO_PAR_CALC, &filter, &res, nil) != .NO_FAULT {
+			return false
+		}
+		for j in 0 ..< chunk {
+			out[i + j] = res.results[j]
+		}
+		i += chunk
+	}
+	return true
+}
+
+// Generate `n` constrained layouts and DD-solve them as a batch (see generate_layouts / solve_layouts),
+// returning parallel slices where `layouts[i]` is solved into `tables[i]`. The single choke point the three
+// sampling passes share, so they all get the batched (parallel) solve. Caller frees both slices.
+@(private)
+sample_solved :: proc(
+	pd: norn.Predeal,
+	n: int,
+	seed: u64,
+	cons: Sample_Constraints,
+	allocator := context.allocator,
+) -> (
+	layouts: []norn.Deal,
+	tables: []dds.Table_Results,
+	ok: bool,
+) {
+	layouts = make([]norn.Deal, n, allocator)
+	tables = make([]dds.Table_Results, n, allocator)
+	if !generate_layouts(pd, n, seed, cons, layouts) || !solve_layouts(layouts, tables) {
+		delete(layouts, allocator)
+		delete(tables, allocator)
+		return nil, nil, false
+	}
+	return layouts, tables, true
+}
+
 // Monte-Carlo the full make-% grid for the known partnership `side` (one of NS_SIDE / EW_SIDE — the two
 // seats named in `side` must both be in `board.known`), over `n_samples` constrained deals. See the file
 // header for HOW the sampled layouts get their (correct, a-priori-weighted) variety. Each layout is
@@ -275,38 +363,20 @@ sample_grid :: proc(
 		return {}, false // duplicate cards across the two known hands — malformed input
 	}
 
-	// Own, seeded RNG (safe & reproducible regardless of the caller's context; see count_accepted_seeded).
-	state: rand.Xoshiro256_Random_State
-	context.random_generator = norn.seeded_xoshiro(&state, seed)
-
 	// The two known seats' declarer indices in DDS's grid (norn Seat and dds Hand share N/E/S/W order).
 	ha, hb := dds.Hand(int(a)), dds.Hand(int(b))
 
-	tbl: dds.Table_Results
-	for _ in 0 ..< n_samples {
-		// Draw a constrained layout by reject sampling: deal uniformly, redeal until the defender-shape
-		// inferences hold. No constraints -> the first deal always passes (cap never bites).
-		layout: norn.Deal
-		found := false
-		unconstrained := constraints_empty(constraints)
-		for _ in 0 ..< SAMPLE_MAX_REDEAL {
-			layout = norn.deal_board_predealt(pd)
-			if unconstrained || satisfies(layout, constraints) {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return {}, false // constraints unsatisfiable within the redeal budget
-		}
-		td := to_table_deal(layout)
-		if dds.CalcDDtable(td, &tbl) != .NO_FAULT {
-			return {}, false
-		}
+	// Draw the constrained layouts (reject sampling, seeded) and DD-solve them as a parallel batch.
+	layouts, tables, sok := sample_solved(pd, n_samples, seed, constraints)
+	if !sok {
+		return {}, false // constraints unsatisfiable within the redeal budget, or a DDS fault
+	}
+	defer delete(layouts)
+	defer delete(tables)
+	for tbl in tables {
 		for strain in dds.Strain {
 			// Best of the two pair members declaring — the pair plays it from the stronger side.
-			tk := max(int(tbl.resTable[strain][ha]), int(tbl.resTable[strain][hb]))
-			tk = clamp(tk, 0, 13)
+			tk := clamp(max(int(tbl.resTable[strain][ha]), int(tbl.resTable[strain][hb])), 0, 13)
 			result.hist[strain][tk] += 1
 		}
 	}
@@ -376,28 +446,18 @@ sample_lead_grids :: proc(
 		return false
 	}
 
-	state: rand.Xoshiro256_Random_State
-	context.random_generator = norn.seeded_xoshiro(&state, seed)
 	ha, hb := dds.Hand(int(a)), dds.Hand(int(b))
-	unconstrained := constraints_empty(constraints)
 
-	tbl: dds.Table_Results
-	for _ in 0 ..< n_samples {
-		layout: norn.Deal
-		found := false
-		for _ in 0 ..< SAMPLE_MAX_REDEAL {
-			layout = norn.deal_board_predealt(pd)
-			if unconstrained || satisfies(layout, constraints) {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return false
-		}
-		if dds.CalcDDtable(to_table_deal(layout), &tbl) != .NO_FAULT {
-			return false
-		}
+	// Draw the constrained layouts and DD-solve them as a parallel batch, then FILTER each solved layout into
+	// the base grid + the opening-lead sub-grids (no extra solves — every sub-grid reuses the same table).
+	layouts, tables, sok := sample_solved(pd, n_samples, seed, constraints)
+	if !sok {
+		return false
+	}
+	defer delete(layouts)
+	defer delete(tables)
+	for tbl, si in tables {
+		layout := layouts[si]
 		// Base grid: best-of-pair tricks per strain (no lead known -> the pair declares from its better side).
 		for strain in dds.Strain {
 			tk := clamp(max(int(tbl.resTable[strain][ha]), int(tbl.resTable[strain][hb])), 0, 13)

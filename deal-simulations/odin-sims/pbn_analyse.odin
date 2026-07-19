@@ -1239,7 +1239,8 @@ render_full_deal_body :: proc(
 
 // Bake the BLIND (DDS-sampled) advisor grids for BOTH partnerships of a known deal: `{"ns":<sim>,"ew":<sim>}`
 // where each `<sim>` is the same shape write_sim_json emits for a 2-hand board (n/lvl/strain/g plus the
-// misguess-tax ach/taxpts/pvt). sample_board treats the named side as declarer+dummy and randomises the
+// misguess-tax ach/taxpts/pvt AND the nested opening-lead sub-grids, so each side drives its own lead picker
+// in Blind mode). sample_board treats the named side as declarer+dummy and randomises the
 // other 26 cards, so this is exactly "how would this side fare playing blind". A side that fails to sample
 // is emitted as null.
 write_blind_sides_json :: proc(
@@ -1249,12 +1250,25 @@ write_blind_sides_json :: proc(
 	contract: dd.Contract,
 	has_contract: bool,
 ) {
+	// The recorded opening lead pre-selects the picker, but only on the side it defends against (its leader is
+	// one of that side's defenders). ns_lseat/ew_lseat stay 0 (unset) otherwise, and for a board with no lead.
+	ns_lseat, ew_lseat: u8 = 0, 0
+	ns_lword, ew_lword: string = "", ""
+	if board.has_opening_lead {
+		if board.opening_leader not_in combo.NS_SIDE { 	// leader is E/W -> a defender for N/S
+			ns_lseat, ns_lword = seat_letter(board.opening_leader), card_word(board.opening_lead)
+		}
+		if board.opening_leader not_in combo.EW_SIDE { 	// leader is N/S -> a defender for E/W
+			ew_lseat, ew_lword = seat_letter(board.opening_leader), card_word(board.opening_lead)
+		}
+	}
+
 	strings.write_byte(b, '{')
 	bs_ns, _ := sample_board(board, combo.NS_SIDE, args, contract, has_contract)
 	defer board_sample_free(&bs_ns)
 	strings.write_string(b, `"ns":`)
 	if bs_ns.have {
-		write_sim_json(b, &bs_ns.grid, bs_ns.contract, bs_ns.tax, bs_ns.tax_ok)
+		write_sim_json(b, &bs_ns.grid, bs_ns.contract, bs_ns.tax, bs_ns.tax_ok, bs_ns.leads, combo.NS_SIDE, ns_lseat, ns_lword)
 	} else {
 		strings.write_string(b, "null")
 	}
@@ -1262,7 +1276,7 @@ write_blind_sides_json :: proc(
 	defer board_sample_free(&bs_ew)
 	strings.write_string(b, `,"ew":`)
 	if bs_ew.have {
-		write_sim_json(b, &bs_ew.grid, bs_ew.contract, bs_ew.tax, bs_ew.tax_ok)
+		write_sim_json(b, &bs_ew.grid, bs_ew.contract, bs_ew.tax, bs_ew.tax_ok, bs_ew.leads, combo.EW_SIDE, ew_lseat, ew_lword)
 	} else {
 		strings.write_string(b, "null")
 	}
@@ -1368,12 +1382,20 @@ render_board_body :: proc(
 // make-% for (strain, level) as the tail sum at level+6 and stderr from `n`. `lvl`/`strain` preselect
 // the picker at the driver's --contract. Single-quoted attribute host (see write_html_page), so the
 // JSON uses only double quotes — no escaping needed.
+// `leads`/`side` are optional: when non-nil the opening-lead sub-grids are folded in as a nested
+// `"leads":{n,seats:{...}}` (the same blob write_leads_json bakes standalone on the 2-hand `.par`). The
+// full-deal BLIND bake uses this so each side carries its own lead picker; the 2-hand path leaves it nil
+// (it bakes data-sim-leads as a sibling attribute instead) and passes no leads.
 write_sim_json :: proc(
 	b: ^strings.Builder,
 	sim: ^dd.Grid_Result,
 	contract: dd.Contract,
 	tax: dd.Tax_Result,
 	tax_ok: bool,
+	leads: ^dd.Lead_Grids = nil,
+	side: bit_set[norn.Seat] = {},
+	lead_seat: u8 = 0,
+	lead_card: string = "",
 ) {
 	// Braces must be written literally — Odin's fmt reads `{` in a format string as an argument
 	// reference (see dd.odin's PBN-comment note), so only value fields go through sbprintf.
@@ -1394,6 +1416,18 @@ write_sim_json :: proc(
 	}
 	strings.write_string(b, `,"g":`)
 	write_g_object(b, sim.hist, sim.n)
+	if leads != nil {
+		strings.write_string(b, `,"leads":`)
+		write_leads_json(b, leads, side)
+	}
+	// The recorded opening lead, pre-selecting the picker (client seeds ccaLead from it until the user picks).
+	// Emitted only when the leader is a DEFENDER of this side, keyed like a leads-map entry ("E","3C").
+	if lead_seat != 0 && lead_card != "" {
+		// Braces literal: fmt reads `{` in a format string as a verb (see write_sim_guess_json / dd.odin note).
+		strings.write_string(b, `,"lead":{`)
+		fmt.sbprintf(b, `"seat":"%c","card":"%s"`, lead_seat, lead_card)
+		strings.write_byte(b, '}')
+	}
 	strings.write_byte(b, '}')
 }
 

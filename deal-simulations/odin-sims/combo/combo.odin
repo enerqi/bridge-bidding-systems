@@ -1062,6 +1062,49 @@ pick_partnership_sd :: proc(cand: [4][]Line_Joint) -> Partnership_Sd {
 	return ps
 }
 
+// Does a genuine finesse exist in this holding — an HONOUR (Ten or higher) sitting below a missing honour it
+// can trap? A finesse promotes a card past a missing honour; that card must itself be an honour. On solid
+// tops (AKQ...) the only card below the top missing rank is a spot (e.g. the 7), which can never win a
+// finesse — the line is really a cash. Used to keep the recommended-line LABEL and tooltip honest (a
+// finesse-family line with no real tenace is shown/narrated as a cash), independent of WHY the SD model
+// ranked it first (free-entry timing can inch a "finesse" ahead on a blocked suit like KQ opposite Axxx).
+@(private)
+holding_has_real_finesse :: proc(north, south: u16) -> bool {
+	combined := north | south
+	missing := FULL_SUIT & ~combined
+	top_missing := -1
+	for r := RANKS - 1; r >= 0; r -= 1 {
+		if missing & rank_bit(r) != 0 {top_missing = r; break}
+	}
+	if top_missing < 0 {
+		return false // no missing card at all -> nothing to finesse
+	}
+	fc := -1
+	for r := top_missing - 1; r >= 0; r -= 1 {
+		if combined & rank_bit(r) != 0 {fc = r; break}
+	}
+	// A real finesse card is an honour: Ten or higher. RANK_TEN is the lowest rank worth finessing with.
+	return fc >= RANK_TEN
+}
+
+// The line name to SHOW and NARRATE for a holding: a finesse-family pick with no real tenace is presented as
+// the plain cash it actually is (top-down; a duck-then-finesse becomes a duck-one), so the recommended-line
+// label and its tooltip stay honest — no "finesse the 7" on solid AKQ. Other names (and finesses on a genuine
+// tenace) pass through unchanged. Shared by write_suits_lines_json (the label) and describe_suit_line (the
+// tooltip) so the two never disagree.
+@(private)
+display_line_name :: proc(north, south: u16, name: string) -> string {
+	if !holding_has_real_finesse(north, south) {
+		switch name {
+		case "finesse", "finesse-other":
+			return "top-down"
+		case "duck-then-finesse":
+			return "duck-one"
+		}
+	}
+	return name
+}
+
 // Assemble a partnership's whole `Sd_Bundle` (the four card-page single-dummy blobs, all by value) from its
 // already-gathered candidate joint tables: pick the best line per suit, then derive the SD total and adaptive
 // make curve. Shared by `sd_bundle` (serial gather) and the threaded render path (per-suit gather tasks), so
@@ -1382,13 +1425,14 @@ write_suits_json_sd :: proc(b: ^strings.Builder, sd: ^Sd_Bundle) {
 // Write the per-suit RECOMMENDED blind line names as a JSON array `["s","h","d","c"]` (the best fixed
 // single-dummy line by mean per suit — `best_line_by_mean`, brick 2). Same suit order s,h,d,c as the
 // distribution blobs, so the card page can label each suit row with how to play it.
-write_suits_lines_json :: proc(b: ^strings.Builder, sd: ^Sd_Bundle) {
+write_suits_lines_json :: proc(b: ^strings.Builder, sd: ^Sd_Bundle, north, south: norn.Hand_Summary) {
 	strings.write_byte(b, '[')
-	for i in 0 ..< 4 {
+	for suit, i in DISPLAY_SUITS {
 		if i > 0 {
 			strings.write_byte(b, ',')
 		}
-		fmt.sbprintf(b, `"%s"`, sd.best_name[i])
+		// Show the honest line: a finesse with no real tenace is relabelled as a cash (see display_line_name).
+		fmt.sbprintf(b, `"%s"`, display_line_name(north.suits[suit], south.suits[suit], sd.best_name[i]))
 	}
 	strings.write_byte(b, ']')
 }
@@ -1467,9 +1511,26 @@ describe_suit_line :: proc(
 	}
 	n_win := card_count(winners)
 
-	switch line_name {
+	// The hand the recommended finesse line leads TOWARD and inserts from — the source of the card actually
+	// run. `line_finesse`/`line_duck_then_finesse` lead toward the strong honour hand; `line_finesse_other`
+	// leads toward the WEAKER hand, so on a two-way holding whose touching honours straddle the hands (AJ
+	// opposite KT, missing the Q) the card run is the LOWER honour from the weak hand (the ten), not the
+	// higher honour describe_finesse would otherwise name off `combined`. Narrating from this hand keeps the
+	// tooltip's card in step with the recommended line.
+	disp := display_line_name(north, south, line_name)
+	strong := strong_honour_seat(north, south)
+	strong_hold := north if strong == SEAT_N else south
+	weak_hold := south if strong == SEAT_N else north
+	insert_hold := strong_hold
+	if disp == "finesse-other" {
+		insert_hold = weak_hold
+	}
+
+	// Present a finesse with no real tenace as the cash it actually is (see display_line_name), so the tooltip
+	// matches the relabelled cell and never narrates a bogus finesse of a spot card.
+	switch disp {
 	case "finesse", "finesse-other":
-		describe_finesse(&b, combined, winners, top_missing, n_win, ns_len)
+		describe_finesse(&b, combined, winners, insert_hold, top_missing, n_win, ns_len)
 	case "duck-one":
 		strings.write_string(
 			&b,
@@ -1486,7 +1547,7 @@ describe_suit_line :: proc(
 			&b,
 			"Duck the first round (play low from both hands), then take the finesse. ",
 		)
-		describe_finesse(&b, combined, winners, top_missing, n_win, ns_len)
+		describe_finesse(&b, combined, winners, insert_hold, top_missing, n_win, ns_len)
 		strings.write_string(&b, " Ducking first keeps an entry so the finesse can be repeated.")
 	case:
 		describe_cash(&b, combined, winners, top_missing, n_win, ns_len)
@@ -1494,20 +1555,23 @@ describe_suit_line :: proc(
 	return strings.to_string(b)
 }
 
-// Narrate the finesse line in terms of the actual cards: lead low toward the top cards and insert the
-// highest touching honour below the opponents best card. Falls back to a cash narration when NS holds no
-// card below the top missing rank (nothing to finesse with). Shared by the plain and compound finesse
-// cases. NO apostrophes / double quotes (single-quoted HTML attribute).
+// Narrate the finesse line in terms of the actual cards: lead low toward the INSERTING hand's top cards and
+// run its highest honour below the opponents best card. `insert_hold` is the hand the recommended line leads
+// toward (see describe_suit_line) — narrating the finesse card from THAT hand keeps the tooltip in step with
+// the line, which on a straddled two-way (AJ opposite KT: `finesse-other` runs the ten from the weak hand)
+// differs from the highest honour in `combined`. Falls back to a cash narration when the inserting hand holds
+// no card below the top missing rank (nothing to finesse with there). Shared by the plain and compound
+// finesse cases. NO apostrophes / double quotes (single-quoted HTML attribute).
 @(private)
 describe_finesse :: proc(
 	b: ^strings.Builder,
-	combined, winners: u16,
+	combined, winners, insert_hold: u16,
 	top_missing, n_win, ns_len: int,
 ) {
 	finesse_card := -1
 	if top_missing >= 0 {
 		for r := top_missing - 1; r >= 0; r -= 1 {
-			if combined & rank_bit(r) != 0 {finesse_card = r; break}
+			if insert_hold & rank_bit(r) != 0 {finesse_card = r; break}
 		}
 	}
 	if finesse_card < 0 {
@@ -1515,7 +1579,7 @@ describe_finesse :: proc(
 		return
 	}
 	tops: u16
-	for r := 12; r > finesse_card; r -= 1 {tops |= combined & rank_bit(r)}
+	for r := 12; r > finesse_card; r -= 1 {tops |= insert_hold & rank_bit(r)}
 	strings.write_string(b, "Lead a low card toward your ")
 	if tops != 0 {
 		write_cards_desc(b, tops)
@@ -1792,7 +1856,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		strings.write_string(builder, `' data-ns-atl='`)
 		write_curve_json(builder, ns_sd.atl)
 		strings.write_string(builder, `' data-ns-lines='`)
-		write_suits_lines_json(builder, &ns_sd)
+		write_suits_lines_json(builder, &ns_sd, ds[.North], ds[.South])
 		strings.write_string(builder, `' data-ns-tips='`)
 		write_suits_tips_json(builder, &ns_sd, ds[.North], ds[.South])
 		strings.write_string(builder, `' data-ns-notes='`)
@@ -1810,7 +1874,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		strings.write_string(builder, `' data-ew-atl='`)
 		write_curve_json(builder, ew_sd.atl)
 		strings.write_string(builder, `' data-ew-lines='`)
-		write_suits_lines_json(builder, &ew_sd)
+		write_suits_lines_json(builder, &ew_sd, ds[.East], ds[.West])
 		strings.write_string(builder, `' data-ew-tips='`)
 		write_suits_tips_json(builder, &ew_sd, ds[.East], ds[.West])
 		strings.write_string(builder, `' data-ew-notes='`)
