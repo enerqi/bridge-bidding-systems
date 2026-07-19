@@ -1422,8 +1422,42 @@ write_suits_json_sd :: proc(b: ^strings.Builder, sd: ^Sd_Bundle) {
 	strings.write_byte(b, '}')
 }
 
-// Write the per-suit RECOMMENDED blind line names as a JSON array `["s","h","d","c"]` (the best fixed
-// single-dummy line by mean per suit — `best_line_by_mean`, brick 2). Same suit order s,h,d,c as the
+// When the published suit-combination encyclopedia covers this holding, the card page OVERRIDES its engine
+// recommendation with the book's: `label` is the book's play (the cell label), `tip` is that play plus the
+// book's make-percentages vs best defence (the hover tooltip). `ok` is false on a miss -> caller keeps the
+// engine line + narration. The book fixes the holdings where our fixed lines underperform published theory.
+@(private)
+encyclopedia_override :: proc(
+	n, s: u16,
+	allocator := context.temp_allocator,
+) -> (label: string, tip: string, ok: bool) {
+	e, hit := encyclopedia_lookup(n, s)
+	if !hit {
+		return
+	}
+	label = e.line
+	tb := strings.builder_make(allocator)
+	strings.write_string(&tb, "Textbook line: ")
+	strings.write_string(&tb, e.line)
+	if e.nt > 0 {
+		strings.write_string(&tb, ". Chances vs best defence: ")
+		for i in 0 ..< e.nt {
+			if i > 0 {
+				strings.write_string(&tb, ", ")
+			}
+			strings.write_int(&tb, e.targets[i].need)
+			strings.write_string(&tb, " tricks ")
+			strings.write_int(&tb, e.targets[i].pct)
+			strings.write_byte(&tb, '%')
+		}
+	}
+	strings.write_byte(&tb, '.')
+	return label, strings.to_string(tb), true
+}
+
+// Write the per-suit RECOMMENDED blind line names as a JSON array `["s","h","d","c"]` — the published
+// encyclopedia line where it covers the holding (an OVERRIDE, see `encyclopedia_override`), else the best
+// fixed single-dummy line by mean (`best_line_by_mean`, brick 2). Same suit order s,h,d,c as the
 // distribution blobs, so the card page can label each suit row with how to play it.
 write_suits_lines_json :: proc(b: ^strings.Builder, sd: ^Sd_Bundle, north, south: norn.Hand_Summary) {
 	strings.write_byte(b, '[')
@@ -1431,8 +1465,12 @@ write_suits_lines_json :: proc(b: ^strings.Builder, sd: ^Sd_Bundle, north, south
 		if i > 0 {
 			strings.write_byte(b, ',')
 		}
-		// Show the honest line: a finesse with no real tenace is relabelled as a cash (see display_line_name).
-		fmt.sbprintf(b, `"%s"`, display_line_name(north.suits[suit], south.suits[suit], sd.best_name[i]))
+		if label, _, ok := encyclopedia_override(north.suits[suit], south.suits[suit]); ok {
+			fmt.sbprintf(b, `"%s"`, label)
+		} else {
+			// Show the honest line: a finesse with no real tenace is relabelled as a cash (display_line_name).
+			fmt.sbprintf(b, `"%s"`, display_line_name(north.suits[suit], south.suits[suit], sd.best_name[i]))
+		}
 	}
 	strings.write_byte(b, ']')
 }
@@ -1608,7 +1646,12 @@ write_suits_tips_json :: proc(
 		if i > 0 {
 			strings.write_byte(b, ',')
 		}
-		desc := describe_suit_line(north.suits[suit], south.suits[suit], sd.best_name[i])
+		desc: string
+		if _, tip, ok := encyclopedia_override(north.suits[suit], south.suits[suit]); ok {
+			desc = tip // book covers this holding: narrate the published line + odds (override)
+		} else {
+			desc = describe_suit_line(north.suits[suit], south.suits[suit], sd.best_name[i])
+		}
 		// JSON string; the narration contains no quotes/backslashes, but escape defensively.
 		strings.write_byte(b, '"')
 		for c in transmute([]u8)desc {

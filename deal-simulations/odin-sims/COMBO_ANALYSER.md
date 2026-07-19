@@ -4,6 +4,30 @@ Per-suit **trick-chance tables** for the North-South pair + a combined **P(≥ t
 next to the DDS par as a make-chance guide. Source doc: `Naive card combination analyser.md`.
 Inspiration: <https://bridge.esmarkkappel.dk/main/main.html> (a much simpler version of it).
 
+> ## ★★★ STATUS (2026-07-19) — SUIT-COMBINATION ENCYCLOPEDIA BUILT + WIRED (Option C DONE)
+>
+> The "suit-combination REFERENCE library" (Option C, below) is **no longer a future idea — it is built,
+> wired, and verified.** Full detail: **`SUIT_COMBINATION_ENCYCLOPEDIA_HANDOFF.md`** (read it; this is only a
+> pointer). In brief:
+> - Scraped the **BridgeHands** suit-combination tables → `combo/encyclopedia/` (parser + baker, Python,
+>   OFFLINE-ONLY) → **`combo/suit_encyclopedia.odin`**: 677 canonical holdings → published best line + P(≥k).
+> - **Canonical key = the ENGINE, not syntax.** `enc_key` serialises `sd_best_joint_table` (the recommended
+>   line's joint counts), so equivalent holdings collapse with **0 false merges** (syntactic keys failed:
+>   0.1–21% coverage or unsafe). Engine-keyed lazy `sync.Once` map; **26% coverage** (higher on 6–10-card).
+> - **Wired as an OVERRIDE.** `encyclopedia_override` in `write_suits_lines_json`/`write_suits_tips_json`: on a
+>   hit the card-page cell label = the book line and the tooltip = "Textbook line: … Chances vs best defence:
+>   4 tricks 96%…"; miss → engine line + `describe_suit_line`. Aggregate make-% band stays engine-driven.
+> - Verified end-to-end (pbn_analyse full deal), **golden PASS** (data-sim unchanged), **combo 51**, lint clean.
+> - Also this session: **Path A (`line_finesse_deep`) proven a DEAD END** (ties best under DD defence — the
+>   gain is a single-dummy misguess effect no fixed line captures); **narration fix shipped** (`finesse-other`
+>   runs the ten, tooltip now says so). Diff oracle found **221 line-gaps** the book fixes.
+> - **FUTURE (recorded, not built):** vacant-space / a-posteriori re-weighting (generalise the `g_binom`
+>   split weight; composes with the encyclopedia's alternative lines). Polish: doubled remark text (parser),
+>   long labels, perf (2s map build + 2×/suit recompute).
+>
+> So below: **Option C is DONE** (was "ELEVATED"); the "C2 reference library stays demoted" line in the
+> 2026-07-16 banner is superseded. ALL UNCOMMITTED (user manages commits).
+
 > ## ★★ NEXT-SESSION HANDOFF (2026-07-16)
 >
 > The 2-hand advisor + the image/PBN pipeline are feature-complete. This session shipped: misguess-tax
@@ -1015,7 +1039,15 @@ most random-deal suits are short and fall back, so no policy; and (2) the optima
 (branches on defenders' cards), so honest narration must be CONDITIONAL ("duck; lead low; if the K
 covers, win the A; else finesse"), which is fuzzy to render. Multi-session, partial coverage. Not next.
 
-### Option C — entry-aware lines + a suit-combination REFERENCE library (ELEVATED — see the 2-hand section above)
+### Option C — entry-aware lines + a suit-combination REFERENCE library (✅ DONE 2026-07-19 — see ★★★ banner + `SUIT_COMBINATION_ENCYCLOPEDIA_HANDOFF.md`)
+
+**✅ BUILT & WIRED (2026-07-19).** The reference-library half of Option C is done: the BridgeHands
+suit-combination tables are baked into `combo/suit_encyclopedia.odin` (677 holdings), looked up by an
+ENGINE-derived canonical key (`enc_key` = serialised `sd_best_joint_table`, 0 false merges, 26% coverage),
+and wired as an OVERRIDE of the card-page line label + tooltip (`encyclopedia_override`). Full detail in
+`SUIT_COMBINATION_ENCYCLOPEDIA_HANDOFF.md`. The entry-aware-lines half (parameterising the engine by entry
+count) is NOT built and stays optional — DDS sampling already covers realism. The design sketch below is kept
+for context.
 
 **Status change:** Option C was "later; worth examining." It is now the **recommended first realism
 deliverable for the 2-hand (declarer + dummy) advisor** — because with only two hands there is no `dd`
