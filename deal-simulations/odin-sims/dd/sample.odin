@@ -233,6 +233,13 @@ satisfies :: proc(board: norn.Deal, cons: Sample_Constraints) -> bool {
 @(private)
 SOLVE_BATCH :: dds.MAXNOOFTABLES
 
+// Adaptive early-stop knobs (see `solve_sample_adaptive`). Stop once the primary contract's 95% make-% CI
+// half-width (1.96·binomial SE) is within ADAPTIVE_CI_HALFWIDTH points — a 4-point band is about as tight as
+// the fixed-N default already is for a middling contract — but never below ADAPTIVE_MIN_SAMPLES samples (the
+// floor that keeps the lead sub-grids and non-picked contract cells, which ride the same batch, usable).
+ADAPTIVE_MIN_SAMPLES :: 200
+ADAPTIVE_CI_HALFWIDTH :: 4.0
+
 // Reject-sample `n` constrained layouts with a seeded RNG into `out` (len == n). Identical draw order to the
 // old one-at-a-time loop (solving never touched the RNG), so results stay byte-stable. false if some sample
 // could not be drawn within SAMPLE_MAX_REDEAL redeals (constraints too tight).
@@ -308,6 +315,175 @@ sample_solved :: proc(
 		return nil, nil, false
 	}
 	return layouts, tables, true
+}
+
+// A once-solved batch of constrained layouts for a known partnership `side`, reusable by BOTH the lead-grid
+// (`lead_grids_from_sample`) and misguess-tax (`tax_from_sample`) filters. Each of those is a PURE FILTER over
+// the solved tables, so sharing one batch avoids DD-solving the same seeded layouts twice (the two passes draw
+// identical layouts — same predeal/seed/constraints). `a`/`b` are the two declaring seats. Free with
+// `solved_sample_free`.
+Solved_Sample :: struct {
+	layouts: []norn.Deal,
+	tables:  []dds.Table_Results,
+	side:    bit_set[norn.Seat],
+	a, b:    norn.Seat,
+	n:       int,
+}
+
+// Validate `side` is a fully-known partnership, predeal its 26 cards, draw `n_samples` constrained layouts and
+// DD-solve them ONCE into a `Solved_Sample`. Guards mirror `sample_grid` (side fully known; n_samples > 0; DDS
+// succeeds; constraints satisfiable within the redeal budget). Free the result with `solved_sample_free`.
+// Resolve `side` to its two declaring seats and predeal their 26 known cards. ok=false if `side` is not a
+// fully-known partnership or the two hands share a card. Shared front-matter for the sampling entry points.
+@(private)
+predeal_side :: proc(
+	board: norn.Parsed_Board,
+	side: bit_set[norn.Seat],
+) -> (
+	pd: norn.Predeal,
+	a: norn.Seat,
+	b: norn.Seat,
+	ok: bool,
+) {
+	if .North in side {
+		a, b = .North, .South
+	} else if .East in side {
+		a, b = .East, .West
+	} else {
+		return {}, {}, {}, false
+	}
+	if (board.known & side) != side {
+		return {}, {}, {}, false
+	}
+	for seat in ([2]norn.Seat{a, b}) {
+		for k in 0 ..< norn.HAND_SIZE {
+			norn.predeal_add(&pd, seat, board.deal[seat][k])
+		}
+	}
+	if valid, _ := norn.predeal_validate(pd); !valid {
+		return {}, {}, {}, false // duplicate cards across the two known hands — malformed input
+	}
+	return pd, a, b, true
+}
+
+solve_sample :: proc(
+	board: norn.Parsed_Board,
+	side: bit_set[norn.Seat],
+	n_samples: int,
+	seed: u64 = 0,
+	constraints: Sample_Constraints = {},
+) -> (
+	s: Solved_Sample,
+	ok: bool,
+) {
+	if n_samples <= 0 {
+		return {}, false
+	}
+	pd, a, b, pok := predeal_side(board, side)
+	if !pok {
+		return {}, false
+	}
+	layouts, tables, sok := sample_solved(pd, n_samples, seed, constraints)
+	if !sok {
+		return {}, false // constraints unsatisfiable within the redeal budget, or a DDS fault
+	}
+	return {layouts = layouts, tables = tables, side = side, a = a, b = b, n = n_samples}, true
+}
+
+// Adaptive early-stop sampling: draw all `n_cap` seeded layouts (generation is cheap — pure RNG, no DDS) but
+// DD-solve only a PREFIX of them, growing one `SOLVE_BATCH` round at a time and stopping as soon as the primary
+// contract's make-% is statistically resolved. "Resolved" = a 95% confidence half-width (1.96·binomial SE) of
+// at most `ADAPTIVE_CI_HALFWIDTH` points, and never below `ADAPTIVE_MIN_SAMPLES` samples (a floor that keeps the
+// secondary numbers riding this same batch — the opening-lead sub-grids and the non-picked contract cells —
+// usable) nor above `n_cap`. Knife-edge contracts (make% near 50) never resolve within the cap and so run the
+// full `n_cap`, exactly as fixed-N would; only lopsided (near-cold / near-hopeless) boards stop short.
+//
+// Because we solve a deterministic PREFIX of the same seeded layout stream, the result is byte-identical to a
+// fixed-N run truncated at the stop point — reproducible, and identical to `solve_sample` whenever `n_cap <=
+// ADAPTIVE_MIN_SAMPLES` (the floor forces a full run). `target`/`has_target` name the gating contract; with
+// `has_target=false` the current best-EV contract is re-picked each round. Returns the resolved batch (its
+// `.n` = samples actually solved) and the gating contract. Free with `solved_sample_free`.
+solve_sample_adaptive :: proc(
+	board: norn.Parsed_Board,
+	side: bit_set[norn.Seat],
+	n_cap: int,
+	seed: u64 = 0,
+	constraints: Sample_Constraints = {},
+	target: Contract = {},
+	has_target: bool = false,
+) -> (
+	s: Solved_Sample,
+	gating: Contract,
+	ok: bool,
+) {
+	if n_cap <= 0 {
+		return {}, {}, false
+	}
+	pd, a, b, pok := predeal_side(board, side)
+	if !pok {
+		return {}, {}, false
+	}
+	layouts := make([]norn.Deal, n_cap)
+	tables := make([]dds.Table_Results, n_cap)
+	if !generate_layouts(pd, n_cap, seed, constraints, layouts) {
+		delete(layouts)
+		delete(tables)
+		return {}, {}, false // constraints unsatisfiable within the redeal budget
+	}
+
+	ha, hb := dds.Hand(int(a)), dds.Hand(int(b))
+	floor := min(ADAPTIVE_MIN_SAMPLES, n_cap)
+	grid: Grid_Result
+	gc := target
+	done := 0
+	for done < n_cap {
+		round := min(SOLVE_BATCH, n_cap - done)
+		if !solve_layouts(layouts[done:done + round], tables[done:done + round]) {
+			delete(layouts)
+			delete(tables)
+			return {}, {}, false // a DDS fault
+		}
+		// Accumulate the base (best-of-pair) grid over the newly solved round — mirrors sample_grid's tally.
+		for tbl in tables[done:done + round] {
+			for strain in dds.Strain {
+				tk := clamp(max(int(tbl.resTable[strain][ha]), int(tbl.resTable[strain][hb])), 0, 13)
+				grid.hist[strain][tk] += 1
+			}
+		}
+		done += round
+		grid.n = done
+		// Re-pick the gating contract from the running grid unless the caller fixed one.
+		if !has_target {
+			if bc, bok := best_contract(grid); bok {
+				gc = bc
+			}
+		}
+		// Stop once the gating contract's make-% is resolved (but not before the floor).
+		if done >= floor {
+			r := result_for(grid, gc)
+			if 1.96 * r.stderr_pct <= ADAPTIVE_CI_HALFWIDTH {
+				break
+			}
+		}
+	}
+	// Reslice to the solved prefix; the base pointer is unchanged, so solved_sample_free's delete still frees
+	// the whole allocation (the default heap allocator frees by pointer). The unsolved tail is never read.
+	s = Solved_Sample {
+		layouts = layouts[:done],
+		tables  = tables[:done],
+		side    = side,
+		a       = a,
+		b       = b,
+		n       = done,
+	}
+	return s, gc, true
+}
+
+// Release a Solved_Sample's layout/table slices (no-op on a zero value).
+solved_sample_free :: proc(s: ^Solved_Sample) {
+	delete(s.layouts)
+	delete(s.tables)
+	s^ = {}
 }
 
 // Monte-Carlo the full make-% grid for the known partnership `side` (one of NS_SIDE / EW_SIDE — the two
@@ -423,39 +599,24 @@ sample_lead_grids :: proc(
 	ok: bool,
 ) {
 	out^ = {}
-	a, b: norn.Seat
-	if .North in side {
-		a, b = .North, .South
-	} else if .East in side {
-		a, b = .East, .West
-	} else {
-		return false
-	}
-	if (board.known & side) != side || n_samples <= 0 {
-		return false
-	}
-	defenders := bit_set[norn.Seat]{.North, .East, .South, .West} - side
-
-	pd: norn.Predeal
-	for seat in ([2]norn.Seat{a, b}) {
-		for k in 0 ..< norn.HAND_SIZE {
-			norn.predeal_add(&pd, seat, board.deal[seat][k])
-		}
-	}
-	if valid, _ := norn.predeal_validate(pd); !valid {
-		return false
-	}
-
-	ha, hb := dds.Hand(int(a)), dds.Hand(int(b))
-
-	// Draw the constrained layouts and DD-solve them as a parallel batch, then FILTER each solved layout into
-	// the base grid + the opening-lead sub-grids (no extra solves — every sub-grid reuses the same table).
-	layouts, tables, sok := sample_solved(pd, n_samples, seed, constraints)
+	s, sok := solve_sample(board, side, n_samples, seed, constraints)
 	if !sok {
 		return false
 	}
-	defer delete(layouts)
-	defer delete(tables)
+	defer solved_sample_free(&s)
+	lead_grids_from_sample(&s, out)
+	return true
+}
+
+// Fill the base grid + all opening-lead sub-grids (see Lead_Grids) by FILTERING an already-solved batch — no
+// solving here. Shares the DD solve with `tax_from_sample` when both read the same `Solved_Sample`.
+lead_grids_from_sample :: proc(s: ^Solved_Sample, out: ^Lead_Grids) {
+	out^ = {}
+	a, b := s.a, s.b
+	n_samples := s.n
+	defenders := bit_set[norn.Seat]{.North, .East, .South, .West} - s.side
+	ha, hb := dds.Hand(int(a)), dds.Hand(int(b))
+	layouts, tables := s.layouts, s.tables
 	for tbl, si in tables {
 		layout := layouts[si]
 		// Base grid: best-of-pair tricks per strain (no lead known -> the pair declares from its better side).
@@ -484,7 +645,6 @@ sample_lead_grids :: proc(
 	}
 	out.base.n = n_samples
 	out.n = n_samples
-	return true
 }
 
 // Monte-Carlo make-probability for one `contract` declared by `side` — a thin one-strain read of

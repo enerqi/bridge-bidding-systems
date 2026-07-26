@@ -1,4 +1,4 @@
-set windows-shell := ["nu", "-c"]
+set windows-shell := ["powershell", "-c"]
 set shell := ["bash", "-c"]
 
 # This project is a CONSUMER of the norn library: norn provides the hand-generation engine
@@ -36,8 +36,8 @@ export HAND_OCR_DIR := env_var_or_default("HAND_OCR_DIR", replace(home_directory
 
 [windows]
 @mktarget_dirs:
-	-mkdir target/debug
-	-mkdir target/release
+	New-Item -ItemType Directory -Force target/debug | Out-Null
+	New-Item -ItemType Directory -Force target/release | Out-Null
 
 # ols.json is machine-specific (absolute paths) and gitignored — regenerate it after cloning or when
 # NORN_HOME / DDS_HOME change:  NORN_HOME=/path/to/norn DDS_HOME=/path/to/odin-dds just ols-config
@@ -95,16 +95,21 @@ build *args: mktarget_dirs
 # DDS-sampling whole-hand make-% verdict (links DDS); `--contract 4H` is OPTIONAL (best contract
 # auto-picked if omitted). `--html <out>` writes the interactive card page (green verdict band +
 # contract picker when sampling).
-# e.g. just analyse-deal '[Deal "N:AKQ3.AK2.A32.A32 - QJT98.QJT.KQ.KQJ -"]'  (add --target 9 to highlight a level)
-# e.g. just analyse-deal 'https://play.intobridge.com/hand?lin=...'            (paste a hand URL; single-quote it)
-# e.g. just analyse-deal --sample 400 '[Deal "N:... - ... -"]'                 (auto-pick the contract)
-# e.g. just analyse-deal --sample 400 --contract 3NT --html out.html '[Deal "N:... - ... -"]'
-# Reads a string arg, a --file <path>, or stdin (so `hand-ocr ... | pbn_analyse` works). A --file /
-# stdin holding SEVERAL [Deal] tags renders as one carousel page (text: a report per board).
+# The DEAL comes FIRST (single-quoted); optional flags follow it. The deal is quoted-through with
+# just's `quote()` so a LIN URL's `|` pipes, `!` alerts, `%` escapes and bare-PBN spaces survive the shell
+# (nu/powershell/bash all treat the metachars as pipes otherwise). Flags after it are plain tokens.
+# e.g. just analyse-deal 'https://play.intobridge.com/hand?lin=...'                         (paste a hand URL)
+# e.g. just analyse-deal 'N:AK6.AT753..AKQ98 T952.KJ.J4.T5432 QJ7.QT75.KQ96.76 843.986432.A82.J'
+# e.g. just analyse-deal 'N:... - ... -' --sample 400                                       (auto-pick the contract)
+# e.g. just analyse-deal 'N:... - ... -' --sample 400 --contract 3NT --html out.html
+# Prefer the BARE `N:...` deal form over the `[Deal "..."]` wrapper: on Windows `odin run` strips the
+# wrapper's literal double-quotes when it spawns the exe (MSVCRT arg re-parse), so the tag form loses its
+# quotes. For that form / --file <path> / stdin (a .pbn with SEVERAL [Deal] tags -> one carousel page, or
+# `hand-ocr ... | pbn_analyse`), run the built exe directly: target/release/pbn_analyse.exe --file <path>.
 # ---
 # 2-hand (declarer + dummy) card-combination advisor: deal (PBN / LIN URL) -> combo analysis (+ optional --sample verdict / --html card page)
-analyse-deal *args: mktarget_dirs
-	odin run pbn_analyse.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe -- {{args}}
+analyse-deal deal *flags: mktarget_dirs
+	odin run pbn_analyse.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe -- {{flags}} {{quote(deal)}}
 
 # deprecated alias for `analyse-deal` (recipe was PBN-only before it learned LIN)
 alias analyse-pbn := analyse-deal
@@ -168,6 +173,17 @@ ocr-pbn image *args:
 # OCR a hand-diagram IMAGE straight to the interactive card page
 ocr-analyse image *args: mktarget_dirs
 	odin build pbn_analyse.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe
+	uv run --no-project python tools/ocr_analyse.py {{image}} {{args}}
+
+# image -> PBN -> pbn_analyse with the DDS-sampling advisor + CCA/DD features. Writes
+# <image-basename>.html (override with --html); samples 400 deals by default (override with --sample).
+# Extra flags pass through to pbn_analyse (e.g. --contract 3NT).
+# `just ocr-analyse-rerun --demo` runs hand-ocr's sample deal end-to-end (plumbing check, no vision deps needed).
+# <image> may be `--clipboard` to read straight from the OS clipboard (screenshot -> card page, no temp file).
+# e.g. `just ocr-analyse-rerun hand.png` ; `just ocr-analyse-rerun hand.png --contract 3NT --seed 7` ; `just ocr-analyse-rerun --clipboard`
+# ---
+# OCR a hand-diagram IMAGE straight to the interactive card page without recompiling pbn_analyse.exe
+ocr-analyse-rerun image *args: mktarget_dirs
 	uv run --no-project python tools/ocr_analyse.py {{image}} {{args}}
 
 # build pbn_analyse, run it on a fixed board+seed, and diff the emitted `data-sim='...'` against

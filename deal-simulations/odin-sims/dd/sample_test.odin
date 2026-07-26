@@ -391,3 +391,51 @@ test_exact_grids_spikes :: proc(t: ^testing.T) {
 	// This deal: NS take 12 in spades (6S makes), matching the makeable list.
 	testing.expect_value(t, ns.hist[dds.Strain.Spades][12], 1)
 }
+
+// Adaptive early-stop: a COLD contract (make% ~100) resolves immediately, so solve_sample_adaptive stops at
+// the floor (first eligible round >= ADAPTIVE_MIN_SAMPLES) instead of running the full cap.
+@(test)
+test_adaptive_cold_stops_early :: proc(t: ^testing.T) {
+	init()
+	board, err := norn.parse_pbn_deal(`[Deal "N:AKQJ2.AK3.A32.A2 - 543.QJ2.KQ4.KQ43 -"]`)
+	testing.expect_value(t, err, norn.Pbn_Parse_Error.None)
+	c, _ := parse_contract("6S") // cold small slam -> p ~ 1 -> CI resolves at the floor
+	s, _, ok := solve_sample_adaptive(board, {.North, .South}, 600, 7, {}, c, true)
+	testing.expect(t, ok)
+	defer solved_sample_free(&s)
+	// Stopped at the floor's first eligible round, far short of the 600 cap.
+	testing.expect(t, s.n >= ADAPTIVE_MIN_SAMPLES)
+	testing.expect(t, s.n <= ADAPTIVE_MIN_SAMPLES + SOLVE_BATCH)
+	testing.expect(t, s.n < 600)
+	testing.expect_value(t, len(s.tables), s.n) // resliced to the solved prefix, no unsolved tail
+}
+
+// When the cap is at or below the floor, adaptive can never stop early: it must solve the SAME seeded prefix
+// as fixed-N solve_sample, table-for-table (the reproducibility guarantee the golden test relies on).
+@(test)
+test_adaptive_prefix_matches_fixed :: proc(t: ^testing.T) {
+	init()
+	board, err := norn.parse_pbn_deal(`[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]`)
+	testing.expect_value(t, err, norn.Pbn_Parse_Error.None)
+	side := bit_set[norn.Seat]{.North, .South}
+	n := 150 // <= ADAPTIVE_MIN_SAMPLES -> forced full run
+	fixed, fok := solve_sample(board, side, n, 7)
+	testing.expect(t, fok)
+	defer solved_sample_free(&fixed)
+	adapt, _, aok := solve_sample_adaptive(board, side, n, 7)
+	testing.expect(t, aok)
+	defer solved_sample_free(&adapt)
+	testing.expect_value(t, adapt.n, n)
+	testing.expect_value(t, len(adapt.tables), len(fixed.tables))
+	identical := true
+	for i in 0 ..< len(fixed.tables) {
+		for st in dds.Strain {
+			for h in 0 ..< 4 {
+				if fixed.tables[i].resTable[st][dds.Hand(h)] != adapt.tables[i].resTable[st][dds.Hand(h)] {
+					identical = false
+				}
+			}
+		}
+	}
+	testing.expect(t, identical)
+}

@@ -1430,11 +1430,12 @@ write_suits_json_sd :: proc(b: ^strings.Builder, sd: ^Sd_Bundle) {
 encyclopedia_override :: proc(
 	n, s: u16,
 	allocator := context.temp_allocator,
-) -> (label: string, tip: string, ok: bool) {
+) -> (label: string, tip: string, entry: Enc_Entry, ok: bool) {
 	e, hit := encyclopedia_lookup(n, s)
 	if !hit {
 		return
 	}
+	entry = e
 	label = e.line
 	tb := strings.builder_make(allocator)
 	strings.write_string(&tb, "Textbook line: ")
@@ -1449,24 +1450,120 @@ encyclopedia_override :: proc(
 			strings.write_string(&tb, " tricks ")
 			strings.write_int(&tb, e.targets[i].pct)
 			strings.write_byte(&tb, '%')
+			// Name the per-target play only when it differs from the headline label (the modal line),
+			// so a lower trick target reached by a DIFFERENT line is spelled out without repeating the label.
+			tl := e.targets[i].line
+			if tl != "" && tl != label {
+				strings.write_string(&tb, " (")
+				strings.write_string(&tb, tl)
+				strings.write_byte(&tb, ')')
+			}
 		}
 	}
 	strings.write_byte(&tb, '.')
-	return label, strings.to_string(tb), true
+	return label, strings.to_string(tb), e, true
+}
+
+// Build a per-trick-count probability row from an encyclopedia entry's CUMULATIVE targets (each = P(>= need)
+// vs best defence). Exact p[k] = P(>=k) - P(>=k+1) is recoverable only where BOTH cumulative points are
+// known: at the highest listed target (nothing above it) or where the next-higher trick count is also listed.
+// A gap above a listed target leaves that p[k] at 0 (blank) rather than inventing mass. Feeds the card page's
+// per-suit "book" row so the published shape sits alongside our engine's blue single-dummy row.
+@(private)
+book_pk_row :: proc(e: Enc_Entry) -> (row: [RANKS + 1]f64) {
+	cum: [RANKS + 2]f64
+	listed: [RANKS + 2]bool
+	max_need := 0
+	for i in 0 ..< e.nt {
+		nd := e.targets[i].need
+		if nd >= 0 && nd <= RANKS {
+			cum[nd] = f64(e.targets[i].pct) / 100
+			listed[nd] = true
+			if nd > max_need {max_need = nd}
+		}
+	}
+	for nd in 0 ..= RANKS {
+		if !listed[nd] {continue}
+		higher: f64
+		switch {
+		case nd == max_need:
+			higher = 0 // nothing above the top listed target
+		case listed[nd + 1]:
+			higher = cum[nd + 1]
+		case:
+			continue // a gap above this target: p[nd] is not exactly recoverable -> leave blank
+		}
+		p := cum[nd] - higher
+		if p < 0 {p = 0}
+		row[nd] = p
+	}
+	return
+}
+
+// One partnership's per-suit encyclopedia override (label + tooltip), in DISPLAY_SUITS order. Computed ONCE
+// per partnership and shared by the label and tooltip emit: each entry costs an `encyclopedia_lookup` (whose
+// `enc_key` runs `sd_best_joint_table`), so precomputing halves that work vs the label and tip paths each
+// looking it up. Strings are arena-backed (allocated in the annotate temp, freed with it).
+Suit_Override :: struct {
+	label, tip: string,
+	book:       [RANKS + 1]f64, // published per-trick shape (P(exactly k)), 0 where the book is silent
+	ok:         bool,
+}
+
+@(private)
+suit_overrides :: proc(
+	north, south: norn.Hand_Summary,
+	allocator := context.temp_allocator,
+) -> (out: [4]Suit_Override) {
+	for suit, i in DISPLAY_SUITS {
+		e: Enc_Entry
+		out[i].label, out[i].tip, e, out[i].ok = encyclopedia_override(
+			north.suits[suit],
+			south.suits[suit],
+			allocator,
+		)
+		if out[i].ok {
+			out[i].book = book_pk_row(e)
+		}
+	}
+	return
+}
+
+// Write the per-suit published (encyclopedia) per-trick shape as a JSON array `[<[p0..p13]>|null, ...]` in
+// suit order s,h,d,c: the book's row where it covers the holding, `null` on a miss. The card page shows it as
+// a per-suit "book" row beside our engine's blue single-dummy row (they diverge on the line-gap holdings).
+write_suits_book_json :: proc(b: ^strings.Builder, ov: ^[4]Suit_Override) {
+	strings.write_byte(b, '[')
+	for i in 0 ..< 4 {
+		if i > 0 {
+			strings.write_byte(b, ',')
+		}
+		if ov[i].ok {
+			write_curve_json(b, ov[i].book)
+		} else {
+			strings.write_string(b, "null")
+		}
+	}
+	strings.write_byte(b, ']')
 }
 
 // Write the per-suit RECOMMENDED blind line names as a JSON array `["s","h","d","c"]` — the published
 // encyclopedia line where it covers the holding (an OVERRIDE, see `encyclopedia_override`), else the best
 // fixed single-dummy line by mean (`best_line_by_mean`, brick 2). Same suit order s,h,d,c as the
 // distribution blobs, so the card page can label each suit row with how to play it.
-write_suits_lines_json :: proc(b: ^strings.Builder, sd: ^Sd_Bundle, north, south: norn.Hand_Summary) {
+write_suits_lines_json :: proc(
+	b: ^strings.Builder,
+	sd: ^Sd_Bundle,
+	ov: ^[4]Suit_Override,
+	north, south: norn.Hand_Summary,
+) {
 	strings.write_byte(b, '[')
 	for suit, i in DISPLAY_SUITS {
 		if i > 0 {
 			strings.write_byte(b, ',')
 		}
-		if label, _, ok := encyclopedia_override(north.suits[suit], south.suits[suit]); ok {
-			fmt.sbprintf(b, `"%s"`, label)
+		if ov[i].ok {
+			fmt.sbprintf(b, `"%s"`, ov[i].label)
 		} else {
 			// Show the honest line: a finesse with no real tenace is relabelled as a cash (display_line_name).
 			fmt.sbprintf(b, `"%s"`, display_line_name(north.suits[suit], south.suits[suit], sd.best_name[i]))
@@ -1639,6 +1736,7 @@ describe_finesse :: proc(
 write_suits_tips_json :: proc(
 	b: ^strings.Builder,
 	sd: ^Sd_Bundle,
+	ov: ^[4]Suit_Override,
 	north, south: norn.Hand_Summary,
 ) {
 	strings.write_byte(b, '[')
@@ -1647,8 +1745,8 @@ write_suits_tips_json :: proc(
 			strings.write_byte(b, ',')
 		}
 		desc: string
-		if _, tip, ok := encyclopedia_override(north.suits[suit], south.suits[suit]); ok {
-			desc = tip // book covers this holding: narrate the published line + odds (override)
+		if ov[i].ok {
+			desc = ov[i].tip // book covers this holding: narrate the published line + odds (override)
 		} else {
 			desc = describe_suit_line(north.suits[suit], south.suits[suit], sd.best_name[i])
 		}
@@ -1898,10 +1996,13 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_curve_json(builder, ns_sd.totsd)
 		strings.write_string(builder, `' data-ns-atl='`)
 		write_curve_json(builder, ns_sd.atl)
+		ns_ov := suit_overrides(ds[.North], ds[.South]) // once per partnership; shared by lines + tips
 		strings.write_string(builder, `' data-ns-lines='`)
-		write_suits_lines_json(builder, &ns_sd, ds[.North], ds[.South])
+		write_suits_lines_json(builder, &ns_sd, &ns_ov, ds[.North], ds[.South])
 		strings.write_string(builder, `' data-ns-tips='`)
-		write_suits_tips_json(builder, &ns_sd, ds[.North], ds[.South])
+		write_suits_tips_json(builder, &ns_sd, &ns_ov, ds[.North], ds[.South])
+		strings.write_string(builder, `' data-ns-book='`)
+		write_suits_book_json(builder, &ns_ov)
 		strings.write_string(builder, `' data-ns-notes='`)
 		write_suits_notes_json(builder, ds[.North], ds[.South])
 		strings.write_string(builder, `' data-ns-floor='`)
@@ -1916,10 +2017,13 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_curve_json(builder, ew_sd.totsd)
 		strings.write_string(builder, `' data-ew-atl='`)
 		write_curve_json(builder, ew_sd.atl)
+		ew_ov := suit_overrides(ds[.East], ds[.West]) // once per partnership; shared by lines + tips
 		strings.write_string(builder, `' data-ew-lines='`)
-		write_suits_lines_json(builder, &ew_sd, ds[.East], ds[.West])
+		write_suits_lines_json(builder, &ew_sd, &ew_ov, ds[.East], ds[.West])
 		strings.write_string(builder, `' data-ew-tips='`)
-		write_suits_tips_json(builder, &ew_sd, ds[.East], ds[.West])
+		write_suits_tips_json(builder, &ew_sd, &ew_ov, ds[.East], ds[.West])
+		strings.write_string(builder, `' data-ew-book='`)
+		write_suits_book_json(builder, &ew_ov)
 		strings.write_string(builder, `' data-ew-notes='`)
 		write_suits_notes_json(builder, ds[.East], ds[.West])
 		strings.write_string(builder, `' data-ew-floor='`)

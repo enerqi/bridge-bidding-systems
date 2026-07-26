@@ -39,3 +39,22 @@ test_encyclopedia_known :: proc(t: ^testing.T) {
 	testing.expect(t, oka == okb)
 	if oka && okb {testing.expect(t, a.n == b.n && a.s == b.s)}
 }
+
+// The card-validity gate: the engine key is odds-based, so an odds-equivalent holding with DIFFERENT honours
+// shares a key with a baked entry (AQ9x/T8x, missing KJ, is the same double-finesse odds as AKJ9/xxx, missing
+// QT). Accepting that hit would show the wrong entry's card names ("low to K" on a holding with no king). The
+// book does not list AQ9x/T8x, so it MUST resolve to a miss -> engine fallback, not a false hit.
+@(test)
+test_encyclopedia_card_validity :: proc(t: ^testing.T) {
+	// AQ9x / T8x: A,Q,9,5 (0x14a0) opposite T,8,4 (0x0150); no king, no jack.
+	n := u16((1 << 12) | (1 << 10) | (1 << 7) | (1 << 5))
+	s := u16((1 << 8) | (1 << 6) | (1 << 4))
+	e, ok := encyclopedia_lookup(n, s)
+	testing.expectf(t, !ok, "AQ9x/T8x must miss (not in book); got line=%q", e.line)
+
+	// Sanity: the engine-equivalent holding that IS baked (AKJ9/xxx, 0x1a80/0x0007) still hits, and its line
+	// names only cards it holds.
+	e2, ok2 := encyclopedia_lookup(0x1a80, 0x0007)
+	testing.expect(t, ok2)
+	if ok2 {testing.expect(t, e2.n == 0x1a80 && e2.s == 0x0007)}
+}

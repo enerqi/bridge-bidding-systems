@@ -206,6 +206,52 @@ test_tax_same_suit_double_pivot :: proc(t: ^testing.T) {
 	testing.expect(t, seen_q && seen_t)
 }
 
+// Per-lead conditioned tax (option (a)): conditioning on a defender HOLDING the trapped honour resolves that
+// guess, so the "lead of the queen" entry carries ~zero tax, while a lead that does NOT locate it keeps the
+// guess and a real tax. This contrast IS the value of per-lead tax over the unconditioned rung — a lead that
+// reveals the honour kills the guess. Same ♠Q board as test_tax_two_way_guess_is_docked.
+@(test)
+test_lead_tax_resolves_pivot :: proc(t: ^testing.T) {
+	init()
+	board, err := norn.parse_pbn_deal(`[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]`)
+	testing.expect_value(t, err, norn.Pbn_Parse_Error.None)
+	c, _ := parse_contract("3NT")
+
+	// Unconditioned: a big two-way ♠Q guess on this board.
+	base, bok := misguess_tax(board, {.North, .South}, c, 400, 7)
+	testing.expect(t, bok)
+	testing.expect(t, base.tax_pts >= 20.0)
+
+	s, sok := solve_sample(board, {.North, .South}, 400, 7)
+	testing.expect(t, sok)
+	defer solved_sample_free(&s)
+	lt := new(Lead_Tax)
+	defer free(lt)
+	lead_tax_from_sample(board, &s, c, lt)
+
+	qs := norn.make_card(.Spades, .Queen)
+	// Both defenders have layouts where they hold the queen; conditioning on that resolves the guess -> ~0 tax.
+	for d in ([]norn.Seat{.East, .West}) {
+		e := lt.seat[d][int(qs)]
+		testing.expect(t, e.has_pvt)
+		testing.expect(t, e.n >= 20) // ~half of 400 layouts put the queen with each defender
+		testing.expect(t, e.taxpts <= 5.0) // the lead located the queen -> guess resolved, ~no tax
+	}
+
+	// But some lead that does NOT locate the queen keeps a real tax near the unconditioned figure. Scan the
+	// defenders' card entries for the largest surviving tax; it must stay materially above the resolved ~0.
+	max_tax := 0.0
+	for d in ([]norn.Seat{.East, .West}) {
+		for ci in 0 ..< 52 {
+			e := lt.seat[d][ci]
+			if e.has_pvt && e.n >= 20 && e.taxpts > max_tax {
+				max_tax = e.taxpts
+			}
+		}
+	}
+	testing.expect(t, max_tax >= 15.0) // a non-revealing lead still faces the blind guess
+}
+
 // Textbook single-missing-honour two-way queens are all caught: AJ opp KT and its variants (a card above
 // the queen in BOTH hands, both immediate neighbours held). This pins the geometry's intended coverage.
 @(test)

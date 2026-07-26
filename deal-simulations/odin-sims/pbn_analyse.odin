@@ -175,6 +175,7 @@ Board_Sample :: struct {
 	auto:     bool, // contract was auto-picked (no --contract)
 	tax:      dd.Tax_Result, // the misguess-tax achievable-SD estimate for `contract` (valid iff tax_ok)
 	tax_ok:   bool,
+	lead_tax: ^dd.Lead_Tax, // per-opening-lead conditioned tax for `contract` (heap; freed with the sample)
 }
 
 // Release a Board_Sample's heap grids (no-op when sampling was off).
@@ -182,6 +183,10 @@ board_sample_free :: proc(bs: ^Board_Sample) {
 	if bs.leads != nil {
 		free(bs.leads)
 		bs.leads = nil
+	}
+	if bs.lead_tax != nil {
+		free(bs.lead_tax)
+		bs.lead_tax = nil
 	}
 }
 
@@ -201,6 +206,16 @@ sample_board :: proc(
 	if args.sample <= 0 {
 		return {}, ""
 	}
+	// When no --contract was given, fall back to the contract the board itself names (LIN auction / PBN
+	// [Contract]) — but only if its declarer is on the side being analysed, so a board where the OTHER
+	// pair declares still auto-picks THIS side's best contract. An explicit --contract still overrides
+	// (has_contract is already true then). auto stays false: this is the real contract, not a guess.
+	contract, has_contract := contract, has_contract
+	if !has_contract {
+		if c, decl, ok := board_contract(board); ok && decl in side {
+			contract, has_contract = c, true
+		}
+	}
 	defenders := bit_set[norn.Seat]{.North, .East, .South, .West} - side
 	for con in args.constraints {
 		if con.seat not_in defenders {
@@ -216,27 +231,36 @@ sample_board :: proc(
 		}
 	}
 	cons := dd.Sample_Constraints{shape = args.constraints[:], held = args.held[:]}
-	lg := new(dd.Lead_Grids)
-	if !dd.sample_lead_grids(board, side, args.sample, lg, args.seed, cons) {
-		free(lg)
+	// Solve the sampled layouts ONCE, with adaptive early-stop: `args.sample` is a CAP — sampling stops as soon
+	// as the picked contract's make-% is statistically resolved (lopsided boards stop short; knife-edge boards
+	// run the full cap). The lead grids and the misguess tax are then pure FILTERS over that one solved batch
+	// (they otherwise each draw+solve the identical seeded layouts), so a board pays for its samples once, not
+	// twice. `gating` is the contract that gated the stop — the auto-pick when the caller gave none.
+	s, gating, sok := dd.solve_sample_adaptive(board, side, args.sample, args.seed, cons, contract, has_contract)
+	if !sok {
 		return {}, "DDS sampling failed — the constraints are too rare or impossible for these hands (could not draw enough consistent deals)"
 	}
+	defer dd.solved_sample_free(&s)
+	lg := new(dd.Lead_Grids)
+	dd.lead_grids_from_sample(&s, lg)
 	bs.leads = lg
 	bs.grid = lg.base
 	bs.have = true
 	if has_contract {
 		bs.contract = contract
 	} else {
-		bc, bc_ok := dd.best_contract(bs.grid)
-		if !bc_ok {
-			return {}, "could not pick a contract from the sample"
-		}
-		bs.contract, bs.auto = bc, true
+		bs.contract, bs.auto = gating, true
 	}
-	// Achievable single-dummy (the misguess-tax 4th rung) for the resolved contract. Same board/seed/
-	// constraints as the ceiling sample; an extra CalcDDtable pass (no lead sub-grids), cheap vs the lead
-	// grids above. A failure just drops the achievable rung — the ceiling verdict still stands.
-	bs.tax, bs.tax_ok = dd.misguess_tax(board, side, bs.contract, args.sample, args.seed, cons)
+	// Achievable single-dummy (the misguess-tax 4th rung) for the resolved contract — a FILTER over the SAME
+	// solved batch as the lead grids (no extra solves). A failure just drops the achievable rung — the ceiling
+	// verdict still stands.
+	bs.tax, bs.tax_ok = dd.tax_from_sample(board, &s, bs.contract)
+	// Per-opening-lead conditioned tax for the resolved contract — another FILTER over the same solved batch
+	// (no extra solves). Lets the card page show a coupled, lead-conditioned achievable when a lead is picked
+	// (a lead that reveals the trapped honour resolves its guess → tax 0). Heap-held like `leads`.
+	lt := new(dd.Lead_Tax)
+	dd.lead_tax_from_sample(board, &s, bs.contract, lt)
+	bs.lead_tax = lt
 	return bs, ""
 }
 
@@ -246,6 +270,29 @@ sample_board :: proc(
 // DDS-sampling advisor (which models the unknown defenders).
 board_fully_known :: proc(board: norn.Parsed_Board) -> bool {
 	return board.known == {.North, .East, .South, .West}
+}
+
+// The contract the board itself names (from a LIN `mb|` auction or PBN `[Contract]`/`[Declarer]`) as a
+// dd.Contract plus its declaring seat. ok=false when the board named no contract. Maps norn's contract
+// strain onto dd's (dds) strain — the two enums order their variants differently, so map by name.
+board_contract :: proc(board: norn.Parsed_Board) -> (c: dd.Contract, declarer: norn.Seat, ok: bool) {
+	if !board.has_contract {
+		return {}, .North, false
+	}
+	strain: dd.Strain
+	switch board.contract_strain {
+	case .Clubs:
+		strain = .Clubs
+	case .Diamonds:
+		strain = .Diamonds
+	case .Hearts:
+		strain = .Hearts
+	case .Spades:
+		strain = .Spades
+	case .NoTrump:
+		strain = .NT
+	}
+	return dd.Contract{level = board.contract_level, strain = strain}, board.declarer, true
 }
 
 // Text report for a fully-known 4-hand deal: the layout, then the EXACT double-dummy verdict (par +
@@ -1224,7 +1271,7 @@ render_full_deal_body :: proc(
 	// so the page can toggle exact ↔ blind for either partnership. solve_table is cached (dd.annotate's).
 	if ns_grid, ew_grid, ok := dd.exact_grids(board.deal); ok {
 		strings.write_string(b, `<div class="sim-exact" hidden data-sim='`)
-		write_exact_sim_json(b, &ns_grid, &ew_grid)
+		write_exact_sim_json(b, &ns_grid, &ew_grid, board)
 		strings.write_string(b, `'`)
 		if args.sample > 0 {
 			strings.write_string(b, ` data-sim-blind='`)
@@ -1268,7 +1315,7 @@ write_blind_sides_json :: proc(
 	defer board_sample_free(&bs_ns)
 	strings.write_string(b, `"ns":`)
 	if bs_ns.have {
-		write_sim_json(b, &bs_ns.grid, bs_ns.contract, bs_ns.tax, bs_ns.tax_ok, bs_ns.leads, combo.NS_SIDE, ns_lseat, ns_lword)
+		write_sim_json(b, &bs_ns.grid, bs_ns.contract, bs_ns.tax, bs_ns.tax_ok, bs_ns.leads, combo.NS_SIDE, ns_lseat, ns_lword, bs_ns.lead_tax)
 	} else {
 		strings.write_string(b, "null")
 	}
@@ -1276,7 +1323,7 @@ write_blind_sides_json :: proc(
 	defer board_sample_free(&bs_ew)
 	strings.write_string(b, `,"ew":`)
 	if bs_ew.have {
-		write_sim_json(b, &bs_ew.grid, bs_ew.contract, bs_ew.tax, bs_ew.tax_ok, bs_ew.leads, combo.EW_SIDE, ew_lseat, ew_lword)
+		write_sim_json(b, &bs_ew.grid, bs_ew.contract, bs_ew.tax, bs_ew.tax_ok, bs_ew.leads, combo.EW_SIDE, ew_lseat, ew_lword, bs_ew.lead_tax)
 	} else {
 		strings.write_string(b, "null")
 	}
@@ -1286,8 +1333,9 @@ write_blind_sides_json :: proc(
 // Bake the EXACT double-dummy grids (one per partnership) as a `data-sim` blob with `exact:true`, so the
 // verdict band shows "double-dummy (exact): N♠ makes/fails" (no sampled ±, no guess tax) and FOLLOWS the
 // N/S↔E/W toggle — `ns`/`ew` each carry that side's per-strain spike grid. `lvl`/`strain` preselect the
-// picker at NS's best-making contract (most tricks; ties -> NT by iteration order).
-write_exact_sim_json :: proc(b: ^strings.Builder, ns_grid, ew_grid: ^dd.Grid_Result) {
+// picker at the contract the deal actually names (from `[Contract]`), else NS's best-making contract
+// (most tricks; ties -> NT by iteration order).
+write_exact_sim_json :: proc(b: ^strings.Builder, ns_grid, ew_grid: ^dd.Grid_Result, board: norn.Parsed_Board) {
 	best_strain := dd.Strain.NT
 	best_tricks := 0
 	for st in dd.Strain {
@@ -1302,8 +1350,13 @@ write_exact_sim_json :: proc(b: ^strings.Builder, ns_grid, ew_grid: ^dd.Grid_Res
 		}
 	}
 	lvl := clamp(best_tricks - 6, 1, 7)
+	strain := best_strain
+	// Prefer the contract the record names (what was played at the table) over the engine's best-making pick.
+	if c, _, ok := board_contract(board); ok {
+		lvl, strain = c.level, c.strain
+	}
 	strings.write_byte(b, '{')
-	fmt.sbprintf(b, `"n":1,"exact":true,"lvl":%d,"strain":"%s"`, lvl, strain_key(best_strain))
+	fmt.sbprintf(b, `"n":1,"exact":true,"lvl":%d,"strain":"%s"`, lvl, strain_key(strain))
 	strings.write_string(b, `,"ns":`)
 	write_g_object(b, ns_grid.hist, ns_grid.n)
 	strings.write_string(b, `,"ew":`)
@@ -1360,7 +1413,7 @@ render_board_body :: proc(
 		write_sim_json(b, &bs.grid, bs.contract, bs.tax, bs.tax_ok)
 		strings.write_string(b, "'")
 		strings.write_string(b, " data-sim-leads='")
-		write_leads_json(b, bs.leads, side)
+		write_leads_json(b, bs.leads, side, bs.lead_tax)
 		strings.write_string(b, "'")
 		// Per-suit blind two-way GUESS notes (Option C1 narration): the misguess-tax pivots keyed by suit,
 		// merged client-side into that suit's line tooltip. Only when a guess actually COSTS something at
@@ -1396,6 +1449,7 @@ write_sim_json :: proc(
 	side: bit_set[norn.Seat] = {},
 	lead_seat: u8 = 0,
 	lead_card: string = "",
+	lead_tax: ^dd.Lead_Tax = nil,
 ) {
 	// Braces must be written literally — Odin's fmt reads `{` in a format string as an argument
 	// reference (see dd.odin's PBN-comment note), so only value fields go through sbprintf.
@@ -1418,7 +1472,7 @@ write_sim_json :: proc(
 	write_g_object(b, sim.hist, sim.n)
 	if leads != nil {
 		strings.write_string(b, `,"leads":`)
-		write_leads_json(b, leads, side)
+		write_leads_json(b, leads, side, lead_tax)
 	}
 	// The recorded opening lead, pre-selecting the picker (client seeds ccaLead from it until the user picks).
 	// Emitted only when the leader is a DEFENDER of this side, keyed like a leads-map entry ("E","3C").
@@ -1517,7 +1571,16 @@ write_g_object :: proc(b: ^strings.Builder, hist: [dd.Strain][14]int, n: int) {
 // over the layouts where that defender holds the card (== "the opening lead was that card, from that
 // defender"). The client reads make-% = g[strain] tail at level+6 and the honest ± from the sub-n. Only
 // cards actually seen (n>0) are emitted. Single-quoted attribute host: double quotes only, no escaping.
-write_leads_json :: proc(b: ^strings.Builder, leads: ^dd.Lead_Grids, side: bit_set[norn.Seat]) {
+// Minimum sub-sample for an honest per-lead tax (matches worst_lead's guard): below it the lead-conditioned
+// tax is too noisy to bake, and the client falls back to the lead-independent decoupled note.
+LEAD_TAX_MIN_N :: 20
+
+write_leads_json :: proc(
+	b: ^strings.Builder,
+	leads: ^dd.Lead_Grids,
+	side: bit_set[norn.Seat],
+	lead_tax: ^dd.Lead_Tax = nil,
+) {
 	defenders := bit_set[norn.Seat]{.North, .East, .South, .West} - side
 	strings.write_byte(b, '{')
 	fmt.sbprintf(b, `"n":%d,"seats":`, leads.n)
@@ -1544,6 +1607,16 @@ write_leads_json :: proc(b: ^strings.Builder, leads: ^dd.Lead_Grids, side: bit_s
 			strings.write_byte(b, '{')
 			fmt.sbprintf(b, `"n":%d,"g":`, lc.n)
 			write_g_object(b, lc.hist, lc.n)
+			// The lead-conditioned guess tax (option (a)): the make-% (from `g`) docked for the two-way guess
+			// that survives THIS lead. `tax` may be ~0 — the lead itself located the trapped honour, resolving
+			// the guess — which the client shows as "guess resolved", distinct from a thin sub-sample (no entry
+			// baked → the client falls back to the lead-independent note). Only for the baked contract.
+			if lead_tax != nil {
+				lt := lead_tax.seat[d][ci]
+				if lt.has_pvt && lt.n >= LEAD_TAX_MIN_N {
+					fmt.sbprintf(b, `,"tax":%.1f,"pvt":"%s"`, lt.taxpts, card_word(lt.pvt))
+				}
+			}
 			strings.write_byte(b, '}')
 		}
 		strings.write_byte(b, '}')

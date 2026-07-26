@@ -254,7 +254,14 @@ sd_trick :: proc(
 // Enumerates every E/W split, plays it out with `sd_deal_tricks` (double-dummy defence), and weights
 // by the same vacant-space a-priori probability Phase 1 uses (see `suit_trick_distribution`). The
 // returned `p[]` sums to 1. This is the "achievable" companion to Phase 1's census.
-sd_line_distribution :: proc(north, south: u16, line: Sd_Line) -> Suit_Trick_Dist {
+// `memo_in` (optional): a caller-owned scratch map REUSED across evaluations so they share one backing
+// allocation (see `sd_line_joint_table`). `clear`ed on entry — cached values are per-line and must not carry
+// over. `nil` → throwaway (standalone callers). Within one call it is shared across all E/W splits (`line` fixed).
+sd_line_distribution :: proc(
+	north, south: u16,
+	line: Sd_Line,
+	memo_in: ^map[u64]int = nil,
+) -> Suit_Trick_Dist {
 	ns := north | south
 	ns_len := card_count(ns)
 
@@ -274,8 +281,15 @@ sd_line_distribution :: proc(north, south: u16, line: Sd_Line) -> Suit_Trick_Dis
 	denom := g_binom[26][13]
 
 	// One memo shared across every E/W split (valid because `line` is fixed for this whole loop).
-	memo := make(map[u64]int)
-	defer delete(memo)
+	local: map[u64]int
+	memo := memo_in
+	if memo == nil {
+		local = make(map[u64]int)
+		memo = &local
+	} else {
+		clear(memo)
+	}
+	defer if memo_in == nil {delete(local)}
 
 	// Equivalence-class enumeration (see `Split_Iter` in combo.odin): one representative per pattern,
 	// weighted by `mult` concrete splits — all sharing the same East length `a`, hence the same weight.
@@ -286,7 +300,7 @@ sd_line_distribution :: proc(north, south: u16, line: Sd_Line) -> Suit_Trick_Dis
 			break
 		}
 		west := missing & ~east
-		tricks := sd_deal_tricks(line, north, south, east, west, &memo)
+		tricks := sd_deal_tricks(line, north, south, east, west, memo)
 		dist.p[tricks] += mult * g_binom[26 - m][13 - a]
 	}
 
@@ -363,14 +377,19 @@ sd_best_joint_table :: proc(north, south: u16) -> Suit_Joint_Table {
 	lines := candidate_lines()
 	best := lines[0]
 	best_mean := f64(-1)
+	// One scratch memo reused (cleared per line) across all 5 line evaluations + the final joint table,
+	// instead of each call allocating and freeing its own — this proc is allocation-bound and runs 677x at
+	// map build and once per suit per lookup.
+	memo := make(map[u64]int)
+	defer delete(memo)
 	for line in lines {
-		mn := expected_tricks(sd_line_distribution(north, south, line).p)
+		mn := expected_tricks(sd_line_distribution(north, south, line, &memo).p)
 		if mn > best_mean {
 			best_mean = mn
 			best = line
 		}
 	}
-	return sd_line_joint_table(north, south, best)
+	return sd_line_joint_table(north, south, best, &memo)
 }
 
 // The double-dummy tax for a suit under a given line: the mean tricks the line actually achieves

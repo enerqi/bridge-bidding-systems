@@ -183,38 +183,39 @@ misguess_tax :: proc(
 	result: Tax_Result,
 	ok: bool,
 ) {
-	a, b: norn.Seat
-	if .North in side {
-		a, b = .North, .South
-	} else if .East in side {
-		a, b = .East, .West
-	} else {
+	s, sok := solve_sample(board, side, n_samples, seed, constraints)
+	if !sok {
 		return {}, false
 	}
-	if (board.known & side) != side || n_samples <= 0 {
-		return {}, false
-	}
+	defer solved_sample_free(&s)
+	return tax_from_sample(board, &s, contract)
+}
+
+// Estimate the ACHIEVABLE single-dummy make-% for `contract` declared by the known partnership, by FILTERING
+// an already-solved batch (`Solved_Sample`) — NO solving here (one CalcDDtable/layout happened in
+// `solve_sample`). Shares the DD solve with `lead_grids_from_sample` when both read the same batch, so a board
+// pays for the sampled layouts once, not twice. See the file header for the model.
+tax_from_sample :: proc(
+	board: norn.Parsed_Board,
+	s: ^Solved_Sample,
+	contract: Contract,
+) -> (
+	result: Tax_Result,
+	ok: bool,
+) {
+	a, b := s.a, s.b
+	n_samples := s.n
 
 	// The two defender seats (the ones NOT declaring), in a fixed order for the per-pivot split.
 	defs: [2]norn.Seat
 	{
 		i := 0
 		for seat in norn.Seat {
-			if seat not_in side {
+			if seat not_in s.side {
 				defs[i] = seat
 				i += 1
 			}
 		}
-	}
-
-	pd: norn.Predeal
-	for seat in ([2]norn.Seat{a, b}) {
-		for k in 0 ..< norn.HAND_SIZE {
-			norn.predeal_add(&pd, seat, board.deal[seat][k])
-		}
-	}
-	if valid, _ := norn.predeal_validate(pd); !valid {
-		return {}, false
 	}
 
 	// The blind two-way guesses to tax (from the known hands' geometry alone — same on every layout).
@@ -235,15 +236,9 @@ misguess_tax :: proc(
 	// but only the low 2^n_pivots combos are ever touched.
 	joint_hist: [1 << TAX_MAX_PIVOTS][14]int
 
-	// Same constrained layouts as the ceiling sample (identical seed), DD-solved as a parallel batch.
-	layouts, tables, sok := sample_solved(pd, n_samples, seed, constraints)
-	if !sok {
-		return {}, false
-	}
-	defer delete(layouts)
-	defer delete(tables)
-	for tbl, si in tables {
-		layout := layouts[si]
+	// Filter the shared, already-solved batch (no re-solve — see tax_from_sample's header).
+	for tbl, si in s.tables {
+		layout := s.layouts[si]
 		// Best of the two pair members declaring, matching sample_grid's ceiling exactly.
 		tk := clamp(max(int(tbl.resTable[strain][ha]), int(tbl.resTable[strain][hb])), 0, 13)
 		ceiling_hist[tk] += 1
@@ -288,6 +283,117 @@ misguess_tax :: proc(
 	sort_pivots_dominant_first(result.pivots[:n_pivots])
 	result.tax_pts = result.ceiling_pct - result.achievable_pct
 	return result, true
+}
+
+// Per opening-lead-card conditioned misguess-tax. `seat[D][ci]` (only the two DEFENDER seats populated,
+// indexed by `int(card)`) is the tax when the opening lead is that card from D. Companion to Lead_Grids:
+// the grid gives the lead-conditioned make-% (ceiling), this gives the guess tax to dock it by, both under
+// the SAME fixed single declarer (leader's partner), so `make-% − taxpts` is a coherent lead-conditioned
+// achievable. `n` is the sub-sample size (== the matching Lead_Card_Hist.n); a thin sub-sample is left to
+// the caller to gate. Entries with no guess under this lead have has_pvt=false / taxpts 0.
+Lead_Tax_Entry :: struct {
+	n:       int,
+	taxpts:  f64,
+	pvt:     norn.Card, // the costliest guess still live under this lead (dominant marginal)
+	has_pvt: bool,
+}
+Lead_Tax :: struct {
+	seat: [norn.Seat][52]Lead_Tax_Entry,
+}
+
+// Fill the per-opening-lead conditioned tax (see Lead_Tax) for `contract` by FILTERING the already-solved
+// batch — no solving here (shares the DD solve with lead_grids_from_sample / tax_from_sample). For each
+// defender lead card, restricts to the layouts where that defender holds the card and reads the FIXED single
+// declarer's tricks (leader's partner = (leader+3)%4), exactly as the lead sub-grid make-% does — so the tax
+// pairs correctly with that conditioned make-%. Conditioning on the lead being a pivot honour collapses that
+// pivot's holder split to one side, so a lead that reveals the trapped honour resolves its guess (tax→0), the
+// key win of per-lead tax over the unconditioned rung. With no two-way guesses on the board, `out` is zeroed
+// (the client then shows no rung under any lead).
+lead_tax_from_sample :: proc(board: norn.Parsed_Board, s: ^Solved_Sample, contract: Contract, out: ^Lead_Tax) {
+	out^ = {}
+	a, b := s.a, s.b
+	pivot_cards, n_pivots := two_way_guess_pivots(board.deal, a, b)
+	if n_pivots == 0 {
+		return
+	}
+	defs: [2]norn.Seat
+	{
+		i := 0
+		for seat in norn.Seat {
+			if seat not_in s.side {
+				defs[i] = seat
+				i += 1
+			}
+		}
+	}
+	strain := contract.strain
+	need := contract.level + 6
+	defenders := bit_set[norn.Seat]{.North, .East, .South, .West} - s.side
+	for d in defenders {
+		decl := dds.Hand((int(d) + 3) % 4) // a known lead fixes the leader, hence the declarer (leader's partner)
+		for ci in 0 ..< 52 {
+			card := norn.Card(ci)
+			// Reduce the batch conditioned on defender `d` holding `card` (== that opening lead). joint_hist is
+			// the holder-pattern×tricks tally (best-policy achievable); marg[i] is pivot i's holder split (its
+			// marginal make-%, for picking the dominant surviving guess to label).
+			joint_hist: [1 << TAX_MAX_PIVOTS][14]int
+			marg: [TAX_MAX_PIVOTS][2][14]int
+			cnt := 0
+			for tbl, si in s.tables {
+				layout := s.layouts[si]
+				if !hand_holds(layout[d], card) {
+					continue
+				}
+				cnt += 1
+				t := clamp(int(tbl.resTable[strain][decl]), 0, 13)
+				combo := 0
+				for i in 0 ..< n_pivots {
+					holder := defender_holding(layout, defs, pivot_cards[i])
+					marg[i][holder][t] += 1
+					combo |= holder << uint(i)
+				}
+				joint_hist[combo][t] += 1
+			}
+			if cnt == 0 {
+				continue
+			}
+			ceiling_make := 0
+			for combo in 0 ..< (1 << uint(n_pivots)) {
+				for k in need ..< 14 {
+					ceiling_make += joint_hist[combo][k]
+				}
+			}
+			ceiling := f64(ceiling_make) / f64(cnt) * 100
+			achievable := joint_achievable_pct(joint_hist[:], n_pivots, need, cnt)
+			// Dominant surviving guess = the pivot whose conditioned marginal make-% is lowest (costs most).
+			worst_pct := 101.0
+			worst_i := 0
+			for i in 0 ..< n_pivots {
+				p := committed_make_pct(marg[i], need, cnt)
+				if p < worst_pct {
+					worst_pct = p
+					worst_i = i
+				}
+			}
+			out.seat[d][ci] = Lead_Tax_Entry {
+				n       = cnt,
+				taxpts  = ceiling - achievable,
+				pvt     = pivot_cards[worst_i],
+				has_pvt = true,
+			}
+		}
+	}
+}
+
+// True iff `hand` contains `card`.
+@(private = "file")
+hand_holds :: proc(hand: norn.Hand, card: norn.Card) -> bool {
+	for c in hand {
+		if c == card {
+			return true
+		}
+	}
+	return false
 }
 
 // Which of the two defenders holds `card` in this layout (0 or 1). A pivot card is by construction a
