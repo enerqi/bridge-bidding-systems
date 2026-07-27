@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parent.parent  # odin-sims/
 EXE = ROOT / "target" / "release" / "pbn_analyse.exe"
 FIXTURE = ROOT / "tests" / "golden" / "two_way_q_3nt.datasim.json"
 GUESS_FIXTURE = ROOT / "tests" / "golden" / "two_way_q_3nt.simguess.json"
+JOINT_FIXTURE = ROOT / "tests" / "golden" / "two_way_q_3nt.nsjoint.json"
 BOARD = '[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]'
 
 
@@ -48,6 +49,8 @@ def main() -> int:
     want = FIXTURE.read_text(encoding="utf-8").rstrip("\n")
     ggot = extract(html, "data-sim-guess")
     gwant = GUESS_FIXTURE.read_text(encoding="utf-8").rstrip("\n")
+    jgot = extract(html, "data-ns-joint")
+    jwant = JOINT_FIXTURE.read_text(encoding="utf-8").rstrip("\n")
 
     fail = False
     if got != want:
@@ -60,9 +63,17 @@ def main() -> int:
         print(f"want: {gwant}")
         print(f"got:  {ggot}")
         fail = True
+    if jgot != jwant:
+        print(f"FAIL: data-ns-joint JSON drifted from golden ({JOINT_FIXTURE})")
+        print(f"want: {jwant}")
+        print(f"got:  {jgot}")
+        fail = True
     if fail:
         return 1
-    print(f"PASS: data-sim ({len(want)} B) and data-sim-guess ({len(gwant)} B) match golden")
+    print(
+        f"PASS: data-sim ({len(want)} B), data-sim-guess ({len(gwant)} B), "
+        f"data-ns-joint ({len(jwant)} B) match golden"
+    )
     return 0
 
 

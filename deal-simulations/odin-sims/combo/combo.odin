@@ -986,6 +986,33 @@ format_analysis :: proc(a: ^Deal_Analysis, target: int, allocator := context.all
 	return strings.to_string(b)
 }
 
+// Append a per-suit RECOMMENDED-LINE block to a TEXT report (`.Pretty` / `.Html_Handviewer`), in DISPLAY_SUITS
+// order (s,h,d,c). For each suit it names the blind single-dummy line to play — the published encyclopedia line
+// where the book covers the holding (an OVERRIDE, the same pick the card page's `data-*-lines`/`-tips` use),
+// else our best fixed line by mean (`sd.best_name`) — then a narration line (the book's line + odds vs best
+// defence, or `describe_suit_line`). The text formats carried only the census trick table; this brings the SAME
+// ~5.4% of holdings their book description to stdout / the handviewer, mirroring the card page's wiring.
+@(private)
+write_suit_lines_text :: proc(
+	b: ^strings.Builder,
+	north, south: norn.Hand_Summary,
+	sd: ^Sd_Bundle,
+	ov: ^[4]Suit_Override,
+) {
+	strings.write_string(b, "\nrecommended line (blind, single-dummy):\n")
+	for suit, i in DISPLAY_SUITS {
+		label, tip: string
+		if ov[i].ok {
+			label = ov[i].label // book covers this holding: its line + odds (override)
+			tip = ov[i].tip
+		} else {
+			label = display_line_name(north.suits[suit], south.suits[suit], sd.best_name[i])
+			tip = describe_suit_line(north.suits[suit], south.suits[suit], sd.best_name[i])
+		}
+		fmt.sbprintf(b, "  %c  %s\n       %s\n", norn.suit_letter(suit), label, tip)
+	}
+}
+
 // --- Machine-readable distributions (for the interactive card page) ---------------------------
 
 // Emit the four per-suit trick distributions as a compact JSON object keyed by suit letter:
@@ -1547,6 +1574,67 @@ write_suits_book_json :: proc(b: ^strings.Builder, ov: ^[4]Suit_Override) {
 	strings.write_byte(b, ']')
 }
 
+// One suit's JOINT (east_len × tricks) table as `[[k0..kL] per a in 0..m]` of INTEGER split counts (the
+// raw `count[a][k]` — East holds `a` of the suit's `m` cards, the line/census takes `k` tricks). Rows run
+// a = 0..m, columns k = 0..ns_len (a suit yields at most `ns_len` tricks). This is the un-weighted tally
+// the a-priori vacant-space weight is normally applied to; the client re-applies its OWN weight for
+// user-entered opponent minimums (see aposteriori.odin), so the raw counts are exactly what it needs.
+@(private)
+write_joint_matrix :: proc(b: ^strings.Builder, tbl: Suit_Joint_Table) {
+	strings.write_byte(b, '[')
+	for a in 0 ..= tbl.m {
+		if a > 0 {
+			strings.write_byte(b, ',')
+		}
+		strings.write_byte(b, '[')
+		for k in 0 ..= tbl.ns_len {
+			if k > 0 {
+				strings.write_byte(b, ',')
+			}
+			fmt.sbprintf(b, "%d", int(tbl.count[a][k]))
+		}
+		strings.write_byte(b, ']')
+	}
+	strings.write_byte(b, ']')
+}
+
+// Phase 2 of the vacant-space / a-posteriori feature: bake the per-suit JOINT count tables so the card page
+// can re-weight everything CLIENT-SIDE for user-entered opponent minimums, with no server round-trip. Per
+// suit (s,h,d,c) we emit the CENSUS table (recomputes the double-dummy ceiling marginals + the combined
+// total under the constraints) and EVERY candidate line's table (re-picks the best blind line by mean — the
+// line flip). Shape:
+//
+//   [ {"m":M,"l":L,"cen":<matrix>,"ln":[["<label>",<matrix>], ...]}, ... ]
+//
+// `<matrix>` is `write_joint_matrix`; `label` is the honest display name of that line (`display_line_name`,
+// so a bogus finesse reads "cash"). Purely additive: consumed only when a constraint is entered, so a page
+// with none renders exactly the baked a-priori rows. NB recomputes the census + candidate tables here rather
+// than threading them out of the two `annotate` paths — a later perf pass can reuse them (PERFORMANCE.md).
+write_suits_joint_json :: proc(b: ^strings.Builder, north, south: norn.Hand_Summary) {
+	cand := gather_candidate_tables(north, south, context.temp_allocator)
+	strings.write_byte(b, '[')
+	for suit, i in DISPLAY_SUITS {
+		if i > 0 {
+			strings.write_byte(b, ',')
+		}
+		cen := suit_joint_table(north.suits[suit], south.suits[suit])
+		fmt.sbprintf(b, `{{"m":%d,"l":%d,"cen":`, cen.m, cen.ns_len)
+		write_joint_matrix(b, cen)
+		strings.write_string(b, `,"ln":[`)
+		for lj, j in cand[i] {
+			if j > 0 {
+				strings.write_byte(b, ',')
+			}
+			label := display_line_name(north.suits[suit], south.suits[suit], lj.name)
+			fmt.sbprintf(b, `["%s",`, label)
+			write_joint_matrix(b, lj.tbl)
+			strings.write_byte(b, ']')
+		}
+		strings.write_string(b, `]}`)
+	}
+	strings.write_byte(b, ']')
+}
+
 // Write the per-suit RECOMMENDED blind line names as a JSON array `["s","h","d","c"]` — the published
 // encyclopedia line where it covers the holding (an OVERRIDE, see `encyclopedia_override`), else the best
 // fixed single-dummy line by mean (`best_line_by_mean`, brick 2). Same suit order s,h,d,c as the
@@ -1889,6 +1977,9 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 			`<div style="max-width:900px;margin:0 auto;color:#444;font-size:0.75rem"><pre style="display:inline-block;text-align:left">`,
 		)
 		strings.write_string(builder, table)
+		sd := sd_bundle(ds[.North], ds[.South])
+		ov := suit_overrides(ds[.North], ds[.South]) // book line where covered, else the engine's best fixed line
+		write_suit_lines_text(builder, ds[.North], ds[.South], &sd, &ov)
 		strings.write_string(builder, "</pre></div>")
 	case .Html_Cards:
 		// A `.combo` sibling after the `.compass` (and the dd `.par`). The card page's carousel script
@@ -2007,6 +2098,8 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_suits_notes_json(builder, ds[.North], ds[.South])
 		strings.write_string(builder, `' data-ns-floor='`)
 		write_suits_floor_json(builder, &ns_sd)
+		strings.write_string(builder, `' data-ns-joint='`)
+		write_suits_joint_json(builder, ds[.North], ds[.South])
 		strings.write_string(builder, `' data-ew='`)
 		write_suits_json(builder, &ew)
 		strings.write_string(builder, `' data-ew-sd='`)
@@ -2028,6 +2121,8 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_suits_notes_json(builder, ds[.East], ds[.West])
 		strings.write_string(builder, `' data-ew-floor='`)
 		write_suits_floor_json(builder, &ew_sd)
+		strings.write_string(builder, `' data-ew-joint='`)
+		write_suits_joint_json(builder, ds[.East], ds[.West])
 		strings.write_string(builder, `'></div>`)
 		prof_add(prof_a, prof_b, prof_c, prof_now()) // parallel / assemble / JSON split
 		free_all(context.temp_allocator)
@@ -2036,6 +2131,9 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		table := format_analysis(&a, 0, context.temp_allocator)
 		strings.write_string(builder, "\n")
 		strings.write_string(builder, table)
+		sd := sd_bundle(ds[.North], ds[.South])
+		ov := suit_overrides(ds[.North], ds[.South]) // book line where covered, else the engine's best fixed line
+		write_suit_lines_text(builder, ds[.North], ds[.South], &sd, &ov)
 	case .Line, .Numeric, .Handviewer, .Pbn:
 	// unreachable: filtered out above
 	}
