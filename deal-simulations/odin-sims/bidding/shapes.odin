@@ -168,8 +168,5 @@ has_major_support :: proc(opener, responder: norn.Hand_Summary, support_length: 
 	opener_h := norn.heart_length(opener)
 	resp_s := norn.spade_length(responder)
 	resp_h := norn.heart_length(responder)
-	return(
-		(opener_s >= 5 && resp_s >= support_length) ||
-		(opener_h >= 5 && resp_h >= support_length) \
-	)
+	return (opener_s >= 5 && resp_s >= support_length) || (opener_h >= 5 && resp_h >= support_length)
 }

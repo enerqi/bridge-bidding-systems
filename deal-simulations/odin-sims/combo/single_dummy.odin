@@ -112,11 +112,7 @@ sd_key :: #force_inline proc "contextless" (hands: Suit_Layout, trick_no: int) -
 // converge once enough cards are gone — the same win Phase-1's memo gets. `nil` (external callers) makes a
 // throwaway memo good only within this one layout. The memo is valid ONLY for a fixed `line`: never share
 // it across lines (different pure function => different values); the two internal callers rebuild it.
-sd_deal_tricks :: proc(
-	line: Sd_Line,
-	north, south, east, west: u16,
-	memo: ^map[u64]int = nil,
-) -> int {
+sd_deal_tricks :: proc(line: Sd_Line, north, south, east, west: u16, memo: ^map[u64]int = nil) -> int {
 	hands := Suit_Layout{}
 	hands[SEAT_N] = north
 	hands[SEAT_S] = south
@@ -204,10 +200,7 @@ sd_trick :: proc(
 			north    = hands[SEAT_N],
 			south    = hands[SEAT_S],
 			own      = hold,
-			played   = FULL_SUIT & ~(hands[SEAT_N] |
-					hands[SEAT_S] |
-					hands[SEAT_E] |
-					hands[SEAT_W]),
+			played   = FULL_SUIT & ~(hands[SEAT_N] | hands[SEAT_S] | hands[SEAT_E] | hands[SEAT_W]),
 			seat     = seat,
 			rho_rank = last_rank if !is_ns(rho) else -1,
 			win_rank = win_rank,
@@ -257,11 +250,7 @@ sd_trick :: proc(
 // `memo_in` (optional): a caller-owned scratch map REUSED across evaluations so they share one backing
 // allocation (see `sd_line_joint_table`). `clear`ed on entry — cached values are per-line and must not carry
 // over. `nil` → throwaway (standalone callers). Within one call it is shared across all E/W splits (`line` fixed).
-sd_line_distribution :: proc(
-	north, south: u16,
-	line: Sd_Line,
-	memo_in: ^map[u64]int = nil,
-) -> Suit_Trick_Dist {
+sd_line_distribution :: proc(north, south: u16, line: Sd_Line, memo_in: ^map[u64]int = nil) -> Suit_Trick_Dist {
 	ns := north | south
 	ns_len := card_count(ns)
 
@@ -320,11 +309,7 @@ sd_line_distribution :: proc(
 // entries from a previous line/suit must not carry over. `nil` → throwaway (standalone callers). Within one
 // call it is still shared across all E/W splits (valid because `line` is fixed for this loop). See
 // `gather_candidate_tables`.
-sd_line_joint_table :: proc(
-	north, south: u16,
-	line: Sd_Line,
-	memo_in: ^map[u64]int = nil,
-) -> Suit_Joint_Table {
+sd_line_joint_table :: proc(north, south: u16, line: Sd_Line, memo_in: ^map[u64]int = nil) -> Suit_Joint_Table {
 	ns := north | south
 	ns_len := card_count(ns)
 

@@ -145,12 +145,7 @@ test_joint_length_constraint_and_cap :: proc(t: ^testing.T) {
 	}
 	a := analyse_ns(north, south)
 
-	testing.expectf(
-		t,
-		abs(total_mass(a.total) - 1) < 1e-9,
-		"total must be normalised, got %.12f",
-		total_mass(a.total),
-	)
+	testing.expectf(t, abs(total_mass(a.total) - 1) < 1e-9, "total must be normalised, got %.12f", total_mass(a.total))
 	testing.expectf(
 		t,
 		abs(a.total[RANKS] - 1) < 1e-9,
@@ -186,12 +181,7 @@ test_strong_deal_is_capped :: proc(t: ^testing.T) {
 	a := analyse_ns(north, south)
 
 	suit_means := sum_of_suit_means(a)
-	testing.expectf(
-		t,
-		suit_means > 13,
-		"precondition: per-suit means should over-sum (got %.4f)",
-		suit_means,
-	)
+	testing.expectf(t, suit_means > 13, "precondition: per-suit means should over-sum (got %.4f)", suit_means)
 	// The joint total is a genuine probability distribution (no drop, no collapse).
 	testing.expectf(
 		t,

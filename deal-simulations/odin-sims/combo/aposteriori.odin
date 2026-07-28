@@ -196,10 +196,7 @@ constrained_best_idx :: proc(cand: [4][]Line_Joint, ctx: ^Constraint_Ctx) -> (be
 // the surviving weight `D`. Returns `feasible = false` (and a zeroed analysis) when the constraints admit
 // no deal — the caller then falls back to the unconstrained analysis rather than showing an empty table.
 @(private)
-constrained_census :: proc(
-	tables: [norn.Suit]Suit_Joint_Table,
-	ctx: ^Constraint_Ctx,
-) -> (out: Deal_Analysis) {
+constrained_census :: proc(tables: [norn.Suit]Suit_Joint_Table, ctx: ^Constraint_Ctx) -> (out: Deal_Analysis) {
 	// Per-suit marginals via leave-one-out coupling.
 	for S in norn.Suit {
 		tbl := tables[S]

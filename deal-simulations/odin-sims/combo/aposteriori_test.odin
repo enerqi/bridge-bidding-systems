@@ -45,10 +45,7 @@ sample_tables :: proc() -> (tables: [norn.Suit]Suit_Joint_Table) {
 	tables[.Spades] = suit_joint_table(n_top, s_low)
 	tables[.Hearts] = suit_joint_table(n_top, s_low)
 	tables[.Diamonds] = suit_joint_table(n_top, s_low)
-	tables[.Clubs] = suit_joint_table(
-		mask(.Ace, .King, .Queen, .Jack),
-		mask(.Ten, .Nine, .Eight, .Seven),
-	)
+	tables[.Clubs] = suit_joint_table(mask(.Ace, .King, .Queen, .Jack), mask(.Ten, .Nine, .Eight, .Seven))
 	return
 }
 
@@ -171,10 +168,7 @@ test_aposteriori_line_mean_parity :: proc(t: ^testing.T) {
 	tt[.Spades] = suit_joint_table(mask(.Ace, .Queen), mask(.Three, .Two))
 	tt[.Hearts] = suit_joint_table(mask(.Ace, .King, .Queen), mask(.Four, .Three, .Two))
 	tt[.Diamonds] = suit_joint_table(mask(.Ace, .King, .Queen), mask(.Four, .Three, .Two))
-	tt[.Clubs] = suit_joint_table(
-		mask(.Ace, .King, .Queen, .Jack, .Ten),
-		mask(.Nine, .Eight, .Seven, .Six, .Five),
-	)
+	tt[.Clubs] = suit_joint_table(mask(.Ace, .King, .Queen, .Jack, .Ten), mask(.Nine, .Eight, .Seven, .Six, .Five))
 
 	oc: Opp_Constraints // a-priori
 	cx := constraint_ctx(tt, oc)
@@ -198,16 +192,18 @@ test_aposteriori_coupling_breaks_two_way :: proc(t: ^testing.T) {
 	tables[.Spades] = suit_joint_table(mask(.Ace, .Jack), mask(.King, .Ten))
 	tables[.Hearts] = suit_joint_table(mask(.Ace, .King, .Queen), mask(.Four, .Three, .Two))
 	tables[.Diamonds] = suit_joint_table(mask(.Ace, .King, .Queen), mask(.Four, .Three, .Two))
-	tables[.Clubs] = suit_joint_table(
-		mask(.Ace, .King, .Queen, .Jack, .Ten),
-		mask(.Nine, .Eight, .Seven, .Six, .Five),
-	)
+	tables[.Clubs] = suit_joint_table(mask(.Ace, .King, .Queen, .Jack, .Ten), mask(.Nine, .Eight, .Seven, .Six, .Five))
 
 	fin := sd_line_joint_table(mask(.Ace, .Jack), mask(.King, .Ten), line_finesse)
 	oth := sd_line_joint_table(mask(.Ace, .Jack), mask(.King, .Ten), line_finesse_other)
 
 	// `delta = mean(finesse) - mean(finesse-other)`: which finesse direction the vacant-space model prefers.
-	spade_delta :: proc(tables: [norn.Suit]Suit_Joint_Table, oc: Opp_Constraints, fin, oth: Suit_Joint_Table, t: ^testing.T) -> f64 {
+	spade_delta :: proc(
+		tables: [norn.Suit]Suit_Joint_Table,
+		oc: Opp_Constraints,
+		fin, oth: Suit_Joint_Table,
+		t: ^testing.T,
+	) -> f64 {
 		cx := constraint_ctx(tables, oc)
 		testing.expect(t, cx.feasible)
 		return constrained_line_mean(&cx, .Spades, fin) - constrained_line_mean(&cx, .Spades, oth)

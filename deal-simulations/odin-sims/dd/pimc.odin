@@ -79,12 +79,7 @@ set_count :: proc(s: Card_Set) -> (n: int) {
 // trick (removed from `rem`), and every seat's remaining holding. Mirrors to_table_deal's encoding but from
 // a live Card_Set rather than a full norn.Deal.
 @(private = "file")
-build_deal :: proc(
-	trump: dds.Strain,
-	leader: norn.Seat,
-	trick: []Play,
-	rem: [norn.Seat]Card_Set,
-) -> dds.Deal {
+build_deal :: proc(trump: dds.Strain, leader: norn.Seat, trick: []Play, rem: [norn.Seat]Card_Set) -> dds.Deal {
 	dl: dds.Deal
 	dl.trump = trump
 	dl.first = dds.Hand(int(leader))

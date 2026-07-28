@@ -90,9 +90,7 @@ finesse_insert :: proc(v: Sd_View) -> int {
 // its opposite is the weaker honour hand `line_finesse_other` attacks.
 @(private)
 strong_honour_seat :: proc(north, south: u16) -> int {
-	return(
-		SEAT_N if (north != 0 && (south == 0 || highest_rank(north) >= highest_rank(south))) else SEAT_S \
-	)
+	return SEAT_N if (north != 0 && (south == 0 || highest_rank(north) >= highest_rank(south))) else SEAT_S
 }
 
 // `line_finesse` — lead low toward the honour hand and insert the cheapest card that beats the

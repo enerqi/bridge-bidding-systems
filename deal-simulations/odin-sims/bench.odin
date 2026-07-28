@@ -65,10 +65,7 @@ SOUTH_8M :: u16(0x0300)
 
 // --- Phase 1: suit_trick_distribution ---
 
-bench_p1_6m :: proc(
-	options: ^time.Benchmark_Options,
-	_ := context.allocator,
-) -> time.Benchmark_Error {
+bench_p1_6m :: proc(options: ^time.Benchmark_Options, _ := context.allocator) -> time.Benchmark_Error {
 	local := f64(0)
 	for _ in 0 ..< COUNT_SUIT {
 		d := combo.suit_trick_distribution(NORTH_6M, SOUTH_6M)
@@ -79,10 +76,7 @@ bench_p1_6m :: proc(
 	return .Okay
 }
 
-bench_p1_8m :: proc(
-	options: ^time.Benchmark_Options,
-	_ := context.allocator,
-) -> time.Benchmark_Error {
+bench_p1_8m :: proc(options: ^time.Benchmark_Options, _ := context.allocator) -> time.Benchmark_Error {
 	local := f64(0)
 	for _ in 0 ..< COUNT_SUIT {
 		d := combo.suit_trick_distribution(NORTH_8M, SOUTH_8M)
@@ -95,10 +89,7 @@ bench_p1_8m :: proc(
 
 // --- Phase 2 / single line: sd_line_distribution ---
 
-bench_p2_sd_6m :: proc(
-	options: ^time.Benchmark_Options,
-	_ := context.allocator,
-) -> time.Benchmark_Error {
+bench_p2_sd_6m :: proc(options: ^time.Benchmark_Options, _ := context.allocator) -> time.Benchmark_Error {
 	local := f64(0)
 	for _ in 0 ..< COUNT_SUIT {
 		d := combo.sd_line_distribution(NORTH_6M, SOUTH_6M, combo.line_finesse)
@@ -109,10 +100,7 @@ bench_p2_sd_6m :: proc(
 	return .Okay
 }
 
-bench_p2_sd_8m :: proc(
-	options: ^time.Benchmark_Options,
-	_ := context.allocator,
-) -> time.Benchmark_Error {
+bench_p2_sd_8m :: proc(options: ^time.Benchmark_Options, _ := context.allocator) -> time.Benchmark_Error {
 	local := f64(0)
 	for _ in 0 ..< COUNT_SUIT {
 		d := combo.sd_line_distribution(NORTH_8M, SOUTH_8M, combo.line_finesse)
@@ -125,10 +113,7 @@ bench_p2_sd_8m :: proc(
 
 // --- Phase 2 / 5 candidates: suit_candidate_lines ---
 
-bench_p2_cands_6m :: proc(
-	options: ^time.Benchmark_Options,
-	_ := context.allocator,
-) -> time.Benchmark_Error {
+bench_p2_cands_6m :: proc(options: ^time.Benchmark_Options, _ := context.allocator) -> time.Benchmark_Error {
 	local := f64(0)
 	for _ in 0 ..< COUNT_SUIT {
 		results := combo.suit_candidate_lines(NORTH_6M, SOUTH_6M, context.temp_allocator)
@@ -140,10 +125,7 @@ bench_p2_cands_6m :: proc(
 	return .Okay
 }
 
-bench_p2_cands_8m :: proc(
-	options: ^time.Benchmark_Options,
-	_ := context.allocator,
-) -> time.Benchmark_Error {
+bench_p2_cands_8m :: proc(options: ^time.Benchmark_Options, _ := context.allocator) -> time.Benchmark_Error {
 	local := f64(0)
 	for _ in 0 ..< COUNT_SUIT {
 		results := combo.suit_candidate_lines(NORTH_8M, SOUTH_8M, context.temp_allocator)
@@ -158,10 +140,7 @@ bench_p2_cands_8m :: proc(
 // --- Phase 2 / optimal: sd_optimal_distribution ---
 // 6m may complete exactly; 8m will likely hit the budget and fall back to best_line_by_mean.
 
-bench_p2_opt_6m :: proc(
-	options: ^time.Benchmark_Options,
-	_ := context.allocator,
-) -> time.Benchmark_Error {
+bench_p2_opt_6m :: proc(options: ^time.Benchmark_Options, _ := context.allocator) -> time.Benchmark_Error {
 	local := f64(0)
 	for _ in 0 ..< COUNT_OPT {
 		d, exact := combo.sd_optimal_distribution(NORTH_6M, SOUTH_6M)
@@ -174,10 +153,7 @@ bench_p2_opt_6m :: proc(
 	return .Okay
 }
 
-bench_p2_opt_8m :: proc(
-	options: ^time.Benchmark_Options,
-	_ := context.allocator,
-) -> time.Benchmark_Error {
+bench_p2_opt_8m :: proc(options: ^time.Benchmark_Options, _ := context.allocator) -> time.Benchmark_Error {
 	local := f64(0)
 	for _ in 0 ..< COUNT_OPT {
 		d, exact := combo.sd_optimal_distribution(NORTH_8M, SOUTH_8M)
@@ -193,10 +169,7 @@ bench_p2_opt_8m :: proc(
 // --- Deal level: adaptive_at_least_curve (gather candidates + 14 DP passes) ---
 // gather_candidates is private; this is the nearest public entry point that exercises it.
 
-bench_adaptive_curve :: proc(
-	options: ^time.Benchmark_Options,
-	_ := context.allocator,
-) -> time.Benchmark_Error {
+bench_adaptive_curve :: proc(options: ^time.Benchmark_Options, _ := context.allocator) -> time.Benchmark_Error {
 	local := f64(0)
 	for i in 0 ..< COUNT_DEAL {
 		ds := summaries[i & POOL_MASK]
@@ -213,10 +186,7 @@ bench_adaptive_curve :: proc(
 // This is the real-world hot path: Phase 1 × 8 suits + Phase 2 best-line × 24 calls +
 // adaptive_at_least_curve × 2. The single most useful number for comparing changes.
 
-bench_annotate :: proc(
-	options: ^time.Benchmark_Options,
-	_ := context.allocator,
-) -> time.Benchmark_Error {
+bench_annotate :: proc(options: ^time.Benchmark_Options, _ := context.allocator) -> time.Benchmark_Error {
 	b := strings.builder_make(context.allocator)
 	defer strings.builder_destroy(&b)
 	local := 0
@@ -267,13 +237,7 @@ main :: proc() {
 		fmt.println("FAIL — Phase2 mean exceeds Phase1 ceiling.")
 		return
 	}
-	fmt.printfln(
-		"Pool: %d deals.  Iterations: suit=%d  opt=%d  deal=%d\n",
-		POOL,
-		COUNT_SUIT,
-		COUNT_OPT,
-		COUNT_DEAL,
-	)
+	fmt.printfln("Pool: %d deals.  Iterations: suit=%d  opt=%d  deal=%d\n", POOL, COUNT_SUIT, COUNT_OPT, COUNT_DEAL)
 
 	opt_p1_6m := &time.Benchmark_Options{bench = bench_p1_6m}
 	opt_p1_8m := &time.Benchmark_Options{bench = bench_p1_8m}
@@ -344,14 +308,8 @@ main :: proc() {
 	adp_ms := f64(time.duration_nanoseconds(opt_adaptive_curve.duration)) / f64(COUNT_DEAL) / 1e6
 
 	fmt.println()
-	fmt.printfln(
-		"P2-single-line vs P1 ratio (6m):     %.1fx  (no-memo overhead vs memoised)",
-		p2_sd_us / p1_us,
-	)
-	fmt.printfln(
-		"P2-5-lines vs P1 ratio (6m):         %.1fx  (expected ~5× single-line)",
-		p2_5l_us / p1_us,
-	)
+	fmt.printfln("P2-single-line vs P1 ratio (6m):     %.1fx  (no-memo overhead vs memoised)", p2_sd_us / p1_us)
+	fmt.printfln("P2-5-lines vs P1 ratio (6m):         %.1fx  (expected ~5× single-line)", p2_5l_us / p1_us)
 	fmt.printfln(
 		"annotate vs adaptive-curve (NS only): %.1fx  (annotate does 2 partnerships + extra writers)",
 		ann_ms / adp_ms,

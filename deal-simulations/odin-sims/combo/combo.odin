@@ -522,10 +522,7 @@ Suit_Joint_Table :: struct {
 // share one backing allocation instead of an alloc+free each. This proc `clear`s it on entry (each suit's
 // Suit_Layout space is independent — different suits share rank positions numerically, so entries must NOT
 // carry over). `nil` → make a throwaway internally (standalone callers). See `analyse_ns`.
-suit_joint_table :: proc(
-	north, south: u16,
-	memo_in: ^map[Suit_Layout]int = nil,
-) -> Suit_Joint_Table {
+suit_joint_table :: proc(north, south: u16, memo_in: ^map[Suit_Layout]int = nil) -> Suit_Joint_Table {
 	ns := north | south // NS's combined holding in the suit (the two hands are disjoint)
 	ns_len := card_count(ns)
 
@@ -799,13 +796,7 @@ parsed_board_partnership :: proc(
 // hands. The combo model needs only the two partners' holdings (the defenders' 26 cards stay unknown,
 // split over every E/W layout), so no full deal is required. Returns the census analysis (the per-suit
 // / combined trick CEILING), the side analysed, and `ok` (see `parsed_board_partnership`).
-analyse_parsed_board :: proc(
-	board: norn.Parsed_Board,
-) -> (
-	a: Deal_Analysis,
-	side: bit_set[norn.Seat],
-	ok: bool,
-) {
+analyse_parsed_board :: proc(board: norn.Parsed_Board) -> (a: Deal_Analysis, side: bit_set[norn.Seat], ok: bool) {
 	n, s, resolved, k := parsed_board_partnership(board)
 	if !k {
 		return {}, {}, false
@@ -819,13 +810,7 @@ analyse_parsed_board :: proc(
 // resolution and `ok` contract. Together the two give the DD ceiling vs SD achievable for a 2-hand
 // board with no full deal / no DDS par. Uses `context.temp_allocator` internally (result copies out by
 // value, so the caller may reset that arena afterwards — see `sd_bundle`).
-sd_bundle_parsed_board :: proc(
-	board: norn.Parsed_Board,
-) -> (
-	sd: Sd_Bundle,
-	side: bit_set[norn.Seat],
-	ok: bool,
-) {
+sd_bundle_parsed_board :: proc(board: norn.Parsed_Board) -> (sd: Sd_Bundle, side: bit_set[norn.Seat], ok: bool) {
 	n, s, resolved, k := parsed_board_partnership(board)
 	if !k {
 		return {}, {}, false
@@ -855,10 +840,7 @@ Line_Summary :: struct {
 // DISPLAY_SUITS order (s,h,d,c) — so index `i` lines up with `Sd_Bundle.best_marg[i]` and the text
 // report's per-suit rows. The read-only candidate view (aids plan G1) the text advisor's B/C blocks
 // consume. Caller owns the four returned slices (allocated from `allocator`).
-suit_line_summaries :: proc(
-	north, south: norn.Hand_Summary,
-	allocator := context.allocator,
-) -> [4][]Line_Summary {
+suit_line_summaries :: proc(north, south: norn.Hand_Summary, allocator := context.allocator) -> [4][]Line_Summary {
 	out: [4][]Line_Summary
 	for suit, i in DISPLAY_SUITS {
 		lrs := suit_candidate_lines(north.suits[suit], south.suits[suit], allocator)
@@ -1457,7 +1439,12 @@ write_suits_json_sd :: proc(b: ^strings.Builder, sd: ^Sd_Bundle) {
 encyclopedia_override :: proc(
 	n, s: u16,
 	allocator := context.temp_allocator,
-) -> (label: string, tip: string, entry: Enc_Entry, ok: bool) {
+) -> (
+	label: string,
+	tip: string,
+	entry: Enc_Entry,
+	ok: bool,
+) {
 	e, hit := encyclopedia_lookup(n, s)
 	if !hit {
 		return
@@ -1541,14 +1528,12 @@ Suit_Override :: struct {
 suit_overrides :: proc(
 	north, south: norn.Hand_Summary,
 	allocator := context.temp_allocator,
-) -> (out: [4]Suit_Override) {
+) -> (
+	out: [4]Suit_Override,
+) {
 	for suit, i in DISPLAY_SUITS {
 		e: Enc_Entry
-		out[i].label, out[i].tip, e, out[i].ok = encyclopedia_override(
-			north.suits[suit],
-			south.suits[suit],
-			allocator,
-		)
+		out[i].label, out[i].tip, e, out[i].ok = encyclopedia_override(north.suits[suit], south.suits[suit], allocator)
 		if out[i].ok {
 			out[i].book = book_pk_row(e)
 		}
@@ -1679,11 +1664,7 @@ write_cards_desc :: proc(b: ^strings.Builder, m: u16) {
 
 // Narrate the "cash from the top" plan for a holding.
 @(private)
-describe_cash :: proc(
-	b: ^strings.Builder,
-	combined, winners: u16,
-	top_missing, n_win, ns_len: int,
-) {
+describe_cash :: proc(b: ^strings.Builder, combined, winners: u16, top_missing, n_win, ns_len: int) {
 	if top_missing < 0 {
 		strings.write_string(b, "Cash from the top: ")
 		write_cards_desc(b, combined)
@@ -1708,11 +1689,7 @@ describe_cash :: proc(
 // tooltip on the card page. Best-effort: it describes the chosen heuristic (cash / finesse / duck) in
 // terms of the ACTUAL cards held. Deliberately uses NO apostrophes or double quotes (it is emitted
 // inside a single-quoted HTML attribute, as a JSON string).
-describe_suit_line :: proc(
-	north, south: u16,
-	line_name: string,
-	allocator := context.temp_allocator,
-) -> string {
+describe_suit_line :: proc(north, south: u16, line_name: string, allocator := context.temp_allocator) -> string {
 	b := strings.builder_make(allocator)
 	combined := north | south
 	ns_len := card_count(combined)
@@ -1766,10 +1743,7 @@ describe_suit_line :: proc(
 		}
 		strings.write_string(&b, ". Ducking keeps a guard and can set up your long cards.")
 	case "duck-then-finesse":
-		strings.write_string(
-			&b,
-			"Duck the first round (play low from both hands), then take the finesse. ",
-		)
+		strings.write_string(&b, "Duck the first round (play low from both hands), then take the finesse. ")
 		describe_finesse(&b, combined, winners, insert_hold, top_missing, n_win, ns_len)
 		strings.write_string(&b, " Ducking first keeps an entry so the finesse can be repeated.")
 	case:
@@ -1786,11 +1760,7 @@ describe_suit_line :: proc(
 // no card below the top missing rank (nothing to finesse with there). Shared by the plain and compound
 // finesse cases. NO apostrophes / double quotes (single-quoted HTML attribute).
 @(private)
-describe_finesse :: proc(
-	b: ^strings.Builder,
-	combined, winners, insert_hold: u16,
-	top_missing, n_win, ns_len: int,
-) {
+describe_finesse :: proc(b: ^strings.Builder, combined, winners, insert_hold: u16, top_missing, n_win, ns_len: int) {
 	finesse_card := -1
 	if top_missing >= 0 {
 		for r := top_missing - 1; r >= 0; r -= 1 {
@@ -2015,12 +1985,28 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 			wg: sync.Wait_Group
 			sync.wait_group_add(&wg, 16)
 			for suit in norn.Suit {
-				ns_ct[suit] = {north = ds[.North].suits[suit], south = ds[.South].suits[suit], wg = &wg}
-				ew_ct[suit] = {north = ds[.East].suits[suit], south = ds[.West].suits[suit], wg = &wg}
+				ns_ct[suit] = {
+					north = ds[.North].suits[suit],
+					south = ds[.South].suits[suit],
+					wg    = &wg,
+				}
+				ew_ct[suit] = {
+					north = ds[.East].suits[suit],
+					south = ds[.West].suits[suit],
+					wg    = &wg,
+				}
 			}
 			for suit, i in DISPLAY_SUITS {
-				ns_st[i] = {north = ds[.North].suits[suit], south = ds[.South].suits[suit], wg = &wg}
-				ew_st[i] = {north = ds[.East].suits[suit], south = ds[.West].suits[suit], wg = &wg}
+				ns_st[i] = {
+					north = ds[.North].suits[suit],
+					south = ds[.South].suits[suit],
+					wg    = &wg,
+				}
+				ew_st[i] = {
+					north = ds[.East].suits[suit],
+					south = ds[.West].suits[suit],
+					wg    = &wg,
+				}
 			}
 			for suit in norn.Suit {
 				thread.pool_add_task(&g_pool, context.allocator, suit_census_task, &ns_ct[suit])
@@ -2053,8 +2039,14 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 
 			wg2: sync.Wait_Group
 			sync.wait_group_add(&wg2, 2)
-			ns_sdt := Sd_Finish_Task{cand = ns_cand, wg = &wg2}
-			ew_sdt := Sd_Finish_Task{cand = ew_cand, wg = &wg2}
+			ns_sdt := Sd_Finish_Task {
+				cand = ns_cand,
+				wg   = &wg2,
+			}
+			ew_sdt := Sd_Finish_Task {
+				cand = ew_cand,
+				wg   = &wg2,
+			}
 			thread.pool_add_task(&g_pool, context.allocator, sd_finish_task, &ns_sdt)
 			thread.pool_add_task(&g_pool, context.allocator, sd_finish_task, &ew_sdt)
 

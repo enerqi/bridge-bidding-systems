@@ -38,9 +38,7 @@ is_generic_weak2d :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.spade_length(hand) >= 4 || norn.heart_length(hand) >= 4 {
 		return false
 	}
-	if norn.diamond_length(hand) == 6 &&
-	   norn.club_length(hand) <= 5 &&
-	   norn.top_count(hand, .Diamonds, 4) >= 1 {
+	if norn.diamond_length(hand) == 6 && norn.club_length(hand) <= 5 && norn.top_count(hand, .Diamonds, 4) >= 1 {
 		return true
 	}
 	return false
@@ -99,10 +97,7 @@ is_weak2_5card_major :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.diamond_length(hand) > 5 || norn.club_length(hand) > 5 {
 		return false
 	}
-	return(
-		(ss == 5 && norn.top_count(hand, .Spades, 4) >= 2) ||
-		(hs == 5 && norn.top_count(hand, .Hearts, 4) >= 2) \
-	)
+	return (ss == 5 && norn.top_count(hand, .Spades, 4) >= 2) || (hs == 5 && norn.top_count(hand, .Hearts, 4) >= 2)
 }
 
 // A standard weak two on a 6-card major: 6-11 (weaker hands need 6-4 shape; 6-5 hands cap at 9), no
@@ -126,10 +121,7 @@ is_weak2_major :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.diamond_length(hand) > 5 || norn.club_length(hand) > 5 {
 		return false
 	}
-	return(
-		(ss == 6 && norn.top_count(hand, .Spades, 4) >= 1) ||
-		(hs == 6 && norn.top_count(hand, .Hearts, 4) >= 1) \
-	)
+	return (ss == 6 && norn.top_count(hand, .Spades, 4) >= 1) || (hs == 6 && norn.top_count(hand, .Hearts, 4) >= 1)
 }
 
 // Either flavour of weak major two-bid (5- or 6-card). (deal-utils `is_weak_5_or_6_card_major`.)
@@ -346,8 +338,5 @@ is_weak2_major_in_range :: proc(hand: norn.Hand_Summary, low, high: int) -> bool
 	if norn.diamond_length(hand) > 5 || norn.club_length(hand) > 5 {
 		return false
 	}
-	return(
-		(ss == 6 && norn.top_count(hand, .Spades, 4) >= 2) ||
-		(hs == 6 && norn.top_count(hand, .Hearts, 4) >= 2) \
-	)
+	return (ss == 6 && norn.top_count(hand, .Spades, 4) >= 2) || (hs == 6 && norn.top_count(hand, .Hearts, 4) >= 2)
 }

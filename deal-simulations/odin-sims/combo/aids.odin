@@ -95,21 +95,18 @@ combination_note :: proc(north, south: u16) -> string {
 // Everything B and C need for ONE suit: the full candidate view (G1), the index of the best line by MEAN
 // (the card page's recommendation) and by FLOOR (the max-guaranteed safety line), and the pattern note.
 Suit_Combo_Advice :: struct {
-	cands:                  []Line_Summary, // every candidate line (mean + guaranteed floor); caller owns it
-	best_mean_idx:          int, // index into `cands` of the highest-mean line (matches Sd_Bundle's pick)
-	best_floor_idx:         int, // index of the highest-guaranteed-floor line (ties → higher mean)
-	note:                   string, // combination pattern phrase, or "" (temp-allocated by `combination_note`)
-	north_holding:          u16, // this suit's NS holdings — so C can run the optimal-line search (below) lazily
-	south_holding:          u16,
+	cands:          []Line_Summary, // every candidate line (mean + guaranteed floor); caller owns it
+	best_mean_idx:  int, // index into `cands` of the highest-mean line (matches Sd_Bundle's pick)
+	best_floor_idx: int, // index of the highest-guaranteed-floor line (ties → higher mean)
+	note:           string, // combination pattern phrase, or "" (temp-allocated by `combination_note`)
+	north_holding:  u16, // this suit's NS holdings — so C can run the optimal-line search (below) lazily
+	south_holding:  u16,
 }
 
 // Per-suit combination advice for a known partnership, in DISPLAY_SUITS order (s,h,d,c). Builds on the G1
 // candidate view (`suit_line_summaries`) and adds the best-by-mean / best-by-floor picks + the pattern
 // note. Caller owns each `cands` slice (allocated from `allocator`).
-suit_combo_advice :: proc(
-	north, south: norn.Hand_Summary,
-	allocator := context.allocator,
-) -> [4]Suit_Combo_Advice {
+suit_combo_advice :: proc(north, south: norn.Hand_Summary, allocator := context.allocator) -> [4]Suit_Combo_Advice {
 	out: [4]Suit_Combo_Advice
 	cands4 := suit_line_summaries(north, south, allocator)
 	for suit, i in DISPLAY_SUITS {
@@ -165,7 +162,7 @@ finesse_leads_needed :: proc(north, south: u16) -> int {
 	bot := lowest_rank(hon_hold)
 	n := 0
 	for r := bot + 1; r < top; r += 1 {
-		if ns & rank_bit(r) == 0 { // an opponent card inside the honour hand's span — a finesse target
+		if ns & rank_bit(r) == 0 { 	// an opponent card inside the honour hand's span — a finesse target
 			n += 1
 		}
 	}

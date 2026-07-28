@@ -134,8 +134,7 @@ is_2c_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	points := norn.hcp(hand)
 	clublen := norn.club_length(hand)
 	min_7carder := points == 10 && clublen == 7
-	long_other :=
-		norn.spade_length(hand) > 5 || norn.heart_length(hand) > 5 || norn.diamond_length(hand) > 5
+	long_other := norn.spade_length(hand) > 5 || norn.heart_length(hand) > 5 || norn.diamond_length(hand) > 5
 	if !long_other && (min_7carder || (clublen >= 6 && points >= 11)) && points <= 15 {
 		return true
 	}
@@ -178,9 +177,7 @@ is_2d_intermediate_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	if points == 9 && !is_6_plus_other_11_or_more_card_two_suiter(hand) {
 		return false
 	}
-	if points == 10 &&
-	   !is_6_plus_other_10_card_two_suiter(hand) &&
-	   !is_6_plus_other_11_or_more_card_two_suiter(hand) {
+	if points == 10 && !is_6_plus_other_10_card_two_suiter(hand) && !is_6_plus_other_11_or_more_card_two_suiter(hand) {
 		return false
 	}
 	return true
@@ -201,17 +198,13 @@ is_3n_opener :: proc(hand: norn.Hand_Summary) -> bool {
 	}
 	if long_semi_solid(hand, .Spades) &&
 	   ((norn.top_count(hand, .Spades, 2) == 1 &&
-				   (side_ace(hand, .Hearts) ||
-						   side_ace(hand, .Diamonds) ||
-						   side_ace(hand, .Clubs))) ||
+				   (side_ace(hand, .Hearts) || side_ace(hand, .Diamonds) || side_ace(hand, .Clubs))) ||
 			   (norn.top_count(hand, .Spades, 2) == 2)) {
 		return true
 	}
 	if long_semi_solid(hand, .Hearts) &&
 	   ((norn.top_count(hand, .Hearts, 2) == 1 &&
-				   (side_ace(hand, .Spades) ||
-						   side_ace(hand, .Diamonds) ||
-						   side_ace(hand, .Clubs))) ||
+				   (side_ace(hand, .Spades) || side_ace(hand, .Diamonds) || side_ace(hand, .Clubs))) ||
 			   (norn.top_count(hand, .Hearts, 2) == 2)) {
 		return true
 	}

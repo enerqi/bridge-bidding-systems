@@ -242,7 +242,9 @@ test_constrained_sampling_conditions :: proc(t: ^testing.T) {
 	free_grid, ok1 := sample_grid(board, {.North, .South}, 300, 3)
 	testing.expect(t, ok1)
 
-	cons := Sample_Constraints{shape = {{seat = .East, suit = .Spades, min = 0, max = 0}}}
+	cons := Sample_Constraints {
+		shape = {{seat = .East, suit = .Spades, min = 0, max = 0}},
+	}
 	con_grid, ok2 := sample_grid(board, {.North, .South}, 300, 3, cons)
 	testing.expect(t, ok2)
 	testing.expect_value(t, con_grid.n, 300)
@@ -264,7 +266,9 @@ test_constrained_impossible_fails :: proc(t: ^testing.T) {
 	init()
 	// 4 spades are missing; asking one defender to hold 5 is impossible.
 	board, _ := norn.parse_pbn_deal(`[Deal "N:AKQJ8.A2.A32.A32 - T732.KQ3.K54.K54 -"]`)
-	cons := Sample_Constraints{shape = {{seat = .West, suit = .Spades, min = 5, max = 13}}}
+	cons := Sample_Constraints {
+		shape = {{seat = .West, suit = .Spades, min = 5, max = 13}},
+	}
 	_, ok := sample_grid(board, {.North, .South}, 10, 1, cons)
 	testing.expect(t, !ok)
 }
@@ -281,13 +285,17 @@ test_held_card_conditions :: proc(t: ^testing.T) {
 	ks := norn.make_card(.Spades, .King)
 
 	// West holds the K -> onside -> grand slam cold.
-	west_k := Sample_Constraints{held = {{seat = .West, card = ks}}}
+	west_k := Sample_Constraints {
+		held = {{seat = .West, card = ks}},
+	}
 	gw, okw := sample_grid(board, {.North, .South}, 150, 3, west_k)
 	testing.expect(t, okw)
 	rw := result_for(gw, Contract{level = 7, strain = .NT})
 
 	// East holds the K -> offside -> grand slam off.
-	east_k := Sample_Constraints{held = {{seat = .East, card = ks}}}
+	east_k := Sample_Constraints {
+		held = {{seat = .East, card = ks}},
+	}
 	ge, oke := sample_grid(board, {.North, .South}, 150, 3, east_k)
 	testing.expect(t, oke)
 	re := result_for(ge, Contract{level = 7, strain = .NT})
@@ -336,18 +344,14 @@ test_worst_lead :: proc(t: ^testing.T) {
 	ok := sample_lead_grids(board, {.North, .South}, 300, lg, 9)
 	testing.expect(t, ok)
 
-	con := Contract{level = 7, strain = .NT}
+	con := Contract {
+		level  = 7,
+		strain = .NT,
+	}
 	card, wpct, n, base_pct, found := worst_lead(lg, con, {.North, .South})
 	testing.expect(t, found)
 	testing.expect(t, n >= 20) // the reported worst lead cleared the min-n guard
-	testing.expectf(
-		t,
-		base_pct - wpct > 10,
-		"worst lead %v should trail base: %.1f%% vs %.1f%%",
-		card,
-		wpct,
-		base_pct,
-	)
+	testing.expectf(t, base_pct - wpct > 10, "worst lead %v should trail base: %.1f%% vs %.1f%%", card, wpct, base_pct)
 }
 
 @(test)
@@ -380,13 +384,21 @@ test_exact_grids_spikes :: proc(t: ^testing.T) {
 	for st in dds.Strain {
 		ns_sum, ns_spike, ew_sum, ew_spike := 0, -1, 0, -1
 		for k in 0 ..< 14 {
-			ns_sum += ns.hist[st][k];if ns.hist[st][k] > 0 {ns_spike = k}
-			ew_sum += ew.hist[st][k];if ew.hist[st][k] > 0 {ew_spike = k}
+			ns_sum += ns.hist[st][k]; if ns.hist[st][k] > 0 {ns_spike = k}
+			ew_sum += ew.hist[st][k]; if ew.hist[st][k] > 0 {ew_spike = k}
 		}
 		testing.expect_value(t, ns_sum, 1) // exactly one spike per strain, each side
 		testing.expect_value(t, ew_sum, 1)
-		testing.expect_value(t, ns_spike, max(int(res.resTable[st][dds.Hand.North]), int(res.resTable[st][dds.Hand.South])))
-		testing.expect_value(t, ew_spike, max(int(res.resTable[st][dds.Hand.East]), int(res.resTable[st][dds.Hand.West])))
+		testing.expect_value(
+			t,
+			ns_spike,
+			max(int(res.resTable[st][dds.Hand.North]), int(res.resTable[st][dds.Hand.South])),
+		)
+		testing.expect_value(
+			t,
+			ew_spike,
+			max(int(res.resTable[st][dds.Hand.East]), int(res.resTable[st][dds.Hand.West])),
+		)
 	}
 	// This deal: NS take 12 in spades (6S makes), matching the makeable list.
 	testing.expect_value(t, ns.hist[dds.Strain.Spades][12], 1)

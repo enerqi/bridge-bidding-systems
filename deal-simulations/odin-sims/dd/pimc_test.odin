@@ -30,7 +30,12 @@ test_pimc_cold_slam_undershoots :: proc(t: ^testing.T) {
 	res, ok := pimc_make(board, {.North, .South}, c, 50, 10, 1)
 	testing.expect(t, ok && cok)
 	testing.expect_value(t, res.n, 50)
-	fmt.eprintfln("[NEAR-COLD] 6S ceiling %.1f%% achievable %.1f%% mean %.2f", ceil.make_pct, res.make_pct, res.mean_tricks)
+	fmt.eprintfln(
+		"[NEAR-COLD] 6S ceiling %.1f%% achievable %.1f%% mean %.2f",
+		ceil.make_pct,
+		res.make_pct,
+		res.mean_tricks,
+	)
 	testing.expect(t, res.make_pct <= ceil.make_pct + 2.0) // never exceeds the double-dummy ceiling
 	testing.expect(t, res.make_pct >= 60.0) // still makes a cold slam most of the time, even naive
 }

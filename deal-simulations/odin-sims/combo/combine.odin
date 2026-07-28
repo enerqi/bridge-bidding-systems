@@ -127,10 +127,7 @@ DISPLAY_SUITS :: [4]norn.Suit{.Spades, .Hearts, .Diamonds, .Clubs}
 
 // Gather the candidate lines for all four suits of an NS pair. Caller owns the returned slices.
 @(private)
-gather_candidates :: proc(
-	north, south: norn.Hand_Summary,
-	allocator := context.allocator,
-) -> [4][]Line_Result {
+gather_candidates :: proc(north, south: norn.Hand_Summary, allocator := context.allocator) -> [4][]Line_Result {
 	out: [4][]Line_Result
 	for suit, i in DISPLAY_SUITS {
 		out[i] = suit_candidate_lines(north.suits[suit], south.suits[suit], allocator)
@@ -141,10 +138,7 @@ gather_candidates :: proc(
 // Choose ONE line per suit to maximise the objective of the convolved total — an exhaustive search
 // over the (few) candidate lines per suit. Returns the winning line per suit, the total distribution,
 // and the objective value.
-best_fixed_combination :: proc(
-	north, south: norn.Hand_Summary,
-	obj: Objective,
-) -> Line_Combination {
+best_fixed_combination :: proc(north, south: norn.Hand_Summary, obj: Objective) -> Line_Combination {
 	cand := gather_candidates(north, south, context.temp_allocator)
 
 	best: Line_Combination

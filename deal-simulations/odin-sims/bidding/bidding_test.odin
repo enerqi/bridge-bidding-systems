@@ -65,9 +65,5 @@ test_is_strong_1c :: proc(t: ^testing.T) {
 	// 17 flat -> does not (shown as a strong notrump instead).
 	testing.expect(t, !is_strong_1c(flat_17()), "flat 17 should not open strong 1C")
 	// Below 16 -> never.
-	testing.expect(
-		t,
-		!is_strong_1c(norn.summarize(norn.Hand{})),
-		"an empty/low hand is not a strong 1C",
-	)
+	testing.expect(t, !is_strong_1c(norn.summarize(norn.Hand{})), "an empty/low hand is not a strong 1C")
 }

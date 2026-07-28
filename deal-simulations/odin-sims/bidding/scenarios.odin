@@ -38,8 +38,7 @@ registry := []cli.Scenario {
 			south := b[.South]
 			return(
 				is_any_1c_opener(b[.North]) &&
-				(is_1n_unbal_minor_swedish_club_resp(south) ||
-						is_1n_marmic_swedish_club_resp(south)) \
+				(is_1n_unbal_minor_swedish_club_resp(south) || is_1n_marmic_swedish_club_resp(south)) \
 			)
 		},
 	},
@@ -63,13 +62,9 @@ registry := []cli.Scenario {
 			)
 		},
 	},
-	{
-		"1c-any-2s",
-		"1C opener; South responds 2S (both minors)",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"1c-any-2s", "1C opener; South responds 2S (both minors)", proc(b: norn.Deal_Summary) -> bool {
 			return is_any_1c_opener(b[.North]) && is_2s_swedish_club_resp(b[.South])
-		},
-	},
+		}},
 	{
 		"1c-any-3n-plus",
 		"1C opener; South makes a solid-suit 3NT / 4-of-a-suit slam-try response",
@@ -83,13 +78,9 @@ registry := []cli.Scenario {
 			)
 		},
 	},
-	{
-		"1c-any-3x-response",
-		"1C opener; South makes a 3-level preempt response",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"1c-any-3x-response", "1C opener; South makes a 3-level preempt response", proc(b: norn.Deal_Summary) -> bool {
 			return is_any_1c_opener(b[.North]) && is_3x_preempt_swedish_club_response(b[.South])
-		},
-	},
+		}},
 	{
 		"1c-any-preempted",
 		"1C opener; East preempts (any weak 6+ or weak/min 7+ suit); South has 4+ hcp",
@@ -115,47 +106,27 @@ registry := []cli.Scenario {
 	},
 
 	// --- 1C strong (the 16+ artificial opening) ---
-	{
-		"1c-strong",
-		"North opens a strong 1C",
-		proc(b: norn.Deal_Summary) -> bool {return is_strong_1c(b[.North])},
-	},
-	{
-		"1c-19plus-or-marmic",
-		"Strong 1C that is either Marmic or 19+ hcp",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"1c-strong", "North opens a strong 1C", proc(b: norn.Deal_Summary) -> bool {return is_strong_1c(b[.North])}},
+	{"1c-19plus-or-marmic", "Strong 1C that is either Marmic or 19+ hcp", proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
 			return is_strong_1c(north) && (is_marmic(north) || norn.hcp(north) >= 19)
-		},
-	},
-	{
-		"1c-strong-19plus-unbal",
-		"Strong 1C, 19+ and unbalanced",
-		proc(b: norn.Deal_Summary) -> bool {
+		}},
+	{"1c-strong-19plus-unbal", "Strong 1C, 19+ and unbalanced", proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
 			return is_strong_1c(north) && norn.hcp(north) >= 19 && !is_flattish(north)
-		},
-	},
+		}},
 	{
 		"1c-strong-19plus-asymmetric-10plus-card-two-suiter",
 		"Strong 1C, 19+ with an asymmetric 10+ card two-suiter",
 		proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
-			return(
-				is_strong_1c(north) &&
-				norn.hcp(north) >= 19 &&
-				is_asymmetric_10_plus_two_suiter(north) \
-			)
+			return is_strong_1c(north) && norn.hcp(north) >= 19 && is_asymmetric_10_plus_two_suiter(north)
 		},
 	},
-	{
-		"1c-strong-21plus-unbal",
-		"Strong 1C, 21+ and unbalanced",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"1c-strong-21plus-unbal", "Strong 1C, 21+ and unbalanced", proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
 			return is_strong_1c(north) && norn.hcp(north) >= 21 && !is_flattish(north)
-		},
-	},
+		}},
 	{
 		"1c-strong-(overcall)",
 		"Strong 1C with East able to overcall (8+ hcp, not flat)",
@@ -206,13 +177,9 @@ registry := []cli.Scenario {
 			)
 		},
 	},
-	{
-		"1c-strong-1n",
-		"Strong 1C; South makes any 1NT response",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"1c-strong-1n", "Strong 1C; South makes any 1NT response", proc(b: norn.Deal_Summary) -> bool {
 			return is_strong_1c(b[.North]) && is_any_1n_swedish_club_response(b[.South])
-		},
-	},
+		}},
 	{
 		"1c-strong-1n-unbal",
 		"Strong 1C; South 1NT on an unbalanced-minor or Marmic hand",
@@ -220,8 +187,7 @@ registry := []cli.Scenario {
 			south := b[.South]
 			return(
 				is_strong_1c(b[.North]) &&
-				(is_1n_unbal_minor_swedish_club_resp(south) ||
-						is_1n_marmic_swedish_club_resp(south)) \
+				(is_1n_unbal_minor_swedish_club_resp(south) || is_1n_marmic_swedish_club_resp(south)) \
 			)
 		},
 	},
@@ -235,28 +201,16 @@ registry := []cli.Scenario {
 	{"1c-strong-2cd", "Strong 1C; South responds 2C/2D", proc(b: norn.Deal_Summary) -> bool {
 			return is_strong_1c(b[.North]) && is_2cd_swedish_club_resp(b[.South])
 		}},
-	{
-		"1c-strong-extras-2cd",
-		"Strong 1C, 20+; South responds 2C/2D",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"1c-strong-extras-2cd", "Strong 1C, 20+; South responds 2C/2D", proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
-			return(
-				is_strong_1c(north) &&
-				norn.hcp(north) >= 20 &&
-				is_2cd_swedish_club_resp(b[.South]) \
-			)
-		},
-	},
+			return is_strong_1c(north) && norn.hcp(north) >= 20 && is_2cd_swedish_club_resp(b[.South])
+		}},
 	{"1c-strong-2h-or-2n", "Strong 1C; South responds 2H/2NT", proc(b: norn.Deal_Summary) -> bool {
 			return is_strong_1c(b[.North]) && is_2h_or_2n_swedish_club_resp(b[.South])
 		}},
-	{
-		"1c-strong-2s",
-		"Strong 1C; South responds 2S (both minors)",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"1c-strong-2s", "Strong 1C; South responds 2S (both minors)", proc(b: norn.Deal_Summary) -> bool {
 			return is_strong_1c(b[.North]) && is_2s_swedish_club_resp(b[.South])
-		},
-	},
+		}},
 	{
 		"1c-strong-responder-bal-gf",
 		"Strong 1C; South gives the old balanced 12+ 1NT response",
@@ -269,11 +223,7 @@ registry := []cli.Scenario {
 		"Strong 1C; South balanced 1NT response with 14+ hcp",
 		proc(b: norn.Deal_Summary) -> bool {
 			south := b[.South]
-			return(
-				is_strong_1c(b[.North]) &&
-				is_old_1n_bal_swedish_club_response(south) &&
-				norn.hcp(south) >= 14 \
-			)
+			return is_strong_1c(b[.North]) && is_old_1n_bal_swedish_club_response(south) && norn.hcp(south) >= 14
 		},
 	},
 	{
@@ -350,8 +300,7 @@ registry := []cli.Scenario {
 				s_hcp > 4 &&
 				!has_side_major(south) &&
 				!is_flattish(south) &&
-				(norn.hcp(east) < 8 ||
-						(norn.heart_length(east) < 5 && norn.spade_length(east) < 5)) \
+				(norn.hcp(east) < 8 || (norn.heart_length(east) < 5 && norn.spade_length(east) < 5)) \
 			)
 		},
 	},
@@ -387,11 +336,7 @@ registry := []cli.Scenario {
 		proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
 			east := b[.East]
-			return(
-				(is_1d_opener(north) || is_any_1c_opener(north)) &&
-				norn.hcp(east) >= 8 &&
-				!is_flattish(east) \
-			)
+			return (is_1d_opener(north) || is_any_1c_opener(north)) && norn.hcp(east) >= 8 && !is_flattish(east)
 		},
 	},
 
@@ -406,21 +351,13 @@ registry := []cli.Scenario {
 		"North opens a light 1 of a major",
 		proc(b: norn.Deal_Summary) -> bool {return is_light_1major_opener(b[.North])},
 	},
-	{
-		"1major-inviteish",
-		"1 major opener; South invitational (9-12)",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"1major-inviteish", "1 major opener; South invitational (9-12)", proc(b: norn.Deal_Summary) -> bool {
 			s_hcp := norn.hcp(b[.South])
 			return is_1major_opener(b[.North]) && s_hcp >= 9 && s_hcp < 13
-		},
-	},
-	{
-		"1major-game-force",
-		"1 major opener; South 13+ (game force)",
-		proc(b: norn.Deal_Summary) -> bool {
+		}},
+	{"1major-game-force", "1 major opener; South 13+ (game force)", proc(b: norn.Deal_Summary) -> bool {
 			return is_1major_opener(b[.North]) && norn.hcp(b[.South]) >= 13
-		},
-	},
+		}},
 	{
 		"1major-gf-3plus-card-support",
 		"1 major opener; South 13+ with 3+ card support",
@@ -466,22 +403,14 @@ registry := []cli.Scenario {
 			if !is_1major_opener(north) {
 				return false
 			}
-			splinter :=
-				s_hcp >= 7 &&
-				s_hcp <= 11 &&
-				has_major_support(north, south, 4) &&
-				any_singleton_or_void(south)
+			splinter := s_hcp >= 7 && s_hcp <= 11 && has_major_support(north, south, 4) && any_singleton_or_void(south)
 			invite := s_hcp >= 9 && s_hcp <= 12 && any_good_6_plus_carder(south)
 			return splinter || invite
 		},
 	},
-	{
-		"1major-slam-try",
-		"1 major opener; South 18+ (slam try)",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"1major-slam-try", "1 major opener; South 18+ (slam try)", proc(b: norn.Deal_Summary) -> bool {
 			return is_1major_opener(b[.North]) && norn.hcp(b[.South]) >= 18
-		},
-	},
+		}},
 	{
 		"1major-max-6-carder-maybe-1nt",
 		"Maximum (14+) 1 major opener on a 6-bagger opposite a South hand that might pass 1NT",
@@ -489,11 +418,7 @@ registry := []cli.Scenario {
 	},
 
 	// --- 1NT opening ---
-	{
-		"1n-opener",
-		"North opens 1NT",
-		proc(b: norn.Deal_Summary) -> bool {return is_1nt_opener(b[.North])},
-	},
+	{"1n-opener", "North opens 1NT", proc(b: norn.Deal_Summary) -> bool {return is_1nt_opener(b[.North])}},
 	{"1n-slam-try", "1NT opener; South 13+ (slam try)", proc(b: norn.Deal_Summary) -> bool {
 			return is_1nt_opener(b[.North]) && norn.hcp(b[.South]) >= 13
 		}},
@@ -505,22 +430,14 @@ registry := []cli.Scenario {
 		}},
 
 	// --- 2C opening (strong / artificial) ---
-	{
-		"2c-opener",
-		"North opens 2C",
-		proc(b: norn.Deal_Summary) -> bool {return is_2c_opener(b[.North])},
-	},
+	{"2c-opener", "North opens 2C", proc(b: norn.Deal_Summary) -> bool {return is_2c_opener(b[.North])}},
 	{"2c-any-slam-try", "2C opener; South 18+ (slam try)", proc(b: norn.Deal_Summary) -> bool {
 			return is_2c_opener(b[.North]) && norn.hcp(b[.South]) >= 18
 		}},
-	{
-		"2c-any-two-suiter-slam-try",
-		"2C opener; South a 17+ two-suiter",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"2c-any-two-suiter-slam-try", "2C opener; South a 17+ two-suiter", proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
 			return is_2c_opener(b[.North]) && two_suiter(s) && norn.hcp(s) >= 17
-		},
-	},
+		}},
 	{"2c-any-unbalanced", "2C opener; South unbalanced", proc(b: norn.Deal_Summary) -> bool {
 			return is_2c_opener(b[.North]) && !is_flattish(b[.South])
 		}},
@@ -532,30 +449,18 @@ registry := []cli.Scenario {
 			return is_2c_opener(b[.North]) && has_9_plus_majors(s) && norn.hcp(s) >= 8
 		},
 	},
-	{
-		"2c-positive-two-suiter",
-		"2C opener; South an 8+ two-suiter",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"2c-positive-two-suiter", "2C opener; South an 8+ two-suiter", proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
 			return is_2c_opener(b[.North]) && two_suiter(s) && norn.hcp(s) >= 8
-		},
-	},
-	{
-		"2c-positive-unbalanced",
-		"2C opener; South 8+ unbalanced",
-		proc(b: norn.Deal_Summary) -> bool {
+		}},
+	{"2c-positive-unbalanced", "2C opener; South 8+ unbalanced", proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
 			return is_2c_opener(b[.North]) && !is_flattish(s) && norn.hcp(s) >= 8
-		},
-	},
-	{
-		"2c-unbal-slam-try",
-		"2C opener; South 16+ unbalanced (slam try)",
-		proc(b: norn.Deal_Summary) -> bool {
+		}},
+	{"2c-unbal-slam-try", "2C opener; South 16+ unbalanced (slam try)", proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
 			return is_2c_opener(b[.North]) && norn.hcp(s) >= 16 && !is_flattish(s)
-		},
-	},
+		}},
 
 	// --- 2D openings (Precision-style and intermediate) ---
 	{
@@ -601,11 +506,7 @@ registry := []cli.Scenario {
 		"Intermediate 2D; South 13+ with a good 6+ suit (game force)",
 		proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
-			return(
-				is_2d_intermediate_opener(b[.North]) &&
-				norn.hcp(s) >= 13 &&
-				any_good_6_plus_carder(s) \
-			)
+			return is_2d_intermediate_opener(b[.North]) && norn.hcp(s) >= 13 && any_good_6_plus_carder(s)
 		},
 	},
 	{
@@ -616,8 +517,7 @@ registry := []cli.Scenario {
 			return(
 				is_2d_intermediate_opener(b[.North]) &&
 				norn.hcp(s) >= 13 &&
-				(is_6_plus_other_10_card_two_suiter(s) ||
-						is_6_plus_other_11_or_more_card_two_suiter(s)) \
+				(is_6_plus_other_10_card_two_suiter(s) || is_6_plus_other_11_or_more_card_two_suiter(s)) \
 			)
 		},
 	},
@@ -652,21 +552,13 @@ registry := []cli.Scenario {
 	{"2hs-any-20-plus", "Weak 2 major; South 20+", proc(b: norn.Deal_Summary) -> bool {
 			return is_weak2_major(b[.North]) && norn.hcp(b[.South]) >= 20
 		}},
-	{
-		"2hs-unbalanced-16-plus",
-		"Weak 2 major; South 16+ unbalanced",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"2hs-unbalanced-16-plus", "Weak 2 major; South 16+ unbalanced", proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
 			return is_weak2_major(b[.North]) && norn.hcp(s) >= 16 && !is_flattish(s)
-		},
-	},
+		}},
 
 	// --- 2NT opening ---
-	{
-		"2n-opener",
-		"North opens 2NT",
-		proc(b: norn.Deal_Summary) -> bool {return is_2nt_opener(b[.North])},
-	},
+	{"2n-opener", "North opens 2NT", proc(b: norn.Deal_Summary) -> bool {return is_2nt_opener(b[.North])}},
 	{"2n-slam-try", "2NT opener; South 11+ (slam try)", proc(b: norn.Deal_Summary) -> bool {
 			return is_2nt_opener(b[.North]) && norn.hcp(b[.South]) >= 11
 		}},
@@ -678,11 +570,7 @@ registry := []cli.Scenario {
 		}},
 
 	// --- High openings and preempts ---
-	{
-		"3n-opener",
-		"North opens a gambling 3NT",
-		proc(b: norn.Deal_Summary) -> bool {return is_3n_opener(b[.North])},
-	},
+	{"3n-opener", "North opens a gambling 3NT", proc(b: norn.Deal_Summary) -> bool {return is_3n_opener(b[.North])}},
 	{
 		"3x-preempt",
 		"North opens a 3-level preempt (minor 7-bagger or likely 3-major)",
@@ -701,17 +589,13 @@ registry := []cli.Scenario {
 		"North opens a potential 4NT (two-suited slam invitation)",
 		proc(b: norn.Deal_Summary) -> bool {return is_potential_4n_opener(b[.North])},
 	},
-	{
-		"5m-opener",
-		"North opens an insane offensive preempt with a 7+ minor",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"5m-opener", "North opens an insane offensive preempt with a 7+ minor", proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
 			return(
 				is_insane_offensive_preempt(north) &&
 				(norn.diamond_length(north) >= 7 || norn.club_length(north) >= 7) \
 			)
-		},
-	},
+		}},
 	{
 		"extreme-offensive-opener",
 		"North holds an insane offensive preempt",
@@ -735,18 +619,12 @@ registry := []cli.Scenario {
 	{
 		"slam-hands-32-plus-hcp",
 		"North-South hold a combined 32+ hcp",
-		proc(b: norn.Deal_Summary) -> bool {return(
-				norn.hcp(b[.North]) + norn.hcp(b[.South]) >=
-				32 \
-			)},
+		proc(b: norn.Deal_Summary) -> bool {return norn.hcp(b[.North]) + norn.hcp(b[.South]) >= 32},
 	},
 	{
 		"slam-hands-35-plus-hcp",
 		"North-South hold a combined 35+ hcp",
-		proc(b: norn.Deal_Summary) -> bool {return(
-				norn.hcp(b[.North]) + norn.hcp(b[.South]) >=
-				35 \
-			)},
+		proc(b: norn.Deal_Summary) -> bool {return norn.hcp(b[.North]) + norn.hcp(b[.South]) >= 35},
 	},
 	{
 		"acol-lessons-balanced",
@@ -754,12 +632,7 @@ registry := []cli.Scenario {
 		proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
 			south := b[.South]
-			return(
-				is_flattish(north) &&
-				is_flattish(south) &&
-				norn.hcp(north) >= 11 &&
-				norn.hcp(south) >= 5 \
-			)
+			return is_flattish(north) && is_flattish(south) && norn.hcp(north) >= 11 && norn.hcp(south) >= 5
 		},
 	},
 	{
@@ -794,44 +667,25 @@ registry := []cli.Scenario {
 	},
 
 	// --- Defending opponents' notrump openings (East opens the NT) ---
-	{
-		"defence-vs-mini-nt",
-		"East opens a 10-12 NT; N-S may overcall",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"defence-vs-mini-nt", "East opens a 10-12 NT; N-S may overcall", proc(b: norn.Deal_Summary) -> bool {
 			return north_south_may_overcall_1N(b, 12) && nt5cM(b[.East], 10, 12)
-		},
-	},
-	{
-		"defence-vs-weak-nt",
-		"East opens a 12-14 NT; N-S may overcall",
-		proc(b: norn.Deal_Summary) -> bool {
+		}},
+	{"defence-vs-weak-nt", "East opens a 12-14 NT; N-S may overcall", proc(b: norn.Deal_Summary) -> bool {
 			return north_south_may_overcall_1N(b, 14) && nt5cM(b[.East], 12, 14)
-		},
-	},
+		}},
 	{
 		"defence-vs-weak-nt-invitational",
 		"East opens a 12-14 NT; South may overcall opposite an invitational North",
 		proc(b: norn.Deal_Summary) -> bool {
-			return(
-				nt5cM(b[.East], 12, 14) &&
-				south_may_overcall_opponents_1N_with_north_invitational(b, 14) \
-			)
+			return nt5cM(b[.East], 12, 14) && south_may_overcall_opponents_1N_with_north_invitational(b, 14)
 		},
 	},
-	{
-		"defence-vs-intermediate-nt",
-		"East opens a 14-16 NT; N-S may overcall",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"defence-vs-intermediate-nt", "East opens a 14-16 NT; N-S may overcall", proc(b: norn.Deal_Summary) -> bool {
 			return north_south_may_overcall_1N(b, 15) && nt5cM(b[.East], 14, 16)
-		},
-	},
-	{
-		"defence-vs-strong-nt",
-		"East opens a 15-17 NT; N-S may overcall",
-		proc(b: norn.Deal_Summary) -> bool {
+		}},
+	{"defence-vs-strong-nt", "East opens a 15-17 NT; N-S may overcall", proc(b: norn.Deal_Summary) -> bool {
 			return north_south_may_overcall_1N(b, 16) && nt5cM(b[.East], 15, 17)
-		},
-	},
+		}},
 
 	// --- Defending opponents' prepared-minor / strong-club openings ---
 	{
@@ -839,10 +693,7 @@ registry := []cli.Scenario {
 		"East opens a prepared minor; South has both majors or a red weak-two shape",
 		proc(b: norn.Deal_Summary) -> bool {
 			south := b[.South]
-			return(
-				opens_std_1minor_prepared(b[.East]) &&
-				(has_both_majors_michaels(south) || is_weak_2DH(south)) \
-			)
+			return opens_std_1minor_prepared(b[.East]) && (has_both_majors_michaels(south) || is_weak_2DH(south))
 		},
 	},
 	{
@@ -859,17 +710,13 @@ registry := []cli.Scenario {
 	},
 
 	// --- Overcalling an unbalanced 12-19 East opening ---
-	{
-		"unbalanced-overcalls",
-		"East opens 12-19 unbalanced; South 7+ and not flat",
-		proc(b: norn.Deal_Summary) -> bool {
+	{"unbalanced-overcalls", "East opens 12-19 unbalanced; South 7+ and not flat", proc(b: norn.Deal_Summary) -> bool {
 			if !east_opens_unbalanced(b) {
 				return false
 			}
 			s := b[.South]
 			return norn.hcp(s) >= 7 && !is_flattish(s)
-		},
-	},
+		}},
 	{
 		"unbalanced-two-suiter-overcalls",
 		"East opens 12-19 unbalanced; South 7+, not flat, two-suiter",

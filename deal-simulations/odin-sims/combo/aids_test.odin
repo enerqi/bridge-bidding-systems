@@ -51,12 +51,7 @@ test_p_reach_alias :: proc(t: ^testing.T) {
 		testing.expect(t, p_reach(d.p, k) == p_at_least(d.p, k), "p_reach must equal p_at_least")
 	}
 	for k in 1 ..= RANKS {
-		testing.expectf(
-			t,
-			p_reach(d.p, k) <= p_reach(d.p, k - 1) + 1e-12,
-			"tail not monotone at k=%d",
-			k,
-		)
+		testing.expectf(t, p_reach(d.p, k) <= p_reach(d.p, k - 1) + 1e-12, "tail not monotone at k=%d", k)
 	}
 }
 
@@ -146,11 +141,7 @@ test_suit_combo_advice :: proc(t: ^testing.T) {
 	sp := advice[0] // spades = DISPLAY_SUITS index 0
 	testing.expectf(t, strings.contains(sp.note, "two-way"), "spades note = %q", sp.note)
 	testing.expect(t, len(sp.cands) == N_CANDIDATE_LINES, "candidate count")
-	testing.expect(
-		t,
-		sp.best_mean_idx >= 0 && sp.best_mean_idx < len(sp.cands),
-		"best_mean_idx in range",
-	)
+	testing.expect(t, sp.best_mean_idx >= 0 && sp.best_mean_idx < len(sp.cands), "best_mean_idx in range")
 	// best-by-mean really has the max mean; best-by-floor really has the max floor.
 	for ls in sp.cands {
 		testing.expect(t, sp.cands[sp.best_mean_idx].mean >= ls.mean - 1e-12, "best_mean is max mean")
@@ -207,6 +198,16 @@ test_entry_helpers :: proc(t: ^testing.T) {
 
 	// sure_side_entries: the top solid run from the ace in each side suit, excluding the develop suit.
 	suits := [4]u16{mask(.Ace, .King, .Five), mask(.Three, .Two), mask(.Ace), mask(.King, .Queen)}
-	testing.expectf(t, sure_side_entries(suits, 0) == 1, "excl S = %d, want 1 (only ♦A)", sure_side_entries(suits, 0))
-	testing.expectf(t, sure_side_entries(suits, 1) == 3, "excl H = %d, want 3 (♠AK + ♦A)", sure_side_entries(suits, 1))
+	testing.expectf(
+		t,
+		sure_side_entries(suits, 0) == 1,
+		"excl S = %d, want 1 (only ♦A)",
+		sure_side_entries(suits, 0),
+	)
+	testing.expectf(
+		t,
+		sure_side_entries(suits, 1) == 3,
+		"excl H = %d, want 3 (♠AK + ♦A)",
+		sure_side_entries(suits, 1),
+	)
 }

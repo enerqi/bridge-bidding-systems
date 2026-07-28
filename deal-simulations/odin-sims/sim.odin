@@ -32,11 +32,7 @@ import "norn:norn"
 // The double-dummy par caption (dd) followed by the naive combined-holding trick table (combo). Both
 // are `norn.Deal_Annotator`s writing to the same builder; combo needs no DDS, so the combo half still
 // renders when a board reaches here. Registered for scenarios that want both (see `dd_annotators`).
-dd_and_combo_annotate :: proc(
-	builder: ^strings.Builder,
-	board: norn.Deal,
-	format: norn.Output_Format,
-) {
+dd_and_combo_annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Output_Format) {
 	dd.annotate(builder, board, format)
 	combo.annotate(builder, board, format)
 }
@@ -75,10 +71,7 @@ run_sim :: proc() -> int {
 	// dd_annotators["2c-any-slam-try"] = dd.annotate
 	// dd_annotators["slam-hands-32-plus-hcp"] = dd.annotate
 
-	return cli.main_program(
-		bidding.registry,
-		cli.Gen_Hooks{dd_filters = dd_filters, dd_annotators = dd_annotators},
-	)
+	return cli.main_program(bidding.registry, cli.Gen_Hooks{dd_filters = dd_filters, dd_annotators = dd_annotators})
 }
 
 main :: proc() { 	// Operational setup only; program semantics live in `run_sim` above
@@ -178,10 +171,7 @@ spall_profiler_setup :: proc() {
 @(require_results)
 spall_thread_local_setup :: proc(allocator := context.allocator) -> (spall_backing_buffer: []u8) {
 	spall_backing_buffer = make([]u8, spall.BUFFER_DEFAULT_SIZE)
-	thread_local_spall_buffer = spall.buffer_create(
-		spall_backing_buffer,
-		u32(sync.current_thread_id()),
-	)
+	thread_local_spall_buffer = spall.buffer_create(spall_backing_buffer, u32(sync.current_thread_id()))
 	return
 }
 
@@ -192,11 +182,7 @@ spall_profiler_destroy :: proc() {
 }
 
 @(no_instrumentation)
-spall_event_start :: #force_inline proc "contextless" (
-	name: string,
-	args: string = "",
-	location := #caller_location,
-) {
+spall_event_start :: #force_inline proc "contextless" (name: string, args: string = "", location := #caller_location) {
 	when SPALL_ENABLE {
 		spall._buffer_begin(&global_spall_ctx, &thread_local_spall_buffer, name, args, location)
 	}
@@ -250,17 +236,12 @@ when TRACKING_ALLOCATOR_ENABLE {
 		tracking_allocator_finalise :: proc(tracking_allocator: ^mem.Tracking_Allocator) {
 			SPALL_SCOPED_EVENT(name = #procedure)
 
-			if len(tracking_allocator.allocation_map) > 0 ||
-			   len(tracking_allocator.bad_free_array) > 0 {
+			if len(tracking_allocator.allocation_map) > 0 || len(tracking_allocator.bad_free_array) > 0 {
 				for _, v in tracking_allocator.allocation_map {
 					log.errorf("Memory Leak:\t%v", v)
 				}
 				for bad_free in tracking_allocator.bad_free_array {
-					log.errorf(
-						"%v allocation %p was freed badly\n",
-						bad_free.location,
-						bad_free.memory,
-					)
+					log.errorf("%v allocation %p was freed badly\n", bad_free.location, bad_free.memory)
 				}
 			}
 
@@ -299,10 +280,7 @@ make_logging_context :: proc() -> log.Logger {
 	log_level := log.Level.Info
 	env_value_buf := [32]u8{}
 	if log_level_env_var, err := os.lookup_env(env_value_buf[:], LOG_LEVEL_ENV_KEY); err == nil {
-		normalized_env_var := strings.to_pascal_case(
-			log_level_env_var,
-			allocator = context.temp_allocator,
-		)
+		normalized_env_var := strings.to_pascal_case(log_level_env_var, allocator = context.temp_allocator)
 		if level, level_ok := reflect.enum_from_name(log.Level, normalized_env_var); level_ok {
 			log_level = level
 		} else {

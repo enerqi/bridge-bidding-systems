@@ -217,17 +217,9 @@ test_suit_quality :: proc(t: ^testing.T) {
 test_two_suiter_shapes :: proc(t: ^testing.T) {
 	testing.expect(t, two_suiter(majors_6511()), "6-5-1-1 is a two-suiter")
 	testing.expect(t, !two_suiter(majors_44()), "4-4-3-2 is not a two-suiter")
-	testing.expect(
-		t,
-		is_6_plus_other_10_card_two_suiter(unbal_diamond_6421()),
-		"6-4 is a 10-card 2-suiter",
-	)
+	testing.expect(t, is_6_plus_other_10_card_two_suiter(unbal_diamond_6421()), "6-4 is a 10-card 2-suiter")
 	testing.expect(t, is_asymmetric_10_plus_two_suiter(majors_6511()), "6-5 is asymmetric 10+")
-	testing.expect(
-		t,
-		is_6_plus_other_11_or_more_card_two_suiter(majors_6511()),
-		"6-5 is 11+ card 2-suiter",
-	)
+	testing.expect(t, is_6_plus_other_11_or_more_card_two_suiter(majors_6511()), "6-5 is 11+ card 2-suiter")
 }
 
 @(test)
@@ -265,11 +257,7 @@ test_one_level_openers :: proc(t: ^testing.T) {
 	testing.expect(t, is_any_1c_opener(unbalanced_16()), "strong 1C is a 1C opener")
 	testing.expect(t, is_1major_opener(major_opener_1h()), "5 hearts 12 is a 1-major opener")
 	testing.expect(t, !is_1major_opener(light_major_1s()), "9 hcp is not a (full) 1-major opener")
-	testing.expect(
-		t,
-		is_light_1major_opener(light_major_1s()),
-		"9 hcp 5 spades is a light 1-major",
-	)
+	testing.expect(t, is_light_1major_opener(light_major_1s()), "9 hcp 5 spades is a light 1-major")
 	testing.expect(t, is_1d_unbal_opener(unbal_1d_5431()), "5-4-3-1 diamond is a 1D unbal opener")
 	testing.expect(t, is_1d_opener(unbal_1d_5431()), "unbal diamond opens 1D")
 }
@@ -287,18 +275,10 @@ test_notrump_and_marmic_openers :: proc(t: ^testing.T) {
 test_two_level_openers :: proc(t: ^testing.T) {
 	testing.expect(t, is_2c_opener(club_2c_opener()), "6 clubs 12 opens 2C")
 	testing.expect(t, is_2d_opener(diamond_2d_opener()), "4-4-1-4 opens 2D")
-	testing.expect(
-		t,
-		is_2d_intermediate_opener(unbal_diamond_6421()),
-		"6+ diamond opens 2D intermediate",
-	)
+	testing.expect(t, is_2d_intermediate_opener(unbal_diamond_6421()), "6+ diamond opens 2D intermediate")
 	testing.expect(t, is_3n_opener(gambling3n()), "solid major + side ace opens 3NT")
 	testing.expect(t, !is_3n_opener(solid7_spades()), "7-2-2-2 is excluded from 3NT")
-	testing.expect(
-		t,
-		opens_std_1minor_prepared(unbal_diamond_6421()),
-		"diamond-long opens a prepared 1m",
-	)
+	testing.expect(t, opens_std_1minor_prepared(unbal_diamond_6421()), "diamond-long opens a prepared 1m")
 	testing.expect(t, is_3cd_opener_1st2nd(insane_preempt()), "tricky club suit opens 3C")
 	testing.expect(t, is_standard_3cd_7carder(clubs_3c_7carder()), "KQ 7-card club opens 3C")
 }
@@ -317,28 +297,16 @@ test_weak_twos :: proc(t: ^testing.T) {
 	testing.expect(t, is_generic_weak2d(weak2_diamonds()), "A-headed 6 diamonds is a weak 2D")
 	testing.expect(t, is_weak_2DH(weak2_diamonds()), "6 diamonds 6 hcp is a weak red two")
 	testing.expect(t, is_weak2_5card_major(weak2_5card_spades()), "5-card spade weak two")
-	testing.expect(
-		t,
-		is_generic_5card_unbal_weak2(weak2_5card_spades()),
-		"5-card unbalanced weak two",
-	)
+	testing.expect(t, is_generic_5card_unbal_weak2(weak2_5card_spades()), "5-card unbalanced weak two")
 	testing.expect(t, is_weak2_major(weak2_spades()), "6-card spade weak two")
 	testing.expect(t, is_weak_5_or_6_card_major(weak2_spades()), "5/6-card major weak two")
 	testing.expect(t, is_weak2_major_in_range(weak2_spades(), 5, 11), "weak two in 5-11 range")
-	testing.expect(
-		t,
-		is_semi_positive_weak_two_hearts(semipos_2h()),
-		"semi-positive weak two hearts",
-	)
+	testing.expect(t, is_semi_positive_weak_two_hearts(semipos_2h()), "semi-positive weak two hearts")
 }
 
 @(test)
 test_two_suiters_and_minor_preempts :: proc(t: ^testing.T) {
-	testing.expect(
-		t,
-		is_semi_positive_majors_two_suiter(weak_majors_6511()),
-		"weak majors 2-suiter",
-	)
+	testing.expect(t, is_semi_positive_majors_two_suiter(weak_majors_6511()), "weak majors 2-suiter")
 	testing.expect(t, is_gf_majors_two_suiter(majors_6511()), "strong majors 2-suiter")
 	testing.expect(t, is_gf_hearts_minor_two_suiter(gf_hearts_minor()), "GF hearts+minor 2-suiter")
 	testing.expect(t, is_minors_2n_preempt(both_minors_5521()), "5-5 minors 2NT preempt")
@@ -362,41 +330,17 @@ test_high_preempts_and_powerhouses :: proc(t: ^testing.T) {
 @(test)
 test_swedish_club_two_level :: proc(t: ^testing.T) {
 	testing.expect(t, is_1n_marmic_swedish_club_resp(marmic12()), "Marmic 12 is a 1NT response")
-	testing.expect(
-		t,
-		is_2s_swedish_club_resp(both_minors_5521()),
-		"both minors + short major is 2S",
-	)
+	testing.expect(t, is_2s_swedish_club_resp(both_minors_5521()), "both minors + short major is 2S")
 	testing.expect(t, is_2cd_swedish_club_resp(unbal_no_major_9()), "unbal no-major 9 is 2C/2D")
-	testing.expect(
-		t,
-		is_2h_or_2n_swedish_club_resp(flat_no_major_10()),
-		"flat no-major 10 is 2H/2NT",
-	)
-	testing.expect(
-		t,
-		is_minor_swedish_club_positive_response(unbal_diamond_6421()),
-		"unbal minor 13 positive",
-	)
+	testing.expect(t, is_2h_or_2n_swedish_club_resp(flat_no_major_10()), "flat no-major 10 is 2H/2NT")
+	testing.expect(t, is_minor_swedish_club_positive_response(unbal_diamond_6421()), "unbal minor 13 positive")
 }
 
 @(test)
 test_swedish_club_notrump_responses :: proc(t: ^testing.T) {
-	testing.expect(
-		t,
-		is_old_1n_bal_swedish_club_response(balanced_13()),
-		"balanced 13 is a 1NT response",
-	)
-	testing.expect(
-		t,
-		is_1n_unbal_minor_swedish_club_resp(unbal_diamond_6421()),
-		"unbal minor 13 is 1NT",
-	)
-	testing.expect(
-		t,
-		is_any_1n_swedish_club_response(balanced_13()),
-		"balanced is some 1NT response",
-	)
+	testing.expect(t, is_old_1n_bal_swedish_club_response(balanced_13()), "balanced 13 is a 1NT response")
+	testing.expect(t, is_1n_unbal_minor_swedish_club_resp(unbal_diamond_6421()), "unbal minor 13 is 1NT")
+	testing.expect(t, is_any_1n_swedish_club_response(balanced_13()), "balanced is some 1NT response")
 	testing.expect(t, is_any_1n_swedish_club_response(marmic12()), "Marmic is some 1NT response")
 	testing.expect(t, eq_3_control_points_and_max_12_hcp(solid6_spades()), "3 controls, 10 hcp")
 }
@@ -405,46 +349,18 @@ test_swedish_club_notrump_responses :: proc(t: ^testing.T) {
 test_swedish_club_solid_suit_responses :: proc(t: ^testing.T) {
 	testing.expect(t, is_akqj(solid6_spades(), .Spades), "AKQJ spades")
 	testing.expect(t, is_3n_swedish_club_resp(solid6_spades()), "solid 6 is a 3NT response")
-	testing.expect(
-		t,
-		is_4hs_swedish_club_response(solid7_akqj_spades()),
-		"solid 7 major is a 4M response",
-	)
-	testing.expect(
-		t,
-		is_4cd_swedish_club_response(eight_spades_aqj()),
-		"AQJ 8-bagger is a 4-minor response",
-	)
-	testing.expect(
-		t,
-		is_3x_preempt_swedish_club_response(clubs_3c_7carder()),
-		"7-card 3C preempt response",
-	)
+	testing.expect(t, is_4hs_swedish_club_response(solid7_akqj_spades()), "solid 7 major is a 4M response")
+	testing.expect(t, is_4cd_swedish_club_response(eight_spades_aqj()), "AQJ 8-bagger is a 4-minor response")
+	testing.expect(t, is_3x_preempt_swedish_club_response(clubs_3c_7carder()), "7-card 3C preempt response")
 }
 
 @(test)
 test_one_d_responses :: proc(t: ^testing.T) {
-	testing.expect(
-		t,
-		is_1d_swedish_club_resp(neg_1d_response()),
-		"weak no-major 9 is a 1D negative",
-	)
-	testing.expect(
-		t,
-		is_possible_inverted_diamond_raise(unbal_diamond_6421()),
-		"13 + 6 diamonds raises",
-	)
+	testing.expect(t, is_1d_swedish_club_resp(neg_1d_response()), "weak no-major 9 is a 1D negative")
+	testing.expect(t, is_possible_inverted_diamond_raise(unbal_diamond_6421()), "13 + 6 diamonds raises")
 	testing.expect(t, is_possible_wjs_1d_response(wjs_clubs()), "sub-10 + 6 clubs jump-shifts")
-	testing.expect(
-		t,
-		is_possible_splinter_1d_response(unbal_diamond_6421()),
-		"13 + 6 diamonds + singleton splinters",
-	)
-	testing.expect(
-		t,
-		is_possible_diamond_preempt_1d_response(weak2_diamonds()),
-		"6 diamonds preempts over 1D",
-	)
+	testing.expect(t, is_possible_splinter_1d_response(unbal_diamond_6421()), "13 + 6 diamonds + singleton splinters")
+	testing.expect(t, is_possible_diamond_preempt_1d_response(weak2_diamonds()), "6 diamonds preempts over 1D")
 }
 
 // --- Batch 5: competitive (single-hand and multi-seat). ---
@@ -477,11 +393,7 @@ test_multi_seat_overcalls :: proc(t: ^testing.T) {
 	all_flat[.East] = junk()
 	all_flat[.South] = junk()
 	all_flat[.West] = junk()
-	testing.expect(
-		t,
-		!north_south_may_overcall_1N(all_flat, 15),
-		"flat-vs-flat both minimum: no overcall",
-	)
+	testing.expect(t, !north_south_may_overcall_1N(all_flat, 15), "flat-vs-flat both minimum: no overcall")
 	testing.expect(
 		t,
 		!south_may_overcall_opponents_1N_with_north_invitational(all_flat, 15),

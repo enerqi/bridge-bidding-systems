@@ -772,7 +772,10 @@ best_contract :: proc(grid: Grid_Result) -> (best: Contract, ok: bool) {
 			ev := f64(made) / f64(grid.n) * f64(contract_score(strain, i32(level)))
 			if ev > best_ev {
 				best_ev = ev
-				best = Contract{level = level, strain = strain}
+				best = Contract {
+					level  = level,
+					strain = strain,
+				}
 				ok = true
 			}
 		}

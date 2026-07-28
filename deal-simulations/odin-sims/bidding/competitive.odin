@@ -73,10 +73,7 @@ north_south_may_overcall_1N :: proc(board: norn.Deal_Summary, top_nt_range: int)
 	west := board[.West]
 
 	s_hcp := norn.hcp(south)
-	if is_flattish(south) &&
-	   is_flattish(north) &&
-	   s_hcp < top_nt_range &&
-	   norn.hcp(north) < top_nt_range {
+	if is_flattish(south) && is_flattish(north) && s_hcp < top_nt_range && norn.hcp(north) < top_nt_range {
 		return false
 	}
 
@@ -90,10 +87,7 @@ north_south_may_overcall_1N :: proc(board: norn.Deal_Summary, top_nt_range: int)
 // May South overcall the opponents' 1NT with North holding an invitational hand? South must be
 // shapely and not too strong, E-W limited, with North in an invitational 9-13 band. (deal-utils
 // `south_may_overcall_opponents_1N_with_north_invitational`.)
-south_may_overcall_opponents_1N_with_north_invitational :: proc(
-	board: norn.Deal_Summary,
-	top_nt_range: int,
-) -> bool {
+south_may_overcall_opponents_1N_with_north_invitational :: proc(board: norn.Deal_Summary, top_nt_range: int) -> bool {
 	north := board[.North]
 	east := board[.East]
 	south := board[.South]

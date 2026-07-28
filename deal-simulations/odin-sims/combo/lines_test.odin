@@ -85,28 +85,15 @@ test_finesse_beats_top_down :: proc(t: ^testing.T) {
 		p_at_least(fin.p, 2),
 		p_at_least(top.p, 2),
 	)
-	testing.expect(
-		t,
-		expected_tricks(fin.p) > expected_tricks(top.p) + 0.3,
-		"finesse mean should beat top-down",
-	)
+	testing.expect(t, expected_tricks(fin.p) > expected_tricks(top.p) + 0.3, "finesse mean should beat top-down")
 }
 
 // `best_line` for a 2-trick target on AQ-opp-xx should choose the finesse.
 @(test)
 test_best_line_picks_finesse :: proc(t: ^testing.T) {
 	best := best_line(mask(.Ace, .Queen), mask(.Three, .Two), 2)
-	testing.expectf(
-		t,
-		best.name == "finesse",
-		"best line for target 2 was %q, want finesse",
-		best.name,
-	)
-	testing.expect(
-		t,
-		p_at_least(best.dist.p, 2) > 0.4,
-		"the finesse should make >=2 roughly half the time",
-	)
+	testing.expectf(t, best.name == "finesse", "best line for target 2 was %q, want finesse", best.name)
+	testing.expect(t, p_at_least(best.dist.p, 2) > 0.4, "the finesse should make >=2 roughly half the time")
 }
 
 // The Pareto frontier is non-empty and internally consistent: no member dominates another.
@@ -123,13 +110,7 @@ test_pareto_non_dominated :: proc(t: ^testing.T) {
 			if i == j {
 				continue
 			}
-			testing.expectf(
-				t,
-				!line_dominates(a.dist, b.dist),
-				"pareto member %s dominates %s",
-				b.name,
-				a.name,
-			)
+			testing.expectf(t, !line_dominates(a.dist, b.dist), "pareto member %s dominates %s", b.name, a.name)
 		}
 	}
 }
@@ -141,12 +122,7 @@ test_pareto_collapses_when_solid :: proc(t: ^testing.T) {
 	defer delete(cands)
 	front := pareto_lines(cands)
 	defer delete(front)
-	testing.expectf(
-		t,
-		len(front) == 1,
-		"solid suit should collapse to one frontier line, got %d",
-		len(front),
-	)
+	testing.expectf(t, len(front) == 1, "solid suit should collapse to one frontier line, got %d", len(front))
 }
 
 // The two compound candidates are registered (they must appear in `candidate_lines` for the DP,
@@ -173,11 +149,7 @@ test_finesse_other_is_distinct :: proc(t: ^testing.T) {
 	fin := sd_line_distribution(n, s, line_finesse)
 	oth := sd_line_distribution(n, s, line_finesse_other)
 
-	testing.expect(
-		t,
-		!dist_near_equal(fin, oth),
-		"the two finesse directions should differ on a one-way holding",
-	)
+	testing.expect(t, !dist_near_equal(fin, oth), "the two finesse directions should differ on a one-way holding")
 	testing.expectf(
 		t,
 		expected_tricks(fin.p) > expected_tricks(oth.p) + 1e-9,
@@ -214,12 +186,7 @@ test_duck_then_finesse_selected_by_mean :: proc(t: ^testing.T) {
 	n := mask(.Ace, .King, .Jack, .Seven)
 	s := mask(.Six, .Three)
 	best := best_line_by_mean(n, s)
-	testing.expectf(
-		t,
-		best.name == "duck-then-finesse",
-		"best line by mean was %q, want duck-then-finesse",
-		best.name,
-	)
+	testing.expectf(t, best.name == "duck-then-finesse", "best line by mean was %q, want duck-then-finesse", best.name)
 
 	fin := sd_line_distribution(n, s, line_finesse)
 	testing.expectf(

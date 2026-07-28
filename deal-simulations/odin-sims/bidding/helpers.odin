@@ -33,20 +33,12 @@ has_pattern :: proc(hand: norn.Hand_Summary, a, b, c, d: int) -> bool {
 // required)? Used by `is_4cd_swedish_club_response` to spot a near-solid suit missing the king.
 @(private)
 has_aqj :: proc(hand: norn.Hand_Summary, suit: norn.Suit) -> bool {
-	return(
-		norn.holds(hand, suit, .Ace) &&
-		norn.holds(hand, suit, .Queen) &&
-		norn.holds(hand, suit, .Jack) \
-	)
+	return norn.holds(hand, suit, .Ace) && norn.holds(hand, suit, .Queen) && norn.holds(hand, suit, .Jack)
 }
 
 // The system's `defvector KQJ 0 1 1 1`: does the hand hold king, queen AND jack of `suit` (ace not
 // required)? The "missing the ace" sibling of `has_aqj`.
 @(private)
 has_kqj :: proc(hand: norn.Hand_Summary, suit: norn.Suit) -> bool {
-	return(
-		norn.holds(hand, suit, .King) &&
-		norn.holds(hand, suit, .Queen) &&
-		norn.holds(hand, suit, .Jack) \
-	)
+	return norn.holds(hand, suit, .King) && norn.holds(hand, suit, .Queen) && norn.holds(hand, suit, .Jack)
 }

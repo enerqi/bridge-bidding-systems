@@ -73,12 +73,8 @@ run :: proc() -> int {
 	defer delete(args.held)
 	if arg_err != "" {
 		fmt.eprintln("pbn_analyse:", arg_err)
-		fmt.eprintln(
-			"usage: pbn_analyse [--file <path>] [--target <n>] [--html <out.html>]",
-		)
-		fmt.eprintln(
-			"                   [--sample <deals> [--contract <e.g. 4H>] [--seed <n>]]",
-		)
+		fmt.eprintln("usage: pbn_analyse [--file <path>] [--target <n>] [--html <out.html>]")
+		fmt.eprintln("                   [--sample <deals> [--contract <e.g. 4H>] [--seed <n>]]")
 		fmt.eprintln(
 			"                   [--void <seat>:<suit>] [--len <seat>:<suit>:<n|n-m|n+>] [--lead <seat>:<card>]",
 		)
@@ -105,9 +101,7 @@ run :: proc() -> int {
 	multi := len(boards) > 1
 	// Constraints name specific seats/cards of ONE board, so they are meaningless across a set.
 	if multi && (len(args.constraints) > 0 || len(args.held) > 0) {
-		fmt.eprintln(
-			"pbn_analyse: --void/--len/--lead condition a specific board, so they need a SINGLE board input",
-		)
+		fmt.eprintln("pbn_analyse: --void/--len/--lead condition a specific board, so they need a SINGLE board input")
 		return 1
 	}
 
@@ -230,7 +224,10 @@ sample_board :: proc(
 			return {}, "--lead card is already in a known hand (only defenders' unknown cards can be led)"
 		}
 	}
-	cons := dd.Sample_Constraints{shape = args.constraints[:], held = args.held[:]}
+	cons := dd.Sample_Constraints {
+		shape = args.constraints[:],
+		held  = args.held[:],
+	}
 	// Solve the sampled layouts ONCE, with adaptive early-stop: `args.sample` is a CAP — sampling stops as soon
 	// as the picked contract's make-% is statistically resolved (lopsided boards stop short; knife-edge boards
 	// run the full cap). The lead grids and the misguess tax are then pure FILTERS over that one solved batch
@@ -238,7 +235,8 @@ sample_board :: proc(
 	// twice. `gating` is the contract that gated the stop — the auto-pick when the caller gave none.
 	s, gating, sok := dd.solve_sample_adaptive(board, side, args.sample, args.seed, cons, contract, has_contract)
 	if !sok {
-		return {}, "DDS sampling failed — the constraints are too rare or impossible for these hands (could not draw enough consistent deals)"
+		return {},
+			"DDS sampling failed — the constraints are too rare or impossible for these hands (could not draw enough consistent deals)"
 	}
 	defer dd.solved_sample_free(&s)
 	lg := new(dd.Lead_Grids)
@@ -306,12 +304,7 @@ report_full_deal :: proc(board: norn.Parsed_Board) {
 	fmt.println(strings.to_string(b))
 }
 
-report_board :: proc(
-	board: norn.Parsed_Board,
-	args: ^Args,
-	contract: dd.Contract,
-	has_contract: bool,
-) {
+report_board :: proc(board: norn.Parsed_Board, args: ^Args, contract: dd.Contract, has_contract: bool) {
 	a, side, ok := combo.analyse_parsed_board(board)
 	if !ok {
 		if board_fully_known(board) {
@@ -352,14 +345,7 @@ report_board :: proc(
 			fmt.print("  (sampled only layouts where")
 			first := true
 			for con in args.constraints {
-				fmt.printf(
-					"%s %v %s %d-%d",
-					" " if first else ",",
-					con.seat,
-					suit_word(con.suit),
-					con.min,
-					con.max,
-				)
+				fmt.printf("%s %v %s %d-%d", " " if first else ",", con.seat, suit_word(con.suit), con.min, con.max)
 				first = false
 			}
 			for h in args.held {
@@ -555,7 +541,7 @@ print_sample_verdict :: proc(
 	// lead sub-grids. Only surfaced when it costs something material vs the baseline (a killing lead worth
 	// warning about); a rare lead's sub-sample `n` is shown so its wider ± is honest.
 	if leads != nil {
-		if card, wpct, wn, base_pct, ok := dd.worst_lead(leads, contract, side); ok && base_pct-wpct >= 3 {
+		if card, wpct, wn, base_pct, ok := dd.worst_lead(leads, contract, side); ok && base_pct - wpct >= 3 {
 			fmt.printfln(
 				"  Worst opening lead: %s -> %.0f%% (vs %.0f%% average, %d deals) — plan for it.",
 				card_word(card),
@@ -580,9 +566,7 @@ print_sample_verdict :: proc(
 	fmt.printfln("    naive ceiling %.2f (DD census)", combo.expected_tricks(a.total))
 	fmt.printfln("    naive blind   %.2f (SD census)", combo.expected_tricks(sd.totsd))
 	fmt.printfln("    simulated     %.2f (DDS whole-hand)", s.mean_tricks)
-	fmt.println(
-		"  (per-layout double-dummy census: a ceiling that already bakes in entries/squeezes/tempo per",
-	)
+	fmt.println("  (per-layout double-dummy census: a ceiling that already bakes in entries/squeezes/tempo per")
 	fmt.println("   solve — far tighter than combo's per-suit sums; achievable docks it for the blind guess.")
 	fmt.println("   See COMBO_ANALYSER.md Track 2.)")
 }
@@ -598,7 +582,7 @@ Args :: struct {
 	contract:    string,
 	seed:        u64,
 	constraints: [dynamic]dd.Card_Constraint, // defender-shape inferences from --void / --len
-	held:        [dynamic]dd.Held_Card,       // specific-card locations from --lead / --card
+	held:        [dynamic]dd.Held_Card, // specific-card locations from --lead / --card
 }
 
 // Split the argv tail into an `Args` and an error message ("" == ok). `--file` wins over positionals;
@@ -844,8 +828,7 @@ print_winner_count :: proc(sd: ^combo.Sd_Bundle, target: int) {
 	order := [4]int{0, 1, 2, 3}
 	for i in 1 ..< 4 {
 		j := i
-		for j > 0 &&
-		    (means[order[j]] - f64(floors[order[j]])) > (means[order[j - 1]] - f64(floors[order[j - 1]])) {
+		for j > 0 && (means[order[j]] - f64(floors[order[j]])) > (means[order[j - 1]] - f64(floors[order[j - 1]])) {
 			order[j], order[j - 1] = order[j - 1], order[j]
 			j -= 1
 		}
@@ -949,7 +932,7 @@ combination_is_decision :: proc(ad: combo.Suit_Combo_Advice) -> bool {
 		lo = min(lo, ls.mean)
 		hi = max(hi, ls.mean)
 	}
-	return hi-lo > 0.10
+	return hi - lo > 0.10
 }
 
 // C. Safety play / min-variance line (aids plan C). Where a suit's best line BY MEAN differs from its best
@@ -1077,11 +1060,7 @@ line_role :: proc(name: string) -> (role: string, develop: bool) {
 // entries to get back there for each attempt. It is NOT a real entry analysis (that needs the whole-hand
 // play): the entry count under-reads (high cards only, no ruffing/long-card entries), so the check is
 // conservative and printed under a loud HEURISTIC banner. Combo geometry only — no DDS.
-print_entry_warnings :: proc(
-	sd: ^combo.Sd_Bundle,
-	advice: [4]combo.Suit_Combo_Advice,
-	side: bit_set[norn.Seat],
-) {
+print_entry_warnings :: proc(sd: ^combo.Sd_Bundle, advice: [4]combo.Suit_Combo_Advice, side: bit_set[norn.Seat]) {
 	letters := [4]string{"S", "H", "D", "C"} // Sd_Bundle / advice order is S H D C
 	ns := side == combo.NS_SIDE
 	seat_name := [2]string{ns ? "North" : "East", ns ? "South" : "West"} // [SEAT_N slot, SEAT_S slot]
@@ -1179,14 +1158,10 @@ print_report :: proc(
 	print_priority_sketch(sd)
 	print_entry_warnings(sd, advice, side)
 
-	fmt.println(
-		"\nNote: the naive model assumes free entries and independent suits, so totals are an upper",
-	)
+	fmt.println("\nNote: the naive model assumes free entries and independent suits, so totals are an upper")
 	if st, ok := sim_total.?; ok {
 		blind := combo.expected_tricks(sd.totsd)
-		fmt.println(
-			"bound (no tempo race, no squeezes/endplays). The whole-hand DDS simulation below is the",
-		)
+		fmt.println("bound (no tempo race, no squeezes/endplays). The whole-hand DDS simulation below is the")
 		fmt.printfln(
 			"honest cross-check: %.2f tricks vs this naive %.2f blind sum — the %.2f-trick gap is the over-count.",
 			st,
@@ -1194,9 +1169,7 @@ print_report :: proc(
 			blind - st,
 		)
 	} else {
-		fmt.println(
-			"bound (no tempo race, no squeezes/endplays). With only two hands there is no DDS par to",
-		)
+		fmt.println("bound (no tempo race, no squeezes/endplays). With only two hands there is no DDS par to")
 		fmt.println("cross-check it against. See COMBO_ANALYSER.md.")
 	}
 }
@@ -1315,7 +1288,18 @@ write_blind_sides_json :: proc(
 	defer board_sample_free(&bs_ns)
 	strings.write_string(b, `"ns":`)
 	if bs_ns.have {
-		write_sim_json(b, &bs_ns.grid, bs_ns.contract, bs_ns.tax, bs_ns.tax_ok, bs_ns.leads, combo.NS_SIDE, ns_lseat, ns_lword, bs_ns.lead_tax)
+		write_sim_json(
+			b,
+			&bs_ns.grid,
+			bs_ns.contract,
+			bs_ns.tax,
+			bs_ns.tax_ok,
+			bs_ns.leads,
+			combo.NS_SIDE,
+			ns_lseat,
+			ns_lword,
+			bs_ns.lead_tax,
+		)
 	} else {
 		strings.write_string(b, "null")
 	}
@@ -1323,7 +1307,18 @@ write_blind_sides_json :: proc(
 	defer board_sample_free(&bs_ew)
 	strings.write_string(b, `,"ew":`)
 	if bs_ew.have {
-		write_sim_json(b, &bs_ew.grid, bs_ew.contract, bs_ew.tax, bs_ew.tax_ok, bs_ew.leads, combo.EW_SIDE, ew_lseat, ew_lword, bs_ew.lead_tax)
+		write_sim_json(
+			b,
+			&bs_ew.grid,
+			bs_ew.contract,
+			bs_ew.tax,
+			bs_ew.tax_ok,
+			bs_ew.leads,
+			combo.EW_SIDE,
+			ew_lseat,
+			ew_lword,
+			bs_ew.lead_tax,
+		)
 	} else {
 		strings.write_string(b, "null")
 	}

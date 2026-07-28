@@ -218,11 +218,7 @@ is_possible_wjs_1d_response :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.hcp(hand) >= 10 {
 		return false
 	}
-	return(
-		norn.heart_length(hand) >= 6 ||
-		norn.spade_length(hand) >= 6 ||
-		norn.club_length(hand) >= 6 \
-	)
+	return norn.heart_length(hand) >= 6 || norn.spade_length(hand) >= 6 || norn.club_length(hand) >= 6
 }
 
 // A possible splinter response to 1D: 13+, 6+ diamonds with a side singleton. (deal-utils
@@ -234,11 +230,7 @@ is_possible_splinter_1d_response :: proc(hand: norn.Hand_Summary) -> bool {
 	if norn.diamond_length(hand) < 6 {
 		return false
 	}
-	return(
-		norn.club_length(hand) == 1 ||
-		norn.heart_length(hand) == 1 ||
-		norn.spade_length(hand) == 1 \
-	)
+	return norn.club_length(hand) == 1 || norn.heart_length(hand) == 1 || norn.spade_length(hand) == 1
 }
 
 // A possible diamond-preempt response to 1D: at most 10 hcp with 6+ diamonds. (deal-utils
