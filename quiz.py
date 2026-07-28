@@ -16,6 +16,7 @@ bml_tools_dir = Path(environ.get("BML_TOOLS_DIRECTORY", join(home, "dev/bml")))
 sys.path.append(bml_tools_dir)
 
 import bml  # noqa: E402
+import bmlbids  # noqa: E402
 
 ProcessBidNodeFunc = Callable[[bml.Node, int], None]
 
@@ -124,8 +125,6 @@ class BidSequenceMeaning:
     _initial_sequence: list[str]
 
 
-bid_regex = re.compile(r"\(?[1-7][CDHSN]\)?$")
-multi_bid_regex = re.compile(r"\(?[1-7][CDHSN]+\)?$")
 separator_bid_regex = re.compile(r"\-\(?[1-7][CDHSN]\)?")  # without $ we allow e.g. 1C--1HS
 prefix_separator_bid_regex = re.compile(r"\(?[1-7][CDHSN]\)?\-")
 
@@ -165,10 +164,9 @@ def parse_bids_from_headers(header_context: list[Header], debug: bool = False) -
                 print(parts)
 
             for part in parts:
-                # so what about matching 1HS?
-                # diff regex to capture 1HS
-                # but then need later `missing_context` to account for 1HS being 1H or 1S
-                if re.match(bid_regex, part) or re.match(multi_bid_regex, part):
+                # multi-suit bids (1HS) count: `bid_less_than` compares them
+                # strictly, so `missing_context` below handles "1H or 1S"
+                if bmlbids.is_bid_token(part):
                     # in theory there could be bidding context information overlap been different headers
                     # e.g 1D and 1D--1S
                     if part not in header_bids:
@@ -275,64 +273,13 @@ def collect_bid_table_auctions(bid_tables: list[BidTable], debug: bool = False) 
     return sequences
 
 
-def parse_individual_bids(bid_strings: list[str]) -> list[str]:
-    # list of "1h pass 2h", or just "2S" etc.
-    bids = []
-    for bid_str in bid_strings:
-        parts = bid_str.split()
-        for part in parts:
-            if re.match(bid_regex, part):
-                bids.append(part)
-
-    return bids
-
-
-def test_parse_individual_bids():
-    simple_bids = ["2H", "(4H)", "5C"]
-    parsed = parse_individual_bids(simple_bids)
-    assert parsed == simple_bids
-
-    compound = ["1H (pass) 2S", "3C"]
-    parsed_compound = parse_individual_bids(compound)
-    assert parsed_compound == ["1H", "2S", "3C"]
-
-
-bid_level_regex = re.compile(r"(\d)")
-bid_suit_regex = re.compile(r"[1-7]([CDHSN])")
-ranks = {
-    "C": 1,
-    "D": 2,
-    "H": 3,
-    "S": 4,
-}
-
-
-def bid_less_than(b1: str, b2: str) -> bool:
-    try:
-        n1 = re.search(bid_level_regex, b1)[0]
-        n2 = re.search(bid_level_regex, b2)[0]
-        if n1 < n2:
-            return True
-
-        if n1 == n2:
-            suit1 = re.search(bid_suit_regex, b1)[1]
-            suit2 = re.search(bid_suit_regex, b2)[1]
-            return ranks.get(suit1, 5) < ranks.get(suit2, 5)
-        else:
-            return False
-    except Exception:
-        print("logic needs fixing...")
-        return False
-
-
-def test_bid_less_than():
-    assert bid_less_than("1H", "2H")
-    assert bid_less_than("(1H)", "2H")
-    assert bid_less_than("(1H)", "2C")
-    assert bid_less_than("1H", "2C")
-    assert not bid_less_than("1N", "1S")
-    assert not bid_less_than("7C", "1S")
-    assert bid_less_than("7C", "7NT")
+# The bid model lives in the bml tools (bmlbids.py) so the parser, the html
+# renderers and this quiz all agree on what a call is and how calls order.
+# Notably `bid_tokens` keeps multi-suit bids like `1HS`; the single-suit regex
+# this used to use dropped them, which silently lost section context such as
+# `1C--1HS` from the recorded auction.
+parse_individual_bids = bmlbids.bid_tokens
+bid_less_than = bmlbids.bid_less_than
 
 
 # maybe remove, easier for end users to manipulate

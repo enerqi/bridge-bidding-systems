@@ -20,8 +20,25 @@ from opentelemetry import trace
 from panel.io import hold
 
 import quiz
+import bidfilter
 
 tracer = trace.get_tracer(__name__)
+
+
+def rx_depends(*deps):
+    """Re-render a value-ignoring view when any `param.rx` dependency changes.
+
+    Replaces `@pn.depends(<rx>, ...)`, which stopped accepting param.rx args in
+    panel 1.9 / param 2.4 ('rx' object has no attribute 'set_display'). The
+    wrapped views read their state via `.rx.value` and take no positional args,
+    so the pushed values are discarded; panel still detects the result as a
+    reactive ParamFunction and re-renders on change.
+    """
+
+    def deco(fn):
+        return pn.bind(lambda *_evts: fn(), *deps)
+
+    return deco
 
 
 def session_key_func(request):  # tornado.httputil.HTTPServerRequest
@@ -83,10 +100,62 @@ def load_bid_sequences(bml_source: str):
     return bid_sequences
 
 
+@pn.cache
+def load_sequence_bids(bml_source: str):
+    """Canonical bids per auction, parsed once per process. Filtering is then
+    just prefix comparisons, which is what makes validating the filter on
+    every keystroke cheap enough to do."""
+    return bidfilter.prepare_sequence_bids(q.sequence for q in load_bid_sequences(bml_source))
+
+
 bid_sequences = load_bid_sequences(bml_file)
+sequence_bids = load_sequence_bids(bml_file)
 
 INITIAL_DIFFICULTY = 5
 MAX_DIFFICULTY = 8
+
+# Pre-composed filters offered in the sidebar's topics popup, from
+# `quiz_topics.toml` beside this script. Topics scoped to the *other* bml
+# system are dropped; a missing file just means no topics are offered.
+topics = bidfilter.load_topics(system=bml_file)
+topic_names = list(topics)
+
+# The working set questions are drawn from. A bidding-tree filter (see the
+# sidebar) narrows this to auctions beginning with a pattern like `1D--1M--1N`,
+# or to one or more named topics. Empty / unparseable / too-small results fall
+# back to the full set so generate_question always has enough distinct
+# auctions to build a question.
+filtered_sequences = bid_sequences
+
+
+def check_bid_filter(filter_str):
+    """Work out what a filter string *would* do, without applying it.
+
+    Returns (status, hits, parsed) where status is 'all' | 'ok' | 'error' |
+    'too_few', `hits` is the matching subset, and `parsed` is the
+    `bidfilter.ParsedFilter` — it carries the canonical text (topic prefixes
+    resolved to full names) and any entries that could not be interpreted.
+
+    Used both to validate as the user types and to apply on commit, so the
+    preview can never disagree with the result."""
+    parsed = bidfilter.parse_filter(filter_str, topics)
+    if not parsed.patterns:
+        return ("error" if parsed.errors else "all", bid_sequences, parsed)
+    hits = [q for q, bids in zip(bid_sequences, sequence_bids) if bidfilter.bids_match_any(bids, parsed.patterns)]
+    # Need enough distinct auctions for the hardest question; fall back if not.
+    if len(hits) < MAX_DIFFICULTY:
+        return ("too_few", hits, parsed)
+    return ("ok", hits, parsed)
+
+
+def apply_bid_filter(filter_str):
+    """Commit a filter: set `filtered_sequences`. Returns (status, count,
+    parsed) as per `check_bid_filter`. Statuses other than 'ok' fall back to
+    the full set so generate_question always has enough to work with."""
+    global filtered_sequences
+    status, hits, parsed = check_bid_filter(filter_str)
+    filtered_sequences = hits if status == "ok" else bid_sequences
+    return (status, len(hits), parsed)
 
 # Global question data made into a reactive signal so that other things can change when it updates
 # the alternative is to make question part of a Parameterized subclass
@@ -95,7 +164,7 @@ MAX_DIFFICULTY = 8
 # `question.rx.value` allows us to mess with the underlying question class
 question = param.rx(
     quiz.generate_question(
-        bid_sequences, choice_type=quiz.random_multi_choice_type(), multi_choice_count=INITIAL_DIFFICULTY
+        filtered_sequences, choice_type=quiz.random_multi_choice_type(), multi_choice_count=INITIAL_DIFFICULTY
     )
 )
 
@@ -108,7 +177,7 @@ def quiz_still_playing() -> bool:
 
 
 @tracer.start_as_current_span("intro_view")
-@pn.depends(question, quiz_completion_time)
+@rx_depends(question, quiz_completion_time)
 def intro_view(_view_model_cache={}):
     if not _view_model_cache:
         _view_model_cache[quiz.MultiChoiceType.Auctions] = pn.Row(
@@ -544,7 +613,7 @@ async def on_answer_click(event):  # event handlers can be async with no extra w
 
     if quiz_still_playing():
         question.rx.value = quiz.generate_question(
-            bid_sequences,
+            filtered_sequences,
             choice_type=quiz.random_multi_choice_type(),
             multi_choice_count=difficulty_slider.value_throttled,
         )
@@ -647,7 +716,7 @@ ui_context = UI_Context()
 
 
 @tracer.start_as_current_span("question_view")
-@pn.depends(question, quiz_completion_time)
+@rx_depends(question, quiz_completion_time)
 def question_view(_view_model_cache={}):
     if not quiz_still_playing():
         return ""
@@ -696,7 +765,7 @@ def question_view(_view_model_cache={}):
 
 
 @tracer.start_as_current_span("answer_view")
-@pn.depends(question, quiz_completion_time)
+@rx_depends(question, quiz_completion_time)
 def answer_view(_view_model_cache={}):
     if quiz_still_playing():
         # bad name? can also emojify the answer
@@ -750,7 +819,7 @@ def skip_question_handler(event):
     if skips_left.rx.value > 0:
         with hold():
             question.rx.value = quiz.generate_question(
-                bid_sequences,
+                filtered_sequences,
                 choice_type=quiz.random_multi_choice_type(),
                 multi_choice_count=difficulty_slider.value_throttled,
             )
@@ -787,7 +856,7 @@ target_percentage_checkbox.param.watch(target_percentage_toggle, "value")
 target_percentage_slider.param.watch(target_percentage_change, "value_throttled")
 
 
-@pn.depends(skips_left)
+@rx_depends(skips_left)
 def skips_left_view():
     global skips_left
     return f"{skips_left.rx.value} left"
@@ -814,7 +883,7 @@ def reset_skips_and_scoring_and_timer_and_question():
         reset_time_bonus_by_difficulty(difficulty_slider.value_throttled)
 
         question.rx.value = quiz.generate_question(
-            bid_sequences,
+            filtered_sequences,
             choice_type=quiz.random_multi_choice_type(),
             multi_choice_count=difficulty_slider.value_throttled,
         )
@@ -845,6 +914,213 @@ def difficulty_change(event):
 # `value_throttled` only updates when mouse released unlike `value`
 difficulty_slider.param.watch(difficulty_change, "value_throttled")
 
+
+# A widget `description` is rendered as markdown in a hover tooltip by panel.
+BID_FILTER_HELP = """
+Restrict the quiz to auctions that **start with** a pattern.
+
+`1D-1M-1N` &nbsp; a bid; suits C D H S N. Separate calls with a dash or a
+space — `1D 1H`, `1D-1H` and `1D--1H` are the same
+
+`M` / `m` &nbsp; any major / any minor — *the only place case matters*
+
+`1*` / `*` &nbsp; any suit at that level / any call
+
+`Pass` `X` `XX` &nbsp; pass, double, redouble
+
+`(2H)` &nbsp; brackets = the opponents' call; `(*)` = they did something
+
+`1D-1M, 2C` &nbsp; comma separates alternatives — either one matches
+
+A pattern describes **your** auction: opponent calls you do not mention are
+stepped over, so `1D-1H` matches 1D (Pass) 1H, 1D (1S) 1H and 1D (X) 1H.
+Bracket a call to pin the opponents down at that exact point.
+
+Type part of a topic name and press Enter to select it, or use the Topics
+button. Too few matches falls back to the whole system.
+"""
+
+TOPICS_HELP = "Pick pre-composed filters. Any auction matching **any** ticked topic is included."
+
+# Free-form patterns are the point, so `restrict=False`: the topic names are
+# offered as completions, not as the only legal input. Typing part of a topic
+# name and pressing Enter resolves it to the full name (see `_apply_filter_text`).
+bid_filter_input = pn.widgets.AutocompleteInput(
+    name="Bidding tree filter",
+    options=topic_names,
+    restrict=False,
+    case_sensitive=False,
+    search_strategy="includes",
+    min_characters=1,
+    placeholder="e.g. 1D-1M-1N, or a topic",
+    description=BID_FILTER_HELP,
+    width=200,
+)
+
+# Feedback line under the filter box: what the text in the box would select,
+# shown while typing, before anything is committed.
+bid_filter_status = pn.pane.Markdown("", disable_anchors=True, margin=(0, 10), width=200)
+
+topics_checkbox_group = pn.widgets.CheckBoxGroup(options=topic_names, value=[])
+topics_status = pn.pane.Markdown("", disable_anchors=True)
+topics_apply_button = pn.widgets.Button(name="Apply", button_type="primary")
+topics_clear_button = pn.widgets.Button(
+    name="Clear", button_type="light", description="Untick everything. Takes effect on Apply."
+)
+topics_button = pn.widgets.Button(
+    name="Topics…", button_type="default", description=TOPICS_HELP, width=200
+)
+
+# Set by make_app_template; the modal lives on the template, but the button
+# that opens it is built here as part of the sidebar.
+_app_template = None
+
+# Guards the input <-> checkbox mirroring below from re-triggering the watchers.
+_filter_sync = False
+
+# The filter actually in force, as canonical text. Committing the same filter
+# again is a no-op, so the quiz is only restarted by a real change.
+_active_filter_text = ""
+
+
+def _filter_feedback(text, pending_hint=None):
+    """Markdown describing what `text` would select — asking never commits it.
+
+    `pending_hint` is appended when `text` differs from the filter in force,
+    which is what tells the user their edit is staged but not yet applied."""
+    status, hits, parsed = check_bid_filter(text)
+    bits = []
+    if parsed.errors:
+        bits.append("⚠ not a topic or pattern: " + ", ".join(f"`{e}`" for e in parsed.errors))
+    if status == "too_few":
+        bits.append(f"⚠ only {len(hits)} match, need {MAX_DIFFICULTY}+ — the whole system is used")
+    elif status == "error":
+        bits.append("⚠ nothing usable — the whole system is used")
+    elif not parsed.entries:
+        bits.append(f"the whole system, **{len(hits)}** auctions")
+    else:
+        bits.append(f"**{len(hits)}** auctions match")
+    if pending_hint and parsed.canonical_text != _active_filter_text:
+        bits.append(pending_hint)
+    return "<br>".join(bits)
+
+
+def _commit_filter_text(text):
+    """The one path that changes the filter in force: apply, report, bring the
+    input box and topic checkboxes into agreement with what was applied, and
+    restart the quiz — but only if the filter actually changed."""
+    global _filter_sync, _active_filter_text
+    status, count, parsed = apply_bid_filter(text)
+    if parsed.errors:
+        pn.state.notifications.warning(
+            "Not a topic or pattern, ignored: " + ", ".join(parsed.errors), duration=4000
+        )
+    if status == "too_few":
+        pn.state.notifications.warning(
+            f"Only {count} auctions match (need {MAX_DIFFICULTY}+); showing all", duration=4000
+        )
+    elif status == "ok":
+        pn.state.notifications.info(f"{count} auctions match", duration=2000)
+    changed = parsed.canonical_text != _active_filter_text
+    _active_filter_text = parsed.canonical_text
+    _filter_sync = True
+    try:
+        # canonical_text has topic prefixes expanded to full names and the
+        # whitespace/case tidied, so the box shows what is actually in force
+        bid_filter_input.value = parsed.canonical_text
+        topics_checkbox_group.value = list(parsed.topic_names)
+    finally:
+        _filter_sync = False
+    bid_filter_status.object = _filter_feedback(parsed.canonical_text)
+    topics_status.object = ""
+    if changed:
+        reset_skips_and_scoring_and_timer_and_question()
+
+
+def bid_filter_typing(event):
+    """Validate per keystroke. Deliberately does not apply anything."""
+    if _filter_sync:
+        return
+    bid_filter_status.object = _filter_feedback(event.new, pending_hint="_press Enter to apply_")
+
+
+def bid_filter_change(event):
+    if _filter_sync:  # we set the value ourselves; already applied
+        return
+    _commit_filter_text(event.new)
+
+
+# `value_input` fires per keystroke — used only to validate and preview.
+# `value` commits on Enter/blur, and is the only thing that applies a filter.
+bid_filter_input.param.watch(bid_filter_typing, "value_input")
+bid_filter_input.param.watch(bid_filter_change, "value")
+
+
+def topics_change(event):
+    """Preview the ticked selection. Nothing is applied until Apply."""
+    if _filter_sync:
+        return
+    topics_status.object = _filter_feedback(
+        ", ".join(event.new), pending_hint="_press **Apply** to use this_"
+    )
+
+
+topics_checkbox_group.param.watch(topics_change, "value")
+
+
+def topics_open_handler(event):
+    # the checkboxes are kept in step with the filter by _commit_filter_text,
+    # including filters that were typed rather than picked, so just show them
+    if _app_template is not None:
+        _app_template.open_modal()
+
+
+def topics_apply_handler(event):
+    _commit_filter_text(", ".join(topics_checkbox_group.value))
+    if _app_template is not None:
+        _app_template.close_modal()
+
+
+def topics_clear_handler(event):
+    # only unticks — the selection is not in force until Apply is clicked
+    topics_checkbox_group.value = []
+
+
+topics_button.on_click(topics_open_handler)
+topics_apply_button.on_click(topics_apply_handler)
+topics_clear_button.on_click(topics_clear_handler)
+
+# no filter at startup, but say so rather than leaving a blank line
+bid_filter_status.object = _filter_feedback("")
+
+# `description` in quiz_topics.toml is optional, so only list the ones that
+# have it — a legend, since a CheckBoxGroup has no per-option tooltip.
+topic_legend = "\n".join(
+    f"- **{t.name}** — {t.description}" for t in topics.values() if t.description
+)
+
+topics_modal = pn.Column(
+    pn.pane.Markdown("### Topics", disable_anchors=True),
+    pn.pane.Markdown(
+        "Pick any number — an auction matching _any_ selected topic is included. "
+        "Nothing changes until you press **Apply**, which replaces whatever is "
+        "in the filter box.",
+        disable_anchors=True,
+    ),
+    topics_checkbox_group,
+    topics_status,
+    pn.Row(topics_apply_button, topics_clear_button),
+    pn.Card(
+        pn.pane.Markdown(topic_legend, disable_anchors=True),
+        title="What the topics mean",
+        collapsed=True,
+        sizing_mode="stretch_width",
+    )
+    if topic_legend
+    else "",
+    width=400,
+)
+
 main_card_like_style = dict(
     background="seagreen",
     padding="20px",
@@ -866,6 +1142,9 @@ side_section = [
     pn.Row(
         pn.Column(
             difficulty_slider,
+            bid_filter_input,
+            bid_filter_status,
+            topics_button if topic_names else "",
             ladder_mode_checkbox,
             target_percentage_checkbox,
             target_percentage_slider,
@@ -920,13 +1199,18 @@ def make_app_template():
     # Should be fine to make this a global var as it's recreated per new session. In some situations we want a function
     # so we get a new object on each call, e.g. if this were to be in a different module separate to the main script
     # file that panel serve reruns per user connection.
-    return pn.template.MaterialTemplate(
+    global _app_template
+    _app_template = pn.template.MaterialTemplate(
         title=title,
         main=main_section,
         sidebar=side_section,
+        # the topics popup; opened by the sidebar button, which needs the
+        # template to exist first — hence the global rather than a closure
+        modal=[topics_modal] if topic_names else [],
         sidebar_width=230,
         theme=theme,
     )
+    return _app_template
 
 
 # Enable dual-mode execution
