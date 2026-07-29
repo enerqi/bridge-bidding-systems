@@ -45,6 +45,16 @@ mask :: proc(ranks: ..norn.Rank) -> u16 {
 	return m
 }
 
+// As `mask`, but as the `norn.Rank_Set` a `Hand_Summary` holds (combo's own solvers take the raw u16).
+@(private = "file")
+holding :: proc(ranks: ..norn.Rank) -> norn.Rank_Set {
+	h: norn.Rank_Set
+	for r in ranks {
+		h += {r}
+	}
+	return h
+}
+
 @(private = "file")
 total_mass :: proc(p: [RANKS + 1]f64) -> f64 {
 	s := f64(0)
@@ -97,18 +107,18 @@ test_vacant_space_marginal_is_exact_hypergeometric :: proc(t: ^testing.T) {
 test_mirror_deal_total_is_exact :: proc(t: ^testing.T) {
 	north := norn.Hand_Summary {
 		suits = {
-			.Spades = mask(.Ace, .Seven, .Four, .Two),
-			.Hearts = mask(.Ace, .Eight, .Three),
-			.Diamonds = mask(.Ace, .Nine, .Five),
-			.Clubs = mask(.Ace, .Ten, .Six),
+			.Spades = holding(.Ace, .Seven, .Four, .Two),
+			.Hearts = holding(.Ace, .Eight, .Three),
+			.Diamonds = holding(.Ace, .Nine, .Five),
+			.Clubs = holding(.Ace, .Ten, .Six),
 		},
 	}
 	south := norn.Hand_Summary {
 		suits = {
-			.Spades = mask(.King, .Queen, .Nine, .Five),
-			.Hearts = mask(.King, .Seven, .Four),
-			.Diamonds = mask(.Queen, .Jack, .Six),
-			.Clubs = mask(.King, .Eight, .Four),
+			.Spades = holding(.King, .Queen, .Nine, .Five),
+			.Hearts = holding(.King, .Seven, .Four),
+			.Diamonds = holding(.Queen, .Jack, .Six),
+			.Clubs = holding(.King, .Eight, .Four),
 		},
 	}
 	a := analyse_ns(north, south)
@@ -138,10 +148,10 @@ test_mirror_deal_total_is_exact :: proc(t: ^testing.T) {
 @(test)
 test_joint_length_constraint_and_cap :: proc(t: ^testing.T) {
 	north := norn.Hand_Summary {
-		suits = {.Spades = FULL_SUIT, .Hearts = 0, .Diamonds = 0, .Clubs = 0},
+		suits = {.Spades = norn.rank_set(FULL_SUIT), .Hearts = {}, .Diamonds = {}, .Clubs = {}},
 	}
 	south := norn.Hand_Summary {
-		suits = {.Spades = 0, .Hearts = FULL_SUIT, .Diamonds = 0, .Clubs = 0},
+		suits = {.Spades = {}, .Hearts = norn.rank_set(FULL_SUIT), .Diamonds = {}, .Clubs = {}},
 	}
 	a := analyse_ns(north, south)
 
@@ -164,18 +174,18 @@ test_joint_length_constraint_and_cap :: proc(t: ^testing.T) {
 test_strong_deal_is_capped :: proc(t: ^testing.T) {
 	north := norn.Hand_Summary {
 		suits = {
-			.Spades = mask(.Ace, .King, .Queen, .Jack, .Two),
-			.Hearts = mask(.Ace, .King, .Three),
-			.Diamonds = mask(.Ace, .King, .Four),
-			.Clubs = mask(.Ace, .Five),
+			.Spades = holding(.Ace, .King, .Queen, .Jack, .Two),
+			.Hearts = holding(.Ace, .King, .Three),
+			.Diamonds = holding(.Ace, .King, .Four),
+			.Clubs = holding(.Ace, .Five),
 		},
 	}
 	south := norn.Hand_Summary {
 		suits = {
-			.Spades = mask(.Ten, .Nine),
-			.Hearts = mask(.Queen, .Jack, .Ten, .Four),
-			.Diamonds = mask(.Queen, .Jack, .Ten, .Five),
-			.Clubs = mask(.King, .Queen, .Six),
+			.Spades = holding(.Ten, .Nine),
+			.Hearts = holding(.Queen, .Jack, .Ten, .Four),
+			.Diamonds = holding(.Queen, .Jack, .Ten, .Five),
+			.Clubs = holding(.King, .Queen, .Six),
 		},
 	}
 	a := analyse_ns(north, south)

@@ -274,11 +274,12 @@ board_fully_known :: proc(board: norn.Parsed_Board) -> bool {
 // dd.Contract plus its declaring seat. ok=false when the board named no contract. Maps norn's contract
 // strain onto dd's (dds) strain — the two enums order their variants differently, so map by name.
 board_contract :: proc(board: norn.Parsed_Board) -> (c: dd.Contract, declarer: norn.Seat, ok: bool) {
-	if !board.has_contract {
+	bc, has := board.contract.?
+	if !has {
 		return {}, .North, false
 	}
 	strain: dd.Strain
-	switch board.contract_strain {
+	switch bc.strain {
 	case .Clubs:
 		strain = .Clubs
 	case .Diamonds:
@@ -287,10 +288,10 @@ board_contract :: proc(board: norn.Parsed_Board) -> (c: dd.Contract, declarer: n
 		strain = .Hearts
 	case .Spades:
 		strain = .Spades
-	case .NoTrump:
+	case .NoTrumps:
 		strain = .NT
 	}
-	return dd.Contract{level = board.contract_level, strain = strain}, board.declarer, true
+	return dd.Contract{level = bc.level, strain = strain}, bc.declarer, true
 }
 
 // Text report for a fully-known 4-hand deal: the layout, then the EXACT double-dummy verdict (par +
@@ -1274,12 +1275,12 @@ write_blind_sides_json :: proc(
 	// one of that side's defenders). ns_lseat/ew_lseat stay 0 (unset) otherwise, and for a board with no lead.
 	ns_lseat, ew_lseat: u8 = 0, 0
 	ns_lword, ew_lword: string = "", ""
-	if board.has_opening_lead {
-		if board.opening_leader not_in combo.NS_SIDE { 	// leader is E/W -> a defender for N/S
-			ns_lseat, ns_lword = seat_letter(board.opening_leader), card_word(board.opening_lead)
+	if lead, has := board.opening_lead.?; has {
+		if lead.leader not_in combo.NS_SIDE { 	// leader is E/W -> a defender for N/S
+			ns_lseat, ns_lword = seat_letter(lead.leader), card_word(lead.card)
 		}
-		if board.opening_leader not_in combo.EW_SIDE { 	// leader is N/S -> a defender for E/W
-			ew_lseat, ew_lword = seat_letter(board.opening_leader), card_word(board.opening_lead)
+		if lead.leader not_in combo.EW_SIDE { 	// leader is N/S -> a defender for E/W
+			ew_lseat, ew_lword = seat_letter(lead.leader), card_word(lead.card)
 		}
 	}
 

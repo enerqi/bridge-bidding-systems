@@ -726,7 +726,7 @@ analyse_ns :: proc(north, south: norn.Hand_Summary, memo_in: ^map[Suit_Layout]in
 	}
 	defer if memo_in == nil {delete(local)}
 	for suit in norn.Suit {
-		tables[suit] = suit_joint_table(north.suits[suit], south.suits[suit], memo)
+		tables[suit] = suit_joint_table(norn.suit_mask(north, suit), norn.suit_mask(south, suit), memo)
 	}
 	return finish_census(tables)
 }
@@ -752,7 +752,7 @@ finish_census :: proc(tables: [norn.Suit]Suit_Joint_Table) -> Deal_Analysis {
 sd_joint_total :: proc(north, south: norn.Hand_Summary) -> [RANKS + 1]f64 {
 	tables: [norn.Suit]Suit_Joint_Table
 	for suit in norn.Suit {
-		tables[suit] = sd_best_joint_table(north.suits[suit], south.suits[suit])
+		tables[suit] = sd_best_joint_table(norn.suit_mask(north, suit), norn.suit_mask(south, suit))
 	}
 	return joint_total(tables)
 }
@@ -843,7 +843,7 @@ Line_Summary :: struct {
 suit_line_summaries :: proc(north, south: norn.Hand_Summary, allocator := context.allocator) -> [4][]Line_Summary {
 	out: [4][]Line_Summary
 	for suit, i in DISPLAY_SUITS {
-		lrs := suit_candidate_lines(north.suits[suit], south.suits[suit], allocator)
+		lrs := suit_candidate_lines(norn.suit_mask(north, suit), norn.suit_mask(south, suit), allocator)
 		defer delete(lrs, allocator)
 		sums := make([]Line_Summary, len(lrs), allocator)
 		for lr, j in lrs {
@@ -988,8 +988,8 @@ write_suit_lines_text :: proc(
 			label = ov[i].label // book covers this holding: its line + odds (override)
 			tip = ov[i].tip
 		} else {
-			label = display_line_name(north.suits[suit], south.suits[suit], sd.best_name[i])
-			tip = describe_suit_line(north.suits[suit], south.suits[suit], sd.best_name[i])
+			label = display_line_name(norn.suit_mask(north, suit), norn.suit_mask(south, suit), sd.best_name[i])
+			tip = describe_suit_line(norn.suit_mask(north, suit), norn.suit_mask(south, suit), sd.best_name[i])
 		}
 		fmt.sbprintf(b, "  %c  %s\n       %s\n", norn.suit_letter(suit), label, tip)
 	}
@@ -1533,7 +1533,11 @@ suit_overrides :: proc(
 ) {
 	for suit, i in DISPLAY_SUITS {
 		e: Enc_Entry
-		out[i].label, out[i].tip, e, out[i].ok = encyclopedia_override(north.suits[suit], south.suits[suit], allocator)
+		out[i].label, out[i].tip, e, out[i].ok = encyclopedia_override(
+			norn.suit_mask(north, suit),
+			norn.suit_mask(south, suit),
+			allocator,
+		)
 		if out[i].ok {
 			out[i].book = book_pk_row(e)
 		}
@@ -1602,7 +1606,7 @@ write_suits_joint_json :: proc(b: ^strings.Builder, north, south: norn.Hand_Summ
 		if i > 0 {
 			strings.write_byte(b, ',')
 		}
-		cen := suit_joint_table(north.suits[suit], south.suits[suit])
+		cen := suit_joint_table(norn.suit_mask(north, suit), norn.suit_mask(south, suit))
 		fmt.sbprintf(b, `{{"m":%d,"l":%d,"cen":`, cen.m, cen.ns_len)
 		write_joint_matrix(b, cen)
 		strings.write_string(b, `,"ln":[`)
@@ -1610,7 +1614,7 @@ write_suits_joint_json :: proc(b: ^strings.Builder, north, south: norn.Hand_Summ
 			if j > 0 {
 				strings.write_byte(b, ',')
 			}
-			label := display_line_name(north.suits[suit], south.suits[suit], lj.name)
+			label := display_line_name(norn.suit_mask(north, suit), norn.suit_mask(south, suit), lj.name)
 			fmt.sbprintf(b, `["%s",`, label)
 			write_joint_matrix(b, lj.tbl)
 			strings.write_byte(b, ']')
@@ -1639,7 +1643,11 @@ write_suits_lines_json :: proc(
 			fmt.sbprintf(b, `"%s"`, ov[i].label)
 		} else {
 			// Show the honest line: a finesse with no real tenace is relabelled as a cash (display_line_name).
-			fmt.sbprintf(b, `"%s"`, display_line_name(north.suits[suit], south.suits[suit], sd.best_name[i]))
+			fmt.sbprintf(
+				b,
+				`"%s"`,
+				display_line_name(norn.suit_mask(north, suit), norn.suit_mask(south, suit), sd.best_name[i]),
+			)
 		}
 	}
 	strings.write_byte(b, ']')
@@ -1806,7 +1814,7 @@ write_suits_tips_json :: proc(
 		if ov[i].ok {
 			desc = ov[i].tip // book covers this holding: narrate the published line + odds (override)
 		} else {
-			desc = describe_suit_line(north.suits[suit], south.suits[suit], sd.best_name[i])
+			desc = describe_suit_line(norn.suit_mask(north, suit), norn.suit_mask(south, suit), sd.best_name[i])
 		}
 		// JSON string; the narration contains no quotes/backslashes, but escape defensively.
 		strings.write_byte(b, '"')
@@ -1835,7 +1843,7 @@ write_suits_notes_json :: proc(b: ^strings.Builder, north, south: norn.Hand_Summ
 		if i > 0 {
 			strings.write_byte(b, ',')
 		}
-		note := combination_note(north.suits[suit], south.suits[suit])
+		note := combination_note(norn.suit_mask(north, suit), norn.suit_mask(south, suit))
 		strings.write_byte(b, '"')
 		for c in transmute([]u8)note {
 			switch c {
@@ -1986,25 +1994,25 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 			sync.wait_group_add(&wg, 16)
 			for suit in norn.Suit {
 				ns_ct[suit] = {
-					north = ds[.North].suits[suit],
-					south = ds[.South].suits[suit],
+					north = norn.suit_mask(ds[.North], suit),
+					south = norn.suit_mask(ds[.South], suit),
 					wg    = &wg,
 				}
 				ew_ct[suit] = {
-					north = ds[.East].suits[suit],
-					south = ds[.West].suits[suit],
+					north = norn.suit_mask(ds[.East], suit),
+					south = norn.suit_mask(ds[.West], suit),
 					wg    = &wg,
 				}
 			}
 			for suit, i in DISPLAY_SUITS {
 				ns_st[i] = {
-					north = ds[.North].suits[suit],
-					south = ds[.South].suits[suit],
+					north = norn.suit_mask(ds[.North], suit),
+					south = norn.suit_mask(ds[.South], suit),
 					wg    = &wg,
 				}
 				ew_st[i] = {
-					north = ds[.East].suits[suit],
-					south = ds[.West].suits[suit],
+					north = norn.suit_mask(ds[.East], suit),
+					south = norn.suit_mask(ds[.West], suit),
 					wg    = &wg,
 				}
 			}

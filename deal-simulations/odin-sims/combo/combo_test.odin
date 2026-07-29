@@ -28,6 +28,16 @@ mask :: proc(ranks: ..norn.Rank) -> u16 {
 	return m
 }
 
+// As `mask`, but as the `norn.Rank_Set` a `Hand_Summary` holds (combo's own solvers take the raw u16).
+@(private = "file")
+holding :: proc(ranks: ..norn.Rank) -> norn.Rank_Set {
+	h: norn.Rank_Set
+	for r in ranks {
+		h += {r}
+	}
+	return h
+}
+
 // The 2-hand (declarer + dummy) entry: a PBN tag with two known partners parses and analyses. N holds
 // all 13 spades and S all 13 hearts — a degenerate but valid board — so each of those suits is 13
 // certain tricks and the combined total caps at 13.
@@ -189,18 +199,18 @@ test_combined_normalised_and_tail :: proc(t: ^testing.T) {
 	// would break normalisation. Real deals (`summarize_deal`) are always 13 cards.
 	north := norn.Hand_Summary {
 		suits = {
-			.Spades = mask(.Ace, .King, .Queen, .Two),
-			.Hearts = mask(.Ace, .King, .Three, .Two),
-			.Diamonds = mask(.Ace, .Five, .Four),
-			.Clubs = mask(.Seven, .Six),
+			.Spades = holding(.Ace, .King, .Queen, .Two),
+			.Hearts = holding(.Ace, .King, .Three, .Two),
+			.Diamonds = holding(.Ace, .Five, .Four),
+			.Clubs = holding(.Seven, .Six),
 		},
 	}
 	south := norn.Hand_Summary {
 		suits = {
-			.Spades = mask(.Five, .Four, .Three),
-			.Hearts = mask(.Queen, .Jack, .Ten),
-			.Diamonds = mask(.King, .Six),
-			.Clubs = mask(.Ace, .King, .Eight, .Three, .Two),
+			.Spades = holding(.Five, .Four, .Three),
+			.Hearts = holding(.Queen, .Jack, .Ten),
+			.Diamonds = holding(.King, .Six),
+			.Clubs = holding(.Ace, .King, .Eight, .Three, .Two),
 		},
 	}
 	a := analyse_ns(north, south)

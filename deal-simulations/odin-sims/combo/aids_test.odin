@@ -22,6 +22,16 @@ mask :: proc(ranks: ..norn.Rank) -> u16 {
 	return m
 }
 
+// As `mask`, but as the `norn.Rank_Set` a `Hand_Summary` holds (combo's own solvers take the raw u16).
+@(private = "file")
+holding :: proc(ranks: ..norn.Rank) -> norn.Rank_Set {
+	h: norn.Rank_Set
+	for r in ranks {
+		h += {r}
+	}
+	return h
+}
+
 // AKQ opposite void: three solid tricks, guaranteed in every layout — floor is exactly the length.
 // A void holding floors at 0. And a distribution's floor never exceeds its mean.
 @(test)
@@ -60,9 +70,9 @@ test_p_reach_alias :: proc(t: ^testing.T) {
 @(test)
 test_suit_line_summaries :: proc(t: ^testing.T) {
 	n, s: norn.Hand_Summary
-	n.suits[.Spades] = mask(.Ace, .Queen) // a real two-way-ish finesse suit for NS
-	s.suits[.Spades] = mask(.Three, .Two)
-	n.suits[.Hearts] = mask(.Ace, .King, .Queen) // solid
+	n.suits[.Spades] = holding(.Ace, .Queen) // a real two-way-ish finesse suit for NS
+	s.suits[.Spades] = holding(.Three, .Two)
+	n.suits[.Hearts] = holding(.Ace, .King, .Queen) // solid
 	// diamonds/clubs left void
 
 	cands := suit_line_summaries(n, s)
@@ -130,8 +140,8 @@ test_combination_note :: proc(t: ^testing.T) {
 @(test)
 test_suit_combo_advice :: proc(t: ^testing.T) {
 	n, s: norn.Hand_Summary
-	n.suits[.Spades] = mask(.Ace, .Jack) // two-way finesse suit
-	s.suits[.Spades] = mask(.King, .Ten)
+	n.suits[.Spades] = holding(.Ace, .Jack) // two-way finesse suit
+	s.suits[.Spades] = holding(.King, .Ten)
 
 	advice := suit_combo_advice(n, s)
 	defer for ad in advice {

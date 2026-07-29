@@ -130,7 +130,7 @@ DISPLAY_SUITS :: [4]norn.Suit{.Spades, .Hearts, .Diamonds, .Clubs}
 gather_candidates :: proc(north, south: norn.Hand_Summary, allocator := context.allocator) -> [4][]Line_Result {
 	out: [4][]Line_Result
 	for suit, i in DISPLAY_SUITS {
-		out[i] = suit_candidate_lines(north.suits[suit], south.suits[suit], allocator)
+		out[i] = suit_candidate_lines(norn.suit_mask(north, suit), norn.suit_mask(south, suit), allocator)
 	}
 	return out
 }
@@ -216,7 +216,7 @@ gather_candidate_tables :: proc(
 		for line, j in lines {
 			lj[j] = Line_Joint {
 				name = line.name,
-				tbl  = sd_line_joint_table(north.suits[suit], south.suits[suit], line, memo),
+				tbl  = sd_line_joint_table(norn.suit_mask(north, suit), norn.suit_mask(south, suit), line, memo),
 			}
 		}
 		out[i] = lj

@@ -124,9 +124,9 @@ suit_combo_advice :: proc(north, south: norn.Hand_Summary, allocator := context.
 			cands          = cs,
 			best_mean_idx  = bm,
 			best_floor_idx = bf,
-			note           = combination_note(north.suits[suit], south.suits[suit]),
-			north_holding  = north.suits[suit],
-			south_holding  = south.suits[suit],
+			note           = combination_note(norn.suit_mask(north, suit), norn.suit_mask(south, suit)),
+			north_holding  = norn.suit_mask(north, suit),
+			south_holding  = norn.suit_mask(south, suit),
 		}
 	}
 	return out

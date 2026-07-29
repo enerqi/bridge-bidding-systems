@@ -25,20 +25,30 @@ mask :: proc(ranks: ..norn.Rank) -> u16 {
 	return m
 }
 
+// As `mask`, but as the `norn.Rank_Set` a `Hand_Summary` holds (combo's own solvers take the raw u16).
+@(private = "file")
+holding :: proc(ranks: ..norn.Rank) -> norn.Rank_Set {
+	h: norn.Rank_Set
+	for r in ranks {
+		h += {r}
+	}
+	return h
+}
+
 // A hand whose spade suit is a finesse (AQ opposite xx) and whose other three suits are solid AKQ
 // opposite a void (three certain tricks each).
 @(private = "file")
 finesse_hand :: proc() -> (north, south: norn.Hand_Summary) {
 	north = norn.Hand_Summary {
 		suits = {
-			.Spades = mask(.Ace, .Queen),
-			.Hearts = mask(.Ace, .King, .Queen),
-			.Diamonds = mask(.Ace, .King, .Queen),
-			.Clubs = mask(.Ace, .King, .Queen),
+			.Spades = holding(.Ace, .Queen),
+			.Hearts = holding(.Ace, .King, .Queen),
+			.Diamonds = holding(.Ace, .King, .Queen),
+			.Clubs = holding(.Ace, .King, .Queen),
 		},
 	}
 	south = norn.Hand_Summary {
-		suits = {.Spades = mask(.Three, .Two), .Hearts = 0, .Diamonds = 0, .Clubs = 0},
+		suits = {.Spades = holding(.Three, .Two), .Hearts = {}, .Diamonds = {}, .Clubs = {}},
 	}
 	return
 }
@@ -90,7 +100,7 @@ test_fixed_beats_baseline :: proc(t: ^testing.T) {
 	base := [RANKS + 1]f64{}
 	base[0] = 1
 	for suit in DISPLAY_SUITS {
-		d := sd_line_distribution(north.suits[suit], south.suits[suit], line_top_down)
+		d := sd_line_distribution(norn.suit_mask(north, suit), norn.suit_mask(south, suit), line_top_down)
 		base = convolve(base, d.p)
 	}
 	testing.expectf(t, comb.value >= apply_objective(base, obj) - 1e-12, "best combination must beat baseline")
@@ -105,18 +115,18 @@ test_fixed_beats_baseline :: proc(t: ^testing.T) {
 full_nocap_hand :: proc() -> (north, south: norn.Hand_Summary) {
 	north = norn.Hand_Summary {
 		suits = {
-			.Spades = mask(.Ace, .Seven, .Four, .Two),
-			.Hearts = mask(.Ace, .Eight, .Three),
-			.Diamonds = mask(.Ace, .Nine, .Five),
-			.Clubs = mask(.Ace, .Ten, .Six),
+			.Spades = holding(.Ace, .Seven, .Four, .Two),
+			.Hearts = holding(.Ace, .Eight, .Three),
+			.Diamonds = holding(.Ace, .Nine, .Five),
+			.Clubs = holding(.Ace, .Ten, .Six),
 		},
 	}
 	south = norn.Hand_Summary {
 		suits = {
-			.Spades = mask(.King, .Queen, .Nine, .Five),
-			.Hearts = mask(.King, .Seven, .Four),
-			.Diamonds = mask(.Queen, .Jack, .Six),
-			.Clubs = mask(.King, .Eight, .Four),
+			.Spades = holding(.King, .Queen, .Nine, .Five),
+			.Hearts = holding(.King, .Seven, .Four),
+			.Diamonds = holding(.Queen, .Jack, .Six),
+			.Clubs = holding(.King, .Eight, .Four),
 		},
 	}
 	return
@@ -134,7 +144,11 @@ test_adaptive_bounds_and_linear :: proc(t: ^testing.T) {
 	// A joint fixed baseline: fold the all-top-down line in every suit under the joint constraint.
 	base_tables: [norn.Suit]Suit_Joint_Table
 	for suit in DISPLAY_SUITS {
-		base_tables[suit] = sd_line_joint_table(north.suits[suit], south.suits[suit], line_top_down)
+		base_tables[suit] = sd_line_joint_table(
+			norn.suit_mask(north, suit),
+			norn.suit_mask(south, suit),
+			line_top_down,
+		)
 	}
 	base_total := joint_total(base_tables)
 
@@ -157,7 +171,9 @@ test_adaptive_bounds_and_linear :: proc(t: ^testing.T) {
 	for suit in DISPLAY_SUITS {
 		best := f64(0)
 		for line in candidate_lines() {
-			m := expected_tricks(sd_line_distribution(north.suits[suit], south.suits[suit], line).p)
+			m := expected_tricks(
+				sd_line_distribution(norn.suit_mask(north, suit), norn.suit_mask(south, suit), line).p,
+			)
 			best = max(best, m)
 		}
 		best_mean_sum += best
@@ -198,7 +214,7 @@ test_matchpoints_in_unit_range :: proc(t: ^testing.T) {
 	field := [RANKS + 1]f64{}
 	field[0] = 1
 	for suit in DISPLAY_SUITS {
-		field = convolve(field, suit_trick_distribution(north.suits[suit], south.suits[suit]).p)
+		field = convolve(field, suit_trick_distribution(norn.suit_mask(north, suit), norn.suit_mask(south, suit)).p)
 	}
 	comb := best_fixed_combination(north, south, objective_matchpoints(field))
 	testing.expectf(

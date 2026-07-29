@@ -48,7 +48,7 @@ to_table_deal :: proc(board: norn.Deal) -> dds.Table_Deal {
 	for seat in norn.Seat {
 		for suit in norn.Suit {
 			dds_suit := dds.Suit(3 - int(suit))
-			mask := u32(ds[seat].suits[suit]) << 2
+			mask := u32(norn.suit_mask(ds[seat], suit)) << 2
 			td.cards[dds.Hand(int(seat))][dds_suit] = transmute(dds.Holding)mask
 		}
 	}
