@@ -1,6 +1,6 @@
 """Tests for bidfilter: the quiz's bidding-tree filter language.
 
-    uv run --with pytest pytest tests/test_bidfilter.py
+    uv run --with pytest pytest apps/quiz/tests/test_bidfilter.py
 """
 
 from bidfilter import (

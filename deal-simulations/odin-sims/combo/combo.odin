@@ -1231,7 +1231,7 @@ prof_add :: #force_inline proc(a, b, c, d: i64) {
 profile_reset :: proc() {g_prof = {}}
 profile_read :: proc() -> [3]i64 {return g_prof}
 
-// Stop and free the persistent pool + every worker's memo maps. Optional — safe to skip (the OS reclaims it all
+// Stop and free the persistent pool + every worker's memo maps, plus the encyclopedia key map. Optional — safe to skip (the OS reclaims it all
 // at exit) — but a leak-checked build (sim's tracking allocator) wants the allocations released, so the CLI calls
 // this before finalising. No-op if the pool was never started (non-threaded build, or no Html_Cards deal ran).
 // Order matters: `pool_join` first so the workers are dead and no longer touch their thread-local memos.
@@ -1251,6 +1251,7 @@ shutdown :: proc() {
 			g_pool_started = false
 		}
 	}
+	encyclopedia_shutdown()
 }
 
 // Per-worker persistent scratch (PERFORMANCE.md §8.2 / §10 #2). Each pool worker — and the calling thread — owns,

@@ -3,7 +3,14 @@
 # https://just.systems/man/en/chapter_20.html
 set shell := ["nu", "-c"]
 
-deals_output_dir := "w:/deals/"
+# The deal-simulation recipes live in the odin-sims justfile (it owns the build flags and the output
+# directory defaults), reached from here as a module: `just sims regen 48`, `just sims deal 2c-opener`,
+# `just sims scenarios`, `just sims run --scenario 1c-any -n 12`, ... (`just --list sims` lists them all).
+# Batch output goes to DEALS_OUTPUT_DIR (default w:/deals/); single-scenario output to the directory
+# just was invoked from. Both are also trailing recipe arguments.
+
+# deal simulations (odin/norn engine): regen, regen-cards, deal, scenarios, run, test, ...
+mod sims 'deal-simulations/odin-sims'
 
 # alias for typing `just w`
 alias w := watch
@@ -12,114 +19,35 @@ alias w := watch
 watch:
     watchexec --no-global-ignore --exts bml,css uv run doit
 
-
-# regenerate all deal simulations via the norn engine. Output html to deals_output_dir. COUNT deals per scenario.
-[script("nu")]
-regen-norn COUNT="48":
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just run --html-dir {{deals_output_dir}} --count {{COUNT}}
-
-# --dd variant of regen-norn: per-scenario double-dummy annotate/filter (scenarios registered in
-# sim.odin). DD scenarios export serially (solver isn't reentrant); the rest still pool.
-# ---
-# regenerate all deal simulations with double-dummy annotations. COUNT deals per scenario.
-[script("nu")]
-regen-norn-dd COUNT="48":
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just run --html-dir {{deals_output_dir}} --count {{COUNT}} --dd
-
-# card-carousel variant of regen-norn: self-rendered, offline HTML (no BBO iframe) — every scenario
-# is one page with a prev/next carousel of text-compass diagrams, a seat toggle, and a par toggle.
-# Add --dd (as regen-norn-cards-dd) for the par-score caption on scenarios that register an annotator.
-# ---
-# regenerate all deal simulations as offline card carousels. COUNT deals per scenario.
-[script("nu")]
-regen-norn-cards COUNT="48":
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just run --html-dir {{deals_output_dir}} --count {{COUNT}} --format html-cards
-
-# regenerate all deal simulations as offline card carousels WITH double-dummy par captions. COUNT deals per scenario.
-[script("nu")]
-regen-norn-cards-dd COUNT="48":
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just run --html-dir {{deals_output_dir}} --count {{COUNT}} --format html-cards --dd
-
-# regenerate all deal simulations without recompiling for any changes within odin-sims. Output html to deals_output_dir. COUNT deals per scenario.
-[script("nu")]
-rerun-regen-norn COUNT="48":
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just rerun --html-dir {{deals_output_dir}} --count {{COUNT}}
-
-# regenerate a subset via the norn engine. NAMES is comma-separated (e.g. 1c-any,2c-opener). e.g. `just regen-norn-some 1c-any,2c-opener 100`
-[script("nu")]
-regen-norn-some NAMES COUNT="48":
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just run --html-dir {{deals_output_dir}} --scenario {{NAMES}} --count {{COUNT}}
-
-# norn equivalent of py-run-scratch: generate COUNT deals for one SCENARIO via the norn engine. Output to current dir as <SCENARIO>.html
-[script("nu")]
-run-norn SCENARIO COUNT="48":
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just run --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{justfile_directory()}}/{{SCENARIO}}.html
-
-# --dd variant of run-norn: double-dummy annotate/filter for SCENARIO (if registered in sim.odin).
-# ---
-# generate COUNT deals for one SCENARIO with double-dummy annotations -> <SCENARIO>.html
-[script("nu")]
-run-norn-dd SCENARIO COUNT="48":
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just run --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{justfile_directory()}}/{{SCENARIO}}.html --dd
-
-# card-carousel variant of run-norn: one SCENARIO as a self-rendered offline card carousel. Add --dd
-# (run-norn-cards-dd) for par captions if the scenario registers an annotator in sim.odin.
-# ---
-# generate COUNT deals for one SCENARIO as an offline card carousel -> <SCENARIO>.html
-[script("nu")]
-run-norn-cards SCENARIO COUNT="48":
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just run --scenario {{SCENARIO}} --count {{COUNT}} --format html-cards --output {{justfile_directory()}}/{{SCENARIO}}.html
-
-# generate COUNT deals for one SCENARIO as an offline card carousel with double-dummy par -> <SCENARIO>.html
-[script("nu")]
-run-norn-cards-dd SCENARIO COUNT="48":
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just run --scenario {{SCENARIO}} --count {{COUNT}} --format html-cards --output {{justfile_directory()}}/{{SCENARIO}}.html --dd
-
-# norn equivalent of py-run-scratch: generate COUNT deals for one SCENARIO via the norn engine. Output to current dir as <SCENARIO>.html
-[script("nu")]
-rerun-norn SCENARIO COUNT="48":
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just rerun --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{justfile_directory()}}/{{SCENARIO}}.html
-
-# list the available scenarios as compiled into the odin-sims
-[script("nu")]
-list-scenarios:
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just run_debug --list
-
-# raw sim program access, freshly built
-[script("nu")]
-sim *args:
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just run {{args}}
-
-# raw sim program access, rerun last compiled version
-[script("nu")]
-resim *args:
-    cd {{justfile_directory()}}/deal-simulations/odin-sims
-    just rerun {{args}}
+#
+# Python apps (apps/<app>/). Served from the repo root so the .bml corpus beside this justfile is
+# what the quiz reads; quiz.py resolves the corpus from its own location, not the cwd.
+#
 
 # serve quiz app in dev mode
 quiz:
-    uv run panel serve quiz_app.py --dev
+    uv run panel serve apps/quiz/quiz_app.py --dev
 
-# copy quiz app files to deployment folder
+# serve quiz app in dev mode with OpenTelemetry tracing (see apps/quiz/run-jaeger-tracing.cmd)
+quiz-traced:
+    uv run panel serve apps/quiz/quiz_app.py --dev --setup apps/quiz/quiz_app_telemetry_setup.py
+
+# run the quiz app python tests
+quiz-test *args:
+    uv run --with pytest pytest apps/quiz/tests {{args}}
+
+# serve the optimal point count app in dev mode
+opc:
+    uv run panel serve apps/optimal-point-count/optimal_point_count_app.py --dev
+
+# copy quiz app files to deployment folder (flattened: app + bml corpus in one directory)
 deploy-quiz:
     #!nu
     let dest = 'X:/quiz-u16/'
     glob '*.bml' | each {|file| cp $file $dest }
-    glob '*.py' | each {|file| cp $file $dest }
-    glob '*.jpeg' | each {|file| cp $file $dest }
+    glob 'apps/quiz/*.py' | each {|file| cp $file $dest }
+    glob 'apps/quiz/*.jpeg' | each {|file| cp $file $dest }
+    cp apps/quiz/quiz_topics.toml $dest
     cp pyproject.toml $dest
     cp uv.lock $dest
 
@@ -127,6 +55,8 @@ deploy-quiz:
 #
 # Legacy tcl deal.exe + tcl script handling
 #
+
+deals_output_dir := env_var_or_default("DEALS_OUTPUT_DIR", "w:/deals/")
 
 # regenerate all deal simulations. Output html to web server
 [script("nu")]

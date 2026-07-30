@@ -5,40 +5,29 @@ A bml section titled `**** 2C--2D--2H` means the table inside it is rooted at
 restores that prefix; these tests pin that behaviour down, including the
 multi-suit case (`1C--1HS`) that a single-suit regex used to drop silently.
 
-    uv run --with pytest pytest tests/test_quiz_context.py
+    uv run --with pytest pytest apps/quiz/tests/test_quiz_context.py
 """
-
-import os
 
 import pytest
 
 import bidfilter
 import quiz
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-
-@pytest.fixture(autouse=True)
-def _in_repo(monkeypatch):
-    # bml resolves #INCLUDE and the .bml paths relative to the working dir
-    monkeypatch.chdir(REPO)
-
 
 @pytest.fixture(scope="module")
 def auctions():
-    """Parsed auctions per corpus file, built once (parsing is slow)."""
+    """Parsed auctions per corpus file, built once (parsing is slow).
+
+    `quiz.load_bid_tables` chdirs to the `.bml` corpus itself, so the names
+    below are corpus-relative regardless of where pytest was invoked.
+    """
     cache = {}
 
     def load(bml_file):
         if bml_file not in cache:
-            cwd = os.getcwd()
-            os.chdir(REPO)
-            try:
-                tables = quiz.load_bid_tables(bml_file)
-                quiz.prettify_bid_table_nodes(tables)
-                cache[bml_file] = quiz.collect_bid_table_auctions(tables)
-            finally:
-                os.chdir(cwd)
+            tables = quiz.load_bid_tables(bml_file)
+            quiz.prettify_bid_table_nodes(tables)
+            cache[bml_file] = quiz.collect_bid_table_auctions(tables)
         return cache[bml_file]
 
     return load

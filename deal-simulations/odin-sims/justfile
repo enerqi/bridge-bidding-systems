@@ -22,6 +22,16 @@ dds_home := env_var_or_default("DDS_HOME", replace(home_directory(), "\\", "/") 
 dds := "-collection:dds=" + dds_home
 sim_name := "sim.exe"
 
+# Where the batch `regen-*` recipes write their per-scenario HTML: DEALS_OUTPUT_DIR if set, else the
+# w: web-server volume. Every recipe also takes it as a trailing argument, e.g. `just regen 48 ./out/`.
+deals_output_dir := env_var_or_default("DEALS_OUTPUT_DIR", "w:/deals/")
+
+# Where the single-scenario `deal-*` recipes write <SCENARIO>.html: the directory just was invoked
+# from (NOT this justfile's directory, which just would otherwise chdir to), so a scratch run lands
+# where you typed it. `_native` + `replace` because the plain builtin hands back a /c/... path on
+# Windows. Overridable per-recipe too, and via DEALS_SCRATCH_DIR.
+scratch_dir := env_var_or_default("DEALS_SCRATCH_DIR", replace(invocation_directory_native(), "\\", "/"))
+
 # hand-ocr is a SEPARATE sibling repo (image -> PBN/LIN; uv/Python). HAND_OCR_DIR overrides the default
 # checkout location, mirroring norn_home/dds_home. `export` re-exports it as an env var so the `ocr-analyse`
 # recipe's `ocr_analyse.py` reads the SAME value (just variables are not environment variables otherwise) --
@@ -88,6 +98,66 @@ run_debug *args: mktarget_dirs
 # build the sim deal generator (release)
 build *args: mktarget_dirs
 	odin build sim.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/{{sim_name}} {{args}}
+
+#
+# Convenience wrappers over `run` / `rerun` (these used to live in the repo-root justfile as the
+# `*-norn` family; the root reaches them as a just module, e.g. `just sims regen 48`).
+#
+# BATCH: every registered scenario -> <DIR>/<scenario>.html, DIR defaulting to deals_output_dir.
+# SINGLE: one scenario -> <DIR>/<SCENARIO>.html, DIR defaulting to scratch_dir (where you invoked just).
+# Variants: -dd adds the per-scenario double-dummy annotate/filter (scenarios register these in
+# sim.odin; DD scenarios export serially since the solver isn't reentrant, the rest still pool);
+# -cards swaps the BBO iframe pages for self-rendered offline card carousels (one page per scenario,
+# prev/next carousel of text-compass diagrams, seat toggle, par toggle).
+#
+
+# regenerate ALL scenarios (COUNT deals each) -> DIR/<scenario>.html
+regen COUNT="48" DIR=deals_output_dir:
+	just run --html-dir {{DIR}} --count {{COUNT}}
+
+# regenerate ALL scenarios WITH double-dummy annotations -> DIR/<scenario>.html
+regen-dd COUNT="48" DIR=deals_output_dir:
+	just run --html-dir {{DIR}} --count {{COUNT}} --dd
+
+# regenerate ALL scenarios as offline card carousels -> DIR/<scenario>.html
+regen-cards COUNT="48" DIR=deals_output_dir:
+	just run --html-dir {{DIR}} --count {{COUNT}} --format html-cards
+
+# regenerate ALL scenarios as offline card carousels WITH double-dummy par captions
+regen-cards-dd COUNT="48" DIR=deals_output_dir:
+	just run --html-dir {{DIR}} --count {{COUNT}} --format html-cards --dd
+
+# regenerate ALL scenarios WITHOUT recompiling (reuses the last release build)
+regen-rerun COUNT="48" DIR=deals_output_dir:
+	just rerun --html-dir {{DIR}} --count {{COUNT}}
+
+# regenerate a SUBSET; NAMES is comma-separated, e.g. `just regen-some 1c-any,2c-opener 100`
+regen-some NAMES COUNT="48" DIR=deals_output_dir:
+	just run --html-dir {{DIR}} --scenario {{NAMES}} --count {{COUNT}}
+
+# COUNT deals for ONE scenario -> DIR/<SCENARIO>.html
+deal SCENARIO COUNT="48" DIR=scratch_dir:
+	just run --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{DIR}}/{{SCENARIO}}.html
+
+# COUNT deals for ONE scenario WITH double-dummy annotations -> DIR/<SCENARIO>.html
+deal-dd SCENARIO COUNT="48" DIR=scratch_dir:
+	just run --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{DIR}}/{{SCENARIO}}.html --dd
+
+# COUNT deals for ONE scenario as an offline card carousel -> DIR/<SCENARIO>.html
+deal-cards SCENARIO COUNT="48" DIR=scratch_dir:
+	just run --scenario {{SCENARIO}} --count {{COUNT}} --format html-cards --output {{DIR}}/{{SCENARIO}}.html
+
+# COUNT deals for ONE scenario as an offline card carousel with double-dummy par -> DIR/<SCENARIO>.html
+deal-cards-dd SCENARIO COUNT="48" DIR=scratch_dir:
+	just run --scenario {{SCENARIO}} --count {{COUNT}} --format html-cards --output {{DIR}}/{{SCENARIO}}.html --dd
+
+# COUNT deals for ONE scenario WITHOUT recompiling -> DIR/<SCENARIO>.html
+deal-rerun SCENARIO COUNT="48" DIR=scratch_dir:
+	just rerun --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{DIR}}/{{SCENARIO}}.html
+
+# list the scenarios compiled into the sim
+scenarios:
+	just run_debug --list
 
 # read a deal and print the combo analysis (double-dummy census + achievable single-dummy) for the
 # known partnership. The deal may be a PBN [Deal] tag / bare N:... value, a bridge-site hand URL

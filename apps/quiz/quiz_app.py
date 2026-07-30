@@ -8,6 +8,7 @@
 import asyncio
 import dataclasses
 import functools
+import os.path
 import re
 import sys
 import time
@@ -23,6 +24,10 @@ import quiz
 import bidfilter
 
 tracer = trace.get_tracer(__name__)
+
+# beside this script, not relative to the cwd -- the app is served from the repo
+# root (`just quiz`), so a relative path would not resolve
+COMPLETED_IMAGE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "completed.jpeg")
 
 
 def rx_depends(*deps):
@@ -791,7 +796,7 @@ def answer_view(_view_model_cache={}):
                 styles={"font-size": "3rem"},
                 disable_anchors=True,
             ),
-            pn.pane.Image("./completed.jpeg", alt_text="cat sleeping next to computer mouse", width=600),
+            pn.pane.Image(COMPLETED_IMAGE, alt_text="cat sleeping next to computer mouse", width=600),
         )
 
 

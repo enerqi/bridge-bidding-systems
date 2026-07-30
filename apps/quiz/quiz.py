@@ -1,9 +1,11 @@
+from contextlib import contextmanager
 from copy import deepcopy
 from dataclasses import dataclass
 from enum import Enum
 import functools
+import os
 from os import environ
-from os.path import join, expanduser
+from os.path import abspath, dirname, exists, join, expanduser
 from pprint import pprint
 import random
 import re
@@ -14,6 +16,39 @@ Path = NewType("Path", str)
 home = Path(expanduser("~"))
 bml_tools_dir = Path(environ.get("BML_TOOLS_DIRECTORY", join(home, "dev/bml")))
 sys.path.append(bml_tools_dir)
+
+app_dir = Path(dirname(abspath(__file__)))
+
+
+def bml_docs_dir() -> Path:
+    """Directory holding the `.bml` corpus.
+
+    The bml module resolves both the file it is given and every `#INCLUDE`
+    inside it relative to the *working directory*, so parsing has to happen
+    with the cwd set here (see `in_bml_docs`).
+
+    Two layouts must work: this app lives in `apps/quiz/` of the notes repo
+    (docs two levels up), while `just deploy-quiz` flattens the app and the
+    `.bml` files into one deployment folder (docs beside the script). The
+    script's own directory wins when it has the corpus; `BML_DOCS_DIRECTORY`
+    overrides both.
+    """
+    override = environ.get("BML_DOCS_DIRECTORY")
+    if override:
+        return Path(override)
+    if exists(join(app_dir, "bidding-system.bml")):
+        return app_dir
+    return Path(abspath(join(app_dir, "..", "..")))
+
+
+@contextmanager
+def in_bml_docs():
+    cwd = os.getcwd()
+    os.chdir(bml_docs_dir())
+    try:
+        yield
+    finally:
+        os.chdir(cwd)
 
 import bml  # noqa: E402
 import bmlbids  # noqa: E402
@@ -36,7 +71,9 @@ class BidTable:
 def load_bid_tables(
     bml_file_path: str,
 ) -> list[BidTable]:
-    bml.content_from_file(bml_file_path)
+    with in_bml_docs():
+        # bml resolves this path and its #INCLUDEs relative to the cwd
+        bml.content_from_file(bml_file_path)
     # this could be other things than nodes or strings, but we only extract tables and headers
     content: list[tuple[bml.ContentType, bml.Node | str]] = deepcopy(bml.content)
 

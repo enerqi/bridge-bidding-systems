@@ -79,7 +79,8 @@ enc_key :: proc(n, s: u16, allocator := context.temp_allocator) -> string {
 }
 
 // key -> every entry index sharing that engine key. Usually one; several when odds-equivalent holdings with
-// different honours collide (the lookup then card-filters). Slices live process-lifetime (freed at exit).
+// different honours collide (the lookup then card-filters). Keys + slices live process-lifetime; released by
+// `encyclopedia_shutdown` so a leak-checked build reports clean.
 @(private)
 g_enc_map: map[string][dynamic]int
 @(private)
@@ -98,6 +99,21 @@ enc_build :: proc() {
 			append(&g_enc_map[k], i)
 		}
 	}
+}
+
+// Free the lazily-built key map: the interned keys (heap-allocated by `enc_key` in `enc_build`) and the
+// per-key candidate slices. Optional — the OS reclaims it at exit — but a leak-checked build wants it
+// released, so `shutdown` calls this. Safe if the map was never built, and re-buildable afterwards only if
+// `g_enc_once` is reset too (it is, below), though in practice this runs once at exit.
+@(private)
+encyclopedia_shutdown :: proc() {
+	for k, cands in g_enc_map {
+		delete(cands)
+		delete(k)
+	}
+	delete(g_enc_map)
+	g_enc_map = nil
+	g_enc_once = {}
 }
 
 // Look up the published line + odds for an NS single-suit holding. Returns the entry and true on a hit;
