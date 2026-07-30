@@ -24,16 +24,17 @@ import "core:sync"
 import "core:time"
 
 import "bidding"
-import "combo"
-import "dd"
+import "dealsolve"
 import "norn:cli"
+import "norn:combo"
 import "norn:norn"
+import "suitbook"
 
-// The double-dummy par caption (dd) followed by the naive combined-holding trick table (combo). Both
+// The double-dummy par caption (dealsolve) followed by the naive combined-holding trick table (combo). Both
 // are `norn.Deal_Annotator`s writing to the same builder; combo needs no DDS, so the combo half still
 // renders when a board reaches here. Registered for scenarios that want both (see `dd_annotators`).
 dd_and_combo_annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Output_Format) {
-	dd.annotate(builder, board, format)
+	dealsolve.annotate(builder, board, format)
 	combo.annotate(builder, board, format)
 }
 
@@ -42,34 +43,34 @@ dd_and_combo_annotate :: proc(builder: ^strings.Builder, board: norn.Deal, forma
 // (logging, allocators, profiling). Returns the process exit code.
 run_sim :: proc() -> int {
 	// Double-dummy solver lifecycle: one-time init, teardown on return. Cheap when unused — nothing
-	// solves unless --dd is passed and a hook fires. See the `dd` package.
-	dd.init()
-	defer dd.shutdown()
+	// solves unless --dd is passed and a hook fires. See the `dealsolve` package.
+	dealsolve.init()
+	defer dealsolve.shutdown()
 
 	// Per-scenario double-dummy filters (policy: which DD condition each scenario's survivors must
 	// also pass). Only scenarios listed here get a second stage under --dd; the rest are unfiltered.
-	// The filter *implementations* live in the `dd` package; this is just the name -> filter binding.
+	// The filter *implementations* live in the `dealsolve` package; this is just the name -> filter binding.
 	dd_filters := make(map[string]norn.Deal_Filter)
 	defer delete(dd_filters)
-	dd_filters["1major-game-force"] = dd.ns_makes_game
-	dd_filters["slam-makes-dd"] = dd.ns_makes_slam
-	// dd_filters["1major-gf-3plus-card-support"] = dd.ns_makes_game
-	// dd_filters["1n-slam-try"] = dd.ns_makes_slam
-	// dd_filters["2c-any-slam-try"] = dd.ns_makes_slam
-	// dd_filters["slam-hands-32-plus-hcp"] = dd.ns_makes_slam
+	dd_filters["1major-game-force"] = dealsolve.ns_makes_game
+	dd_filters["slam-makes-dd"] = dealsolve.ns_makes_slam
+	// dd_filters["1major-gf-3plus-card-support"] = dealsolve.ns_makes_game
+	// dd_filters["1n-slam-try"] = dealsolve.ns_makes_slam
+	// dd_filters["2c-any-slam-try"] = dealsolve.ns_makes_slam
+	// dd_filters["slam-hands-32-plus-hcp"] = dealsolve.ns_makes_slam
 
 	// Per-scenario double-dummy annotators (policy: which scenarios get the DD caption in their HTML).
 	// Per-scenario, not global, so under --dd the batch export still pools every scenario NOT listed
 	// here (annotators, like filters, make the scenario call DDS -> serial). List every scenario name
-	// to caption them all — they then serialise, each still parallel inside DDS. `dd.annotate` is the
+	// to caption them all — they then serialise, each still parallel inside DDS. `dealsolve.annotate` is the
 	// single uniform caption; a scenario could instead be given a bespoke annotator.
 	dd_annotators := make(map[string]norn.Deal_Annotator)
 	defer delete(dd_annotators)
 	dd_annotators["1major-game-force"] = dd_and_combo_annotate
 	dd_annotators["slam-makes-dd"] = dd_and_combo_annotate
-	// dd_annotators["1n-slam-try"] = dd.annotate
-	// dd_annotators["2c-any-slam-try"] = dd.annotate
-	// dd_annotators["slam-hands-32-plus-hcp"] = dd.annotate
+	// dd_annotators["1n-slam-try"] = dealsolve.annotate
+	// dd_annotators["2c-any-slam-try"] = dealsolve.annotate
+	// dd_annotators["slam-hands-32-plus-hcp"] = dealsolve.annotate
 
 	return cli.main_program(bidding.registry, cli.Gen_Hooks{dd_filters = dd_filters, dd_annotators = dd_annotators})
 }
@@ -111,6 +112,10 @@ main :: proc() { 	// Operational setup only; program semantics live in `run_sim`
 	// (5b) Release combo's persistent worker pool before the leak check (LIFO: registered after the tracking
 	// finalise defer, so it runs first). No-op unless an Html_Cards deal spun the pool up. See combo/combo.odin.
 	defer combo.shutdown()
+	// (5c) Give combo this project's published suit-combination table. combo ships none (it is a library; the
+	// corpus is ours) and is engine-only until registered — see combo/book.odin and suitbook/suitbook.odin.
+	// Its lazily-built key index is freed by the `combo.shutdown` above, through the registered provider.
+	combo.set_suit_book(suitbook.provider())
 	// (6) Logger setup to stdout
 	context.logger = make_logging_context()
 	defer destroy_logging_context()

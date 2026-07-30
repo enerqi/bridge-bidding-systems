@@ -19,7 +19,7 @@ There are now **two engines** for this:
 
 | Path | What |
 |------|------|
-| `odin-sims/` | the **Norn consumer** — an Odin project. `bidding/` is one package (this system's predicates + the named-scenario registry); `sim.odin` is the generator/exporter program. Depends on the `norn` library via an Odin collection. |
+| `odin-sims/` | the **Norn consumer** — an Odin project. `bidding/` (this system's predicates + the named-scenario registry), `dealsolve/` (the DDS double-dummy boundary), `suitbook/` (the published suit-combination table, plugged into `norn:combo`'s book hook); `sim.odin` is the generator/exporter program and `pbn_analyse.odin` the single-deal advisor. Depends on the `norn` library (incl. the `norn:combo` card-combination engine) via an Odin collection. |
 | `tcl-sims/` | the **legacy Tcl** — `deal-utils.tcl` (the ~85-proc predicate library) + ≈111 condition scripts (one situation each), plus the `run-deal.py` / `regen-html-deals.py` runners. |
 | `tcl-sims/run-deal.py` | legacy: run one `tcl-sims/` script → deals → HTML (handviewer iframes). |
 | `tcl-sims/regen-html-deals.py` | legacy: batch `run-deal.py` over every `tcl-sims/*.tcl`. |

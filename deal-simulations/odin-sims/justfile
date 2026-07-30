@@ -15,7 +15,7 @@ norn_home := env_var_or_default("NORN_HOME", replace(home_directory(), "\\", "/"
 norn := "-collection:norn=" + norn_home
 
 # odin-dds provides the DDS double-dummy solver bindings, referenced as the `dds` collection and used
-# only by the local `dd` package (the norn->DDS boundary). DDS_HOME overrides the default checkout
+# only by the local `dealsolve` package (the norn->DDS boundary). DDS_HOME overrides the default checkout
 # location, mirroring norn_home. Its lib/dds.lib (Windows) / lib/dds.a (Unix) must be built first —
 # see odin-dds `just build-lib`.
 dds_home := env_var_or_default("DDS_HOME", replace(home_directory(), "\\", "/") + "/dev/odin-dds")
@@ -71,15 +71,16 @@ ols-config:
 format:
 	odinfmt -w .
 
-# lints the two library packages (`bidding`, `dd`) with -no-entry-point and the `sim.odin` single-file
-# program; `dd` and `sim` pull in the `dds` collection (the DDS boundary), `bidding` does not. `combo`
-# (the naive card-combination analyser) is solver-free like `bidding`, so it needs only the norn collection.
+# lints the local library packages with -no-entry-point plus the two single-file programs. `dealsolve`,
+# `sim` and `pbn_analyse` pull in the `dds` collection (the DDS boundary); `bidding` and `suitbook` do not
+# (`suitbook` is this project's published suit-combination table, plugged into `norn:combo`'s book hook).
+# The card-combination ENGINE itself now lives in norn (`norn:combo`) — lint it there.
 # ---
-# type check + vet + strict style (bidding, combo, dd, sim.odin)
+# type check + vet + strict style (bidding, suitbook, dealsolve, sim.odin, pbn_analyse.odin)
 lint *args:
 	odin check bidding {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
-	odin check combo {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
-	odin check dd {{norn}} {{dds}} -vet -vet-cast -strict-style -no-entry-point {{args}}
+	odin check suitbook {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
+	odin check dealsolve {{norn}} {{dds}} -vet -vet-cast -strict-style -no-entry-point {{args}}
 	odin check sim.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style {{args}}
 	odin check pbn_analyse.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style {{args}}
 
@@ -204,7 +205,7 @@ bench *args: mktarget_dirs
 #   just bench-e2e '-define:E2E_COUNT=24' '-define:E2E_ITERS=5'
 #   just bench-e2e '-define:COMBO_THREADS=false'     (time the serial combo path)
 # ---
-# END-TO-END benchmark of ONE scenario's full pipeline (generate + DD filter + dd/combo annotate + render)
+# END-TO-END benchmark of ONE scenario's full pipeline (generate + DD filter + dealsolve/combo annotate + render)
 bench-e2e *args: mktarget_dirs
 	odin run bench_e2e.odin -file {{norn}} {{dds}} -o:speed -microarch:native {{args}}
 
@@ -212,16 +213,20 @@ bench-e2e *args: mktarget_dirs
 test *args: mktarget_dirs
 	odin test bidding {{norn}} -debug -file -microarch:native -show-timings -out:target/debug/test-bidding.exe {{args}}
 
-# run the card-combination analyser unit tests
-test-combo *args: mktarget_dirs
-	odin test combo {{norn}} -debug -microarch:native -show-timings -out:target/debug/test-combo.exe {{args}}
+# Covers the baked table itself: every entry round-trips through its own engine key, the card-validity
+# gate rejects odds-equivalent-but-wrong-honour hits, and `zz_book_diff` prints the book-vs-engine
+# percentage diff. The card-combination ENGINE's own tests live in norn now (`just test-combo` there).
+# ---
+# run the published suit-combination table (suitbook) unit tests + the book-vs-engine diff
+test-suitbook *args: mktarget_dirs
+	odin test suitbook {{norn}} -debug -microarch:native -show-timings -out:target/debug/test-suitbook.exe {{args}}
 
 # Forced single-threaded: DDS shares process-global transposition tables and is NOT reentrant, so
 # concurrent test procs would corrupt each other's solves.
 # ---
 # run the double-dummy / DDS-sampling unit tests (links the DDS solver via the dds collection)
-test-dd *args: mktarget_dirs
-	odin test dd {{norn}} {{dds}} -debug -microarch:native -define:ODIN_TEST_THREADS=1 -show-timings -out:target/debug/test-dd.exe {{args}}
+test-dealsolve *args: mktarget_dirs
+	odin test dealsolve {{norn}} {{dds}} -debug -microarch:native -define:ODIN_TEST_THREADS=1 -show-timings -out:target/debug/test-dealsolve.exe {{args}}
 
 # declarer+dummy uses '-' for the unknown hands; a full 4-hand diagram emits all four. Bridges to the
 # sibling hand-ocr repo (uv), at HAND_OCR_DIR (default ~/dev/bridge-hand-ocr). A real image needs

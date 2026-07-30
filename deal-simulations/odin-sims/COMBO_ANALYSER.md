@@ -1,20 +1,45 @@
 # `combo` — naive card-combination analyser — handoff notes
 
 Per-suit **trick-chance tables** for the North-South pair + a combined **P(≥ target tricks)**, shown
-next to the DDS par as a make-chance guide. Source doc: `Naive card combination analyser.md`.
+next to the DDS par as a make-chance guide. Source doc: `~/dev/norn/combo/DESIGN.md` (was `Naive card combination analyser.md`).
 Inspiration: <https://bridge.esmarkkappel.dk/main/main.html> (a much simpler version of it).
+
+> ## ★ STRUCTURE MOVED (2026-07-30) — read before following any path below
+>
+> The card-combination **engine** is no longer part of this project. It moved to the norn library as
+> **`norn:combo`** (`~/dev/norn/combo/`), imported here as `import "norn:combo"`. It is generic bridge
+> maths with no bidding-system content, and norn already owned the card-page JS that renders its output.
+> Lint/test it there: `cd ~/dev/norn && just lint && just test-combo`.
+>
+> The **published suit-combination table stayed here**, as the local `suitbook` package
+> (`suitbook/suitbook.odin` + the `suitbook/encyclopedia/` scrape-and-bake pipeline). It is somebody
+> else's editorial corpus, so it must not ship inside a reusable library. combo now takes it through a
+> HOOK: `combo.Suit_Book{lookup, shutdown}` registered with `combo.set_suit_book(suitbook.provider())`
+> (done in `sim.odin`, `pbn_analyse.odin`, `bench.odin`, `bench_e2e.odin`). With nothing registered combo
+> is engine-only — every holding reports the line combo computed itself.
+>
+> Engine-only docs moved with the code: the original brief (`Naive card combination analyser.md`) is now
+> `~/dev/norn/combo/DESIGN.md`, and the performance analysis is `~/dev/norn/combo/PERFORMANCE.md`. What stays
+> here is what is about the card PAGE, the 2-hand advisor and the book data: this file, `HTML_CARDS.md`,
+> `LEARNER_AIDS_PLAN.md`, `SUIT_COMBINATION_ENCYCLOPEDIA_HANDOFF.md`, `SUIT_SOLVER_PLAN.md`.
+>
+> Renames that came with it: `encyclopedia_lookup` → `suitbook.lookup`, `encyclopedia_override` →
+> `combo.book_override`, `enc_key` → `combo.book_key`, `honour_compatible` → `combo.book_line_applies`,
+> `Enc_Entry`/`Enc_Target` → `combo.Book_Entry`/`Book_Target`, `enc_entries` → `book_entries`. The DDS
+> boundary package `dd` is now **`dealsolve`** (`just test-dealsolve`). Older sections below were written
+> before this split: read `combo/...` paths as `norn:combo/...`, and book-data paths as `suitbook/...`.
 
 > ## ★★★ STATUS (2026-07-19) — SUIT-COMBINATION ENCYCLOPEDIA BUILT + WIRED (Option C DONE)
 >
 > The "suit-combination REFERENCE library" (Option C, below) is **no longer a future idea — it is built,
 > wired, and verified.** Full detail: **`SUIT_COMBINATION_ENCYCLOPEDIA_HANDOFF.md`** (read it; this is only a
 > pointer). In brief:
-> - Scraped the **BridgeHands** suit-combination tables → `combo/encyclopedia/` (parser + baker, Python,
->   OFFLINE-ONLY) → **`combo/suit_encyclopedia.odin`**: 677 canonical holdings → published best line + P(≥k).
-> - **Canonical key = the ENGINE, not syntax.** `enc_key` serialises `sd_best_joint_table` (the recommended
+> - Scraped the **BridgeHands** suit-combination tables → `suitbook/encyclopedia/` (parser + baker, Python,
+>   OFFLINE-ONLY) → **`suitbook/suitbook.odin`**: 677 canonical holdings → published best line + P(≥k).
+> - **Canonical key = the ENGINE, not syntax.** `combo.book_key` serialises `sd_best_joint_table` (the recommended
 >   line's joint counts), so equivalent holdings collapse with **0 false merges** (syntactic keys failed:
 >   0.1–21% coverage or unsafe). Engine-keyed lazy `sync.Once` map; **26% coverage** (higher on 6–10-card).
-> - **Wired as an OVERRIDE.** `encyclopedia_override` in `write_suits_lines_json`/`write_suits_tips_json`: on a
+> - **Wired as an OVERRIDE.** `combo.book_override` in `write_suits_lines_json`/`write_suits_tips_json`: on a
 >   hit the card-page cell label = the book line and the tooltip = "Textbook line: … Chances vs best defence:
 >   4 tricks 96%…"; miss → engine line + `describe_suit_line`. Aggregate make-% band stays engine-driven.
 > - Verified end-to-end (pbn_analyse full deal), **golden PASS** (data-sim unchanged), **combo 51**, lint clean.
@@ -41,9 +66,9 @@ Inspiration: <https://bridge.esmarkkappel.dk/main/main.html> (a much simpler ver
 >
 > **NEXT (pick up here), in priority order:**
 > 1. **Stage B2 — DONE 2026-07-16.** Full 4-hand deals now drive a live EXACT double-dummy explorer:
->    `dd.exact_grid(deal)` builds a `Grid_Result` spiked at each strain's NS DD trick count (n=1);
+>    `dealsolve.exact_grid(deal)` builds a `Grid_Result` spiked at each strain's NS DD trick count (n=1);
 >    `render_full_deal_body` bakes it via `write_exact_sim_json` (`{n:1,exact:true,lvl,strain,g}`,
->    preselecting NS's best-making contract) onto a hidden `.sim-exact` div — dd.annotate owns `.par`, so
+>    preselecting NS's best-making contract) onto a hidden `.sim-exact` div — dealsolve.annotate owns `.par`, so
 >    the grid rides its own element and render.odin now reads `el._sim` from any `[data-sim]` in the slide.
 >    `simBand` gates on `sim.exact`: "Double-dummy (exact): N♠ makes/fails", no ±/deal-count, no tax rung,
 >    recon says "double-dummy" not "simulated". 2-hand path untouched (browser-verified both). Test
@@ -55,17 +80,17 @@ Inspiration: <https://bridge.esmarkkappel.dk/main/main.html> (a much simpler ver
 > 3. **Misguess-tax fallbacks #2/#3** (analytic estimator / full PIMC) — only if the tax proves too crude
 >    on real boards. **Option C2 (reference library) / C3 (entry model)** stay demoted (DDS covers realism).
 >
-> **Verify commands:** `just lint`, `just test-combo` (41), `just test-dd` (25, ~3 min single-thread),
+> **Verify commands:** `just lint`, `just test-combo` (41), `just test-dealsolve` (25, ~3 min single-thread),
 > `just test-golden`, `just ocr-analyse --demo` (pipeline plumbing). Browser: serve a page via
 > `python -m http.server` (file:// is blocked) + playwright. **Uncommitted at handoff** (user manages
-> commits): norn `render.odin`; odin-sims `dd/tax*.odin`, `dd/sample*.odin`, `pbn_analyse.odin`, `justfile`,
+> commits): norn `render.odin`; odin-sims `dealsolve/tax*.odin`, `dealsolve/sample*.odin`, `pbn_analyse.odin`, `justfile`,
 > `tools/ocr-analyse.sh`, `tests/golden*`, this doc; `deal-simulations/README.md`.
 
 **Phase 1 AND Track 1 (the interactive client-side redesign) are DONE** — built, vetted, tested, wired,
 and eyeballed in-browser. **Phase 2 (real single-dummy lines) is COMPLETE — all four bricks built + tested:** brick 1 (fixed-line
-evaluator, `combo/single_dummy.odin`), brick 2 (candidate-line generator + Pareto/best-line,
-`combo/lines.odin`), brick 3 (optimal single-dummy SEARCH, `combo/single_dummy_opt.odin`), brick 4
-(objective layer + combination DP, `combo/combine.odin`). 37 combo tests pass, lint clean. **NB while
+evaluator, `norn:combo/single_dummy.odin`), brick 2 (candidate-line generator + Pareto/best-line,
+`norn:combo/lines.odin`), brick 3 (optimal single-dummy SEARCH, `norn:combo/single_dummy_opt.odin`), brick 4
+(objective layer + combination DP, `norn:combo/combine.odin`). 37 combo tests pass, lint clean. **NB while
 building brick 3 a Phase-1 overcount bug was found + fixed** (running suits; see "Phase-1 bug fixed"
 below). **PROPER JOINT MODEL now DONE (2026-07-04):** the independent per-suit convolution is replaced by
 a constrained joint convolution (`suit_joint_table` + `joint_total`, East holds 13 / tricks capped at 13);
@@ -79,7 +104,7 @@ TODO. **FULLY WIRED into the card page** (`combo.annotate` Html_Cards + norn `re
 - The CCA overlay shows the double-dummy CEILING vs single-dummy ACHIEVABLE: per-suit rows + black
   `tot`/`≥k` (census), blue `sd` row (achievable shape), blue `≥sd` row = the **adaptive-optimum
   P(≥k)** (brick-4). Headline `P(≥ t): DD X% · SD Y%` (SD from the curve); inline one-liner shows the
-  analysed side + DD/SD + `E[tot] dd/sd`.
+  analysed side + DD/SD + `E[tot] dealsolve/sd`.
 - **Per-suit blind numbers + recommended line** (added on request): each suit row's `E` column shows
   `double-dummy / blind` expected tricks (the blue blind figure = `etr` of the per-suit `data-*-sd`),
   and a `line` column names the recommended blind play (`data-{ns,ew}-lines` = `best_line_by_mean`'s
@@ -130,7 +155,7 @@ make k". (Full explanation in the `combo.odin` header — the `WHAT p[k] IS` and
    never misguesses a finesse (optimistic for NS), defence never misdefends (pessimistic — e.g. `Q985`
    opp stiff `K` reads ~1 trick because best defence nails the ace-timing every layout it can). Also
    **no contract in view**: defenders just minimise *that suit's* tricks — no "take it or it runs",
-   no "duck to beat the contract". Par (`dd`) shares assumption 3; combo drops entries + interaction on top.
+   no "duck to beat the contract". Par (`dealsolve`) shares assumption 3; combo drops entries + interaction on top.
 
 **TEMPO caveat (why the TOTAL reads high — the practically important one).** Assumptions 1+2 let NS take
 all its tricks *without ever surrendering the lead*. Real play is a race: developing tricks usually means
@@ -140,12 +165,12 @@ all its tricks *without ever surrendering the lead*. Real play is a race: develo
 cashed *in tempo* while NS develops — the cross-suit race doesn't exist here. So the summed total is an
 **upper bound that doesn't know who gets in first** ("13 tricks" can really be fewer). This is a MODEL
 property (entries + independence), NOT the vacant-space weighting — the joint-convolution fix does **not**
-address it; only whole-deal play (`dd` par) does. When combo and par disagree on the total, **par wins**.
+address it; only whole-deal play (`dealsolve` par) does. When combo and par disagree on the total, **par wins**.
 Surfaced to users in the CCA help "?" modal's small print (norn `render.odin`).
 
 ## Where the code lives
 
-New **solver-free** package (no DDS dep) in `odin-sims`; composed with `dd` at the `sim.odin` layer.
+New **solver-free** package (no DDS dep) in `odin-sims`; composed with `dealsolve` at the `sim.odin` layer.
 
 | File | What |
 |------|------|
@@ -160,10 +185,10 @@ New **solver-free** package (no DDS dep) in `odin-sims`; composed with `dd` at t
 | `odin-sims/combo/single_dummy_opt_test.odin` | 4 tests: running suit AKQJT9/87654 = exactly 6 (== fixed census); best-candidate ≤ optimal ≤ census on a two-way holding; a genuine two-way queen guess (AJ975/KT864) has optimal STRICTLY < census (0.11, the blind guess); a short holding overflows and falls back to a valid distribution. |
 | `odin-sims/combo/combine.odin` | **Phase 2, brick 4 (DONE) + joint adaptive DP (2026-07-04).** The objective layer + combination DP. `Objective` = a weight vector `w[t]`; constructors `objective_at_least`/`_imps`/`_expected_tricks`/`_matchpoints(field)`. `apply_objective` scores a total. **INDEPENDENT primitives** (per-suit marginals, synthetic-hand-safe): `best_fixed_combination` (exhaustive one-line/suit → `Line_Combination`), `dp_value`, `gather_candidates`, `convolve`. **JOINT (whole-deal) path** (length-constrained, full hands): `Line_Joint`/`gather_candidate_tables` (per-line `sd_line_joint_table`), `dp_value_joint` (residual-target DP + East-length axis), `optimal_adaptive_value` and `adaptive_at_least_curve` (the card page's `data-*-atl`). Candidates from brick 2. |
 | `odin-sims/combo/combine_test.odin` | 5 tests: `apply_objective(at_least)` == P(≥target) tail + total sums to 1; the DP picks the spade finesse when target 11 needs the extra trick; best combination beats all-top-down; adaptive ≥ fixed always and == fixed for the linear E[tricks] objective; matchpoints value in [0,1]. |
-| `odin-sims/sim.odin` | `import "combo"`; `dd_and_combo_annotate` (calls `dd.annotate` then `combo.annotate`); registered for scenario `1major-game-force`. |
+| `odin-sims/sim.odin` | `import "combo"`; `dd_and_combo_annotate` (calls `dealsolve.annotate` then `combo.annotate`); registered for scenario `1major-game-force`. |
 | `odin-sims/justfile` | `lint` checks `combo`; `just test-combo` runs its tests. |
 | `norn/norn/render.odin` | **Lib changes.** (Phase 1) carousel grouping generalised to grab EVERY sibling up to the next `.compass`; `.combo` CSS folded under the Par toggle. (Track 1) client-side combo: JS `convolve`/`comboTotal`/`tail`/`ctTableHTML`/`comboLine`, the **CCA overlay** (`.cca-panel` + `renderCca`/`hlCca`/`setCca`, wired into `show`), the toolbar **CCA button**, keydown guard for focused inputs, and `<meta charset="utf-8">`. Inline `.combo` is a one-line summary; the full `.ct` table + the **per-board target slider** live in the overlay footer (`nc-cca-target`, defaults from the board's `.par[data-target]`). (Joint model 2026-07-04) `side()` now prefers the **baked joint totals** `data-*-tot`/`-totsd` over `comboTotal`; `convolve`/`comboTotal` demoted to a fallback for old pages. |
-| `odin-sims/dd/dd.odin` | (Track 1) `ns_par_target_tricks` + `data-target` on the `Html_Cards` `.par` div — the NS par trick count that seeds each board's combo slider default. |
+| `odin-sims/dealsolve/dealsolve.odin` | (Track 1) `ns_par_target_tricks` + `data-target` on the `Html_Cards` `.par` div — the NS par trick count that seeds each board's combo slider default. |
 
 ## Architecture (the pipeline)
 
@@ -196,7 +221,7 @@ Text table (Handviewer/Pretty) = one row/suit of P(exactly k)%, an `E[tr]` mean 
 ```
 cd deal-simulations/odin-sims
 just test-combo                       # 41 combo tests (Phase 1 + Phase 2 bricks 1-4 + Option A + joint model)
-just test-dd                          # 11 dd tests (DDS-sampling; forced single-thread — DDS not reentrant)
+just test-dealsolve                          # 11 dd tests (DDS-sampling; forced single-thread — DDS not reentrant)
 just lint                             # bidding + combo + dd + sim + pbn_analyse
 odin build sim.odin -file -collection:norn=~/dev/norn -collection:dds=~/dev/odin-dds -o:speed -out:target/release/sim.exe
 ./target/release/sim.exe -S 1major-game-force -n 3 -f pretty --dd --seed 42     # see dd par + combo table
@@ -225,7 +250,7 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
       the full per-suit table lives in a **CCA overlay panel** — a `position:fixed` drawer (out of page
       flow, so the page never gains a scrollbar; the table fits its natural size, no internal scroll in
       practice), toggled by a **CCA** toolbar button, showing the ACTIVE board and re-rendering on nav.
-  - **Target is PER BOARD, defaulting to that board's NS par trick count.** `dd.annotate` tags the
+  - **Target is PER BOARD, defaulting to that board's NS par trick count.** `dealsolve.annotate` tags the
     `.par` caption with `data-target="<tricks>"` (`ns_par_target_tricks`: a MAKING NS-declared par
     contract's level+6, else NS's best makeable strain — handles EW-sacrifice pars); the card page reads
     it per board (`el._target`, fallback 9). The **slider lives at the BOTTOM of the CCA popup beside the
@@ -250,19 +275,19 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
       line to make the total" — is a **single-dummy** problem: pick ONE blind strategy per suit, evaluate
       across layouts → a real distribution; then a **DP over candidate lines per suit** maximising the
       objective (residual-target DP = adaptive optimum). Built in bricks:
-  - [x] **Brick 1 — fixed-line evaluator (DONE).** `combo/single_dummy.odin`: score ANY hand-given
+  - [x] **Brick 1 — fixed-line evaluator (DONE).** `norn:combo/single_dummy.odin`: score ANY hand-given
         blind line (`Sd_Line`) exactly across all layouts with double-dummy defence → a real
         `Suit_Trick_Dist`; `sd_census_gap` reports the double-dummy tax vs Phase 1. This is exact and
         cheap because a FIXED line has no hidden-info coupling (each layout plays out independently, the
         line is self-consistent as one pure function of public cards). Shipped one baseline line
         (`line_top_down`); 6 tests. This is the scoring oracle every later brick calls.
-  - [x] **Brick 2 — candidate-line generator (DONE).** `combo/lines.odin`: generic `line_finesse`
+  - [x] **Brick 2 — candidate-line generator (DONE).** `norn:combo/lines.odin`: generic `line_finesse`
         (lead low toward the honour hand, partner inserts cheapest card beating RHO) + `line_duck_one`
         (concede round 1 then cash) beside `line_top_down`; `suit_candidate_lines` scores all,
         `pareto_lines` keeps the non-dominated frontier on the P(≥k) tail, `best_line` picks the max
         P(≥target). 5 tests. Still generic heuristics, NOT the per-holding optimum (that's brick 3). Next
         candidates to add when useful: finesse from the OTHER side (two-way), deeper ducks, safety plays.
-  - [x] **Brick 3 — optimal-line SEARCH (DONE).** `combo/single_dummy_opt.odin`: partial-observability
+  - [x] **Brick 3 — optimal-line SEARCH (DONE).** `norn:combo/single_dummy_opt.odin`: partial-observability
         minimax — declarer picks one card per belief (no strategy fusion), defenders do an exact
         assignment-min pooling worlds by observed rank (models false-carding). Card-equivalence +
         transposition memo keep it tractable; EXACT only when NS holds most of the suit (few missing) —
@@ -271,7 +296,7 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
         guess). **Objective:** currently mean tricks (max/min key); brick 4 generalises to `U` (below).
         Known limit: short holdings (many missing) overflow → fallback; a golden/perf pass could raise
         the exact ceiling (better pruning, alpha-beta on the mean, tighter equivalence).
-  - [x] **Brick 4 — objective layer + residual-target DP (DONE).** `combo/combine.odin`: `Objective`
+  - [x] **Brick 4 — objective layer + residual-target DP (DONE).** `norn:combo/combine.odin`: `Objective`
         = a weight vector `w[t]`, so every goal (make / E[tricks] / matchpoints-vs-field) plugs in as
         DATA. `best_fixed_combination` (one line/suit, exhaustive) gives a reportable line-per-suit +
         total dist; `optimal_adaptive_value` is the residual-target DP (adaptive optimum ≥ fixed). 5
@@ -311,7 +336,7 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
     add `E[score]` and MPs as later objective plug-ins — no solver rework, just a different `U` (+ a
     field-belief input for MPs).
 - [x] **Target-from-par — DONE (Track 1).** The card page's per-board slider defaults to the NS par
-      trick count via `dd`'s `data-target` (see the Track-1 block above). The TEXT formats still pass
+      trick count via `dealsolve`'s `data-target` (see the Track-1 block above). The TEXT formats still pass
       `target=0` (no coupling needed there — the `>=k` row shows every level).
 - [ ] (Maybe) golden test for the `Html_Cards`/`Html_Handviewer` `annotate` output — none yet, eyeball only.
       For `Html_Cards` a golden would assert the `data-suits` JSON shape (the client JS is unit-testable
@@ -358,7 +383,7 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
       always are); partial hands break the e==13 normalisation. Covered by the rewritten `joint_test.odin`.
   - [ ] (Maybe) the residual **free-entry** over-count (assumption 1) still lets a strong hand's per-suit
         means over-sum, so the cap parks surplus at 13 and E[tot] < Σ means (`test_strong_deal_is_capped`).
-        Fixing THAT needs whole-deal play with entries (i.e. `dd` par), out of scope for the naive model.
+        Fixing THAT needs whole-deal play with entries (i.e. `dealsolve` par), out of scope for the naive model.
   - [x] **Joint DP for the adaptive `atl` curve — DONE (2026-07-04).** `combine.odin` now has
         `dp_value_joint` (the residual-target DP with a SECOND axis = East's running 0..13 card count) +
         `gather_candidate_tables` (per candidate line, a `Line_Joint` = name + `sd_line_joint_table`).
@@ -381,7 +406,7 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
 > **DONE + verified (in-browser + tests):**
 > - **2-hand input**: PBN reader (`norn/pbn.odin` `parse_pbn_deal`/`Parsed_Board`), `combo.analyse_parsed_board`
 >   + `sd_bundle_parsed_board`, CLI `pbn_analyse.odin`, face-down partial render.
-> - **DDS-sampling engine** (`dd/sample.odin`): the honest whole-hand make-% (the 2-hand "par" combo lacks).
+> - **DDS-sampling engine** (`dealsolve/sample.odin`): the honest whole-hand make-% (the 2-hand "par" combo lacks).
 >   `sample_grid` (one `CalcDDtable`/layout → every contract), `sample_contract`, `sample_lead_grids`,
 >   `best_contract`, constrained sampling (`Sample_Constraints{shape, held}` via reject sampling).
 > - **Card page UI** (`norn/render.odin`, CCA overlay): green **whole-hand verdict band**, **contract
@@ -395,7 +420,7 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
 > **REMAINING (all the priority items below are now DONE — 2026-07-16):**
 > 1. **Achievable single-dummy** — the honest "a human misguesses" number BELOW the DD-census ceiling
 >    (all sampling is currently per-layout double-dummy = a ceiling). Whole-deal POMDP; the one big item.
->    **MISGUESS-TAX ESTIMATOR (candidate #1) BUILT 2026-07-14 (`dd/tax.odin` + `dd/tax_test.odin`) and
+>    **MISGUESS-TAX ESTIMATOR (candidate #1) BUILT 2026-07-14 (`dealsolve/tax.odin` + `dealsolve/tax_test.odin`) and
 >    WIRED 2026-07-15** — geometric two-way-guess identification + a −1-on-misguess strata tax, reuses
 >    sample.odin's loop with no extra solves. Validated: docks a real two-way Q (3NT ceiling 71% →
 >    achievable 36%, tax 35) yet keeps the spike's cold slam/3NT boards at 100% where naive PIMC undershot
@@ -409,7 +434,7 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
 >    (`joint_achievable_pct` — compounds independent knife-edge guesses, two-pivot 6S board → joint ~30% vs
 >    single-worst ~50%); pivot range broadened Jack..King → **Ten..King** (real two-way ten finesse +
 >    same-suit doubles). dd **24** tests pass, lint clean.
->    **Prior spike 2026-07-13 (`dd/pimc.odin` + `dd/pimc_test.odin`) — do NOT productionise as-is; see the
+>    **Prior spike 2026-07-13 (`dealsolve/pimc.odin` + `dealsolve/pimc_test.odin`) — do NOT productionise as-is; see the
 >    "PIMC spike findings" block below.** A minimal PIMC play-out (blind declarer, DD defenders) was
 >    built and measured: (a) COST ~22–56 s/board single-thread (11k–27k DDS solves), 50–500× the
 >    ceiling's 0.1–1 s — breaks the instant-bake model unless batched via `SolveAllBoards`; (b) QUALITY —
@@ -429,10 +454,10 @@ session: each slide = `[compass, par, combo]`, 0 orphans, Par toggle hides `.com
 >    against `tests/golden/` (byte-stable via the seeded RNG). Optional per-declarer base-grid selector
 >    stays low value (the lead picker already fixes declarer).
 >
-> **Uncommitted at handoff:** norn `render.odin`; odin-sims `dd/tax.odin`, `dd/tax_test.odin`,
-> `dd/sample.odin`, `dd/sample_test.odin`, `pbn_analyse.odin`, `justfile`, `tests/golden-sim-json.sh`,
+> **Uncommitted at handoff:** norn `render.odin`; odin-sims `dealsolve/tax.odin`, `dealsolve/tax_test.odin`,
+> `dealsolve/sample.odin`, `dealsolve/sample_test.odin`, `pbn_analyse.odin`, `justfile`, `tests/golden-sim-json.sh`,
 > `tests/golden/*`, this doc. Build/verify commands unchanged (see "Dev / test commands" and the justfile:
-> `just test-dd` / `test-combo` / `test-golden`, `just analyse-deal …`).
+> `just test-dealsolve` / `test-combo` / `test-golden`, `just analyse-deal …`).
 >
 > The detailed, dated build log for all of the above is in the "Suggested build order" subsection's
 > nested bullets further down. The prose below predates the build and describes the design/rationale.
@@ -465,7 +490,7 @@ is a fixed `[Seat]Hand` of `[13]Card` (a partial board was not representable), a
 1. **A 2-hand entry point — PBN reader DONE (2026-07-10).** `norn/norn/pbn.odin`: `parse_pbn_deal(text)
    -> (Parsed_Board, Pbn_Parse_Error)`. `Parsed_Board{ deal: Deal, known: bit_set[Seat] }` is the
    partial-board representation — every SPECIFIED hand filled as a full 13 cards, seats written `-`
-   left out of `known`. A 4-hand tag yields `known == {N,E,S,W}` (drop-in to dd/combo/render); a
+   left out of `known`. A 4-hand tag yields `known == {N,E,S,W}` (drop-in to dealsolve/combo/render); a
    declarer+dummy tag yields just those two seats. Strict parse (4 fields; each `-` or a full 13-card
    `S.H.D.C` hand; all cards distinct) with a typed error enum; accepts a full `[Deal "..."]` line or a
    bare `N:...` value; `seat_from_letter` added to `deal.odin` for the prefix seat. 15 tests
@@ -502,16 +527,16 @@ is a fixed `[Seat]Hand` of `[13]Card` (a partial board was not representable), a
    SD expected total). Verified in-browser (playwright): board + face-down defenders render, CCA opens,
    per-suit ♠ finesse shows DD 3.3 / SD 3.2, slider + toggles work, 0 JS errors. 97 norn + 41 combo
    tests still pass.
-2. **DDS / par is UNAVAILABLE with two hands.** `dd.annotate` (par, makeable) needs all four hands —
+2. **DDS / par is UNAVAILABLE with two hands.** `dealsolve.annotate` (par, makeable) needs all four hands —
    DDS cannot solve unknown defenders. Consequences: no par caption; the card page's per-board target
-   (which defaults from `dd`'s `data-target`) has no seed → falls back to the hardcoded 9 (already
+   (which defaults from `dealsolve`'s `data-target`) has no seed → falls back to the hardcoded 9 (already
    coded), but the user should instead **set the contract / target manually**. combo's own DD-census row
    still computes (it is combo's per-layout minimax, NOT DDS) — only the whole-deal par/makeable is lost.
 3. **The render is a 4-hand compass.** The card page assumes a full `Deal` and draws N/E/S/W; per-seat
    focus shows ONE hand and collapses the other three to pills (which implies known-but-hidden). There is
    no "2 known + 2 UNKNOWN" layout. A render mode is needed: declarer + dummy shown, defenders
    face-down / "?". (Tracked on the `HTML_CARDS.md` side.)
-4. **The reality-check anchor is gone.** With four hands, `dd` par was ground truth ("when combo and par
+4. **The reality-check anchor is gone.** With four hands, `dealsolve` par was ground truth ("when combo and par
    disagree, par wins" — see the TEMPO caveat). Solo, combo's optimistic total (free entries + suit
    independence + no tempo race) is **unchecked** — the same over-count, but no par to catch it. This
    raises the stakes on the two realism tracks below.
@@ -563,7 +588,7 @@ whole-hand make-probability — **the honest number a player wants, and the real
 solo**.
 
 **IT CAN BE PRECOMPUTED / BAKED — this is the key reframing (2026-07-11).** The card page is already
-GENERATED offline and combo/dd already BAKE their results into `data-*` attributes. DDS-sampling fits
+GENERATED offline and norn:combo/dd already BAKE their results into `data-*` attributes. DDS-sampling fits
 the same slot: run the samples **when the HTML is written** (CLI/`pbn_analyse` side), bake the make-% +
 histogram into a `data-*` blob, and the page stays **static and instant** — a baked annotation like
 dd's par caption, NOT a runtime engine. This removes the interactivity/perf risk that once made it look
@@ -591,7 +616,7 @@ achievable SINGLE-DUMMY number (ONE fixed blind strategy across all samples) is 
 much harder. Ship the DD-census make-% as the honest ceiling (what serious tools report as "X% over N
 simulations"); the achievable-SD refinement is a later, optional step.
 
-#### PIMC spike findings (2026-07-13) — `dd/pimc.odin`, `dd/pimc_test.odin`
+#### PIMC spike findings (2026-07-13) — `dealsolve/pimc.odin`, `dealsolve/pimc_test.odin`
 
 The achievable-SD "later step" was SPIKED to measure it before committing. `pimc.odin` is a minimal
 PIMC (Perfect-Information Monte-Carlo) play-out — the industry estimator (GIB/Jack): the two known hands
@@ -625,10 +650,10 @@ prose above implies. Cheaper alternatives now look better: a **misguess-tax esti
 the expected loss at the identifiable blind two-way decisions — no play-out, no procrastination
 pathology, export-cheap, approximate) or simply **shipping the DD-census ceiling labelled as a ceiling**
 (what serious tools report). Recommendation: do not build full PIMC now; keep `pimc.odin` as the
-reference/measurement harness. Tests: `just test-dd` (15, incl. 4 PIMC — `test_pimc_measure` prints the
+reference/measurement harness. Tests: `just test-dealsolve` (15, incl. 4 PIMC — `test_pimc_measure` prints the
 cost/gap; the cold-slam test asserts only the undershoot direction). Uncommitted at handoff.
 
-#### misguess-tax estimator — CANDIDATE #1 BUILT (2026-07-14), `dd/tax.odin` + `dd/tax_test.odin`
+#### misguess-tax estimator — CANDIDATE #1 BUILT (2026-07-14), `dealsolve/tax.odin` + `dealsolve/tax_test.odin`
 
 **Status: DONE (library level), NOT yet wired to the card page / CLI.** Candidate #1 (the per-layout
 DD-vs-fixed-guess delta) is implemented as `misguess_tax(board, side, contract, n_samples, seed,
@@ -675,7 +700,7 @@ constraints, seeded RNG, ONE CalcDDtable/layout — **no extra solves**, ~1× th
   reported. Reduces to the single-pivot formula at n=1; achievable == ceiling at n=0. The −1 only bites at
   the knife edge (t==need), so a non-pivotal flagged guess is self-correctingly untaxed.
 
-**Validated against the PIMC spike's boards (`test-dd`, 24 total incl. compound + geometry-catalogue + same-suit, lint clean):**
+**Validated against the PIMC spike's boards (`test-dealsolve`, 24 total incl. compound + geometry-catalogue + same-suit, lint clean):**
 - **Two-way guess board `N:AJ54.AK2.A32.AK3 - KT32.543.654.542`, 3NT** (spades AJ54/KT32 miss Q9876, a
   two-way Q deciding the 9th trick): ceiling **71%**, achievable **36%**, tax **35 pts**, sole pivot =
   ♠Q. The blind declarer is right ~half the time — a real, sane tax. (This board is NOT stone cold: the
@@ -725,7 +750,7 @@ pivotal guesses docked as if only the worst existed) — is now **FIXED (2b, DON
 best-policy achievable. New knife-edge two-pivot board `N:AKQJ4.AJ4.AJ4.A2 - T9832.KT3.KT3.43`, 6S (solid
 ♠ trumps + two-way ♥Q AND ♦Q, no cushion): ceiling **100%**, each guess's marginal ~**50%**, joint
 achievable **~30%** (both queens must be right), tax **70** — the single-worst view would have wrongly
-reported ~50%. `test_tax_two_guesses_compound` (`test-dd`, now 24 tests, lint clean) pins it. Board C's
+reported ~50%. `test_tax_two_guesses_compound` (`test-dealsolve`, now 24 tests, lint clean) pins it. Board C's
 mild under-tax is likewise resolved by the joint model.
 
 <details><summary>Original design sketch (pre-build) — kept for the candidate #2/#3 fallbacks</summary>
@@ -736,11 +761,11 @@ procrastination pathology, no `SolveAllBoards` harness). Approximate but honest-
 reconciliation rung `ceiling · blind(combo-SD) · simulated(DDS ceiling) · achievable(tax)`.
 
 **What already exists to reuse (don't rebuild):**
-- `dd/sample.odin` `sample_grid` — the per-layout DDS census (the ceiling), already baked as `data-sim`.
+- `dealsolve/sample.odin` `sample_grid` — the per-layout DDS census (the ceiling), already baked as `data-sim`.
 - combo's per-suit **blind SD** (`best_line_by_mean`, the blue `sd`/`≥sd` rows) — already a per-suit
   misguess estimate under FREE ENTRIES; the reconciliation strip already shows `ceiling · blind ·
   simulated`. The tax number is essentially "make-% under blind play", which combo approximates per-suit.
-- `dd/pimc.odin` helpers (play-out, `build_deal`, `same_side`, sampling) if a bounded play-out is wanted.
+- `dealsolve/pimc.odin` helpers (play-out, `build_deal`, `same_side`, sampling) if a bounded play-out is wanted.
 
 **Three candidate designs, cheapest first (pick/prototype next session):**
 1. **Per-layout DD-vs-fixed-guess delta (cheapest, pure sampling).** In `sample_grid`'s existing loop,
@@ -836,11 +861,11 @@ the only render difference is face-down vs shown defenders (the "minor HTML/UX d
 - **combo is INHERENTLY the unknown-defenders analysis.** Averaging over all E/W splits IS the correct
   thing to do WHEN you don't know the defenders. On a 4-hand deal you DO know them, so the honest
   per-deal answer is not the average — it is the ONE actual layout, i.e. double-dummy on the real 52
-  cards (`dd` par / makeable). Running combo on a 4-hand deal throws away the E/W information you have;
+  cards (`dealsolve` par / makeable). Running combo on a 4-hand deal throws away the E/W information you have;
   its census becomes an a-priori "what could have been" sidebar to par, which is why the help says "when
   combo and par disagree, trust par". (combo restricted to the single actual split = plain double-dummy
-  = `dd`. The average is combo's whole point, so a 4-hand board is really `dd`'s home.)
-- **`dd` par exists ONLY with 4 hands** (DDS needs all 52). The 2-hand view structurally CANNOT have it.
+  = `dealsolve`. The average is combo's whole point, so a 4-hand board is really `dealsolve`'s home.)
+- **`dealsolve` par exists ONLY with 4 hands** (DDS needs all 52). The 2-hand view structurally CANNOT have it.
 - **DDS-sampling is the 2-hand analogue of par.** With 4 hands you don't sample — you solve the one known
   deal (that IS par). Sampling over E/W layouts is precisely the tool for when the defenders are unknown;
   it fills the exact gap the 2-hand view has. combo's census is already a crude, per-suit, entry-free
@@ -859,7 +884,7 @@ DDS-sampling is what makes the 2-hand view analytically first-class (its own "pa
 2. **DDS-sampling baked verdict + the strain+level contract picker** — the honest whole-hand make-% (the
    2-hand's "par"), precomputed at export, shown as the green top rung. Reuses norn deal-gen + dd's DDS.
    The contract picker ships with it (DDS needs a strain).
-   - **ENGINE + CLI DONE (2026-07-11).** `dd/sample.odin`: `sample_contract(board, side, contract,
+   - **ENGINE + CLI DONE (2026-07-11).** `dealsolve/sample.odin`: `sample_contract(board, side, contract,
      n_samples, seed) -> (Sample_Result, ok)`. Predeals the two known hands to their seats, deals the
      remaining 26 to the defenders via `norn.deal_board_predealt` (a seeded xoshiro stream → reproducible;
      uniform over the free cards = a-priori vacant-space split odds), and bulk-solves each layout for the
@@ -871,9 +896,9 @@ DDS-sampling is what makes the 2-hand view analytically first-class (its own "pa
      `contract_label` renders "4H". Single-threaded like all DDS here. **CLI DONE:** `pbn_analyse
      --sample <deals> --contract <4H> [--seed n]` prints the green verdict (`4S makes 2% (±1%, 500 deals)`,
      E[tricks] simulated) + a **reconciliation strip** `ceiling X (combo DD) > blind Y (combo SD) >
-     simulated Z (DDS whole-hand)` — the entry/tempo/independence tax shown as the gap. `dd/sample_test.odin`
-     (5 tests: parse, cold-slam=100%, hopeless<25%, seed-reproducible, rejects-unknown-side); `just test-dd`
-     (forced `ODIN_TEST_THREADS=1` — DDS not reentrant). `pbn_analyse`/`dd` lint + the `analyse-deal` recipe
+     simulated Z (DDS whole-hand)` — the entry/tempo/independence tax shown as the gap. `dealsolve/sample_test.odin`
+     (5 tests: parse, cold-slam=100%, hopeless<25%, seed-reproducible, rejects-unknown-side); `just test-dealsolve`
+     (forced `ODIN_TEST_THREADS=1` — DDS not reentrant). `pbn_analyse`/`dealsolve` lint + the `analyse-deal` recipe
      now link the `dds` collection. Verified live: 6S cold hand → 100%; 20-HCP 4S → 2%, mean 8.80,
      reconciliation 8.93 > 8.82 > 8.80.
    - **GRID REFRAME (2026-07-11):** the core is now `sample_grid` (per layout ONE `dds.CalcDDtable` returns
@@ -895,7 +920,7 @@ DDS-sampling is what makes the 2-hand view analytically first-class (its own "pa
      appear ONLY when a board carries `data-sim` (guarded by `el._sim`), so all normal sim/dd pages are
      unchanged. Help modal gained a green-rung paragraph + swatch. Verified in-browser (playwright): 2-hand
      page 4♠ 2% / 3NT 42% with live strain+slider switching and correct per-strain reconciliation; normal
-     `1major-game-force` page band+picker hidden, CCA unregressed, 0 JS errors. 97 norn + dd/combo tests
+     `1major-game-force` page band+picker hidden, CCA unregressed, 0 JS errors. 97 norn + dealsolve/combo tests
      pass, lint clean.
    - **CONSTRAINED SAMPLING DONE (2026-07-12).** `sample_grid`/`sample_contract` take an optional
      `constraints: []Card_Constraint` (a DEFENDER shape inference: `{seat, suit, min, max}` card-count
@@ -920,7 +945,7 @@ DDS-sampling is what makes the 2-hand view analytically first-class (its own "pa
      before the tenace) **100%** → `--lead E:KS` (offside) **3%** — the textbook finesse swing.
      `test_held_card_conditions` (10 dd tests).
    - **LIVE IN-PAGE LEAD PICKER DONE (2026-07-12).** Confirmed the design finding — conditioning on a lead
-     is a FILTER over the solved samples, not a re-solve. `dd.sample_lead_grids` does ONE sample pass and
+     is a FILTER over the solved samples, not a re-solve. `dealsolve.sample_lead_grids` does ONE sample pass and
      returns `Lead_Grids{base, seat[Seat][52]Lead_Card_Hist, n}`: the base best-of-pair grid PLUS, per
      DEFENDER seat per card, the best-of-pair trick histogram over the layouts where that defender holds the
      card (each sample tallies its 13 held cards per defender — no extra solves). `pbn_analyse --html`
@@ -952,10 +977,10 @@ DDS-sampling is what makes the 2-hand view analytically first-class (its own "pa
      active board). Text prints a `Board i of N` report per board. `run()` refactored around `sample_board`
      (per-board sampling + constraint validation + contract resolution, returns `Board_Sample`) shared by
      both paths. Constraints (`--void/--len/--lead`) require a SINGLE board (they name a specific board's
-     seats/cards) — errored otherwise. **Two bugs fixed on the way:** (1) `dd.sample_lead_grids` now writes
+     seats/cards) — errored otherwise. **Two bugs fixed on the way:** (1) `dealsolve.sample_lead_grids` now writes
      through a caller `^Lead_Grids` (it is ~118 KB; returning by value down the deeper call chain
      stack-overflowed → segfault); `Board_Sample.leads` is a heap pointer (`board_sample_free`). (2) the DDS
-     `defer dd.shutdown()` was inside the `if sample>0` block scope so it fired right after `init` (before
+     `defer dealsolve.shutdown()` was inside the `if sample>0` block scope so it fired right after `init` (before
      any sampling → segfault); moved to `run()` scope. Verified in-browser: a 2-board file → 2 slides,
      Board 1 auto-3NT 44% / Board 2 auto-6NT 100%, each its own picker + lead menu (53 opts; board 1
      correctly omits K♠ = a known card), nav switches the CCA. 11 dd + 97 norn tests, lint clean.
@@ -965,7 +990,7 @@ DDS-sampling is what makes the 2-hand view analytically first-class (its own "pa
      finds a match on try 1, so a big cap is free there; 50k makes anything down to ~0.05% robust while a
      genuinely impossible set still terminates fast (~0.1 s) and fails cleanly. Error message reworded to
      "too rare or impossible". Verified: `--void E:H --lead W:AC` now samples (4S 0%, both conditions noted).
-   - **AUTO-CONTRACT DONE (2026-07-12).** `--contract` is now OPTIONAL: omit it and `dd.best_contract(grid)`
+   - **AUTO-CONTRACT DONE (2026-07-12).** `--contract` is now OPTIONAL: omit it and `dealsolve.best_contract(grid)`
      picks the contract maximising EXPECTED SCORE = P(make) × `contract_score` (neutral/undoubled; rewards
      making often AND being worth bidding — a cold 3NT beats 2NT, a 55% game beats a 95% part-score, a
      strong hand surfaces a slam). The CLI notes the auto-pick; the html bake seeds the picker's default
@@ -1042,15 +1067,15 @@ covers, win the A; else finesse"), which is fuzzy to render. Multi-session, part
 ### Option C — entry-aware lines + a suit-combination REFERENCE library (✅ DONE 2026-07-19 — see ★★★ banner + `SUIT_COMBINATION_ENCYCLOPEDIA_HANDOFF.md`)
 
 **✅ BUILT & WIRED (2026-07-19).** The reference-library half of Option C is done: the BridgeHands
-suit-combination tables are baked into `combo/suit_encyclopedia.odin` (677 holdings), looked up by an
-ENGINE-derived canonical key (`enc_key` = serialised `sd_best_joint_table`, 0 false merges, 26% coverage),
-and wired as an OVERRIDE of the card-page line label + tooltip (`encyclopedia_override`). Full detail in
+suit-combination tables are baked into `suitbook/suitbook.odin` (677 holdings), looked up by an
+ENGINE-derived canonical key (`combo.book_key` = serialised `sd_best_joint_table`, 0 false merges, 26% coverage),
+and wired as an OVERRIDE of the card-page line label + tooltip (`combo.book_override`). Full detail in
 `SUIT_COMBINATION_ENCYCLOPEDIA_HANDOFF.md`. The entry-aware-lines half (parameterising the engine by entry
 count) is NOT built and stays optional — DDS sampling already covers realism. The design sketch below is kept
 for context.
 
 **Status change:** Option C was "later; worth examining." It is now the **recommended first realism
-deliverable for the 2-hand (declarer + dummy) advisor** — because with only two hands there is no `dd`
+deliverable for the 2-hand (declarer + dummy) advisor** — because with only two hands there is no `dealsolve`
 par to cross-check combo's optimism, and the FREE-ENTRIES assumption (assumption 1) is that optimism's
 single biggest source. The entry-count refinement (below) is what makes the solo single-dummy numbers
 materially honest. Read this section together with "★ NEXT MAJOR LINE OF WORK" above.
@@ -1089,7 +1114,7 @@ hands the 2-hand advisor needs).
 
 **4-hand deals (Stage B1).** A fully-known PBN deal now takes the EXACT double-dummy path instead of
 bailing "Not a 2-hand board": `board_fully_known` → `render_full_deal_body` (HTML) / `report_full_deal`
-(text) reuse the sim card-page flow — `norn.render_deal_html_cards` (4 hands face-up) + `dd.annotate`
+(text) reuse the sim card-page flow — `norn.render_deal_html_cards` (4 hands face-up) + `dealsolve.annotate`
 (one `CalcDDtable` of the ACTUAL deal → the `.par` caption: par + NS-makeable + the CCA slider
 `data-target`) + `combo.annotate` on the real deal (both partnerships' CCA). DDS is inited when any
 board is full (not only `--sample`). Page title reflects content (advisor / "Bridge deal analysis
@@ -1098,11 +1123,11 @@ board is full (not only `--sample`). Page title reflects content (advisor / "Bri
 
 **Stage B2 — exact-DD contract explorer on full deals DONE 2026-07-16.** The B1 page rendered par +
 makeable + CCA but the ♠♥♦♣NT picker, trick slider, and green band stayed dark (they only wake for a
-`data-sim` grid). Now `dd.exact_grid(deal)` (`dd/sample.odin`) returns a `Grid_Result` whose every strain
+`data-sim` grid). Now `dealsolve.exact_grid(deal)` (`dealsolve/sample.odin`) returns a `Grid_Result` whose every strain
 is a SPIKE at the NS double-dummy trick count (`max(resTable[strain][N|S])`), `n=1` — the exact census, no
-sampling; it reuses `solve_table`'s per-board cache (`dd.annotate` just solved the same deal).
+sampling; it reuses `solve_table`'s per-board cache (`dealsolve.annotate` just solved the same deal).
 `render_full_deal_body` bakes it via `write_exact_sim_json` (`{"n":1,"exact":true,"lvl","strain","g"}`,
-preselecting NS's best-making contract) onto a hidden **`.sim-exact`** div — `dd.annotate` owns the `.par`,
+preselecting NS's best-making contract) onto a hidden **`.sim-exact`** div — `dealsolve.annotate` owns the `.par`,
 so the grid rides its own element and `render.odin` now reads `el._sim` from ANY `[data-sim]` in the slide
 (2-hand `.par` or full-deal `.sim-exact`). `simBand` gates on `sim.exact`: shows "Double-dummy (exact):
 N♠ **makes/fails** (known deal, both defenders visible)", NO sampling ± / deal count, NO misguess-tax rung
@@ -1143,13 +1168,13 @@ already-tested combo describers):**
 1. **Thread tax → per-suit render.** `Board_Sample` already carries `bs.tax`/`bs.tax_ok`. Pass the pivot
    set into the per-suit annotation path at the `combo.annotate` call site in `pbn_analyse.odin` (~line
    737), or overlay after it. `tax.pivots[i].card` names the guessed suit(s) and `tax.tax_pts` the cost.
-2. **Append a guess clause** in/around `describe_suit_line` (`combo/combo.odin:1360`) for any suit holding
+2. **Append a guess clause** in/around `describe_suit_line` (`norn:combo/combo.odin:1360`) for any suit holding
    a tax pivot: e.g. "— blind two-way guess (~50/50); a misguess taxes the contract N%". Reuse the pivot
    card + `tax_pts`. Keep the NO-apostrophe / NO-double-quote rule (tips live in single-quoted HTML attrs).
 3. **Emit.** Bake the clause into the existing `data-{ns,ew}-tips` strings server-side (simplest, no client
    change); the render.odin tooltip (`.cca-tip`) shows it for free. (Alt: a parallel `data-*-guess` attr
    the client merges — only if server-side bake is awkward.)
-4. **Tests.** combo/lines test: the describer includes the guess clause IFF a pivot sits in that suit, and
+4. **Tests.** norn:combo/lines test: the describer includes the guess clause IFF a pivot sits in that suit, and
    omits it otherwise (no false clause on guess-free suits). Extend `just test-golden` with a TIPS fixture
    on the two-way ♠Q board so the narration string is pinned byte-for-byte like `data-sim` already is.
 
@@ -1208,9 +1233,9 @@ These reference this project's specific `data-ns`, `data-ns-sd`, `data-ns-atl`, 
 **Why not now:** combo is still evolving; the analysis API (especially Phase 2 / optimal search)
 will change. Moving to norn implies a stability contract. The rendering and analysis are
 co-evolving. Revisit after Phase 3 (if any) is complete and the API has been stable for one
-season of use. See `PERFORMANCE.md` §9 for threading implications of the same split.
+season of use. See `~/dev/norn/combo/PERFORMANCE.md` §9 for threading implications of the same split.
 
-## Performance / threading (see `PERFORMANCE.md`)
+## Performance / threading (see `~/dev/norn/combo/PERFORMANCE.md`)
 
 `combo.annotate(.Html_Cards)` is the render hot path — optimised 471 → **12.6 ms/deal**. Latest work: a
 process-lifetime `thread.Pool` runs each deal's **16 per-suit tasks** (8 double-dummy census suits + 8
@@ -1218,7 +1243,7 @@ single-dummy candidate gathers, NS+EW) concurrently, assembled on the caller via
 `finish_census`/`finish_sd` seams; each worker keeps its minimax memos + a temp arena in thread-local storage
 (zero heap allocs/deal, freed once by `combo.shutdown`). The serial reference (`-define:COMBO_THREADS=false`)
 stays byte-identical — the parity gate. Full account (including the two measurement-falsified premises: the
-convolution cost, and coarse-threading spawn overhead) in `PERFORMANCE.md` §0 / §9.4.
+convolution cost, and coarse-threading spawn overhead) in `~/dev/norn/combo/PERFORMANCE.md` §0 / §9.4.
 
 ## Reference
 

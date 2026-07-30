@@ -57,9 +57,10 @@ import "core:os"
 import "core:strconv"
 import "core:strings"
 
-import "combo"
-import "dd"
+import "dealsolve"
+import "norn:combo"
 import "norn:norn"
+import "suitbook"
 
 main :: proc() {
 	os.exit(run())
@@ -67,6 +68,9 @@ main :: proc() {
 
 run :: proc() -> int {
 	defer combo.shutdown() // free combo's worker pool if the HTML annotate spun it up (no-op otherwise)
+	// This project's published suit-combination table; combo is engine-only until it is registered (see
+	// combo/book.odin). Its key index is freed by the `combo.shutdown` above, via the provider.
+	combo.set_suit_book(suitbook.provider())
 
 	args, arg_err := parse_args(os.args[1:])
 	defer delete(args.constraints)
@@ -106,10 +110,10 @@ run :: proc() -> int {
 	}
 
 	// --contract applies to every board (empty -> auto-pick per board). Parse it once, fail fast.
-	contract: dd.Contract
+	contract: dealsolve.Contract
 	has_contract := false
 	if args.contract != "" {
-		c, c_ok := dd.parse_contract(args.contract)
+		c, c_ok := dealsolve.parse_contract(args.contract)
 		if !c_ok {
 			fmt.eprintfln("pbn_analyse: could not parse --contract %q (expected e.g. 4H, 3NT)", args.contract)
 			return 1
@@ -118,7 +122,7 @@ run :: proc() -> int {
 	}
 
 	// DDS lifecycle: init once if ANY board needs the solver — either --sample (2-hand advisor) OR a
-	// fully-known 4-hand deal (exact double-dummy via dd.annotate). The shutdown defer must sit at RUN scope
+	// fully-known 4-hand deal (exact double-dummy via dealsolve.annotate). The shutdown defer must sit at RUN scope
 	// (not inside the if-block, or it would fire immediately after init — before any board solves).
 	needs_dds := args.sample > 0
 	if !needs_dds {
@@ -130,11 +134,11 @@ run :: proc() -> int {
 		}
 	}
 	if needs_dds {
-		dd.init()
+		dealsolve.init()
 	}
 	defer {
 		if needs_dds {
-			dd.shutdown()
+			dealsolve.shutdown()
 		}
 	}
 
@@ -163,13 +167,13 @@ run :: proc() -> int {
 // `leads` is heap-allocated (~118 KB — kept off the stack); the caller frees it with `board_sample_free`.
 Board_Sample :: struct {
 	have:     bool,
-	grid:     dd.Grid_Result,
-	leads:    ^dd.Lead_Grids,
-	contract: dd.Contract,
+	grid:     dealsolve.Grid_Result,
+	leads:    ^dealsolve.Lead_Grids,
+	contract: dealsolve.Contract,
 	auto:     bool, // contract was auto-picked (no --contract)
-	tax:      dd.Tax_Result, // the misguess-tax achievable-SD estimate for `contract` (valid iff tax_ok)
+	tax:      dealsolve.Tax_Result, // the misguess-tax achievable-SD estimate for `contract` (valid iff tax_ok)
 	tax_ok:   bool,
-	lead_tax: ^dd.Lead_Tax, // per-opening-lead conditioned tax for `contract` (heap; freed with the sample)
+	lead_tax: ^dealsolve.Lead_Tax, // per-opening-lead conditioned tax for `contract` (heap; freed with the sample)
 }
 
 // Release a Board_Sample's heap grids (no-op when sampling was off).
@@ -191,7 +195,7 @@ sample_board :: proc(
 	board: norn.Parsed_Board,
 	side: bit_set[norn.Seat],
 	args: ^Args,
-	contract: dd.Contract,
+	contract: dealsolve.Contract,
 	has_contract: bool,
 ) -> (
 	bs: Board_Sample,
@@ -224,7 +228,7 @@ sample_board :: proc(
 			return {}, "--lead card is already in a known hand (only defenders' unknown cards can be led)"
 		}
 	}
-	cons := dd.Sample_Constraints {
+	cons := dealsolve.Sample_Constraints {
 		shape = args.constraints[:],
 		held  = args.held[:],
 	}
@@ -233,14 +237,22 @@ sample_board :: proc(
 	// run the full cap). The lead grids and the misguess tax are then pure FILTERS over that one solved batch
 	// (they otherwise each draw+solve the identical seeded layouts), so a board pays for its samples once, not
 	// twice. `gating` is the contract that gated the stop — the auto-pick when the caller gave none.
-	s, gating, sok := dd.solve_sample_adaptive(board, side, args.sample, args.seed, cons, contract, has_contract)
+	s, gating, sok := dealsolve.solve_sample_adaptive(
+		board,
+		side,
+		args.sample,
+		args.seed,
+		cons,
+		contract,
+		has_contract,
+	)
 	if !sok {
 		return {},
 			"DDS sampling failed — the constraints are too rare or impossible for these hands (could not draw enough consistent deals)"
 	}
-	defer dd.solved_sample_free(&s)
-	lg := new(dd.Lead_Grids)
-	dd.lead_grids_from_sample(&s, lg)
+	defer dealsolve.solved_sample_free(&s)
+	lg := new(dealsolve.Lead_Grids)
+	dealsolve.lead_grids_from_sample(&s, lg)
 	bs.leads = lg
 	bs.grid = lg.base
 	bs.have = true
@@ -252,33 +264,33 @@ sample_board :: proc(
 	// Achievable single-dummy (the misguess-tax 4th rung) for the resolved contract — a FILTER over the SAME
 	// solved batch as the lead grids (no extra solves). A failure just drops the achievable rung — the ceiling
 	// verdict still stands.
-	bs.tax, bs.tax_ok = dd.tax_from_sample(board, &s, bs.contract)
+	bs.tax, bs.tax_ok = dealsolve.tax_from_sample(board, &s, bs.contract)
 	// Per-opening-lead conditioned tax for the resolved contract — another FILTER over the same solved batch
 	// (no extra solves). Lets the card page show a coupled, lead-conditioned achievable when a lead is picked
 	// (a lead that reveals the trapped honour resolves its guess → tax 0). Heap-held like `leads`.
-	lt := new(dd.Lead_Tax)
-	dd.lead_tax_from_sample(board, &s, bs.contract, lt)
+	lt := new(dealsolve.Lead_Tax)
+	dealsolve.lead_tax_from_sample(board, &s, bs.contract, lt)
 	bs.lead_tax = lt
 	return bs, ""
 }
 
 // Text report for one board: the combo census + SD summary, and (with --sample) the simulated verdict.
 // True iff all four hands are present — a complete deal, not the declarer+dummy (2-hand) advisor input.
-// Such a board takes the EXACT double-dummy path (dd.annotate solves the actual deal) rather than the
+// Such a board takes the EXACT double-dummy path (dealsolve.annotate solves the actual deal) rather than the
 // DDS-sampling advisor (which models the unknown defenders).
 board_fully_known :: proc(board: norn.Parsed_Board) -> bool {
 	return board.known == {.North, .East, .South, .West}
 }
 
 // The contract the board itself names (from a LIN `mb|` auction or PBN `[Contract]`/`[Declarer]`) as a
-// dd.Contract plus its declaring seat. ok=false when the board named no contract. Maps norn's contract
-// strain onto dd's (dds) strain — the two enums order their variants differently, so map by name.
-board_contract :: proc(board: norn.Parsed_Board) -> (c: dd.Contract, declarer: norn.Seat, ok: bool) {
+// dealsolve.Contract plus its declaring seat. ok=false when the board named no contract. Maps norn's contract
+// strain onto dealsolve's (dds) strain — the two enums order their variants differently, so map by name.
+board_contract :: proc(board: norn.Parsed_Board) -> (c: dealsolve.Contract, declarer: norn.Seat, ok: bool) {
 	bc, has := board.contract.?
 	if !has {
 		return {}, .North, false
 	}
-	strain: dd.Strain
+	strain: dealsolve.Strain
 	switch bc.strain {
 	case .Clubs:
 		strain = .Clubs
@@ -291,21 +303,21 @@ board_contract :: proc(board: norn.Parsed_Board) -> (c: dd.Contract, declarer: n
 	case .NoTrumps:
 		strain = .NT
 	}
-	return dd.Contract{level = bc.level, strain = strain}, bc.declarer, true
+	return dealsolve.Contract{level = bc.level, strain = strain}, bc.declarer, true
 }
 
 // Text report for a fully-known 4-hand deal: the layout, then the EXACT double-dummy verdict (par +
-// NS-makeable, from dd.annotate solving the actual deal — no sampling, no ceiling/achievable gap), then the
+// NS-makeable, from dealsolve.annotate solving the actual deal — no sampling, no ceiling/achievable gap), then the
 // per-partnership combo (CCA) census. Uses the temp allocator; the whole block prints at once.
 report_full_deal :: proc(board: norn.Parsed_Board) {
 	b := strings.builder_make(context.temp_allocator)
 	norn.render_deal_pretty(&b, board.deal)
-	dd.annotate(&b, board.deal, .Pretty)
+	dealsolve.annotate(&b, board.deal, .Pretty)
 	combo.annotate(&b, board.deal, .Pretty)
 	fmt.println(strings.to_string(b))
 }
 
-report_board :: proc(board: norn.Parsed_Board, args: ^Args, contract: dd.Contract, has_contract: bool) {
+report_board :: proc(board: norn.Parsed_Board, args: ^Args, contract: dealsolve.Contract, has_contract: bool) {
 	a, side, ok := combo.analyse_parsed_board(board)
 	if !ok {
 		if board_fully_known(board) {
@@ -333,9 +345,9 @@ report_board :: proc(board: norn.Parsed_Board, args: ^Args, contract: dd.Contrac
 	// If sampling ran, the whole-hand simulated E[total] is the honest cross-check for the naive
 	// census — thread it into the caveat so the over-count is named right where the warning lives.
 	sim_total: Maybe(f64)
-	sample: dd.Sample_Result
+	sample: dealsolve.Sample_Result
 	if bs.have {
-		sample = dd.result_for(bs.grid, bs.contract)
+		sample = dealsolve.result_for(bs.grid, bs.contract)
 		sim_total = sample.mean_tricks
 	}
 
@@ -517,15 +529,15 @@ suit_word :: proc(s: norn.Suit) -> string {
 print_sample_verdict :: proc(
 	a: ^combo.Deal_Analysis,
 	sd: ^combo.Sd_Bundle,
-	s: ^dd.Sample_Result,
+	s: ^dealsolve.Sample_Result,
 	auto_contract: bool,
-	tax: dd.Tax_Result,
+	tax: dealsolve.Tax_Result,
 	tax_ok: bool,
-	leads: ^dd.Lead_Grids,
+	leads: ^dealsolve.Lead_Grids,
 	side: bit_set[norn.Seat],
-	contract: dd.Contract,
+	contract: dealsolve.Contract,
 ) {
-	label := dd.contract_label(dd.Contract{level = s.level, strain = s.strain}) // temp-allocated
+	label := dealsolve.contract_label(dealsolve.Contract{level = s.level, strain = s.strain}) // temp-allocated
 	fmt.println("\nWhole-hand (simulated) — the honest whole-deal verdict:")
 	if auto_contract {
 		fmt.printfln("  (no --contract given; auto-picked %s = best expected score over the sample)", label)
@@ -542,7 +554,7 @@ print_sample_verdict :: proc(
 	// lead sub-grids. Only surfaced when it costs something material vs the baseline (a killing lead worth
 	// warning about); a rare lead's sub-sample `n` is shown so its wider ± is honest.
 	if leads != nil {
-		if card, wpct, wn, base_pct, ok := dd.worst_lead(leads, contract, side); ok && base_pct - wpct >= 3 {
+		if card, wpct, wn, base_pct, ok := dealsolve.worst_lead(leads, contract, side); ok && base_pct - wpct >= 3 {
 			fmt.printfln(
 				"  Worst opening lead: %s -> %.0f%% (vs %.0f%% average, %d deals) — plan for it.",
 				card_word(card),
@@ -582,8 +594,8 @@ Args :: struct {
 	sample:      int,
 	contract:    string,
 	seed:        u64,
-	constraints: [dynamic]dd.Card_Constraint, // defender-shape inferences from --void / --len
-	held:        [dynamic]dd.Held_Card, // specific-card locations from --lead / --card
+	constraints: [dynamic]dealsolve.Card_Constraint, // defender-shape inferences from --void / --len
+	held:        [dynamic]dealsolve.Held_Card, // specific-card locations from --lead / --card
 }
 
 // Split the argv tail into an `Args` and an error message ("" == ok). `--file` wins over positionals;
@@ -698,7 +710,7 @@ parse_args :: proc(args: []string) -> (out: Args, err: string) {
 }
 
 // Parse a `--void <seat>:<suit>` spec into a Card_Constraint (that seat holds ZERO of the suit).
-parse_void_spec :: proc(s: string) -> (c: dd.Card_Constraint, ok: bool) {
+parse_void_spec :: proc(s: string) -> (c: dealsolve.Card_Constraint, ok: bool) {
 	parts := strings.split(strings.trim_space(s), ":", context.temp_allocator)
 	if len(parts) != 2 {
 		return {}, false
@@ -707,11 +719,11 @@ parse_void_spec :: proc(s: string) -> (c: dd.Card_Constraint, ok: bool) {
 	if !sk {
 		return {}, false
 	}
-	return dd.Card_Constraint{seat = seat, suit = suit, min = 0, max = 0}, true
+	return dealsolve.Card_Constraint{seat = seat, suit = suit, min = 0, max = 0}, true
 }
 
 // Parse a `--len <seat>:<suit>:<spec>` where <spec> is `n` (exactly n), `n-m` (n..m), or `n+` (n..13).
-parse_len_spec :: proc(s: string) -> (c: dd.Card_Constraint, ok: bool) {
+parse_len_spec :: proc(s: string) -> (c: dealsolve.Card_Constraint, ok: bool) {
 	parts := strings.split(strings.trim_space(s), ":", context.temp_allocator)
 	if len(parts) != 3 {
 		return {}, false
@@ -745,12 +757,12 @@ parse_len_spec :: proc(s: string) -> (c: dd.Card_Constraint, ok: bool) {
 	if lo < 0 || hi > 13 || lo > hi {
 		return {}, false
 	}
-	return dd.Card_Constraint{seat = seat, suit = suit, min = lo, max = hi}, true
+	return dealsolve.Card_Constraint{seat = seat, suit = suit, min = lo, max = hi}, true
 }
 
 // Parse a `--lead <seat>:<card>` spec into a Held_Card (that defender holds/led the card). The card is
 // rank-first (norn convention): "KH" = king of hearts, "TS" = ten of spades.
-parse_lead_spec :: proc(s: string) -> (h: dd.Held_Card, ok: bool) {
+parse_lead_spec :: proc(s: string) -> (h: dealsolve.Held_Card, ok: bool) {
 	parts := strings.split(strings.trim_space(s), ":", context.temp_allocator)
 	if len(parts) != 2 || len(parts[0]) != 1 {
 		return {}, false
@@ -760,7 +772,7 @@ parse_lead_spec :: proc(s: string) -> (h: dd.Held_Card, ok: bool) {
 	if !seat_ok || !card_ok {
 		return {}, false
 	}
-	return dd.Held_Card{seat = seat, card = card}, true
+	return dealsolve.Held_Card{seat = seat, card = card}, true
 }
 
 // Resolve a seat letter (N/E/S/W) and a suit letter (S/H/D/C) to their norn enums.
@@ -1190,7 +1202,7 @@ write_html :: proc(
 	path: string,
 	boards: []norn.Parsed_Board,
 	args: ^Args,
-	contract: dd.Contract,
+	contract: dealsolve.Contract,
 	has_contract: bool,
 ) -> string {
 	b := strings.builder_make()
@@ -1223,27 +1235,27 @@ write_html :: proc(
 }
 
 // Render a fully-known 4-hand deal into the page builder `b`: all four hands face-up, then the EXACT
-// double-dummy caption (`dd.annotate` Html_Cards: the `.par` div with par + NS-makeable + the CCA slider's
+// double-dummy caption (`dealsolve.annotate` Html_Cards: the `.par` div with par + NS-makeable + the CCA slider's
 // `data-target`, from ONE solve of the actual deal), then the per-partnership combo (CCA) census for BOTH
 // sides (`combo.annotate` on the real deal). No `data-sim`: with the deal known, double-dummy is the exact
 // verdict — there is no sampling ceiling to show and no misguess-tax rung (that models unknown defenders).
-// This is exactly the sim card-page flow (dd.annotate then combo.annotate) for a board fed as PBN.
+// This is exactly the sim card-page flow (dealsolve.annotate then combo.annotate) for a board fed as PBN.
 render_full_deal_body :: proc(
 	b: ^strings.Builder,
 	board: norn.Parsed_Board,
 	args: ^Args,
-	contract: dd.Contract,
+	contract: dealsolve.Contract,
 	has_contract: bool,
 ) {
 	norn.render_deal_html_cards(b, board.deal, false, board.known)
-	dd.annotate(b, board.deal, .Html_Cards)
+	dealsolve.annotate(b, board.deal, .Html_Cards)
 	// Exact double-dummy grids (one per side) so the card page's contract picker + trick slider come alive
 	// on the known deal (spikes at each strain's DD tricks; the band relabels to "double-dummy (exact)").
-	// Carried on its own hidden element — dd.annotate owns the `.par` div — which render.odin reads as the
+	// Carried on its own hidden element — dealsolve.annotate owns the `.par` div — which render.odin reads as the
 	// board's data-sim source. With `--sample` we ALSO bake the BLIND advisor per side (sample_board ignores
 	// the known defenders and randomises the other 26, i.e. "play it as if you can't see all four hands"),
-	// so the page can toggle exact ↔ blind for either partnership. solve_table is cached (dd.annotate's).
-	if ns_grid, ew_grid, ok := dd.exact_grids(board.deal); ok {
+	// so the page can toggle exact ↔ blind for either partnership. solve_table is cached (dealsolve.annotate's).
+	if ns_grid, ew_grid, ok := dealsolve.exact_grids(board.deal); ok {
 		strings.write_string(b, `<div class="sim-exact" hidden data-sim='`)
 		write_exact_sim_json(b, &ns_grid, &ew_grid, board)
 		strings.write_string(b, `'`)
@@ -1268,7 +1280,7 @@ write_blind_sides_json :: proc(
 	b: ^strings.Builder,
 	board: norn.Parsed_Board,
 	args: ^Args,
-	contract: dd.Contract,
+	contract: dealsolve.Contract,
 	has_contract: bool,
 ) {
 	// The recorded opening lead pre-selects the picker, but only on the side it defends against (its leader is
@@ -1331,10 +1343,10 @@ write_blind_sides_json :: proc(
 // N/S↔E/W toggle — `ns`/`ew` each carry that side's per-strain spike grid. `lvl`/`strain` preselect the
 // picker at the contract the deal actually names (from `[Contract]`), else NS's best-making contract
 // (most tricks; ties -> NT by iteration order).
-write_exact_sim_json :: proc(b: ^strings.Builder, ns_grid, ew_grid: ^dd.Grid_Result, board: norn.Parsed_Board) {
-	best_strain := dd.Strain.NT
+write_exact_sim_json :: proc(b: ^strings.Builder, ns_grid, ew_grid: ^dealsolve.Grid_Result, board: norn.Parsed_Board) {
+	best_strain := dealsolve.Strain.NT
 	best_tricks := 0
-	for st in dd.Strain {
+	for st in dealsolve.Strain {
 		for k := 13; k >= 0; k -= 1 {
 			if ns_grid.hist[st][k] > 0 {
 				if k > best_tricks {
@@ -1369,7 +1381,7 @@ render_board_body :: proc(
 	b: ^strings.Builder,
 	board: norn.Parsed_Board,
 	args: ^Args,
-	contract: dd.Contract,
+	contract: dealsolve.Contract,
 	has_contract: bool,
 ) {
 	_, side, ok := combo.analyse_parsed_board(board)
@@ -1437,18 +1449,18 @@ render_board_body :: proc(
 // (it bakes data-sim-leads as a sibling attribute instead) and passes no leads.
 write_sim_json :: proc(
 	b: ^strings.Builder,
-	sim: ^dd.Grid_Result,
-	contract: dd.Contract,
-	tax: dd.Tax_Result,
+	sim: ^dealsolve.Grid_Result,
+	contract: dealsolve.Contract,
+	tax: dealsolve.Tax_Result,
 	tax_ok: bool,
-	leads: ^dd.Lead_Grids = nil,
+	leads: ^dealsolve.Lead_Grids = nil,
 	side: bit_set[norn.Seat] = {},
 	lead_seat: u8 = 0,
 	lead_card: string = "",
-	lead_tax: ^dd.Lead_Tax = nil,
+	lead_tax: ^dealsolve.Lead_Tax = nil,
 ) {
 	// Braces must be written literally — Odin's fmt reads `{` in a format string as an argument
-	// reference (see dd.odin's PBN-comment note), so only value fields go through sbprintf.
+	// reference (see dealsolve.odin's PBN-comment note), so only value fields go through sbprintf.
 	strings.write_byte(b, '{')
 	fmt.sbprintf(b, `"n":%d,"lvl":%d,"strain":"%s"`, sim.n, contract.level, strain_key(contract.strain))
 	// The achievable (misguess-tax) rung for this baked contract: the make-% under blind play plus the
@@ -1473,7 +1485,7 @@ write_sim_json :: proc(
 	// The recorded opening lead, pre-selecting the picker (client seeds ccaLead from it until the user picks).
 	// Emitted only when the leader is a DEFENDER of this side, keyed like a leads-map entry ("E","3C").
 	if lead_seat != 0 && lead_card != "" {
-		// Braces literal: fmt reads `{` in a format string as a verb (see write_sim_guess_json / dd.odin note).
+		// Braces literal: fmt reads `{` in a format string as a verb (see write_sim_guess_json / dealsolve.odin note).
 		strings.write_string(b, `,"lead":{`)
 		fmt.sbprintf(b, `"seat":"%c","card":"%s"`, lead_seat, lead_card)
 		strings.write_byte(b, '}')
@@ -1492,7 +1504,7 @@ write_sim_json :: proc(
 // True iff some blind two-way guess costs at least 1% at this contract — i.e. the guess map would carry a
 // suit. Gates the `data-sim-guess` attribute so a board whose guesses are all cushioned (non-pivotal) emits
 // nothing rather than an empty object.
-tax_has_narratable_guess :: proc(tax: dd.Tax_Result) -> bool {
+tax_has_narratable_guess :: proc(tax: dealsolve.Tax_Result) -> bool {
 	for i in 0 ..< tax.n_pivots {
 		if tax.ceiling_pct - tax.pivots[i].achievable >= 1 {
 			return true
@@ -1501,7 +1513,7 @@ tax_has_narratable_guess :: proc(tax: dd.Tax_Result) -> bool {
 	return false
 }
 
-write_sim_guess_json :: proc(b: ^strings.Builder, side: bit_set[norn.Seat], tax: dd.Tax_Result) {
+write_sim_guess_json :: proc(b: ^strings.Builder, side: bit_set[norn.Seat], tax: dealsolve.Tax_Result) {
 	strings.write_byte(b, '{')
 	sk := "ns"
 	if side == combo.EW_SIDE {
@@ -1538,11 +1550,11 @@ write_sim_guess_json :: proc(b: ^strings.Builder, side: bit_set[norn.Seat], tax:
 
 // Write the `g` object — the five per-strain NORMALISED trick distributions p[k] (k=0..13) — for a
 // histogram grid divided by sample count `n`. Shared by the contract grid and the lead sub-grids.
-write_g_object :: proc(b: ^strings.Builder, hist: [dd.Strain][14]int, n: int) {
+write_g_object :: proc(b: ^strings.Builder, hist: [dealsolve.Strain][14]int, n: int) {
 	strings.write_byte(b, '{')
 	keyed := [5]struct {
 		key:    string,
-		strain: dd.Strain,
+		strain: dealsolve.Strain,
 	}{{"s", .Spades}, {"h", .Hearts}, {"d", .Diamonds}, {"c", .Clubs}, {"nt", .NT}}
 	for e, i in keyed {
 		if i > 0 {
@@ -1573,9 +1585,9 @@ LEAD_TAX_MIN_N :: 20
 
 write_leads_json :: proc(
 	b: ^strings.Builder,
-	leads: ^dd.Lead_Grids,
+	leads: ^dealsolve.Lead_Grids,
 	side: bit_set[norn.Seat],
-	lead_tax: ^dd.Lead_Tax = nil,
+	lead_tax: ^dealsolve.Lead_Tax = nil,
 ) {
 	defenders := bit_set[norn.Seat]{.North, .East, .South, .West} - side
 	strings.write_byte(b, '{')
@@ -1661,7 +1673,7 @@ suit_key :: proc(s: norn.Suit) -> string {
 }
 
 // The card page's lowercase strain key for a dds.Strain.
-strain_key :: proc(s: dd.Strain) -> string {
+strain_key :: proc(s: dealsolve.Strain) -> string {
 	switch s {
 	case .Spades:
 		return "s"

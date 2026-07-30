@@ -30,8 +30,9 @@ import "core:sys/windows"
 import "core:time"
 
 
-import "combo"
+import "norn:combo"
 import "norn:norn"
+import "suitbook"
 
 COUNT_SUIT :: #config(COUNT_SUIT, 2_000) // per-suit Phase 1 and Phase 2 line benches
 COUNT_OPT :: #config(COUNT_OPT, 100) // per-suit optimal-search bench (heavier)
@@ -211,6 +212,10 @@ main :: proc() {
 	// Enable UTF-8 output in the Windows console
 	windows.SetConsoleOutputCP(.UTF8)
 
+	// Bench the same configuration the real programs run: combo with this project's published
+	// suit-combination table registered (an override lookup per suit, see suitbook/suitbook.odin).
+	combo.set_suit_book(suitbook.provider())
+
 	state: rand.Xoshiro256_Random_State
 	context.random_generator = norn.seeded_xoshiro(&state, 42)
 	for i in 0 ..< POOL {
@@ -300,7 +305,7 @@ main :: proc() {
 		}
 	}
 
-	// Derived ratios that motivate the §2 redundancy fix in PERFORMANCE.md.
+	// Derived ratios that motivate the §2 redundancy fix in norn combo/PERFORMANCE.md.
 	p2_sd_us := f64(time.duration_nanoseconds(opt_p2_sd_6m.duration)) / f64(COUNT_SUIT) / 1e3
 	p2_5l_us := f64(time.duration_nanoseconds(opt_p2_cands_6m.duration)) / f64(COUNT_SUIT) / 1e3
 	p1_us := f64(time.duration_nanoseconds(opt_p1_6m.duration)) / f64(COUNT_SUIT) / 1e3

@@ -6,7 +6,7 @@ package main
 	Where `bench.odin` micro-benchmarks the combo procs in isolation, this times the WHOLE realistic
 	export of ONE scenario the way the sim actually runs it: reject-sample deals until `COUNT` pass the
 	scenario predicate AND the double-dummy filter, then render each to Html_Cards WITH the dd par
-	caption + the combo table (`dd.annotate` + `combo.annotate`). Exactly the work behind
+	caption + the combo table (`dealsolve.annotate` + `combo.annotate`). Exactly the work behind
 
 	    sim.exe -S slam-makes-dd --count 48 --format html-cards --dd
 
@@ -30,9 +30,10 @@ import "core:sys/windows"
 import "core:time"
 
 import "bidding"
-import "combo"
-import "dd"
+import "dealsolve"
+import "norn:combo"
 import "norn:norn"
+import "suitbook"
 
 E2E_SCENARIO :: #config(E2E_SCENARIO, "slam-makes-dd")
 E2E_COUNT :: #config(E2E_COUNT, 48)
@@ -40,9 +41,9 @@ E2E_ITERS :: #config(E2E_ITERS, 3)
 E2E_SEED :: #config(E2E_SEED, 42)
 E2E_MAX_ATTEMPTS :: 20_000_000 // matches cli's HTML_EXPORT_MAX_ATTEMPTS; a rare filter under-fills instead of hanging
 
-// The dd par caption followed by the combo table — the same annotator sim registers for this scenario.
+// The dealsolve par caption followed by the combo table — the same annotator sim registers for this scenario.
 e2e_annotate :: proc(b: ^strings.Builder, board: norn.Deal, format: norn.Output_Format) {
-	dd.annotate(b, board, format)
+	dealsolve.annotate(b, board, format)
 	combo.annotate(b, board, format)
 }
 
@@ -58,11 +59,14 @@ g_filter_solves: int
 // predicate let through to a solve).
 counting_slam_filter :: proc(board: norn.Deal) -> bool {
 	g_filter_solves += 1
-	return dd.ns_makes_slam(board)
+	return dealsolve.ns_makes_slam(board)
 }
 
 main :: proc() {
 	windows.SetConsoleOutputCP(.UTF8) // suit glyphs in the rendered output
+
+	// Same wiring as sim.odin: combo prefers this project's published table where it covers a holding.
+	combo.set_suit_book(suitbook.provider())
 
 	// Resolve the scenario predicate from this bidding system's registry.
 	predicate: norn.Predicate
@@ -90,8 +94,8 @@ main :: proc() {
 		)
 	}
 
-	dd.init()
-	defer dd.shutdown()
+	dealsolve.init()
+	defer dealsolve.shutdown()
 
 	b := strings.builder_make()
 	defer strings.builder_destroy(&b)

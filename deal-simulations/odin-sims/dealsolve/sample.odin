@@ -1,4 +1,4 @@
-package dd
+package dealsolve
 
 /*
 	sample.odin — the DDS-sampling whole-hand make-% engine for the 2-hand (declarer + dummy) advisor.
@@ -82,7 +82,7 @@ import "norn:norn"
 Strain :: dds.Strain
 
 // A parsed contract: level 1..7 and strain. Kept opaque to callers (the CLI parses a "4H" string via
-// parse_contract and passes this straight to sample_contract) so nothing outside `dd` touches dds types.
+// parse_contract and passes this straight to sample_contract) so nothing outside `dealsolve` touches dds types.
 Contract :: struct {
 	level:  int,
 	strain: Strain,
@@ -152,7 +152,7 @@ parse_strain :: proc(tok: string) -> (dds.Strain, bool) {
 	return .NT, false
 }
 
-// Render a contract as "4H" / "3NT" for captions and reports. Temp-allocated. strain_label (dd.odin)
+// Render a contract as "4H" / "3NT" for captions and reports. Temp-allocated. strain_label (dealsolve.odin)
 // gives S/H/D/C/NT.
 contract_label :: proc(c: Contract) -> string {
 	return fmt.tprintf("%d%s", c.level, strain_label(c.strain))
@@ -225,7 +225,7 @@ satisfies :: proc(board: norn.Deal, cons: Sample_Constraints) -> bool {
 // --- batched sampling: generate the constrained layouts, then DD-solve them through DDS's OWN thread pool.
 // One `CalcDDtable`-per-layout serial loop leaves every core but one idle; DDS instead parallelises a BATCH
 // internally via `CalcAllTables`. That is the only safe way to multithread DDS — its transposition tables
-// are process-global, so we must never call the solver from our own threads (see dd.odin). Splitting layout
+// are process-global, so we must never call the solver from our own threads (see dealsolve.odin). Splitting layout
 // GENERATION (pure seeded RNG) from SOLVING keeps the draw sequence — hence every tally — byte-identical to
 // the old loop, so this is a pure speedup. All three sampling passes below funnel through `sample_solved`.
 
@@ -673,7 +673,7 @@ sample_contract :: proc(
 // that side's double-dummy trick count (the better of its two declarers), n=1. There is nothing to sample —
 // the deal is known — so this is the EXACT double-dummy census, letting the card page's contract picker +
 // trick slider act as a live double-dummy explorer that follows the N/S↔E/W toggle. One solve for both
-// sides, reusing solve_table's per-board cache (dd.annotate has usually just solved this same deal). ok
+// sides, reusing solve_table's per-board cache (dealsolve.annotate has usually just solved this same deal). ok
 // mirrors solve_table (DDS must succeed).
 exact_grids :: proc(deal: norn.Deal) -> (ns: Grid_Result, ew: Grid_Result, ok: bool) {
 	res, rok := solve_table(deal)

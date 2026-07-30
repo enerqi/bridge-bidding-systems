@@ -1,10 +1,10 @@
-package dd
+package dealsolve
 
 /*
 	sample_test.odin — unit tests for the DDS-sampling whole-hand make-% engine (sample.odin).
 
 	Run (from odin-sims):
-	  odin test dd -collection:norn=<norn> -collection:dds=<dds> -out:target/debug/test-dd.exe
+	  odin test dealsolve -collection:norn=<norn> -collection:dds=<dds> -out:target/debug/test-dealsolve.exe
 	(the `test-dd` justfile recipe wires the collections.)
 
 	DDS is statically linked with no auto-init, so every test that solves must call `init()` first (it

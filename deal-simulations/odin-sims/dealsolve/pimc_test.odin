@@ -1,4 +1,4 @@
-package dd
+package dealsolve
 
 /*
 	pimc_test.odin — spike measurement + sanity for pimc.odin (the achievable single-dummy PIMC play-out).

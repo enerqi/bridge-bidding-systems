@@ -1,4 +1,4 @@
-package dd
+package dealsolve
 
 /*
 	dd — double-dummy analysis for the sim, bridging norn's card model to the odin-dds solver.
@@ -120,7 +120,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 	res, ok := solve_table(board)
 	if !ok {
 		if format == .Html_Handviewer || format == .Html_Cards {
-			strings.write_string(builder, "<!-- dd error: solve failed -->")
+			strings.write_string(builder, "<!-- dealsolve error: solve failed -->")
 		}
 		return
 	}
@@ -162,7 +162,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_par_opc_guide(builder, ns_par, have_par, ds, " &middot; ", true)
 		strings.write_string(builder, "</div>")
 		// Machine-readable form: full trick table as a comment (strain x N/E/S/W).
-		strings.write_string(builder, "<!-- dd tricks[strain]NESW")
+		strings.write_string(builder, "<!-- dealsolve tricks[strain]NESW")
 		for strain in dds.Strain {
 			fmt.sbprintf(builder, " %s:", strain_label(strain))
 			for hand in dds.Hand {

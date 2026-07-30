@@ -1,4 +1,4 @@
-package dd
+package dealsolve
 
 /*
 	tax.odin — the misguess-TAX estimator: a cheap, export-friendly ACHIEVABLE single-dummy make-%.

@@ -1,4 +1,4 @@
-package dd
+package dealsolve
 
 /*
 	pimc.odin — SPIKE: an achievable single-dummy make-% for the 2-hand advisor, via PIMC play-out.
@@ -19,7 +19,7 @@ package dd
 	  2. gap — how far the PIMC make-% drops below the DDS ceiling (is the honesty worth the cost?).
 	`pimc_test.odin` runs one representative board and logs both, next to sample.odin's ceiling.
 
-	Model / conventions reused from dd.odin + sample.odin:
+	Model / conventions reused from dealsolve.odin + sample.odin:
 	  - DDS `SolveBoard` scores the side ON LEAD (`first`): `score` = tricks for the leader's side from the
 	    current (possibly mid-trick) position to the end (see `declarer_makes`). So the player to move wants
 	    to MAXIMISE `score` iff it is on the leader's side, else MINIMISE it (`want_max` below).
