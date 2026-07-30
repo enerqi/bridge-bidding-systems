@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """golden_sim_json.py -- pin the card page's data-sim JSON contract (the string render.odin's simBand JS
-parses) against a committed fixture. write_sim_json in pbn_analyse.odin bakes the DDS-sampled trick grid
+parses) against a committed fixture. write_sim_json in analyse_deal.odin bakes the DDS-sampled trick grid
 PLUS the misguess-tax rung (ach/taxpts/pvt) into `data-sim='...'`; the seeded xoshiro RNG makes the whole
 emission byte-stable for a fixed board+seed+sample, so a golden diff catches any drift in the JSON shape
 (renamed keys, reordered fields, changed rounding) that would silently break the client.
 
 Regenerate the fixtures after an INTENTIONAL format/number change:
   just build-analyse   # or rely on the recipe below building it
-  ./target/release/pbn_analyse.exe --sample 120 --seed 7 --contract 3NT --html /tmp/g.html \
+  ./target/release/analyse_deal.exe --sample 120 --seed 7 --contract 3NT --html /tmp/g.html \
     '[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]'
   # then copy the data-sim / data-sim-guess bodies into tests/golden/*.json (see extract() below).
 
@@ -20,7 +20,7 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent  # odin-sims/
-EXE = ROOT / "target" / "release" / "pbn_analyse.exe"
+EXE = ROOT / "target" / "release" / "analyse_deal.exe"
 FIXTURE = ROOT / "tests" / "golden" / "two_way_q_3nt.datasim.json"
 GUESS_FIXTURE = ROOT / "tests" / "golden" / "two_way_q_3nt.simguess.json"
 JOINT_FIXTURE = ROOT / "tests" / "golden" / "two_way_q_3nt.nsjoint.json"
@@ -28,7 +28,7 @@ BOARD = '[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]'
 
 
 def extract(html: str, attr: str) -> str:
-    """First `attr='...'` body from the page (single-quoted, as pbn_analyse emits it)."""
+    """First `attr='...'` body from the page (single-quoted, as analyse_deal emits it)."""
     m = re.search(rf"{attr}='([^']*)'", html)
     return m.group(1) if m else ""
 

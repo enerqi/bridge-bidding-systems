@@ -72,17 +72,17 @@ format:
 	odinfmt -w .
 
 # lints the local library packages with -no-entry-point plus the two single-file programs. `dealsolve`,
-# `sim` and `pbn_analyse` pull in the `dds` collection (the DDS boundary); `bidding` and `suitbook` do not
+# `sim` and `analyse_deal` pull in the `dds` collection (the DDS boundary); `bidding` and `suitbook` do not
 # (`suitbook` is this project's published suit-combination table, plugged into `norn:combo`'s book hook).
 # The card-combination ENGINE itself now lives in norn (`norn:combo`) — lint it there.
 # ---
-# type check + vet + strict style (bidding, suitbook, dealsolve, sim.odin, pbn_analyse.odin)
+# type check + vet + strict style (bidding, suitbook, dealsolve, sim.odin, analyse_deal.odin)
 lint *args:
 	odin check bidding {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
 	odin check suitbook {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
 	odin check dealsolve {{norn}} {{dds}} -vet -vet-cast -strict-style -no-entry-point {{args}}
 	odin check sim.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style {{args}}
-	odin check pbn_analyse.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style {{args}}
+	odin check analyse_deal.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style {{args}}
 
 # run the deal generator (release). Pass CLI args through, e.g. `just run --scenario 1c-any -n 12`.
 run *args: mktarget_dirs
@@ -176,13 +176,14 @@ scenarios:
 # Prefer the BARE `N:...` deal form over the `[Deal "..."]` wrapper: on Windows `odin run` strips the
 # wrapper's literal double-quotes when it spawns the exe (MSVCRT arg re-parse), so the tag form loses its
 # quotes. For that form / --file <path> / stdin (a .pbn with SEVERAL [Deal] tags -> one carousel page, or
-# `hand-ocr ... | pbn_analyse`), run the built exe directly: target/release/pbn_analyse.exe --file <path>.
+# `hand-ocr ... | analyse_deal`), run the built exe directly: target/release/analyse_deal.exe --file <path>.
 # ---
-# 2-hand (declarer + dummy) card-combination advisor: deal (PBN / LIN URL) -> combo analysis (+ optional --sample verdict / --html card page)
+# single-deal advisor: declarer+dummy (defenders `-`) OR a complete 4-hand deal (exact DD), from PBN / LIN URL -> combo analysis (+ optional --sample verdict / --html card page)
 analyse-deal deal *flags: mktarget_dirs
-	odin run pbn_analyse.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe -- {{flags}} {{quote(deal)}}
+	odin run analyse_deal.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/analyse_deal.exe -- {{flags}} {{quote(deal)}}
 
-# deprecated alias for `analyse-deal` (recipe was PBN-only before it learned LIN)
+# deprecated alias for `analyse-deal` (recipe + program were PBN-only before they learned LIN; the
+# program is now `analyse_deal.odin`, was `pbn_analyse.odin`)
 alias analyse-pbn := analyse-deal
 
 # Frequency test every scenario by default, or pass `-S name[,name]` to restrict the subset.
@@ -238,36 +239,36 @@ test-dealsolve *args: mktarget_dirs
 ocr-pbn image *args:
 	uv run --project {{HAND_OCR_DIR}} python {{HAND_OCR_DIR}}/hand-ocr.py {{image}} --format pbn {{args}}
 
-# image -> PBN -> pbn_analyse with the DDS-sampling advisor + CCA/DD features. Writes
+# image -> PBN -> analyse_deal with the DDS-sampling advisor + CCA/DD features. Writes
 # <image-basename>.html (override with --html); samples 400 deals by default (override with --sample).
-# Extra flags pass through to pbn_analyse (e.g. --contract 3NT).
+# Extra flags pass through to analyse_deal (e.g. --contract 3NT).
 # `just ocr-analyse --demo` runs hand-ocr's sample deal end-to-end (plumbing check, no vision deps needed).
 # <image> may be `--clipboard` to read straight from the OS clipboard (screenshot -> card page, no temp file).
 # e.g. `just ocr-analyse hand.png` ; `just ocr-analyse hand.png --contract 3NT --seed 7` ; `just ocr-analyse --clipboard`
 # ---
 # OCR a hand-diagram IMAGE straight to the interactive card page
 ocr-analyse image *args: mktarget_dirs
-	odin build pbn_analyse.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe
+	odin build analyse_deal.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/analyse_deal.exe
 	uv run --no-project python tools/ocr_analyse.py {{image}} {{args}}
 
-# image -> PBN -> pbn_analyse with the DDS-sampling advisor + CCA/DD features. Writes
+# image -> PBN -> analyse_deal with the DDS-sampling advisor + CCA/DD features. Writes
 # <image-basename>.html (override with --html); samples 400 deals by default (override with --sample).
-# Extra flags pass through to pbn_analyse (e.g. --contract 3NT).
+# Extra flags pass through to analyse_deal (e.g. --contract 3NT).
 # `just ocr-analyse-rerun --demo` runs hand-ocr's sample deal end-to-end (plumbing check, no vision deps needed).
 # <image> may be `--clipboard` to read straight from the OS clipboard (screenshot -> card page, no temp file).
 # e.g. `just ocr-analyse-rerun hand.png` ; `just ocr-analyse-rerun hand.png --contract 3NT --seed 7` ; `just ocr-analyse-rerun --clipboard`
 # ---
-# OCR a hand-diagram IMAGE straight to the interactive card page without recompiling pbn_analyse.exe
+# OCR a hand-diagram IMAGE straight to the interactive card page without recompiling analyse_deal.exe
 ocr-analyse-rerun image *args: mktarget_dirs
 	uv run --no-project python tools/ocr_analyse.py {{image}} {{args}}
 
-# build pbn_analyse, run it on a fixed board+seed, and diff the emitted `data-sim='...'` against
+# build analyse_deal, run it on a fixed board+seed, and diff the emitted `data-sim='...'` against
 # tests/golden/. Guards write_sim_json (incl. the misguess-tax ach/taxpts/pvt rung) from silently
 # drifting out of sync with render.odin's simBand parser.
 # ---
 # golden test for the card page's data-sim JSON contract
 test-golden: mktarget_dirs
-	odin build pbn_analyse.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/pbn_analyse.exe
+	odin build analyse_deal.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/analyse_deal.exe
 	uv run --no-project python tests/golden_sim_json.py
 
 # delete build artifacts

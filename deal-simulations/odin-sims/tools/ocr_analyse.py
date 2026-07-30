@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """ocr_analyse.py -- the image -> interactive card page pipeline. Bridges the two sibling projects:
 hand-ocr (uv/Python, a SEPARATE repo at $HAND_OCR_DIR, default ~/dev/bridge-hand-ocr) turns a hand-diagram
-image into a PBN [Deal] tag; pbn_analyse (this Odin project) turns that PBN into the card page with the
+image into a PBN [Deal] tag; analyse_deal (this Odin project) turns that PBN into the card page with the
 DDS-sampling advisor + CCA/DD features.
 
 hand-ocr is run as `uv run --project <ho> python hand-ocr.py` in hand-ocr's PROJECT env (NOT the script's
 isolated PEP-723 env, which has only docopt, no opencv) -- mirrors hand-ocr's own `demo` recipe. A real
 image needs the vision extra there:  (cd "$HAND_OCR_DIR" && just sync-vision).
 
-Usage:  ocr_analyse.py <image> [extra pbn_analyse flags...]
+Usage:  ocr_analyse.py <image> [extra analyse_deal flags...]
   Writes <image-basename>.html (the interactive page) unless an --html is passed in the extra flags.
   Defaults to --sample 400 (the honest whole-hand verdict) unless --sample is passed. Extra flags pass
   straight through, e.g. `ocr_analyse.py hand.png --contract 3NT --seed 7`.
@@ -26,12 +26,12 @@ ROOT = Path(__file__).resolve().parent.parent  # odin-sims/
 # hand-ocr is a separate sibling repo; HAND_OCR_DIR overrides its checkout location (the justfile exports
 # the same env var, so path lives in one place). Default mirrors the norn/dds ~/dev/<repo> convention.
 HO = Path(os.environ.get("HAND_OCR_DIR") or (Path.home() / "dev" / "bridge-hand-ocr"))
-EXE = ROOT / "target" / "release" / "pbn_analyse.exe"
+EXE = ROOT / "target" / "release" / "analyse_deal.exe"
 
 
 def main(argv: list[str]) -> int:
     if not argv:
-        print("usage: ocr_analyse.py <image|--demo|--clipboard> [extra pbn_analyse flags...]", file=sys.stderr)
+        print("usage: ocr_analyse.py <image|--demo|--clipboard> [extra analyse_deal flags...]", file=sys.stderr)
         return 2
 
     img, extra = argv[0], argv[1:]
@@ -55,7 +55,7 @@ def main(argv: list[str]) -> int:
     if "--html" not in extra:
         extra += ["--html", f"{base}.html"]
 
-    # Feed the PBN to pbn_analyse on stdin.
+    # Feed the PBN to analyse_deal on stdin.
     return subprocess.run([str(EXE), *extra], input=pbn, text=True).returncode
 
 
