@@ -1,4 +1,4 @@
-package dealsolve
+package deal_solve
 
 /*
 	sim_json — the `data-sim*` JSON contract for the card page.
@@ -16,7 +16,7 @@ package dealsolve
 	these writers emit double quotes and never need escaping.
 
 	One fmt gotcha throughout: `{` in a format string is an argument reference to Odin's fmt (see the
-	PBN-comment note in dealsolve.odin), so object braces are written literally with `write_byte`.
+	PBN-comment note in deal_solve.odin), so object braces are written literally with `write_byte`.
 */
 
 import "core:fmt"
@@ -32,8 +32,8 @@ EW_SIDE :: bit_set[norn.Seat]{.East, .West}
 
 // The contract the board itself names (from a LIN `mb|` auction or PBN `[Contract]`/`[Declarer]`) as a
 // Contract plus its declaring seat. ok=false when the board named no contract. Maps norn's contract
-// strain onto dealsolve's (dds) strain — the two enums order their variants differently, so map by name.
-board_contract :: proc(board: norn.Parsed_Board) -> (c: Contract, declarer: norn.Seat, ok: bool) {
+// strain onto deal_solve's (dds) strain — the two enums order their variants differently, so map by name.
+board_contract :: proc(board: norn.Board) -> (c: Contract, declarer: norn.Seat, ok: bool) {
 	bc, has := board.contract.?
 	if !has {
 		return {}, .North, false
@@ -64,7 +64,7 @@ card_word :: proc(c: norn.Card) -> string {
 // N/S↔E/W toggle — `ns`/`ew` each carry that side's per-strain spike grid. `lvl`/`strain` preselect the
 // picker at the contract the deal actually names (from `[Contract]`), else NS's best-making contract
 // (most tricks; ties -> NT by iteration order).
-write_exact_sim_json :: proc(b: ^strings.Builder, ns_grid, ew_grid: ^Grid_Result, board: norn.Parsed_Board) {
+write_exact_sim_json :: proc(b: ^strings.Builder, ns_grid, ew_grid: ^Grid_Result, board: norn.Board) {
 	best_strain := Strain.NT
 	best_tricks := 0
 	for st in Strain {

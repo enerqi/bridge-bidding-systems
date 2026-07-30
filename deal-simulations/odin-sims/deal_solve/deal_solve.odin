@@ -1,4 +1,4 @@
-package dealsolve
+package deal_solve
 
 /*
 	dd — double-dummy analysis for the sim, bridging norn's card model to the odin-dds solver.
@@ -42,9 +42,9 @@ shutdown :: proc() {
 //   - Ranks shift by 2: norn Two=0..Ace=12; a dds Holding sets bit r for rank r (deuce = bit 2,
 //     ace = bit 14), so a norn per-suit rank mask is just `<< 2` into a Holding word.
 // Built off the deal summary norn already computes, so this is a handful of shifts, no card rescan.
-to_table_deal :: proc(board: norn.Deal) -> dds.Table_Deal {
+to_table_deal :: proc(deal: norn.Deal) -> dds.Table_Deal {
 	td: dds.Table_Deal
-	ds := norn.summarize_deal(board)
+	ds := norn.summarize_deal(deal)
 	for seat in norn.Seat {
 		for suit in norn.Suit {
 			dds_suit := dds.Suit(3 - int(suit))
@@ -55,55 +55,55 @@ to_table_deal :: proc(board: norn.Deal) -> dds.Table_Deal {
 	return td
 }
 
-// Per-board double-dummy table cache (single slot). The filter and the annotator both want the SAME
-// CalcDDtable result for the SAME accepted board — the filter solves it during reject-sampling, the
+// Per-deal double-dummy table cache (single slot). The filter and the annotator both want the SAME
+// CalcDDtable result for the SAME accepted deal — the filter solves it during reject-sampling, the
 // annotator again at render — so without sharing, every accepted deal of a filtered+annotated
-// scenario is solved twice. `solve_table` memoises the last board's table and returns it unchanged
-// on a repeat call for an identical board.
+// scenario is solved twice. `solve_table` memoises the last deal's table and returns it unchanged
+// on a repeat call for an identical deal.
 //
 // Safe as a package global: every scenario that reaches DDS runs SINGLE-THREADED (the export/freq
 // partition serialises DDS scenarios — the same non-reentrancy reason DDS itself needs), so only one
 // thread touches this.
 //
-// NEVER needs invalidation. The cache key is the full 52-card board value, so a HIT occurs only on a
-// byte-identical deal, which by definition has the identical DD table; a MISS (any other board, incl.
+// NEVER needs invalidation. The cache key is the full 52-card deal value, so a HIT occurs only on a
+// byte-identical deal, which by definition has the identical DD table; a MISS (any other deal, incl.
 // across scenarios, or when a non-CalcDDtable filter like ns_makes_strain left the slot holding an
-// earlier board) just recomputes. board and table are written together after a successful solve, so a
+// earlier deal) just recomputes. deal and table are written together after a successful solve, so a
 // valid hit can never return a mismatched table. Nothing to clear "after annotation".
 @(private)
-g_cache_board: norn.Deal
+g_cache_deal: norn.Deal
 @(private)
 g_cache_table: dds.Table_Results
 @(private)
 g_cache_valid: bool
 
-// Solve — or reuse — the full double-dummy table for `board`. Returns a pointer to the cached table;
-// ok=false only if DDS itself failed. The pointer stays valid until the next distinct board is solved.
+// Solve — or reuse — the full double-dummy table for `deal`. Returns a pointer to the cached table;
+// ok=false only if DDS itself failed. The pointer stays valid until the next distinct deal is solved.
 @(private)
-solve_table :: proc(board: norn.Deal) -> (table: ^dds.Table_Results, ok: bool) {
-	if g_cache_valid && board == g_cache_board {
+solve_table :: proc(deal: norn.Deal) -> (table: ^dds.Table_Results, ok: bool) {
+	if g_cache_valid && deal == g_cache_deal {
 		return &g_cache_table, true
 	}
-	td := to_table_deal(board)
+	td := to_table_deal(deal)
 	if dds.CalcDDtable(td, &g_cache_table) != .NO_FAULT {
 		g_cache_valid = false
 		return nil, false
 	}
-	g_cache_board = board
+	g_cache_deal = deal
 	g_cache_valid = true
 	return &g_cache_table, true
 }
 
-// A `norn.Deal_Annotator`: append the deal's double-dummy summary after its rendered board, in a
+// A `norn.Deal_Annotator`: append the deal's double-dummy summary after its rendered deal, in a
 // form valid for the active `format`. Annotation is format-specific by nature — an HTML caption
 // would corrupt a PBN tag or a machine-parsed line — so this switches on the format and emits
 // nothing for the machine formats whose grammar has no room for it:
 //   - Html_Handviewer : a visible caption div (par + makeable contracts) plus a greppable trick-table comment
-//   - Html_Cards      : the same, as a `.par` caption the carousel pairs with its board (plus the comment)
+//   - Html_Cards      : the same, as a `.par` caption the carousel pairs with its deal (plus the comment)
 //   - Pretty  : a plain trailing "Par (NS): ..." line (the layout is human-facing already)
 //   - Pbn     : a PBN `{ ... }` inline comment (the only annotation PBN's grammar accepts)
 //   - Line / Numeric / Handviewer : nothing — these are consumed by parsers; any extra text breaks them
-annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Output_Format) {
+annotate :: proc(builder: ^strings.Builder, deal: norn.Deal, format: norn.Output_Format) {
 	// Classify the format. A FULL switch (no #partial) is deliberate: if norn gains a new
 	// Output_Format, this fails to compile until the new format is put on one side or the other, so
 	// annotation can never silently skip — or corrupt — a format nobody classified here.
@@ -114,13 +114,13 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 	// annotated below
 	}
 
-	// Reuse the filter's solve of this same board where possible (see solve_table): filter and
+	// Reuse the filter's solve of this same deal where possible (see solve_table): filter and
 	// annotator otherwise each CalcDDtable the accepted deal. The full table is 5 x 4 = 20 strain x
 	// declarer trick counts; the annotator needs all of them (it prints the whole grid + par).
-	res, ok := solve_table(board)
+	res, ok := solve_table(deal)
 	if !ok {
 		if format == .Html_Handviewer || format == .Html_Cards {
-			strings.write_string(builder, "<!-- dealsolve error: solve failed -->")
+			strings.write_string(builder, "<!-- deal_solve error: solve failed -->")
 		}
 		return
 	}
@@ -134,7 +134,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 	ns_par := &sides[dds.Side.NS]
 
 	// Per-hand summaries feed the naive combined-OPC figure in the par guide (see write_par_opc_guide).
-	ds := norn.summarize_deal(board)
+	ds := norn.summarize_deal(deal)
 
 	// Also a full switch: the machine formats are unreachable here (filtered above) but listed so a
 	// newly added annotating format must add its own emission case rather than fall through silently.
@@ -143,14 +143,14 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		// Visible caption. The two HTML formats wrap it differently: the iframe `Html_Handviewer` tucks
 		// the caption under the iframe above with a negative top margin (inline-styled so norn's page
 		// CSS needs no change); the `Html_Cards` carousel gives each caption a `.par` class its script
-		// pairs with the board above and its stylesheet already positions.
+		// pairs with the deal above and its stylesheet already positions.
 		if format == .Html_Handviewer {
 			strings.write_string(
 				builder,
 				`<div style="max-width:900px;margin:-3.5rem auto 0;text-align:center;color:#555;font-size:0.9rem">`,
 			)
 		} else {
-			// Tag the caption with NS's par trick count so the card page can DEFAULT the per-board
+			// Tag the caption with NS's par trick count so the card page can DEFAULT the per-deal
 			// combo (CCA) slider to it (data attribute, ignored by everything but that script).
 			tgt := ns_par_target_tricks(ns_par, have_par, res)
 			fmt.sbprintf(builder, `<div class="par" data-target="%d">`, tgt)
@@ -162,7 +162,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 		write_par_opc_guide(builder, ns_par, have_par, ds, " &middot; ", true)
 		strings.write_string(builder, "</div>")
 		// Machine-readable form: full trick table as a comment (strain x N/E/S/W).
-		strings.write_string(builder, "<!-- dealsolve tricks[strain]NESW")
+		strings.write_string(builder, "<!-- deal_solve tricks[strain]NESW")
 		for strain in dds.Strain {
 			fmt.sbprintf(builder, " %s:", strain_label(strain))
 			for hand in dds.Hand {
@@ -193,7 +193,7 @@ annotate :: proc(builder: ^strings.Builder, board: norn.Deal, format: norn.Outpu
 	}
 }
 
-// The trick count NS's par contract needs — the natural DEFAULT target for the card page's per-board
+// The trick count NS's par contract needs — the natural DEFAULT target for the card page's per-deal
 // combo (CCA) slider. Prefer a MAKING par contract that NS declares (its `level + 6` tricks; the
 // highest if several qualify). When par is an EW contract (e.g. a doubled sacrifice against NS's game,
 // so `sides[NS]` lists the EW contract), fall back to NS's best MAKEABLE strain — the contract EW is
@@ -524,12 +524,12 @@ denom_trump :: proc(d: dds.Contract_Denom) -> Maybe(norn.Suit) {
 	return nil // NT
 }
 
-// A `norn.Deal_Filter`: keep the board only if North-South can make a game double-dummy — 3NT (9
+// A `norn.Deal_Filter`: keep the deal only if North-South can make a game double-dummy — 3NT (9
 // tricks), 4 of a major (10), or 5 of a minor (11) — with either N or S declaring. A summary
 // predicate can't ask this; it needs the solved trick counts. Use as a scenario's second stage so
 // DDS runs only on the deals that already passed the bidding predicate.
-ns_makes_game :: proc(board: norn.Deal) -> bool {
-	res, ok := solve_table(board)
+ns_makes_game :: proc(deal: norn.Deal) -> bool {
+	res, ok := solve_table(deal)
 	if !ok {
 		return false
 	}
@@ -542,11 +542,11 @@ ns_makes_game :: proc(board: norn.Deal) -> bool {
 	)
 }
 
-// A `norn.Deal_Filter`: keep the board only if North-South can make a small slam (12+ tricks) in
+// A `norn.Deal_Filter`: keep the deal only if North-South can make a small slam (12+ tricks) in
 // some strain double-dummy, with either N or S declaring. Pair it with slam-zone scenarios so the
 // export shows deals that actually play for slam, not just ones that bid like it.
-ns_makes_slam :: proc(board: norn.Deal) -> bool {
-	res, ok := solve_table(board)
+ns_makes_slam :: proc(deal: norn.Deal) -> bool {
+	res, ok := solve_table(deal)
 	if !ok {
 		return false
 	}
@@ -577,8 +577,8 @@ ns_makes :: proc(res: ^dds.Table_Results, strain: dds.Strain, need: i32) -> bool
 // `norn.Deal_Filter` (wrong arity) — wrap it, e.g.
 //     ns_makes_4h :: proc(b: norn.Deal) -> bool { return ns_makes_strain(b, .Hearts, 10) }
 // and register that in sim.odin's dd_filters. Like every DDS call it assumes single-threaded use.
-ns_makes_strain :: proc(board: norn.Deal, strain: dds.Strain, tricks: i32) -> bool {
-	return declarer_makes(board, strain, .North, tricks) || declarer_makes(board, strain, .South, tricks)
+ns_makes_strain :: proc(deal: norn.Deal, strain: dds.Strain, tricks: i32) -> bool {
+	return declarer_makes(deal, strain, .North, tricks) || declarer_makes(deal, strain, .South, tricks)
 }
 
 // SolveBoard core for `ns_makes_strain`: does `declarer`'s side take `tricks`+ in `strain`? DDS's
@@ -587,11 +587,11 @@ ns_makes_strain :: proc(board: norn.Deal, strain: dds.Strain, tricks: i32) -> bo
 // declaring side's tricks are `13 - that`. This matches `resTable[strain][declarer]` exactly. (Using
 // TARGET_FIND_MAX; a `.One` + `target` solve could early-exit but complicates the make/beat logic.)
 @(private)
-declarer_makes :: proc(board: norn.Deal, strain: dds.Strain, declarer: dds.Hand, tricks: i32) -> bool {
+declarer_makes :: proc(deal: norn.Deal, strain: dds.Strain, declarer: dds.Hand, tricks: i32) -> bool {
 	dl: dds.Deal
 	dl.trump = strain
 	dl.first = dds.Hand((int(declarer) + 1) % 4) // opening leader = declarer's LHO
-	dl.remainCards = to_table_deal(board).cards // [Hand][Suit]Holding, same layout as Table_Deal.cards
+	dl.remainCards = to_table_deal(deal).cards // [Hand][Suit]Holding, same layout as Table_Deal.cards
 	fut: dds.Future_Tricks
 	if dds.SolveBoard(dl, dds.TARGET_FIND_MAX, .One, .Auto_Skip_Single, &fut) != .NO_FAULT || fut.cards == 0 {
 		return false

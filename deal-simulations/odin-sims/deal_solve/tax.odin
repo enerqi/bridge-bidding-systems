@@ -1,4 +1,4 @@
-package dealsolve
+package deal_solve
 
 /*
 	tax.odin — the misguess-TAX estimator: a cheap, export-friendly ACHIEVABLE single-dummy make-%.
@@ -173,7 +173,7 @@ Pivot_Track :: struct {
 // (side must be a fully-known partnership; n_samples > 0; DDS must succeed; constraints must be satisfiable
 // within SAMPLE_MAX_REDEAL redeals).
 misguess_tax :: proc(
-	board: norn.Parsed_Board,
+	board: norn.Board,
 	side: bit_set[norn.Seat],
 	contract: Contract,
 	n_samples: int,
@@ -196,7 +196,7 @@ misguess_tax :: proc(
 // `solve_sample`). Shares the DD solve with `lead_grids_from_sample` when both read the same batch, so a board
 // pays for the sampled layouts once, not twice. See the file header for the model.
 tax_from_sample :: proc(
-	board: norn.Parsed_Board,
+	board: norn.Board,
 	s: ^Solved_Sample,
 	contract: Contract,
 ) -> (
@@ -309,7 +309,7 @@ Lead_Tax :: struct {
 // pivot's holder split to one side, so a lead that reveals the trapped honour resolves its guess (tax→0), the
 // key win of per-lead tax over the unconditioned rung. With no two-way guesses on the board, `out` is zeroed
 // (the client then shows no rung under any lead).
-lead_tax_from_sample :: proc(board: norn.Parsed_Board, s: ^Solved_Sample, contract: Contract, out: ^Lead_Tax) {
+lead_tax_from_sample :: proc(board: norn.Board, s: ^Solved_Sample, contract: Contract, out: ^Lead_Tax) {
 	out^ = {}
 	a, b := s.a, s.b
 	pivot_cards, n_pivots := two_way_guess_pivots(board.deal, a, b)

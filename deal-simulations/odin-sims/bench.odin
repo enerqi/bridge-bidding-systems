@@ -32,13 +32,13 @@ import "core:time"
 
 import "norn:combo"
 import "norn:norn"
-import "suitbook"
+import "suit_book"
 
 COUNT_SUIT :: #config(COUNT_SUIT, 2_000) // per-suit Phase 1 and Phase 2 line benches
 COUNT_OPT :: #config(COUNT_OPT, 100) // per-suit optimal-search bench (heavier)
 COUNT_DEAL :: #config(COUNT_DEAL, 200) // per-deal benches (annotate, adaptive curve)
 
-POOL :: 1 << 11 // 2048 pre-dealt boards — enough variety to avoid cache-hot bias
+POOL :: 1 << 11 // 2048 pre-dealt deals — enough variety to avoid cache-hot bias
 POOL_MASK :: POOL - 1
 
 deals: [POOL]norn.Deal
@@ -213,13 +213,13 @@ main :: proc() {
 	windows.SetConsoleOutputCP(.UTF8)
 
 	// Bench the same configuration the real programs run: combo with this project's published
-	// suit-combination table registered (an override lookup per suit, see suitbook/suitbook.odin).
-	combo.set_suit_book(suitbook.provider())
+	// suit-combination table registered (an override lookup per suit, see suit_book/suit_book.odin).
+	combo.set_suit_book(suit_book.provider())
 
 	state: rand.Xoshiro256_Random_State
 	context.random_generator = norn.seeded_xoshiro(&state, 42)
 	for i in 0 ..< POOL {
-		deals[i] = norn.deal_board()
+		deals[i] = norn.deal_hands()
 		summaries[i] = norn.summarize_deal(deals[i])
 	}
 

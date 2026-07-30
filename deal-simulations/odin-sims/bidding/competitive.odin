@@ -66,11 +66,11 @@ has_both_majors_michaels :: proc(hand: norn.Hand_Summary) -> bool {
 // reject the flat-vs-flat both-minimum case, and reject when South is flat or very weak while E-W
 // rate to be game-going. `top_nt_range` is the top of the relevant notrump band. (deal-utils
 // `north_south_may_overcall_1N`.)
-north_south_may_overcall_1N :: proc(board: norn.Deal_Summary, top_nt_range: int) -> bool {
-	north := board[.North]
-	east := board[.East]
-	south := board[.South]
-	west := board[.West]
+north_south_may_overcall_1N :: proc(ds: norn.Deal_Summary, top_nt_range: int) -> bool {
+	north := ds[.North]
+	east := ds[.East]
+	south := ds[.South]
+	west := ds[.West]
 
 	s_hcp := norn.hcp(south)
 	if is_flattish(south) && is_flattish(north) && s_hcp < top_nt_range && norn.hcp(north) < top_nt_range {
@@ -87,11 +87,11 @@ north_south_may_overcall_1N :: proc(board: norn.Deal_Summary, top_nt_range: int)
 // May South overcall the opponents' 1NT with North holding an invitational hand? South must be
 // shapely and not too strong, E-W limited, with North in an invitational 9-13 band. (deal-utils
 // `south_may_overcall_opponents_1N_with_north_invitational`.)
-south_may_overcall_opponents_1N_with_north_invitational :: proc(board: norn.Deal_Summary, top_nt_range: int) -> bool {
-	north := board[.North]
-	east := board[.East]
-	south := board[.South]
-	west := board[.West]
+south_may_overcall_opponents_1N_with_north_invitational :: proc(ds: norn.Deal_Summary, top_nt_range: int) -> bool {
+	north := ds[.North]
+	east := ds[.East]
+	south := ds[.South]
+	west := ds[.West]
 
 	s_hcp := norn.hcp(south)
 	// Ignore penalty-double or flattish South hands.

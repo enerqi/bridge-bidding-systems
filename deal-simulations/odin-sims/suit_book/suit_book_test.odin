@@ -1,4 +1,4 @@
-package suitbook
+package suit_book
 
 import "core:fmt"
 import "core:testing"
@@ -7,7 +7,7 @@ import "core:testing"
 // construction. (Several entries may share an engine key — equivalent holdings — so the returned entry is not
 // necessarily the same index; it must, however, always be a hit.)
 @(test)
-test_suitbook_roundtrip :: proc(t: ^testing.T) {
+test_suit_book_roundtrip :: proc(t: ^testing.T) {
 	miss := 0
 	for e in book_entries {
 		if _, ok := lookup(e.n, e.s); !ok {
@@ -20,7 +20,7 @@ test_suitbook_roundtrip :: proc(t: ^testing.T) {
 
 // Spot-check a known holding + engine-equivalence of low spots + orientation invariance.
 @(test)
-test_suitbook_known :: proc(t: ^testing.T) {
+test_suit_book_known :: proc(t: ^testing.T) {
 	// AK982 / J43 length case (book: cash A K, 4 tricks ~96%).
 	e, ok := lookup(0x18c1, 0x0206)
 	testing.expect(t, ok)
@@ -45,7 +45,7 @@ test_suitbook_known :: proc(t: ^testing.T) {
 // QT). Accepting that hit would show the wrong entry's card names ("low to K" on a holding with no king). The
 // book does not list AQ9x/T8x, so it MUST resolve to a miss -> engine fallback, not a false hit.
 @(test)
-test_suitbook_card_validity :: proc(t: ^testing.T) {
+test_suit_book_card_validity :: proc(t: ^testing.T) {
 	// AQ9x / T8x: A,Q,9,5 (0x14a0) opposite T,8,4 (0x0150); no king, no jack.
 	n := u16((1 << 12) | (1 << 10) | (1 << 7) | (1 << 5))
 	s := u16((1 << 8) | (1 << 6) | (1 << 4))

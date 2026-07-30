@@ -6,7 +6,7 @@ package main
 	Where `bench.odin` micro-benchmarks the combo procs in isolation, this times the WHOLE realistic
 	export of ONE scenario the way the sim actually runs it: reject-sample deals until `COUNT` pass the
 	scenario predicate AND the double-dummy filter, then render each to Html_Cards WITH the dd par
-	caption + the combo table (`dealsolve.annotate` + `combo.annotate`). Exactly the work behind
+	caption + the combo table (`deal_solve.annotate` + `combo.annotate`). Exactly the work behind
 
 	    sim.exe -S slam-makes-dd --count 48 --format html-cards --dd
 
@@ -30,10 +30,10 @@ import "core:sys/windows"
 import "core:time"
 
 import "bidding"
-import "dealsolve"
+import "deal_solve"
 import "norn:combo"
 import "norn:norn"
-import "suitbook"
+import "suit_book"
 
 E2E_SCENARIO :: #config(E2E_SCENARIO, "slam-makes-dd")
 E2E_COUNT :: #config(E2E_COUNT, 48)
@@ -41,32 +41,32 @@ E2E_ITERS :: #config(E2E_ITERS, 3)
 E2E_SEED :: #config(E2E_SEED, 42)
 E2E_MAX_ATTEMPTS :: 20_000_000 // matches cli's HTML_EXPORT_MAX_ATTEMPTS; a rare filter under-fills instead of hanging
 
-// The dealsolve par caption followed by the combo table — the same annotator sim registers for this scenario.
-e2e_annotate :: proc(b: ^strings.Builder, board: norn.Deal, format: norn.Output_Format) {
-	dealsolve.annotate(b, board, format)
-	combo.annotate(b, board, format)
+// The deal_solve par caption followed by the combo table — the same annotator sim registers for this scenario.
+e2e_annotate :: proc(b: ^strings.Builder, deal: norn.Deal, format: norn.Output_Format) {
+	deal_solve.annotate(b, deal, format)
+	combo.annotate(b, deal, format)
 }
 
 // DDS-solve counting. The real cost is double-dummy solves, NOT raw attempts: `generate_accepted` calls
-// the deal_filter (a DDS solve) ONLY on boards that already passed the cheap summary predicate (the `&&`
+// the deal_filter (a DDS solve) ONLY on deals that already passed the cheap summary predicate (the `&&`
 // short-circuits), and the par annotator adds one DDS solve per ACCEPTED deal. So attempts/accept% tell
-// you nothing about cost; the solve count does. `filter_solves` = boards that reached the DDS filter =
+// you nothing about cost; the solve count does. `filter_solves` = deals that reached the DDS filter =
 // cheap-predicate survivors; par solves = accepted. Single-threaded generation here, so a plain global is
 // safe (combo's own worker threads never touch this).
 g_filter_solves: int
 
-// Wraps the scenario's DDS filter to tally how often it actually runs (i.e. how many boards the cheap
+// Wraps the scenario's DDS filter to tally how often it actually runs (i.e. how many deals the cheap
 // predicate let through to a solve).
-counting_slam_filter :: proc(board: norn.Deal) -> bool {
+counting_slam_filter :: proc(deal: norn.Deal) -> bool {
 	g_filter_solves += 1
-	return dealsolve.ns_makes_slam(board)
+	return deal_solve.ns_makes_slam(deal)
 }
 
 main :: proc() {
 	windows.SetConsoleOutputCP(.UTF8) // suit glyphs in the rendered output
 
 	// Same wiring as sim.odin: combo prefers this project's published table where it covers a holding.
-	combo.set_suit_book(suitbook.provider())
+	combo.set_suit_book(suit_book.provider())
 
 	// Resolve the scenario predicate from this bidding system's registry.
 	predicate: norn.Predicate
@@ -94,8 +94,8 @@ main :: proc() {
 		)
 	}
 
-	dealsolve.init()
-	defer dealsolve.shutdown()
+	deal_solve.init()
+	defer deal_solve.shutdown()
 
 	b := strings.builder_make()
 	defer strings.builder_destroy(&b)

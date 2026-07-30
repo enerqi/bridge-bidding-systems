@@ -1,4 +1,4 @@
-package dealsolve
+package deal_solve
 
 /*
 	sample.odin — the DDS-sampling whole-hand make-% engine for the 2-hand (declarer + dummy) advisor.
@@ -29,7 +29,7 @@ package dealsolve
 
 	The two known hands fix 26 cards; the other 26 are unknown, split between the two defenders. We do
 	NOT hand-craft "interesting" splits. Instead we deal the 26 free cards UNIFORMLY at random into the
-	two 13-card defender seats (`norn.deal_board_predealt` predeals the known cards, shuffles the rest,
+	two 13-card defender seats (`norn.deal_hands_predealt` predeals the known cards, shuffles the rest,
 	and fills the empty seats). That single mechanism gives the correct variety for free, in two senses
 	the request calls out:
 
@@ -82,7 +82,7 @@ import "norn:norn"
 Strain :: dds.Strain
 
 // A parsed contract: level 1..7 and strain. Kept opaque to callers (the CLI parses a "4H" string via
-// parse_contract and passes this straight to sample_contract) so nothing outside `dealsolve` touches dds types.
+// parse_contract and passes this straight to sample_contract) so nothing outside `deal_solve` touches dds types.
 Contract :: struct {
 	level:  int,
 	strain: Strain,
@@ -152,7 +152,7 @@ parse_strain :: proc(tok: string) -> (dds.Strain, bool) {
 	return .NT, false
 }
 
-// Render a contract as "4H" / "3NT" for captions and reports. Temp-allocated. strain_label (dealsolve.odin)
+// Render a contract as "4H" / "3NT" for captions and reports. Temp-allocated. strain_label (deal_solve.odin)
 // gives S/H/D/C/NT.
 contract_label :: proc(c: Contract) -> string {
 	return fmt.tprintf("%d%s", c.level, strain_label(c.strain))
@@ -197,12 +197,12 @@ constraints_empty :: proc(c: Sample_Constraints) -> bool {
 // still terminates (50k × n_samples deals) and fails cleanly.
 SAMPLE_MAX_REDEAL :: 50000
 
-// Does `board`'s dealt cards satisfy every constraint (shape bounds AND card locations)?
+// Does `deal`'s dealt cards satisfy every constraint (shape bounds AND card locations)?
 @(private)
-satisfies :: proc(board: norn.Deal, cons: Sample_Constraints) -> bool {
+satisfies :: proc(deal: norn.Deal, cons: Sample_Constraints) -> bool {
 	for c in cons.shape {
 		n := 0
-		for card in board[c.seat] {
+		for card in deal[c.seat] {
 			if norn.card_suit(card) == c.suit {
 				n += 1
 			}
@@ -212,7 +212,7 @@ satisfies :: proc(board: norn.Deal, cons: Sample_Constraints) -> bool {
 		}
 	}
 	held_loop: for h in cons.held {
-		for card in board[h.seat] {
+		for card in deal[h.seat] {
 			if card == h.card {
 				continue held_loop
 			}
@@ -225,7 +225,7 @@ satisfies :: proc(board: norn.Deal, cons: Sample_Constraints) -> bool {
 // --- batched sampling: generate the constrained layouts, then DD-solve them through DDS's OWN thread pool.
 // One `CalcDDtable`-per-layout serial loop leaves every core but one idle; DDS instead parallelises a BATCH
 // internally via `CalcAllTables`. That is the only safe way to multithread DDS — its transposition tables
-// are process-global, so we must never call the solver from our own threads (see dealsolve.odin). Splitting layout
+// are process-global, so we must never call the solver from our own threads (see deal_solve.odin). Splitting layout
 // GENERATION (pure seeded RNG) from SOLVING keeps the draw sequence — hence every tally — byte-identical to
 // the old loop, so this is a pure speedup. All three sampling passes below funnel through `sample_solved`.
 
@@ -251,7 +251,7 @@ generate_layouts :: proc(pd: norn.Predeal, n: int, seed: u64, cons: Sample_Const
 	for i in 0 ..< n {
 		found := false
 		for _ in 0 ..< SAMPLE_MAX_REDEAL {
-			layout := norn.deal_board_predealt(pd)
+			layout := norn.deal_hands_predealt(pd)
 			if unconstrained || satisfies(layout, cons) {
 				out[i] = layout
 				found = true
@@ -337,7 +337,7 @@ Solved_Sample :: struct {
 // fully-known partnership or the two hands share a card. Shared front-matter for the sampling entry points.
 @(private)
 predeal_side :: proc(
-	board: norn.Parsed_Board,
+	board: norn.Board,
 	side: bit_set[norn.Seat],
 ) -> (
 	pd: norn.Predeal,
@@ -367,7 +367,7 @@ predeal_side :: proc(
 }
 
 solve_sample :: proc(
-	board: norn.Parsed_Board,
+	board: norn.Board,
 	side: bit_set[norn.Seat],
 	n_samples: int,
 	seed: u64 = 0,
@@ -404,7 +404,7 @@ solve_sample :: proc(
 // `has_target=false` the current best-EV contract is re-picked each round. Returns the resolved batch (its
 // `.n` = samples actually solved) and the gating contract. Free with `solved_sample_free`.
 solve_sample_adaptive :: proc(
-	board: norn.Parsed_Board,
+	board: norn.Board,
 	side: bit_set[norn.Seat],
 	n_cap: int,
 	seed: u64 = 0,
@@ -503,7 +503,7 @@ solved_sample_free :: proc(s: ^Solved_Sample) {
 // ok=false if `side` is not exactly a fully-known partnership, n_samples <= 0, DDS fails, or the
 // constraints are so tight that a sample could not be found within SAMPLE_MAX_REDEAL redeals.
 sample_grid :: proc(
-	board: norn.Parsed_Board,
+	board: norn.Board,
 	side: bit_set[norn.Seat],
 	n_samples: int,
 	seed: u64 = 0,
@@ -528,7 +528,7 @@ sample_grid :: proc(
 		return {}, false
 	}
 
-	// Predeal the 26 known cards to their seats; deal_board_predealt fills the two defenders at random.
+	// Predeal the 26 known cards to their seats; deal_hands_predealt fills the two defenders at random.
 	pd: norn.Predeal
 	for seat in ([2]norn.Seat{a, b}) {
 		for k in 0 ..< norn.HAND_SIZE {
@@ -589,7 +589,7 @@ Lead_Grids :: struct {
 // card sub-grids. `out` is caller-provided (it is ~118 KB — too big to return by value without risking a
 // deep-call stack overflow, so it is written through a pointer and zeroed here first).
 sample_lead_grids :: proc(
-	board: norn.Parsed_Board,
+	board: norn.Board,
 	side: bit_set[norn.Seat],
 	n_samples: int,
 	out: ^Lead_Grids,
@@ -650,7 +650,7 @@ lead_grids_from_sample :: proc(s: ^Solved_Sample, out: ^Lead_Grids) {
 // Monte-Carlo make-probability for one `contract` declared by `side` — a thin one-strain read of
 // `sample_grid` (see it for the sampling method and guards). ok mirrors sample_grid.
 sample_contract :: proc(
-	board: norn.Parsed_Board,
+	board: norn.Board,
 	side: bit_set[norn.Seat],
 	contract: Contract,
 	n_samples: int,
@@ -673,7 +673,7 @@ sample_contract :: proc(
 // that side's double-dummy trick count (the better of its two declarers), n=1. There is nothing to sample —
 // the deal is known — so this is the EXACT double-dummy census, letting the card page's contract picker +
 // trick slider act as a live double-dummy explorer that follows the N/S↔E/W toggle. One solve for both
-// sides, reusing solve_table's per-board cache (dealsolve.annotate has usually just solved this same deal). ok
+// sides, reusing solve_table's per-board cache (deal_solve.annotate has usually just solved this same deal). ok
 // mirrors solve_table (DDS must succeed).
 exact_grids :: proc(deal: norn.Deal) -> (ns: Grid_Result, ew: Grid_Result, ok: bool) {
 	res, rok := solve_table(deal)

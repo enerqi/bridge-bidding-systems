@@ -1,10 +1,10 @@
-package dealsolve
+package deal_solve
 
 /*
 	sample_test.odin — unit tests for the DDS-sampling whole-hand make-% engine (sample.odin).
 
 	Run (from odin-sims):
-	  odin test dealsolve -collection:norn=<norn> -collection:dds=<dds> -out:target/debug/test-dealsolve.exe
+	  odin test deal_solve -collection:norn=<norn> -collection:dds=<dds> -out:target/debug/test-deal-solve.exe
 	(the `test-dd` justfile recipe wires the collections.)
 
 	DDS is statically linked with no auto-init, so every test that solves must call `init()` first (it
@@ -197,7 +197,7 @@ test_sample_split_distribution_matches_apriori :: proc(t: ^testing.T) {
 	M :: 4000
 	counts: [MISSING + 1]int // counts[k] = samples where East held k of the missing spades
 	for _ in 0 ..< M {
-		b := norn.deal_board_predealt(pd)
+		b := norn.deal_hands_predealt(pd)
 		e := 0
 		for c in b[.East] {
 			if norn.card_suit(c) == .Spades {

@@ -1,4 +1,4 @@
-package dealsolve
+package deal_solve
 
 /*
 	pimc.odin — SPIKE: an achievable single-dummy make-% for the 2-hand advisor, via PIMC play-out.
@@ -19,7 +19,7 @@ package dealsolve
 	  2. gap — how far the PIMC make-% drops below the DDS ceiling (is the honesty worth the cost?).
 	`pimc_test.odin` runs one representative board and logs both, next to sample.odin's ceiling.
 
-	Model / conventions reused from dealsolve.odin + sample.odin:
+	Model / conventions reused from deal_solve.odin + sample.odin:
 	  - DDS `SolveBoard` scores the side ON LEAD (`first`): `score` = tricks for the leader's side from the
 	    current (possibly mid-trick) position to the end (see `declarer_makes`). So the player to move wants
 	    to MAXIMISE `score` iff it is on the leader's side, else MINIMISE it (`want_max` below).
@@ -439,7 +439,7 @@ play_out :: proc(
 // PIMC declarer (K worlds per decision) against double-dummy defenders. This is the achievable LOWER
 // bound the spike measures against sample.odin's double-dummy ceiling. Call `init()` first.
 pimc_make :: proc(
-	board: norn.Parsed_Board,
+	board: norn.Board,
 	side: bit_set[norn.Seat],
 	contract: Contract,
 	n_outer: int,
@@ -482,7 +482,7 @@ pimc_make :: proc(
 
 	total_tricks := 0
 	for _ in 0 ..< n_outer {
-		world := norn.deal_board_predealt(pd)
+		world := norn.deal_hands_predealt(pd)
 		tricks, s := play_out(world, contract.strain, declarer, side, k_inner)
 		result.solves += s
 		total_tricks += tricks

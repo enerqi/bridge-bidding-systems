@@ -1,4 +1,4 @@
-package dealsolve
+package deal_solve
 
 /*
 	sim_json_test.odin — the `data-sim*` JSON contract (sim_json.odin), unit-tested.
@@ -143,15 +143,15 @@ test_sim_guess_json_drops_cushioned_guesses :: proc(t: ^testing.T) {
 	tax.pivots[0] = {
 		card       = norn.make_card(.Spades, .Queen),
 		achievable = 36,
-	} 	// costs 35 -> narrated
+	} // costs 35 -> narrated
 	tax.pivots[1] = {
 		card       = norn.make_card(.Spades, .Ten),
 		achievable = 60,
-	} 	// same suit, dominated -> dropped
+	} // same suit, dominated -> dropped
 	tax.pivots[2] = {
 		card       = norn.make_card(.Hearts, .Jack),
 		achievable = 70.5,
-	} 	// costs 0.5 -> cushioned, dropped
+	} // costs 0.5 -> cushioned, dropped
 
 	testing.expect(t, tax_has_narratable_guess(tax))
 

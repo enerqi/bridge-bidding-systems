@@ -1,4 +1,4 @@
-package dealsolve
+package deal_solve
 
 /*
 	tax_test.odin — validation for the misguess-tax estimator (tax.odin).
