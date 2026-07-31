@@ -9,7 +9,7 @@ package main
 	`-collection:norn=...`; everything system-specific — the predicates and the scenario registry —
 	lives in the local `bidding` package.
 
-	Build/run (from the odin-sims dir): see the justfile, e.g. `just run --scenario 1c-any -n 12`.
+	Build/run (from the odin-sims dir): see the justfile, e.g. `just sim --scenario 1c-any -n 12`.
 	The raw form is:
 	  odin run sim.odin -file -collection:norn=C:/Users/Enerqi/dev/norn -- --scenario 1c-any -n 12
 */

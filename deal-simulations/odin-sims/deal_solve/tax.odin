@@ -195,14 +195,7 @@ misguess_tax :: proc(
 // an already-solved batch (`Solved_Sample`) — NO solving here (one CalcDDtable/layout happened in
 // `solve_sample`). Shares the DD solve with `lead_grids_from_sample` when both read the same batch, so a board
 // pays for the sampled layouts once, not twice. See the file header for the model.
-tax_from_sample :: proc(
-	board: norn.Board,
-	s: ^Solved_Sample,
-	contract: Contract,
-) -> (
-	result: Tax_Result,
-	ok: bool,
-) {
+tax_from_sample :: proc(board: norn.Board, s: ^Solved_Sample, contract: Contract) -> (result: Tax_Result, ok: bool) {
 	a, b := s.a, s.b
 	n_samples := s.n
 

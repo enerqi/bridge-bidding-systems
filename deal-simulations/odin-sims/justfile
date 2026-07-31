@@ -22,11 +22,11 @@ dds_home := env_var_or_default("DDS_HOME", replace(home_directory(), "\\", "/") 
 dds := "-collection:dds=" + dds_home
 sim_name := "sim.exe"
 
-# Where the batch `regen-*` recipes write their per-scenario HTML: DEALS_OUTPUT_DIR if set, else the
-# w: web-server volume. Every recipe also takes it as a trailing argument, e.g. `just regen 48 ./out/`.
+# Where the batch `gen-all*` / `gen-some` recipes write their per-scenario HTML: DEALS_OUTPUT_DIR if set, else the
+# w: web-server volume. Every recipe also takes it as a trailing argument, e.g. `just gen-all 48 ./out/`.
 deals_output_dir := env_var_or_default("DEALS_OUTPUT_DIR", "w:/deals/")
 
-# Where the single-scenario `deal-*` recipes write <SCENARIO>.html: the directory just was invoked
+# Where the single-scenario `gen-one*` recipes write <SCENARIO>.html: the directory just was invoked
 # from (NOT this justfile's directory, which just would otherwise chdir to), so a scratch run lands
 # where you typed it. `_native` + `replace` because the plain builtin hands back a /c/... path on
 # Windows. Overridable per-recipe too, and via DEALS_SCRATCH_DIR.
@@ -84,16 +84,16 @@ lint *args:
 	odin check sim.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style {{args}}
 	odin check analyse_deal.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style {{args}}
 
-# run the deal generator (release). Pass CLI args through, e.g. `just run --scenario 1c-any -n 12`.
-run *args: mktarget_dirs
+# run the deal generator (release). Pass CLI args through, e.g. `just sim --scenario 1c-any -n 12`.
+sim *args: mktarget_dirs
 	odin run sim.odin -file {{norn}} {{dds}} -keep-executable -o:speed -microarch:native -out:target/release/{{sim_name}} -- {{args}}
 
-# rerun the deal generator (release) without recompiling. Pass CLI args through, e.g. `just run --scenario 1c-any -n 12`.
-rerun *args: mktarget_dirs
+# run the deal generator (release) WITHOUT recompiling. Pass CLI args through, e.g. `just sim-norebuild --scenario 1c-any -n 12`.
+sim-norebuild *args: mktarget_dirs
 	target/release/{{sim_name}} {{args}}
 
-# run the deal generator (debug build). Pass CLI args through, e.g. `just run_debug --scenario 1c-any -n 12`.
-run_debug *args: mktarget_dirs
+# run the deal generator (debug build). Pass CLI args through, e.g. `just sim-debug --scenario 1c-any -n 12`.
+sim-debug *args: mktarget_dirs
 	odin run sim.odin -file {{norn}} {{dds}} -microarch:native -out:target/debug/{{sim_name}} -- {{args}}
 
 # build the sim deal generator (release)
@@ -101,8 +101,12 @@ build *args: mktarget_dirs
 	odin build sim.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/{{sim_name}} {{args}}
 
 #
-# Convenience wrappers over `run` / `rerun` (these used to live in the repo-root justfile as the
-# `*-norn` family; the root reaches them as a just module, e.g. `just sims regen 48`).
+# Convenience wrappers over `sim` / `sim-norebuild` (these used to live in the repo-root justfile as
+# the `*-norn` family; the root reaches them as a just module, e.g. `just sims gen-all 48`).
+#
+# NAMING: gen-all = every registered scenario, gen-some = a named subset, gen-one = one scenario.
+# Suffixes stack in this order: [-cards][-dd] for the format/solver variants, -norebuild to skip the
+# compile and reuse the last release build.
 #
 # BATCH: every registered scenario -> <DIR>/<scenario>.html, DIR defaulting to deals_output_dir.
 # SINGLE: one scenario -> <DIR>/<SCENARIO>.html, DIR defaulting to scratch_dir (where you invoked just).
@@ -112,53 +116,53 @@ build *args: mktarget_dirs
 # prev/next carousel of text-compass diagrams, seat toggle, par toggle).
 #
 
-# regenerate ALL scenarios (COUNT deals each) -> DIR/<scenario>.html
-regen COUNT="48" DIR=deals_output_dir:
-	just run --html-dir {{DIR}} --count {{COUNT}}
+# generate ALL scenarios (COUNT deals each) -> DIR/<scenario>.html
+gen-all COUNT="48" DIR=deals_output_dir:
+	just sim --html-dir {{DIR}} --count {{COUNT}}
 
-# regenerate ALL scenarios WITH double-dummy annotations -> DIR/<scenario>.html
-regen-dd COUNT="48" DIR=deals_output_dir:
-	just run --html-dir {{DIR}} --count {{COUNT}} --dd
+# generate ALL scenarios WITH double-dummy annotations -> DIR/<scenario>.html
+gen-all-dd COUNT="48" DIR=deals_output_dir:
+	just sim --html-dir {{DIR}} --count {{COUNT}} --dd
 
-# regenerate ALL scenarios as offline card carousels -> DIR/<scenario>.html
-regen-cards COUNT="48" DIR=deals_output_dir:
-	just run --html-dir {{DIR}} --count {{COUNT}} --format html-cards
+# generate ALL scenarios as offline card carousels -> DIR/<scenario>.html
+gen-all-cards COUNT="48" DIR=deals_output_dir:
+	just sim --html-dir {{DIR}} --count {{COUNT}} --format html-cards
 
-# regenerate ALL scenarios as offline card carousels WITH double-dummy par captions
-regen-cards-dd COUNT="48" DIR=deals_output_dir:
-	just run --html-dir {{DIR}} --count {{COUNT}} --format html-cards --dd
+# generate ALL scenarios as offline card carousels WITH double-dummy par captions
+gen-all-cards-dd COUNT="48" DIR=deals_output_dir:
+	just sim --html-dir {{DIR}} --count {{COUNT}} --format html-cards --dd
 
-# regenerate ALL scenarios WITHOUT recompiling (reuses the last release build)
-regen-rerun COUNT="48" DIR=deals_output_dir:
-	just rerun --html-dir {{DIR}} --count {{COUNT}}
+# generate ALL scenarios WITHOUT recompiling (reuses the last release build)
+gen-all-norebuild COUNT="48" DIR=deals_output_dir:
+	just sim-norebuild --html-dir {{DIR}} --count {{COUNT}}
 
-# regenerate a SUBSET; NAMES is comma-separated, e.g. `just regen-some 1c-any,2c-opener 100`
-regen-some NAMES COUNT="48" DIR=deals_output_dir:
-	just run --html-dir {{DIR}} --scenario {{NAMES}} --count {{COUNT}}
+# generate a SUBSET; NAMES is comma-separated, e.g. `just gen-some 1c-any,2c-opener 100`
+gen-some NAMES COUNT="48" DIR=deals_output_dir:
+	just sim --html-dir {{DIR}} --scenario {{NAMES}} --count {{COUNT}}
 
 # COUNT deals for ONE scenario -> DIR/<SCENARIO>.html
-deal SCENARIO COUNT="48" DIR=scratch_dir:
-	just run --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{DIR}}/{{SCENARIO}}.html
+gen-one SCENARIO COUNT="48" DIR=scratch_dir:
+	just sim --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{DIR}}/{{SCENARIO}}.html
 
 # COUNT deals for ONE scenario WITH double-dummy annotations -> DIR/<SCENARIO>.html
-deal-dd SCENARIO COUNT="48" DIR=scratch_dir:
-	just run --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{DIR}}/{{SCENARIO}}.html --dd
+gen-one-dd SCENARIO COUNT="48" DIR=scratch_dir:
+	just sim --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{DIR}}/{{SCENARIO}}.html --dd
 
 # COUNT deals for ONE scenario as an offline card carousel -> DIR/<SCENARIO>.html
-deal-cards SCENARIO COUNT="48" DIR=scratch_dir:
-	just run --scenario {{SCENARIO}} --count {{COUNT}} --format html-cards --output {{DIR}}/{{SCENARIO}}.html
+gen-one-cards SCENARIO COUNT="48" DIR=scratch_dir:
+	just sim --scenario {{SCENARIO}} --count {{COUNT}} --format html-cards --output {{DIR}}/{{SCENARIO}}.html
 
 # COUNT deals for ONE scenario as an offline card carousel with double-dummy par -> DIR/<SCENARIO>.html
-deal-cards-dd SCENARIO COUNT="48" DIR=scratch_dir:
-	just run --scenario {{SCENARIO}} --count {{COUNT}} --format html-cards --output {{DIR}}/{{SCENARIO}}.html --dd
+gen-one-cards-dd SCENARIO COUNT="48" DIR=scratch_dir:
+	just sim --scenario {{SCENARIO}} --count {{COUNT}} --format html-cards --output {{DIR}}/{{SCENARIO}}.html --dd
 
 # COUNT deals for ONE scenario WITHOUT recompiling -> DIR/<SCENARIO>.html
-deal-rerun SCENARIO COUNT="48" DIR=scratch_dir:
-	just rerun --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{DIR}}/{{SCENARIO}}.html
+gen-one-norebuild SCENARIO COUNT="48" DIR=scratch_dir:
+	just sim-norebuild --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{DIR}}/{{SCENARIO}}.html
 
 # list the scenarios compiled into the sim
 scenarios:
-	just run_debug --list
+	just sim-debug --list
 
 # read a deal and print the combo analysis (double-dummy census + achievable single-dummy) for the
 # known partnership. The deal may be a PBN [Deal] tag / bare N:... value, a bridge-site hand URL
@@ -254,12 +258,12 @@ ocr-analyse image *args: mktarget_dirs
 # image -> PBN -> analyse_deal with the DDS-sampling advisor + CCA/DD features. Writes
 # <image-basename>.html (override with --html); samples 400 deals by default (override with --sample).
 # Extra flags pass through to analyse_deal (e.g. --contract 3NT).
-# `just ocr-analyse-rerun --demo` runs hand-ocr's sample deal end-to-end (plumbing check, no vision deps needed).
+# `just ocr-analyse-norebuild --demo` runs hand-ocr's sample deal end-to-end (plumbing check, no vision deps needed).
 # <image> may be `--clipboard` to read straight from the OS clipboard (screenshot -> card page, no temp file).
-# e.g. `just ocr-analyse-rerun hand.png` ; `just ocr-analyse-rerun hand.png --contract 3NT --seed 7` ; `just ocr-analyse-rerun --clipboard`
+# e.g. `just ocr-analyse-norebuild hand.png` ; `just ocr-analyse-norebuild hand.png --contract 3NT --seed 7` ; `just ocr-analyse-norebuild --clipboard`
 # ---
 # OCR a hand-diagram IMAGE straight to the interactive card page without recompiling analyse_deal.exe
-ocr-analyse-rerun image *args: mktarget_dirs
+ocr-analyse-norebuild image *args: mktarget_dirs
 	uv run --no-project python tools/ocr_analyse.py {{image}} {{args}}
 
 # build analyse_deal, run it on a fixed board+seed, and diff the emitted `data-sim='...'` against

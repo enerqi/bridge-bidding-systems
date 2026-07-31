@@ -32,14 +32,14 @@ All the recipes live in `odin-sims/justfile`; the repo root exposes them as the 
 so they run the same from either directory (drop the `sims ` prefix inside `odin-sims/`):
 
 ```sh
-just sims regen                       # every scenario -> $DEALS_OUTPUT_DIR/<name>.html (48 deals, default w:/deals/)
-just sims regen-some 1c-any,2c-opener # just those two
-just sims deal 2c-opener              # one scenario -> ./2c-opener.html (the dir you invoked just from)
-just sims regen 48 ./out/             # any recipe takes the output dir as its last argument
+just sims gen-all                     # every scenario -> $DEALS_OUTPUT_DIR/<name>.html (48 deals, default w:/deals/)
+just sims gen-some 1c-any,2c-opener   # just those two
+just sims gen-one 2c-opener           # one scenario -> ./2c-opener.html (the dir you invoked just from)
+just sims gen-all 48 ./out/           # any recipe takes the output dir as its last argument
 just --list sims                      # all of them (-dd and -cards variants, freq, bench, ...)
 ```
 
-Inside `odin-sims/` there is also its own `just` for development: `just run --scenario 1c-any -n 12`,
+Inside `odin-sims/` there is also its own `just` for development: `just sim --scenario 1c-any -n 12`,
 `just build`, `just test`, `just lint`. (`just ols-config` regenerates the editor's
 `ols.json` for the `norn:` collection; set `NORN_HOME` if the norn checkout isn't at `~/dev/norn`.)
 

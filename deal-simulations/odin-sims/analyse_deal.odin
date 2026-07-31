@@ -77,11 +77,22 @@ import "norn:combo"
 import "norn:norn"
 import "suit_book"
 
-main :: proc() {
-	os.exit(run())
+// Process exit codes. 0 = success; 2 for a usage/CLI error and 1 for a runtime failure — the same
+// convention `norn:cli` answers the shell with (see cli/app.odin's EXIT_* constants), kept as a
+// distinct type here so every `return` in `run` names its meaning. `int`-backed, so handing it to
+// `os.exit` is a free conversion. The VALUES are load-bearing: tools/ocr_analyse.py and
+// tests/golden_sim_json.py shell out to this program and read them.
+Exit :: enum int {
+	Ok            = 0,
+	Runtime_Error = 1,
+	Usage_Error   = 2,
 }
 
-run :: proc() -> int {
+main :: proc() {
+	os.exit(int(run()))
+}
+
+run :: proc() -> Exit {
 	defer combo.shutdown() // free combo's worker pool if the HTML annotate spun it up (no-op otherwise)
 	// This project's published suit-combination table; combo is engine-only until it is registered (see
 	// combo/book.odin). Its key index is freed by the `combo.shutdown` above, via the provider.
@@ -98,11 +109,11 @@ run :: proc() -> int {
 			"                   [--void <seat>:<suit>] [--len <seat>:<suit>:<n|n-m|n+>] [--lead <seat>:<card>]",
 		)
 		fmt.eprintln("                   ['<PBN deal tag | LIN record | bridge-site hand URL>']")
-		return 2
+		return .Usage_Error
 	}
 	if strings.trim_space(args.text) == "" {
 		fmt.eprintln("analyse_deal: no deal input (pass a PBN/LIN string, --file, or pipe via stdin)")
-		return 2
+		return .Usage_Error
 	}
 	// Resolve the input to boards. PBN input may hold several `[Deal]` tags (a hand-ocr session, a
 	// `.pbn` file) — one board each; LIN input (a bridge-site URL or bare `md|` record) is one board.
@@ -111,17 +122,17 @@ run :: proc() -> int {
 	defer delete(boards)
 	if berr != "" {
 		fmt.eprintln("analyse_deal:", berr)
-		return 1
+		return .Runtime_Error
 	}
 	if len(boards) == 0 {
 		fmt.eprintln("analyse_deal: no deal found in the input")
-		return 1
+		return .Runtime_Error
 	}
 	multi := len(boards) > 1
 	// Constraints name specific seats/cards of ONE board, so they are meaningless across a set.
 	if multi && (len(args.constraints) > 0 || len(args.held) > 0) {
 		fmt.eprintln("analyse_deal: --void/--len/--lead condition a specific board, so they need a SINGLE board input")
-		return 1
+		return .Runtime_Error
 	}
 
 	// --contract applies to every board (empty -> auto-pick per board). Parse it once, fail fast.
@@ -131,7 +142,7 @@ run :: proc() -> int {
 		c, c_ok := deal_solve.parse_contract(args.contract)
 		if !c_ok {
 			fmt.eprintfln("analyse_deal: could not parse --contract %q (expected e.g. 4H, 3NT)", args.contract)
-			return 1
+			return .Runtime_Error
 		}
 		contract, has_contract = c, true
 	}
@@ -160,10 +171,10 @@ run :: proc() -> int {
 	if args.html_path != "" {
 		if werr := write_html(args.html_path, boards[:], &args, contract, has_contract); werr != "" {
 			fmt.eprintln("analyse_deal:", werr)
-			return 1
+			return .Runtime_Error
 		}
 		fmt.eprintfln("wrote %s (%d board%s)", args.html_path, len(boards), "" if len(boards) == 1 else "s")
-		return 0
+		return .Ok
 	}
 
 	for board, i in boards {
@@ -175,7 +186,7 @@ run :: proc() -> int {
 		}
 		report_board(board, &args, contract, has_contract)
 	}
-	return 0
+	return .Ok
 }
 
 // One board's DDS-sample results (empty when --sample is off or the board is not a 2-hand advisor input).
