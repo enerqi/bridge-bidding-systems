@@ -64,6 +64,46 @@ class BidPattern:
     by_opponent: Optional[bool]  # None = don't care
 
 
+@dataclass(frozen=True)
+class CallPattern:
+    """One position in an auction: the alternatives allowed there.
+
+    Usually one. `/` writes more than one -- `2D/2H`, `3S/4C` -- which is a
+    single call the author wrote as a choice, *not* two consecutive calls.
+    Alternatives differing only in suit could equally be written `2DH`; ones
+    spanning levels (`3S/4C`) have no single-token form, which is why a
+    position is a set of patterns rather than one widened pattern.
+    """
+
+    alternatives: tuple[BidPattern, ...]
+
+    def _single(self) -> BidPattern:
+        if len(self.alternatives) != 1:
+            raise ValueError(
+                f"{len(self.alternatives)} alternatives at this position; "
+                "read .alternatives instead"
+            )
+        return self.alternatives[0]
+
+    # Delegation for the ordinary one-alternative case, so callers (and the
+    # tests) can keep asking a position about its level or suits directly.
+    @property
+    def level(self) -> Optional[int]:
+        return self._single().level
+
+    @property
+    def suit_class(self) -> frozenset:
+        return self._single().suit_class
+
+    @property
+    def kind(self) -> str:
+        return self._single().kind
+
+    @property
+    def by_opponent(self) -> Optional[bool]:
+        return self._single().by_opponent
+
+
 def _fold_token_case(tok: str) -> str:
     """Uppercase a token, keeping a lowercase `m` (minors) distinct from `M`
     (majors). Every other character is a suit letter or a keyword, for which
@@ -83,8 +123,22 @@ def normalize_filter_text(text: Optional[str]) -> str:
     return ", ".join(e for e in (part.strip() for part in s.split(",")) if e)
 
 
-def _parse_pattern_token(tok: str) -> BidPattern:
+def _parse_pattern_token(tok: str) -> CallPattern:
+    """Parse one position, which may be an alternation (`2D/2H`, `3S/4C`).
+
+    Brackets may wrap the whole alternation -- `(2D/2H)` is the opponents
+    making either call -- or an individual branch.
+    """
     inner, opp = _strip_parens(tok)
+    parts = [p for p in inner.split(bmlbids.ALT_SEP) if p.strip()]
+    if not parts:
+        raise ValueError(f"cannot parse pattern token: {tok!r}")
+    return CallPattern(tuple(_parse_alternative(p, opp) for p in parts))
+
+
+def _parse_alternative(tok: str, outer_opp: bool = False) -> BidPattern:
+    inner, opp = _strip_parens(tok)
+    opp = opp or outer_opp
     # brackets are the notation for "the opponents did this", so a token
     # without them is one of our calls. (The bare `*` wildcard below opts back
     # out to "either side" — that is what makes it useful for counting depth.)
@@ -122,15 +176,27 @@ def _parse_pattern_token(tok: str) -> BidPattern:
     return BidPattern(level, frozenset(suit_class), "bid", by_opp)
 
 
-def parse_pattern(pattern_str: str) -> list[BidPattern]:
-    """Parse `1D-1M-1N` (dashes or spaces; bml's `--` also accepted)."""
+def parse_pattern(pattern_str: str) -> list[CallPattern]:
+    """Parse `1D-1M-1N` (dashes or spaces; bml's `--` also accepted).
+
+    A position may offer alternatives with `/`: `1M-3S/4C`.
+    """
     parts = [p for p in _SPLIT_RE.split(normalize_filter_text(pattern_str)) if p]
     if not parts:
         raise ValueError("empty pattern")
     return [_parse_pattern_token(p) for p in parts]
 
 
-def bid_matches(bid: Bid, pat: BidPattern) -> bool:
+def bid_matches(bid: Bid, pat: BidPattern | CallPattern) -> bool:
+    """Does one call satisfy one position?
+
+    Both sides can name a *set* of calls — the auction may record `1HS` or
+    `2D/2H`, the pattern may ask for `1M` or `3S/4C` — so this is a test for
+    overlap, not equality: the position matches if any alternative it allows
+    shares a denomination with any the call allows.
+    """
+    if isinstance(pat, CallPattern):
+        return any(bid_matches(bid, alt) for alt in pat.alternatives)
     if pat.kind != "*" and pat.kind != bid.kind:
         return False
     if pat.by_opponent is not None and pat.by_opponent != bid.by_opponent:
@@ -143,7 +209,18 @@ def bid_matches(bid: Bid, pat: BidPattern) -> bool:
     return True
 
 
-def matches_prefix(seq_bids: list[Bid], pattern: list[BidPattern]) -> bool:
+def position_matches(position: tuple[Bid, ...], pat: CallPattern) -> bool:
+    """As `bid_matches`, when the *auction* position is itself a set of calls.
+
+    `1HS--3S/4C` records a position no single Bid can express, so an auction
+    position is a tuple of alternatives. It matches when any of them does —
+    the recorded auction is one of these calls, and the filter is asking
+    whether it could be the one wanted.
+    """
+    return any(bid_matches(bid, pat) for bid in position)
+
+
+def matches_prefix(seq_bids: list, pattern: list[CallPattern]) -> bool:
     """True if the auction begins with the pattern.
 
     A pattern describes *our* auction. The opponents can slip a call in at any
@@ -162,15 +239,29 @@ def matches_prefix(seq_bids: list[Bid], pattern: list[BidPattern]) -> bool:
         opponent's, which is what makes `*-*-*-*-*-*` mean "six calls deep"
         rather than "six calls by us".
     """
+    positions = _as_positions(seq_bids)
     i = 0
     for n, pat in enumerate(pattern):
-        if n and pat.by_opponent is not True and pat.kind != "*":
-            while i < len(seq_bids) and seq_bids[i].by_opponent:
+        if n and not _anchored(pat):
+            while i < len(positions) and all(b.by_opponent for b in positions[i]):
                 i += 1
-        if i >= len(seq_bids) or not bid_matches(seq_bids[i], pat):
+        if i >= len(positions) or not position_matches(positions[i], pat):
             return False
         i += 1
     return True
+
+
+def _anchored(pat: CallPattern | BidPattern) -> bool:
+    """Must this position line up with the very next call rather than skipping
+    over opponent calls? True for anything bracketed and for the bare `*`."""
+    alts = pat.alternatives if isinstance(pat, CallPattern) else (pat,)
+    return any(a.by_opponent is True or a.kind == "*" for a in alts)
+
+
+def _as_positions(seq: list) -> list[tuple[Bid, ...]]:
+    """Accept either a plain list of calls or a list of position alternatives,
+    so callers holding pre-parsed `list[Bid]` keep working."""
+    return [p if isinstance(p, tuple) else (p,) for p in seq]
 
 
 def significant_bids(bids: list[Bid]) -> list[Bid]:
@@ -181,10 +272,32 @@ def significant_bids(bids: list[Bid]) -> list[Bid]:
     return [b for b in bids if not (b.by_opponent and b.kind == "pass")]
 
 
-def sequence_matches(sequence: list[str], pattern: list[BidPattern]) -> bool:
+def parse_sequence_positions(sequence: Iterable[str]) -> list[tuple[Bid, ...]]:
+    """Parse an auction into one entry per position, each the calls it allows.
+
+    Unlike `parse_sequence` this keeps `3S/4C` — an alternation spanning
+    levels, which has no single-Bid form — instead of degrading it to 'other'.
+    """
+    positions: list[tuple[Bid, ...]] = []
+    for element in sequence:
+        for token in str(element).split():
+            calls = bmlbids.parse_call_alternatives(token)
+            if calls:
+                positions.append(tuple(calls))
+    return positions
+
+
+def significant_positions(positions: list[tuple[Bid, ...]]) -> list[tuple[Bid, ...]]:
+    """`significant_bids` for position tuples: drop opponent passes."""
+    return [
+        p for p in positions if not all(b.by_opponent and b.kind == "pass" for b in p)
+    ]
+
+
+def sequence_matches(sequence: list[str], pattern: list[CallPattern]) -> bool:
     """Convenience: parse a raw get_sequence() result and prefix-match it,
     ignoring implicit opponent passes."""
-    return matches_prefix(significant_bids(parse_sequence(sequence)), pattern)
+    return matches_prefix(significant_positions(parse_sequence_positions(sequence)), pattern)
 
 
 # --- topics: pre-composed collections of patterns ---------------------------
@@ -288,7 +401,7 @@ class ParsedFilter:
     after the user commits).
     """
 
-    patterns: tuple[tuple[BidPattern, ...], ...] = ()
+    patterns: tuple[tuple[CallPattern, ...], ...] = ()
     entries: tuple[str, ...] = ()
     topic_names: tuple[str, ...] = ()
     canonical_text: str = ""
@@ -329,7 +442,7 @@ def parse_filter(text: Optional[str], topics: Optional[dict[str, Topic]] = None)
     """
     topics = topics or {}
     entries = split_entries(text)
-    patterns: list[tuple[BidPattern, ...]] = []
+    patterns: list[tuple[CallPattern, ...]] = []
     canonical: list[str] = []
     topic_names: list[str] = []
     errors: list[str] = []
@@ -359,22 +472,25 @@ def parse_filter(text: Optional[str], topics: Optional[dict[str, Topic]] = None)
     )
 
 
-def bids_match_any(bids: list[Bid], patterns: Iterable[Iterable[BidPattern]]) -> bool:
+def bids_match_any(bids: list, patterns: Iterable[Iterable[CallPattern]]) -> bool:
     """True if pre-parsed auction bids match *any* of the patterns (comma = OR)."""
     return any(matches_prefix(bids, list(p)) for p in patterns)
 
 
-def prepare_sequence_bids(sequences: Iterable[list[str]]) -> list[list[Bid]]:
+def prepare_sequence_bids(sequences: Iterable[list[str]]) -> list[list[tuple[Bid, ...]]]:
     """Pre-parse a corpus of auctions once, so that repeatedly re-filtering it
-    (e.g. validating on every keystroke) is only prefix comparisons."""
-    return [significant_bids(parse_sequence(s)) for s in sequences]
+    (e.g. validating on every keystroke) is only prefix comparisons.
+
+    Each auction becomes a list of positions, and each position the calls it
+    allows — one for an ordinary call, several for `2D/2H`."""
+    return [significant_positions(parse_sequence_positions(s)) for s in sequences]
 
 
 def sequence_matches_any(
-    sequence: list[str], patterns: Iterable[Iterable[BidPattern]]
+    sequence: list[str], patterns: Iterable[Iterable[CallPattern]]
 ) -> bool:
     """True if the auction matches *any* of the patterns (comma = OR).
 
     Parses the sequence once, unlike calling `sequence_matches` per pattern.
     """
-    return bids_match_any(significant_bids(parse_sequence(sequence)), patterns)
+    return bids_match_any(significant_positions(parse_sequence_positions(sequence)), patterns)

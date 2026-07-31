@@ -162,8 +162,14 @@ class BidSequenceMeaning:
     _initial_sequence: list[str]
 
 
-separator_bid_regex = re.compile(r"\-\(?[1-7][CDHSN]\)?")  # without $ we allow e.g. 1C--1HS
-prefix_separator_bid_regex = re.compile(r"\(?[1-7][CDHSN]\)?\-")
+# Gate: does this header look like an auction at all? The suit class must allow
+# a whole denomination run, not one letter: `1HS--2M` is a real header, and with
+# a single-letter class neither pattern matched it (`-2M` has no `M`; `1HS-` has
+# an `S` where the dash was expected), so the section lost all of its context.
+# `M`/`m` are the major/minor shorthands and are matched case-sensitively; `*`
+# is "any denomination", as in `1HS--3*/4*`.
+separator_bid_regex = re.compile(r"\-\(?[1-7][CDHSNMm*]+\)?")  # e.g. 1C--1HS, 1HS--2M
+prefix_separator_bid_regex = re.compile(r"\(?[1-7][CDHSNMm*]+\)?\-")
 
 
 def parse_bids_from_headers(header_context: list[Header], debug: bool = False) -> list[str]:
@@ -190,9 +196,16 @@ def parse_bids_from_headers(header_context: list[Header], debug: bool = False) -
         if "-" in header_text and (
             re.search(separator_bid_regex, header_text) or re.search(prefix_separator_bid_regex, header_text)
         ):
-            norm = header_text.strip().upper()
+            # Case-fold the way the bid model does: everything uppercases except
+            # a lowercase `m`, which means "a minor". A plain .upper() turned
+            # `(1m)--P--(1N)` into the opponents opening a *major*.
+            norm = bmlbids.fold_call_case(header_text.strip())
             norm = norm.replace("-", " ")
-            norm = norm.replace("/", " ")
+            # `/` is NOT a separator: `1C--1N/2C` is three calls, the third of
+            # which was written as a choice. Splitting on it invented a fourth
+            # call and shifted the whole auction (`1C 1D 1N 2C 2D` for what is
+            # really `1C 1D (1N or 2C) 2D`), so the alternation stays one token
+            # and `bmlbids` parses it as one position.
             norm = norm.replace("NT", "N")
             parts = norm.split()
 

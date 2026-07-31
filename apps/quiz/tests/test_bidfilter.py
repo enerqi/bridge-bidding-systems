@@ -268,3 +268,66 @@ patterns = ["not a bid"]
         assert set(load_topics(p, system="squad-system.bml")) == {"Everywhere", "Squad only"}
         assert set(load_topics(p, system="bidding-system.bml")) == {"Everywhere"}
     assert load_topics(Path(d) / "gone.toml") == {}  # missing file is not an error
+
+
+# --- alternation (`/`) and the `*` wildcard ---------------------------------
+
+
+def test_pattern_alternation_same_level():
+    """`2D/2H` in a pattern is one position offering two calls."""
+    pat = parse_pattern("1N--2D/2H")
+    assert sequence_matches(["1N (Pass) 2D"], pat)
+    assert sequence_matches(["1N (Pass) 2H"], pat)
+    assert not sequence_matches(["1N (Pass) 2S"], pat)
+    # ...and it is not two positions: 1N-2D-2H must not be what it means
+    assert sequence_matches(["1N (Pass) 2D", "3C"], pat)
+
+
+def test_pattern_alternation_across_levels():
+    """`3S/4C` spans levels, so it cannot collapse to one multi-suit bid."""
+    pat = parse_pattern("1M--3S/4C")
+    assert sequence_matches(["1H (Pass) 3S"], pat)
+    assert sequence_matches(["1S (Pass) 4C"], pat)
+    assert not sequence_matches(["1H (Pass) 4S"], pat)  # no cross-pairing
+    assert not sequence_matches(["1H (Pass) 3C"], pat)
+
+
+def test_pattern_alternation_brackets_apply_to_every_branch():
+    pat = parse_pattern("1C--(2D/2H)")
+    assert sequence_matches(["1C (2D)"], pat)
+    assert sequence_matches(["1C (2H)"], pat)
+    assert not sequence_matches(["1C (Pass) 2D"], pat)  # ours, not theirs
+
+
+def test_wildcard_denomination_pattern():
+    pat = parse_pattern("1M--3*")
+    assert sequence_matches(["1H (Pass) 3D"], pat)
+    assert sequence_matches(["1S (Pass) 3N"], pat)
+    assert not sequence_matches(["1H (Pass) 4D"], pat)  # level still binds
+    # `3*` and the older `3*`-as-any-suit spelling agree
+    assert sequence_matches(["1H (Pass) 3D"], parse_pattern("1M--3*"))
+
+
+def test_alternation_in_the_recorded_auction():
+    """The auction itself can hold an alternation — a section titled
+    `1C--1N/2C` records a call the author wrote as a choice. It should answer
+    to a filter naming either branch, and to neither of the others."""
+    seq = ["1C", "1D", "1N/2C", "2D"]
+    assert sequence_matches(seq, parse_pattern("1C-1D-1N-2D"))
+    assert sequence_matches(seq, parse_pattern("1C-1D-2C-2D"))
+    assert not sequence_matches(seq, parse_pattern("1C-1D-1H-2D"))
+    # and it stays ONE position: 2D follows it, nothing was inserted
+    assert not sequence_matches(seq, parse_pattern("1C-1D-1N-2C"))
+
+
+def test_canonical_text_keeps_alternation():
+    assert canonical_pattern_text("1n -- 2d/2h") == "1N-2D/2H"
+    assert canonical_pattern_text("1m--3*") == "1m-3*"
+
+
+def test_call_pattern_single_alternative_delegates():
+    """One-alternative positions still answer level/suit questions directly."""
+    pat = parse_pattern("1D--1M")
+    assert pat[1].suit_class == MAJORS
+    assert pat[1].level == 1
+    assert len(parse_pattern("1D--3S/4C")[1].alternatives) == 2

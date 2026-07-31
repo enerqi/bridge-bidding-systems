@@ -11,6 +11,7 @@ multi-suit case (`1C--1HS`) that a single-suit regex used to drop silently.
 import pytest
 
 import bidfilter
+import bml
 import quiz
 
 
@@ -43,6 +44,47 @@ def test_parse_individual_bids_keeps_multi_suit():
 def test_bid_less_than_is_strict_for_multi_suit():
     assert quiz.bid_less_than("1HS", "1N")  # both 1H and 1S precede 1N
     assert not quiz.bid_less_than("1HS", "1S")  # 1S is not below itself
+
+
+def header_bids(title):
+    return quiz.parse_bids_from_headers([quiz.Header(bml.ContentType.H1, title)])
+
+
+@pytest.mark.parametrize(
+    "title,expected",
+    [
+        # multi-suit in either position. `1HS--2M` used to yield [] outright:
+        # the gate regex allowed one suit letter, so neither `-2M` nor `1HS-`
+        # matched and the whole section lost its context
+        ("1C--1HS", ["1C", "1HS"]),
+        ("1HS--2M", ["1HS", "2M"]),
+        ("1C--1D--1HS", ["1C", "1D", "1HS"]),
+        # `x` is not the wildcard -- `*` is, and the corpus was migrated to it
+        ("1HS--3x/4x", ["1HS"]),
+        ("1HS--3*/4*", ["1HS", "3*/4*"]),
+        # major/minor shorthand
+        ("1M--3D", ["1M", "3D"]),
+        ("2M--2N", ["2M", "2N"]),
+        ("1m--2m", ["1m", "2m"]),
+        ("1M--(2C)--2D", ["1M", "(2C)", "2D"]),
+        # prose around the auction; `/` is OR *within* one position
+        ("Transfers after 1M--(X) or 1M overcall--(X)", ["1M"]),
+        ("1N--2D/2H", ["1N", "2D/2H"]),
+        # not auctions
+        ("Good-Bad", []),
+        ("1HS", []),  # no separator: a section name, not a sequence
+    ],
+)
+def test_header_bids(title, expected):
+    assert header_bids(title) == expected
+
+
+def test_minor_shorthand_survives_case_folding():
+    """`(1m)` is the opponents opening a *minor*. A plain .upper() folded it to
+    `(1M)`, silently turning the section into a major-opening context."""
+    assert header_bids("After (1m)--P--(1N)") == ["(1m)", "(1N)"]
+    assert bidfilter.parse_bid_token("(1m)").suits == bidfilter.MINORS
+    assert bidfilter.parse_bid_token("(1M)").suits == bidfilter.MAJORS
 
 
 def test_section_auction_title_is_prepended(auctions):
@@ -104,3 +146,45 @@ def test_no_multi_suit_context_is_dropped(bml_file, auctions):
             if not present and quiz.bid_less_than(context_bid, first):
                 offenders.append((context_bid, a._parsed_context_bids, a.sequence))
     assert not offenders, offenders[:5]
+
+
+def test_alternation_in_a_header_is_one_position():
+    """`/` is OR at a single position, not a call separator.
+
+    `** 1C--1N/2C` means 1C, then 1D (from the enclosing section), then *either*
+    1N or 2C. Splitting the slash recorded four context calls and pushed every
+    auction under the section one call to the right.
+    """
+    assert header_bids("1C--1N/2C") == ["1C", "1N/2C"]
+    assert header_bids("1N--2S/2N") == ["1N", "2S/2N"]
+    assert header_bids("(1N)--P--(2D/2H)") == ["(1N)", "(2D/2H)"]
+    assert header_bids("1HS--3*/4*") == ["1HS", "3*/4*"]
+
+
+def test_alternation_section_does_not_invent_a_call(auctions):
+    """The regression: auctions under `1C--1N/2C` were recorded as
+    `1C 1D 1N 2C 2D...`, a five-call auction that was never bid."""
+    under = [
+        a
+        for a in auctions("alternatives.bml")
+        if any("1C--1N/2C" in h.text for h in a._debug_headers_context)
+    ]
+    assert under, "expected auctions under the 1C--1N/2C section"
+    for a in under:
+        assert a.sequence[:3] == ["1C", "1D", "1N/2C"], a.sequence
+        assert "2C" not in a.sequence[:3]
+
+
+def test_alternation_auction_matches_either_branch(auctions):
+    under = [
+        a
+        for a in auctions("alternatives.bml")
+        if a.sequence[:3] == ["1C", "1D", "1N/2C"]
+    ]
+    assert under
+    prepared = bidfilter.prepare_sequence_bids(a.sequence for a in under)
+    for pattern_text in ("1C-1D-1N", "1C-1D-2C"):
+        pattern = [bidfilter.parse_pattern(pattern_text)]
+        assert any(bidfilter.bids_match_any(b, pattern) for b in prepared), pattern_text
+    absent = [bidfilter.parse_pattern("1C-1D-1H")]
+    assert not any(bidfilter.bids_match_any(b, absent) for b in prepared)
