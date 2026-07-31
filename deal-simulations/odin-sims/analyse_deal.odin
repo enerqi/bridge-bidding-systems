@@ -59,6 +59,7 @@ package main
 	  --html <out.html>      Write the interactive card page (declarer + dummy shown, defenders face-down,
 	                         CCA overlay). With --sample the page also bakes the sampled grid for its green
 	                         whole-hand verdict + contract picker.
+	  -h / --help            Print the flag list (generated from the `Cli` struct) and exit 0.
 
 	Build/run (from the odin-sims dir): see the justfile `analyse-deal` recipe, e.g.
 	  just analyse-deal '[Deal "N:AKQ.. ... - -"]'
@@ -67,6 +68,7 @@ package main
 	  odin run analyse_deal.odin -file -collection:norn=C:/Users/Enerqi/dev/norn -- --target 9 '<PBN>'
 */
 
+import "core:flags"
 import "core:fmt"
 import "core:os"
 import "core:strconv"
@@ -103,13 +105,12 @@ run :: proc() -> Exit {
 	defer delete(args.held)
 	if arg_err != "" {
 		fmt.eprintln("analyse_deal:", arg_err)
-		fmt.eprintln("usage: analyse_deal [--file <path>] [--target <n>] [--html <out.html>]")
-		fmt.eprintln("                   [--sample <deals> [--contract <e.g. 4H>] [--seed <n>]]")
-		fmt.eprintln(
-			"                   [--void <seat>:<suit>] [--len <seat>:<suit>:<n|n-m|n+>] [--lead <seat>:<card>]",
-		)
-		fmt.eprintln("                   ['<PBN deal tag | LIN record | bridge-site hand URL>']")
+		write_usage(os.stderr)
 		return .Usage_Error
+	}
+	if args.help {
+		write_usage(os.stdout)
+		return .Ok
 	}
 	if strings.trim_space(args.text) == "" {
 		fmt.eprintln("analyse_deal: no deal input (pass a PBN/LIN string, --file, or pipe via stdin)")
@@ -593,117 +594,163 @@ Args :: struct {
 	seed:        u64,
 	constraints: [dynamic]deal_solve.Card_Constraint, // defender-shape inferences from --void / --len
 	held:        [dynamic]deal_solve.Held_Card, // specific-card locations from --lead / --card
+	help:        bool, // -h / --help was given: the caller prints the usage and exits 0
 }
 
-// Split the argv tail into an `Args` and an error message ("" == ok). `--file` wins over positionals;
-// positionals win over stdin (resolved by the caller when `text` is empty).
-parse_args :: proc(args: []string) -> (out: Args, err: string) {
-	file_path: string
-	positionals: [dynamic]string
-	defer delete(positionals)
+// The raw command line, as `core:flags` fills it in from this struct's run-time type info and tags. The
+// FIELD NAMES are the flag names (parsed UNIX-style, so `--sample 400`, `--sample=400` and `-sample 400`
+// all work); the one-letter fields are the short aliases, hidden from the usage text and folded into
+// their long forms by `parse_args`. `core:flags` also writes the usage from the `usage` tags, so it
+// cannot drift from the flag list the way a hand-written usage string does.
+//
+// The seat/suit/card specs arrive as raw strings and go through the existing `parse_*_spec` procs
+// afterwards, rather than through `flags.register_type_setter`: that hook is a package-level GLOBAL, and
+// this program also links `norn:cli`, which would then share it.
+Cli :: struct {
+	file:     string `usage:"read the deal from this file (the whole file is scanned for a [Deal] tag)"`,
+	html:     string `usage:"write the interactive card page here"`,
+	target:   int `usage:"highlight the P(>= n) make column (0 = no highlight)"`,
+	sample:   int `usage:"DDS-sample this many layouts for the whole-hand make-% (0 = off; 200-500 is plenty)"`,
+	contract: string `usage:"contract to score under --sample, e.g. 4H, 3NT (default: auto-pick the best)"`,
+	seed:     u64 `usage:"seed the --sample RNG (reproducible)"`,
+	void:     [dynamic]string `usage:"<seat>:<suit> — that defender is void, e.g. E:S. Repeatable"`,
+	len:      [dynamic]string `usage:"<seat>:<suit>:<n|n-m|n+> — defender suit length, e.g. W:H:6. Repeatable"`,
+	lead:     [dynamic]string `usage:"<seat>:<card> — that defender holds/led it, e.g. W:KH (rank-first). Repeatable"`,
+	card:     [dynamic]string `args:"hidden"`, // alias for --lead
+	f:        string `args:"hidden"`, // alias for --file
+	o:        string `args:"hidden"`, // alias for --html
+	t:        int `args:"hidden"`, // alias for --target
+	s:        int `args:"hidden"`, // alias for --sample
+	c:        string `args:"hidden"`, // alias for --contract
+	overflow: [dynamic]string `usage:"the deal: a PBN [Deal] tag or bare N:... value, a LIN record, or a bridge-site hand URL"`,
+}
 
-	i := 0
-	for i < len(args) {
-		arg := args[i]
-		switch arg {
-		case "--file", "-f":
-			if i + 1 >= len(args) {
-				return out, "--file needs a path"
-			}
-			file_path = args[i + 1]
-			i += 2
-		case "--html", "-o":
-			if i + 1 >= len(args) {
-				return out, "--html needs an output path"
-			}
-			out.html_path = args[i + 1]
-			i += 2
-		case "--target", "-t":
-			if i + 1 >= len(args) {
-				return out, "--target needs a number"
-			}
-			n, n_ok := strconv.parse_int(args[i + 1])
-			if !n_ok {
-				return out, fmt.tprintf("--target %q is not a number", args[i + 1])
-			}
-			out.target = n
-			i += 2
-		case "--sample", "-s":
-			if i + 1 >= len(args) {
-				return out, "--sample needs a deal count"
-			}
-			n, n_ok := strconv.parse_int(args[i + 1])
-			if !n_ok || n <= 0 {
-				return out, fmt.tprintf("--sample %q is not a positive number", args[i + 1])
-			}
-			out.sample = n
-			i += 2
-		case "--contract", "-c":
-			if i + 1 >= len(args) {
-				return out, "--contract needs a contract, e.g. 4H"
-			}
-			out.contract = args[i + 1]
-			i += 2
-		case "--seed":
-			if i + 1 >= len(args) {
-				return out, "--seed needs a number"
-			}
-			n, n_ok := strconv.parse_u64(args[i + 1])
-			if !n_ok {
-				return out, fmt.tprintf("--seed %q is not a number", args[i + 1])
-			}
-			out.seed = n
-			i += 2
-		case "--void":
-			if i + 1 >= len(args) {
-				return out, "--void needs a <seat>:<suit>, e.g. E:S"
-			}
-			c, c_ok := parse_void_spec(args[i + 1])
-			if !c_ok {
-				return out, fmt.tprintf("--void %q is not <seat>:<suit> (seat E/W or N/S, suit S/H/D/C)", args[i + 1])
-			}
-			append(&out.constraints, c)
-			i += 2
-		case "--len":
-			if i + 1 >= len(args) {
-				return out, "--len needs a <seat>:<suit>:<n|n-m|n+>, e.g. W:H:6"
-			}
-			c, c_ok := parse_len_spec(args[i + 1])
-			if !c_ok {
-				return out, fmt.tprintf("--len %q is not <seat>:<suit>:<n|n-m|n+>", args[i + 1])
-			}
-			append(&out.constraints, c)
-			i += 2
-		case "--lead", "--card":
-			if i + 1 >= len(args) {
-				return out, "--lead needs a <seat>:<card>, e.g. W:KH"
-			}
-			h, h_ok := parse_lead_spec(args[i + 1])
-			if !h_ok {
-				return out, fmt.tprintf("--lead %q is not <seat>:<card> (card rank-first, e.g. KH, TS)", args[i + 1])
-			}
-			append(&out.held, h)
-			i += 2
-		case:
-			append(&positionals, arg)
-			i += 1
-		}
+// PBN writes an UNKNOWN hand as a bare `-` (`N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -`), which is the
+// normal shape of a two-hand advisor input — but `core:flags` reads any token starting with `-` as a
+// flag, and an UNQUOTED deal reaches us as several tokens. Swap those lone dashes for a sentinel before
+// parsing and back afterwards, so an unquoted two-hand deal keeps working as it did under the
+// hand-rolled parser. (Every scripted caller quotes the deal into one argument; humans often don't.)
+VOID_HAND :: "-"
+VOID_HAND_SENTINEL :: "\x00void-hand"
+
+// Split the argv tail into an `Args` and an error message ("" == ok). `--file` wins over positionals;
+// positionals win over stdin (resolved here when neither is given). A `-h` sets `out.help` and returns
+// at once — notably WITHOUT touching stdin, so `analyse_deal -h` does not hang waiting for input.
+parse_args :: proc(argv: []string) -> (out: Args, err: string) {
+	patched := make([]string, len(argv), context.temp_allocator)
+	for arg, i in argv {
+		patched[i] = VOID_HAND_SENTINEL if arg == VOID_HAND else arg
 	}
 
-	if file_path != "" {
-		data, read_err := os.read_entire_file_from_path(file_path, context.allocator)
+	cli: Cli
+	defer {
+		delete(cli.void)
+		delete(cli.len)
+		delete(cli.lead)
+		delete(cli.card)
+		delete(cli.overflow)
+	}
+
+	if parse_err := flags.parse(&cli, patched, .Unix); parse_err != nil {
+		if _, is_help := parse_err.(flags.Help_Request); is_help {
+			out.help = true
+			return out, ""
+		}
+		return out, flags_error_message(parse_err)
+	}
+
+	// Fold the short aliases into their long forms. 0 / "" is both the zero value and the "off" value
+	// for every one of these, so an unset alias is indistinguishable from one set to its default — and
+	// that is exactly the behaviour we want.
+	if cli.f != "" {
+		cli.file = cli.f
+	}
+	if cli.o != "" {
+		cli.html = cli.o
+	}
+	if cli.t != 0 {
+		cli.target = cli.t
+	}
+	if cli.s != 0 {
+		cli.sample = cli.s
+	}
+	if cli.c != "" {
+		cli.contract = cli.c
+	}
+	if cli.sample < 0 {
+		return out, fmt.tprintf("--sample %d is not a positive number", cli.sample)
+	}
+	out.html_path, out.target, out.sample, out.contract, out.seed =
+		cli.html, cli.target, cli.sample, cli.contract, cli.seed
+
+	// The repeatable seat/suit/card specs. --void and --len both produce shape bounds and land in the
+	// same `constraints` list; it is an unordered AND filter (see deal_solve's `constraints_satisfied`),
+	// so splitting them across two flags loses nothing.
+	for spec in cli.void {
+		c, c_ok := parse_void_spec(spec)
+		if !c_ok {
+			return out, fmt.tprintf("--void %q is not <seat>:<suit> (seat E/W or N/S, suit S/H/D/C)", spec)
+		}
+		append(&out.constraints, c)
+	}
+	for spec in cli.len {
+		c, c_ok := parse_len_spec(spec)
+		if !c_ok {
+			return out, fmt.tprintf("--len %q is not <seat>:<suit>:<n|n-m|n+>", spec)
+		}
+		append(&out.constraints, c)
+	}
+	append(&cli.lead, ..cli.card[:]) // --card is an alias, so the two lists are one
+	for spec in cli.lead {
+		h, h_ok := parse_lead_spec(spec)
+		if !h_ok {
+			return out, fmt.tprintf("--lead %q is not <seat>:<card> (card rank-first, e.g. KH, TS)", spec)
+		}
+		append(&out.held, h)
+	}
+
+	if cli.file != "" {
+		data, read_err := os.read_entire_file_from_path(cli.file, context.allocator)
 		if read_err != nil {
-			return out, fmt.tprintf("could not read file %q: %v", file_path, read_err)
+			return out, fmt.tprintf("could not read file %q: %v", cli.file, read_err)
 		}
 		out.text = string(data)
 		return out, ""
 	}
-	if len(positionals) > 0 {
-		out.text = strings.join(positionals[:], " ")
+	if len(cli.overflow) > 0 {
+		for &token in cli.overflow {
+			if token == VOID_HAND_SENTINEL {
+				token = VOID_HAND
+			}
+		}
+		out.text = strings.join(cli.overflow[:], " ")
 		return out, ""
 	}
 	out.text = read_stdin()
 	return out, ""
+}
+
+// Flatten a `core:flags` error to the one-line message `run` prints. (`flags.print_errors` would write
+// it for us, but it formats for its own `parse_or_exit` and prints usage itself; this program owns both.)
+flags_error_message :: proc(err: flags.Error) -> string {
+	switch e in err {
+	case flags.Parse_Error:
+		return e.message if e.message != "" else fmt.tprintf("%v", e.reason)
+	case flags.Validation_Error:
+		return e.message
+	case flags.Open_File_Error:
+		return fmt.tprintf("could not open %q: %v", e.filename, e.errno)
+	case flags.Help_Request:
+	}
+	return "bad command line"
+}
+
+// The flag list, generated by `core:flags` from `Cli`'s tags. Only the input precedence — which is
+// positional/stdin behaviour rather than a flag — is written by hand.
+write_usage :: proc(file: ^os.File) {
+	w := os.to_writer(file)
+	flags.write_usage(w, Cli, "analyse_deal", .Unix)
+	fmt.wprintln(w, "\nThe deal is read from --file, else the positional argument(s), else stdin.")
 }
 
 // Parse a `--void <seat>:<suit>` spec into a Card_Constraint (that seat holds ZERO of the suit).
