@@ -186,10 +186,6 @@ scenarios:
 analyse-deal deal *flags: mktarget_dirs
 	odin run analyse_deal.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/analyse_deal.exe -- {{flags}} {{quote(deal)}}
 
-# deprecated alias for `analyse-deal` (recipe + program were PBN-only before they learned LIN; the
-# program is now `analyse_deal.odin`, was `pbn_analyse.odin`)
-alias analyse-pbn := analyse-deal
-
 # Frequency test every scenario by default, or pass `-S name[,name]` to restrict the subset.
 # e.g. `just freq` (1M, -all), `just freq 5000000`, `just freq 1000000 -S 1c-any,2c-opener`.
 # With --dd the rate also counts each scenario's double-dummy filter (filtered scenarios run serially).

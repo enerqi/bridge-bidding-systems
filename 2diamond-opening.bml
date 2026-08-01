@@ -261,45 +261,42 @@ There are space limitations compared to the [2!c Opener](#2C Intermediate Openin
 
 ** 2D Intermediate Interference
 
-2D--(X)
-    XX = penalty interest
-    3D = competitive
-    others = system on, ignore double
+2D
+    (P)--P = trying to play 2D
+        (2x) = opps balancing
+            X = takeout, by either partner
+        (3x) = opps balancing 3 level
+            X = penalty, by either partner
+    (X)
+        XX = penalty interest
+        3D = competitive
+        others = system on, ignore double
+    (2x)
+        P = nothing special
+        X = negative
+        3D = competitive
+        new-suit = 2 level NF, 3 level forcing
+        cue = forcing, !d support
+        jump-cue = splinter, !d support
+    (2N)
+        X = penalty
+        others = NF
+    (3x/4x)
+        X = negative
+        new-suit = natural, forcing
+    2H+
+        (2N+)
+            X = penalty, of 4th position free bid
+    2HS
+        (X) usually takeout
+            XX = penalty interest (e.g. 4 card other major)
+            P = as 2N, without stop
+            2N = as system, but stop implication
+            others = system on
 
-2D--(2x)
-    P = nothing special
-    X = negative
-    3D = competitive
-    new-suit = 2 level NF, 3 level forcing
-    cue = forcing, !d support
-    jump-cue = splinter, !d support
-
-2D--(2N)
-    X = penalty
-    others = NF
-
-2D--(3x/4x)
-    X = negative
-    new-suit = natural, forcing
-
-2D--2H+--(2N+)
-    X = penalty, of 4th position free bid
-
-2D--2HS--(X)
-    XX = penalty interest (e.g. 4 card other major)
-    P = as 2N, without stop
-    2N = as system, but stop implication
-    others = system on
-
-2D--2H--(2S)
-    X = penalty interest
-    others = system on
-
-2D--2N+--(X)
-    XX = penalty interest
-
-2D--(P)--P--(2x)
-    X = takeout, by either partner
-
-2D--(P)--P--(3x)
-    X = penalty, by either partner
+        (2S)
+            X = penalty interest
+            others = system on
+    2N+
+        (X)
+            XX = penalty interest

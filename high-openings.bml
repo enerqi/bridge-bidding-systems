@@ -60,10 +60,10 @@
         Game = to play
         X = penalty, all positions
         4N = quantitative
-
-3CD--(P)--P--(X)--P--(P)
-    XX = two suit escape (e.g. 6--5 or 6--6)
-    NewSuit = escape
+    (P)--P--(X) = opps takeout in 4th
+        P--(P) = opps penalty pass
+            XX = two suit escape (e.g. 6--5 or 6--6)
+            NewSuit = escape
 
 
 * 3HS Openings
@@ -105,10 +105,11 @@
     (overcall)
         NewSuit = NF
         X = penalty, all positions
+    (P)--P--(X) = opps takeout in 4th
+        P--(P) = opps penalty pass
+            XX = two suit escape (e.g. 6--5 or 6--6)
+            NewSuit = escape
 
-3HS--(P)--P--(X)--P--(P)
-    XX = two suit escape (e.g. 6--5 or 6--6)
-    NewSuit = escape
 
 * 3N Opening
 
@@ -155,7 +156,7 @@ Note [3N Alternatives](#3N Opening Alternatives)
     5CD = to play
 
 4CD
-    (Bid/X)
+    (any)
         X/XX = penalty
 
 
@@ -183,7 +184,7 @@ Note [3N Alternatives](#3N Opening Alternatives)
     slam = to play
 
 4HS/5CD
-    (Bid/X)
+    (any)
         X/XX = penalty
 
 *** 5x Control Asking Bids Over Preempts

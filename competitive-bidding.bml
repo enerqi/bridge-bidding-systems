@@ -2187,7 +2187,7 @@ Hand strength guide:
 - 2!c!d!h!s are basically natural direct pressure bids
 
 (1N) = Strong NT
-    Dbl = majors OR some extra strong overcall
+    X = majors OR some extra strong overcall
         2CD = (lowest minor available) longer major ask
     2C = !cs and a major
         2D = major ask
@@ -2318,7 +2318,45 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
 
 (2D)
     P = maybe 4 !h and opening values
-    Dbl = 4 or 5 poor spades
+      (P) = !d signoff, over weak only multi
+        X = values ~13+
+          2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
+      (2H) = opps P/C
+        P = maybe limited !h hand hoping partner will double later with passing minimal opening !h values
+          (P) = opp had !hs
+            X = penalty/values, max 3 card !s suit, good 4+ card !h holding
+              Bid = natural limited, run away
+            2N = natural, !h stop
+          (2S) = opp had !ss
+            X = takeout with 4 or 5 poor !hs
+              2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
+            2N = natural, !s stop
+        X = 4 or 5 poor spades
+            (P) = !hs, unless psyche
+                2S = to play
+                2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
+      (2S) = opps P/C, likes !hs
+        X = 4 or 5 poor spades
+        (P) = !ss, unless pyche
+            2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl) run away / maybe forced to bid with poor defense
+      (2N) = usually artificial ask
+        X = strong ~16+ values, pysche expose etc, starts penalty doubles
+      (3H) = paradox preempt, likely 3!hs + 3!ss, aggressive 2--2 more hcp possible
+        X = takeout (alternative is takeout/penalty, depends on openers next bid)
+          (P) = !h opening, unless psyche
+              P = penalty pass
+              3S = minimal, to play
+      (3S) = paradox preempt, likely 4!hs + 3!ss
+        X = takeout
+          (P) = !s opening, unless psyche
+              P = penalty pass
+              4H = to play
+      (4CD) = various major(s) showing or asking/transferring to major
+        X = shows suit, either strong values or distributional
+        P = maybe waiting to takeout double 4H or values double 4S
+      (4M) = paradox preempt
+        X = values
+    X = 4 or 5 poor spades
         (P)
             2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
             3D = (assuming pass !d showing) strong, GF, often stop ask
@@ -2347,62 +2385,38 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
         4N = !d RKB
     4N = minors
 
-
-(2D)--P--(P) = !d signoff, over weak only multi
-    Dbl = values ~13+
-        2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
-
-(2D)--P--(2!h)
-    P = maybe limited !h hand hoping partner will double later with passing minimal opening !h values
-    Dbl = 4 or 5 poor spades
-        (P) = !hs, unless psyche
-            2S = to play
-            2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
-
-(2D)--P--(2!h)--P--(P)
-    Dbl = penalty/values, max 3 card !s suit, good 4+ card !h holding
-        Bid = natural limited, run away
-    2N = natural, !h stop
-
-(2D)--P--(2!s)
-    Dbl = 4 or 5 poor spades
-        (P) = !ss, unless pyche
-            2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl) run away / maybe forced to bid with poor defense
-
-
-(2D)--P--(2!h)--P--(2!s)
-    Dbl = takeout with 4 or 5 poor !hs
-        2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
-    2N = natural, !s stop
-
-
-(2D)--P--(2N) = usually artificial ask
-    Dbl = strong ~16+ values, pysche expose etc, starts penalty doubles
-
-(2D)--P--(3H) = paradox preempt, likely 3!hs + 3!ss, aggressive 2--2 more hcp possible
-    Dbl = takeout (alternative is takeout/penalty, depends on openers next bid)
-        (P) = !h opening, unless psyche
-            P = penalty pass
-            3S = minimal, to play
-
-(2D)--P--(3S) = paradox preempt, likely 4!hs + 3!ss
-    Dbl = takeout
-        (P) = !s opening, unless psyche
-            P = penalty pass
-            4H = to play
-
-(2D)--P--(4CD) = various major(s) showing or asking/transferring to major
-    Dbl = shows suit, either strong values or distributional
-    P = maybe waiting to takeout double 4H or values double 4S
-
-(2D)--P--(4M) = paradox preempt
-    Dbl = values
-
 ** alternative strength/values double
 
 (2D)
     P = maybe a major takeout, not rushing to bid
-    Dbl = 13--15 / 19+ values, generally flattish
+        (P) = !d signoff, over weak only multi
+            X = values ~13+
+            2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
+        (2M)
+            X = takeout
+                (2S) = correction
+                    X = penalty assuming partner has a normal takeout with some !ss
+                    any = stronger game going, not sitting a penalty
+            2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
+        (2N) = artificial ask (usually)
+            X = strong ~16+ values, pysche expose etc, starts penalty doubles
+        (3H) = paradox preempt, likely 3!hs + 3!ss, aggressive 2--2 more hcp possible
+            X = takeout (alternative is takeout/penalty, depends on openers next bid)
+              (P) = !h opening, unless psyche
+                  P = penalty pass
+                  3S = minimal, to play
+        (3S) = paradox preempt, likely 4!hs + 3!ss
+            X = takeout
+              (P) = !s opening, unless psyche
+                  P = penalty pass
+                  4H = to play
+        (4CD) = various major(s) showing or asking/transferring to major
+            X = shows suit, either strong values or distributional
+            P = maybe waiting to takeout double 4H or values double 4S
+        (4M) = paradox preempt
+            X = values
+
+    X = 13--15 / 19+ values, generally flattish
         (P)
             2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
             3D = (assuming pass !d showing) strong, GF, often stop ask
@@ -2427,42 +2441,6 @@ Treat as an [intermediate 2C](#Opponents open Intermediate 2C) opening, with car
     4CD = minor + major, GF
         next = major ask
     4N = minors, stronger
-
-
-(2D)--P--(P) = !d signoff, over weak only multi
-    Dbl = values ~13+
-        2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
-
-(2D)--P--(2M)
-    Dbl = takeout
-        2N+ = [Better Minor Lebensohl](#Better Minor Lebensohl)
-
-(2D)--P--(2!h)--X--(2!s)
-    Dbl = penalty assuming partner has a normal takeout with some !ss
-        any = stronger game going, not sitting a penalty
-
-
-(2D)--P--(2N) = usually artificial ask
-    Dbl = strong ~16+ values, pysche expose etc, starts penalty doubles
-
-(2D)--P--(3H) = paradox preempt, likely 3!hs + 3!ss, aggressive 2--2 more hcp possible
-    Dbl = takeout (alternative is takeout/penalty, depends on openers next bid)
-        (P) = !h opening, unless psyche
-            P = penalty pass
-            3S = minimal, to play
-
-(2D)--P--(3S) = paradox preempt, likely 4!hs + 3!ss
-    Dbl = takeout
-        (P) = !s opening, unless psyche
-            P = penalty pass
-            4H = to play
-
-(2D)--P--(4CD) = various major(s) showing or asking/transferring to major
-    Dbl = shows suit, either strong values or distributional
-    P = maybe waiting to takeout double 4H or values double 4S
-
-(2D)--P--(4M) = paradox preempt
-    Dbl = values
 
 
 * Opponents open Weak 2D 2H 2S

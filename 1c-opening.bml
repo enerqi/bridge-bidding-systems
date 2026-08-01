@@ -605,7 +605,7 @@ Continuations are very similar to a modern precision majors first rebid style.
 
 **** Interference over 1C--1N
 
-1C--(P)--1N-
+1C--(P)--1N
     (X) = whatever, usually takeout
         P = weak NT, doubleton
             XX = retransfer ask
@@ -707,7 +707,7 @@ Continuations are very similar to a modern precision majors first rebid style.
 
 **** Interference over 1C--2C
 
-1C--(P)--2C-
+1C--(P)--2C
     (X) = whatever, usually lead directing
         P = weak NT, doubleton
             XX = retransfer ask
@@ -771,7 +771,7 @@ Continuations are very similar to a modern precision majors first rebid style.
 
 **** Interference over 1C--2D
 
-1C--(P)--2D-
+1C--(P)--2D
     (X) = whatever, usually lead directing
         P = no stop, waiting, weak NT
         XX = business, play suggestion
@@ -802,7 +802,7 @@ Continuations are very similar to a modern precision majors first rebid style.
 
 **** Interference over 1C--2H
 
-1C--(P)--2H-
+1C--(P)--2H
     (X) = whatever, usually lead directing
         P = no stop, waiting, weak NT
             2S = 4 card major
@@ -857,17 +857,19 @@ Similar-ish shape to 1N--3H/3S but invitational values.
 
 **** Interference over 1C--2S
 
-1C--(P)--2S--(X) = whatever, usually lead directing
-    P = weak, no stop, no 4+ card minor
-        2N = stop, implies !h shortage
-        other = as over 2N, implies !s shortage
-    XX = business, to play interest
-    3CD = weak, system on, no stop implied
-    other = system on
+1C--(P)--2S
+    (X) = whatever, usually lead directing
+        P = weak, no stop, no 4+ card minor
+            2N = stop, implies !h shortage
+            other = as over 2N, implies !s shortage
+        XX = business, to play interest
+        3CD = weak, system on, no stop implied
+        other = system on
 
-1C--(P)--2S--(2N+)
-    bid = natural
-    X = penalty
+1C--(P)--2S
+    (2N+)
+        bid = natural
+        X = penalty
 
 
 ** 1C--2N
@@ -926,8 +928,8 @@ game = to play, regardless of suit
 
 ** 1C Interference
 
-- In general assume that opener has the weak balanced hand.
-- 2nd position 2 level interference assumes opener has the weak NT hand and uses Lebensohl.
+- In general assume that opener has the weak balanced hand
+- 2nd position 2 level interference assumes opener has the weak NT hand and uses Lebensohl
 
 When responder shows a weak hand such as the following and the opponents interfere...
 

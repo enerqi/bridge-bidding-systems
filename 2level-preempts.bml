@@ -129,8 +129,8 @@ Responding:
 - after 2N the 4CD !h/!s slam tries allow slam bidding in either major after assessing the 5 vs 6 card major situation
 - except other major sign off is to play, the opening major is implicitly agreed unless slam try in other major
 
-2HS--2N = Suit Ask
-    3C = any 5 carder
+2HS--2N = non-vulnerable Suit Ask
+    3C = any 5 carder NV
         3D = ask
             3H = minimum
             3S = maximum, 0--2 card other major
@@ -140,54 +140,55 @@ Responding:
         4D = !s slam try
         4HS = to play
         4N = [RKB](#RKB 4N)
-    3D = minimum, 6 carder
+    3D = minimum, 6 carder NV
         3oM = 5 cards, forcing
         3M = sign off
         4C = !h slam try
         4D = !s slam try
         4HS = to play
         4N = [RKB](#RKB 4N)
-    3H = medium (hcp or bad suit issues), 6 carder
+    3H = medium (hcp or bad suit issues), 6 carder NV
         4C = !h slam try
         4D = !s slam try
         4HS = to play
         4N = [RKB](#RKB 4N)
-    3S = maximum, 6 carder + 0--2 card other major
+    3S = maximum, 6 carder + 0--2 card other major NV
         4C = !h slam try
         4D = !s slam try
         4HS = to play
         4N = [RKB](#RKB 4N)
-    3N = maximum, 6 carder + 3 card other major support
+    3N = maximum, 6 carder + 3 card other major support NV
         4C = !h slam try
         4D = !s slam try
         4HS = to play
         4N = [RKB](#RKB 4N)
-    4HS = 7 carder, bad suit (not worth 3!h!s opening)
+    4HS = 7 carder, bad suit NV (not worth 3!h!s opening)
 
 
 ** 2HS interference
 
-2HS--(X)
-    XX = 2N system
-    P = later penalty double
-    2S = NF, natural
-    2N = !c transfer, unbreakable, weak sign off OR constructive OR 4+ card lead directing with weak raise
-    3C = !d transfer, unbreakable, ...
-    3D = !h transfer, invite (often distributional mixed like) if transfer to 3M,
-    3H = !s transfer, invite (often distributional mixed like) if transfer to 3M
-    3M = weak limit raise
-    3N = to play
-    4CD = fit jumps
-    4HS = to play
-2H--(2S)
-    X = penalty
-    2N = system on
-    newSuit = NF
-    3S = cue, stop ask
-    4CD = fit jumps
-2HS--(3x)
-    X = penalty
-    newSuit = NF
-    cue = slam try
-2HS--P--(P)--(2!s/3!c!d!h)--P--P
-    X = re-opening takeout
+2HS
+    (X) takeout usually
+        XX = 2N system
+        P = later penalty double
+        2S = NF, natural
+        2N = !c transfer, unbreakable, weak sign off OR constructive OR 4+ card lead directing with weak raise
+        3C = !d transfer, unbreakable, ...
+        3D = !h transfer, invite (often distributional mixed like) if transfer to 3M,
+        3H = !s transfer, invite (often distributional mixed like) if transfer to 3M
+        3M = weak limit raise
+        3N = to play
+        4CD = fit jumps
+        4HS = to play
+    (2S)
+        X = penalty
+        2N = system on
+        newSuit = NF
+        3S = cue, stop ask
+        4CD = fit jumps
+    (3x)
+        X = penalty
+        newSuit = NF
+        cue = slam try
+    P--(P)--(2!s/3!c!d!h)--P--P = opps balancing bid passed out
+        X = re-opening takeout

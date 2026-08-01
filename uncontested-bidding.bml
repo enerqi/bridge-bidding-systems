@@ -710,7 +710,7 @@ Invitational plus.
         X = decents !ds, lead directing, inviting support
 
 1D--(1H)
-    Dbl = 4!ss exactly ~6+ hcp, *system on* without further interference
+    X = 4!ss exactly ~6+ hcp, *system on* without further interference
         1S = 3 card support (unbal or dislike NT)
         1N = natural, Two Way NMF continuations
         2D = [good !s raise](#1D--1S--2D)
@@ -811,14 +811,14 @@ Invitational plus.
     4N = minors, unusual
 
 1D--(1S)
-    Dbl = 4!hs exactly ~8+ hcp OR GF 5(rarely 6)!hs, maybe longer minor NF immediate rebid, system on
+    X = 4!hs exactly ~8+ hcp OR GF 5(rarely 6)!hs, maybe longer minor NF immediate rebid, system on
         (2S) = opponents raise
             Pass = minimum opener, maybe 5--4 minors
                 2N = takeout, 4!hs invite plus
                     3C = minor preference, denies 4 card !h support
                         3D = conversion, risky, minor correction, probably try 3N with stop
                 3CD = 4!hs + 5 minor, competitive only
-            Dbl = support 3 !hs, max, short !ss
+            X = support 3 !hs, max, short !ss
             2N = Good-Bad strong support / weaker minors (but medium+ reasonable)
             3CD = minors 5--5, max
             3H = competitive, 4!hs, 11--13 hcp
@@ -908,7 +908,7 @@ Invitational plus.
     3CD = extreme 6m--5om constructive maximum, avoided opening 2!c/!d
 
 1D--(2C)
-    Dbl = stand in for 2!c Stayman, no Smolen in case of competition
+    X = stand in for 2!c Stayman, no Smolen in case of competition
     2D = !h transfer
         (any) = interference
             3H = competitive
@@ -2090,7 +2090,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     4CD = void-splinter if opponent's suit
 
 1H--(3C)
-    Dbl = [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
+    X = [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
         3D = puppet
             P = competitive !ds
             3H = competitive !hs, less than invite
@@ -2108,7 +2108,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     5C = void-splinter
 
 1H--(3D)
-    Dbl = [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
+    X = [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
         3H = puppet
             P = competitive !hs
             3S = competitive !ss
@@ -2128,7 +2128,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
     X = invite
 
 1H--(3S)
-    Dbl = primarily stop interested (Thrump), but maybe [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
+    X = primarily stop interested (Thrump), but maybe [Relay Lebensohl Doubles](#Relay Lebensohl Doubles)
         3N = stop
             4CD = competitive, to play
             4H = competitive
@@ -2151,17 +2151,18 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
 
 *** 4th only overcalls:
 
-1H--1S--(X)
-    P = doubleton !s, nothing to bid
-    XX = support, otherwise ignore the double
+1H--1S
+    (X)
+        P = doubleton !s, nothing to bid
+        XX = support, otherwise ignore the double
 
-1H--1N--(X)
-    XX = artificial, good suit mild extras, 6 !hs, not shapely enough for 3!h bid
-
-1H--1N--(2DS)
-    X = penalty
-    3new = good hand
-    2N = scrambling/competitive
+1H--1N
+    (X)
+        XX = artificial, good suit mild extras, 6 !hs, not shapely enough for 3!h bid
+    (2DS)
+        X = penalty
+        3new = good hand
+        2N = scrambling/competitive
 
 *** responder passing, 4th hand reopens
 
@@ -2938,13 +2939,13 @@ Similar to [1H interference](#1H interference).
 
 *** 4th only overcalls:
 
-1S--1N--(X)
-    XX = artificial, good suit mild extras, 6 !ss, not shapely enough for 3!s bid
-
-1S--1N--(2DH)
-    X = penalty
-    3new = good hand
-    2N = scrambling/competitive
+1S--1N
+    (X)
+        XX = artificial, good suit mild extras, 6 !ss, not shapely enough for 3!s bid
+    (2DH)
+        X = penalty
+        3new = good hand
+        2N = scrambling/competitive
 
 *** responder passing, 4th hand reopens
 
