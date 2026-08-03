@@ -17,13 +17,13 @@ from pprint import pprint
 
 import panel as pn
 import param
-from opentelemetry import trace
 from panel.io import hold
 
 import quiz
 import bidfilter
-
-tracer = trace.get_tracer(__name__)
+# opentelemetry is optional; quiz_telemetry falls back to a no-op tracer when it
+# is not installed, so the instrumentation below can stay unconditional
+from quiz_telemetry import traced, tracer
 
 # beside this script, not relative to the cwd -- the app is served from the repo
 # root (`just quiz`), so a relative path would not resolve
@@ -77,12 +77,14 @@ if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 if "swedish" in pn.state.location.search.lower():
+    variant = "swedish"  # also the session_key_func key and the ?swedish query param
     title = "Swedish Club Quiz"
     bml_file = "bidding-system.bml"
     system_notes_url = "https://sublime.is/bidding-system.html"
     theme = "default"
     # theme = "dark"
 else:
+    variant = "squad"
     title = "U16 Squad System Quiz"
     bml_file = "squad-system.bml"
     system_notes_url = "https://sublime.is/squad-system.html"
@@ -120,9 +122,10 @@ INITIAL_DIFFICULTY = 5
 MAX_DIFFICULTY = 8
 
 # Pre-composed filters offered in the sidebar's topics popup, from
-# `quiz_topics.toml` beside this script. Topics scoped to the *other* bml
-# system are dropped; a missing file just means no topics are offered.
-topics = bidfilter.load_topics(system=bml_file)
+# `<variant>_topics.toml` beside this script if that file exists, else
+# `default_topics.toml`. Within the chosen file, topics scoped to the *other*
+# bml system are dropped; a missing file just means no topics are offered.
+topics = bidfilter.load_topics(bidfilter.topics_file_for(variant), system=bml_file)
 topic_names = list(topics)
 
 # The working set questions are drawn from. A bidding-tree filter (see the
@@ -422,7 +425,11 @@ def points(question_value: quiz.Question, streak: int, percent_time_left: int) -
     )
 
 
-@tracer.start_as_current_span("on_answer_click")
+# `traced`, not `tracer.start_as_current_span`: the latter is a ContextDecorator,
+# whose wrapper is a plain function returning a coroutine. Panel tests the handler
+# with `inspect.iscoroutinefunction`, so it would never be awaited -- the body
+# would not run at all ("coroutine ... was never awaited").
+@traced("on_answer_click")
 async def on_answer_click(event):  # event handlers can be async with no extra work
     """Event handler for question button presses that updates the score accordingly.
 
@@ -1098,7 +1105,7 @@ topics_clear_button.on_click(topics_clear_handler)
 # no filter at startup, but say so rather than leaving a blank line
 bid_filter_status.object = _filter_feedback("")
 
-# `description` in quiz_topics.toml is optional, so only list the ones that
+# `description` in the topics toml is optional, so only list the ones that
 # have it — a legend, since a CheckBoxGroup has no per-option tooltip.
 topic_legend = "\n".join(
     f"- **{t.name}** — {t.description}" for t in topics.values() if t.description
@@ -1212,7 +1219,7 @@ def make_app_template():
         # the topics popup; opened by the sidebar button, which needs the
         # template to exist first — hence the global rather than a closure
         modal=[topics_modal] if topic_names else [],
-        sidebar_width=230,
+        sidebar_width=300,
         theme=theme,
     )
     return _app_template

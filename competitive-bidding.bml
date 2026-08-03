@@ -918,13 +918,13 @@ With limited strength may want to hide distribution information and just bid the
         1D = Pass/Correct minor
           1H = 3 card !h fragment and long !c suit
           1S = 4 good !s happy with 4--3 fit
-        !c/!d = pass/correct any level (unless rebid later self-sufficient suit)
+        !c+/!d+ = pass/correct any level (unless rebid later self-sufficient suit)
         1N = 4 card !s limit raise, opening hand+
         2N = 5 card !s limit raise, opening hand+
       (XX)
           P = play if you have !c  (1!cXX is not game)
       (any)
-         !c/!d = pass/correct any level
+         !c+/!d+ = pass/correct any level
          NT = constructive !s raise
     1D = 4--4/5--4 both majors (longer !h 5--4 is better as it will be choosen when advancer is equal length)
       !h/!s = bid to level
@@ -1868,7 +1868,7 @@ When we - takeout doubler and advancer have PASSED (or just 2N bidder) it's also
 
 (1S)
     1N = passed hand 5--5+ !h + minor, weaker than 2!s overcall
-        !c/!d = pass/correct, any level
+        !c+/!d+ = pass/correct, any level
     1N = usual ~15--18, beware downgrade too many honours/length in the opponent's suit
         bid = system on
         2H = !s shortage (transfer to their suit)
@@ -2175,7 +2175,7 @@ Hand strength guide:
     3D = Michaels if 2!d natural
 
 (1N)--P--(2!h!s)
-    More = similar to (1N)--P--(2!d)
+    any = similar to (1N)--P--(2!d)
 
 ** Strong NT Defence
 
@@ -2669,7 +2669,7 @@ OR
 (2D/2H)
     P...X = sound !h takeout
     X = light !h takeout
-        More = [Lebensohl, usual weak two defence](#1NT Interference and Lebensohl)
+        any = [Lebensohl, usual weak two defence](#1NT Interference and Lebensohl)
     2S/3S = natural normal/strong
     2N = natural, ~16--19
         3CD = weak, natural (stayman or !h transfers inappropriate here)

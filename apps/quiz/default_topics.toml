@@ -1,5 +1,10 @@
 # Pre-composed bidding-tree filters ("topics") offered by the quiz sidebar.
 #
+# This is the catch-all file. A quiz variant can replace it wholesale by adding
+# `<variant>_topics.toml` beside it (e.g. `swedish_topics.toml`, picked up when
+# the app is opened with ?swedish) -- the variant file is used INSTEAD of this
+# one, with no merging or inheritance between them.
+#
 # Each topic is a named bundle of auction-prefix patterns. An auction belongs
 # to the topic if it matches ANY of the patterns. Selecting several topics
 # (or typing them comma-separated in the filter box) ORs them together.
@@ -63,12 +68,25 @@ patterns = ["1C-1*", "1C-2*", "1C-3*"]
 description = "Our 1C opening and partner's response, whatever the opponents do."
 
 [topics."Major raises"]
-patterns = ["1M-2M", "1M-3M", "1M-4M"]
+patterns = ["1M-2M", "1M-3M", "1M-4M", "1M-2N", "1H-3S", "1H-4m", "1S-4CDH"]
 description = "Partner raises our major opening."
 
 [topics."Notrump responses"]
 patterns = ["1*-1N", "1*-2N", "1*-3N"]
 description = "Partner responds in notrump to a one-level opening."
+
+[topics."NT Opening responses"]
+patterns = ["1N-*", "2N-*"]
+description = "Responses to 1N or 2N opening"
+
+
+[topics."We Double"]
+patterns = ["(1*)-X", "(2*)-X", "(3*)-X", "(4*)-X", "(*)-P-(*)-X"]
+description = "Opponents open, we double"
+
+[topics."Opponents Start High"]
+patterns = ["(2*)-*", "(3*)-*", "(4*)-*"]
+description = "Opponents open at 2+ level, mostly preempts"
 
 # `1*`..`7*` is "our bid at that level" -- spelled out because a bare `*`
 # would also allow the opponents to have opened.

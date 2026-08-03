@@ -1,0 +1,175 @@
+# Pre-composed bidding-tree filters ("topics") offered by the quiz sidebar.
+#
+# This is the catch-all file. A quiz variant can replace it wholesale by adding
+# `<variant>_topics.toml` beside it (e.g. `swedish_topics.toml`, picked up when
+# the app is opened with ?swedish) -- the variant file is used INSTEAD of this
+# one, with no merging or inheritance between them.
+#
+# Each topic is a named bundle of auction-prefix patterns. An auction belongs
+# to the topic if it matches ANY of the patterns. Selecting several topics
+# (or typing them comma-separated in the filter box) ORs them together.
+#
+#   [topics."Some name"]
+#   patterns    = ["1D-1M", "1D-2M"]   # required
+#   description = "shown as a tooltip"   # optional
+#   systems     = ["squad-system.bml"]   # optional; omit = all systems
+#
+# Pattern syntax (see bidfilter.py):
+#   1D 2H 3N      a bid; suits C D H S N
+#   M / m         major class {H,S} / minor class {C,D} — case matters here
+#   1*  /  *      any suit at that level / any call at all
+#   Pass X XX     pass, double, redouble
+#   (...)         the opponents made this call
+#   - or space    separates calls; bml's `--` also works
+#
+# A pattern describes OUR auction: opponent calls it does not mention are
+# stepped over, so 1D-1H matches 1D (Pass) 1H, 1D (1S) 1H and 1D (X) 1H.
+# Bracket a call to pin the opponents down at that exact point.
+#
+# Patterns match a PREFIX of the auction, so "1C" covers every auction that
+# starts 1C. Everything is case-insensitive except M vs m.
+#
+# Editing this file needs no code change — restart the app to pick it up.
+
+[topics."1C opening"]
+patterns = ["1C"]
+description = "Every auction starting with a 1C opening."
+
+[topics."1C negative"]
+patterns = ["1C-1D"]
+description = "Every auction starting with a 1C-1D"
+
+[topics."1C other"]
+patterns = ["1C-1M", "1C-1N", "1C-2*", "1C-3*", "1C-4*"]
+description = "Every auction starting with a 1C and not a 1D negative response"
+
+[topics."1C interference"]
+patterns = ["1C-(*), 1C-(P)-*-(*)"]
+description = "1C opening, 2nd or 4th opponents bids"
+
+
+[topics."1D opening"]
+patterns = ["1D"]
+description = "Every auction starting with a 1D opening."
+
+[topics."1D 1M"]
+patterns = ["1D-1M"]
+description = "1D Major sequences"
+
+[topics."1D 2C/2D"]
+patterns = ["1D-2m"]
+description = "1D then minor game plus tries"
+
+
+[topics."Major openings"]
+patterns = ["1M"]
+description = "1H or 1S openings."
+
+[topics."Major Raises"]
+patterns = ["1M-2M", "1M-3M", "1M-2N", "1H-3S", "1M-3N", "1M-4*"]
+description = "Partner raises our major opening."
+
+[topics."Major 1N Continuations"]
+patterns = ["1M-1N"]
+description = "Partner responds in notrump to a one-level opening."
+
+[topics."Major opening with 2 over 1 GF"]
+patterns = ["1S-2C/D/H", "1H-2C/D"]
+description = "2/1 GF responses and continuations"
+
+
+[topics."1NT opening"]
+patterns = ["1N"]
+description = "Every auction starting with a 1NT opening."
+
+[topics."1NT Stayman and Red Transfers"]
+patterns = ["1N-2C", "1N-2D", "1N-2H"]
+description = "1NT then stayman or heart/spade transfers"
+
+[topics."1NT High Responses"]
+patterns = ["1N-2S", "1N-2N", "1N-3*", "1N-4*"]
+description = "1NT then 2S or higher responses"
+
+[topics."1NT Interference"]
+patterns = ["1N-(*)", "1N-(P)-P-(*)"]
+description = "1NT opponent bids"
+
+[topics."1NT Escapes"]
+patterns = ["(1N)-X-(P)", "1N-(X)", "(1*)-1N-(X)"]
+description = "We or the opposition may need to run from 1N doubled"
+
+
+[topics."2C opening"]
+patterns = ["2C"]
+description = "Every auction starting with a 2C opening."
+
+[topics."2C 2D Enquiry"]
+patterns = ["2C-2D", "2C-(X)-XX"]
+description = "The 2D enquiry over 2C opening"
+
+[topics."2C High Responses"]
+patterns = ["2C-2M", "2C-2N", "2C-3*", "2C-4*", "2C-5*"]
+description = "2C opening with responses other than 2D enquiry"
+
+[topics."2C interference"]
+patterns = ["2C-(*)", "2C-(P)-2D-(*)", "2C-(P)-2N-(*)", "2C-(P)-3*-(*)"]
+description = "We open 2C, opponents interfere in 2nd or 4th"
+
+
+[topics."2D opening"]
+patterns = ["2D"]
+description = "Every auction starting with a 2C opening."
+
+[topics."2D interference"]
+patterns = ["2D-(*)", "2D-(P)-*-(*)"]
+description = "We open 2D, opponents interfere in 2nd or 4th"
+
+
+[topics."Weak twos"]
+patterns = ["2H", "2S"]
+description = "2 major weak openings"
+
+[topics."Weak two interference"]
+patterns = ["2M--(*)"]
+description = "2 major weak openings with interference"
+
+
+[topics."2NT opening"]
+patterns = ["2N"]
+description = "Every auction starting with a 2NT opening."
+
+[topics."2NT interference"]
+patterns = ["2N-(*)", "2N-(P)-3*-(*)"]
+description = "We open 2N, opponents interfere in 2nd or 4th"
+
+
+[topics."Preempts"]
+patterns = ["3C", "3D", "3H", "3S", "3N", "4C", "4D", "4H", "4S", "4N", "5C", "5D"]
+description = "3+ Level Preempt Openings"
+
+
+[topics."Opponents Start High"]
+patterns = ["(2*)-*", "(3*)-*", "(4*)-*"]
+description = "Opponents open at 2+ level, mostly preempts"
+
+[topics."We Double"]
+patterns = ["(1*)-X", "(2*)-X", "(3*)-X", "(4*)-X", "(*)-P-(*)-X"]
+description = "Opponents open, we double"
+
+# `1*`..`7*` is "our bid at that level" -- spelled out because a bare `*`
+# would also allow the opponents to have opened.
+[topics."Opponents interfere"]
+patterns = ["1*-(*)", "2*-(*)", "3*-(*)", "4*-(*)", "5*-(*)", "6*-(*)", "7*-(*)"]
+description = "We open, the opponents do something other than pass."
+
+[topics."Opponents double"]
+patterns = ["1*-(X)", "2*-(X)", "3*-(X)", "4*-(X)", "5*-(X)", "6*-(X)", "7*-(X)"]
+description = "We open and the opponents double."
+
+[topics."Opponents opened"]
+patterns = ["(*)"]
+description = "The opponents opened the bidding."
+
+[topics."Long auctions"]
+patterns = ["*-*-*-*-*-*"]
+description = "Auctions six or more calls deep — the competitive and slam sequences."

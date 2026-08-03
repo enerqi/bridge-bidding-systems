@@ -59,8 +59,9 @@ def header_bids(title):
         ("1C--1HS", ["1C", "1HS"]),
         ("1HS--2M", ["1HS", "2M"]),
         ("1C--1D--1HS", ["1C", "1D", "1HS"]),
-        # `x` is not the wildcard -- `*` is, and the corpus was migrated to it
-        ("1HS--3x/4x", ["1HS"]),
+        # `x` and `*` are the same wildcard: tables spell it `x`, headers `*`.
+        # Header tokens come back case-folded, hence `3X/4X`.
+        ("1HS--3x/4x", ["1HS", "3X/4X"]),
         ("1HS--3*/4*", ["1HS", "3*/4*"]),
         # major/minor shorthand
         ("1M--3D", ["1M", "3D"]),

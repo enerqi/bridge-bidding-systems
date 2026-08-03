@@ -3,6 +3,9 @@
 # https://just.systems/man/en/chapter_20.html
 set shell := ["nu", "-c"]
 
+bml_home := env_var_or_default("BML_TOOLS_DIRECTORY", replace(home_directory(), "\\", "/") + "/dev/bml")
+
+
 # The deal-simulation recipes live in the odin-sims justfile (it owns the build flags and the output
 # directory defaults), reached from here as a module: `just sims gen-all 48`, `just sims gen-one 2c-opener`,
 # `just sims scenarios`, `just sims sim --scenario 1c-any -n 12`, ... (`just --list sims` lists them all).
@@ -47,9 +50,12 @@ deploy-quiz:
     glob '*.bml' | each {|file| cp $file $dest }
     glob 'apps/quiz/*.py' | each {|file| cp $file $dest }
     glob 'apps/quiz/*.jpeg' | each {|file| cp $file $dest }
-    cp apps/quiz/quiz_topics.toml $dest
+    glob 'apps/quiz/*_topics.toml' | each {|file| cp $file $dest }
     cp pyproject.toml $dest
     cp uv.lock $dest
+    let bml_dest = ($dest | path join 'bml')
+    mkdir $bml_dest
+    glob {{bml_home}}/*.py | each {|file| cp $file $bml_dest }
 
 
 #

@@ -1087,7 +1087,7 @@ the previous section.
 
 *** Major Fit EKB Responses
 
-4x/5x EKB
+4x/5x EKB major fit
     xstep = 0/3, 1/4, 2, 2 with step responses, 5th step = 2 KC + some USEFUL void, 6x = 1 KC + that USEFUL void (or higher suit)
         1step = first suit (non-trump) - [Queen Ask](#Queen Ask)
             6void = ace of void suit, have Q
@@ -1102,7 +1102,7 @@ the previous section.
 
 Similar to Redwood/Minorwood type continuations
 
-4x/5x EKB
+4x/5x EKB minor fit
     xstep = 0/3, 1/4, 2, 2 with step responses, 5th step = 2 KC + some void, 6x = 1 KC + that void (or higher suit)
         1step = lowest of 4N or first suit (non-trump) - [Queen Ask](#Queen Ask Minor Fit)
             6void = ace of void suit, have Q

@@ -30,6 +30,33 @@ telemetry = [
     "opentelemetry-exporter-otlp-proto-grpc",
 ]
 
+[tool.uv]
+constraint-dependencies = [
+    "numpy>=1.26.0,<2.4",  # CPU features problem on old freebsd hardware
+]
+# Build environments (PEP 517 isolated envs, e.g. pandas' build-system.requires)
+# resolve independently of the lock and of constraint-dependencies, so the numpy
+# pin has to be repeated here or the pandas build imports a numpy whose SIMD
+# baseline the old Athlon X2 can't execute (SIGILL during meson setup).
+build-constraint-dependencies = [
+    "numpy>=1.26.0,<2.4",
+]
+
+# If the <2.4 ceiling ever has to be lifted, the escape is to build numpy with
+# the baseline explicitly lowered -- `none` is the value numpy's own 2.4.0 notes
+# name for pre-2009 CPUs:
+#
+#   [tool.uv.config-settings-package]
+#   numpy = { setup-args = "-Dcpu-baseline=none" }
+#
+# Left commented out because it was never observed to take effect here, and it is
+# unverified whether uv threads config settings into a *nested* PEP 517 build env
+# (numpy as pandas' build dep) -- the version ceiling is what covers that case.
+# If you do test it: neither pip nor uv key cached wheels on config settings, so
+# `uv cache clean numpy` first or you will re-test the old wheel.
+# Docs: docs.astral.sh/uv/reference/settings/#config-settings-package
+#       numpy.org/doc/stable/reference/simd/build-options.html
+
 [dependency-groups]
 dev = ["pytest"]
 
