@@ -1,4 +1,6 @@
-set windows-shell := ["powershell", "-c"]
+# -NoProfile keeps recipes reproducible: a developer's profile cannot redefine an alias a recipe
+# uses. -NoLogo drops the startup banner. (`-c` is just an abbreviation of `-Command`.)
+set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
 set shell := ["bash", "-c"]
 
 # This project is a CONSUMER of the norn library: norn provides the hand-generation engine
@@ -22,6 +24,23 @@ dds_home := env_var_or_default("DDS_HOME", replace(home_directory(), "\\", "/") 
 dds := "-collection:dds=" + dds_home
 sim_name := "sim.exe"
 
+# Which linker Odin hands the object files to. `-linker:` takes exactly four values: `default` (Odin
+# picks - MSVC `link.exe` on Windows), `lld` (Windows and Linux; NOT on a stock macOS, where Odin
+# links through Apple's clang and clang ships no lld), `radlink` (Windows only, and bundled with the
+# Odin toolchain so it needs no install - which is why it is the Windows default here) and `mold`
+# (Linux only, and not bundled - `apt install mold` first). Odin has no build cache and relinks on
+# every `just sim`, so the link step is a cost paid on each iteration - and this project links the
+# DDS static library on top of its own code, which makes the link the slower half of a rebuild.
+#
+# Override for a single command without editing this file. It is an env var rather than a recipe
+# argument because `odin` errors on a repeated flag, so a `-linker:` passed through a recipe's *args
+# would collide with the one the recipe already adds:
+#
+#     ODIN_LINKER=lld just sim --scenario 1c-any   # -lto on Windows *requires* -linker:lld
+#
+# See the odin-lang-skeleton justfile for the full per-value notes.
+linker := env_var_or_default("ODIN_LINKER", if os() == "windows" { "radlink" } else { "default" })
+
 # Where the batch `gen-all*` / `gen-some` recipes write their per-scenario HTML: DEALS_OUTPUT_DIR if set, else the
 # w: web-server volume. Every recipe also takes it as a trailing argument, e.g. `just gen-all 48 ./out/`.
 deals_output_dir := env_var_or_default("DEALS_OUTPUT_DIR", "w:/deals/")
@@ -41,13 +60,11 @@ export HAND_OCR_DIR := env_var_or_default("HAND_OCR_DIR", replace(home_directory
 # ensure the build artifacts directory exists
 [unix]
 @mktarget_dirs:
-	-mkdir -p target/debug
-	-mkdir -p target/release
+	mkdir -p target/debug target/release
 
 [windows]
 @mktarget_dirs:
-	New-Item -ItemType Directory -Force target/debug | Out-Null
-	New-Item -ItemType Directory -Force target/release | Out-Null
+	New-Item -ItemType Directory -Force target/debug,target/release | Out-Null
 
 # ols.json is machine-specific (absolute paths) and gitignored — regenerate it after cloning or when
 # NORN_HOME / DDS_HOME change:  NORN_HOME=/path/to/norn DDS_HOME=/path/to/odin-dds just ols-config
@@ -78,15 +95,15 @@ format:
 # ---
 # type check + vet + strict style (bidding, suit_book, deal_solve, sim.odin, analyse_deal.odin)
 lint *args:
-	odin check bidding {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
-	odin check suit_book {{norn}} -vet -vet-cast -strict-style -no-entry-point {{args}}
-	odin check deal_solve {{norn}} {{dds}} -vet -vet-cast -strict-style -no-entry-point {{args}}
-	odin check sim.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style {{args}}
-	odin check analyse_deal.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style {{args}}
+	odin check bidding {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+	odin check suit_book {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+	odin check deal_solve {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+	odin check sim.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
+	odin check analyse_deal.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 
 # run the deal generator (release). Pass CLI args through, e.g. `just sim --scenario 1c-any -n 12`.
 sim *args: mktarget_dirs
-	odin run sim.odin -file {{norn}} {{dds}} -keep-executable -o:speed -microarch:native -out:target/release/{{sim_name}} -- {{args}}
+	odin run sim.odin -file {{norn}} {{dds}} -keep-executable -o:speed -microarch:native -linker:{{linker}} -out:target/release/{{sim_name}} -- {{args}}
 
 # run the deal generator (release) WITHOUT recompiling. Pass CLI args through, e.g. `just sim-norebuild --scenario 1c-any -n 12`.
 sim-norebuild *args: mktarget_dirs
@@ -94,11 +111,11 @@ sim-norebuild *args: mktarget_dirs
 
 # run the deal generator (debug build). Pass CLI args through, e.g. `just sim-debug --scenario 1c-any -n 12`.
 sim-debug *args: mktarget_dirs
-	odin run sim.odin -file {{norn}} {{dds}} -microarch:native -out:target/debug/{{sim_name}} -- {{args}}
+	odin run sim.odin -file {{norn}} {{dds}} -microarch:native -linker:{{linker}} -out:target/debug/{{sim_name}} -- {{args}}
 
 # build the sim deal generator (release)
 build *args: mktarget_dirs
-	odin build sim.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/{{sim_name}} {{args}}
+	odin build sim.odin -file {{norn}} {{dds}} -o:speed -microarch:native -linker:{{linker}} -out:target/release/{{sim_name}} {{args}}
 
 #
 # Convenience wrappers over `sim` / `sim-norebuild` (these used to live in the repo-root justfile as
@@ -184,7 +201,7 @@ scenarios:
 # ---
 # single-deal advisor: declarer+dummy (defenders `-`) OR a complete 4-hand deal (exact DD), from PBN / LIN URL -> combo analysis (+ optional --sample verdict / --html card page)
 analyse-deal deal *flags: mktarget_dirs
-	odin run analyse_deal.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/analyse_deal.exe -- {{flags}} {{quote(deal)}}
+	odin run analyse_deal.odin -file {{norn}} {{dds}} -o:speed -microarch:native -linker:{{linker}} -out:target/release/analyse_deal.exe -- {{flags}} {{quote(deal)}}
 
 # Frequency test every scenario by default, or pass `-S name[,name]` to restrict the subset.
 # e.g. `just freq` (1M, -all), `just freq 5000000`, `just freq 1000000 -S 1c-any,2c-opener`.
@@ -192,13 +209,13 @@ analyse-deal deal *flags: mktarget_dirs
 # ---
 # measure each scenario's acceptance frequency over N deals (no deals emitted)
 freq trials="1000000" *args: mktarget_dirs
-	odin run sim.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/{{sim_name}} -- --frequency {{trials}} {{args}}
+	odin run sim.odin -file {{norn}} {{dds}} -o:speed -microarch:native -linker:{{linker}} -out:target/release/{{sim_name}} -- --frequency {{trials}} {{args}}
 
 # Override counts: just bench '-define:COUNT_SUIT=5000' '-define:COUNT_DEAL=500'
 # ---
 # benchmark the combo package (Phase 1, Phase 2 lines/optimal, annotate end-to-end)
 bench *args: mktarget_dirs
-	odin run bench.odin -file {{norn}} -o:speed -microarch:native {{args}}
+	odin run bench.odin -file {{norn}} -o:speed -microarch:native -linker:{{linker}} {{args}}
 
 # the compute behind `sim -S slam-makes-dd --count 48 --format html-cards --dd`, minus the file write.
 # Links DDS like sim. Knobs via -define, e.g.:
@@ -208,11 +225,11 @@ bench *args: mktarget_dirs
 # ---
 # END-TO-END benchmark of ONE scenario's full pipeline (generate + DD filter + deal_solve/combo annotate + render)
 bench-e2e *args: mktarget_dirs
-	odin run bench_e2e.odin -file {{norn}} {{dds}} -o:speed -microarch:native {{args}}
+	odin run bench_e2e.odin -file {{norn}} {{dds}} -o:speed -microarch:native -linker:{{linker}} {{args}}
 
 # run the bidding-system unit tests
 test *args: mktarget_dirs
-	odin test bidding {{norn}} -debug -file -microarch:native -show-timings -out:target/debug/test-bidding.exe {{args}}
+	odin test bidding {{norn}} -debug -file -microarch:native -show-timings -linker:{{linker}} -out:target/debug/test-bidding.exe {{args}}
 
 # Covers the baked table itself: every entry round-trips through its own engine key, the card-validity
 # gate rejects odds-equivalent-but-wrong-honour hits, and `zz_book_diff` prints the book-vs-engine
@@ -220,14 +237,14 @@ test *args: mktarget_dirs
 # ---
 # run the published suit-combination table (suit_book) unit tests + the book-vs-engine diff
 test-suit-book *args: mktarget_dirs
-	odin test suit_book {{norn}} -debug -microarch:native -show-timings -out:target/debug/test-suit-book.exe {{args}}
+	odin test suit_book {{norn}} -debug -microarch:native -show-timings -linker:{{linker}} -out:target/debug/test-suit-book.exe {{args}}
 
 # Forced single-threaded: DDS shares process-global transposition tables and is NOT reentrant, so
 # concurrent test procs would corrupt each other's solves.
 # ---
 # run the double-dummy / DDS-sampling unit tests (links the DDS solver via the dds collection)
 test-deal-solve *args: mktarget_dirs
-	odin test deal_solve {{norn}} {{dds}} -debug -microarch:native -define:ODIN_TEST_THREADS=1 -show-timings -out:target/debug/test-deal-solve.exe {{args}}
+	odin test deal_solve {{norn}} {{dds}} -debug -microarch:native -define:ODIN_TEST_THREADS=1 -show-timings -linker:{{linker}} -out:target/debug/test-deal-solve.exe {{args}}
 
 # declarer+dummy uses '-' for the unknown hands; a full 4-hand diagram emits all four. Bridges to the
 # sibling hand-ocr repo (uv), at HAND_OCR_DIR (default ~/dev/bridge-hand-ocr). A real image needs
@@ -248,7 +265,7 @@ ocr-pbn image *args:
 # ---
 # OCR a hand-diagram IMAGE straight to the interactive card page
 ocr-analyse image *args: mktarget_dirs
-	odin build analyse_deal.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/analyse_deal.exe
+	odin build analyse_deal.odin -file {{norn}} {{dds}} -o:speed -microarch:native -linker:{{linker}} -out:target/release/analyse_deal.exe
 	uv run --no-project python tools/ocr_analyse.py {{image}} {{args}}
 
 # image -> PBN -> analyse_deal with the DDS-sampling advisor + CCA/DD features. Writes
@@ -268,10 +285,21 @@ ocr-analyse-norebuild image *args: mktarget_dirs
 # ---
 # golden test for the card page's data-sim JSON contract
 test-golden: mktarget_dirs
-	odin build analyse_deal.odin -file {{norn}} {{dds}} -o:speed -microarch:native -out:target/release/analyse_deal.exe
+	odin build analyse_deal.odin -file {{norn}} {{dds}} -o:speed -microarch:native -linker:{{linker}} -out:target/release/analyse_deal.exe
 	uv run --no-project python tests/golden_sim_json.py
 
+# Split per platform because `rm -rf` is bash-only: PowerShell's `rm` is an alias for Remove-Item,
+# which rejects `-rf` ("A parameter cannot be found that matches parameter name 'rf'") and left the
+# target directory in place. Test-Path first because Remove-Item errors on a missing path.
+# ---
 # delete build artifacts
+[unix]
 clean:
 	rm -rf target
+	just mktarget_dirs
+
+# delete build artifacts
+[windows]
+clean:
+	if (Test-Path target) { Remove-Item -Recurse -Force target }
 	just mktarget_dirs
