@@ -1,0 +1,9 @@
+{# The #filter-status fragment: what the text currently in the box would select. Rendered on
+   every (debounced) keystroke by /filter/preview, and again on commit -- both go through
+   `render.filter_status`, so the preview can never disagree with the result.
+
+   `lines` are Markup built server-side; the unrecognised-entry text inside them is escaped
+   user input. #}
+{% for line in lines %}
+<div class="filter-line">{{ line }}</div>
+{% endfor %}

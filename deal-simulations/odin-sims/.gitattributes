@@ -1,0 +1,53 @@
+# Scoped to this directory ON PURPOSE. gitattributes borrows gitignore's scoping: a .gitattributes
+# applies to its own directory and everything below it, so these rules cover the odin-sims project and
+# nothing else in bridge-bidding-system. The repository root has no .gitattributes, and putting
+# `* text=auto eol=lf` there would reach every .html, .csv and image in the rest of the repo - a
+# repository-wide renormalization to settle a problem that is only the Odin toolchain's. Adding this
+# file here costs the rest of the repo nothing.
+#
+# LF everywhere, in the index AND in the working directory, on every platform. This matches the Odin
+# project's own .editorconfig, which declares `end_of_line = lf` despite Odin being developed mainly on
+# Windows.
+#
+# `text=auto` alone only guarantees LF in the *index*; what lands in the working directory is then left
+# to each developer's `core.autocrlf`, which Git for Windows sets to `true` in its system config. That
+# gives Windows checkouts CRLF files while .editorconfig (end_of_line = lf) and the tools that rewrite
+# files in place - odinfmt above all - emit LF, so a formatting pass leaves a file with mixed endings
+# and Git reports "<line-endings changed since checkout>". `eol=lf` pins the working directory too and
+# overrides core.autocrlf, so the whole toolchain agrees. Odin, just, cmd and Sublime all read LF
+# happily on Windows.
+#
+# Every tracked file under this directory was already LF in both the index and the working tree when
+# this was added, so it pins the status quo rather than rewriting anything - no `git add --renormalize`
+# needed. That is only true because odinfmt.json now sets `"newline_style": "LF"`; odinfmt does NOT
+# read .editorconfig's `end_of_line`, and without that setting it writes CRLF on Windows and re-dirties
+# the tree after every `just format`.
+#
+# Keep this in sync with .editorconfig's `end_of_line` and odinfmt.json's `newline_style`.
+* text=auto eol=lf
+
+# Windows-only scripts are the exception: some interpreters need CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Never touch the contents of these. They are gitignored today, so this only matters for a file
+# committed deliberately or force-added - but that is exactly the case where the `* text=auto eol=lf`
+# above would otherwise corrupt one. The HTML/PNG entries are here because this project generates deal
+# pages and hand-diagram images beside its sources.
+*.exe binary
+*.pdb binary
+*.lib binary
+*.dll binary
+*.obj binary
+*.o binary
+*.so binary
+*.dylib binary
+*.a binary
+*.bc binary
+*.spall binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary

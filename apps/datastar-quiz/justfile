@@ -1,0 +1,172 @@
+# Datastar/Litestar port of the panel bidding quiz.
+#
+# Reachable from the repo root as a just module once this line is added to the root justfile:
+#     mod dsquiz 'apps/datastar-quiz'
+# then `just dsquiz serve`, `just dsquiz test`, ... Until then, run these from this directory.
+set shell := ["nu", "-c"]
+
+# `source_directory()`, NOT `justfile_directory()`: when this file is used as a module from the repo
+# root (`just dsquiz test`), `justfile_directory()` is the ROOT justfile's directory, so `--project`
+# pointed uv at the root project and every import failed. `source_directory()` is this file's own
+# directory either way.
+project := source_directory()
+# forward slashes: nu's `glob` treats a windows backslash as an escape and refuses the pattern, so
+# anything used as a glob prefix is normalised (`bml_home` and `deploy_dir` are written that way too)
+project_glob := replace(source_directory(), "\\", "/")
+repo := replace(parent_directory(parent_directory(source_directory())), "\\", "/")
+port := env_var_or_default("DSQUIZ_PORT", "5008")
+bml_home := env_var_or_default("BML_TOOLS_DIRECTORY", replace(home_directory(), "\\", "/") + "/dev/bml")
+deploy_dir := env_var_or_default("DSQUIZ_DEPLOY_DIR", "X:/quiz-ds/")
+
+# interactive chooser (assumes fzf)
+default:
+    @just --choose
+
+# serve under granian with autoreload; panel is on 5006, so default to 5008
+serve *args:
+    uv run --project {{project}} --directory {{project}} granian --interface asgi --port {{port}} --reload {{args}} app:app
+
+alias s := serve
+
+# serve with the debug panel armed for every session: +/- points, set the goal, jump to the reveal or
+# the finale. Without this you can still arm it per session with `?debug` on the URL; `DSQUIZ_DEBUG=0`
+# forbids both (what a deployment should set -- see DEPLOY.md).
+dev *args:
+    #!nu
+    $env.DSQUIZ_DEBUG = "1"
+    uv run --project {{project}} --directory {{project}} granian --interface asgi --port {{port}} --reload {{args}} app:app
+
+alias d := dev
+
+# serve with the held-SSE countdown instead of the client interval (see COMPARISON.md)
+serve-streamed *args:
+    #!nu
+    $env.DSQUIZ_TIMER = "stream"
+    uv run --project {{project}} --directory {{project}} granian --interface asgi --port {{port}} --reload {{args}} app:app
+
+# serve under granian as in production: no reload, and pick up worker/runtime defaults
+serve-prod *args:
+    uv run --project {{project}} --directory {{project}} granian --interface asgi --host 0.0.0.0 --port {{port}} {{args}} app:app
+
+# serve under uvicorn via the litestar CLI: the pure-python fallback (e.g. FreeBSD, no granian wheels)
+serve-uvicorn *args:
+    uv run --project {{project}} --directory {{project}} litestar --app app:app run --port {{port}} --reload {{args}}
+
+# what the deployment box runs (see DEPLOY.md): uvicorn, no reload, no dev group, prefixed and with
+# the debug panel forbidden. Useful locally to rehearse the real thing -- http://localhost:5008/bridge-system-quiz/
+serve-deployed *args:
+    #!nu
+    $env.DSQUIZ_PREFIX = "bridge-system-quiz"
+    $env.DSQUIZ_DEBUG = "0"
+    uv run --project {{project}} --directory {{project}} --no-dev litestar --app app:app run --port {{port}} {{args}}
+
+# serve with OpenTelemetry tracing (see apps/quiz/run-jaeger-tracing.cmd for a local jaeger)
+serve-traced *args:
+    #!nu
+    $env.DSQUIZ_OTEL = "1"
+    uv run --project {{project}} --extra telemetry --directory {{project}} opentelemetry-instrument litestar --app app:app run --port {{port}} {{args}}
+
+# xdist spreads load with `--dist loadfile`: all tests in a file go to the same worker, though no file-level
+# shared state currently required
+# ---
+# run the tests
+test *args:
+    uv run --project {{project}} --directory {{project}} pytest -n 4 --dist loadfile {{args}}
+
+alias t := test
+
+sources := "*.py tests tools"
+
+# format, lint and typecheck (astral ruff + ty), as the other python projects do
+qa: format lint typecheck
+
+alias q := qa
+
+# ruff format (writes)
+format *args:
+    uv run --project {{project}} --directory {{project}} ruff format --quiet {{args}} {{sources}}
+
+# ruff lint
+lint *args:
+    uv run --project {{project}} --directory {{project}} ruff check --quiet {{args}} {{sources}}
+
+# astral ty type check
+typecheck *args:
+    uv run --project {{project}} --directory {{project}} ty check --quiet {{args}} {{sources}}
+
+alias tc := typecheck
+
+# Files only; the box then runs `uv sync` and restarts its own service -- DEPLOY.md section 4 is the
+# full walkthrough.
+#
+# Unlike the root `just deploy-quiz`, this does NOT flatten: `corpus.py` puts `../quiz` on sys.path,
+# the `/media` static router serves `../quiz/completed.jpeg`, and `quiz.bml_docs_dir()` looks two
+# levels up for the .bml corpus -- so the repo's relative layout is what is copied.
+# ---
+# copy the app + apps/quiz + the bml corpus/tools to DEST (default DSQUIZ_DEPLOY_DIR, else X:/quiz-ds/)
+deploy dest=deploy_dir:
+    #!nu
+    let dest = ({{quote(dest)}} | str trim --right --char '/')
+    let app = ($dest | path join apps datastar-quiz)
+    let quiz = ($dest | path join apps quiz)
+    let bml = ($dest | path join bml)
+    mkdir $app $quiz $bml
+
+    # glob patterns are BUILT BY INTERPOLATION, not `path join`: on windows path join inserts a
+    # backslash, which nu's glob then reads as an escape ("error accessing path", os error 123)
+    #
+    # the .bml corpus, at the deploy root because that is where quiz.py looks for it
+    glob $"{{repo}}/*.bml" | each {|f| cp $f $dest }
+    # the bml tools -- BML_TOOLS_DIRECTORY points here on the box
+    glob $"{{bml_home}}/*.py" | each {|f| cp $f $bml }
+    # the panel app's domain modules (imported as-is, never copied into this app), the topics files
+    # bidfilter reads from beside itself, and the jpeg the /media router serves
+    for pattern in ['*.py' '*_topics.toml' '*.jpeg'] {
+        glob $"{{repo}}/apps/quiz/($pattern)" | each {|f| cp $f $quiz }
+    }
+    # this app: flat modules, the lock, and the two asset dirs. Those are replaced wholesale, so a
+    # renamed stylesheet or template cannot linger on the box as a stale file that still resolves.
+    glob $"{{project_glob}}/*.py" | each {|f| cp $f $app }
+    for name in ['pyproject.toml' 'uv.lock'] { cp ({{quote(project)}} | path join $name) $app }
+    for name in ['static' 'templates'] {
+        let target = ($app | path join $name)
+        if ($target | path exists) { rm -r -f $target }
+        cp -r ({{quote(project)}} | path join $name) $app
+    }
+    print $"deployed to ($dest) -- now on the box: cd (($dest | path basename))/apps/datastar-quiz; uv sync --no-dev; then restart the service"
+
+# list the routes litestar has registered
+routes:
+    uv run --project {{project}} --directory {{project}} litestar --app app:app routes
+
+# re-vendor the CSS frameworks the two spikes import (see DESIGN.md); pinned versions, not @latest
+vendor-css:
+    #!nu
+    let static = ({{quote(project)}} | path join static)
+    let sheets = [
+        [name url];
+        ["pico.classless.min.css" "https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.classless.min.css"]
+        ["bulma.min.css" "https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"]
+    ]
+    for sheet in $sheets {
+        http get $sheet.url | save --force ($static | path join $sheet.name)
+        print $"vendored ($sheet.name)"
+    }
+
+# re-vendor static/datastar.js (+ its source map) from the datastar checkout
+# (DATASTAR_HOME, else ~/dev/datastar)
+#
+# The MAP matters: the bundle ends with `//# sourceMappingURL=datastar.js.map`, so opening devtools
+# asks for it, and without it the static router raises NotFoundException -- a stack trace in the log
+# every time anyone opens devtools. With it, expression errors point into datastar's own sources,
+# which is worth 190KB that only devtools ever downloads.
+vendor-datastar:
+    #!nu
+    let home = ($env.DATASTAR_HOME? | default ($nu.home-path | path join dev datastar))
+    let static = ({{quote(project)}} | path join static)
+    for name in ["datastar.js" "datastar.js.map"] {
+        let src = ($home | path join bundles $name)
+        if not ($src | path exists) { error make {msg: $"datastar bundle not found at ($src)"} }
+        cp $src ($static | path join $name)
+        print $"vendored ($src)"
+    }

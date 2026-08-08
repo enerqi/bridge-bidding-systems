@@ -1,0 +1,9 @@
+{# The #toasts fragment, patched INNER: one notification at a time, as the panel app showed
+   them (centre screen, one after another). An empty text renders an empty container, which is
+   how the bare pause between the last toast and the next question is expressed.
+
+   `kind` is success / info / warning -- the panel notification methods -- which is also Bulma's
+   modifier vocabulary, so `is-{{ kind }}` needs no mapping table. #}
+{% if toast.text %}
+<div class="toast {{ toast.kind }} notification is-{{ toast.kind }}">{{ toast.text | suits }}</div>
+{% endif %}

@@ -1,0 +1,70 @@
+{# The #quiz fragment: prompt, the thing to match, and the candidate buttons.
+
+   The action is in the URL -- `/answer/<qid>/<index>` -- not in a signal. The qid is the
+   server's question nonce, so a second click, a stale tab or a replayed request scores
+   nothing: the server compares the qid and answers 204. That replaces the panel app's
+   "multiple clicks occurred too quickly before server disabled the buttons" guard.
+
+   `data-indicator` sets that local signal while the request is in flight, and every button reads
+   it to disable itself -- the visual half of the same protection, done without a round trip.
+   It is written in the *value* form, not as `data-indicator:_answering`: attribute keys go
+   through `kebab`, which turns a leading underscore into a dash and then drops it, so the key
+   form would name the signal `Answering` -- losing the underscore that keeps it local, and
+   uploading it with every request.
+
+   These are BUTTONS, not a radio group: a click commits immediately, with no separate submit, so
+   button semantics are the honest ones. What they get instead is `role="group"` with a label, and
+   a digit accelerator each -- the choices are numbered, so 1-9 answer without the mouse.
+
+   ONE window keydown handler, on the group, mapping the digit to an index -- not one per button.
+   Five identical `__window` listeners were five registrations and five teardowns per patch, and
+   five copies of the same guard to keep in step.
+
+   The guard is three things:
+     - `$_answering` -- an answer already in flight. NOT cosmetic and not removable: the server
+       mutates before it streams, so by the time the toasts are playing the *next* question is
+       already the live one, and a keypress here would answer a question the player has not been
+       shown yet. `aria-busy` says so, and `disabled` on the buttons shows it.
+     - `closest(TYPING_TARGETS)` -- a keystroke aimed at a control that has a use for it belongs
+       to that control. This was a tagName check on `evt.target`, which only sees the exact element
+       the event fired on; `closest` also covers a focused control inside a wrapper (Bulma's
+       `<div class="select">`) and anything typed into a rich field. The `?.` matters because
+       `evt.target` can be `window` itself.
+       The selector is NOT "any form control" -- see `render.TYPING_TARGETS`. It was, and a focused
+       difficulty slider (which keeps focus on purpose, or you could not arrow it) then killed 1-9
+       for the rest of the session. A range has no use for a digit; a text box does.
+     - the digit is in range for THIS question's choice count.
+   `evt.key` compared through `Number` rather than as a string, so a ten-choice question would not
+   silently accept "1" as ten. #}
+<h2 class="intro">{{ intro }}</h2>
+<p class="answer">&ldquo;<strong>{{ answer | suits }}</strong>&rdquo;</p>
+{# `data-attr` in the OBJECT form, because a hyphenated attribute name cannot survive as a key:
+   `data-attr:aria-busy` is kebab-then-camel converted to `ariaBusy` and nothing reaches the DOM --
+   no `aria-busy`, no error, the attribute simply never appears. Same family as the `data-bind:`
+   naming trap; the object form keeps the literal name.
+
+   The value is the STRING "true"/"false", not the boolean: a boolean `true` renders as `aria-busy=""`
+   (datastar's "set the attribute" form), and an empty string is not a valid ARIA state -- it reads
+   as neither busy nor idle. ARIA states are enumerated strings, so they are stated as strings. #}
+{# `data-indicator` is per REQUESTING ELEMENT: it sets the signal for requests this element starts.
+   The buttons have their own for clicks, and the group needs its own for the digit path -- without
+   it a keyboard answer left `_answering` false, so the buttons never greyed out and the guard below
+   could never be true. Which means two quick digits could both post, and the second would answer
+   the NEXT question (already live server-side) before it had been shown. #}
+<div class="candidates" role="group" aria-label="answer choices"
+     data-indicator="_answering"
+     data-attr="{'aria-busy': $_answering ? 'true' : 'false'}"
+     data-on:keydown__window="!$_answering && !$_topicsOpen
+       && !evt.target.closest?.('{{ TYPING_TARGETS }}')
+       && Number(evt.key) >= 1 && Number(evt.key) <= {{ candidates | length }}
+       && @post('{{ prefix }}/answer/{{ qid }}/' + (Number(evt.key) - 1))">
+  {% for candidate in candidates %}
+  <button type="button" class="candidate button"
+          data-indicator="_answering"
+          data-attr:disabled="$_answering"
+          data-on:click="@post('{{ prefix }}/answer/{{ qid }}/{{ loop.index0 }}')">
+    <kbd class="accel tag is-light" aria-hidden="true">{{ loop.index }}</kbd>
+    <span class="candidate-text">{{ candidate | suits }}</span>
+  </button>
+  {% endfor %}
+</div>

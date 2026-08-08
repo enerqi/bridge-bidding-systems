@@ -1,0 +1,12 @@
+{# One floating score, appended to the card the player chose (see `app._answer_stream`).
+
+   Streamed on every scoring beat whether or not the game-feel experiment is on: `$_juice` is a local
+   view signal that never reaches the server, so the gate is CSS (`body.juice`, see
+   `static/juice.css`). Inert markup is the cheaper half of that trade -- ~60 bytes per beat -- and it
+   keeps the choreography in the stream with the toasts it belongs to rather than split across a
+   client-side effect.
+
+   No cleanup: both outcomes replace `#quiz` wholesale within a second or two (the next question, or
+   the reveal), so a floater cannot outlive its beat. `aria-hidden` because the corner toast already
+   announces the same number to assistive technology, and the animation is decoration. #}
+<span class="floater {{ kind }}" aria-hidden="true">{{ label }}</span>

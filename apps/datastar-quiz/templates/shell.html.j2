@@ -1,0 +1,83 @@
+{# The document: head, <body> with the signal declarations, and #app holding the page itself.
+   Server-rendered from current session state -- no client-side bootstrap, no hydration, so
+   view-source is the state of the quiz and a reload resumes it exactly.
+
+   #app is what interactions patch, whole ("fat morph" -- see app.html.j2). Only the toast slot is
+   patched finer, because a single answer shows several in sequence. #}
+<!DOCTYPE html>
+{# `data-theme` goes on the ROOT, not on <body>, and that is not a preference:
+     * the canvas and the scrollbars take `color-scheme` from the root and nowhere else -- painting
+       the root from a body attribute needs a `:has()` hop, and Pico's own `--pico-background-color`
+       (which this sheet paints `html` with) is then set one level BELOW the element using it, so the
+       page behind the app kept the OS palette while everything inside it switched;
+     * Pico and Bulma both document `data-theme` on <html>, so putting it there switches the
+       frameworks' own dark themes for free.
+   It is `false` -- not `'auto'`, not `''` -- when the OS should decide: datastar removes an
+   attribute set to false, and NO attribute is what leaves `color-scheme: light dark` in charge. An
+   empty string would set `data-theme=""`, which matches neither of our forcings but does count as
+   "themed" to Pico. The `$_theme &&` guard is the same one the stylesheet <link> needs: this element
+   is processed before <body> declares any signal. #}
+{# The attribute is rendered TWICE over: once statically from the cookie, which is what makes the
+   first paint right, and once as `data-attr`, which keeps it right after a click. Without the static
+   half a remembered choice arrives a frame late -- a flash of the OS palette on every load. #}
+<html lang="en"{% if theme %} data-theme="{{ theme }}"{% endif %}
+      data-attr:data-theme="$_theme && $_theme !== 'auto' ? $_theme : false">
+  <head>
+    <meta charset="utf-8" />
+    <title>{{ variant.title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {# The CSS A/B/C: `$_css` swaps the whole stylesheet -- hand-rolled, Pico classless, or Bulma,
+       each plus its adapter -- with no reload and no server involvement. The comparison is settled
+       (COMPARISON.md) and `render.DEFAULT_CSS` is what everyone gets; the picker still exists, but
+       only in the DEBUG panel's company, because the three variants differ by details a player does
+       not see. See DESIGN.md.
+
+       The href is BUILT from the signal rather than a chain of ternaries, which makes the file
+       naming the contract: `hand` is `app.css` and anything else is `app-<signal>.css`. A fourth
+       variant is then a stylesheet plus an <option>, with nothing here to edit -- and
+       `tests/test_css_variants.py` pins the two lists against the files that exist, so a typo in
+       either is a failing test rather than a 404 and an unstyled page.
+
+       The empty branch is not defensive noise. This element is in <head>, so it is processed BEFORE
+       `data-signals` on <body> has declared anything, and an undefined signal reads as `''` -- which
+       built `/static/app-.css` and fetched a 404 on every single page load before the real value
+       arrived a tick later. It falls back to `css_href`: the DEFAULT sheet, the same string as the
+       static `href` beside it, so an undeclared signal repaints nothing. #}
+    <link rel="stylesheet"
+          data-attr:href="$_css ? ($_css === 'hand' ? '{{ prefix }}/static/app.css' : '{{ prefix }}/static/app-' + $_css + '.css') : '{{ css_href }}'"
+          href="{{ css_href }}" />
+    {# The game-feel layer, loaded AFTER the base sheet and on top of whichever of the three is
+       selected: every rule in it is scoped to `body.juice`, so it is inert until the Appearance
+       toggle turns it on and it needs no changes in the three base stylesheets. One file rather than
+       three copies is the whole reason it is separate -- the experiment can be deleted by deleting a
+       file and one signal. #}
+    <link rel="stylesheet" href="{{ prefix }}/static/juice.css" />
+    {# inline, so a bare deployment does not 404 looking for one #}
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13'>&#9824;</text></svg>" />
+    {# vendored, not the CDN: works offline and pins the version we tested against #}
+    <script type="module" src="{{ prefix }}/static/datastar.js"></script>
+  </head>
+  {# `$_font` is mirrored onto the body as a data attribute, which the CSS switches `--ui-font`
+     on. Purely a view concern, so it is a local signal: no request, no reload, and nothing the
+     server has an opinion about. #}
+  {# `data-init` runs once on load. The drawer now starts CLOSED at every width.
+     It used to open on a wide viewport, back when it held the score and the Skip button -- things you
+     need while playing. Those moved to the HUD in the app bar, and what is left is difficulty, the
+     filter, topics, ladder mode, the target, Restart and Appearance: every one of which restarts the
+     quiz or is a one-off preference. A panel you touch twice a session should not be the widest thing
+     on screen, and it was also the tallest, which is what used to make the whole document scroll. #}
+  {# `juice` on the <body>, not inside `#app`: it must survive every morph, and every rule in
+     `juice.css` hangs off it. `data-class` rather than `data-attr` because a class is what CSS wants
+     to match, and it composes with anything else the body carries. #}
+  <body data-signals="{{ initial_signals }}" data-attr:data-font="$_font"
+        data-class="{juice: $_juice}"
+        data-init="$_navOpen = false{% if timer_mode == 'stream' %}; @get('{{ prefix }}/timer'){% endif %}">
+    {# The morph target: everything below is replaced as one chunk on every interaction #}
+    {# The morph target. Its contents are `app.html.j2`, INCLUDED rather than duplicated: this
+       file and the fat patch must render the same markup, and when they were two copies they drifted
+       within the hour -- a change to the settings panel showed up in patches but not on page load. #}
+    <div id="app">
+      {% include "app.html.j2" %}
+    </div>
+  </body>
+</html>

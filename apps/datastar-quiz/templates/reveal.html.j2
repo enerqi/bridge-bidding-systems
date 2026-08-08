@@ -1,0 +1,40 @@
+{# Shown in #quiz after a wrong answer, instead of panel's 4.2s centre-screen toast.
+
+   Non-blocking and in place: the prompt stays, the right answer is marked, the choice you took is
+   marked, and nothing advances until you say so. The clock for the NEXT question starts when it is
+   served, so reading this costs you no time bonus. Enter / Space advance as well as the button. #}
+<h2 class="intro">{{ intro }}</h2>
+<p class="answer">&ldquo;<strong>{{ answer | suits }}</strong>&rdquo;</p>
+<div class="candidates" role="group" aria-label="answer choices, revealed">
+  {% for candidate in candidates %}
+  <div class="candidate revealed
+              {% if loop.index0 == correct_index %}correct{% elif loop.index0 == wrong_index %}wrong{% endif %}">
+    <span class="mark" aria-hidden="true">
+      {%- if loop.index0 == correct_index %}✓{% elif loop.index0 == wrong_index %}✗{% endif -%}
+    </span>
+    <span class="candidate-text">{{ candidate | suits }}</span>
+  </div>
+  {% endfor %}
+</div>
+{# The window keydown lives on the WRAPPER and excludes BUTTON, because a focused button already
+   activates on Enter/Space natively. Binding both to the button fired two `@post('/next')`s: the
+   second superseded and aborted the first, after the server had already advanced the question --
+   so state moved on while the browser kept the stale reveal. Exclude buttons and each path fires
+   once: native activation when the button has focus, the window handler when it does not.
+
+   Form controls are excluded with `closest`, not a tagName list, for the reasons in quiz.html.j2:
+   Enter in the filter box commits a filter and must not also advance the question. BUTTON stays a
+   tagName test -- it is specifically the element the event fired on that activates natively, and a
+   button *containing* the target is not the same thing.
+
+   `ACTIVATION_TARGETS`, not `TYPING_TARGETS`: Space ACTIVATES a focused checkbox or radio, so those
+   keep their claim on this key even though they have none on a digit. See `render.py`. #}
+<div class="reveal-actions"
+     data-on:keydown__window="(evt.key === 'Enter' || evt.key === ' ')
+       && !$_topicsOpen
+       && evt.target.tagName !== 'BUTTON'
+       && !evt.target.closest?.('{{ ACTIVATION_TARGETS }}')
+       && @post('{{ prefix }}/next')">
+  <button type="button" class="next button is-primary" autofocus data-on:click="@post('{{ prefix }}/next')">Next question</button>
+  <span class="reveal-hint">or press Enter</span>
+</div>

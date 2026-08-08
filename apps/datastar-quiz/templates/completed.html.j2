@@ -1,0 +1,67 @@
+{# Replaces #quiz once the points goal (and the target percentage, if required) is met. The image is
+   served from the panel app's directory read-only -- see the /media mount in app.py.
+
+   This is the payoff for a quiz that takes several minutes, and it used to be three static party
+   emoji and a sentence. The finale is now built from pieces CSS can animate individually, which is
+   the only reason any of this needs markup rather than a stylesheet:
+
+   * every party emoji is its OWN span, because a single text node cannot be staggered;
+   * every digit of every number is its own span, so they fly in from different directions and
+     assemble -- "fragments forming numbers";
+   * the confetti is a fixed list of glyph / drift / spin / delay tuples (`render._CONFETTI`) rendered
+     as inline custom properties -- the drift is a percentage of the CARD, not of the viewport, so the
+     party cannot spill past the window edge and scroll the page (it could when the drawer was open,
+     which shifts the card's centre right). Fixed rather than random on purpose: the server renders this screen,
+     and a reload should show the same party rather than re-rolling it. The offsets are also spread by
+     hand, because a formula (`i * 37 % 100`) looks combed rather than scattered.
+
+   Inert without the game-feel toggle: `juice.css` scopes every rule to `body.juice`, so with it off
+   this is the same "🎉 and a sentence" as before, in more spans. `aria-hidden` on the decoration --
+   a screen reader wants the numbers and the sentence, not sixteen confetti. #}
+
+{# One span per character, numbered, so each can be sent in from somewhere different. `loop.index0`
+   rather than anything random, so the assembly is the same on every render. #}
+{# The unit lives INSIDE the figure, not beside it: `.finale-stat` is a flex column, so a sibling
+   `%` or `s` became its own row under the number. #}
+{% macro number(value, cls="", unit="") %}
+<span class="figure {{ cls }}">
+  {%- for ch in value | string -%}
+  <span class="digit" style="--i: {{ loop.index0 }}">{{ ch }}</span>
+  {%- endfor -%}
+  {%- if unit %}<span class="figure-unit">{{ unit }}</span>{% endif -%}
+</span>
+{% endmacro %}
+
+<div class="finale">
+  <div class="confetti" aria-hidden="true">
+    {% for glyph, drift, spin, step in confetti %}
+    <span class="confetti-bit" style="--drift: {{ drift }}%; --spin: {{ spin * 12 }}deg; --i: {{ step }}">{{ glyph }}</span>
+    {% endfor %}
+  </div>
+
+  <h2 class="celebrate" aria-hidden="true">
+    {% for _ in range(3) %}
+    <span class="pop" style="--i: {{ loop.index0 }}">🎉</span>
+    {% endfor %}
+  </h2>
+
+  <p class="celebrate-text">Quiz complete!</p>
+
+  <div class="finale-figures">
+    <span class="finale-stat">
+      {{ number(points, "big") }}
+      <span class="finale-label">points of {{ goal }}</span>
+    </span>
+    <span class="finale-stat">
+      {{ number(percentage, unit="%") }}
+      <span class="finale-label">{{ correct }} of {{ attempted }} right</span>
+    </span>
+    <span class="finale-stat">
+      {{ number(elapsed, unit="s") }}
+      <span class="finale-label">start to finish</span>
+    </span>
+  </div>
+
+  <p class="celebrate-text">Well done, now take a break&hellip;</p>
+  <img src="{{ prefix }}/media/completed.jpeg" alt="cat sleeping next to computer mouse" width="600" />
+</div>
