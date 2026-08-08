@@ -43,7 +43,19 @@ quiz-test *args:
 opc:
     uv run panel serve apps/optimal-point-count/optimal_point_count_app.py --dev
 
-# copy quiz app files to deployment folder (flattened: app + bml corpus in one directory)
+# The datastar/litestar port of the quiz owns its own justfile (and its own uv project, so litestar
+# stays out of this repo's lock), reached from here as a module: `just dsquiz serve` (granian, port
+# 5008, alongside `just quiz` on 5006), `just dsquiz qa`, `just dsquiz test`,
+# `just dsquiz serve-streamed` for the held-SSE timer variant. `just --list dsquiz` lists them all.
+#
+# It deploys itself too -- `just dsquiz deploy` (-> X:/quiz-ds/), NOT `deploy-quiz` below: that port
+# needs the repo's directory layout rather than one flat directory, because it imports apps/quiz and
+# serves an asset from there. apps/datastar-quiz/DEPLOY.md is the walkthrough.
+
+# datastar quiz port (litestar + uvicorn/granian): serve, deploy, test, qa, routes, ...
+mod dsquiz 'apps/datastar-quiz'
+
+# copy PANEL quiz app files to deployment folder (flattened: app + bml corpus in one directory)
 deploy-quiz:
     #!nu
     let dest = 'X:/quiz-u16/'
