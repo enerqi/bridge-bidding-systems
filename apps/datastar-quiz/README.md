@@ -19,8 +19,8 @@ quiz in `apps/quiz/`, kept beside it so the two architectures can be run side by
 >
 > Genuinely open, none blocking: verifying the OpenTelemetry path against a live Jaeger; **running it
 > on the box** — `just deploy` ships the tree and `DEPLOY.md` walks the takeover of
-> `/bridge-system-quiz/` step by step (rehearsed locally against a real deploy tree, but nginx and
-> supervisord have not seen it yet); darkening `.ccolor`/`.dcolor`
+> `/bridge-system-quiz/` step by step; the app runs there under supervisord and the nginx swap is
+> written against the live config; darkening `.ccolor`/`.dcolor`
 > in the external `bml.css` so the System Notes iframe matches this app's darker suit colours;
 > row-level extras nobody has asked for.
 > The two push models (`DSQUIZ_TIMER`) and the two morph modes (`DSQUIZ_MORPH`) both exist on purpose
@@ -43,7 +43,7 @@ just qa            # format + lint + typecheck; also `just format`, `just lint`,
 just routes
 just vendor-datastar   # re-copy static/datastar.js from ~/dev/datastar/bundles/
 
-uv run --project . python tools/measure.py   # payload sizes + SSE frame pacing, against a running server
+just measure        # payload sizes + SSE frame pacing, against a running server (--base URL)
 ```
 
 Env flags: `DSQUIZ_MORPH=fat|fragment` (how much DOM a patch carries), `DSQUIZ_TIMER=client|stream`
@@ -140,8 +140,7 @@ Interactions patch **`#app` — the whole page below `<body>`** ("fat morph", as
 the server-owned signals. `DSQUIZ_MORPH=fragment` restores the original `#quiz`-only patching for
 comparison. Responses are brotli-compressed, **including the SSE streams**, which is what makes a
 whole-page patch cheap: 23KB raw becomes 4.1KB on the wire, and the stream still arrives frame by
-frame. Numbers and the flushing proof are in `COMPARISON.md`; re-measure with
-`uv run --project . python tools/measure.py`.
+frame. Numbers and the flushing proof are in `COMPARISON.md`; re-measure with `just measure`.
 
 ## Presentation
 

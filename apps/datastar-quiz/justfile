@@ -135,6 +135,13 @@ deploy dest=deploy_dir:
     }
     print $"deployed to ($dest) -- now on the box: cd (($dest | path basename))/apps/datastar-quiz; uv sync --no-dev; then restart the service"
 
+# payload sizes + SSE frame pacing against a RUNNING server; `--base` defaults to the local dev one.
+# Needs `--directory` as well as `--project`: the script path is relative, and `--project` alone
+# leaves the cwd wherever just was invoked from.
+#   just dsquiz measure --base https://sublime.is/bridge-system-quiz
+measure *args:
+    uv run --project {{project}} --directory {{project}} python tools/measure.py {{args}}
+
 # list the routes litestar has registered
 routes:
     uv run --project {{project}} --directory {{project}} litestar --app app:app routes
