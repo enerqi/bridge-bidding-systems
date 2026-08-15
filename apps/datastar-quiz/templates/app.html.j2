@@ -77,9 +77,13 @@
         <span aria-hidden="true" data-text="$_streak"></span><span aria-hidden="true">&times;</span>
       </span>
 
+      {# The fraction is wrapped so the CSS can shed it on a narrow bar. It is the rung after the
+         gauge (dropped at 760px) on the same ladder: under 400px the bar keeps the POINTS, because
+         points are what the skips are earned against, and the fraction is still on the drawer's
+         dial. Wrapping it here rather than hiding `.topbar-score` whole is the difference between
+         a smaller score and no score. #}
       <span class="topbar-score">
-        <span data-text="$_correct"></span>/<span data-text="$_attempted"></span>
-        &nbsp;·&nbsp;<span data-text="$_points"></span> pts
+        <span class="score-fraction"><span data-text="$_correct"></span>/<span data-text="$_attempted"></span>&nbsp;·&nbsp;</span><span data-text="$_points"></span> pts
       </span>
 
       {# The points gauge, promoted out of the sidebar. The NOTCHES are why it earns space up here:

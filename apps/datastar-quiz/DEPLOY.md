@@ -345,7 +345,8 @@ manylinux / musllinux / win_amd64 (grep `granian-` in `uv.lock` and there is no 
 naming it a dependency would make every `uv sync` here compile it from the sdist with a rust
 toolchain. uvicorn is pure python and is what `litestar run` drives. `--no-dev` skips
 pytest/ruff/ty/watchfiles. (A linux or windows host would add `--extra granian` and run
-`granian --interface asgi app:app` instead of the litestar CLI below.)
+`granian --interface asgi app:app` instead of the litestar CLI below; on this box that means a source
+build — see "Trying granian on the box" further down.)
 
 `requires-python = "==3.14.*"` is satisfied by the box's **own** python — `/usr/local/bin/python3.14`
 from pkg, which is what `/quiz-u16/.venv/pyvenv.cfg` already points at (`home = /usr/local/bin`,
@@ -359,6 +360,42 @@ reproducible. (`apps/quiz/quiz_app.py` carries a PEP 723 header — `panel`, `wa
 what `uv run --no-project` would read instead, but the flattened `/quiz-u16` is a real project too:
 its venv is named `bridge-bidding-apps` after the root `pyproject.toml` that `deploy-quiz` copies.
 Nothing in either deployment resolves dependencies from a script header.)
+
+#### Trying granian on the box (optional, and probably not worth it)
+
+The box does have a rust toolchain, so the sdist build is available. Nothing below disturbs the
+running service: uvicorn stays installed either way, because it is a plain dependency.
+
+```shell
+sudo -H -u apps uv sync --frozen --no-dev --extra granian --cache-dir /home/apps/.cache/uv
+```
+
+Minutes, not seconds — maturin may build from source too. The wheel is cached afterwards. Then run
+it by hand on a spare port, beside the live workers, and measure it *bypassing nginx*:
+
+```shell
+sudo -H -u apps env DSQUIZ_PREFIX=bridge-system-quiz DSQUIZ_DEBUG=0 \
+  BML_TOOLS_DIRECTORY=/usr/jails/sandbox/quiz-ds/bml \
+  uv run --frozen --no-sync granian --interface asgi --host 0.0.0.0 --port 6014 app:app
+
+# from a dev machine
+just dsquiz measure --base http://www.sublime.is:6014/bridge-system-quiz
+```
+
+Check the **frame pacing**, not just the sizes: a different server re-opens the question of whether
+SSE writes are flushed promptly. Adopting it is then one line in the program block —
+`granian --interface asgi --host 0.0.0.0 --port 60%(process_num)02d app:app` in place of the litestar
+CLI invocation.
+
+**The trap: `granian --workers N` cannot replace the three processes.** Its workers share one
+listening socket, so nginx sees a single backend and can do no affinity at all — precisely the
+`panel serve --num-procs 3` failure in §2. Sessions are process-local, so it stays three
+single-worker processes on distinct ports until §6 happens. Granian changes nothing about the
+topology.
+
+Worth being honest about the payoff: the endpoints measure 1.7-6.2ms for a squad-sized audience, and
+granian's advantage is throughput under load this deployment does not have. Do it for the
+measurement, not for the service.
 
 ### 4.3 supervisord
 
@@ -608,8 +645,13 @@ done
 curl -s $B/ | grep -o 'href="[^"]*"\|src="[^"]*"' | sort -u
 curl -s $B/ | grep -o "@post('[^']*'" | sort -u
 
-# the assets the two static routers serve, one of which comes from apps/quiz -- 200 each
-for p in /static/app.css /static/datastar.js /media/completed.jpeg; do
+# the assets the two static routers serve, one of which comes from apps/quiz -- 200 each.
+# `pico.classless.min.css` is in the list because it is NOT emitted by a template: the adapter sheet
+# `@import`s it, so it is the one URL the prefix cannot be pasted into. Rooted at `/static/...` it
+# 404d here and nowhere else, and the symptom was a WHITE quiz card in dark mode -- with Pico's
+# tokens missing, `.card` fell through to its `#fff` fallback while the rest of the page, painted
+# from the adapter's own tokens, stayed dark. It is a relative import now; this line is the check.
+for p in /static/app-pico.css /static/pico.classless.min.css /static/datastar.js /media/completed.jpeg; do
     printf '%s %s\n' "$p" "$(curl -s -o /dev/null -w '%{http_code}' $B$p)"
 done
 

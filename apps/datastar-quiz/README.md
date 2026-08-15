@@ -13,7 +13,12 @@ quiz in `apps/quiz/`, kept beside it so the two architectures can be run side by
 > picked, an escalating streak chip, press/hover, a ring on the card you got right, a throbbing
 > countdown in the last band — one toggle, one stylesheet, no JS), on a four-rung elevation ladder and
 > a surface ladder that separate the answer cards from what they sit on.
-> 499 tests; `just dsquiz qa` clean. Everything below is described as it actually behaves, not as
+> 562 tests (`just dsquiz test`); `just dsquiz lint` / `format` clean, `typecheck` currently reports
+> 16 pre-existing ty diagnostics, all of the "`.group` on `Match | None` after an `assert match`"
+> shape in the test files. A second phone pass fixed the app bar (a wrapped score, and 16px of it
+> that belonged to Pico's button margin), corrected `--topbar-h` — which the mobile drawer had been
+> hanging 14px behind — and moved the countdown above the question and stuck it to the bar, out from
+> under the phone's URL bar (DESIGN.md, "Second pass"). Everything below is described as it actually behaves, not as
 > planned — `COMPARISON.md` has the measurements and every bug the port surfaced, `DESIGN.md` the
 > UI/UX reasoning and the open list.
 >

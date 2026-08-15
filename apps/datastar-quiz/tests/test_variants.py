@@ -59,11 +59,47 @@ def test_existing_session_switches_variant(client):
     assert _session(client).variant.bml_file == "bidding-system.bml"
 
 
-def test_a_plain_request_keeps_the_variant(client):
+def test_variant_switch_distinguishes_bare_from_unrelated():
+    """`requested_variant` says what was named; `variant_switch_for_query` says what to do about it."""
+    assert corpus.variant_switch_for_query("swedish").key == "swedish"
+    # a bare URL is "take me home", so it resolves rather than abstaining
+    assert corpus.variant_switch_for_query("").key == "squad"
+    assert corpus.variant_switch_for_query(None).key == "squad"
+    # a query that names no variant abstains, so an odd link cannot flip a swedish session
+    assert corpus.variant_switch_for_query("debug") is None
+
+
+def test_a_bare_url_returns_to_the_default(client):
+    """The shared URL has to be the way home: nothing in the UI hints that `?squad` exists."""
     client.get("/?swedish")
-    # no query, and a query naming nothing: neither may drag the session back to the default
-    assert "Swedish Club Quiz" in client.get("/").text
+
+    assert "U16 Squad System Quiz" in client.get("/").text
+    assert _session(client).variant.key == "squad"
+
+
+def test_an_unrelated_query_keeps_the_variant(client):
+    """`?debug` and friends must not drag a swedish session back to the default."""
+    client.get("/?swedish")
+
     assert "Swedish Club Quiz" in client.get("/?debug").text
+    assert _session(client).variant.key == "swedish"
+
+
+def test_interactions_never_switch_the_variant(client):
+    """The bare-URL rule is for NAVIGATIONS only.
+
+    Every datastar interaction posts to a bare path with no query, so applying "no query means the
+    default" to them would reset a swedish player to squad on their first click -- silently, since
+    the reply is a DOM patch and not a page load.
+    """
+    client.get("/?swedish")
+    session = _session(client)
+
+    client.post("/skip")
+    client.post("/next")
+    client.get("/filter/topics-reset")
+
+    assert _session(client).sid == session.sid
     assert _session(client).variant.key == "swedish"
 
 

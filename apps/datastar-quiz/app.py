@@ -106,27 +106,43 @@ TOASTS_SELECTOR = "#toasts"
 # --- session plumbing -------------------------------------------------------
 
 
-async def provide_session(request: Request) -> state.Session:
-    """The cookie is the only client state the server insists on. A missing or expired session
-    is silently replaced -- a quiz is not worth an error page.
+def _session_for(request: Request, wanted: corpus.Variant | None) -> state.Session:
+    """The session the cookie names, switched to `wanted` if that is a different variant.
 
-    A query that explicitly names a *different* variant (`/?swedish`) replaces the session, because
-    the variant decides which bml system the questions come from and which topics file applies --
-    there is no way to switch it in place. Panel got this for free by keying its sessions on the
-    variant (`session_key_func`, `quiz_app.py:49`); with one cookie per browser it has to be
-    handled here, or the query is silently ignored for anyone who already has a session.
+    Switching is a *replacement*: the variant decides which bml system the questions come from and
+    which topics file applies, and there is no way to change that in place. Panel got this for free
+    by keying its sessions on the variant (`session_key_func`, `quiz_app.py:49`); with one cookie
+    per browser it has to be handled here. `wanted` of None means "keep whatever the session has".
     """
     sid = request.cookies.get(state.SESSION_COOKIE)
     session = STORE.get(sid)
     if session is None:
-        session = STORE.create(corpus.variant_for_query(request.url.query))
-    else:
-        requested = corpus.requested_variant(request.url.query)
-        if requested is not None and requested.key != session.variant.key:
-            STORE.discard(session.sid)
-            session = STORE.create(requested)
-
+        return STORE.create(wanted or corpus.DEFAULT_VARIANT)
+    if wanted is not None and wanted.key != session.variant.key:
+        STORE.discard(session.sid)
+        return STORE.create(wanted)
     return session
+
+
+async def provide_session(request: Request) -> state.Session:
+    """The cookie is the only client state the server insists on. A missing or expired session
+    is silently replaced -- a quiz is not worth an error page.
+
+    Only an *explicitly named* variant switches here, because the datastar interactions post to
+    bare paths (`/answer/3/1`, `/skip`) with no query at all. Reading a bare path as "take me to
+    the default" would throw a swedish player back to squad on their first click -- the same trap
+    the `?debug` flag avoids by being read on the page load only (see `index`).
+    """
+    return _session_for(request, corpus.requested_variant(request.url.query))
+
+
+async def provide_page_session(request: Request) -> state.Session:
+    """`provide_session` for the full page, where a **bare** URL additionally means the default.
+
+    Only a real navigation can carry that meaning, which is why this is a separate dependency used
+    by `index` alone -- `variant_switch_for_query` explains the three cases.
+    """
+    return _session_for(request, corpus.variant_switch_for_query(request.url.query))
 
 
 def debug_allowed(query: str = "") -> bool:
@@ -234,7 +250,7 @@ def _clear_toasts() -> DatastarEvent:
 @get(
     "/",
     media_type=MediaType.HTML,
-    dependencies={"session": Provide(provide_session)},
+    dependencies={"session": Provide(provide_page_session)},
     sync_to_thread=False,
     cache_control=CacheControlHeader(no_store=True),
 )
@@ -245,6 +261,9 @@ def index(session: NamedDependency[state.Session], request: Request) -> Response
     (`/answer/3/1`) with no query, so re-reading `?debug` per request would switch the panel off on the
     first click. Set on page load, sticky for the session -- `?debug` arms it, a plain reload disarms
     it, which is the same lifetime panel's `pn.state.location.search` gave it.
+
+    `provide_page_session` rather than `provide_session` for the same reason: a bare URL means "back
+    to the default variant", and only a navigation can mean that.
     """
     session.debug = debug_allowed(request.url.query)
     # The theme is the browser's preference, not the session's: it is written by the toggle into its

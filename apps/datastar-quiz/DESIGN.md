@@ -689,6 +689,60 @@ percentage of the card now. Long unbroken tokens in bml descriptions get `overfl
 the app bar's flex children get `min-width: 0` with an ellipsis on the title, so a long variant name
 cannot push the page wider.
 
+### Second pass: the app bar, and the countdown the URL bar was eating
+
+Re-measured on the two widths that actually turn up — 390×844 (iPhone 12/13/14) and 360×740
+(Galaxy S9) — because the first pass fixed the *type scale* and the tap targets and left the chrome
+alone. Four faults, three of them invisible on a laptop and one of them invisible everywhere:
+
+| | before | after |
+|---|---|---|
+| app bar height | **78px** | 62 |
+| score | wrapped to 3 lines — `0/0`, `· 0`, `pts`, read vertically | one line |
+| drawer top edge | 48px, i.e. 14px *behind* the 62px bar | flush |
+| countdown | below the card, under the fold and under the phone's URL bar | pinned under the app bar |
+
+- **The score wrapped, and that is what made the bar 78px tall.** It is a flex item with
+  `min-width: 0` (given, correctly, so it could not push the page wider) and no `white-space`, so
+  when the bar ran out of room it broke the number instead of the layout. A score is one line or it
+  is not a score: `nowrap` and `flex: none`, and the *title* is the item that gives way — it has the
+  ellipsis. Below 400px the correct/attempted **fraction** drops out too, which is the next rung of
+  the ladder that already sheds the gauge at 760px. The points survive because they are what the
+  skips are earned against, and the fraction is still on the drawer's dial. 400px was chosen so both
+  common widths are on the same side of it: with the fraction in, the title measured 86–116px at
+  360–390 and the bar read as five things fighting.
+- **16px of the bar belonged to Pico.** Pico gives every `button` a `margin-bottom` of one spacing
+  unit, and on a flex item that margin is part of the *bar's* height. Skip and the theme toggle had
+  zeroed it; the hamburger had not, so a 44px target sat in a 62px bar that measured 78. Nothing on
+  screen pointed at it — it is the kind of thing that is only ever found by adding up the children
+  and finding they do not reach the parent. Now stated in all three sheets, so the variants measure
+  the same whichever is selected.
+- **`--topbar-h` had been wrong since the touch targets went in.** It said `3rem`, from when the bar
+  really was 48px; the 44px hamburger plus 0.55rem of padding is 62. Two things are positioned from
+  that token, so the mobile drawer had been opening 14px underneath the bar — the same "the rule is
+  right, the context moved" shape as the drawer bug above. It is `3.875rem` now, and a coarse pointer
+  lands on the same number (Skip and the theme toggle grow to the same 44px floor), so one value is
+  right for both pointer types.
+- **The countdown was in the worst place a phone has.** It sat below the question card in flow: with
+  five choices it is already at the fold, and a phone's URL bar slides back over the bottom of the
+  viewport the moment you scroll *up* — so the one element that is worthless off-screen was the one
+  most likely to be off-screen, and covered by browser chrome when it wasn't. Below 900px `.main`
+  becomes a flex column and the timer takes `order: -1` with `position: sticky; top: var(--topbar-h)`:
+  visually above the question, pinned to the bar, 22px instead of 32. `order` and nothing else —
+  the DOM order (and so the screen-reader order, and every template) is untouched, and the desktop
+  layout keeps the bar under the question where the reveal appears beside it.
+
+The theme toggle **stayed in the bar**, deliberately, against the first instinct to move it: the
+squeeze was the wrapped score and Pico's margin, not the toggle, and with those gone the bar has room
+at 360px. Moving it into the drawer would have paid for a fault it did not cause with the thing the
+drawer is worst at — "this is too bright right now" is fixed the moment it is noticed.
+
+What is left, and is a limit rather than a bug: **five choices plus the prompt do not always fit one
+screen.** The vertical budget was trimmed where it was free — the bar gives back 16px, the sticky
+countdown takes 32px of card-pushing margin out of the flow, and under 560px the grid gap, the
+prompt's margin and the card minimum each come down a notch — but a five-line auction is five lines,
+and shrinking type further trades a scroll for a squint. `tests/test_phone_layout.py` pins all of it.
+
 ## The debug panel
 
 The panel app had `debug_enabled` and a row of buttons for reaching states that take minutes of honest

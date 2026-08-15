@@ -104,8 +104,26 @@ def test_the_default_variant_is_the_one_the_link_falls_back_to(player_markup):
 def test_the_vendored_frameworks_are_imported_not_fetched_from_a_cdn(vendored):
     """Same rule as `datastar.js`: vendored, so the app works offline and pins what was tested."""
     assert (STATIC / vendored).is_file()
-    importers = [css for css in STATIC.glob("app-*.css") if f'@import url("/static/{vendored}")' in css.read_text()]
+    importers = [css for css in STATIC.glob("app-*.css") if f'@import url("{vendored}")' in css.read_text()]
     assert importers, f"{vendored} is vendored but no adapter imports it"
+
+
+def test_no_stylesheet_url_is_rooted_at_slash_static():
+    """The one URL in the app that CANNOT have the deployment prefix pasted into it.
+
+    Every URL the templates emit is prepended with `render.url_prefix()`; a stylesheet is not a
+    template, so `@import url("/static/x.css")` is frozen at the root and 404s under a prefix
+    (`/bridge-system-quiz/...`). Relative is prefix-agnostic: an @import resolves against the
+    importing stylesheet's own URL.
+
+    It bit as a DARK MODE bug, which is why it survived so long: with Pico's sheet missing, every
+    `--pico-*` token was undefined, `.card` fell through to its `#fff` fallback, and the quiz card
+    sat white on a canvas the adapter's own tokens had correctly painted dark. Local dev has no
+    prefix, so it only ever appeared on the deployed box.
+    """
+    for css in STATIC.glob("app*.css"):
+        rooted = re.findall(r'url\(\s*["\']?/static/[^)]*\)', css.read_text(encoding="utf-8"))
+        assert not rooted, f"{css.name}: root-absolute URL(s) {rooted} -- 404 under a deployment prefix"
 
 
 def test_a_framework_that_styles_aria_busy_is_neutralised_on_the_choice_group():
@@ -120,7 +138,7 @@ def test_a_framework_that_styles_aria_busy_is_neutralised_on_the_choice_group():
     """
     for adapter in STATIC.glob("app-*.css"):
         text = adapter.read_text(encoding="utf-8")
-        imported = re.search(r'@import url\("/static/([^"]+)"\)', text)
+        imported = re.search(r'@import url\("([^"]+)"\)', text)
         if not imported:
             continue
         framework = (STATIC / imported.group(1)).read_text(encoding="utf-8")

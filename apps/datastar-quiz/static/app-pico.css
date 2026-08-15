@@ -10,7 +10,13 @@
  * spacing scale, <details> disclosure, <dialog> chrome, <kbd>, focus-visible, colour scheme.
  */
 
-@import url("/static/pico.classless.min.css");
+/* RELATIVE, not `/static/...`: an @import resolves against the STYLESHEET's own URL, which is the
+   only URL in this app that the deployment prefix does not have to be pasted into by hand. Rooted at
+   `/static/` it 404s the moment the app is served under a prefix (`/bridge-system-quiz/static/...`),
+   and the failure is silent and mid-page: every `--pico-*` token vanishes, so `.card` fell through
+   to its `#fff` fallback and sat white on a dark canvas -- dark mode looked broken while the rest of
+   the page, which uses this sheet's own tokens, looked fine. */
+@import url("pico.classless.min.css");
 
 :root {
   --primary: light-dark(#14564a, #123f36);
@@ -44,9 +50,15 @@
   --pico-font-size: 100%;
   /* Pico ships its own dark theme; the block at the bottom of this file supplies the tokens it
      cannot know, so `light dark` is honest here too. */
-  /* the app bar's height, so the sidebar's own scroll region can be sized off it rather than
-     off a guess -- being 13px out was enough to put a scrollbar back on the page */
-  --topbar-h: 3rem;
+  /* the app bar's height, so the sidebar's own scroll region -- and the sticky countdown on a
+     phone -- can be sized off it rather than off a guess; being 13px out was enough to put a
+     scrollbar back on the page.
+     3.875rem = 62px = the hamburger's 44px touch target plus the bar's 0.55rem of padding, which
+     is what the bar has ACTUALLY measured since the touch targets went in. It said 3rem for
+     months, so the drawer opened 14px under the bar and anything sticking to `--topbar-h` would
+     have hidden behind it. A coarse pointer lands on the same number (Skip and the theme toggle
+     grow to the same 44px floor), so one value is right for both. */
+  --topbar-h: 3.875rem;
   /* ELEVATION -- one light, overhead. Every rung is `x = 0`, `blur = 2x offset`, and each is a
      DIRECT cast plus a tighter AMBIENT one (contact occlusion, half the offset). Depth only reads as
      depth while every shadow on the page agrees about where the light is; before this the app had
@@ -203,10 +215,22 @@ body > header {
   font-variant-numeric: tabular-nums;
   font-size: 0.95rem;
   opacity: 0.9;
+  /* NOWRAP, and it does not shrink. On a 390px phone this was the widest thing the bar could not
+     fit, so it wrapped to three lines -- "0/0", "· 0", "pts", read vertically -- and took the bar
+     from 48px to 78px. A score is one line or it is not a score; the title is the flex item that
+     gives way (it has `min-width: 0` and an ellipsis), and below 400px the fraction drops out
+     entirely rather than the bar overflowing. */
+  white-space: nowrap;
+  flex: none;
 }
 
 .nav-toggle {
   width: auto;
+  /* Pico gives every button `margin-bottom: var(--pico-spacing)` -- 16px, on a flex item, so it is
+     16px of the APP BAR's height. The bar was 78px tall on a phone instead of 48 and nobody could
+     see where it came from: the hamburger is 44px and the bar's padding is 8.8. Skip and the theme
+     toggle already zeroed it; this one did not. */
+  margin: 0;
   background: transparent;
   border: 0;
   padding: 0.4rem;
@@ -404,7 +428,9 @@ button.light {
 
   .sidebar {
     position: fixed;
-    top: 3rem;
+    /* the TOKEN, not a repeat of its value: a coarse pointer makes the bar 3.5rem (Skip's 44px
+       floor), and a hardcoded 3rem put the drawer 8px under it */
+    top: var(--topbar-h);
     bottom: 0;
     left: 0;
     max-height: none;
@@ -1097,22 +1123,28 @@ button.light {
   .answer {
     font-size: 1.4rem;
     padding: 0.45rem 0.6rem;
+    /* every rem of dead space between the prompt and the choices is a choice pushed under the
+       fold -- the phone complaint is that five answers do not fit at once */
+    margin-bottom: 0.9rem;
   }
 
   .candidate,
   .candidate.button {
     font-size: 1.3rem;
-    min-height: 3rem;
+    min-height: 2.9rem;
   }
 
   .intro {
     font-size: 1.05rem;
+    margin-bottom: 0.5rem;
   }
 
   /* a phone has no room for a 16rem minimum column: one choice per row, full width */
   .candidates {
     grid-template-columns: minmax(0, 1fr);
     padding: 0.5rem;
+    /* one column, so the gap only ever costs height: 0.8rem x 4 was a sixth of a card */
+    gap: 0.5rem;
   }
 
   .card {
@@ -1121,6 +1153,60 @@ button.light {
 
   .notes iframe {
     height: 55vh;
+  }
+}
+
+/* --- the app bar on a phone ------------------------------------------------- *
+ * Three fixes, all measured at 390x844 (iPhone 12) and 360x740 (Galaxy S9):
+ *   - the score no longer wraps (see `.topbar-score` above), which is what made the bar 78px tall
+ *     and its contents read vertically;
+ *   - the gaps and the theme toggle tighten, so the title keeps some width before the ellipsis;
+ *   - below 400px the correct/attempted FRACTION drops. That is the next rung of the same
+ *     shedding ladder as the gauge at 760px: points survive because they are what the skips are
+ *     earned against, and the fraction is still on the drawer's dial. */
+@media (max-width: 520px) {
+  .topbar {
+    gap: 0.5rem;
+    padding-inline: 0.6rem;
+  }
+
+  .theme-toggle {
+    padding: 0.3rem;
+  }
+}
+
+/* 400px, so BOTH common phone widths are on the same side of it: 390 (iPhone 12/13/14) and 360
+   (Galaxy S9 and most of android). Measured with the fraction in, the title had 86-116px left --
+   "U16 Squad S..." -- and the bar read as five things fighting; without it the title gets ~118px
+   at both widths and the live number is still there. Nothing is lost: the fraction is on the
+   drawer's dial, and the aria-labels in the bar never dropped it. */
+@media (max-width: 400px) {
+  .score-fraction {
+    display: none;
+  }
+}
+
+/* THE COUNTDOWN GOES ABOVE THE QUESTION AND STICKS TO THE BAR (phone/tablet widths only).
+ * It used to sit below the card in flow, which on a phone put it in the worst possible place: with
+ * five choices it is already at the fold, and the browser's own URL bar -- which slides back in the
+ * moment you scroll up -- covers whatever is at the bottom of the viewport. So the one element that
+ * is worthless off-screen was the one most likely to be off-screen.
+ * `order: -1` moves it visually only; the DOM (and so the screen-reader order, and every template)
+ * is untouched. It is also slimmer here: it is a bar, not a panel, and the height it gives back is
+ * most of an answer card. */
+@media (max-width: 900px) {
+  .main {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .timer {
+    order: -1;
+    position: sticky;
+    top: var(--topbar-h);
+    z-index: 12;
+    height: 1.4rem;
+    margin: 0 0 0.8rem;
   }
 }
 

@@ -37,6 +37,7 @@ __all__ = [
     "requested_variant",
     "topics_for",
     "variant_for_query",
+    "variant_switch_for_query",
 ]
 
 
@@ -88,6 +89,23 @@ def requested_variant(query: str | None) -> Variant | None:
 def variant_for_query(query: str | None) -> Variant:
     """`?swedish` picks the swedish club system, anything else the squad system."""
     return requested_variant(query) or DEFAULT_VARIANT
+
+
+def variant_switch_for_query(query: str | None) -> Variant | None:
+    """What an *existing* session should switch to, or None to keep the variant it has.
+
+    Three cases, and the middle one is the whole point:
+
+    - names a variant (`?swedish`, `?squad`) -> that variant, as `requested_variant`;
+    - **no query at all** -> the default. The bare URL is the one people share and link to, so it
+      has to mean "take me home"; without this a `?swedish` session is stuck forever, because
+      nothing in the UI says the way back is a query string nobody remembers;
+    - a non-empty query naming no variant (`?debug`) -> None, keep what the session has. Reading
+      that as "switch me to the default" would flip a swedish player to squad on the next odd link.
+    """
+    if not (query or ""):
+        return DEFAULT_VARIANT
+    return requested_variant(query)
 
 
 # Parsing the whole corpus takes seconds, so it is done once per process and shared by every
