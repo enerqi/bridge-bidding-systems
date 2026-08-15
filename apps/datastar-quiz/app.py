@@ -107,31 +107,41 @@ TOASTS_SELECTOR = "#toasts"
 
 
 def _session_for(request: Request, wanted: corpus.Variant | None) -> state.Session:
-    """The session the cookie names, switched to `wanted` if that is a different variant.
+    """This browser's session for the variant this request belongs to, or a new one.
 
-    Switching is a *replacement*: the variant decides which bml system the questions come from and
-    which topics file applies, and there is no way to change that in place. Panel got this for free
-    by keying its sessions on the variant (`session_key_func`, `quiz_app.py:49`); with one cookie
-    per browser it has to be handled here. `wanted` of None means "keep whatever the session has".
+    The variant is resolved FIRST, because it is half the key: sessions live under (browser, variant)
+    so the two systems coexist (see `state.SessionStore`). `wanted` is what the request names -- the
+    query on a navigation, the query every action URL carries (`render.variant_query`) on an
+    interaction. When it names none, the browser's last navigated-to variant stands in, and failing
+    that the default.
+
+    Switching systems is therefore no longer a replacement: `?swedish` parks the squad quiz and
+    resumes (or starts) the swedish one, both keep their score, and a squad tab left open in the same
+    browser goes on being about the squad session. That is what made a background tab dangerous
+    before -- one cookie, one session, so the tab you had forgotten about was answering into the quiz
+    you were playing.
+
+    `request.state.session_replaced` records that the browser arrived with an identity we no longer
+    have a quiz for -- a restart, a six-hour gap -- so the play routes can resync the page instead of
+    quietly scoring against a question it has never shown.
     """
     sid = request.cookies.get(state.SESSION_COOKIE)
-    session = STORE.get(sid)
+    variant = wanted or corpus.variant_by_key(STORE.current_variant(sid)) or corpus.DEFAULT_VARIANT
+    session = STORE.get(sid, variant.key)
     if session is None:
-        return STORE.create(wanted or corpus.DEFAULT_VARIANT)
-    if wanted is not None and wanted.key != session.variant.key:
-        STORE.discard(session.sid)
-        return STORE.create(wanted)
+        request.state.session_replaced = bool(sid)
+        return STORE.create(variant, sid=sid)
     return session
 
 
 async def provide_session(request: Request) -> state.Session:
     """The cookie is the only client state the server insists on. A missing or expired session
-    is silently replaced -- a quiz is not worth an error page.
+    is silently replaced -- a quiz is not worth an error page -- but the play routes then resync the
+    page rather than acting on it (`_stale`).
 
-    Only an *explicitly named* variant switches here, because the datastar interactions post to
-    bare paths (`/answer/3/1`, `/skip`) with no query at all. Reading a bare path as "take me to
-    the default" would throw a swedish player back to squad on their first click -- the same trap
-    the `?debug` flag avoids by being read on the page load only (see `index`).
+    Reading a *bare* path as "take me to the default" would throw a swedish player back to squad on
+    their first click, so only `index` does that -- the same trap the `?debug` flag avoids by being
+    read on the page load only. In practice every action URL names its variant anyway.
     """
     return _session_for(request, corpus.requested_variant(request.url.query))
 
@@ -143,6 +153,47 @@ async def provide_page_session(request: Request) -> state.Session:
     by `index` alone -- `variant_switch_for_query` explains the three cases.
     """
     return _session_for(request, corpus.variant_switch_for_query(request.url.query))
+
+
+def _stale(request: Request, session: state.Session, qid: int | None = None) -> bool:
+    """Whether the page this request came from is talking about a quiz that no longer exists.
+
+    Two ways, and they used to be handled differently for no reason:
+
+    * the session itself is gone (`session_replaced`), so *nothing* the page says applies here;
+    * the question nonce has moved on -- a double click, a replayed request, a background tab.
+
+    Since `qid`s are unique per process (see `state.next_qid`), the second test is now exact: it can
+    no longer pass by coincidence because two sessions both started counting at 1.
+    """
+    if getattr(request.state, "session_replaced", False):
+        return True
+    return qid is not None and qid != session.qid
+
+
+def _resync(session: state.Session) -> DatastarResponse:
+    """Answer a stale interaction by making the page tell the truth again.
+
+    The old answer was a bare 204: correct, in that nothing should be scored, but from the player's
+    chair it is a dead button -- and the page stays wrong, so the next click is stale too. This
+    re-renders the whole page from the session that actually exists, which is the one thing that
+    ends the loop, and says so, because the question changing under your finger needs an explanation.
+
+    The FAT patch even in fragment morph mode: what is stale here is not just the question. The
+    title, the score, the drawer and the topics all belong to a quiz this browser is no longer in.
+    """
+    return DatastarResponse(
+        [
+            SSE.patch_elements(render.app_body(session), selector=APP_SELECTOR, mode=ElementPatchMode.INNER),
+            SSE.patch_signals({**render.signals(session), **render.settings_signals(session)}),
+            SSE.patch_elements(
+                render.toast(engine.Toast(kind="warning", text="Quiz reloaded — this page has caught up", pause=0)),
+                selector=TOASTS_SELECTOR,
+                mode=ElementPatchMode.INNER,
+            ),
+        ],
+        cookies=_cookies(session),
+    )
 
 
 def debug_allowed(query: str = "") -> bool:
@@ -266,6 +317,11 @@ def index(session: NamedDependency[state.Session], request: Request) -> Response
     to the default variant", and only a navigation can mean that.
     """
     session.debug = debug_allowed(request.url.query)
+    # A NAVIGATION is the only thing that moves the mark for "which system this browser is on", which
+    # is what an ambiguous later page load (`?debug`, naming no variant) resolves against. Doing it
+    # on interactions instead would let a background tab drag the answer back to its own system --
+    # the cross-tab bleed the (browser, variant) keying exists to end.
+    STORE.remember(session)
     # The theme is the browser's preference, not the session's: it is written by the toggle into its
     # own cookie and only relayed here, so it survives a new session, a restart and a second tab.
     theme = render.theme_from(request.cookies.get(render.THEME_COOKIE))
@@ -294,11 +350,15 @@ async def score_answer(
 ) -> DatastarResponse:
     """Score one answer, then stream the notifications the way panel showed them.
 
-    A stale `qid` (double click, back button, replay) or a finished quiz is a 204 no-op: the
-    session's nonce moved on when the question did.
+    A stale `qid` (double click, back button, replay, a page whose session was replaced) scores
+    nothing and RESYNCS the page instead: the nonce moved on when the question did, and the browser
+    is showing a quiz that no longer exists. A finished quiz is still a plain no-op -- the completion
+    screen is already what the page is showing.
     """
     with telemetry.span("answer"):
-        if qid != session.qid or not session.still_playing:
+        if _stale(request, session, qid):
+            return _resync(session)
+        if not session.still_playing:
             return DatastarResponse(cookies=_cookies(session))
         if not 0 <= index < len(session.question.candidates):
             return DatastarResponse(cookies=_cookies(session))
@@ -405,6 +465,8 @@ async def next_question(session: NamedDependency[state.Session], request: Reques
     Only valid while parked on a reveal, so a stray press cannot skip a live question -- that is
     what `Skip` is for, and it costs a skip.
     """
+    if _stale(request, session):
+        return _resync(session)
     _sync_settings(session, await _signals(request))
     if not session.awaiting_next or not session.still_playing:
         return DatastarResponse(cookies=_cookies(session))
@@ -448,6 +510,8 @@ async def _timer_stream(session: state.Session) -> AsyncGenerator[DatastarEvent]
 @post("/skip", dependencies={"session": Provide(provide_session)})
 async def skip(session: NamedDependency[state.Session], request: Request) -> DatastarResponse:
     """Skip the question if a milestone has paid for it."""
+    if _stale(request, session):
+        return _resync(session)
     _sync_settings(session, await _signals(request))
     if session.skips_left <= 0 or not session.still_playing:
         return DatastarResponse(cookies=_cookies(session))

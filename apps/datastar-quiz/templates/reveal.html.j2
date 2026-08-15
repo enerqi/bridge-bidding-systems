@@ -34,7 +34,7 @@
        && !$_topicsOpen
        && evt.target.tagName !== 'BUTTON'
        && !evt.target.closest?.('{{ ACTIVATION_TARGETS }}')
-       && @post('{{ prefix }}/next')">
-  <button type="button" class="next button is-primary" autofocus data-on:click="@post('{{ prefix }}/next')">Next question</button>
+       && @post('{{ prefix }}/next{{ variant_query }}')">
+  <button type="button" class="next button is-primary" autofocus data-on:click="@post('{{ prefix }}/next{{ variant_query }}')">Next question</button>
   <span class="reveal-hint">or press Enter</span>
 </div>

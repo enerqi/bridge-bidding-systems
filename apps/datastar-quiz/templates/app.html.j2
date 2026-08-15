@@ -108,11 +108,11 @@
          not inherit them. #}
       <button type="button" class="skip warning button is-warning"
               data-attr:disabled="$_skipsLeft <= 0 || !$_playing"
-              data-on:click="@post('{{ prefix }}/skip')"
+              data-on:click="@post('{{ prefix }}/skip{{ variant_query }}')"
               data-on:keydown__window="evt.key === 's'
                 && $_skipsLeft > 0 && $_playing && !$_answering && !$_topicsOpen
                 && !evt.target.closest?.('{{ TYPING_TARGETS }}')
-                && @post('{{ prefix }}/skip')">
+                && @post('{{ prefix }}/skip{{ variant_query }}')">
         Skip <span class="skip-count" data-text="$_skipsLeft"></span>
       </button>
     </header>
@@ -163,18 +163,18 @@
         <section class="panel box debug" id="debug">
           <strong>Debug</strong>
           <div class="debug-row">
-            <button type="button" class="button is-small" data-on:click="@post('{{ prefix }}/debug/points/100')">+100 pts</button>
-            <button type="button" class="button is-small" data-on:click="@post('{{ prefix }}/debug/points/-100')">&minus;100</button>
+            <button type="button" class="button is-small" data-on:click="@post('{{ prefix }}/debug/points/100{{ variant_query }}')">+100 pts</button>
+            <button type="button" class="button is-small" data-on:click="@post('{{ prefix }}/debug/points/-100{{ variant_query }}')">&minus;100</button>
           </div>
           <div class="debug-row">
             {# the goal decides completion AND where the skip milestones fall, so a small goal
                exercises the whole ladder in a minute #}
-            <button type="button" class="button is-small" data-on:click="@post('{{ prefix }}/debug/goal/200')">goal 200</button>
-            <button type="button" class="button is-small" data-on:click="@post('{{ prefix }}/debug/goal/1000')">goal 1000</button>
+            <button type="button" class="button is-small" data-on:click="@post('{{ prefix }}/debug/goal/200{{ variant_query }}')">goal 200</button>
+            <button type="button" class="button is-small" data-on:click="@post('{{ prefix }}/debug/goal/1000{{ variant_query }}')">goal 1000</button>
           </div>
           <div class="debug-row">
-            <button type="button" class="button is-small" data-on:click="@post('{{ prefix }}/debug/reveal')">show reveal</button>
-            <button type="button" class="button is-small" data-on:click="@post('{{ prefix }}/debug/complete')">show finale</button>
+            <button type="button" class="button is-small" data-on:click="@post('{{ prefix }}/debug/reveal{{ variant_query }}')">show reveal</button>
+            <button type="button" class="button is-small" data-on:click="@post('{{ prefix }}/debug/complete{{ variant_query }}')">show finale</button>
           </div>
           {# `build` is the fingerprint of the server-side sources (`render.build_stamp`). It is here
              because "the app is broken again" has three times been a process serving code from
@@ -199,26 +199,26 @@
                binding has run. #}
             <input type="range" min="{{ min_difficulty }}" max="{{ max_difficulty }}" step="1"
                    value="{{ settings.difficulty }}"
-                   data-bind:difficulty data-on:change__debounce.400ms="@post('{{ prefix }}/settings')" />
+                   data-bind:difficulty data-on:change__debounce.400ms="@post('{{ prefix }}/settings{{ variant_query }}')" />
           </label>
           {# `checked` is server-rendered for the same reason as the slider `value`s, and it
              matters more here: an unchecked box on first paint is state the binding would
              push back up, quietly turning ladder mode off. #}
           <label class="checkbox">
             <input type="checkbox" {% if settings.ladder_mode %}checked{% endif %}
-                   data-bind:ladder-mode data-on:change="@post('{{ prefix }}/settings')" />
+                   data-bind:ladder-mode data-on:change="@post('{{ prefix }}/settings{{ variant_query }}')" />
             Ladder mode (can lose points)
           </label>
           <label class="checkbox">
             <input type="checkbox" {% if settings.target_on %}checked{% endif %}
-                   data-bind:target-on data-on:change="@post('{{ prefix }}/settings')" />
+                   data-bind:target-on data-on:change="@post('{{ prefix }}/settings{{ variant_query }}')" />
             Target percentage required
           </label>
           <label>
             Target <output data-text="$targetPct"></output>%
             <input type="range" min="70" max="90" step="10" value="{{ settings.target_pct }}"
                    data-attr:disabled="!$targetOn"
-                   data-bind:target-pct data-on:change__debounce.400ms="@post('{{ prefix }}/settings')" />
+                   data-bind:target-pct data-on:change__debounce.400ms="@post('{{ prefix }}/settings{{ variant_query }}')" />
           </label>
           {# Topics before the filter, and the filter folded away behind "Advanced", because they
              answer the same question at two very different prices: a topic is a name you recognise
@@ -247,7 +247,7 @@
               <input type="text" class="input" list="topic-names" placeholder="e.g. 1D-1M-1N, or a topic"
                      value="{{ filter_text }}"
                      data-bind:filter-text
-                     data-on:input__debounce.300ms="@get('{{ prefix }}/filter/preview')"
+                     data-on:input__debounce.300ms="@get('{{ prefix }}/filter/preview{{ variant_query }}')"
                      {# Enter COMMITS, and a commit is the end of the interaction -- so it hands focus
                         back, exactly as the Appearance pickers do. Typing is not: `input` above must
                         never blur, or the box would eject you after one character.
@@ -256,7 +256,7 @@
                         then reaching for 1-9 looked like "the accelerators are broken again", with the
                         keystrokes quietly landing in the filter box. The blur is FIRST in the sequence
                         so the post is not racing a focus change. #}
-                     data-on:keydown="evt.key === 'Enter' && (evt.target.blur(), @post('{{ prefix }}/filter/apply'))" />
+                     data-on:keydown="evt.key === 'Enter' && (evt.target.blur(), @post('{{ prefix }}/filter/apply{{ variant_query }}'))" />
             </label>
             {# native autocomplete: the topic names, no javascript of ours #}
             <datalist id="topic-names">
@@ -293,7 +293,7 @@
              Only the explicit button does this -- the sliders and checkboxes restart the quiz too,
              and you may be adjusting several. #}
           <button type="button" class="danger button is-danger"
-                  data-on:click="@post('{{ prefix }}/restart');
+                  data-on:click="@post('{{ prefix }}/restart{{ variant_query }}');
                     window.matchMedia('{{ DRAWER_OVERLAY_QUERY }}').matches && ($_navOpen = false)">Restart</button>
           {# Presentation, not quiz rules -- and collapsed, because the settings column was the
              tallest thing on the page. With these folded away it fits an ordinary viewport without a
@@ -363,7 +363,29 @@
         {# `card` is OUR class and also one of Bulma's -- and for once they mean the same thing, so
            the Bulma variant inherits its surface for free and the adapter only adds the padding
            (Bulma's card expects a `.card-content` child) and the green top rule. #}
-        <section class="card" id="quiz">{{ quiz_body | safe }}</section>
+        {# the one fragment that is patched as elements #}
+        {# `card` is OUR class and also one of Bulma's -- and for once they mean the same thing, so
+           the Bulma variant inherits its surface for free and the adapter only adds the padding
+           (Bulma's card expects a `.card-content` child) and the green top rule. #}
+        {# COMING BACK FROM THE SYSTEM NOTES TAKES THE KEYBOARD BACK.
+
+           The reported bug, reproduced: read the notes, click inside them to scroll, come back to
+           the quiz, and 1-9 do nothing while the mouse still works. Nothing in this app is broken
+           when that happens -- the notes are an `<iframe>`, so a click inside them puts focus in
+           ANOTHER DOCUMENT (a cross-origin one), and every accelerator here is a `__window` listener
+           on ours. The keys are being delivered, just not to us, and no guard we own can see it:
+           `$_answering`, `$_topicsOpen` and the qid are all fine, which is exactly why it looked
+           like "the shortcuts randomly stop working". The mouse keeps working because a click is
+           delivered by position, not by focus.
+
+           Bringing the pointer back to the question is the gesture that means "I am playing again",
+           so that is where the focus is taken back. Narrow on purpose -- only when the thing holding
+           focus is an iframe, so a half-typed filter box or a focused slider is left alone -- and it
+           costs nothing when focus is already ours. `window.focus()` as well as the blur, because
+           the parent document has to be the one holding focus, not merely the iframe not holding it. #}
+        <section class="card" id="quiz"
+                 data-on:mouseenter="document.activeElement?.tagName === 'IFRAME'
+                   && (document.activeElement.blur(), window.focus())">{{ quiz_body | safe }}</section>
 
         {# The timer's markup never changes; only the signal does. Which side produces that signal
            is the experiment (DSQUIZ_TIMER, see app.TIMER_MODE):

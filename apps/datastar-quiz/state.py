@@ -21,6 +21,7 @@ app already had (see the `session_key_func` notes at `apps/quiz/quiz_app.py:49`)
 
 from __future__ import annotations
 
+import itertools
 import time
 import uuid
 
@@ -32,9 +33,35 @@ import engine
 # see the note in engine.py: `quiz` is only importable once corpus has run
 from corpus import quiz
 
+# The cookie identifies the BROWSER, not the quiz: sessions are keyed by (browser, variant), so the
+# squad quiz and the swedish one coexist instead of one replacing the other. Deliberately still one
+# cookie under one name -- nginx pins a browser to a worker with `hash $cookie_dsq_sid consistent`
+# (DEPLOY.md), and a name that varied by variant would leave that directive hashing on a cookie half
+# the requests do not carry.
 SESSION_COOKIE = "dsq_sid"
 SESSION_TTL_SECONDS = 6 * 60 * 60
 _SWEEP_EVERY_SECONDS = 10 * 60
+
+# THE QUESTION NONCE IS PROCESS-WIDE, and that is the whole point of it.
+#
+# It used to be per session, starting at 1. So a page whose session had been REPLACED -- and there
+# are three ordinary ways for that to happen: `?swedish` discards the old session and the session
+# cookie is one per browser, the store is emptied by a restart (`--reload` does this constantly),
+# and a session ages out after six hours -- posted `qid=1` at a brand new session whose first
+# question was *also* `qid=1`. The staleness guard in `score_answer` then passed by coincidence and
+# the answer was scored against a question that had never been on screen: the reveal came back for
+# a different auction, marked wrong, and with `?swedish` involved from a different SYSTEM. That is
+# the "I answered one question and it showed me another" report, and it is not a race -- it is two
+# counters that both start at 1.
+#
+# A counter that never repeats within a process makes the collision impossible, so a stale answer is
+# always recognised as stale (and now answered with a resync rather than silence -- see `app._stale`).
+_qids = itertools.count(1)
+
+
+def next_qid() -> int:
+    """The next question nonce. Unique per process, not per session."""
+    return next(_qids)
 
 
 class Settings(msgspec.Struct):
@@ -56,7 +83,7 @@ class Session(msgspec.Struct):
     score: engine.Score
     sequences: list  # the working set questions are drawn from (filtered or the whole system)
     question: quiz.Question
-    qid: int = 1  # bumped per question; the answer route rejects a stale qid
+    qid: int = 0  # set from `next_qid()`; the answer route rejects a stale one. Never per-session.
     skips_left: int = engine.INITIAL_SKIPS
     last_correct_points: int = 0
     filter_text: str = ""
@@ -118,7 +145,7 @@ class Session(msgspec.Struct):
         self.awaiting_next = False
         self.wrong_index = None
         self.question = engine.new_question(self.sequences, self.settings.difficulty)
-        self.qid += 1
+        self.qid = next_qid()
         self.question_seconds = engine.seconds_for_difficulty(self.settings.difficulty)
         self.start_question_clock()
 
@@ -172,6 +199,9 @@ def new_session(variant: corpus.Variant, sid: str | None = None) -> Session:
         score=engine.Score(),
         sequences=sequences,
         question=engine.new_question(sequences, settings.difficulty),
+        # from the process-wide counter, so this session's first question cannot share a nonce with
+        # the first question of the session it replaced -- see the note on `next_qid`
+        qid=next_qid(),
         question_seconds=engine.seconds_for_difficulty(settings.difficulty),
         question_start=time.monotonic(),
         quiz_start_wall=time.time(),
@@ -180,34 +210,75 @@ def new_session(variant: corpus.Variant, sid: str | None = None) -> Session:
 
 
 class SessionStore:
-    """Process-local session registry with lazy TTL eviction.
+    """Process-local session registry with lazy TTL eviction, keyed by (browser, variant).
 
-    Lazy rather than a background task: a sweep is cheap, sessions are few, and this keeps the
-    store usable from tests without an event loop.
+    ONE QUIZ PER VARIANT PER BROWSER, which is what panel had for free by keying its sessions on the
+    variant (`session_key_func`, `quiz_app.py:49`). The single-session version replaced the whole
+    quiz whenever `?swedish` was opened, and with one cookie per browser that reached across tabs:
+    the squad tab, the back-history entry and the phone's first tab were all left holding a quiz that
+    no longer existed, mid-score. Now switching systems parks one and resumes the other, both keep
+    their score, and the two can be played in two tabs at once.
+
+    The `sid` still identifies the browser, so it stays a single cookie (see `SESSION_COOKIE`).
+    `_current` remembers which variant a browser last *navigated* to, for the one request that cannot
+    say: a page load with a query that names no variant (`?debug`), which must not be read as "take
+    me back to squad".
+
+    Lazy sweeping rather than a background task: a sweep is cheap, sessions are few, and this keeps
+    the store usable from tests without an event loop.
     """
 
     def __init__(self, ttl: float = SESSION_TTL_SECONDS) -> None:
-        self._sessions: dict[str, Session] = {}
+        self._sessions: dict[tuple[str, str], Session] = {}
+        self._current: dict[str, str] = {}
         self._ttl = ttl
         self._last_sweep = 0.0
 
-    def get(self, sid: str | None) -> Session | None:
+    def get(self, sid: str | None, variant_key: str | None = None) -> Session | None:
+        """This browser's session for `variant_key`, or for whatever it is currently on.
+
+        The default is what makes every caller that only ever plays one system -- most of the
+        tests, and every request before this existed -- read the same as it always did.
+        """
         self._maybe_sweep()
         if not sid:
             return None
-        session = self._sessions.get(sid)
+        key = variant_key or self._current.get(sid)
+        if key is None:
+            return None
+        session = self._sessions.get((sid, key))
         if session is not None:
             session.touched = time.time()
         return session
 
-    def create(self, variant: corpus.Variant) -> Session:
+    def current_variant(self, sid: str | None) -> str | None:
+        """The variant this browser last navigated to, if the store still has it."""
         self._maybe_sweep()
-        session = new_session(variant)
-        self._sessions[session.sid] = session
+        return self._current.get(sid) if sid else None
+
+    def create(self, variant: corpus.Variant, sid: str | None = None) -> Session:
+        """A quiz for `variant`, under the given browser id (a new browser if there is none)."""
+        self._maybe_sweep()
+        session = new_session(variant, sid=sid or uuid.uuid4().hex)
+        self._sessions[(session.sid, variant.key)] = session
+        # `setdefault`, not an assignment: a browser with NO mark has to get one from somewhere, and
+        # the quiz it just had built is the only candidate. A browser that already has one keeps it
+        # -- moving the mark is a navigation's job, so a rebuild triggered by a background tab's
+        # click cannot decide what the next `?debug` page load resumes.
+        self._current.setdefault(session.sid, variant.key)
         return session
 
-    def discard(self, sid: str) -> None:
-        self._sessions.pop(sid, None)
+    def remember(self, session: Session) -> None:
+        """Note which variant this browser is on. Page loads only: an interaction from a background
+        tab must not move the mark, since that is the cross-tab bleed this store exists to end."""
+        self._current[session.sid] = session.variant.key
+
+    def discard(self, sid: str, variant_key: str | None = None) -> None:
+        """Drop one of a browser's quizzes, or (with no variant) every one of them."""
+        for key in [(sid, variant_key)] if variant_key else [k for k in self._sessions if k[0] == sid]:
+            self._sessions.pop(key, None)
+        if variant_key is None or self._current.get(sid) == variant_key:
+            self._current.pop(sid, None)
 
     def __len__(self) -> int:
         return len(self._sessions)
@@ -217,6 +288,9 @@ class SessionStore:
         if now - self._last_sweep < _SWEEP_EVERY_SECONDS:
             return
         self._last_sweep = now
-        stale = [sid for sid, s in self._sessions.items() if now - s.touched > self._ttl]
-        for sid in stale:
-            del self._sessions[sid]
+        stale = [key for key, s in self._sessions.items() if now - s.touched > self._ttl]
+        for key in stale:
+            del self._sessions[key]
+        live = {sid for sid, _ in self._sessions}
+        for sid in [sid for sid in self._current if sid not in live]:
+            del self._current[sid]

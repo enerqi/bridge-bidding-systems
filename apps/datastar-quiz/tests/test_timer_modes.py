@@ -38,12 +38,12 @@ def test_default_mode_is_the_client_interval(client):
     assert app_module.TIMER_MODE == "client"
     body = client.get("/").text
     assert "data-on-interval__duration.100ms" in body
-    assert "@get('/timer')" not in body
+    assert "@get('/timer?squad')" not in body
 
 
 def test_stream_mode_wires_the_connection_instead(client, stream_mode):
     body = client.get("/").text
-    assert "@get('/timer')" in body
+    assert "@get('/timer?squad')" in body
     # the two must never both be live, or the bar is driven from both ends
     assert "data-on-interval" not in body
 

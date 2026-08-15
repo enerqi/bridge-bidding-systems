@@ -13,7 +13,15 @@ quiz in `apps/quiz/`, kept beside it so the two architectures can be run side by
 > picked, an escalating streak chip, press/hover, a ring on the card you got right, a throbbing
 > countdown in the last band — one toggle, one stylesheet, no JS), on a four-rung elevation ladder and
 > a surface ladder that separate the answer cards from what they sit on.
-> 562 tests (`just dsquiz test`); `just dsquiz lint` / `format` clean, `typecheck` currently reports
+> Two bugs fixed since (COMPARISON.md 15 and 16): a page whose session had been replaced could score
+> an answer against a question it had never shown, because question nonces were per session and two
+> sessions both started at 1; and the keyboard accelerators go quiet after a click inside the System
+> Notes iframe, which puts focus in another document where our `__window` listeners cannot see it.
+> **Sessions are now keyed by (browser, variant)**, so `?swedish` parks the squad quiz rather than
+> ending it: both keep their score, both can be open at once, and each tab's action URLs say which
+> system they belong to. Still one cookie under one name — nginx pins a player to a worker by hashing
+> it.
+> 577 tests (`just dsquiz test`); `just dsquiz lint` / `format` clean, `typecheck` currently reports
 > 16 pre-existing ty diagnostics, all of the "`.group` on `Match | None` after an `assert match`"
 > shape in the test files. A second phone pass fixed the app bar (a wrapped score, and 16px of it
 > that belonged to Pico's button margin), corrected `--topbar-h` — which the mobile drawer had been
@@ -113,13 +121,16 @@ Datastar's own guidance (`data-star.dev/guide/the_tao_of_datastar`):
 
 | Where | What | Why |
 |---|---|---|
-| Server (`state.Session`, keyed by the `dsq_sid` cookie) | current `Question` incl. `answer_candidate`, a `qid` nonce, score/streak/points/milestones, skips, timers, applied filter + its working set | signals are readable in devtools **and** uploaded with every request, so an answer in a signal is a cheat code; the working set is a slice of the per-process `.bml` corpus and cannot travel |
+| Server (`state.Session`, keyed by `(dsq_sid cookie, variant)`) | current `Question` incl. `answer_candidate`, a process-unique `qid` nonce, score/streak/points/milestones, skips, timers, applied filter + its working set | signals are readable in devtools **and** uploaded with every request, so an answer in a signal is a cheat code; the working set is a slice of the per-process `.bml` corpus and cannot travel |
 | Client, bound signals (uploaded) | `$difficulty`, `$ladderMode`, `$targetOn`, `$targetPct`, `$filterText`, `$topics.*` | these *originate* in the browser: `data-bind` is datastar's form encoding. `$filterText` is the uncommitted draft — Panel's `value_input` vs `value` split, now server vs client |
 | Client, local signals (`_` prefix, never uploaded) | `$_topicsOpen`, `$_answering`, `$_timeLeftPct`, plus server-owned display values `$_points`, `$_scorePct`, … | view toggles, request lifecycle, and numbers the server already told the browser (echoing them back would be waste) |
 
 Sessions are process-local, so one worker (or sticky routing) — the same constraint Panel had
 (see the `session_key_func` notes at `apps/quiz/quiz_app.py:49`). The escape hatch is Redis, not
-signals. Because the session identity is *our own cookie*, affinity can be done properly
+signals. The cookie identifies the **browser** and the variant is the other half of the key, so one
+player can have both systems going at once; the variant comes from the page's own action URLs rather
+than from the cookie, because a cookie cannot tell two tabs apart. Because the session identity is
+*our own cookie*, affinity can be done properly
 (`hash $cookie_dsq_sid consistent` in nginx) rather than by client IP, which is what Panel is stuck
 with; `DEPLOY.md` covers both, and what a shared store would remove.
 
@@ -138,7 +149,7 @@ with; `DEPLOY.md` covers both, and what a shared store would remove.
 | the sidebar holding score + Skip + settings together | three zones by *when you touch them*: a HUD in the app bar (score, points gauge, streak, **Skip** and `s`), the play area, and a drawer that starts **closed** and holds only what restarts the quiz. The score used to be rendered twice and spending a skip meant opening the settings drawer |
 | `MaterialTemplate` | hand-written CSS — the cost side of the trade, 629 code lines. Pico classless plus an adapter does it in 564, Bulma plus an adapter in 536 *and* 28 class tokens in the templates. **Pico is the default**; switching between all three live is a debug-session control now, because the difference is invisible to a player |
 | Bokeh diffing its document model | fat morph: send `#app` whole and let the morph work out the difference, brotli making the bytes a non-issue |
-| `session_key_func` per variant | an explicit `?swedish` / `?squad` query replaces the session (`provide_session`), because one cookie per browser cannot key on the variant |
+| `session_key_func` per variant | the same idea, spelled out: the store is keyed by **(browser, variant)**, the cookie carries the browser and each page's action URLs carry its variant (`render.variant_query`). So the two systems coexist, and a squad tab left open cannot answer into the swedish quiz. It began as "the query *replaces* the session", which is what made a background tab dangerous — COMPARISON.md 15 |
 | `add_periodic_callback` pushing the timer | either push model: client interval (default) or a held SSE stream via `DSQUIZ_TIMER=stream`. Measured side by side in `COMPARISON.md` |
 
 Interactions patch **`#app` — the whole page below `<body>`** ("fat morph", as the Tao advises), plus

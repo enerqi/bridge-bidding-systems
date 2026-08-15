@@ -71,7 +71,7 @@
      to match, and it composes with anything else the body carries. #}
   <body data-signals="{{ initial_signals }}" data-attr:data-font="$_font"
         data-class="{juice: $_juice}"
-        data-init="$_navOpen = false{% if timer_mode == 'stream' %}; @get('{{ prefix }}/timer'){% endif %}">
+        data-init="$_navOpen = false{% if timer_mode == 'stream' %}; @get('{{ prefix }}/timer{{ variant_query }}'){% endif %}">
     {# The morph target: everything below is replaced as one chunk on every interaction #}
     {# The morph target. Its contents are `app.html.j2`, INCLUDED rather than duplicated: this
        file and the fat patch must render the same markup, and when they were two copies they drifted

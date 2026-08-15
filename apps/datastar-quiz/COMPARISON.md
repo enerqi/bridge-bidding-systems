@@ -396,8 +396,40 @@ Every one of these was found by *measuring the visible result*, not by asserting
 14. The digit accelerators were inert in two states nobody tried — focus parked in a `<select>`, and
     the whole answer stream (see DESIGN.md). Neither logged anything; both looked like "the shortcuts
     are broken".
+15. **Two counters that both started at 1.** Reported as "I clicked an answer and it showed me a
+    different question, marked wrong". The question nonce was per session and started at 1, and the
+    session cookie is one per browser — so `?swedish` (which *replaces* the session, since the
+    variant decides the bml system) left the other tab, the back-history entry and the phone's first
+    tab showing a quiz that no longer existed, and their `qid=1` **matched** the new session's first
+    question. The staleness guard that exists for exactly this passed by coincidence, and the answer
+    scored against a question that had never been on screen — from a different *system*, so the app
+    bar changed its title too. A restart (`--reload`, constantly) and the six-hour sweep produce the
+    same stale page. Nonces are now unique per process, so the guard is exact; a stale interaction
+    **resyncs the page** instead of returning a silent 204, because a dead button leaves the page
+    wrong and the next click stale as well; and every action URL now carries its variant, so a
+    session that has to be *rebuilt* is rebuilt as the system the page is actually showing rather
+    than as the default. Then the model itself was fixed: sessions are keyed by **(browser, variant)**
+    rather than by the cookie alone, which is what panel had for free by keying its sessions on the
+    variant. Switching systems now parks one quiz and resumes the other — both keep their score, both
+    can be open in two tabs at once — instead of one silently ending the other. One cookie still, and
+    still under one name, because nginx pins a player to a worker by hashing it (DEPLOY.md); the
+    variant is the other half of the key and it comes from the page's own URLs.
+16. **The keys were being delivered to another document.** "The shortcuts randomly stop working, and
+    a reload does not bring them back" — on a live question, with the mouse still working. Nothing in
+    the app was broken: the System Notes are a cross-origin `<iframe>`, so a click inside them (to
+    scroll, to follow a link) moves focus out of our document, and every accelerator here is a
+    `__window` listener on ours. No guard we own can see that state — `$_answering`, `$_topicsOpen`
+    and the qid are all healthy — and the mouse is unaffected because a click is delivered by
+    position, not by focus. The pointer arriving back on the question card now takes focus back, and
+    only from an iframe, so a half-typed filter box is left alone. **And a second cause with the same
+    signature, outside the app entirely**: a keyboard extension. Vimium binds 1-9 as count prefixes
+    (`3j`), so it eats precisely the digits, spares the mouse and survives reloads — established by
+    elimination, since a private window plays fine. Nothing to fix in the page; the cure is the
+    extension's own URL exclusion list. Two of the five causes of "the shortcuts are broken" turned
+    out not to be shortcuts at all, which is the lesson: when a key never arrives, no amount of guard
+    inspection will find it — ask *which document has focus*, then *what else is listening*.
 
-Four patterns, worth carrying forward:
+Five patterns, worth carrying forward:
 
 - **The thing being sized was not the thing being measured** (5, 6).
 - **One gesture must not drive two handlers** (7, 8) — and note 7's deeper lesson: with
@@ -407,6 +439,12 @@ Four patterns, worth carrying forward:
 - **The nearest existing signal is not the right condition** (13, 14). `$_playing` for "is this
   question live", `evt.target.tagName` for "is the user typing" — both are *almost* the predicate you
   want, both are wrong in exactly the states that are hard to notice, and neither fails loudly.
+- **A guard that can pass by coincidence is not a guard** (15). The nonce was there precisely to make
+  a stale click harmless, and it worked for every case it was written against (double click, replay)
+  because those share a session. Scoped per session, it was a *local* answer to a question that is
+  global: two quizzes existing at once. Anything used to say "this message is about the thing I think
+  it is" has to be unique across everything that can send one — and when it does catch something,
+  saying nothing is its own bug (the page stays wrong, so the next click is stale too).
 
 ## Would I build the next one this way
 

@@ -170,6 +170,24 @@ that don't look like components:**
   of asking: a control swallows a keystroke when it has a *use* for that key, not because it is a
   control. (Rendered via jinja globals, and a test asserts they resolve: an out-of-scope global
   renders as the empty string, and `closest('')` throws — which swallows every keystroke instead.)
+- **…and the last two were not the app at all.** Same report — "the digit shortcuts randomly stop
+  working, the mouse still works, a reload does not bring them back" — and two more causes, neither
+  of which any guard in this codebase can see, because in both the keydown never reaches our
+  document:
+  **(d) the System Notes `<iframe>`.** Click inside it to scroll or follow a link and focus moves to
+  another (cross-origin) document, while every accelerator here is a `__window` listener on ours. The
+  mouse is unaffected because a click is delivered by position, not by focus. Reproduced in Firefox
+  and Chrome; fixed by taking focus back when the pointer returns to the question card, and only from
+  an iframe, so a half-typed filter box is left alone.
+  **(e) a browser extension, and the likeliest one is Vimium.** It binds **1-9 as count prefixes**
+  (`3j` scrolls three lines), so it swallows exactly the digits, leaves the mouse alone, and keeps
+  doing it across reloads — the whole symptom. It is invisible from the page: no event arrives, so
+  there is nothing to log and no state to inspect. Confirmed the way these things have to be, by
+  elimination: a private window (no extensions) plays fine.
+  There is nothing to fix here and nothing worth building — a hidden focus trap that put the page in
+  Vimium's "insert mode" would fight our own typing guards for the sake of one extension. The fix is
+  the extension's own exclusion list (Vimium options → *Excluded URLs and keys* → the quiz's URL, keys
+  blank for all of them). Worth knowing because it looks exactly like (a)-(d) and is not.
 - **`data-indicator` is per requesting element.** Moving that handler off the buttons took the
   in-flight flag with it: the buttons kept `data-indicator="_answering"`, the group had none, so a
   *keyboard* answer set the signal for nobody — choices never greyed out and the guard above could

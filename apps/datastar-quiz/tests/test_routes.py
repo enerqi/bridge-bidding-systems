@@ -71,7 +71,10 @@ def test_new_question_clock_starts_when_it_reaches_the_player(client):
     assert '"_timeLeftPct":100' in response.text.replace(" ", "")
 
 
-def test_stale_qid_is_a_no_op(client):
+def test_stale_qid_scores_nothing_and_resyncs_the_page(client):
+    """It used to be a bare 204. Correct as far as scoring goes, and useless from the player's
+    chair: the button is dead and the page is still showing the question that moved on, so the
+    next click is stale too. It now re-renders the page from the session that actually exists."""
     session = _session(client)
     qid = session.qid
     correct_index = session.question.candidates.index(session.question.answer_candidate)
@@ -81,8 +84,10 @@ def test_stale_qid_is_a_no_op(client):
 
     # the same click again -- a double click, a replay, or a stale tab
     second = client.post(f"/answer/{qid}/{correct_index}")
-    assert second.status_code == 204
-    assert session.score.questions_attempted == 1
+    assert second.status_code == 200
+    assert session.score.questions_attempted == 1, "a stale answer must not score"
+    assert "datastar-patch-elements" in second.text, "the stale page was left as it was"
+    assert "#app" in second.text, "a stale page needs the whole page back, not just the question"
 
 
 def test_out_of_range_candidate_is_a_no_op(client):

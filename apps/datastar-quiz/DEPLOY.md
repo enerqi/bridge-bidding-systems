@@ -229,6 +229,12 @@ collapse a whole NAT onto one worker. `consistent` means adding or removing a ba
 about 1/N of sessions instead of all of them. The very first request has no cookie and hashes on the
 empty string — fine, that is the request that creates the session and sets the cookie.
 
+`dsq_sid` identifies the **browser**, not one quiz: sessions are keyed by (browser, variant), so a
+player can have the squad quiz and the swedish one going at once and each tab's own URLs say which is
+which. That is deliberately still *one* cookie under *one* name — a name that varied by variant would
+leave this directive hashing on a cookie half the requests do not carry, and the same browser would
+bounce between workers depending on which tab it clicked in.
+
 **`proxy_buffering off` is not optional.** The answer stream is deliberately paced with server-side
 sleeps (toast, pause, toast, pause, then the new question). With buffering on, nginx holds the frames
 and the player sees nothing for two or three seconds and then everything at once. `send_timeout` is

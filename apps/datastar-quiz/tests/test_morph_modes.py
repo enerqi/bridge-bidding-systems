@@ -86,10 +86,10 @@ def test_the_timer_stream_init_is_outside_the_morph_target(monkeypatch):
     document = render.shell(session)
     patched = render.app_body(session)
 
-    assert "@get('/timer')" in document
-    assert "@get('/timer')" not in patched
+    assert "@get('/timer?squad')" in document
+    assert "@get('/timer?squad')" not in patched
     # and it is on the body tag, before the morph target opens
-    assert document.index("@get('/timer')") < document.index('<div id="app">')
+    assert document.index("@get('/timer?squad')") < document.index('<div id="app">')
 
 
 def test_the_client_interval_is_inside_the_morph_target(monkeypatch):

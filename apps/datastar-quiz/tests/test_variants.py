@@ -59,6 +59,71 @@ def test_existing_session_switches_variant(client):
     assert _session(client).variant.bml_file == "bidding-system.bml"
 
 
+# --- one quiz per variant, per browser ---------------------------------------
+#
+# Sessions are keyed by (browser, variant), which is what panel had by keying on the variant.
+# Switching used to REPLACE the single session, and since the cookie is one per browser that reached
+# across tabs: the squad tab was left holding a quiz that no longer existed, and its next click
+# landed in the swedish one (COMPARISON.md 15).
+
+
+def test_switching_systems_parks_the_other_quiz_rather_than_ending_it(client):
+    """The score is the point: a system switch is "let me look at the other one", not "throw this
+    away". Both quizzes stay in the store, each under its own key."""
+    client.get("/")
+    squad = _session(client)
+    squad.score.questions_attempted = 7
+    squad.score.questions_correct = 5
+
+    client.get("/?swedish")
+    swedish = _session(client)
+
+    assert swedish is not squad
+    assert swedish.score.questions_attempted == 0, "the swedish quiz started with the squad score"
+    assert app_module.STORE.get(squad.sid, "squad") is squad, "the squad quiz was discarded"
+
+
+def test_switching_back_resumes_the_quiz_you_left(client):
+    client.get("/")
+    squad = _session(client)
+    squad.score.questions_attempted = 7
+    qid = squad.qid
+
+    client.get("/?swedish")
+    body = client.get("/").text
+
+    assert _session(client) is squad, "going back started a new squad quiz"
+    assert _session(client).score.questions_attempted == 7
+    assert _session(client).qid == qid, "the parked quiz lost the question it was on"
+    assert "7" in body
+
+
+def test_the_two_quizzes_share_one_cookie_and_one_browser_id(client):
+    """One cookie, because a load balancer pins a player to a worker by hashing it (DEPLOY.md).
+    The variant is the other half of the key, and it comes from the URL rather than the cookie."""
+    client.get("/")
+    squad = _session(client)
+    client.get("/?swedish")
+    swedish = _session(client)
+
+    assert squad.sid == swedish.sid
+    assert client.cookies[state.SESSION_COOKIE] == squad.sid
+
+
+def test_a_click_in_the_other_system_s_tab_stays_in_that_system(client):
+    """The cross-tab bug, from the other side: the squad tab's action URLs carry `?squad`, so its
+    clicks reach the squad quiz even while the browser is 'on' swedish."""
+    client.get("/")
+    squad = _session(client)
+    client.get("/?swedish")
+    swedish = _session(client)
+    assert swedish.skips_left == squad.skips_left
+
+    client.post("/skip?squad")
+
+    assert squad.skips_left == swedish.skips_left - 1, "the skip was spent in the wrong quiz"
+
+
 def test_variant_switch_distinguishes_bare_from_unrelated():
     """`requested_variant` says what was named; `variant_switch_for_query` says what to do about it."""
     assert corpus.variant_switch_for_query("swedish").key == "swedish"

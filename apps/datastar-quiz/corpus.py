@@ -36,6 +36,7 @@ __all__ = [
     "quiz",
     "requested_variant",
     "topics_for",
+    "variant_by_key",
     "variant_for_query",
     "variant_switch_for_query",
 ]
@@ -89,6 +90,16 @@ def requested_variant(query: str | None) -> Variant | None:
 def variant_for_query(query: str | None) -> Variant:
     """`?swedish` picks the swedish club system, anything else the squad system."""
     return requested_variant(query) or DEFAULT_VARIANT
+
+
+def variant_by_key(key: str | None) -> Variant | None:
+    """A variant by its key, for a key that came from storage rather than from a URL.
+
+    Tolerant of `None` and of a key this build no longer has: it is used for the store's memory of
+    which system a browser was last on (`SessionStore.current_variant`), and a renamed variant should
+    hand the player the default rather than a KeyError.
+    """
+    return VARIANTS.get(key) if key else None
 
 
 def variant_switch_for_query(query: str | None) -> Variant | None:

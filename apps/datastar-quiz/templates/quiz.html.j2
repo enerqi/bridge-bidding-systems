@@ -57,12 +57,14 @@
      data-on:keydown__window="!$_answering && !$_topicsOpen
        && !evt.target.closest?.('{{ TYPING_TARGETS }}')
        && Number(evt.key) >= 1 && Number(evt.key) <= {{ candidates | length }}
-       && @post('{{ prefix }}/answer/{{ qid }}/' + (Number(evt.key) - 1))">
+       {# the variant goes on the END, after the index this expression appends -- see the note on
+          `render.variant_query`; every action URL carries it, and here it is a third fragment #}
+       && @post('{{ prefix }}/answer/{{ qid }}/' + (Number(evt.key) - 1) + '{{ variant_query }}')">
   {% for candidate in candidates %}
   <button type="button" class="candidate button"
           data-indicator="_answering"
           data-attr:disabled="$_answering"
-          data-on:click="@post('{{ prefix }}/answer/{{ qid }}/{{ loop.index0 }}')">
+          data-on:click="@post('{{ prefix }}/answer/{{ qid }}/{{ loop.index0 }}{{ variant_query }}')">
     <kbd class="accel tag is-light" aria-hidden="true">{{ loop.index }}</kbd>
     <span class="candidate-text">{{ candidate | suits }}</span>
   </button>

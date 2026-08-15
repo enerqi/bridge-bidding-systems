@@ -63,7 +63,8 @@ def test_every_url_the_page_emits_carries_the_prefix(prefixed):
 def test_the_answer_route_posted_by_the_page_actually_exists(prefixed):
     """End to end rather than by inspection: take the URL the page emits and post it."""
     body = prefixed.get(f"{PREFIX}/").text
-    posted = re.search(rf"@post\('({re.escape(PREFIX)}/answer/\d+/\d+)'\)", body)
+    # `?squad` on the end is the variant every action URL carries -- see `render.variant_query`
+    posted = re.search(rf"@post\('({re.escape(PREFIX)}/answer/\d+/\d+\?\w+)'\)", body)
     assert posted, body[:400]
     assert prefixed.post(posted.group(1), content="{}").status_code == 200
 

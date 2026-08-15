@@ -242,6 +242,7 @@ def _quiz_context(session: state.Session) -> dict:
         "candidates": [emoji_text_auction(c) for c in question.candidates],
         "qid": session.qid,
         "prefix": url_prefix(),
+        "variant_query": variant_query(session.variant),
     }
 
 
@@ -334,6 +335,22 @@ def url_prefix() -> str:
     import app
 
     return app.URL_PREFIX
+
+
+def variant_query(variant: corpus.Variant) -> str:
+    """The query every ACTION url carries, naming the system this page belongs to (`?swedish`).
+
+    The session cookie is one per browser, so it cannot say which quiz a given *page* is playing:
+    open `?swedish` and the squad tab, the back-history entry and the phone's other tab all still
+    hold the old markup while the cookie has moved on. The page's own URLs can say it, and they are
+    written by the server that knows.
+
+    It is read only when a session has to be BUILT (`app._session_for`): a restart, a six-hour gap
+    or a switch in another tab used to hand a swedish page a squad session -- questions from the
+    wrong system under a title from the right one, which is what "the header does not match the URL"
+    was. It never switches a live session; see the note there for why that would be worse.
+    """
+    return f"?{variant.key}"
 
 
 def timer_mode() -> str:
@@ -433,6 +450,7 @@ def _page_context(session: state.Session) -> dict:
         "filter_text": session.filter_text,
         "filter_status": filter_status(check, in_force=session.filter_text),
         "prefix": url_prefix(),
+        "variant_query": variant_query(session.variant),
         "_check": check,
     }
 
@@ -464,6 +482,7 @@ def quiz_body(session: state.Session) -> str:
             goal=session.points_goal,
             confetti=_CONFETTI,
             prefix=url_prefix(),
+            variant_query=variant_query(session.variant),
         )
     context = _quiz_context(session)
     if session.awaiting_next:

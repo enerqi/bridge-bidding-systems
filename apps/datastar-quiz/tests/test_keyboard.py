@@ -191,3 +191,29 @@ def test_a_control_hands_focus_back_when_its_interaction_ends():
         typing = re.search(r'data-on:input[^=]*="([^"]*)"', control)
         assert typing, f"the filter box does not preview as you type: {control}"
         assert "blur()" not in typing.group(1), "blurring per keystroke would eject you after one"
+
+
+def test_returning_to_the_question_takes_the_keyboard_back_from_the_notes():
+    """The reported "the shortcuts randomly stop working", reproduced in firefox and chrome alike:
+    click inside the System Notes to scroll them, come back to the quiz, and 1-9 do nothing while
+    the mouse still works.
+
+    Nothing here is broken when that happens. The notes are a cross-origin `<iframe>`, so a click
+    inside them moves focus to ANOTHER DOCUMENT, and every accelerator in this app is a `__window`
+    listener on ours -- the keys are delivered, just not to us. No guard we own can see it
+    (`$_answering`, `$_topicsOpen` and the qid are all healthy), and the mouse is unaffected because
+    a click is delivered by position rather than by focus.
+
+    So the pointer arriving back on the question -- the gesture that means "I am playing again" --
+    takes focus back. Deliberately narrow: only when an IFRAME is what holds it, so a half-typed
+    filter box or a slider mid-arrow is left alone.
+    """
+    markup = markup_of(TEMPLATE_DIR / "app.html.j2")
+    card = re.search(r"<section class=\"card\" id=\"quiz\"(.*?)>", markup, re.DOTALL)
+    assert card, "no quiz card"
+    reclaim = re.search(r'data-on:mouseenter="([^"]+)"', card.group(1), re.DOTALL)
+    assert reclaim, "coming back to the question does not reclaim the keyboard"
+    expression = reclaim.group(1)
+    assert "IFRAME" in expression, "the guard must name what it takes focus from"
+    assert "blur()" in expression
+    assert "window.focus()" in expression, "blurring the iframe is not the same as focusing us"
