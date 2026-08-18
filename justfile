@@ -2,6 +2,13 @@
 # Not specifically a build tool (e.g file resource to file resource build graph like Make)
 # https://just.systems/man/en/chapter_20.html
 set shell := ["nu", "-c"]
+set unstable  # [script] recipes - https://github.com/casey/just/issues/1479
+
+# Bare `[script]` recipes run under this; `[script("nu")]` names its own interpreter and is unaffected.
+# `python` alone is not a reliable cross-platform lookup (python/python3/python3.x); uv resolves and
+# downloads on every platform, and --no-project keeps it off this repo's venv - bml2html.py and its
+# `bml` module are stdlib-only, so the build needs no project dependencies at all.
+set script-interpreter := ["uv", "run", "--no-project", "-p", "3.14", "python"]
 
 bml_home := env_var_or_default("BML_TOOLS_DIRECTORY", replace(home_directory(), "\\", "/") + "/dev/bml")
 
@@ -16,13 +23,148 @@ bml_home := env_var_or_default("BML_TOOLS_DIRECTORY", replace(home_directory(), 
 [group('modules')]
 mod sims 'deal-simulations/odin-sims'
 
+#
+# BML -> HTML. This used to be a `doit` build (dodo.py, a .doit.db of file hashes and a
+# .include-deps.json cache of every file's `#INCLUDE` directives) and is now an unconditional rebuild,
+# because the dependency tracking cost more than the work it was skipping. Measured, 19 .bml files:
+#
+#     doit, everything already up to date (no-op) ... 2.68s
+#     doit -a, forced rebuild of all 46 tasks ....... 2.54s
+#     this recipe, all 19 rebuilt in parallel ....... 0.41s
+#
+# Only ONE file in the corpus has `#INCLUDE` directives (bidding-system.bml, 13 of them), so the
+# include cache existed to produce 18 empty lists -- and it could not be a doit `file_dep` anyway,
+# being one shared file rewritten by unrelated .bml edits, which is why dodo.py depended on task
+# ORDER instead. All of that is gone.
+#
+# What is deliberately NOT rebuilt conditionally, and why each still needs a guard:
+#   - bml.css is copied only when it differs, because `watch` fires on .css writes too and an
+#     unconditional copy into the watched directory would retrigger the build forever.
+#   - `publish` skips unchanged files, because W: is the web-server volume and that is the one copy
+#     here whose cost is not local disk.
+#
+
+# The web-server volume dodo.py hard-coded as W:/. Overridable so a dry run can target a scratch dir.
+web_root := env_var_or_default("BML_PUBLISH_DIR", "w:/")
+
 # alias for typing `just w`
 alias w := watch
 
-# bml doc creation via doit when relevant files change
+# Rebuilds and republishes on every save, as the doit loop did. `just bml` alone if W: is not mounted.
+# ---
+# rebuild (and publish) the bml docs whenever a .bml or .css file changes
 [group('bml')]
 watch:
-    watchexec --no-global-ignore --exts bml,css uv run doit
+    watchexec --no-global-ignore --exts bml,css just publish
+
+# FILES defaults to every *.bml; name a subset to convert just those, e.g. `just bml nt-bidding.bml`.
+# One subprocess per file because `bml` accumulates module-global state (`bml.content` / `bml.meta`)
+# across `content_from_file`, so a single process cannot safely convert several documents.
+# ---
+# convert *.bml -> *.html (in parallel) and refresh bml.css from the bml tools directory
+[group('bml')]
+[script]
+bml *FILES:
+    import os, subprocess, sys, time
+    from concurrent.futures import ThreadPoolExecutor
+    from glob import glob
+    from shutil import copy2
+
+    tools = r"{{bml_home}}"
+    bml2html = os.path.join(tools, "bml2html.py")
+    if not os.path.isfile(bml2html):
+    	sys.exit("no bml2html.py under " + tools + " - clone enerqi/bml or set BML_TOOLS_DIRECTORY")
+
+    files = r"""{{FILES}}""".split() or sorted(glob("*.bml"))
+    missing = [f for f in files if not os.path.isfile(f)]
+    if missing:
+    	sys.exit("no such bml file: " + ", ".join(missing))
+
+    # Subprocesses, so the pool is not fighting the GIL for anything that matters.
+    started = time.perf_counter()
+    with ThreadPoolExecutor(max_workers=min(16, os.cpu_count() or 4)) as pool:
+    	codes = list(pool.map(lambda f: subprocess.run([sys.executable, bml2html, f]).returncode, files))
+    failed = [f for f, code in zip(files, codes) if code != 0]
+    if failed:
+    	sys.exit("bml2html failed for: " + ", ".join(failed))
+
+    # CONTENT, not mtime: this build rewrites every output unconditionally, so an mtime comparison
+    # would always say "newer" and the guard would never hold.
+    def same_bytes(a, b):
+    	if not os.path.exists(b) or os.path.getsize(a) != os.path.getsize(b):
+    		return False
+    	with open(a, "rb") as fa, open(b, "rb") as fb:
+    		return fa.read() == fb.read()
+
+    css = "bml.css"
+    source = os.path.join(tools, css)
+    if os.path.isfile(source) and not same_bytes(source, css):
+    	copy2(source, css)
+    	print("refreshed " + css)
+
+    print("built %d html in %.2fs" % (len(files), time.perf_counter() - started))
+
+# The published set is a hand-picked subset of the corpus, not every root document.
+# ---
+# copy the published documents + bml.css to the web-server volume (default w:/, else BML_PUBLISH_DIR)
+[group('bml')]
+[script]
+publish DEST=web_root: bml
+    import os, sys
+    from shutil import copy2
+
+    PUBLISHED = [
+    	"bidding-system.html",
+    	"scanian-natural.html",
+    	"squad-system.html",
+    	"youth-improvements.html",
+    	"alternatives.html",
+    	"weak-strong-club.bboalert",
+    	"bml.css",
+    ]
+
+    dest = r"{{DEST}}"
+    if not os.path.isdir(dest):
+    	sys.exit(dest + " is not mounted - `just bml` builds without publishing")
+
+    # CONTENT, not mtime: `bml` rewrites every .html on every run, so by mtime everything would always
+    # look newer and the whole set would cross the wire on each save. Reading the local copy back is
+    # far cheaper than writing to W: needlessly.
+    def same_bytes(a, b):
+    	if not os.path.exists(b) or os.path.getsize(a) != os.path.getsize(b):
+    		return False
+    	with open(a, "rb") as fa, open(b, "rb") as fb:
+    		return fa.read() == fb.read()
+
+    copied = 0
+    for name in PUBLISHED:
+    	if not os.path.isfile(name):
+    		sys.exit("nothing to publish at " + name + " - run `just bml` first")
+    	target = os.path.join(dest, name)
+    	if same_bytes(name, target):
+    		continue
+    	copy2(name, target)
+    	copied += 1
+    	print("published " + name)
+
+    print("%d of %d files copied to %s" % (copied, len(PUBLISHED), dest))
+
+# Only the .html beside a .bml of the same name, plus the copied bml.css -- never the whole *.html
+# glob, which would also take hand-authored pages that no .bml generates.
+# ---
+# delete the generated html and the copied bml.css
+[group('bml')]
+[script]
+bml-clean:
+    import os
+    from glob import glob
+
+    removed = 0
+    for path in [os.path.splitext(f)[0] + ".html" for f in sorted(glob("*.bml"))] + ["bml.css"]:
+    	if os.path.exists(path):
+    		os.remove(path)
+    		removed += 1
+    print("removed %d generated file(s)" % removed)
 
 #
 # Python apps (apps/<app>/). Served from the repo root so the .bml corpus beside this justfile is

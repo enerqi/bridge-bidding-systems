@@ -8,16 +8,14 @@ Html can be generated from the `.bml` files using the bml tools.
 - Download the [BML tools](https://github.com/enerqi/bml) and this repository.
 - Install [Python v3](https://www.python.org/) programming language, preferrably not system wide to make permissions
   easier and make sure Python 3 is added to `PATH` via the installer options.
-- Install [doit](https://pydoit.org) from public Python packages repository: `pip install --user doit`
-  If `pip` is not found then the `Scripts` directory needs adding to the `PATH` environment variable, e.g. the
-  `C:/Users/$MyUser/AppData/Roaming/Python/Python38/Scripts/` directory if Python 3.8 was installed. `pip` should be
-  in there (using the correct `MyUser` replacement). The `doit` program will be installed to the same directory
-  as `pip`.
+- Install [uv](https://docs.astral.sh/uv/) — it provides the Python the build runs under, so a system-wide
+  Python installation is not required.
+- Install [just](https://just.systems/) — the task runner the build recipes live in.
 - Install [watchexec](https://github.com/watchexec/watchexec) as per the instructions and ensure it's in the `PATH`
   To install with `cargo` when you don't have `cargo`, use [rustup](https://rustup.rs/) to install the Rust tooling
   ecosystem. Otherwise use one of the other suggestions.
 
-All the programs `doit`, `python`, and `watchexec` should be found from a command prompt (shell) at this point.
+All the programs `uv`, `just`, and `watchexec` should be found from a command prompt (shell) at this point.
 
 The bml tools should be specified by one of two ways:
 - downloaded to the `dev/bml` directory within your home (user) directory, e.g. `C:/Users/MyUser/dev/bml`
@@ -29,15 +27,18 @@ files everytime you save changes to a bml file in this directory. Open a command
 ```shell
 
 cd bridge-bidding-systems
-watchexec --exts bml,css doit
+just watch          # alias: just w
 ```
 
 - Watchexec is now monitoring this directory for any file system changes to files with the extension `.bml` (or `.css`).
-- Whenever a change is found the `doit` program is run
-- `doit` looks at `dodo.py` and runs all the tasks in there.
-- the `task_publish_main_bidding` in `dodo.py` will probably fail unless you have a 'W:' windows volume, could be deleted. It's meant for continuously publishing the output to a webserver directory. Untried, but `watchexec --exts bml,css doit ignore task_publish_main_bidding` could be what is needed.
+- Whenever a change is found, `just publish` runs: every `.bml` is converted to `.html` (in parallel), `bml.css`
+  is refreshed from the bml tools directory, and the published subset is copied to the web server volume.
+- The publish step needs a `W:` windows volume (override with `BML_PUBLISH_DIR`). Without one, watch the build
+  alone instead: `watchexec --exts bml,css just bml`.
 
-The `dodo.py` task automation program uses the `bml2html.py` python program found in the bml tools.
+The build recipes are `bml`, `publish` and `bml-clean` in the `justfile` (`just --list`); they drive the
+`bml2html.py` python program found in the bml tools. Every `.bml` is rebuilt on every run — the whole corpus
+takes well under a second, which is less than any dependency-tracking build tool spends deciding what to skip.
 
 ### Live Web Page (HTML) View
 

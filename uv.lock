@@ -49,7 +49,6 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "docopt" },
-    { name = "doit" },
     { name = "panel" },
     { name = "watchfiles" },
 ]
@@ -79,7 +78,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "docopt", specifier = ">=0.6.2" },
-    { name = "doit", specifier = ">=0.36.0" },
     { name = "opentelemetry-distro", marker = "extra == 'telemetry'", specifier = ">=0.65b0" },
     { name = "opentelemetry-exporter-otlp-proto-grpc", marker = "extra == 'telemetry'" },
     { name = "opentelemetry-instrumentation-asyncio", marker = "extra == 'telemetry'", specifier = "==0.65b0" },
@@ -192,15 +190,6 @@ name = "docopt"
 version = "0.6.2"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/a2/55/8f8cab2afd404cf578136ef2cc5dfb50baa1761b68c9da1fb1e4eed343c9/docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491", size = 25901, upload-time = "2014-06-16T11:18:57.406Z" }
-
-[[package]]
-name = "doit"
-version = "0.37.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/35/f6/3a817d438799bda4d4e5fd136175cf7c328c074fadc1422dec3b374907e7/doit-0.37.0.tar.gz", hash = "sha256:d3c72e0e46a8fa1ddabea8f830762402dee090caf33c30c2295ac7010db8f09c", size = 1450967, upload-time = "2026-02-09T07:02:15.578Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/9c/38/3d6dcbf8379cb86d71a2325210ca3469a33767d8254b74d8c343db26ce87/doit-0.37.0-py3-none-any.whl", hash = "sha256:a9f181566aa90faac515e276f85e6526019554ed7e13c12cf9dc094ffecf3e1b", size = 85780, upload-time = "2026-02-09T07:02:10.155Z" },
-]
 
 [[package]]
 name = "googleapis-common-protos"

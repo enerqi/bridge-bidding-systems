@@ -1,7 +1,7 @@
 [project]
 # Deliberately its own uv project rather than a member of the root one: this is an
 # experiment sitting beside the panel app (`apps/quiz/`), and litestar/datastar have no
-# business in the root lock that the doit build and the panel app share.
+# business in the root lock that the bml build and the panel app share.
 #
 #   uv run --project apps/datastar-quiz litestar --app app:app run
 #
