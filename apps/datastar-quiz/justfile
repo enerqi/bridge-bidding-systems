@@ -19,10 +19,12 @@ bml_home := env_var_or_default("BML_TOOLS_DIRECTORY", replace(home_directory(), 
 deploy_dir := env_var_or_default("DSQUIZ_DEPLOY_DIR", "X:/quiz-ds/")
 
 # interactive chooser (assumes fzf)
+[group('dev')]
 default:
     @just --choose
 
 # serve under granian with autoreload; panel is on 5006, so default to 5008
+[group('serve')]
 serve *args:
     uv run --project {{project}} --directory {{project}} granian --interface asgi --port {{port}} --reload {{args}} app:app
 
@@ -31,6 +33,9 @@ alias s := serve
 # serve with the debug panel armed for every session: +/- points, set the goal, jump to the reveal or
 # the finale. Without this you can still arm it per session with `?debug` on the URL; `DSQUIZ_DEBUG=0`
 # forbids both (what a deployment should set -- see DEPLOY.md).
+# ---
+# serve with the debug panel armed for every session
+[group('serve')]
 dev *args:
     #!nu
     $env.DSQUIZ_DEBUG = "1"
@@ -39,21 +44,27 @@ dev *args:
 alias d := dev
 
 # serve with the held-SSE countdown instead of the client interval (see COMPARISON.md)
+[group('serve')]
 serve-streamed *args:
     #!nu
     $env.DSQUIZ_TIMER = "stream"
     uv run --project {{project}} --directory {{project}} granian --interface asgi --port {{port}} --reload {{args}} app:app
 
 # serve under granian as in production: no reload, and pick up worker/runtime defaults
+[group('serve')]
 serve-prod *args:
     uv run --project {{project}} --directory {{project}} granian --interface asgi --host 0.0.0.0 --port {{port}} {{args}} app:app
 
 # serve under uvicorn via the litestar CLI: the pure-python fallback (e.g. FreeBSD, no granian wheels)
+[group('serve')]
 serve-uvicorn *args:
     uv run --project {{project}} --directory {{project}} litestar --app app:app run --port {{port}} --reload {{args}}
 
 # what the deployment box runs (see DEPLOY.md): uvicorn, no reload, no dev group, prefixed and with
 # the debug panel forbidden. Useful locally to rehearse the real thing -- http://localhost:5008/bridge-system-quiz/
+# ---
+# serve exactly as the deployment box does (prefixed, no reload, debug forbidden)
+[group('serve')]
 serve-deployed *args:
     #!nu
     $env.DSQUIZ_PREFIX = "bridge-system-quiz"
@@ -61,6 +72,7 @@ serve-deployed *args:
     uv run --project {{project}} --directory {{project}} --no-dev litestar --app app:app run --port {{port}} {{args}}
 
 # serve with OpenTelemetry tracing (see apps/quiz/run-jaeger-tracing.cmd for a local jaeger)
+[group('serve')]
 serve-traced *args:
     #!nu
     $env.DSQUIZ_OTEL = "1"
@@ -70,6 +82,7 @@ serve-traced *args:
 # shared state currently required
 # ---
 # run the tests
+[group('qa')]
 test *args:
     uv run --project {{project}} --directory {{project}} pytest -n 4 --dist loadfile {{args}}
 
@@ -78,19 +91,23 @@ alias t := test
 sources := "*.py tests tools"
 
 # format, lint and typecheck (astral ruff + ty), as the other python projects do
+[group('qa')]
 qa: format lint typecheck
 
 alias q := qa
 
 # ruff format (writes)
+[group('qa')]
 format *args:
     uv run --project {{project}} --directory {{project}} ruff format --quiet {{args}} {{sources}}
 
 # ruff lint
+[group('qa')]
 lint *args:
     uv run --project {{project}} --directory {{project}} ruff check --quiet {{args}} {{sources}}
 
 # astral ty type check
+[group('qa')]
 typecheck *args:
     uv run --project {{project}} --directory {{project}} ty check --quiet {{args}} {{sources}}
 
@@ -104,6 +121,7 @@ alias tc := typecheck
 # levels up for the .bml corpus -- so the repo's relative layout is what is copied.
 # ---
 # copy the app + apps/quiz + the bml corpus/tools to DEST (default DSQUIZ_DEPLOY_DIR, else X:/quiz-ds/)
+[group('deploy')]
 deploy dest=deploy_dir:
     #!nu
     let dest = ({{quote(dest)}} | str trim --right --char '/')
@@ -139,14 +157,19 @@ deploy dest=deploy_dir:
 # Needs `--directory` as well as `--project`: the script path is relative, and `--project` alone
 # leaves the cwd wherever just was invoked from.
 #   just dsquiz measure --base https://sublime.is/bridge-system-quiz
+# ---
+# measure payload sizes + SSE frame pacing against a running server
+[group('deploy')]
 measure *args:
     uv run --project {{project}} --directory {{project}} python tools/measure.py {{args}}
 
 # list the routes litestar has registered
+[group('dev')]
 routes:
     uv run --project {{project}} --directory {{project}} litestar --app app:app routes
 
 # re-vendor the CSS frameworks the two spikes import (see DESIGN.md); pinned versions, not @latest
+[group('assets')]
 vendor-css:
     #!nu
     let static = ({{quote(project)}} | path join static)
@@ -167,6 +190,9 @@ vendor-css:
 # asks for it, and without it the static router raises NotFoundException -- a stack trace in the log
 # every time anyone opens devtools. With it, expression errors point into datastar's own sources,
 # which is worth 190KB that only devtools ever downloads.
+# ---
+# re-vendor static/datastar.js + its source map from the datastar checkout (DATASTAR_HOME)
+[group('assets')]
 vendor-datastar:
     #!nu
     let home = ($env.DATASTAR_HOME? | default ($nu.home-path | path join dev datastar))
