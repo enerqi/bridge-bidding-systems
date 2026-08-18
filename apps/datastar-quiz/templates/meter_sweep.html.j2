@@ -1,0 +1,10 @@
+{# The milestone shine, appended to the points gauge for one beat (see `render.meter_sweep`).
+
+   The gauge already carries the notches, so the player is told WHERE the skips are; what was missing
+   was the moment one is collected -- that arrived as a corner toast, three seconds of which are also
+   points and streak notifications, while the thing that measures the milestone sat still. Now the
+   bar itself acknowledges it.
+
+   Styled only in `juice.css` and only under `body.juice`: an empty inline span is inert everywhere
+   else, which is how it can be streamed without asking the server whether game feel is on. #}
+<span class="meter-sweep" aria-hidden="true"></span>

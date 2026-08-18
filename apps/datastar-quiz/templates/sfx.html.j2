@@ -1,0 +1,12 @@
+{# One sound beat, appended to `#sfx` (see `render.sfx_beat` and `app._answer_stream`).
+
+   `data-init` runs when datastar sees the element, and an APPENDED element is always a new one --
+   which is why this is appended to a sink that is cleared at the start of the stream, rather than
+   morphed into place. Two identical consecutive beats (two correct answers) would render identical
+   markup, and an idempotent morph leaves the existing element alone: the sound would play once and
+   then never again. Appending sidesteps the question entirely.
+
+   No `id`, no class, no text: the element exists to be seen by datastar once and then thrown away
+   with the rest of the sink. `aria-hidden` because it is not content -- and the sound itself is
+   decoration, since every beat it marks is also a toast in an `aria-live` region. #}
+<span aria-hidden="true" data-init="$_sound && document.getElementById('sfx-{{ beat }}')?.play()?.catch(() => {})"></span>
