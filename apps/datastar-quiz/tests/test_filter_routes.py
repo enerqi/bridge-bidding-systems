@@ -7,6 +7,7 @@ import re
 
 import pytest
 from litestar.testing import TestClient
+from markup import found
 
 import app as app_module
 import corpus
@@ -155,7 +156,7 @@ def test_clear_writes_the_leaves_rather_than_replacing_the_namespace(client):
     body = client.get("/").text
     clear = re.search(r"<button[^>]*>Clear</button>", body, re.DOTALL)
     assert clear, "no Clear button"
-    handler = re.search(r'data-on:click="([^"]+)"', clear.group(0), re.DOTALL).group(1)
+    handler = found(r'data-on:click="([^"]+)"', clear.group(0), re.DOTALL).group(1)
     assert "$topics = {}" not in handler, handler
     assert "$topics={}" not in handler, handler
     assert "@setAll(false" in handler, handler

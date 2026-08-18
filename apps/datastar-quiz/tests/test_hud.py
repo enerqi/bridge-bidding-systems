@@ -19,6 +19,7 @@ from pathlib import Path
 
 import pytest
 from litestar.testing import TestClient
+from markup import found
 
 import app as app_module
 import corpus
@@ -154,7 +155,7 @@ def test_restart_closes_the_drawer_only_where_it_covers_the_quiz(client):
     body = client.get("/").text
     restart = re.search(r"<button[^>]*>Restart</button>", body, re.DOTALL)
     assert restart, "no Restart button"
-    handler = re.search(r'data-on:click="([^"]+)"', restart.group(0), re.DOTALL).group(1)
+    handler = found(r'data-on:click="([^"]+)"', restart.group(0), re.DOTALL).group(1)
     assert "/restart" in handler
     assert "$_navOpen = false" in handler, "restarting leaves the drawer over the quiz on a phone"
     assert render.DRAWER_OVERLAY_QUERY in handler, "the width test must come from the shared constant"

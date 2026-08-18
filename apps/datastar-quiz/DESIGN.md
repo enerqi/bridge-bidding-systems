@@ -549,8 +549,66 @@ works when there is room above the card. Verified: 1px above its own card, no ov
    frozen in the last band keeps throbbing behind the reveal, hurrying you along on a question you have
    already answered. Reduced motion keeps the red and drops the beat.
 
-Not built, in rough order of appeal: a tick *sound* in the last three seconds; a milestone sweep across
-the points gauge when a skip is earned; and sound generally.
+8. **The milestone sweep.** The points gauge carries the notches, so it is the thing that says *where*
+   the next skip is — and it was the one part of the HUD that said nothing when one was collected. The
+   award arrived as a corner toast, third or fourth in a chain of them, while the bar it was measured
+   against sat still and merely got longer. Now a shine crosses the gauge on that beat: the server
+   appends a `.meter-sweep` span when `toast.awards_skip` (a FLAG on the toast, not a match on the
+   words "+1 SKIP!", so a copy edit cannot silently drop it), the animation is 780ms, and the next view
+   patch takes the element away with no cleanup — exactly the floaters' lifecycle.
+
+   The shine is **white at low alpha**, not a colour: the track is a red-to-green gradient, so a tinted
+   sweep would read as a different *score* on the way past. And it starts and ends off the ends of the
+   bar, which is what makes it a pass rather than a fade — `.meter` is `overflow: hidden` in all three
+   sheets, so the bar clips it for free. Under reduced motion there is no travel to keep and no state
+   left behind when it ends, so it becomes one brief flush of the bar instead.
+
+Everything to here is CSS. The next thing is not, and it is the reason the "no JavaScript of ours" rule
+needed re-reading rather than repeating:
+
+## Sound (`$_sound`)
+
+Off by default, and it is the only appearance preference that is: the others change how the page looks
+to whoever asked for them, while audio arrives in whatever room the laptop is in. Five beats — the
+verdict chime, a low thud for a wrong answer, an arpeggio when a milestone pays for a skip, a fanfare
+at the finale, and a tick through the last three seconds of the countdown.
+
+**The sounds are synthesised, not shipped.** `sfx.py` builds five WAVs from `math.sin` at import (8 kHz,
+8-bit, mono, ~20 KB the lot) and `GET /sfx/<name>` serves them from memory. No binary assets in a
+documentation repo, no licence to track, no regeneration step: change a number and the next request
+serves the new sound. They are cached for a year and the page appends `?v=<build stamp>`, so an edited
+synth arrives as a new URL rather than waiting out a cache.
+
+Four things that fell out of building it:
+
+- **Turning it on is what fetches it.** The five `<audio>` elements have no `src` at all — the URL comes
+  from `data-attr:src="$_sound ? … : false"`. With sound off (the default) the page is still the three
+  requests COMPARISON.md measures; with it on, `preload="auto"` fetches all five at once, long before
+  the first beat.
+- **They live OUTSIDE `#app`.** Inside the morph target they would be replaced on every interaction:
+  re-fetched constantly and cut off mid-play. Out in the document they load once and survive every
+  patch — the same reasoning that put the held timer stream's `data-init` on `<body>`.
+- **A beat is an APPEND, not a morph.** The trigger is a one-line span with
+  `data-init="$_sound && document.getElementById('sfx-correct')?.play()"`, appended to a `#sfx` sink
+  that is cleared at the start of each answer stream. Morphing it in would have been the obvious move
+  and would have been wrong: two identical consecutive beats (two right answers) render identical
+  markup, an idempotent morph leaves the element alone, and `data-init` would never run a second time.
+  Appending sidesteps the question — an appended element is always new. Verified in the browser, twice
+  in a row.
+- **The tick's rate limit is the sample.** It rides the existing 100ms countdown interval, and ten
+  ticks a second is a buzz. `play()` on an element that is already playing does nothing, so `tick` is a
+  45ms blip padded with silence out to a full second: the audio's own length spaces the ticks and no
+  timer state is kept anywhere. Measured in a real browser — 25 calls at 100ms produce 3 sounds.
+
+So the rule the game-feel layer states as "no JavaScript of ours" survives, read properly: `play()` in a
+datastar attribute is the same kind of thing as every other handler in this app, and a helper *script*
+is what is being avoided. The visible cost of holding that line is that there is no volume control —
+setting `.volume` needs a real module — so the levels are baked into the samples instead. The tick is
+also client-timer only: in `DSQUIZ_TIMER=stream` the interval attribute does not exist, and a tick there
+would be an element patch per second per tab, which is a cost the comparison should not absorb quietly.
+
+Not built: sound for the skip button and for arriving at a new question (both are actions the player
+took, and the app is already noisier than it was); anything that needs an `AudioContext`.
 
 ## Where each control lives (the HUD)
 
@@ -1053,18 +1111,25 @@ Real bugs first; nothing here is done unless marked.
 
 **Open.**
 
-8. ~~Evaluate a base stylesheet (Pico first)~~ **spiked, both families**: a `$_css` local signal
-   swaps the stylesheet `href`, the same trick as the font picker, and the sidebar now offers
-   hand-rolled / Pico classless / Bulma. Findings in the two sections above; the recommendation is
-   Pico. What is left is a *decision*, not work — and if the answer is "none of them", the spikes
-   cost two files and one `<option>` each, so the picker can stay as documentation of why.
+8. ~~Evaluate a base stylesheet (Pico first)~~ **spiked, both families, and DECIDED: Pico.**
+   `render.DEFAULT_CSS = "pico"` is what every session starts with, and the `$_css` picker is now
+   behind `?debug` — the three variants differ by details a player has no way to care about, so
+   offering the choice was asking them to make a decision with nothing on either side of it. The
+   hand-rolled sheet and Bulma stay on disk deliberately: the comparison is still the point of the
+   spike (COMPARISON.md), switching sheets live is how it is checked, and they are the base to
+   re-experiment from. Findings in the two sections above.
 9. ~~A real dark palette~~ **done**, and since ~~OS-only~~ **switchable** — see *A theme switch, and
    why the media query had to go* below. The suits are re-picked rather than reused: black is 1.37:1
    on a dark card face, an invisible spade, so it becomes near-white as four-colour decks do in dark
    themes; the other three lighten until each clears 4.5:1. Tested in both palettes.
-10. Consider `data-persist` (Pro) so the font and drawer choices survive a reload. The **theme**
-    no longer needs it — it is remembered in a cookie the toggle writes itself, which also buys a
-    correct first paint that `data-persist` (client-side, post-hydration) would not.
+10. ~~Consider `data-persist` (Pro) so the font and drawer choices survive a reload~~ **dropped, and
+    worth saying why rather than leaving it on a list.** The **theme** never needed it — it is
+    remembered in a cookie the toggle writes itself, which also buys a correct first paint that
+    `data-persist` (client-side, post-hydration) would not. What is left resetting on a reload is
+    `$_font`, `$_juice`, `$_css`, `$_sound` and the drawer, and every one of those *starts at the
+    value you want*: the reset is invisible unless you deliberately chose the non-default, and the
+    session-backed alternative is server state for something the server has no opinion about. If it
+    ever does bite, the cookie the theme uses is the pattern to copy — not a Pro licence.
 11. ~~An elevation ladder~~ **done**: `--elev-inset` / `--elev-1..4` in all three sheets — one
     overhead light, `blur = 2 × offset`, ambient + direct, ink-hued. Replaces seven ad-hoc alphas, the
     offsetless drawer, Pico's left-lit blue `.notes` shadow and the flat answer cards. Pinned by

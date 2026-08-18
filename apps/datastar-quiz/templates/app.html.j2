@@ -342,6 +342,17 @@
               <input type="checkbox" checked data-bind="_juice" />
               Game feel (shake, floating points, streak)
             </label>
+            {# Sound is the one appearance preference that starts OFF, and NOT for the usual
+               conservative reason: the others change how the page looks to the person who asked for
+               them, while audio arrives in whatever room the laptop is in. Note the missing `checked`
+               -- it has to agree with the declared default of `$_sound` (see `render.local_ui_signals`),
+               or the first paint would upload `true` into the signal and the quiz would start making
+               noise on its own. Turning it on is also what gives the five `<audio>` elements their
+               `src`, so this box is the fetch as well as the switch. #}
+            <label class="checkbox">
+              <input type="checkbox" data-bind="_sound" />
+              Sound (countdown tick, scoring chimes)
+            </label>
             <label>
               Font
               <div class="select">
@@ -408,8 +419,21 @@
            between the click and the patch that ends it. Assigning ONLY while ticking is what freezes
            the bar rather than resetting it: the value it holds is what was left when the answer
            landed, which is the number the bonus was scored from. #}
+        {# The last three seconds also TICK, when sound is on. It rides this interval rather than
+           having one of its own, which raises the obvious problem: the interval runs at 100ms and a
+           tick per run is a 10Hz buzz. The rate limit is the SAMPLE -- `sfx.py` pads the blip with
+           silence out to a full second, and `play()` on an element that is already playing does
+           nothing, so the sound's own length spaces the ticks and no timer state is kept anywhere.
+
+           `$_timeLeftPct * $_questionMs < 300000` is "under three seconds left" without a division
+           (pct x ms < 3000 x 100). The assignment before it returns the new percentage, so at zero
+           the chain stops on its own -- there is no tick on an expired clock.
+
+           Client-timer only. `DSQUIZ_TIMER=stream` omits this attribute entirely (the server pushes
+           the percentage instead), and a tick would then have to be an element patch per second per
+           tab, which is a cost the comparison should not quietly absorb. #}
         <div class="timer" id="timer"
-             {% if timer_mode != "stream" %}data-on-interval__duration.100ms="$_ticking && !$_answering && ($_timeLeftPct = Math.max(0, $_timeLeftPct - 10000 / $_questionMs))"{% endif %}>
+             {% if timer_mode != "stream" %}data-on-interval__duration.100ms="$_ticking && !$_answering && ($_timeLeftPct = Math.max(0, $_timeLeftPct - 10000 / $_questionMs)) && $_sound && $_timeLeftPct * $_questionMs < 300000 && document.getElementById('sfx-tick')?.play()?.catch(() => {})"{% endif %}>
           {# `ticking` is the same condition the interval above assigns under, and it is here for the
              game-feel layer: the last band throbs, and a bar that is FROZEN behind a reveal (or mid
              answer-stream) must not -- urgency about a question you have already answered is a lie.

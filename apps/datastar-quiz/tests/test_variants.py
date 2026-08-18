@@ -126,10 +126,14 @@ def test_a_click_in_the_other_system_s_tab_stays_in_that_system(client):
 
 def test_variant_switch_distinguishes_bare_from_unrelated():
     """`requested_variant` says what was named; `variant_switch_for_query` says what to do about it."""
-    assert corpus.variant_switch_for_query("swedish").key == "swedish"
+    named = corpus.variant_switch_for_query("swedish")
+    assert named is not None
+    assert named.key == "swedish"
     # a bare URL is "take me home", so it resolves rather than abstaining
-    assert corpus.variant_switch_for_query("").key == "squad"
-    assert corpus.variant_switch_for_query(None).key == "squad"
+    for bare in ("", None):
+        home = corpus.variant_switch_for_query(bare)
+        assert home is not None, bare
+        assert home.key == "squad", bare
     # a query that names no variant abstains, so an odd link cannot flip a swedish session
     assert corpus.variant_switch_for_query("debug") is None
 

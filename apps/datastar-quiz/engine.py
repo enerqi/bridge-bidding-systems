@@ -100,6 +100,11 @@ class Toast(msgspec.Struct, frozen=True):
     # the panel app revealed the points in instalments (candidate length, then streak bonus,
     # then time bonus), so each toast carries the number to show alongside it.
     points_after: int | None = None
+    # This beat is a milestone paying for a skip. A flag rather than a text match in the renderer:
+    # the words are presentation and have already been reworded once, and "+1 SKIP!" appearing in
+    # `app._answer_stream` would make an unrelated copy edit silently drop the gauge sweep and the
+    # sound that go with it. `Answered.awarded_skips` counts them; this says WHICH beat they land on.
+    awards_skip: bool = False
 
 
 class Answered(msgspec.Struct, frozen=True):
@@ -194,7 +199,7 @@ def answer(
     while score.available_milestones and score.available_milestones[-1] * points_goal <= score.total_points:
         score.available_milestones.pop()
         awarded_skips += 1
-        toasts.append(Toast("success", "+1 SKIP!", 0.5))
+        toasts.append(Toast("success", "+1 SKIP!", 0.5, awards_skip=True))
 
     completed = False
     if score.total_points >= points_goal:

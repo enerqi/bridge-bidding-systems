@@ -19,6 +19,7 @@ from pathlib import Path
 import palette
 import pytest
 from litestar.testing import TestClient
+from markup import found
 
 import app as app_module
 import render
@@ -110,7 +111,7 @@ def test_a_remembered_theme_is_in_the_first_paint(client):
     server can render `data-theme` into the document. Local storage is only readable after JS runs,
     which is a frame of the OS palette on every load for anyone who chose against it."""
     client.cookies.set(render.THEME_COOKIE, "dark")
-    root = re.search(r"<html[^>]*>", client.get("/").text).group(0)
+    root = found(r"<html[^>]*>", client.get("/").text).group(0)
     assert 'data-theme="dark"' in root, root
 
 
@@ -119,14 +120,14 @@ def test_the_remembered_theme_and_the_signal_agree(client):
     they disagreed the first click would jump to whatever the signal happened to say."""
     client.cookies.set(render.THEME_COOKIE, "light")
     body = client.get("/").text
-    signals = re.search(r'data-signals="([^"]+)"', body).group(1)
+    signals = found(r'data-signals="([^"]+)"', body).group(1)
     assert "&#34;_theme&#34;: &#34;light&#34;" in signals or '"_theme": "light"' in signals, signals
 
 
 def test_auto_writes_no_attribute(client):
     """`auto` is the absence of the attribute, in the rendered document as much as in the CSS."""
     client.cookies.set(render.THEME_COOKIE, "auto")
-    root = re.search(r"<html[^>]*>", client.get("/").text).group(0)
+    root = found(r"<html[^>]*>", client.get("/").text).group(0)
     assert "data-theme=" not in root.replace("data-attr:data-theme=", ""), root
 
 
@@ -142,8 +143,8 @@ def test_the_toggle_writes_the_cookie_itself(client):
     like the session cookie -- cookies ignore the PORT, so two instances on one host share a name,
     and only the path keeps a prefixed deployment separate."""
     body = client.get("/").text
-    toggle = re.search(r"<button[^>]*class=\"theme-toggle[^\"]*\"(.*?)</button>", body, re.DOTALL).group(1)
-    click = re.search(r'data-on:click="([^"]+)"', toggle, re.DOTALL).group(1)
+    toggle = found(r"<button[^>]*class=\"theme-toggle[^\"]*\"(.*?)</button>", body, re.DOTALL).group(1)
+    click = found(r'data-on:click="([^"]+)"', toggle, re.DOTALL).group(1)
     assert "document.cookie" in click, "the choice is not remembered"
     assert render.THEME_COOKIE in click
     assert "max-age=31536000" in click, "a preference should outlive the session"
@@ -184,7 +185,7 @@ def test_the_toggle_cycles_all_three_states(client):
     """One button, three states -- and the cycle has to be closed, or `auto` becomes unreachable
     after the first click and the OS-following default is lost for the session."""
     body = client.get("/").text
-    toggle = re.search(r"<button[^>]*class=\"theme-toggle[^\"]*\"(.*?)</button>", body, re.DOTALL).group(1)
+    toggle = found(r"<button[^>]*class=\"theme-toggle[^\"]*\"(.*?)</button>", body, re.DOTALL).group(1)
     click = re.search(r'data-on:click="([^"]+)"', toggle)
     assert click, "the toggle does nothing"
     for state in ("'auto'", "'light'", "'dark'"):
@@ -194,9 +195,9 @@ def test_the_toggle_cycles_all_three_states(client):
 def test_the_toggle_says_which_state_it_is_in(client):
     """The glyph alone is a rebus -- especially `auto`, which is neither a sun nor a moon."""
     body = client.get("/").text
-    toggle = re.search(r"<button[^>]*class=\"theme-toggle[^\"]*\"(.*?)</button>", body, re.DOTALL).group(1)
+    toggle = found(r"<button[^>]*class=\"theme-toggle[^\"]*\"(.*?)</button>", body, re.DOTALL).group(1)
     assert "data-attr:aria-label" in toggle
-    assert "$_theme" in re.search(r'data-attr:aria-label="([^"]+)"', toggle).group(1)
+    assert "$_theme" in found(r'data-attr:aria-label="([^"]+)"', toggle).group(1)
 
 
 def test_the_toggle_needs_no_javascript_of_ours(client):

@@ -11,8 +11,12 @@ quiz in `apps/quiz/`, kept beside it so the two architectures can be run side by
 > the spikes are measured in `DESIGN.md`), plus a
 > game-feel layer (`$_juice`: hit-stop and shake on the reveal, score floating off the card you
 > picked, an escalating streak chip, press/hover, a ring on the card you got right, a throbbing
-> countdown in the last band — one toggle, one stylesheet, no JS), on a four-rung elevation ladder and
-> a surface ladder that separate the answer cards from what they sit on.
+> countdown in the last band, a shine across the points gauge when a milestone pays for a skip — one
+> toggle, one stylesheet, no JS), on a four-rung elevation ladder and
+> a surface ladder that separate the answer cards from what they sit on. **Sound** is a separate
+> toggle and the only one that starts OFF (`$_sound`): five WAVs synthesised at import by `sfx.py` and
+> served from `/sfx/<name>`, played by `data-init` on a one-shot element — no audio files, no helper
+> script, and nothing fetched at all until the box is ticked.
 > Two bugs fixed since (COMPARISON.md 15 and 16): a page whose session had been replaced could score
 > an answer against a question it had never shown, because question nonces were per session and two
 > sessions both started at 1; and the keyboard accelerators go quiet after a click inside the System
@@ -21,9 +25,11 @@ quiz in `apps/quiz/`, kept beside it so the two architectures can be run side by
 > ending it: both keep their score, both can be open at once, and each tab's action URLs say which
 > system they belong to. Still one cookie under one name — nginx pins a player to a worker by hashing
 > it.
-> 577 tests (`just dsquiz test`); `just dsquiz lint` / `format` clean, `typecheck` currently reports
-> 16 pre-existing ty diagnostics, all of the "`.group` on `Match | None` after an `assert match`"
-> shape in the test files. A second phone pass fixed the app bar (a wrapped score, and 16px of it
+> 619 tests (`just dsquiz test`); `just dsquiz qa` is clean — lint, format **and** typecheck. (The 16
+> ty diagnostics an earlier version of this banner admitted to are gone: three were jinja's
+> unannotated `Environment.globals`, the other thirteen were `re.search(...).group(1)` in tests,
+> which is a type error every time it is written and now goes through `tests/markup.py:found`.)
+> A second phone pass fixed the app bar (a wrapped score, and 16px of it
 > that belonged to Pico's button margin), corrected `--topbar-h` — which the mobile drawer had been
 > hanging 14px behind — and moved the countdown above the question and stuck it to the bar, out from
 > under the phone's URL bar (DESIGN.md, "Second pass"). Everything below is described as it actually behaves, not as
@@ -123,7 +129,7 @@ Datastar's own guidance (`data-star.dev/guide/the_tao_of_datastar`):
 |---|---|---|
 | Server (`state.Session`, keyed by `(dsq_sid cookie, variant)`) | current `Question` incl. `answer_candidate`, a process-unique `qid` nonce, score/streak/points/milestones, skips, timers, applied filter + its working set | signals are readable in devtools **and** uploaded with every request, so an answer in a signal is a cheat code; the working set is a slice of the per-process `.bml` corpus and cannot travel |
 | Client, bound signals (uploaded) | `$difficulty`, `$ladderMode`, `$targetOn`, `$targetPct`, `$filterText`, `$topics.*` | these *originate* in the browser: `data-bind` is datastar's form encoding. `$filterText` is the uncommitted draft — Panel's `value_input` vs `value` split, now server vs client |
-| Client, local signals (`_` prefix, never uploaded) | `$_topicsOpen`, `$_answering`, `$_timeLeftPct`, plus server-owned display values `$_points`, `$_scorePct`, … | view toggles, request lifecycle, and numbers the server already told the browser (echoing them back would be waste) |
+| Client, local signals (`_` prefix, never uploaded) | `$_topicsOpen`, `$_answering`, `$_timeLeftPct`, the appearance preferences `$_theme` / `$_font` / `$_css` / `$_juice` / `$_sound`, plus server-owned display values `$_points`, `$_scorePct`, … | view toggles, request lifecycle, and numbers the server already told the browser (echoing them back would be waste). `$_sound` also gates a *fetch*: the `<audio>` elements get their `src` from it, so sound off costs nothing at all |
 
 Sessions are process-local, so one worker (or sticky routing) — the same constraint Panel had
 (see the `session_key_func` notes at `apps/quiz/quiz_app.py:49`). The escape hatch is Redis, not
@@ -233,6 +239,7 @@ state.py      msgspec session structs + the cookie-keyed store
 engine.py     rules only: points, toasts, milestones, completion (no HTTP, no HTML)
 corpus.py     imports apps/quiz's quiz.py + bidfilter.py; caching and filter checks
 render.py     jinja env, fragments, signal payloads, datastar naming helpers
+sfx.py        the five sound effects, synthesised at import (no audio files); GET /sfx/<name>
 templates/    shell + the patchable fragments
 static/       vendored datastar.js (no CDN) + app.css, juice.css (the game-feel layer),
               and the two framework spikes:

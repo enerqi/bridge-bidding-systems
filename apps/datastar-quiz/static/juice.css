@@ -567,6 +567,57 @@ body.juice .timer:has(.timer-fill.spent.ticking) {
   animation: juice-timer-alarm 620ms ease-in-out infinite;
 }
 
+/* --- 6. the milestone sweep ------------------------------------------------ *
+ * The points gauge carries the milestone notches, so it is the thing that says WHERE the next skip
+ * is -- and it was the one part of the HUD that said nothing when one was collected. The award
+ * arrived as a corner toast, third or fourth in a chain of them, while the bar it was measured
+ * against sat still and merely got longer.
+ *
+ * So the bar acknowledges it: a light crosses the gauge, once, on the beat the milestone lands
+ * (`app._answer_stream` appends `.meter-sweep` when `toast.awards_skip`). No new signal -- the server
+ * already knows, because it is the thing that awarded the skip.
+ *
+ * Two details worth keeping:
+ *   - the shine is WHITE at low alpha rather than a colour: the track is a red-to-green gradient, so
+ *     any tint would read as a different score on the way past;
+ *   - `.meter` is `overflow: hidden` in all three base sheets, so the sweep can start and end off the
+ *     ends of the bar and be clipped to it, which is what makes it a pass rather than a fade. */
+@keyframes juice-meter-sweep {
+  from {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(520%) skewX(-18deg);
+  }
+}
+
+/* the reduced-motion stand-in: the same acknowledgement, with no travel */
+@keyframes juice-meter-flush {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+body.juice .meter-sweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 22%;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgb(255 255 255 / 0%),
+    rgb(255 255 255 / 75%),
+    rgb(255 255 255 / 0%)
+  );
+  animation: juice-meter-sweep 780ms cubic-bezier(0.3, 0, 0.2, 1) 1 both;
+}
+
 /* --- honesty about motion -------------------------------------------------- *
  * The base sheets already collapse their transitions under `prefers-reduced-motion`; this file adds
  * the effects that most need it, so it repeats the rule for its own. The floaters and the marks stay
@@ -617,6 +668,16 @@ body.juice .timer:has(.timer-fill.spent.ticking) {
 
   body.juice .points-meter.full {
     animation: none;
+  }
+
+  /* A sweep is travel and nothing else -- there is no state left behind when it finishes, so unlike
+     the marks and floaters there is nothing to keep visible. It becomes a single brief flush of the
+     bar instead: the milestone is still acknowledged where it was earned, without anything crossing
+     the screen. */
+  body.juice .meter-sweep {
+    animation: juice-meter-flush 700ms ease-in-out 1 both;
+    width: 100%;
+    background: rgb(255 255 255 / 30%);
   }
 
   /* the countdown keeps the COLOUR and loses the beat: "you are nearly out of time" is information,

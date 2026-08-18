@@ -79,5 +79,29 @@
     <div id="app">
       {% include "app.html.j2" %}
     </div>
+
+    {# --- sound ---------------------------------------------------------------
+
+       OUTSIDE `#app`, and that is the whole design. The morph target is rewritten on every
+       interaction; an `<audio>` element inside it would be replaced mid-playback, and the browser
+       would re-fetch each file every time. Out here they are loaded once per page and survive
+       everything.
+
+       `data-attr:src` rather than a static `src`: with sound off (the default) these elements have no
+       source, so a player who never turns it on never requests a WAV -- the page stays at the three
+       requests COMPARISON.md measures. Turning it on sets all five sources at once and `preload="auto"`
+       fetches them immediately, which is well before the first beat can arrive. `?v=` is the build
+       stamp, so a changed synth reaches a browser that has the old file cached.
+
+       The sounds themselves are synthesised in `sfx.py` and served from `/sfx/<name>` -- no binary
+       assets in the repo. There is no volume control, deliberately: setting `.volume` needs real
+       JavaScript, and the levels are baked into the samples instead. #}
+    {% for name in sfx_names %}
+    <audio id="sfx-{{ name }}" preload="auto"
+           data-attr:src="$_sound ? '{{ prefix }}/sfx/{{ name }}?v={{ build_stamp }}' : false"></audio>
+    {% endfor %}
+    {# The sink the beats are appended to. Cleared at the start of every answer stream, so it holds
+       at most the handful of markers one answer produced. #}
+    <div id="sfx" hidden aria-hidden="true"></div>
   </body>
 </html>

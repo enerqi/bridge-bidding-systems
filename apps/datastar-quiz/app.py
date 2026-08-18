@@ -39,6 +39,7 @@ from litestar.static_files import create_static_files_router
 import corpus
 import engine
 import render
+import sfx
 import state
 import telemetry
 
@@ -101,6 +102,11 @@ TIMER_STREAM_MAX_SECONDS = 600.0
 APP_SELECTOR = "#app"
 QUIZ_SELECTOR = "#quiz"
 TOASTS_SELECTOR = "#toasts"
+# The sound sink lives OUTSIDE `#app`, with the `<audio>` elements, so a fat morph cannot disturb a
+# sound mid-play (see shell.html.j2). The gauge is inside it, which is exactly what the milestone
+# sweep wants: the next view patch takes the shine away with no cleanup, like the floaters.
+SFX_SELECTOR = "#sfx"
+METER_SELECTOR = f"{APP_SELECTOR} .points-meter"
 
 
 # --- session plumbing -------------------------------------------------------
@@ -289,6 +295,17 @@ def _clear_toasts() -> DatastarEvent:
     return SSE.patch_elements("", selector=TOASTS_SELECTOR, mode=ElementPatchMode.INNER)
 
 
+def _clear_sfx() -> DatastarEvent:
+    """Empty the sound sink before an answer appends its beats to it.
+
+    The markers are appended rather than morphed (see `templates/sfx.html.j2`), so without this they
+    would accumulate for the life of the page. Clearing at the START rather than the end also means a
+    marker is never removed while the sound it started is still playing -- the `<audio>` element is
+    what plays, and it lives outside the sink.
+    """
+    return SSE.patch_elements("", selector=SFX_SELECTOR, mode=ElementPatchMode.INNER)
+
+
 # --- routes -----------------------------------------------------------------
 
 
@@ -429,8 +446,25 @@ async def _answer_stream(
     # (after the toasts, with the next question) read as belonging to the following question.
     yield SSE.patch_signals({"_streak": session.score.streak})
 
+    # Sound rides the same beats, gated client-side on `$_sound` -- see `render.sfx_beat`. The verdict
+    # chime goes FIRST, before the toast it belongs to, because a sound that arrives after the words
+    # have appeared reads as a response to reading them.
+    yield _clear_sfx()
+    yield SSE.patch_elements(
+        render.sfx_beat("correct" if outcome.correct else "wrong"),
+        selector=SFX_SELECTOR,
+        mode=ElementPatchMode.APPEND,
+    )
+
     for toast in outcome.toasts:
         yield SSE.patch_elements(render.toast(toast), selector=TOASTS_SELECTOR, mode=ElementPatchMode.INNER)
+        # A milestone has just paid for a skip: the gauge that measures milestones says so itself,
+        # rather than leaving it to one toast among four. Both halves are one-shot appends -- the
+        # shine is taken away by the view patch at the end of the stream, the sound marker by the
+        # `_clear_sfx` of the next answer.
+        if toast.awards_skip:
+            yield SSE.patch_elements(render.meter_sweep(), selector=METER_SELECTOR, mode=ElementPatchMode.APPEND)
+            yield SSE.patch_elements(render.sfx_beat("skip"), selector=SFX_SELECTOR, mode=ElementPatchMode.APPEND)
         if toast.points_after is not None:
             yield SSE.patch_signals(
                 {
@@ -448,6 +482,12 @@ async def _answer_stream(
                 mode=ElementPatchMode.APPEND,
             )
         await asyncio.sleep(toast.pause)
+
+    # The finale's own sound, once per quiz, with the completion screen rather than with the answer:
+    # the gold floater and the confetti are the same beat, and the fanfare is long enough that firing
+    # it beside the "Correct!" chime would be two flourishes over each other.
+    if outcome.completed:
+        yield SSE.patch_elements(render.sfx_beat("final"), selector=SFX_SELECTOR, mode=ElementPatchMode.APPEND)
 
     yield _clear_toasts()
     # the clock starts when the question reaches the player, not when it was drawn -- the
@@ -771,6 +811,29 @@ async def topics_apply(session: NamedDependency[state.Session], request: Request
     return _commit_filter(session, _topics_text_from(session, signals))
 
 
+# --- sound ------------------------------------------------------------------
+
+
+@get("/sfx/{name:str}", sync_to_thread=False, cache_control=CacheControlHeader(max_age=31536000, public=True))
+def sound(name: FromPath[str]) -> Response[bytes]:
+    """One synthesised WAV. There is no `static/sfx/` directory -- see `sfx.py`.
+
+    Generated at import and served from memory, which suits what these are: a few kilobytes of
+    arithmetic that would otherwise be binary files in a documentation repo, with a licence to think
+    about and a build step to regenerate them.
+
+    Cached HARD (a year, and immutable in effect) because the bytes for a given name never change
+    within a build; the `?v=` the page appends is the build stamp, so an edited synth arrives as a
+    different URL rather than waiting out a cache. `preload="auto"` means the browser asks for all
+    five the moment sound is switched on, and never again.
+    """
+    audio = sfx.SOUNDS.get(name)
+    if audio is None:
+        unknown = f"no sound named {name!r}"
+        raise NotFoundException(unknown)
+    return Response(audio, media_type="audio/wav")
+
+
 def create_app() -> Litestar:
     return Litestar(
         # Fat morph sends the whole page per interaction, and compression is what makes that cheap:
@@ -820,6 +883,7 @@ def create_app() -> Litestar:
             debug_complete,
             debug_reveal,
             devtools_workspace,
+            sound,
             # `no-cache` means REVALIDATE, not "do not cache": the browser keeps the file and asks
             # with its etag, so an unchanged sheet costs a 304 and a changed one arrives immediately.
             # Without it these responses carry only `last-modified`, and a browser is then entitled to

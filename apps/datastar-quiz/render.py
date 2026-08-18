@@ -20,14 +20,16 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import MutableMapping
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 from markupsafe import Markup, escape
 
 import corpus
 import engine
+import sfx
 
 if TYPE_CHECKING:
     import state
@@ -123,9 +125,15 @@ ACTIVATION_TARGETS = "input:not([type=range]), select, textarea, [contenteditabl
 # because it has to agree with the `@media` block that does the repositioning -- pinned by
 # `tests/test_hud.py`, since a drawer that stays open over the quiz is invisible in every unit test.
 DRAWER_OVERLAY_QUERY = "(max-width: 900px)"
-_env.globals["DRAWER_OVERLAY_QUERY"] = DRAWER_OVERLAY_QUERY
-_env.globals["TYPING_TARGETS"] = TYPING_TARGETS
-_env.globals["ACTIVATION_TARGETS"] = ACTIVATION_TARGETS
+
+# Jinja documents `Environment.globals` as `MutableMapping[str, Any]`, but it is only ever ASSIGNED
+# (`self.globals = DEFAULT_NAMESPACE.copy()`, environment.py), so a type checker infers its value type
+# from what that namespace happens to hold -- `range`, `dict` and the `lipsum` function. Every string
+# put here is then an error. One named alias with the documented type, rather than three suppressions.
+_globals = cast("MutableMapping[str, Any]", _env.globals)
+_globals["DRAWER_OVERLAY_QUERY"] = DRAWER_OVERLAY_QUERY
+_globals["TYPING_TARGETS"] = TYPING_TARGETS
+_globals["ACTIVATION_TARGETS"] = ACTIVATION_TARGETS
 
 # --- suit emoji presentation (copied from the panel app) ---------------------
 
@@ -399,6 +407,13 @@ def local_ui_signals(theme: str = "auto") -> dict:
         # you picked, and an escalating streak chip. Purely presentational, so purely local -- the
         # server streams the floaters either way and `body.juice` decides whether they are visible.
         "_juice": True,
+        # Sound, OFF by default and the only appearance preference that is. Everything else here
+        # changes how the page looks to the person who asked for it; audio arrives in a room, and a
+        # quiz played in a lesson or on a train should make no noise until someone says so.
+        #
+        # It also gates the FETCH: the `<audio>` elements in `shell.html.j2` have no `src` until this
+        # is true, so a player with sound off never asks the server for a single WAV.
+        "_sound": False,
     }
 
 
@@ -419,6 +434,8 @@ def shell(session: state.Session, theme: str = "auto") -> str:
         initial_signals=json.dumps(initial),
         # `auto` is the absence of the attribute -- see the theme switch note in `app.css`
         theme=theme if theme != "auto" else "",
+        # the `<audio>` elements, which live outside `#app` and so exist only in the document
+        sfx_names=sfx.NAMES,
         **context,
     )
 
@@ -631,3 +648,36 @@ def floater(item: engine.Toast, *, final: bool = False) -> str:
     if final:
         kind += " final"
     return _env.get_template("floater.html.j2").render(label=label, kind=kind)
+
+
+def sfx_beat(beat: str) -> str:
+    """One sound beat: markup that plays `<audio id="sfx-<beat>">`, which is already in the page.
+
+    Appended to `#sfx` (see `app._answer_stream`), which is the same trick as the floaters -- the
+    server knows when the beat happened, so the beat is a patch rather than something the browser has
+    to work out. Two things are deliberate:
+
+    * **`$_sound &&` first.** The preference is a LOCAL signal, so the server cannot know it and
+      streams the beat either way; the expression is the gate, exactly as `body.juice` gates the
+      floaters. ~90 bytes for a player who has sound off, and the audio elements have no `src` in
+      that case anyway, so nothing is fetched.
+    * **`play()` and nothing else.** An element that has ENDED rewinds itself on the next `play()`
+      (the spec seeks to the start), and one that is still playing ignores the call -- which is what
+      makes `tick` self-spacing. So there is no `currentTime` to reset and no state to keep, which is
+      why this is an attribute expression and not a helper script. `.catch` because a play() that the
+      browser refuses (no `src` yet, no user gesture) rejects a promise, and an unhandled rejection is
+      a console error per beat.
+    """
+    if beat not in sfx.SOUNDS:
+        raise KeyError(beat)
+    return _env.get_template("sfx.html.j2").render(beat=beat)
+
+
+def meter_sweep() -> str:
+    """The shine that crosses the points gauge when a milestone has just paid for a skip.
+
+    Appended to the gauge itself, so it needs no signal and no cleanup: the fat morph at the end of
+    the answer stream rewrites `#app` from markup that never contains it. Inert unless `body.juice` --
+    it is game feel, like the floaters, and it is styled only in `juice.css`.
+    """
+    return _env.get_template("meter_sweep.html.j2").render()

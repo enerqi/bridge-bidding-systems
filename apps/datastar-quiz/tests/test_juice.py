@@ -152,6 +152,44 @@ def test_the_urgency_colour_survives_reduced_motion():
     assert "box-shadow" in reduced, "the alarm should still be visible, just still"
 
 
+# --- the milestone sweep -----------------------------------------------------
+
+
+def test_the_sweep_crosses_the_gauge_and_is_clipped_to_it():
+    """A pass, not a fade: it starts and ends off the ends of the bar, and `.meter` is
+    `overflow: hidden` in all three base sheets, so the bar does the clipping."""
+    rule = re.search(r"body\.juice \.meter-sweep\s*\{([^}]*)\}", JUICE)
+    assert rule, "no sweep rule"
+    assert "position: absolute" in rule.group(1)
+    assert "animation: juice-meter-sweep" in rule.group(1)
+    frames = re.search(r"@keyframes juice-meter-sweep\s*\{(.*?)\n\}", JUICE, re.DOTALL)
+    assert frames
+    assert "translateX(-120%)" in frames.group(1), "the shine should begin off the left end"
+
+
+def test_the_shine_is_white_rather_than_a_colour():
+    """The track is a red-to-green gradient, so a tinted shine would read as a different SCORE on
+    the way past."""
+    rule = re.search(r"body\.juice \.meter-sweep\s*\{([^}]*)\}", JUICE)
+    assert rule
+    assert "rgb(255 255 255" in rule.group(1)
+    for token in ("--suit-", "--primary", "green", "gold"):
+        assert token not in rule.group(1), token
+
+
+def test_the_sweep_has_a_still_version():
+    """Unlike the marks and floaters there is no state left behind when it finishes -- travel is all
+    it is -- so reduced motion gets a brief flush of the bar instead of a frozen streak."""
+    reduced = JUICE[JUICE.index("@media (prefers-reduced-motion: reduce)") :]
+    assert ".meter-sweep" in reduced
+    assert "juice-meter-flush" in reduced
+
+
+def test_the_sweep_is_only_ever_appended_to_the_gauge():
+    assert app_module.METER_SELECTOR.endswith(".points-meter")
+    assert app_module.METER_SELECTOR.startswith(app_module.APP_SELECTOR)
+
+
 def test_no_javascript_was_added_for_any_of_it():
     """Game feel is a CSS problem here. A `<script>` of ours would be the thing to argue about."""
     templates = Path(render.__file__).resolve().parent / "templates"
@@ -218,7 +256,9 @@ def test_a_wrong_first_answer_floats_nothing(client):
     body = client.post(f"/answer/{session.qid}/{wrong}", content="{}").text
 
     assert 'class="floater' not in body
-    assert "mode append" not in body
+    # ...and nothing was aimed at the card either. Not "no append anywhere in the stream": the sound
+    # beats append to `#sfx`, and a wrong answer has one (see test_sound.py).
+    assert "selector #quiz .candidates" not in body
 
 
 def test_the_selector_helper_is_one_indexed():
