@@ -16,24 +16,53 @@ set script-interpreter := ["uv", "run", "--no-project", "-p", "3.14", "python"]
 # reports a plain syntax error, which reads like a corrupt justfile rather than an out-of-date tool.
 set minimum-version := "1.49.0"
 
+# `home_directory()` hands back a NATIVE path -- `C:\Users\Enerqi` on Windows -- and every sibling-checkout
+# variable below wants forward slashes, so the normalisation happens ONCE here instead of at each use.
+#
+# Neither of just's path helpers does this job, measured rather than assumed:
+#
+#     home_directory()                      C:\Users\Enerqi
+#     replace(home_directory(), "\\", "/")  C:/Users/Enerqi          <- this
+#     home_directory() / "dev/norn"         C:\Users\Enerqi/dev/norn   (mixed: `/` only joins)
+#     join(home_directory(), "dev", "norn") C:\Users\Enerqi\dev\norn   (all native, by design)
+#
+# The `/` operator inserts a forward slash BETWEEN components and leaves the left operand alone, and
+# `join` deliberately emits the NATIVE separator -- which is why `target_path` below uses it. Forward
+# slashes matter twice here: Odin's `-collection:` wants them, and these paths are written verbatim into
+# the generated ols.json, where a `\` would be an invalid JSON string escape.
+home := replace(home_directory(), "\\", "/")
+
 # This project is a CONSUMER of the norn library: norn provides the hand-generation engine (`norn:norn`)
 # and the reusable scenario CLI framework (`norn:cli`); everything here (`bidding` + `sim.odin`) is this
 # specific bidding system.
 #
 # `norn_home` is the single source of truth for where the norn checkout lives: NORN_HOME if set, else
-# `<home>/dev/norn` (`replace` normalises Windows backslashes to the forward slashes Odin wants). It
-# feeds BOTH the `-collection` build flag AND the generated ols.json (see `ols-config`) -- ols.json has
-# no env-var expansion of its own, so it is regenerated from this rather than hand-edited.
-norn_home := env_var_or_default("NORN_HOME", replace(home_directory(), "\\", "/") + "/dev/norn")
+# `<home>/dev/norn`. It feeds BOTH the `-collection` build flag AND the generated ols.json (see
+# `ols-config`) -- ols.json has no env-var expansion of its own, so it is regenerated from this rather
+# than hand-edited.
+norn_home := env_var_or_default("NORN_HOME", home / "dev/norn")
 norn := "-collection:norn=" + norn_home
 
 # odin-dds provides the DDS double-dummy solver bindings, used only by the local `deal_solve` package
 # (the norn->DDS boundary). DDS_HOME mirrors norn_home. Its lib/dds.lib (Windows) / lib/dds.a (Unix)
 # must be built first -- see odin-dds `just build-lib`.
-dds_home := env_var_or_default("DDS_HOME", replace(home_directory(), "\\", "/") + "/dev/odin-dds")
+dds_home := env_var_or_default("DDS_HOME", home / "dev/odin-dds")
 dds := "-collection:dds=" + dds_home
+
+# odin-sciter provides the Sciter.JS bindings the desktop workbench renders its UI with. SCITER_HOME
+# mirrors norn_home. Unlike norn and dds this is a RUNTIME dependency as well as a build one: Sciter is
+# dynamic-link-only, so the engine library has to be findable when the exe starts -- hence the exported
+# SCITER_LIB below, naming the directory holding it in that checkout, so nothing has to be copied beside
+# the exe.
+sciter_home := env_var_or_default("SCITER_HOME", home / "dev/odin-sciter")
+sciter := "-collection:sciter=" + sciter_home
+# `export` so every recipe's environment carries it -- `sciter_app.load_engine` reads SCITER_LIB, and an
+# inline `VAR=x cmd` prefix is not valid in cmd.exe (the Windows shell these recipes run in).
+export SCITER_LIB := sciter_home + (if os() == "windows" { "/lib/windows/x64" } else if os() == "macos" { "/lib/macosx" } else { "/lib/linux/x64" })
+
 sim_name := "sim.exe"
 analyse_name := "analyse_deal.exe"
+workbench_name := "workbench.exe"
 test_main_name := "test-bidding.exe"
 
 # `join`, not the `/` operator: `/` always emits a forward slash, and cmd.exe rejects a forward-slash
@@ -70,7 +99,12 @@ linker := env_var_or_default("ODIN_LINKER", "default")
 
 # Where the batch `gen-all*` / `gen-some` recipes write per-scenario HTML: DEALS_OUTPUT_DIR if set, else
 # the w: web-server volume. Also a trailing recipe argument, e.g. `just gen-all 48 ./out/`.
-deals_output_dir := env_var_or_default("DEALS_OUTPUT_DIR", "w:/deals/")
+#
+# `export`ed because the workbench has no recipe argument to take it from: it pre-fills its output-directory
+# field from this variable, so the window opens pointing where `gen-all` would write. Re-exporting the same
+# name is a no-op when it was already set in the environment.
+export DEALS_OUTPUT_DIR := env_var_or_default("DEALS_OUTPUT_DIR", "w:/deals/")
+deals_output_dir := DEALS_OUTPUT_DIR
 
 # Where the single-scenario `gen-one*` recipes write <SCENARIO>.html: the directory just was invoked
 # from (NOT this justfile's directory, which just would otherwise chdir to), so a scratch run lands
@@ -81,7 +115,7 @@ scratch_dir := env_var_or_default("DEALS_SCRATCH_DIR", replace(invocation_direct
 # hand-ocr is a SEPARATE sibling repo (image -> PBN/LIN; uv/Python), at HAND_OCR_DIR. `export` re-exports
 # it so the `ocr-analyse` recipe's `ocr_analyse.py` reads the SAME value (just variables are not env
 # vars otherwise) -- the path lives in one place across just and Python.
-export HAND_OCR_DIR := env_var_or_default("HAND_OCR_DIR", replace(home_directory(), "\\", "/") + "/dev/bridge-hand-ocr")
+export HAND_OCR_DIR := env_var_or_default("HAND_OCR_DIR", home / "dev/bridge-hand-ocr")
 
 
 # ============================================================ dev =========
@@ -112,20 +146,23 @@ format:
 	odinfmt -w .
 
 # Lints the local library packages with -no-entry-point plus the single-file programs. `deal_solve`,
-# `sim`, `analyse_deal` and the benches pull in `dds` (the DDS boundary); `bidding` and `suit_book` do
-# not (`suit_book` is this project's published suit-combination table, plugged into `norn:combo`'s book
-# hook). The card-combination ENGINE lives in norn (`norn:combo`) -- lint it there. The benches are
-# listed because nothing else type-checks them. `-vet-tabs` is the only compiler-side enforcement of
-# .editorconfig's `indent_style = tab`; it is not implied by `-strict-style`.
+# `analyse`, `sim`, `analyse_deal` and the benches pull in `dds` (the DDS boundary); `bidding` and
+# `suit_book` do not (`suit_book` is this project's published suit-combination table, plugged into
+# `norn:combo`'s book hook). The card-combination ENGINE lives in norn (`norn:combo`) -- lint it there.
+# The benches are listed because nothing else type-checks them. `-vet-tabs` is the only compiler-side
+# enforcement of .editorconfig's `indent_style = tab`; it is not implied by `-strict-style`.
 # ---
-# type check + vet + strict style (bidding, suit_book, deal_solve, sim.odin, analyse_deal.odin, benches)
+# type check + vet + strict style (bidding, suit_book, deal_solve, analyse, sim_hooks, sim.odin, analyse_deal.odin, workbench.odin, benches)
 [group('dev')]
 lint *args:
 	odin check bidding {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check suit_book {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check deal_solve {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+	odin check analyse {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check sim.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check analyse_deal.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
+	odin check sim_hooks {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+	odin check workbench.odin -file {{norn}} {{dds}} {{sciter}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check bench.odin -file {{norn}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check bench_e2e.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 
@@ -179,6 +216,41 @@ clean:
 clean:
 	if exist target rmdir /s /q target
 	just mktarget_dirs
+
+
+# ====================================================== workbench =========
+#
+# The desktop app: the generator and the deal advisor in one window, running IN-PROCESS (no subprocess,
+# no temp file). UI in HTML/CSS rendered by Sciter through the odin-sciter bindings.
+#
+# Sciter is dynamic-link-only, so the engine is a RUNTIME dependency too: the exported `SCITER_LIB` (see
+# the variable near the top) points `sciter_app.load_engine` at the library in the odin-sciter checkout,
+# so nothing has to be copied beside the exe. If the load fails it prints every path it tried. The bindings also refuse to load an engine
+# whose version does not match the headers they were generated from, so a stale checkout says so instead
+# of crashing somewhere unrelated.
+#
+# `ui/*.htm` + `ui/*.css` are `#load`ed INTO the binary, so a built exe needs no asset directory -- but
+# they are read at COMPILE time, which means an edit to either needs this recipe again, not just a
+# restart.
+
+# run the desktop workbench (release)
+[group('workbench')]
+workbench *args: mktarget_dirs
+	odin run workbench.odin -file {{norn}} {{dds}} {{sciter}} -keep-executable -o:speed -microarch:native -linker:{{linker}} -out:{{ target_path("release", workbench_name) }} -- {{args}}
+
+# `-debug` for a steppable build with the tracking allocator's leak report at exit; also what to run when
+# attaching the SDK's `inspector` (the window is created with .ENABLE_DEBUG either way).
+# ---
+# run the desktop workbench (debug)
+[group('workbench')]
+workbench-debug *args: mktarget_dirs
+	odin run workbench.odin -file {{norn}} {{dds}} {{sciter}} -keep-executable -debug -linker:{{linker}} -out:{{ target_path("debug", workbench_name) }} -- {{args}}
+
+# run the last-built workbench WITHOUT recompiling (Odin has no build cache, so `just workbench` always
+# rebuilds). Same env: the engine still has to be findable.
+[group('workbench')]
+workbench-norebuild *args:
+	{{ target_path("release", workbench_name) }} {{args}}
 
 
 # ============================================================ sim =========
@@ -442,6 +514,59 @@ test-suit-book *args: mktarget_dirs
 [group('test')]
 test-deal-solve *args: mktarget_dirs
 	odin test deal_solve {{norn}} {{dds}} -debug -microarch:native -define:ODIN_TEST_THREADS=1 -show-timings -linker:{{linker}} -out:{{ target_path("debug", "test-deal-solve.exe") }} {{args}}
+
+# The workbench's document, tested in a WINDOWLESS engine view (no desktop needed). Covers the seam
+# between the document and the host: every id the host reads exists, the scenario list is a projection of
+# the registry, and — the one that matters — the argv its controls compose is accepted by the REAL parsers
+# (`cli.parse_args`, `analyse.parse_args`) with the values the controls named. One test also runs a small
+# seeded generation, which `wb-cli-parity` then diffs against the same run through sim.exe.
+# ---
+# run the desktop workbench's document + argv tests (needs the Sciter engine, not a display)
+[group('test')]
+test-workbench *args: mktarget_dirs
+	odin test workbench.odin -file {{norn}} {{dds}} {{sciter}} -debug -define:ODIN_TEST_THREADS=1 -show-timings -linker:{{linker}} -out:{{ target_path("debug", "test-workbench.exe") }} {{args}}
+
+# The window and the command line must produce the same bytes. `test-workbench` writes
+# target/debug/wb-parity.html through the workbench's IN-PROCESS path (cli.parse_args + cli.run, exactly
+# what the worker thread does); this runs sim.exe with the same flags and compares. Seeded and
+# --fixed-table, so any difference is a real difference.
+# ---
+# prove the in-process generate path and sim.exe agree byte for byte
+[group('test')]
+[script]
+wb-cli-parity: mktarget_dirs
+	import filecmp, pathlib, subprocess, sys
+
+	root = pathlib.Path(".")
+	ui = root / "target" / "debug" / "wb-parity.html"
+	cli = root / "target" / "debug" / "cli-parity.html"
+
+	if not ui.exists():
+	    sys.exit(f"{ui} is missing - run `just test-workbench` first (it writes the in-process page)")
+
+	sim = root / "target" / "release" / "{{sim_name}}"
+	if not sim.exists():
+	    sys.exit(f"{sim} is missing - run `just build` first")
+
+	# The same flags test_the_generate_path_writes_the_same_page_the_cli_does composes from its controls.
+	subprocess.run(
+	    [str(sim), "-S", "1c-any", "-n", "4", "-f", "html-cards", "-s", "42", "--fixed-table", "-o", str(cli)],
+	    check=True,
+	)
+
+	if filecmp.cmp(ui, cli, shallow=False):
+	    print(f"PASS: {ui.name} and {cli.name} are identical ({ui.stat().st_size} bytes)")
+	else:
+	    sys.exit(f"FAIL: {ui} and {cli} differ - the window and the command line have diverged")
+
+# The deal READER, the flag surface and the text report — the solver-free half of the advisor. Also
+# single-threaded: the package links DDS (its sampling path does), and one test proc reaching a solve
+# concurrently with another would corrupt it, same as `test-deal-solve`.
+# ---
+# run the analyse library's unit tests (input formats, --void/--len/--lead specs, report writer)
+[group('test')]
+test-analyse *args: mktarget_dirs
+	odin test analyse {{norn}} {{dds}} -debug -microarch:native -define:ODIN_TEST_THREADS=1 -show-timings -linker:{{linker}} -out:{{ target_path("debug", "test-analyse.exe") }} {{args}}
 
 # Builds analyse_deal, runs it on a fixed board+seed, and diffs the emitted `data-sim='...'` against
 # tests/golden/. Guards write_sim_json (incl. the misguess-tax ach/taxpts/pvt rung) from drifting out of

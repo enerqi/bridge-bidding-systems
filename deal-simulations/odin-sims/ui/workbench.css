@@ -1,0 +1,451 @@
+/*
+	workbench.css — the desktop workbench's look, written for Sciter rather than ported to it.
+
+	Sciter is NOT a browser and the layout model is the difference that matters: there is no
+	`display:flex` and no `display:grid`. Layout is the `flow` property (which layout manager runs INSIDE
+	an element) plus flex units — `*`, `2*`, `0.5*` — on any length. `size: *` is "fill what is left".
+	`gap` does not exist either, so spacing is margins on the children.
+
+	Three more Sciter facts this file is written around (all measured, see odin-sciter
+	docs/html-css-js.md):
+	  * units: dip/em/rem/%/mm/in/pt/sp/px work. There is NO vw/vh and NO clamp().
+	  * an absolutely positioned element with a percentage HEIGHT collapses to 1px, and an inline-level
+	    widget (button, input) taken out of flow collapses to 1x1 — so nothing here is positioned.
+	  * `@media (name: "value")` matches unconditionally (it is not a feature test). Name the flag.
+
+	Card-page note for later: the norn card page is a browser page and uses flex/grid throughout. Hosting
+	it here is stage 2 and the plan is an append-only `@media sciter { ... }` override block in
+	norn/html_cards_header.html.tmpl — NOT a second stylesheet.
+
+	APPROACH — the same one apps/datastar-quiz/CSS_GUIDE.md argues for, and it suits Sciter even better
+	than it suits the browser: TOKENS for the design system, ELEMENT selectors for the components, no
+	component framework. There is no framework to reach for here anyway (see the file's tail), and the
+	guide's cautionary tale — a classless stylesheet styling `aria-busy` and hijacking a state attribute —
+	is an argument against wanting one.
+
+	`var()` works (it is on the engine's supported list), so every colour, radius and spacing step below is
+	a named value defined once in `:root`.
+
+	INTERACTION STATES are on us, measured rather than assumed: a bare `<button>` in this engine computes
+	`background-color: transparent` at rest, on `:hover` and on `:active` alike — the default stylesheet
+	does not paint state feedback for it. So `:hover` / `:active` / `:focus` / `:disabled` are written out
+	here for every control, and `test_controls_have_interaction_states` fails if a button loses them.
+*/
+
+:root {
+	/* surfaces, back to front */
+	--bg: #1e1e2e;
+	--surface: #181825;
+	--sunken: #11111b;
+	--line: #313244;
+	--line-soft: #232334;
+
+	/* ink, brightest to dimmest */
+	--ink: #cdd6f4;
+	--ink-soft: #a6adc8;
+	--ink-dim: #6c7086;
+
+	/* the one accent, and the three states of it */
+	--accent: #89b4fa;
+	--accent-hover: #a6c8ff;
+	--accent-active: #6c9ce8;
+	--accent-ink: #11111b; /* text ON the accent */
+	--good: #a6e3a1;
+
+	/* fields */
+	--field: #313244;
+	--field-hover: #3a3c52;
+	--field-line: #45475a;
+
+	--radius: 4px;
+	--radius-lg: 8px;
+
+	/* Type. One base size everything else is relative to, so this line resizes the whole window; only the
+	   monospace report is absolute, because a proportional step would land it between two pixel sizes and
+	   the census tables are column-aligned text. `pt`/`sp` also work here if you would rather follow the
+	   desktop's own text scaling. */
+	--text: 16px;
+	--text-small: 0.85em; /* labels, the dim second line of a scenario row, the engine version */
+	--mono: 14px; /* the report pane */
+}
+
+html {
+	background: var(--bg);
+	color: var(--ink);
+	/* Not the `font:` shorthand — a var() inside it is not worth the risk when two declarations are
+	   unambiguous. `system` is the platform UI face. */
+	font-family: system;
+	font-size: var(--text);
+}
+
+body {
+	margin: 0;
+	size: *;
+	flow: vertical;
+}
+
+/* ---- the title bar ------------------------------------------------------------------------------ */
+
+header {
+	flow: horizontal;
+	padding: 0.55em 0.9em;
+	border-bottom: 1px solid var(--line);
+	background: var(--surface);
+}
+
+header .title {
+	width: *;
+	font-weight: bold;
+	color: var(--ink);
+}
+
+header .engine {
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+}
+
+/* ---- the two columns ---------------------------------------------------------------------------- */
+
+.panes {
+	size: *;
+	flow: horizontal;
+}
+
+aside {
+	width: 250px;
+	height: *;
+	flow: vertical;
+	border-right: 1px solid var(--line);
+	background: var(--surface);
+}
+
+aside .head {
+	padding: 0.5em 0.8em;
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+	border-bottom: 1px solid var(--line);
+}
+
+#scenarios {
+	width: *;
+	height: *;
+	overflow-y: scroll-indicator;
+}
+
+/* `behavior: button` is not styling — it is what makes a row CLICKABLE. Sciter delivers `.BUTTON_CLICK`
+   from a native controller, and a plain <div> has none: without this the host's handler never hears a row
+   at all and the selection can never move off the first scenario. (That was the bug; `do_click` in the
+   tests is the same door, which is why the test now catches it.) */
+#scenarios .row {
+	behavior: button;
+	padding: 0.35em 0.8em;
+	border-bottom: 1px solid var(--line-soft);
+	cursor: pointer;
+}
+
+#scenarios .row:hover {
+	background: var(--line-soft);
+}
+
+#scenarios .row.sel {
+	background: var(--line);
+	color: var(--accent);
+}
+
+#scenarios .row .name {
+	font-weight: bold;
+}
+
+#scenarios .row .title {
+	display: block;
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+}
+
+.work {
+	size: *;
+	flow: vertical;
+	padding: 0.7em 0.9em;
+}
+
+/* ---- the two command panels --------------------------------------------------------------------- */
+
+.panel {
+	flow: vertical;
+	margin-bottom: 0.7em;
+	padding: 0.6em 0.7em;
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	background: var(--surface);
+}
+
+.panel > .legend {
+	color: var(--accent);
+	font-weight: bold;
+	margin-bottom: 0.45em;
+}
+
+.line {
+	flow: horizontal;
+	margin-bottom: 0.4em;
+}
+
+.line > * {
+	margin-right: 0.5em;
+}
+
+.line label {
+	color: var(--ink-soft);
+	margin-right: 0.25em;
+}
+
+input[type="text"] {
+	padding: 0.25em 0.4em;
+	border: 1px solid var(--field-line);
+	border-radius: var(--radius);
+	background: var(--field);
+	color: var(--ink);
+}
+
+input[type="text"]:hover {
+	background: var(--field-hover);
+}
+
+/* Sciter has `:focus`; the ring is a box-shadow because that IS on its supported property list, whereas
+   `outline`'s behaviour here is not something this file should assume. */
+input[type="text"]:focus {
+	border-color: var(--accent);
+	box-shadow: 0 0 0 2px rgba(137, 180, 250, 0.25);
+}
+
+input.num {
+	width: 5em;
+}
+
+input.wide {
+	width: *;
+}
+
+select {
+	padding: 0.2em 0.4em;
+	border: 1px solid var(--field-line);
+	border-radius: var(--radius);
+	background: var(--field);
+	color: var(--ink);
+}
+
+select:hover {
+	background: var(--field-hover);
+}
+
+select:focus {
+	border-color: var(--accent);
+}
+
+textarea {
+	height: 4em;
+	width: *;
+	padding: 0.3em 0.4em;
+	border: 1px solid var(--field-line);
+	border-radius: var(--radius);
+	background: var(--field);
+	color: var(--ink);
+	font-family: monospace;
+}
+
+textarea:focus {
+	border-color: var(--accent);
+}
+
+/* The primary button, and its three states. `:disabled` comes LAST of the four so it wins over hover and
+   active — a disabled control that still lights up under the pointer is the classic version of this bug,
+   and specificity here is a tie, so order decides. */
+button {
+	/* `appearance: none` first, as the SDK's own samples.sciter/input-elements-styling/button.htm does: a
+	   button's default look is drawn by the engine as an APPEARANCE, not as CSS properties — which is why a
+	   bare one reports `background-color: transparent` — and custom paint sits better with it turned off. */
+	appearance: none;
+	padding: 0.3em 0.9em;
+	border: none;
+	border-radius: var(--radius);
+	background: var(--accent);
+	color: var(--accent-ink);
+	font-weight: bold;
+	cursor: pointer;
+}
+
+button:hover {
+	background: var(--accent-hover);
+}
+
+button:active {
+	background: var(--accent-active);
+}
+
+button:focus {
+	box-shadow: 0 0 0 2px rgba(137, 180, 250, 0.35);
+}
+
+/* The secondary button: same shape, no accent. Its own three states, because it shares none of the
+   primary's colours. */
+button.ghost {
+	background: var(--line);
+	color: var(--ink);
+	font-weight: normal;
+}
+
+button.ghost:hover {
+	background: var(--field-hover);
+}
+
+button.ghost:active {
+	background: var(--line-soft);
+}
+
+button:disabled,
+button.ghost:disabled {
+	background: var(--line);
+	color: var(--ink-dim);
+	cursor: default;
+}
+
+/* The progress bar: a track with a fill whose WIDTH the host sets (in px — the host knows the track
+   width, and a percentage width on a child is the one thing that reads differently here). */
+.track {
+	width: 200px;
+	height: 0.7em;
+	margin-right: 0.6em;
+	border-radius: 4px;
+	background: var(--line);
+}
+
+#fill {
+	width: 0px;
+	height: *;
+	border-radius: 4px;
+	background: var(--good);
+}
+
+.status {
+	width: *;
+	color: var(--ink-soft);
+	font-size: 0.95em;
+}
+
+button.small {
+	padding: 0.15em 0.6em;
+	font-size: var(--text-small);
+	font-weight: normal;
+}
+
+/* ---- the about panel ---------------------------------------------------------------------------- */
+
+/* A block that REPLACES the panes rather than floating over them: an overlay would want
+   `position: fixed; height: 100%`, and a percentage height on an out-of-flow element resolves to 1px
+   here (measured — see the header). Toggling `hidden` on this and on `.panes` costs nothing and cannot
+   hit that trap. */
+.about {
+	display: none; /* the host shows it with an inline display; see set_shown's note */
+	size: *;
+	flow: vertical;
+	padding: 1.2em;
+	background: var(--surface);
+}
+
+.about-card {
+	width: 44em;
+	max-width: 100%;
+	flow: vertical;
+	padding: 1em 1.2em;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	background: var(--bg);
+}
+
+.about-head {
+	margin: 0.9em 0 0.3em;
+	color: var(--accent);
+	font-weight: bold;
+}
+
+.about-line {
+	margin-bottom: 0.35em;
+	color: var(--ink-soft);
+}
+
+.about-line a {
+	color: var(--accent);
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+/* ---- help: the hint bar, the per-panel help, and the engine's own tooltips ---------------------- */
+
+/* One line, and a FIXED height whether or not it has text — a bar that appears and disappears would
+   shove the report pane up and down as the pointer moves across the window. */
+.hintbar {
+	height: 1.6em;
+	padding: 0.25em 0.1em 0;
+	color: var(--ink-soft);
+	font-size: var(--text-small);
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+/* The `?` next to a panel's legend. `margin-left: 0.5em` rather than a gap, as ever. */
+.help-toggle {
+	margin-left: 0.5em;
+	font-weight: bold;
+}
+
+/* Hidden until the host sets an inline `display` — same mechanism as the About panel, for the same
+   reason (the `hidden` attribute cannot be read back). */
+.panel-help {
+	display: none;
+	margin-bottom: 0.5em;
+	padding: 0.5em 0.6em;
+	border-left: 3px solid var(--accent);
+	background: var(--sunken);
+	color: var(--ink-soft);
+}
+
+.panel-help code {
+	font-family: monospace;
+	color: var(--ink);
+}
+
+.panel-help b {
+	color: var(--ink);
+}
+
+/* `title="..."` on an element makes the ENGINE show a tooltip — no code, no element of our own. It
+   arrives as a `<popup role="tooltip">`, which is stylable like anything else; without this rule it is
+   the engine's default light chrome, which reads as a foreign body in a dark window. Rich or dynamic
+   tooltips are the same element authored by hand (`popup-position: at-bottom`, a `tooltiprequest`
+   handler) — see samples.sciter/tooltips++ in the SDK. */
+popup[role="tooltip"] {
+	padding: 0.3em 0.5em;
+	border: 1px solid var(--field-line);
+	border-radius: var(--radius);
+	background: var(--surface);
+	color: var(--ink);
+	font-size: var(--text-small);
+}
+
+/* ---- the transcript ----------------------------------------------------------------------------- */
+
+/* `<plaintext>` is the engine's code-editor element: scrolling, selection and a host-side interface
+   (`content=`, `lines`, `selectRange`) for free. The analysis report is aligned monospace text, so it
+   wants exactly this rather than a <div> — and it is the same widget a BML editor would need later. */
+#report {
+	size: *;
+	padding: 0.4em 0.5em;
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	background: var(--sunken);
+	color: var(--ink);
+	font-family: monospace;
+	font-size: var(--mono);
+	overflow: scroll-indicator;
+	white-space: pre;
+}

@@ -29,16 +29,8 @@ import "bidding"
 import "deal_solve"
 import "norn:cli"
 import "norn:combo"
-import "norn:norn"
+import "sim_hooks"
 import "suit_book"
-
-// The double-dummy par caption (deal_solve) followed by the naive combined-holding trick table (combo). Both
-// are `norn.Deal_Annotator`s writing to the same builder; combo needs no DDS, so the combo half still
-// renders when a deal reaches here. Registered for scenarios that want both (see `dd_annotators`).
-dd_and_combo_annotate :: proc(builder: ^strings.Builder, deal: norn.Deal, format: norn.Output_Format) {
-	deal_solve.annotate(builder, deal, format)
-	combo.annotate(builder, deal, format)
-}
 
 // The program proper: bind this bidding system's scenario registry and its double-dummy hooks to
 // norn's reusable CLI driver, and run it. Separated from `main`, which is only operational setup
@@ -49,32 +41,12 @@ run_sim :: proc() -> int {
 	deal_solve.init()
 	defer deal_solve.shutdown()
 
-	// Per-scenario double-dummy filters (policy: which DD condition each scenario's survivors must
-	// also pass). Only scenarios listed here get a second stage under --dd; the rest are unfiltered.
-	// The filter *implementations* live in the `deal_solve` package; this is just the name -> filter binding.
-	dd_filters := make(map[string]norn.Deal_Filter)
-	defer delete(dd_filters)
-	dd_filters["1major-game-force"] = deal_solve.ns_makes_game
-	dd_filters["slam-makes-dd"] = deal_solve.ns_makes_slam
-	// dd_filters["1major-gf-3plus-card-support"] = deal_solve.ns_makes_game
-	// dd_filters["1n-slam-try"] = deal_solve.ns_makes_slam
-	// dd_filters["2c-any-slam-try"] = deal_solve.ns_makes_slam
-	// dd_filters["slam-hands-32-plus-hcp"] = deal_solve.ns_makes_slam
+	// The per-scenario --dd filters and annotators. In their own package because `workbench.odin`
+	// generates deals too and a second copy of the table is one a new scenario gets added to once.
+	hooks := sim_hooks.make_hooks()
+	defer sim_hooks.free_hooks(&hooks)
 
-	// Per-scenario double-dummy annotators (policy: which scenarios get the DD caption in their HTML).
-	// Per-scenario, not global, so under --dd the batch export still pools every scenario NOT listed
-	// here (annotators, like filters, make the scenario call DDS -> serial). List every scenario name
-	// to caption them all — they then serialise, each still parallel inside DDS. `deal_solve.annotate` is the
-	// single uniform caption; a scenario could instead be given a bespoke annotator.
-	dd_annotators := make(map[string]norn.Deal_Annotator)
-	defer delete(dd_annotators)
-	dd_annotators["1major-game-force"] = dd_and_combo_annotate
-	dd_annotators["slam-makes-dd"] = dd_and_combo_annotate
-	// dd_annotators["1n-slam-try"] = deal_solve.annotate
-	// dd_annotators["2c-any-slam-try"] = deal_solve.annotate
-	// dd_annotators["slam-hands-32-plus-hcp"] = deal_solve.annotate
-
-	return cli.main_program(bidding.registry, cli.Gen_Hooks{dd_filters = dd_filters, dd_annotators = dd_annotators})
+	return cli.main_program(bidding.registry, sim_hooks.gen_hooks(&hooks))
 }
 
 main :: proc() { 	// Operational setup only; program semantics live in `run_sim` above
