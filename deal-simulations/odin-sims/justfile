@@ -60,6 +60,10 @@ sciter := "-collection:sciter=" + sciter_home
 # inline `VAR=x cmd` prefix is not valid in cmd.exe (the Windows shell these recipes run in).
 export SCITER_LIB := sciter_home + (if os() == "windows" { "/lib/windows/x64" } else if os() == "macos" { "/lib/macosx" } else { "/lib/linux/x64" })
 
+# Where the Sciter SDK is checked out. Only the `inspector` recipe needs it: odin-sciter vendors the ENGINE
+# but not the SDK's tools, and the inspector is a separate application that attaches over a socket.
+sciter_sdk_dir := env_var_or_default("SCITER_SDK_DIR", home / "dev/sciter-js-sdk")
+
 sim_name := "sim.exe"
 analyse_name := "analyse_deal.exe"
 workbench_name := "workbench.exe"
@@ -152,7 +156,7 @@ format:
 # The benches are listed because nothing else type-checks them. `-vet-tabs` is the only compiler-side
 # enforcement of .editorconfig's `indent_style = tab`; it is not implied by `-strict-style`.
 # ---
-# type check + vet + strict style (bidding, suit_book, deal_solve, analyse, sim_hooks, sim.odin, analyse_deal.odin, workbench.odin, benches)
+# type check + vet + strict style (bidding, suit_book, deal_solve, analyse, sim_hooks, sim.odin, analyse_deal.odin, workbench.odin, page_check.odin, benches)
 [group('dev')]
 lint *args:
 	odin check bidding {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
@@ -163,6 +167,7 @@ lint *args:
 	odin check analyse_deal.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check sim_hooks {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check workbench.odin -file {{norn}} {{dds}} {{sciter}} -vet -vet-cast -strict-style -vet-tabs {{args}}
+	odin check page_check.odin -file {{norn}} {{dds}} {{sciter}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check bench.odin -file {{norn}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check bench_e2e.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 
@@ -245,6 +250,20 @@ workbench *args: mktarget_dirs
 [group('workbench')]
 workbench-debug *args: mktarget_dirs
 	odin run workbench.odin -file {{norn}} {{dds}} {{sciter}} -keep-executable -debug -linker:{{linker}} -out:{{ target_path("debug", workbench_name) }} -- {{args}}
+
+# The SDK's inspector: a DevTools-style DOM tree, computed styles, a script console and a debugger, over a
+# socket, against a RUNNING workbench. Needs `just workbench-debug` on the other side (the release build
+# deliberately grants neither the window flag, the debug mode, nor the script's socket access -- see the
+# comment in workbench.odin). Start this first if it does not pick the window up, or press CTRL+SHIFT+I in
+# the window to connect the current view by hand.
+#
+# The tool is NOT vendored in odin-sciter (its lib/ carries the engine only): it comes from a Sciter SDK
+# checkout, SCITER_SDK_DIR, default `<home>/dev/sciter-js-sdk`.
+# ---
+# run the SDK's inspector against a running `just workbench-debug`
+[group('workbench')]
+inspector:
+	{{ sciter_sdk_dir }}/bin/{{ if os() == "windows" { "windows/x64/inspector.exe" } else if os() == "macos" { "macosx/inspector.app/Contents/MacOS/inspector" } else { "linux/x64/inspector" } }}
 
 # run the last-built workbench WITHOUT recompiling (Odin has no build cache, so `just workbench` always
 # rebuilds). Same env: the engine still has to be findable.
@@ -525,6 +544,22 @@ test-deal-solve *args: mktarget_dirs
 [group('test')]
 test-workbench *args: mktarget_dirs
 	odin test workbench.odin -file {{norn}} {{dds}} {{sciter}} -debug -define:ODIN_TEST_THREADS=1 -show-timings -linker:{{linker}} -out:{{ target_path("debug", "test-workbench.exe") }} {{args}}
+
+# Does the norn CARD PAGE still lay out inside Sciter? The workbench hosts it in a <frame>, and it fits
+# only because of the `@media sciter` override block in norn/html_cards_header.html.tmpl plus the footer's
+# JS shims — neither of which fails loudly: an unported page lays out wrong (a 70px-wide board, 950px-tall
+# hands) rather than refusing to load. This renders a deal the way the workbench does, loads it into a
+# windowless view with the media var set, and asserts the board's box, the trick slider's control type and
+# that pressing CCA really shows the overlay. No display needed.
+#
+# A program rather than a test because loading this page into the engine from an Odin TEST-RUNNER thread
+# crashes inside the engine, by every route in, while the same calls on a main thread (here, and in the
+# workbench) are fine — see `page_check.odin`'s header.
+# ---
+# check that the hosted card page still lays out in Sciter (the @media sciter port)
+[group('test')]
+page-check *args: mktarget_dirs
+	odin run page_check.odin -file {{norn}} {{dds}} {{sciter}} -o:speed -microarch:native -linker:{{linker}} -out:{{ target_path("release", "page-check.exe") }} -- {{args}}
 
 # The window and the command line must produce the same bytes. `test-workbench` writes
 # target/debug/wb-parity.html through the workbench's IN-PROCESS path (cli.parse_args + cli.run, exactly

@@ -10,3 +10,8 @@ bml.css
 .pytest*
 .ruff_cache
 .venv
+
+# ...except the desktop workbench's UI document, which is SOURCE and not a build artifact: `*.html` above
+# is there for the generated BML output, but `deal-simulations/odin-sims/ui/workbench.html` is `#load`ed
+# INTO workbench.exe, so a checkout without it cannot compile the workbench at all.
+!deal-simulations/odin-sims/ui/workbench.html

@@ -1,0 +1,214 @@
+<html>
+<head>
+<!-- NOT optional, and its absence is silent: with no charset the engine decodes the document with the
+     system codepage, so on a Windows-1252 machine every em dash in the help text below arrives as `â€"`
+     and every `·` as `Â·`. The bytes are fine; the declaration is what was missing. -->
+<meta charset="utf-8">
+<title>Bridge workbench</title>
+<style>
+/*CSS*/
+</style>
+</head>
+<body>
+  <!-- HELP LIVES HERE, in the document, next to the thing it describes — not in an Odin table that would
+       drift out of step with the markup. Three layers, cheapest first:
+
+         title="..."      the engine's own tooltip, on hover-and-wait. Free: no code at all.
+         data-hint="..."  one sentence, shown in the hint bar at the bottom the moment the control is
+                          hovered OR focused. No waiting, and it works for someone tabbing through.
+         .panel-help      two or three sentences per panel, behind the `?` — what the whole task IS,
+                          in bridge terms rather than flag terms.
+
+       `test_every_control_is_documented` fails if a control has a title without a hint or vice versa, so
+       a new control cannot ship undocumented. -->
+
+  <header>
+    <span class="title">Bridge workbench</span>
+    <span class="engine" id="engine"></span>
+    <button id="about" class="ghost small" title="Versions and third-party credits"
+            data-hint="Versions, and the licence credits for the engine and the double-dummy solver.">about</button>
+  </header>
+
+  <!-- The About panel. Not decoration: the Sciter engine's EULA requires a link to Terra Informatica in
+       an About dialog, with the wording below, and this is the only place in the app that can carry it.
+       `#about-sciter-link` is handled by the host (it opens the system browser); the rest is static.
+       Hidden by `.about { display: none }` until the host shows it (an inline `display`, not the `hidden`
+       attribute — see set_shown), and it REPLACES the panes rather than floating over them: an overlay
+       would want a percentage height out of flow, which Sciter collapses to 1px. -->
+  <div class="about" id="about-panel">
+    <div class="about-card">
+      <div class="legend">Bridge workbench</div>
+      <div class="about-line" id="about-versions"></div>
+      <div class="about-line">
+        The deal generator and the single-deal advisor of this bidding-system repository, in one window.
+      </div>
+
+      <div class="about-head">Third-party components</div>
+      <div class="about-line">
+        This Application uses Sciter Engine
+        (<a href="https://sciter.com/" id="about-sciter-link">http://sciter.com/</a>),
+        copyright Terra Informatica Software, Inc.
+      </div>
+      <div class="about-line">
+        Double-dummy analysis by the DDS solver (Bo Haglund, Soren Hein), via the odin-dds bindings.
+      </div>
+      <div class="about-line" id="about-book"></div>
+
+      <div class="line">
+        <button id="about-close">close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- The card page, IN this window. `<frame>` is Sciter's sub-document element: the host puts a document
+       into it with the frame behavior's `loadHtml` (a string — no temp file) or `loadFile`, and
+       `frame.document` comes back as an element, so the outer window can still read what it is showing.
+       Hidden the same way the About panel is (an inline `display`, never the `hidden` attribute), and it
+       REPLACES the panes for the same reason: a floating overlay wants a percentage height out of flow,
+       which this engine lays out 1px tall.
+
+       The page it shows is the norn card page — a browser page. It lays out here because of the
+       `@media sciter { ... }` block in `norn/html_cards_header.html.tmpl`, which only applies when a host
+       sets the `sciter` media var (see `set_media_vars` in main). -->
+  <div class="pageview" id="pageview">
+    <div class="pagebar">
+      <span class="title" id="page-title">card page</span>
+      <!-- Debug builds only (the host shows it; the stylesheet hides it): writes the hosted page's geometry
+           and the handful of computed styles that differ in this engine into the transcript and to stderr.
+           A windowless probe cannot see a real window's hover, drag or scrollbars, so this is how a live
+           window's numbers get out of it and into a bug report. -->
+      <button id="page-dump" class="ghost small" title="Dump this page's geometry to the transcript"
+              data-hint="Write the hosted page's boxes and computed styles into the transcript below (and to stderr) — for reporting a layout bug from the real window.">dump</button>
+      <button id="page-close" title="Back to the controls"
+              data-hint="Close the page and go back to the generate and analyse panels.">close</button>
+    </div>
+    <frame id="page"></frame>
+  </div>
+
+  <div class="panes">
+    <!-- Filled by the host from `bidding.registry`: one row per scenario, carrying its index. -->
+    <aside>
+      <div class="head">scenarios</div>
+      <div id="scenarios"
+           data-hint="Each scenario is a bidding situation from this system. Pick one, then press generate."></div>
+    </aside>
+
+    <div class="work">
+      <!-- Generate: the controls become an argv slice, which `cli.parse_args` validates. Nothing here
+           re-implements a flag. -->
+      <div class="panel">
+        <div class="legend">
+          generate deals
+          <button class="help-toggle ghost small" id="help-generate" title="What does generating do?"
+                  data-hint="Explain what this panel is for.">?</button>
+        </div>
+        <div class="panel-help" id="help-generate-text">
+          Deals thousands of random hands, keeps only the ones that fit the scenario you picked — "North
+          opens 1C", say — and writes the survivors to a page you can click through, one deal at a time.
+          48 is a normal practice set. The page draws each hand as cards and, on the html-cards format,
+          adds the trick table and the card-combination advice for the play.
+        </div>
+        <div class="line">
+          <label for="count">deals</label>
+          <input type="text" id="count" class="num" value="48" title="How many matching deals to keep"
+                 data-hint="How many deals to KEEP. The generator keeps dealing until it has this many that fit the scenario, so a rare scenario deals many more than this.">
+          <label for="format">format</label>
+          <select id="format" title="What kind of page or file to write"
+                  data-hint="html-cards is the interactive page — cards, trick table, play advice. html-handviewer is lighter. pretty, line and pbn are plain text for other tools.">
+            <option value="html-cards">html-cards</option>
+            <option value="html-handviewer">html-handviewer</option>
+            <option value="pretty">pretty</option>
+            <option value="line">line</option>
+            <option value="pbn">pbn</option>
+          </select>
+          <label for="seed">seed</label>
+          <input type="text" id="seed" class="num" placeholder="fresh" title="Repeat the same deals"
+                 data-hint="Leave empty for different deals every run. Put a number in to get the SAME deals back — for comparing a change, or re-finding a hand.">
+        </div>
+        <div class="line">
+          <label for="outdir">output dir</label>
+          <input type="text" id="outdir" class="wide"
+                 title="Where the pages are written; created if missing"
+                 data-hint="Where the pages are written. Created if it does not exist; a relative path is taken from this program's working directory."
+                 placeholder="created if missing; a relative path resolves against the working directory">
+        </div>
+        <div class="line">
+          <input type="checkbox" id="dd" title="Also run the double-dummy solver"
+                 data-hint="Also run the solver: it filters deals the scenario asks it to (only hands where game actually makes, say) and prints the par result on the page. Slower.">
+          <label for="dd">double-dummy hooks (--dd)</label>
+          <input type="checkbox" id="fixed" title="Same dealer and vulnerability every deal"
+                 data-hint="Keep dealer and vulnerability the same on every deal instead of rotating them — one less thing changing while you practise.">
+          <label for="fixed">fixed table</label>
+          <input type="checkbox" id="all" title="Every scenario, one page each"
+                 data-hint="Ignore the selection and run every scenario in the list, one page each. This is the batch that fills the deals folder.">
+          <label for="all">every scenario</label>
+        </div>
+        <div class="line">
+          <button id="generate" title="Deal and write the pages"
+                  data-hint="Start dealing. Progress is per scenario, and the transcript below names each page as it is written.">generate</button>
+          <button id="cancel" class="ghost" disabled title="Stop after the current scenario"
+                  data-hint="Asks the run to stop. It finishes the scenario it is on first — one page, not the whole batch.">cancel</button>
+          <!-- Follows the SELECTION, not this run: it opens the page for whichever scenario is picked in the
+               list, whether this run wrote it, an earlier batch did, or nobody has yet (it says so). No
+               `disabled` — the fields it depends on are all editable, so it resolves on the click. -->
+          <button id="view-page" class="ghost" title="Show the selected scenario's page"
+                  data-hint="Open the page for the scenario selected in the list — from this run or any earlier one. Says so if there is none yet.">view page</button>
+          <div class="track" title="Progress through the scenarios"
+               data-hint="How far through the scenarios this run is."><div id="fill"></div></div>
+          <span class="status" id="status" data-hint="What the last run did, or why it would not start.">idle</span>
+        </div>
+      </div>
+
+      <!-- Analyse: one deal you already have. PBN tag, bare N:..., a LIN record, or a pasted
+           bridge-site hand URL — whatever `analyse.resolve_boards` accepts. -->
+      <div class="panel">
+        <div class="legend">
+          analyse one deal
+          <button class="help-toggle ghost small" id="help-analyse" title="What does analysing do?"
+                  data-hint="Explain what this panel is for.">?</button>
+        </div>
+        <div class="panel-help" id="help-analyse-text">
+          Takes one deal you already have — from a club result, a screenshot, a hand you misplayed — and
+          reports how the play goes. Give it declarer and dummy only (write both defenders as a single
+          <code>-</code>) and it works out every way the defenders' cards can lie. Give it all four hands
+          and it solves the deal exactly. With <b>sample</b> above 0 it also deals the unknown cards out
+          hundreds of times and solves each one, which is the honest "how often does this contract make".
+          <b>Or drop a file on this window</b>: a screenshot of a hand diagram is read by hand-ocr and
+          analysed with the settings below (the deal it read lands in the box, so a misread card can be
+          corrected and re-analysed); a .pbn or .lin is analysed straight; an .html page is opened.
+        </div>
+        <div class="line">
+          <textarea id="deal" title="A PBN tag, a bare N:..., a LIN record, or a hand URL"
+                    data-hint="Paste a deal: a PBN [Deal] tag, a bare N:… value, a LIN record, or the whole URL of a hand from BBO or IntoBridge — or drop a screenshot of a hand diagram anywhere on this window."
+                    placeholder='[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]  ·  or a bare N:..., a LIN record, a hand URL — or drop a screenshot on the window'></textarea>
+        </div>
+        <div class="line">
+          <label for="sample">sample</label>
+          <input type="text" id="sample" class="num" value="0" title="How many layouts to solve; 0 = off"
+                 data-hint="0 means card-combination advice only, no solver. 200 to 500 deals the unknown cards out that many times and solves each, giving a real make percentage.">
+          <label for="contract">contract</label>
+          <input type="text" id="contract" class="num" placeholder="auto" title="The contract to score, e.g. 4H"
+                 data-hint="Which contract to score, e.g. 4H or 3NT. Leave it empty and the best one for the sample is picked for you.">
+          <label for="target">target</label>
+          <input type="text" id="target" class="num" value="0" title="Highlight the column for this many tricks"
+                 data-hint="Highlight the trick count you need: 9 for 3NT, 10 for four of a major, 12 for a small slam.">
+          <input type="checkbox" id="as-page" title="Show the interactive card page instead of the text report"
+                 data-hint="Draw the deal as the interactive card page in this window — cards, the trick table and the play advice — instead of writing the text report into the pane below.">
+          <label for="as-page">as card page</label>
+          <button id="analyse" title="Analyse the deal above"
+                  data-hint="Read the deal above and write the report into the pane below.">analyse</button>
+          <button id="clear" class="ghost" title="Empty the transcript"
+                  data-hint="Empties the pane below. Nothing on disk is touched.">clear</button>
+        </div>
+      </div>
+
+      <plaintext id="report" title="The report, and the log of what each run wrote"
+                 data-hint="Reports and run log. Selectable, so you can copy a line out."></plaintext>
+
+      <!-- The hint bar. One line, always the same height so nothing below it moves, written by the host
+           from the `data-hint` of whatever the pointer or the keyboard is on. -->
+      <div class="hintbar" id="hint"></div>
+    </div>
+  </div>
+</body>
+</html>

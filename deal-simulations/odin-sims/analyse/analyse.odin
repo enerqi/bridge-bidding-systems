@@ -51,9 +51,14 @@ PROGRAM :: "analyse_deal"
 // Where a run's output goes. `out` takes the report; `err` takes diagnostics — a per-board warning, a
 // sampling failure, the "wrote <path>" confirmation — the things a terminal sends to stderr. A GUI
 // passes the same writer twice and gets them interleaved in one pane, which is what you want on screen.
+// `page` is the third destination and the only one a terminal has no use for: the interactive card page
+// as TEXT, for a host that shows it in a window rather than writing a file (the workbench loads it into a
+// Sciter `<frame>`). Set it and `run` renders the page there INSTEAD of to `args.html_path` — a caller
+// asking for the page in memory is not also asking for it on disk. Zero value = no page wanted.
 Sink :: struct {
-	out: io.Writer,
-	err: io.Writer,
+	out:  io.Writer,
+	err:  io.Writer,
+	page: io.Writer,
 }
 
 // The Sink a command-line driver wants: report on stdout, diagnostics on stderr.
@@ -62,10 +67,24 @@ stdio_sink :: proc() -> Sink {
 }
 
 // A Sink that appends everything — report and diagnostics both — to one builder. For the GUI, and for
-// tests that assert on report text.
+// tests that assert on report text. `page` is left unset: pass `page_sink` as well to ask for the page.
 builder_sink :: proc(b: ^strings.Builder) -> Sink {
 	w := strings.to_writer(b)
 	return Sink{out = w, err = w}
+}
+
+// `builder_sink` plus a second builder for the card page, which is what a windowed host wants: the
+// diagnostics in its transcript pane and the page in its frame.
+builder_page_sink :: proc(b: ^strings.Builder, page: ^strings.Builder) -> Sink {
+	sink := builder_sink(b)
+	sink.page = strings.to_writer(page)
+	return sink
+}
+
+// Whether this Sink asked for the card page in memory. An `io.Writer` is a stream struct, so "unset" is
+// a nil procedure rather than a nil pointer.
+wants_page :: proc(sink: Sink) -> bool {
+	return sink.page.procedure != nil
 }
 
 // How a run ended. The values match `analyse_deal.odin`'s `Exit` (and `norn:cli`'s EXIT_* convention):
@@ -146,6 +165,16 @@ run :: proc(sink: Sink, args: ^Args) -> Result {
 		if needs_dds {
 			deal_solve.shutdown()
 		}
+	}
+
+	// The page in memory (a windowed host). Same `render_page` `write_html` calls, minus the file — so
+	// what the frame shows and what `--html` writes cannot drift.
+	if wants_page(sink) {
+		page := render_page(boards[:], args, contract, has_contract, sink)
+		defer delete(page)
+		fmt.wprint(sink.page, page)
+		fmt.wprintfln(sink.err, "rendered the card page (%d board%s)", len(boards), "" if len(boards) == 1 else "s")
+		return .Ok
 	}
 
 	if args.html_path != "" {

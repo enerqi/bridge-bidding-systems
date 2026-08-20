@@ -99,9 +99,14 @@ header .title {
 	color: var(--ink);
 }
 
+/* The scenario count. `margin-right` because the About button sits immediately after it in this row and the
+   two touched — then overlapped — on a narrow window; the engine's own version used to be in this text and
+   now lives only in the About panel, where it is not competing for the same strip. */
 header .engine {
+	margin-right: 0.7em;
 	color: var(--ink-dim);
 	font-size: var(--text-small);
+	white-space: nowrap;
 }
 
 /* ---- the two columns ---------------------------------------------------------------------------- */
@@ -377,6 +382,46 @@ button.small {
 	color: var(--accent);
 	text-decoration: underline;
 	cursor: pointer;
+}
+
+/* ---- the card page, hosted in a <frame> ---------------------------------------------------------- */
+
+/* Same shape as `.about`: shown with an inline `display`, and it replaces the panes rather than floating
+   over them. The frame fills what is left below its own one-line bar. */
+.pageview {
+	display: none;
+	size: *;
+	flow: vertical;
+	background: var(--surface);
+}
+
+.pagebar {
+	flow: horizontal;
+	padding: 0.4em 0.7em;
+	border-bottom: 1px solid var(--line);
+}
+
+/* The geometry dump is a DEBUG affordance: hidden here, and shown by the host only in a `-debug` build
+   (`set_shown`, an inline display — see its note). Release builds never reveal it. */
+#page-dump {
+	display: none;
+	margin-right: 0.5em;
+}
+
+.pagebar .title {
+	width: *;
+	color: var(--ink-soft);
+	font-size: var(--text-small);
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+/* The framed document brings its own (light) stylesheet, so this element gets no colours of its own —
+   only a size. `size: *` is what makes the sub-document fill the window; a frame with no size collapses
+   to nothing and the page reads as "the button did nothing". */
+frame#page {
+	size: *;
+	border: 0;
 }
 
 /* ---- help: the hint bar, the per-panel help, and the engine's own tooltips ---------------------- */

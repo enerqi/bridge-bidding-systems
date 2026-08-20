@@ -112,6 +112,54 @@ ________________________________________________________________________________
 SPALL_ENABLE :: #config(SPALL_ENABLE, false)
 
 /*
+Whether to put the Windows console into UTF-8 for the duration of the process.
+
+`fmt` emits UTF-8 bytes and `core:os` hands them to `WriteFile` unconverted, so a console left on the
+OEM codepage decodes them one byte at a time: `859.7µs` prints as `859.7┬Ás`. Nothing to fix on the
+POSIX side, hence the platform-shaped default.
+
+`@(init)` rather than a step in `main`, because `odin test` builds get their entry point from
+`core:testing` and never call our `main` - and the test runner's timing summary is the output that
+shows the mojibake most often.
+
+The codepage belongs to the console rather than the process, so `main` puts it back on the way out -
+otherwise every run leaves the shell it was launched from on a codepage it did not ask for. A `test`
+build cannot: `core:testing` ends through `os.exit`, which reaches no `@(fini)` and no defer, so a
+test run does leave the console on UTF-8.
+*/
+CONSOLE_UTF8 :: #config(CONSOLE_UTF8, ODIN_OS == .Windows)
+
+when CONSOLE_UTF8 && ODIN_OS == .Windows {
+	// `.ACP` is 0, which is what `GetConsoleOutputCP` returns on failure - stdout being a pipe rather
+	// than a console. Nothing was changed in that case, so there is nothing to put back.
+	@(private = "file")
+	console_codepage_before: win.CODEPAGE
+	@(private = "file")
+	console_input_codepage_before: win.CODEPAGE
+
+	@(init)
+	@(cold)
+	set_console_utf8 :: proc "contextless" () {
+		console_codepage_before = win.GetConsoleOutputCP()
+		console_input_codepage_before = win.GetConsoleCP()
+		win.SetConsoleOutputCP(.UTF8)
+		win.SetConsoleCP(.UTF8) // input as well, so non-ASCII typed or piped into the program decodes
+	}
+
+	@(cold)
+	restore_console_codepage :: proc "contextless" () {
+		if console_codepage_before != .ACP {
+			win.SetConsoleOutputCP(console_codepage_before)
+		}
+		if console_input_codepage_before != .ACP {
+			win.SetConsoleCP(console_input_codepage_before)
+		}
+	}
+} else {
+	restore_console_codepage :: proc "contextless" () {}
+}
+
+/*
 How allocations are tracked. One setting with three states rather than two booleans, because two
 booleans describe four combinations and only three of them mean anything - "no tracking, but with
 backtraces" used to compile silently and do nothing.
