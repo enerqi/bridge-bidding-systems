@@ -1,0 +1,214 @@
+# Go port of the datastar bidding quiz.
+#
+# Reachable from the repo root as a just module (`mod dsgo 'apps/datastar-quiz-golang'` there):
+#     just dsgo serve, just dsgo test, ...
+#
+# SHELL, as in apps/datastar-quiz and deal-simulations/odin-sims: `cmd.exe` starts in ~9ms and is
+# always available, and just launches a shell per recipe line.
+#  - alternatives: `nu -c` ~41ms, `powershell -NoLogo -NoProfile -Command` ~143ms
+#  - cost: poor language for a multi-line recipe, hence `[script]` -> python for anything with logic
+[windows]
+set shell := ["cmd.exe", "/c"]
+[unix]
+set shell := ["bash", "-c"]
+set minimum-version := "1.49.0"  # [script] (1.49); also [group] 1.27, set lazy 1.47
+set unstable  # [script]
+set lazy
+# `python` alone is not a reliable cross-platform lookup (cf. python/python3/python3.x). uv resolves
+# and downloads on every platform, and --no-project means no pyproject.toml / local .venv lookup --
+# these scripts are justfile plumbing, NOT part of the app's environment.
+set script-interpreter := ["uv", "run", "--no-project", "-p", "3.14", "python"]
+
+# `source_directory()`, NOT `justfile_directory()`: when this file is used as a module from the repo
+# root (`just dsgo test`), `justfile_directory()` is the ROOT justfile's directory.
+project := source_directory()
+repo := parent_directory(parent_directory(source_directory()))
+# 5060, not 5008: the python port keeps that one, and running the two side by side is the whole
+# point (`DSQUIZ_PERF_HOST=http://127.0.0.1:5060 just dsperf smoke`).
+port := env_var_or_default("DSQUIZ_PORT", "5060")
+
+# interactive chooser (assumes fzf)
+[group('dev')]
+[script]
+default:
+	import os, subprocess
+
+	justfile = r"{{ join(source_directory(), 'justfile') }}"
+	env = {**os.environ}
+	env.setdefault("JUST_CHOOSER", 'fzf --multi --preview "just --justfile ' + justfile + ' --show {}"')
+	try:
+		rc = subprocess.run(["just", "--justfile", justfile, "--choose"], env=env).returncode
+	except KeyboardInterrupt:
+		rc = 130
+	raise SystemExit(rc)
+
+# run the server (every core, client-side countdown, no debug panel)
+[group('serve')]
+serve *args:
+	cd {{project}} && go run ./cmd/quizd --port {{port}} {{args}}
+
+alias s := serve
+
+# THE LIKE-FOR-LIKE RUN. The python app is one asyncio loop in one process -- one core, whatever the
+# machine has (measured: the granian worker pins at ~89% of one core and 3.7% of 24). Go will use all
+# 24 by default, so a naive comparison says "Go is 20x faster" when it means "Go used 20 cores".
+# This is the number that says what the RUNTIME costs; `serve` is the deployment question.
+# ---
+# run the server pinned to ONE core -- the honest comparison against the python
+[group('serve')]
+serve-1core *args:
+	cd {{project}} && go run ./cmd/quizd --port {{port}} --procs 1 {{args}}
+
+# run with the debug panel armed for every session, and /debug/pprof registered
+[group('serve')]
+dev *args:
+	cd {{project}} && go run ./cmd/quizd --port {{port}} --debug 1 {{args}}
+
+alias d := dev
+
+# run with the held-SSE countdown instead of the client interval.
+#
+# This is the mode nobody would ship on python -- every open tab is a connection pushing a signal
+# patch every 100ms at a single event loop -- and the one the harness has a scenario for that has
+# never been run in anger. Here it is a goroutine and a ticker.
+# ---
+# run with the held-SSE countdown (DSQUIZ_TIMER=stream)
+[group('serve')]
+serve-streamed *args:
+	cd {{project}} && go run ./cmd/quizd --port {{port}} --timer stream {{args}}
+
+# run the compiled binary rather than `go run`, as a deployment would
+[group('serve')]
+serve-prod *args: build
+	cd {{project}} && quizd --addr 0.0.0.0 --port {{port}} {{args}}
+
+# run prefixed and with the debug panel forbidden, exactly as the deployment box would
+[group('serve')]
+serve-deployed *args:
+	cd {{project}} && go run ./cmd/quizd --port {{port}} --prefix bridge-system-quiz --debug 0 {{args}}
+
+# build the binary (the corpus, the templates and the assets are embedded, so this is the deployment)
+[group('build')]
+build:
+	cd {{project}} && go build -o quizd ./cmd/quizd
+
+# run the tests
+[group('qa')]
+test *args:
+	cd {{project}} && go test ./... {{args}}
+
+alias t := test
+
+# run the tests under the race detector.
+#
+# The handoff asks for this and it is the right tool: the session store, the filter memo and the
+# derived topic rows are all touched by many goroutines at once, which the python never had to think
+# about. NOTE on this machine the race runtime does not start -- `exit status 0xc0000139` even for an
+# empty package, which is the mingw-8.1 in PATH rather than anything in this repo. Until that is
+# replaced, `internal/web.TestConcurrentBrowsersAndTabs` is the standing check: the Go runtime throws
+# on a concurrent map write without -race, and an unguarded store or memo would produce exactly that.
+# ---
+# run the tests under the race detector (needs a working C toolchain -- see the note in the recipe)
+[group('qa')]
+test-race *args:
+	cd {{project}} && go test -race ./... {{args}}
+
+# the microbenchmarks: scoring, question generation, and the filter -- which is where the CPU goes.
+#
+# `engine` and `bidfilter` are deliberately free of net/http so these run with no server in the way
+# and can be compared against the python's own numbers (check_filter("1C") 15.8ms warm, a topic 43ms,
+# over 7,627 auctions; prepare_sequence_bids 4.25s for both systems).
+# ---
+# run the microbenchmarks
+[group('qa')]
+bench *args:
+	cd {{project}} && go test -bench . -benchmem -run XXX ./internal/... {{args}}
+
+# gofmt, go vet and (if it is installed) staticcheck
+[group('qa')]
+[script]
+qa:
+	import shutil, subprocess, sys
+
+	project = r"{{project}}"
+	failed = []
+
+	unformatted = subprocess.run(
+		["gofmt", "-l", "."], cwd=project, capture_output=True, text=True
+	).stdout.strip()
+	if unformatted:
+		print("gofmt -l:\n" + unformatted)
+		failed.append("gofmt")
+
+	if subprocess.run(["go", "vet", "./..."], cwd=project).returncode:
+		failed.append("go vet")
+
+	# staticcheck is not vendored and not fetched on demand: a qa recipe that reaches the network is
+	# a qa recipe that fails on a train. Install it once (`go install honnef.co/go/tools/cmd/staticcheck@latest`)
+	# and it joins in.
+	if shutil.which("staticcheck"):
+		if subprocess.run(["staticcheck", "./..."], cwd=project).returncode:
+			failed.append("staticcheck")
+	else:
+		print("staticcheck not installed -- skipped (go install honnef.co/go/tools/cmd/staticcheck@latest)")
+
+	raise SystemExit("failed: " + ", ".join(failed) if failed else 0)
+
+alias q := qa
+
+# format the source
+[group('qa')]
+format:
+	cd {{project}} && gofmt -w .
+
+# take a 30s CPU profile of a RUNNING server and open it.
+#
+# This is the half of the comparison where Go is simply better, and it is worth saying why. The
+# python side spent a day on it: py-spy is a sampling profiler that PAUSES the process to read
+# stacks, and with one asyncio loop on one core the pause IS the outage -- at 100Hz against 100 users
+# the P90 went from ~50ms to 18 SECONDS. Its --nonblocking mode does not pause and then loses ~35% of
+# samples to torn reads. The workable answer was yappi, an instrumenting profiler at several times
+# slower, so it can answer "where does the time go" and never "how fast is it".
+#
+# Here it is a live, unmodified, full-speed server. Needs `just dev` (or --pprof) for the endpoint.
+# ---
+# CPU profile a running server for SECONDS and open the viewer (needs `just dev`)
+[group('qa')]
+pprof seconds="30":
+	go tool pprof -http=: "http://127.0.0.1:{{port}}/debug/pprof/profile?seconds={{seconds}}"
+
+# the scheduler view -- what to reach for under the held timer streams, and the thing the python
+# could not have had at all
+# ---
+# capture and open an execution trace of a running server (needs `just dev`)
+[group('qa')]
+trace seconds="10":
+	cd {{project}} && curl -o trace.out "http://127.0.0.1:{{port}}/debug/pprof/trace?seconds={{seconds}}" && go tool trace trace.out
+
+# REGENERATE THE SHARED CORPUS. The auctions and topics are exported from the python app -- the
+# implementation that owns the BML parser -- and checked in here, so the two provably draw questions
+# from the same corpus. Run this after editing a .bml file or a topics toml.
+#
+# It also refreshes the filter goldens, which is what holds the ported matcher to the reference: 132
+# probes over both systems, each recording the status and a digest of the exact auctions selected.
+# ---
+# re-export the corpus + the filter goldens from the python app
+[group('corpus')]
+[script]
+export-corpus:
+	import subprocess, sys
+	from pathlib import Path
+
+	python_app = Path(r"{{repo}}") / "apps" / "datastar-quiz"
+	for tool in ("tools/export_corpus.py", "tools/export_filter_goldens.py"):
+		rc = subprocess.run(
+			["uv", "run", "--project", str(python_app), "--directory", str(python_app), "python", tool]
+		).returncode
+		if rc:
+			raise SystemExit(rc)
+	print("now: just dsgo test  (the goldens are asserted in internal/corpus)")
+
+# tidy the module and verify the sums
+[group('build')]
+tidy:
+	cd {{project}} && go mod tidy && go mod verify

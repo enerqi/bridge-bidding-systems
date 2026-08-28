@@ -446,6 +446,104 @@ Five patterns, worth carrying forward:
   it is" has to be unique across everything that can send one — and when it does catch something,
   saying nothing is its own bug (the page stays wrong, so the next click is stale too).
 
+## The third implementation: the same app in Go
+
+`apps/datastar-quiz-golang/` is this architecture again on `net/http` + the datastar Go SDK -- same
+routes, same corpus (exported from here and embedded there), same choreography, driven by the same
+`apps/dsquiz-perf` harness unchanged. Its `RESULTS.md` has the runs; the short version, measured
+2026-08-28 on this machine:
+
+| | python (litestar, one loop) | go, ONE core | go, 24 cores |
+|---|---|---|---|
+| aggregate P50 / P95, 400 users | 4 ms / 72 ms | 1 ms / 4 ms | -- |
+| aggregate P50 / P95, 1000 users | 15 ms / 380 ms | 2 ms / 5 ms | 1 ms / 3 ms |
+| `POST /answer` TTFB, 1000 users | P50 10 ms, P95 300 ms | P50 1 ms, P95 4 ms | P50 1 ms, P95 2 ms |
+| `check_filter("1C")` over 7,627 auctions | 15.8 ms | 0.38 ms | -- |
+| parse + prepare both corpora at boot | ~5.5 s | ~70 ms | -- |
+| held `/timer` streams (`DSQUIZ_TIMER=stream`) | not shippable | 400 users, 600 goroutines, 0 failures | -- |
+
+Three things that column says, and one it does not:
+
+- **The P50s barely move; the TAILS collapse.** At these rates neither implementation is queueing
+  much, and what a single event loop costs is head-of-line blocking -- which is a P95/P99 effect. The
+  `/answer` P95 of 300 ms at 1000 users is one request waiting behind others on the loop.
+- **The other 23 cores bought nothing.** One core against 24 is 5 ms against 3 ms at the P95. At this
+  load the difference is Go, not parallelism; the multi-core column would only start to matter at a
+  rate that saturates one core, which these scenarios never reach.
+- **The held-connection timer is the one difference in KIND.** `DSQUIZ_TIMER=stream` is a connection
+  per tab pushing a signal patch every 100 ms; the harness has had a scenario for it since it was
+  written and it had never been run in anger, because this side could not carry it. On the Go side it
+  is a goroutine and a ticker, and the interactive latency alongside it is indistinguishable from the
+  client-interval default's. That is the case where "the push half of datastar starts earning its
+  keep" stops being hypothetical -- see the last section.
+- **It does not say the design was wrong.** The architecture is unchanged, and every design decision
+  in this document survived the port intact: fat morph, the `_`-prefixed signals, the server-owned
+  question, the 204 no-ops, the process-wide nonce. What changed is the floor under it.
+
+The Go port also settles a measurement this document could not make. Profiling here means yappi (see
+`profiling.py`: py-spy's stop-the-world pause *is* the outage on a single loop -- 100 Hz against 100
+users took the P90 from ~50 ms to 18 s), so the profile can say where the time goes and never how
+fast it is. A heap profile of the live Go server at full speed found a 282 MB line in one look -- a
+brotli encoder allocated per SSE response -- and the fix took the resident set from 506 MB to 150 MB
+without touching a percentile. That is the class of question this side has to answer by reasoning.
+
+## The fourth implementation: the same app in Rust
+
+`apps/datastar-quiz-rust/` is the architecture a fourth time, on tokio + axum + askama with the Rust
+datastar SDK. Same routes, same exported corpus, same choreography, same harness. Where the Go port
+answered *"what does a compiled runtime cost"*, this one answers a narrower question: **what do you
+get for no GC and for spending real effort on not allocating**. Its `RESULTS.md` has the runs.
+
+| at 1,000 users, ONE core | python (one loop) | go | rust |
+|---|---|---|---|
+| aggregate P50 / P95 | 15 / 380 ms | 2 / 5 ms | 2 / 17 ms |
+| `POST /answer` TTFB | P50 10, P95 300 ms | P50 1, P95 4 ms | P50 1, P95 7 ms |
+| server CPU | -- | 0.253 cores | 0.223 cores |
+| **worker RSS** | ~185 MB | 278 MB | **99 MB** |
+| players that saturate one core | -- | ~3,850 | ~4,300 |
+| `check_filter("1C")` over 7,627 auctions | 15.8 ms | 380 us | 96.5 us |
+| parse + prepare both corpora at boot | ~5.5 s | ~70 ms | 21.3 ms |
+
+**The memory answer is unambiguous and the throughput answer is not.** 99 MB against Go's 278 MB for
+identical work, from four decisions each measurable on its own: a parsed call is 6 bytes rather than
+40, the prepared corpus is one flat arena of 0.72 MB rather than ~25 MB of nested slices, a memoised
+filter hit is a shared `u32` rather than a copied 40-byte struct, and the brotli encoders need no
+pool at all because they are freed when the response ends rather than when a collector next runs --
+the Go port needed that pool to get from 506 MB down to 150 MB. But the CPU is only ~12% lower and
+the ceiling only ~13% higher.
+
+**Why, and it is the most interesting number of the three ports.** Run each route twice, once with
+`Accept-Encoding: br` and once with `identity`, both servers on one core alternating in the same run:
+
+| one core, closed loop | go, brotli | rust, brotli | go, identity | rust, identity |
+|---|---|---|---|---|
+| `GET /` (the full page) | 785/s | 955/s | 1,337/s | **10,933/s** |
+| `POST /restart` (a full fat morph) | 605/s | 809/s | 1,499/s | **4,806/s** |
+
+With compression off the Rust app renders this page **8.2x** what the Go one does. With compression
+on, 1.22x. Brotli is **91%** of a compressed page response there against **41%** here -- so the
+entire measured advantage of the careful, allocation-free version is spent inside a compression
+library both of them merely call, and the `brotli` crate at q5 turns out to be 1.0-2.9x slower than
+`andybalholm/brotli` at q5 depending on payload. That single library choice, not the language,
+decides every per-route ranking: `/filter/preview` is 1.25x *faster* in Rust uncompressed and 0.71x
+compressed.
+
+Which is the same lesson this document reaches in [Fat morph and compression](#fat-morph-and-compression)
+from the other end. Fat morph makes every interaction a ~23 KB render, that render must be
+compressed to be affordable on the wire, and compression then becomes the workload. The application
+code -- the matcher, the templates, the session -- stopped being the cost three implementations ago.
+
+Two smaller things the Rust column is honest about:
+
+- **Its aggregate P95 is worse than Go's** (17 ms vs 5 ms), and it is one route: the player
+  scenario's `GET /` during the spawn burst, P50 31 ms against Go's 10 ms. Uncompressed it is the
+  fastest server of the three at that route, so it is queueing under a burst rather than service
+  time. One tokio worker handles that ramp less gracefully than one `GOMAXPROCS=1` Go process.
+- **`axum::serve` does not set `TCP_NODELAY`.** `net/http`, uvicorn and granian all do. Without it
+  the keep-alive routes measured 10-11 ms against Go's 2-3, and the answer stream ran 1,401 ms
+  instead of ~1,000 -- Nagle waiting on a delayed ACK, and nothing to do with Rust. It is one line in
+  `main.rs`, and without it this column would have read five times worse than it is.
+
 ## Would I build the next one this way
 
 For this app: the datastar version is nicer to reason about and slower to make pretty. The 2× line

@@ -1,0 +1,645 @@
+<snippet>
+	<content><![CDATA[
+# `cmd.exe` starts in ~9ms and always available. just launches a shell per recipe line.
+#  - alternatives: `nu -c` ~41ms, `powershell -NoLogo -NoProfile -Command` ~143ms
+#  - cost: it is a poor language for a multi-line recipe, hence uv -> python preferred for more complex tasks
+[windows]
+set shell := ["cmd.exe", "/c"]
+[unix]
+set shell := ["bash", "-c"]
+set minimum-version := "1.49.0"  # user-defined functions (1.49)
+set unstable  # user-defined functions
+set lazy
+# `python` alone is not a reliable cross-platform lookup (cf. python/python3/python3.x)
+# uv resolves/downloads on every platform and --no-project means no looking for pyproject.toml / local .venv
+# just recipes opt in with the bare `[script]` attribute (no interpreter argument)
+set script-interpreter := ["uv", "run", "--no-project", "-p", "3.14", "python"]
+
+main_name := "${1:main.exe}"
+test_main_name := "${2:test-main.exe}"
+
+# `join`, not the `/` operator: `/` always emits a forward slash, and cmd.exe rejects a forward-slash
+# path in *command* position ("'target' is not recognized") even quoted.
+target_path(dir, name) := join("target", dir, name)
+
+# Which linker Odin hands the object files to. `-linker:` takes exactly four values: `default` (Odin
+# picks - MSVC `link.exe` on Windows), `lld`, `radlink` (Windows only, bundled with Odin, hence the
+# Windows default here) and `mold` (Linux only, not bundled). Odin has no build cache and relinks on
+# every build, so this is a per-iteration cost. `odin-skel new --linker=VALUE` rewrites the default below.
+#
+# Override for one command without editing this file - for `-lto`, which on Windows *requires* lld, or
+# for a machine that has mold when the project default does not assume it:
+#
+#     ODIN_LINKER=lld just run_release -lto:thin
+#
+# An env var rather than a recipe argument because `odin` errors on a repeated flag ("Previous flag set:
+# 'linker'"), so a `-linker:` passed through a recipe's `*args` would collide with the one added below.
+# Which value to pick, and the lld-on-macOS and incremental-linking caveats: README, "Choosing a linker".
+linker := env_var_or_default("ODIN_LINKER", if os() == "windows" { "radlink" } else { "default" })
+
+# Optional features in same recipe namespace. `odin-skel add bench` to install, and `rm -rf bench/` to uninstall.
+import? 'bench/bench.just'
+
+# Here, not in .just/toolchain.just - what gets formatted is a project decision
+# `{{odinfmt_bin}}`, never a bare `odinfmt` - pins the binary for project consistency
+# ---
+# odinfmt every odin file under this directory or subdirectories
+[group('qa')]
+format: ensure-odinfmt
+	"{{odinfmt_bin}}" -w .
+
+# `-vet-tabs` is the only compiler-side enforcement of .editorconfig's `indent_style = tab`; not implied by
+# `-strict-style`. Nothing in the Odin toolchain checks line endings - those are held in place by .gitattributes and
+# odinfmt.json instead. Accepts extra args like `-show-timings` as needed.
+# ---
+# lint checks for style and potential bugs. No code generation
+[group('qa')]
+lint *args:
+	odin check . -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+
+
+# Every recipe that produces a binary depends on this. Odin does not create the out directory.
+# ---
+# ensure the build artifacts top level directory exists
+[group('housekeeping')]
+[unix]
+@mktarget_dirs:
+	mkdir -p target/debug target/fast_debug target/release_debug target/release target/release_nochecks
+
+# `if not exist` rather than swallowing md's "already exists" with `2>nul`, so a genuine failure still
+# sets a non-zero exit. The loop var is a single `%d`, NOT the `%%d` that a .bat file would use for escaping
+# ---
+# ensure the build artifacts top level directory exists
+[group('housekeeping')]
+[windows]
+@mktarget_dirs:
+	for %d in (debug fast_debug release_debug release release_nochecks) do @if not exist target\%d md target\%d || exit /b 1
+
+# `-debug` implies `-o:none`, so this is the fastest to compile and the friendliest to step through.
+# (-keep-executable so `rerun_debug` can skip recompiling)
+# ---
+# run with debug build
+[group('build')]
+run_debug *args: mktarget_dirs
+	odin run . -debug -microarch:native -keep-executable -linker:{{linker}} -out:{{ target_path("debug", main_name) }} {{args}}
+
+alias run := run_debug
+
+# `-o:minimal` is one rung above the `-debug` default of `-o:none`: still quick to compile and mostly
+# faithful to step through, but noticeably faster at runtime. (-keep-executable so `rerun_fast_debug` avoids recompile)
+# ---
+# run with debug info and light optimizations
+[group('build')]
+run_fast_debug *args: mktarget_dirs
+	odin run . -debug -o:minimal -microarch:native -keep-executable -linker:{{linker}} -out:{{ target_path("fast_debug", main_name) }} {{args}}
+
+# Release codegen with debug info retained: for profiling and for chasing bugs that only appear under optimization
+# Slowest to compile, and the debugger will jump around inlined/reordered code.
+# (-keep-executable so `rerun_release_debug` can skip recompiling)
+# ---
+# run with full optimizations AND debug info
+[group('build')]
+run_release_debug *args: mktarget_dirs
+	odin run . -debug -o:speed -microarch:native -keep-executable -linker:{{linker}} -out:{{ target_path("release_debug", main_name) }} {{args}}
+
+# run with optimizations (-keep-executable so `rerun_release` can skip recompiling)
+[group('build')]
+run_release *args: mktarget_dirs
+	odin run . -o:speed -microarch:native -keep-executable -linker:{{linker}} -out:{{ target_path("release", main_name) }} {{args}}
+
+# `run_release` plus every runtime safety check compiled out: `-no-bounds-check` (slice/array indexing),
+# `-disable-assert` (the built-in `assert`) and `-no-type-assert` (union/any type assertions). Those
+# checks are what turn a memory-corrupting bug into a clean panic, so a fault here is undefined
+# behaviour rather than a readable message - benchmark against `run_release` before adopting it, and
+# keep a checked build in your test matrix. `-o:aggressive` exists too but Odin flags it as risky.
+# (-keep-executable so `rerun_release_nochecks` can skip recompiling)
+# ---
+# run with optimizations and ALL runtime safety checks removed
+[group('build')]
+run_release_nochecks *args: mktarget_dirs
+	odin run . -o:speed -no-bounds-check -disable-assert -no-type-assert -microarch:native -keep-executable -linker:{{linker}} -out:{{ target_path("release_nochecks", main_name) }} {{args}}
+
+# Outside the kind markers on purpose: `test_sanitize` below ships in every project, so these notes must
+# not be stripped along with the exe-only `sanitize`.
+#
+# KIND is `address` (default, ASan), `memory` or `thread`; only `address` is widely supported. ON WINDOWS
+# `address` CATCHES STACK ERRORS BUT NOT HEAP ERRORS - Odin allocates through `HeapAlloc`, which ASan does
+# not intercept, so a clean run there says nothing about your heap. (Probed a 16-byte allocation at +16,
+# +24, +32, +64, +256: Linux reports `heap-buffer-overflow` from +24 on, Windows at none. +16 is in bounds
+# either way - the allocator hands back more than asked for.) The rest, and the Linux
+# `libclang_rt.asan.a` install: README, "Tasks".
+#
+# Both recipes deliberately omit `-linker:{{linker}}` - do not "fix" the inconsistency. A sanitizer has to
+# interpose on the runtime and not every linker cooperates: `radlink` (this file's Windows default, and
+# bundled with Odin, so it is what you get by accident) links an ASan binary that dies on startup with a
+# bare `0xc000001d` illegal-instruction exception and no usable stack, while `-linker:default` runs it.
+# Link speed is worth nothing on a diagnostic run anyway.
+
+# Usage:  just sanitize   or   just sanitize thread -- --my-arg
+# ---
+# run a debug build under a sanitizer (address | memory | thread)
+[group('test')]
+sanitize kind="address" *args: mktarget_dirs
+	odin run . -debug -sanitize:{{kind}} -out:{{ target_path("debug", f"sanitize-{{kind}}-{{main_name}}") }} {{args}}
+
+# See the notes above for platform support, the Windows heap caveat and why no linker is pinned.
+# Usage:  just test_sanitize   or   just test_sanitize thread
+# ---
+# run the tests under a sanitizer (address | memory | thread)
+[group('test')]
+test_sanitize kind="address" *args: mktarget_dirs
+	odin test . -debug -file -sanitize:{{kind}} -out:{{ target_path("debug", f"sanitize-{{kind}}-{{test_main_name}}") }} {{args}}
+
+# Odin has no build cache, so a plain `run` always rebuilds. Requires a prior `run_debug`/`run` build.
+# ---
+# re-run the last debug binary WITHOUT recompiling
+[group('build')]
+rerun_debug *args:
+	{{ target_path("debug", main_name) }} {{args}}
+
+alias rerun := rerun_debug
+
+# re-run the last fast_debug binary without recompiling. Requires a prior `run_fast_debug` build.
+[group('build')]
+rerun_fast_debug *args:
+	{{ target_path("fast_debug", main_name) }} {{args}}
+
+# re-run the last release_debug binary without recompiling. Requires a prior `run_release_debug` build.
+[group('build')]
+rerun_release_debug *args:
+	{{ target_path("release_debug", main_name) }} {{args}}
+
+# re-run the last release binary without recompiling. Requires a prior `run_release` build.
+[group('build')]
+rerun_release *args:
+	{{ target_path("release", main_name) }} {{args}}
+
+# re-run the last nochecks binary without recompiling. Requires a prior `run_release_nochecks` build.
+[group('build')]
+rerun_release_nochecks *args:
+	{{ target_path("release_nochecks", main_name) }} {{args}}
+
+# hyperfine (https://github.com/sharkdp/hyperfine) times whole *processes*, and is installed separately -
+# `just doctor` reports whether it is there. Over `rerun_release`'s binary rather than `just run_release`:
+# Odin has no build cache, so timing the recipe would mostly time the compiler - build first. `-N` skips
+# the shell hyperfine would otherwise spawn per run, at the cost that hyperfine splits the command
+# itself: no pipes, redirects or quoted arguments containing spaces. Process startup (~31ms here)
+# swamps anything smaller - for per-procedure numbers add the harness, `odin-skel add bench`.
+# See the README, "Timing a recipe" and "Benchmarking".
+#
+# `replace` back to forward slashes, unlike every other use of `target_path` here. Under `-N` the
+# command is parsed by hyperfine, whose splitter treats `\` as an escape, so a Windows path arrives as
+# `targetreleasemain.exe` and fails with a bare "program not found" - with the binary sitting right
+# there. Recipes that put the path in *command* position keep the native separators, because that is
+# the case cmd.exe rejects a forward slash in.
+#
+# Usage:  just time_release            time the release binary
+#         just time_release --flag=x   ... passing arguments to the program
+# ---
+# time the release binary end to end with hyperfine (needs a prior run_release/build)
+[group('perf')]
+time_release *args:
+	hyperfine -N --warmup 3 "{{ replace(target_path("release", main_name), "\\", "/") }} {{args}}"
+
+# A/B two build profiles in one run - hyperfine prints the ratio between them, which is the number worth
+# knowing about `-no-bounds-check`. Times both binaries, so needs a prior `run_release` AND
+# `run_release_nochecks`. Forward slashes for the same reason as `time_release` above.
+# ---
+# compare the release and nochecks binaries with hyperfine
+[group('perf')]
+time_profiles *args:
+	hyperfine -N --warmup 3 "{{ replace(target_path("release", main_name), "\\", "/") }} {{args}}" "{{ replace(target_path("release_nochecks", main_name), "\\", "/") }} {{args}}"
+
+# run all tests
+[group('test')]
+test *args: mktarget_dirs
+	odin test . -debug -file -microarch:native -linker:{{linker}} -out:{{ target_path("debug", test_main_name) }} {{args}}
+
+# Filtering is a `core:testing` define, not a compiler flag - there is no `-test-name:`, and a stale
+# spelling of one fails with `Unknown flag: 'test-name'` before anything builds. NAME takes a comma-separated
+# list and the package prefix is optional, so `pkg.my_test`, `my_test` and `one,two` all work:
+#     just test1 my_test
+# ---
+# run one named test (comma-separated for several)
+[group('test')]
+test1 name *args: mktarget_dirs
+	odin test . -debug -file -microarch:native -define:ODIN_TEST_NAMES={{name}} -linker:{{linker}} -out:{{ target_path("debug", test_main_name) }} {{args}}
+
+# simple delete of all debug databases and executables in the target directory
+[group('housekeeping')]
+[unix]
+clean:
+	rm -rf target
+	just mktarget_dirs
+
+# simple delete of all debug databases and executables in the target directory
+[group('housekeeping')]
+[windows]
+clean:
+	if exist target rmdir /s /q target
+	just mktarget_dirs
+
+# build with some verbose diagnostics
+[group('build')]
+diagnose *args: mktarget_dirs
+	odin build . -debug -microarch:native -show-more-timings -show-debug-messages -show-timings -linker:{{linker}} -out:{{ target_path("debug", main_name) }} {{args}}
+
+
+
+
+# Suffix on a native executable, for the pinned tool paths below.
+exe_ext := if os() == "windows" { ".exe" } else { "" }
+
+# The pinned ols release; odinfmt ships inside it. Note odinfmt has no `--version` flag.
+# `just bump-ols` rewrites this and the digests below. README, "Pinned tooling".
+ols_tag := "dev-2026-06"
+
+# A hash and not just a tag, so a re-cut tag is caught rather than installed. One archive per platform,
+# digests published per asset; `just bump-ols` writes both lines.
+ols_plat := if os() == "windows" { "x86_64-pc-windows-msvc" } else if os() == "macos" { if arch() == "aarch64" { "arm64-darwin" } else { "x86_64-darwin" } } else { if arch() == "aarch64" { "arm64-unknown-linux-gnu" } else { "x86_64-unknown-linux-gnu" } }
+ols_sha256 := if ols_plat == "x86_64-pc-windows-msvc" { "08785a8ae2ef5073b9d2e27abae83a7a8000cc6503711d0a92a61e2900bddf9e" } else if ols_plat == "arm64-darwin" { "931bca3776491e7809fc5054fad1c95459c25e62af5492294b84c5950c1a5e36" } else if ols_plat == "x86_64-darwin" { "2e2d3c168ae8dc56d76574a95ebd998f7764b21d5da4dc1f4a66b1e880acbc9b" } else if ols_plat == "arm64-unknown-linux-gnu" { "423c28323223d229dea3b69bc49679dbadd6e4559dc5d6b50eb10ac708f9c9eb" } else { "d0b232947a258032979321626a54c3dba54e44ebd23be255a34eb254dfc679a3" }
+
+# Where versioned tool installs live; `\$ODIN_TOOLS` overrides the root. See README, "Pinned tooling".
+# `USERPROFILE` before `HOME` on Windows (note Git-bash parent sets `HOME=/c/Users/you`, an MSYS path)
+home_dir := if os() == "windows" { env_var_or_default("USERPROFILE", env_var_or_default("HOME", ".")) } else { env_var_or_default("HOME", ".") }
+odin_tools := env_var_or_default("ODIN_TOOLS", join(home_dir, ".odin-tools"))
+ols_install := join(odin_tools, "ols", ols_tag)
+
+# `ODINFMT=odinfmt just format` opts out of the pin and uses PATH; `ensure-odinfmt` then skips the download too.
+odinfmt_override := env_var_or_default("ODINFMT", "")
+odinfmt_bin := if odinfmt_override != "" { odinfmt_override } else { join(ols_install, "odinfmt" + exe_ext) }
+# Installed beside odinfmt from the same archive. For the editor setup - `just sublime-lsp-init`.
+ols_bin := join(ols_install, "ols" + exe_ext)
+
+# A shell test rather than depending on `fetch-ols` directly, which is a `[script]` recipe (uv/python overhead)
+# ---
+# make sure the pinned odinfmt is installed before formatting with it
+[group('toolchain')]
+[unix]
+@ensure-odinfmt:
+	test -n "{{odinfmt_override}}" || test -f "{{odinfmt_bin}}" || just fetch-ols
+
+# Nested `if`s because cmd has no short-circuit operator to write the unix line's `||` with.
+# ---
+# make sure the pinned odinfmt is installed before formatting with it
+[group('toolchain')]
+[windows]
+@ensure-odinfmt:
+	if "{{odinfmt_override}}"=="" if not exist "{{odinfmt_bin}}" just fetch-ols
+
+# Installs ols, odinfmt and the `builtin/` directory ols needs beside it - one archive holds all three -
+# into `\$ODIN_TOOLS/ols/<tag>/`, after checking it against `ols_sha256`. README, "Pinned tooling".
+#
+#     just fetch-ols            install if missing
+#     just fetch-ols --check    exit non-zero when missing, install nothing (CI)
+#     just fetch-ols --force    reinstall over an existing directory
+# ---
+# download the pinned ols + odinfmt into ~/.odin-tools, verified against its SHA-256
+[group('toolchain')]
+[script]
+fetch-ols *args:
+	import hashlib, os, shutil, stat, sys, tempfile, urllib.request, zipfile
+
+	TAG, PLAT, WANT = r"{{ols_tag}}", r"{{ols_plat}}", r"{{ols_sha256}}"
+	flags = r'''{{args}} '''.split()
+	check_only, force = "--check" in flags, "--force" in flags
+
+	# Passed in rather than re-derived: `\$ODIN_TOOLS` and the USERPROFILE-before-HOME rule are
+	# already applied above, and Python's `expanduser` does not agree with them on every machine.
+	dest = r"{{ols_install}}"
+	exe = ".exe" if "windows" in PLAT else ""
+
+	# All three, not just the directory: an odinfmt-only install from an older layout would otherwise
+	# read as a satisfied pin forever.
+	complete = all(
+		os.path.exists(os.path.join(dest, part))
+		for part in ("ols" + exe, "odinfmt" + exe, "builtin")
+	)
+	if complete and not force:
+		print(dest + ": present")
+		sys.exit(0)
+	if check_only:
+		sys.exit(dest + ": missing or incomplete - run `just fetch-ols`")
+
+	url = os.environ.get("OLS_URL") or "https://github.com/DanielGavin/ols/releases/download/" + TAG + "/ols-" + PLAT + ".zip"
+	fd, archive = tempfile.mkstemp(suffix=".zip")
+	os.close(fd)
+	try:
+		print("fetching " + url)
+		try:
+			urllib.request.urlretrieve(url, archive)
+		except OSError as err:
+			# URLError and HTTPError are both OSError subclasses.
+			sys.exit("  " + str(err) + "\n  set OLS_URL to fetch the archive from somewhere else")
+
+		h = hashlib.sha256()
+		with open(archive, "rb") as f:
+			for chunk in iter(lambda: f.read(1 << 20), b""):
+				h.update(chunk)
+		got = h.hexdigest()
+		if got != WANT:
+			sys.exit(
+				"  sha256   " + got + "\n"
+				"  expected " + WANT + "\n"
+				"  refusing to install: this is not the pinned ols. A re-cut " + TAG + " has to be\n"
+				"  adopted deliberately - `just bump-ols " + TAG + "` rewrites the digest."
+			)
+
+		# Staged in a sibling `.part` directory and renamed into place: the guards treat the path existing
+		# as the pin being satisfied, so a half-extracted install would be permanently convincing.
+		staging = dest + ".part"
+		shutil.rmtree(staging, ignore_errors=True)
+		os.makedirs(staging)
+		with zipfile.ZipFile(archive) as z:
+			# By prefix, not exact name: the release ships platform-suffixed binaries
+			# (`ols-x86_64-pc-windows-msvc.exe`), and one that drops the suffix still works.
+			for member in z.infolist():
+				if member.is_dir():
+					continue
+				base = os.path.basename(member.filename)
+				if base.startswith("odinfmt"):
+					out = os.path.join(staging, "odinfmt" + exe)
+				elif base.startswith("ols"):
+					out = os.path.join(staging, "ols" + exe)
+				elif "builtin/" in member.filename.replace("\\", "/"):
+					out = os.path.join(staging, "builtin", base)
+				else:
+					continue
+				os.makedirs(os.path.dirname(out), exist_ok=True)
+				with open(out, "wb") as f:
+					f.write(z.read(member))
+
+		for name in ("ols" + exe, "odinfmt" + exe):
+			path = os.path.join(staging, name)
+			if not os.path.exists(path):
+				sys.exit("  archive contained no " + name + " - did the release layout change?")
+			# The zip's mode bits are not usable on every platform. Harmless on Windows; without it the
+			# unix binary is not runnable.
+			os.chmod(path, os.stat(path).st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+		if not os.path.isdir(os.path.join(staging, "builtin")):
+			# ols hard-errors without it, so an install missing it is a server that starts knowing nothing.
+			sys.exit("  archive contained no builtin/ directory - did the release layout change?")
+
+		if os.path.isdir(dest):
+			old = dest + ".old"
+			shutil.rmtree(old, ignore_errors=True)
+			try:
+				os.rename(dest, old)
+			except OSError as err:
+				# Windows refuses to move a directory holding a running executable - the editor's ols.
+				sys.exit("  cannot replace " + dest + ": " + str(err) + "\n  close any editor running ols and retry")
+			shutil.rmtree(old, ignore_errors=True)
+		os.makedirs(os.path.dirname(dest), exist_ok=True)
+		os.rename(staging, dest)
+		print("  installed " + dest)
+	finally:
+		if os.path.exists(archive):
+			os.remove(archive)
+
+
+# Rewrites the `ols_tag` and `ols_sha256` lines from GitHub's release API, so a bump is one command
+# rather than six digests copied by hand. Edits this file and stops - no fetch, no format, no commit -
+# because the next `format` may reformat files nobody edited and that diff is worth seeing first.
+#
+#     just bump-ols                 rewrite the pin to the latest release
+#     just bump-ols dev-2026-07     ... to a named release instead
+#     just bump-ols --check         report whether a newer release exists, change nothing (exit 1 if so)
+#
+# `/releases/latest` skips prereleases, which keeps the continuously re-cut `nightly` tag out of a pin
+# that only means anything if the bytes are fixed. Uses `\$GITHUB_TOKEN` / `\$GH_TOKEN` when set.
+# ---
+# rewrite the ols pin in .just/toolchain.just to the latest release (or --check for whether one exists)
+[group('toolchain')]
+[script]
+bump-ols *args:
+	import hashlib, json, os, re, sys, tempfile, urllib.request
+
+	# In the order the generated `ols_sha256` chain tests them, last entry being the `else` arm. Must
+	# match `ols_plat` above, or a platform silently gets another one's digest.
+	PLATS = [
+		"x86_64-pc-windows-msvc",
+		"arm64-darwin",
+		"x86_64-darwin",
+		"arm64-unknown-linux-gnu",
+		"x86_64-unknown-linux-gnu",
+	]
+
+	flags = r'''{{args}} '''.split()
+	check_only = "--check" in flags
+	named = [f for f in flags if not f.startswith("--")]
+	if len(named) > 1:
+		sys.exit("expected at most one tag, got " + repr(named))
+
+	def api(url):
+		request = urllib.request.Request(url, headers={
+			"Accept": "application/vnd.github+json",
+			# GitHub rejects an API request with no User-Agent.
+			"User-Agent": "odin-skel-justfile",
+		})
+		token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+		if token:
+			request.add_header("Authorization", "Bearer " + token)
+		try:
+			with urllib.request.urlopen(request) as response:
+				return json.load(response)
+		except OSError as err:
+			sys.exit("  " + str(err) + "\n  GitHub's API is unreachable - the pin can also be edited by hand")
+
+	base = "https://api.github.com/repos/DanielGavin/ols/releases"
+	release = api(base + "/tags/" + named[0] if named else base + "/latest")
+	tag = release["tag_name"]
+
+	current = r"{{ols_tag}}"
+	if tag == current:
+		print("ols_tag " + current + " is already the " + ("named" if named else "latest") + " release")
+		sys.exit(0)
+	# "differs", not "is newer": these tags have no ordering this recipe can rely on, and the
+	# release marked latest can be older than a hand-picked pin. Adopting it is the caller's call.
+	print(current + " -> " + tag)
+	if check_only:
+		sys.exit("  the pin does not match the " + ("named" if named else "latest") + " release - `just bump-ols` adopts it")
+
+	assets = {a["name"]: a for a in release.get("assets", [])}
+	digests = {}
+	for plat in PLATS:
+		name = "ols-" + plat + ".zip"
+		asset = assets.get(name)
+		if asset is None:
+			sys.exit(
+				"  release " + tag + " has no " + name + "\n"
+				"  every platform this project can run on needs one, so a partial release is not\n"
+				"  something to pin - got: " + ", ".join(sorted(assets))
+			)
+		# Published per asset, saving ~5 MB of downloads. A recent API field, so older releases fall
+		# back to hashing.
+		published = (asset.get("digest") or "")
+		if published.startswith("sha256:"):
+			digests[plat] = published[len("sha256:"):]
+			print("  " + plat + " " + digests[plat] + " (published)")
+			continue
+		fd, tmp = tempfile.mkstemp(suffix=".zip")
+		os.close(fd)
+		try:
+			print("  " + plat + ": no published digest, hashing " + name)
+			urllib.request.urlretrieve(asset["browser_download_url"], tmp)
+			h = hashlib.sha256()
+			with open(tmp, "rb") as f:
+				for chunk in iter(lambda: f.read(1 << 20), b""):
+					h.update(chunk)
+			digests[plat] = h.hexdigest()
+			print("  " + plat + " " + digests[plat] + " (hashed)")
+		finally:
+			if os.path.exists(tmp):
+				os.remove(tmp)
+
+	arms = ["if ols_plat == \"%s\" { \"%s\" }" % (p, digests[p]) for p in PLATS[:-1]]
+	line = "ols_sha256 := " + " else ".join(arms) + " else { \"" + digests[PLATS[-1]] + "\" }"
+
+	with open(".just/toolchain.just", encoding="utf-8", newline="") as f:
+		text = f.read()
+	# Anchored to the start of a line so the spelling in this recipe's own comments cannot be rewritten.
+	text, tags = re.subn(r'^ols_tag := ".*"\$', 'ols_tag := "' + tag + '"', text, count=1, flags=re.M)
+	text, shas = re.subn(r"^ols_sha256 := .*\$", line.replace("\\", "\\\\"), text, count=1, flags=re.M)
+	if tags != 1 or shas != 1:
+		sys.exit("  could not find the `ols_tag` / `ols_sha256` lines to rewrite - edit them by hand")
+	with open(".just/toolchain.just", "w", encoding="utf-8", newline="") as f:
+		f.write(text)
+
+	print("")
+	print("rewrote the pin in .just/toolchain.just. Next:")
+	print("  just fetch-ols --force    install " + tag + " (the digests above are checked on the way in)")
+	print("  just format               a new odinfmt may reformat files you did not edit - review that diff")
+
+
+# Cross platform: Sublime then offers them in every window. The `.sublime-project` file is
+# project-local and intentionally NOT installed. Override the destination with the SUBLIME_USER_DIR
+# env var if your setup is non-standard.
+# ---
+# install the editor snippets + build systems into Sublime Text's global `Packages/User` directory
+[group('editor')]
+[script]
+install-sublime:
+	import os, sys, shutil
+	home = os.path.expanduser("~")
+	override = os.environ.get("SUBLIME_USER_DIR")
+	if override:
+		candidates = [override]
+	elif sys.platform == "win32":
+		appdata = os.environ.get("APPDATA", os.path.join(home, "AppData", "Roaming"))
+		candidates = [os.path.join(appdata, p, "Packages", "User") for p in ("Sublime Text", "Sublime Text 3")]
+	elif sys.platform == "darwin":
+		base = os.path.join(home, "Library", "Application Support")
+		candidates = [os.path.join(base, p, "Packages", "User") for p in ("Sublime Text", "Sublime Text 3")]
+	else:
+		base = os.path.join(home, ".config")
+		candidates = [os.path.join(base, p, "Packages", "User") for p in ("sublime-text", "sublime-text-3")]
+
+	# prefer a candidate whose Sublime data dir (the `Packages` parent) already exists
+	target = next((c for c in candidates if os.path.isdir(os.path.dirname(c))), None)
+	if target is None:
+		sys.exit(
+			"could not find a Sublime Text Packages directory. Set SUBLIME_USER_DIR to your "
+			"Packages/User folder and retry. Tried: " + ", ".join(candidates)
+		)
+	os.makedirs(target, exist_ok=True)
+	for name in (
+		"Odin-skeleton.sublime-snippet",
+		"Just-Odin.sublime-snippet",
+		"Just-Odin-lib.sublime-snippet",
+		"Odin.sublime-build",
+		"OdinJustTarget.sublime-build",
+	):
+		shutil.copy2(os.path.join(".sublime", name), os.path.join(target, name))
+		print("installed " + name)
+	print("-> " + target)
+
+
+
+
+# Resolves extra collection imports (`import "xyz:pkg"`), needed only for packages outside this project.
+# Each argument is `name=path` and the arguments are the whole collection list - a rerun replaces it, and
+# every other setting already in ols.json is left alone. No arguments prints what is configured.
+#     just ols-config xyz=../xyz-lib abc=/opt/odin/abc
+#
+# ols resolves a relative path against this project's root, so a collection kept as a sibling checkout
+# gives an ols.json identical on every machine - drop the `ols.json` line from .gitignore and commit it.
+# An absolute path is machine-specific, which is why the file is ignored by default. A leading `~` expands
+# on Linux and macOS only; on Windows write the path out in full.
+#
+# A path containing a space cannot be passed here: just joins a variadic parameter's arguments with spaces
+# before the body sees them, so no quoting survives. Edit ols.json by hand for that - the recipe reads the
+# file back, so it is not an either/or.
+# ---
+# SKELETON: (re)generate ols.json so the Odin language server resolves extra collections
+[group('editor')]
+[script]
+ols-config *pairs:
+	import json, os, re, sys
+
+	USAGE = "usage: just ols-config name=path [name=path ...]   e.g. just ols-config xyz=../xyz-lib"
+
+	# str.split, not shlex.split: shlex's default POSIX mode treats a backslash as an escape and would eat
+	# every separator in a Windows path (C:\odin\libs -> C:odinlibs). The space before the closing quote is
+	# load-bearing - a path ending in a backslash would otherwise escape the quote and leave the string
+	# unterminated. str.split() discards it again as trailing space.
+	args = r'''{{pairs}} '''.split()
+
+	# Read before write. ols.json also holds editor settings (enable_document_symbols, checker_path,
+	# odin_command, ...), and only the collection list is ours to rewrite.
+	config = {}
+	if os.path.exists("ols.json"):
+		with open("ols.json", encoding="utf-8") as f:
+			try:
+				config = json.load(f)
+			except ValueError as err:
+				sys.exit("ols.json is not valid JSON - fix or delete it first: " + str(err))
+		if not isinstance(config, dict):
+			sys.exit("ols.json does not hold a JSON object - fix or delete it first")
+
+	if not args:
+		configured = config.get("collections") or []
+		for entry in configured:
+			print(entry.get("name", "?") + " -> " + entry.get("path", "?"))
+		if not configured:
+			print("no collections configured")
+		print(USAGE)
+		sys.exit(0)
+
+	collections = []
+	seen = set()
+	for arg in args:
+		# partition, not split: only the first `=` separates, so a path may contain one.
+		name, sep, path = arg.partition("=")
+		if not sep or not name or not path:
+			sys.exit("expected name=path, got " + repr(arg) + "\n" + USAGE)
+		# The name is what precedes the colon in `import "xyz:pkg"`, so odin's own rule applies: it has
+		# to be an identifier. Without this a typo like `b/c=d` writes a collection nothing can import.
+		if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", name):
+			sys.exit("collection name " + repr(name) + " is not an identifier")
+		if name in seen:
+			sys.exit("collection " + repr(name) + " given twice")
+		seen.add(name)
+		collections.append({"name": name, "path": path})
+
+	# Second pass so a later bad argument fails before any warning about an earlier good one.
+	for entry in collections:
+		if not os.path.isdir(entry["path"]):
+			# Not fatal - the collection may be cloned later, and ols reads this file on startup.
+			print("warning: " + entry["path"] + " is not a directory (yet)", file=sys.stderr)
+
+	config.setdefault(
+		"\$schema", "https://raw.githubusercontent.com/DanielGavin/ols/master/misc/ols.schema.json"
+	)
+	config["collections"] = collections
+	with open("ols.json", "w", encoding="utf-8", newline="\n") as f:
+		f.write(json.dumps(config, indent=4) + "\n")
+	for entry in collections:
+		print("wrote ols.json -> " + entry["name"] + " collection at " + entry["path"])
+]]></content>
+	<!-- type the tabTrigger and press Tab; or browse Tools -> Snippets... -->
+	<tabTrigger>odin</tabTrigger>
+	<!-- shown beside the trigger in the completion popup -->
+	<description>justfile for an Odin program (build tiers, test, lint)</description>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.just</scope>
+</snippet>

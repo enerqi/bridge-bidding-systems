@@ -1,0 +1,57 @@
+{#- The #quiz fragment: prompt, the thing to match, and the candidate buttons.
+
+The action is in the URL -- `/answer/<qid>/<index>` -- not in a signal. The qid is the server's
+question nonce, so a second click, a stale tab or a replayed request scores nothing: the server
+compares the qid and resyncs the page. That replaces the panel app's "multiple clicks occurred too
+quickly before server disabled the buttons" guard.
+
+`data-indicator` sets that local signal while the request is in flight, and every button reads it to
+disable itself -- the visual half of the same protection, done without a round trip. It is written in
+the *value* form, not as `data-indicator:_answering`: attribute keys go through `kebab`, which turns
+a leading underscore into a dash and then drops it, so the key form would name the signal
+`Answering` -- losing the underscore that keeps it local.
+
+These are BUTTONS, not a radio group: a click commits immediately, with no separate submit. What they
+get instead is `role="group"` with a label, and a digit accelerator each.
+
+ONE window keydown handler, on the group, mapping the digit to an index -- not one per button. Five
+identical `__window` listeners were five registrations and five teardowns per patch, and five copies
+of the same guard to keep in step. The guard is three things:
+  - `$_answering` -- an answer already in flight. NOT cosmetic and not removable: the server mutates
+    before it streams, so by the time the toasts are playing the *next* question is already the live
+    one, and a keypress here would answer a question the player has not been shown yet.
+  - `closest(TYPING_TARGETS)` -- a keystroke aimed at a control that has a use for it belongs to that
+    control. The selector is NOT "any form control": a focused difficulty slider (which keeps focus
+    on purpose, or you could not arrow it) then killed 1-9 for the rest of the session.
+  - the digit is in range for THIS question's choice count.
+`evt.key` compared through `Number` rather than as a string, so a ten-choice question would not
+silently accept "1" as ten. -#}
+<h2 class="intro">{{ intro }}</h2>
+<p class="answer">&ldquo;<strong>{{ answer|safe }}</strong>&rdquo;</p>
+{#- `data-attr` in the OBJECT form, because a hyphenated attribute name cannot survive as a key:
+`data-attr:aria-busy` is kebab-then-camel converted to `ariaBusy` and nothing reaches the DOM -- no
+`aria-busy`, no error, the attribute simply never appears.
+
+The value is the STRING "true"/"false", not the boolean: a boolean `true` renders as `aria-busy=""`
+(datastar's "set the attribute" form), and an empty string is not a valid ARIA state.
+
+`data-indicator` is per REQUESTING ELEMENT: the buttons have their own for clicks, and the group
+needs its own for the digit path -- without it a keyboard answer left `_answering` false, so the
+buttons never greyed out and the guard could never be true. -#}
+<div class="candidates" role="group" aria-label="answer choices"
+     data-indicator="_answering"
+     data-attr="{'aria-busy': $_answering ? 'true' : 'false'}"
+     data-on:keydown__window="!$_answering && !$_topicsOpen
+       && !evt.target.closest?.('{{ typing_targets }}')
+       && Number(evt.key) >= 1 && Number(evt.key) <= {{ candidates.len() }}
+       && @post('{{ prefix }}/answer/{{ qid }}/' + (Number(evt.key) - 1) + '{{ variant_query }}')">
+  {%- for candidate in candidates %}
+  <button type="button" class="candidate button"
+          data-indicator="_answering"
+          data-attr:disabled="$_answering"
+          data-on:click="@post('{{ prefix }}/answer/{{ qid }}/{{ loop.index0 }}{{ variant_query }}')">
+    <kbd class="accel tag is-light" aria-hidden="true">{{ loop.index }}</kbd>
+    <span class="candidate-text">{{ candidate|safe }}</span>
+  </button>
+  {%- endfor %}
+</div>

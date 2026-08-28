@@ -1,0 +1,693 @@
+/* The "game feel" experiment: three effects, one toggle, no base-stylesheet changes.
+ *
+ * Loaded after whichever of the three base sheets is selected, and EVERY rule is scoped to
+ * `body.juice` (set by `data-class="{juice: $_juice}"` on the body). So:
+ *   - with the toggle off, this file changes nothing at all -- it is not a fourth variant;
+ *   - it works identically over the hand-rolled, Pico and Bulma sheets, because it only adds
+ *     animation and colour to elements all three already lay out;
+ *   - deleting the experiment is deleting one file, one signal and one checkbox.
+ *
+ * The three effects (see DESIGN.md for the reasoning):
+ *   1. HIT-STOP + SHAKE on the reveal. A wrong answer freezes for a beat, then the card you picked
+ *      shakes and the right one lands. The shake is on the CARD, never the page: at a question every
+ *      ~15s, screen shake is nausea, and shaking the specific card is also more informative.
+ *   2. FLOATING SCORE off the card you chose, streamed beat-by-beat with the toasts
+ *      (`templates/floater.html.j2`), so the points appear where the action was.
+ *   3. STREAK CHIP that grows and warms, because a run was previously invisible outside one toast.
+ *
+ * Tokens are reused from the base sheet rather than redefined -- `--suit-club` / `--suit-heart` are
+ * the app's existing "right" and "wrong" greens and reds, already contrast-tested in both palettes.
+ */
+
+/* --- 1. hit-stop and shake ------------------------------------------------- */
+
+/* The freeze is the `animation-delay`: the reveal arrives, nothing moves for 90ms, and then it hits.
+   Doing nothing is the effect -- the pause is what makes the shake read as an impact rather than a
+   transition. */
+@keyframes juice-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(-6px) rotate(-0.6deg);
+  }
+  30% {
+    transform: translateX(5px) rotate(0.5deg);
+  }
+  45% {
+    transform: translateX(-4px) rotate(-0.4deg);
+  }
+  60% {
+    transform: translateX(3px) rotate(0.3deg);
+  }
+  80% {
+    transform: translateX(-1px);
+  }
+}
+
+@keyframes juice-land {
+  0% {
+    transform: scale(0.94);
+  }
+  55% {
+    transform: scale(1.035);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes juice-mark-punch {
+  0% {
+    transform: scale(0.2) rotate(-25deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.35) rotate(4deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+body.juice .candidate.revealed.wrong {
+  animation: juice-shake 260ms cubic-bezier(0.36, 0.07, 0.19, 0.97) 90ms both;
+  /* the shake is a transform, so the border colour carries the "this one" emphasis */
+  box-shadow: 0 0 0 2px var(--suit-heart);
+}
+
+/* The right answer lands AFTER the shake, not with it: two things moving at once reads as noise,
+   one then the other reads as "wrong... and here is what it was". */
+body.juice .candidate.revealed.correct {
+  animation: juice-land 320ms ease-out 300ms both;
+  box-shadow: 0 0 0 2px var(--suit-club);
+}
+
+body.juice .candidate.revealed .mark {
+  display: inline-block;
+  animation: juice-mark-punch 260ms cubic-bezier(0.2, 1.4, 0.4, 1) 120ms both;
+}
+
+body.juice .candidate.revealed.correct .mark {
+  animation-delay: 380ms;
+}
+
+/* The cards that were neither picked nor right recede, so the two that matter are the only ones with
+   contrast. Cheaper and calmer than animating them too. */
+body.juice .candidate.revealed:not(.correct):not(.wrong) {
+  opacity: 0.35;
+  transition: opacity 200ms ease-out 300ms;
+}
+
+/* --- 1b. the card behaves like something you can press --------------------- *
+ * Nothing happened before you committed: no hover, no press, no acknowledgement between the click
+ * and the answer stream arriving. These two are the cheapest "this is a button" cues there are, and
+ * they animate the edge and shadow the surface ladder just gave the cards (see `app.css`).
+ *
+ * `:not(:disabled)` matters: the cards are disabled while an answer is in flight, and a card that
+ * lifts under the cursor while it is refusing input is a lie. */
+body.juice .candidate:not(:disabled) {
+  transition:
+    transform 120ms ease-out,
+    box-shadow 120ms ease-out,
+    border-color 120ms ease-out;
+}
+
+/* `hover: hover`, for the reason `app.css` gives at its own `.candidate:hover`: on a touch device
+   :hover latches after the tap, so the answered card stayed lifted and accent-bordered underneath
+   the NEXT question. `:active` below needs no guard -- a tap ends it. */
+@media (hover: hover) {
+  body.juice .candidate:not(:disabled):hover {
+    transform: translateY(-2px);
+    border-color: var(--card-accent);
+    box-shadow: var(--elev-3);
+  }
+}
+
+/* Pressed: down and slightly in, back to the resting rung -- the physical read of "this went
+   down" is the DROP from the hover rung, plus the transform, over 60ms so it is felt rather than
+   watched. With a mouse that is rung 3 -> rung 1; on a touch screen there is no hover to fall from,
+   which is why the transform carries the press there. */
+body.juice .candidate:not(:disabled):active {
+  transform: translateY(1px) scale(0.985);
+  box-shadow: var(--elev-1);
+  transition-duration: 60ms;
+}
+
+/* --- 2. floating score ----------------------------------------------------- */
+
+/* The card is the positioning context. `position: relative` is safe to add here because all three
+   base sheets lay the cards out with grid/flex and none of them position their contents. */
+body.juice .candidate {
+  position: relative;
+}
+
+/* The rise is a VARIABLE, not a constant, because the card it rises out of is 103px tall on a desktop
+   and 48px on a phone. At a fixed -68px the number climbed clear of its own card and landed on the one
+   ABOVE it -- measured, with one card per row at phone width. Keyframes cannot be parameterised any
+   other way, so the distance and the peak are custom properties the media query below overrides. */
+@keyframes juice-float {
+  0% {
+    transform: translate(-50%, 0) scale(0.8);
+    opacity: 0;
+  }
+  18% {
+    transform: translate(-50%, var(--float-peak, -12px)) scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, var(--float-rise, -68px)) scale(1);
+    opacity: 0;
+  }
+}
+
+.floater {
+  /* invisible unless the experiment is on: the server streams these either way, because `$_juice` is
+     a local signal it never sees */
+  display: none;
+}
+
+body.juice .floater {
+  display: block;
+  /* a scored number is chrome, not reading: the display face, like the HUD it is counting into */
+  font-family: var(--display-font);
+  position: absolute;
+  left: 50%;
+  bottom: 60%;
+  z-index: 5;
+  pointer-events: none;
+  font-size: 1.6rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  /* readable over a pale card face and over a dark one, without needing a palette of its own */
+  text-shadow:
+    0 1px 0 rgb(255 255 255 / 55%),
+    0 2px 10px rgb(0 0 0 / 35%);
+  animation: juice-float 1100ms cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+
+body.juice .floater.gain {
+  color: var(--suit-club);
+}
+
+body.juice .floater.loss {
+  color: var(--suit-heart);
+}
+
+/* Several beats land on the same card within a second (points, then streak bonus, then time bonus).
+   Staggering by DOM order turns a pile-up into a rising column -- the stack is the reward. */
+body.juice .floater:nth-of-type(2) {
+  animation-delay: 60ms;
+  bottom: 70%;
+}
+
+body.juice .floater:nth-of-type(3) {
+  animation-delay: 120ms;
+  bottom: 80%;
+}
+
+body.juice .floater:nth-of-type(n + 4) {
+  animation-delay: 180ms;
+  bottom: 90%;
+}
+
+/* --- 2b. the correct card rings ------------------------------------------- *
+ * A correct answer had no beat of its own on the CARD: the toasts said so in the corner, the floater
+ * gave the number, and then the next question arrived. This flashes the card you got right, in green,
+ * for the length of the celebration.
+ *
+ * `:has(.floater.gain)` is what makes it possible without a scrap of JavaScript: the server appends
+ * the floater to the card it was earned on, so the card can style ITSELF from the presence of its
+ * own child. No signal, no class toggle, no bookkeeping -- the same "state is already in the DOM"
+ * trick as `[aria-busy]`, one level down. (Not `:has(.floater)`, which would also ring a red ladder
+ * deduction green.) */
+@keyframes juice-correct-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgb(46 139 87 / 65%);
+    border-color: var(--card-accent);
+  }
+  35% {
+    box-shadow: 0 0 0 6px rgb(46 139 87 / 0%);
+    border-color: var(--suit-club);
+  }
+  100% {
+    box-shadow: var(--elev-1);
+    border-color: var(--card-edge);
+  }
+}
+
+body.juice .candidate:has(.floater.gain) {
+  animation: juice-correct-ring 900ms ease-out both;
+}
+
+/* --- the score animation on a phone --------------------------------------- *
+ * Measured at 390x844: the choice cards are 48px tall and one per row, so a 25.6px number rising 68px
+ * left its own card and overlapped the card above. Two changes: it rises less far and smaller, and
+ * several beats spread SIDEWAYS instead of stacking upward -- the rising column only works when there
+ * is room above the card, which on a phone there is not. */
+@media (max-width: 560px) {
+  body.juice .floater {
+    --float-rise: -34px;
+    --float-peak: -8px;
+    font-size: 1.15rem;
+    bottom: 55%;
+  }
+
+  body.juice .floater:nth-of-type(2) {
+    bottom: 55%;
+    left: 28%;
+  }
+
+  body.juice .floater:nth-of-type(3) {
+    bottom: 55%;
+    left: 72%;
+  }
+
+  body.juice .floater:nth-of-type(n + 4) {
+    bottom: 78%;
+    left: 50%;
+  }
+
+  /* the goal-crossing number is the loudest thing on the screen; it can be big, but not 2.4rem big on
+     a 390px viewport */
+  body.juice .floater.final {
+    font-size: 1.6rem;
+  }
+}
+
+/* --- 3. streak chip -------------------------------------------------------- */
+
+/* Hidden by default AND at streak zero: the markup is always in the app bar, but a chip reading
+   "0×" is worse than no chip, and with the experiment off it should not exist at all. */
+.streak {
+  display: none;
+}
+
+body.juice .streak {
+  display: inline-block;
+  font-family: var(--display-font);
+  transform-origin: center;
+  margin-right: 0.5rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  background: rgb(255 255 255 / 18%);
+  /* the growth: the scale comes from `data-style:transform`, so each correct answer is a step and
+     this transition is what makes the step visible rather than instant */
+  transition:
+    transform 220ms cubic-bezier(0.2, 1.5, 0.4, 1),
+    background-color 300ms ease-out,
+    box-shadow 300ms ease-out;
+}
+
+/* The word, not the number: lighter and smaller, so "streak" labels the chip without competing
+   with the count that is the point of it. */
+body.juice .streak-label {
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  opacity: 0.8;
+  margin-right: 0.1rem;
+}
+
+/* No room for it on a phone -- the bar is hamburger, title, theme, score and Skip already. The chip
+   keeps its `aria-label`, so what it means is still available where it matters most. */
+@media (max-width: 560px) {
+  body.juice .streak-label {
+    display: none;
+  }
+}
+
+body.juice .streak.cold {
+  display: none;
+}
+
+body.juice .streak.hot {
+  background: #d29922;
+  box-shadow: 0 0 12px rgb(210 153 34 / 55%);
+}
+
+body.juice .streak.blazing {
+  background: linear-gradient(180deg, #f0b429, #cf6a22);
+  box-shadow:
+    0 0 16px rgb(240 180 41 / 70%),
+    0 0 32px rgb(207 106 34 / 45%);
+}
+
+/* --- 4. the finale ---------------------------------------------------------- *
+ * Crossing the points goal is the payoff for several minutes of play and it used to be three static
+ * emoji. Four things happen, in this order, which is the whole trick -- a sequence reads as an event,
+ * everything-at-once reads as a page load:
+ *
+ *   0ms    the card itself arrives (scale + fade)
+ *   120ms  the party emoji pop in, staggered
+ *   150ms  confetti bursts upward and falls
+ *   400ms  the numbers assemble, digit by digit, from alternating sides
+ *
+ * Every delay is `calc(<base> + var(--i) * <step>)`, with `--i` rendered into the markup by
+ * `completed.html.j2` -- CSS cannot count for itself, so the server numbers the pieces.
+ */
+
+/* the panel lands first, and `:has()` means nothing has to tell it the quiz is over */
+@keyframes juice-finale-in {
+  0% {
+    transform: scale(0.94);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.012);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+body.juice .card:has(.finale) {
+  animation: juice-finale-in 420ms cubic-bezier(0.2, 1.1, 0.3, 1) both;
+  /* the confetti positions against this, and it has to: see the note on `.confetti` below */
+  position: relative;
+}
+
+/* the party emoji: overshoot hard, then settle and breathe. Emoji ignore `color`, so scale and
+   rotation are the only expressive channels they have. */
+@keyframes juice-pop {
+  0% {
+    transform: scale(0) rotate(-45deg);
+  }
+  55% {
+    transform: scale(1.45) rotate(12deg);
+  }
+  80% {
+    transform: scale(0.92) rotate(-5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes juice-breathe {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(3deg);
+  }
+}
+
+body.juice .pop {
+  /* pop, then hand over to a slow idle wobble -- staggered so the three do not move as one block */
+  animation:
+    juice-pop 520ms cubic-bezier(0.2, 1.6, 0.3, 1) calc(120ms + var(--i) * 90ms) both,
+    juice-breathe 3.2s ease-in-out calc(900ms + var(--i) * 220ms) infinite;
+}
+
+/* Confetti. ABSOLUTE against the card, not fixed to the viewport -- and that is not a preference:
+   the card's own entrance animation is a `transform`, which makes it a containing block for fixed
+   positioning, so `position: fixed` here was quietly measured against the card anyway and came out
+   in the wrong place with the wrong stacking. Absolute says what is actually happening.
+   `pointer-events: none` so the party cannot swallow a click on Restart. Drift and spin come from the
+   markup (`--drift`, `--spin`); the burst goes UP first and then falls, because confetti that only
+   falls reads as rain. */
+.confetti {
+  display: none;
+}
+
+@keyframes juice-confetti {
+  0% {
+    transform: translate(0, 0) rotate(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  30% {
+    transform: translate(calc(var(--drift) * 0.4), -22vh) rotate(calc(var(--spin) * 0.4));
+  }
+  100% {
+    transform: translate(var(--drift), 84vh) rotate(var(--spin));
+    opacity: 0;
+  }
+}
+
+body.juice .confetti {
+  display: block;
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  z-index: 40;
+  pointer-events: none;
+}
+
+body.juice .confetti-bit {
+  position: absolute;
+  font-size: 1.7rem;
+  animation: juice-confetti 2.6s cubic-bezier(0.25, 0.6, 0.4, 1) calc(150ms + var(--i) * 70ms) both;
+}
+
+/* The numbers assemble: each digit flies in from alternating sides, overshoots and settles. The
+   translate is large enough that they come from outside the card -- "fragments forming numbers". */
+@keyframes juice-assemble-left {
+  0% {
+    transform: translate(-60vw, -30vh) rotate(-120deg) scale(2.2);
+    opacity: 0;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, 0) rotate(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes juice-assemble-right {
+  0% {
+    transform: translate(60vw, -26vh) rotate(140deg) scale(2.2);
+    opacity: 0;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, 0) rotate(0) scale(1);
+    opacity: 1;
+  }
+}
+
+body.juice .digit {
+  animation: juice-assemble-left 620ms cubic-bezier(0.16, 1, 0.3, 1) calc(400ms + var(--i) * 110ms) both;
+}
+
+/* alternate the side per digit, so a four-figure score does not sweep in like a train */
+body.juice .digit:nth-child(even) {
+  animation-name: juice-assemble-right;
+}
+
+/* The goal-crossing floater: same number, gold, larger, slower -- the last one the player sees. */
+body.juice .floater.final {
+  color: #f0b429;
+  font-size: 2.4rem;
+  text-shadow:
+    0 1px 0 rgb(255 255 255 / 55%),
+    0 0 18px rgb(240 180 41 / 70%);
+  animation-duration: 1600ms;
+}
+
+/* The points gauge, when it is finally full. `data-class` sets `.full` off `$_pointsPct >= 100`, so
+   the bar celebrates itself without the server saying anything extra. */
+@keyframes juice-gauge-full {
+  0%,
+  100% {
+    filter: none;
+  }
+  50% {
+    filter: brightness(1.25) saturate(1.3);
+  }
+}
+
+body.juice .points-meter.full {
+  animation: juice-gauge-full 1.1s ease-in-out 3;
+  box-shadow: 0 0 12px rgb(46 139 87 / 60%);
+}
+
+/* --- 5. the countdown gets urgent ------------------------------------------ *
+ * The last band of the timer was the DULLEST thing on the screen: `.spent` paints it grey, so the
+ * final ~5 seconds -- the ones where the bonus is draining fastest in proportional terms -- looked
+ * like the bar had already given up. It has not: the time bonus is continuous
+ * (`round(base * percent_left / 100)`), so there are points on the table right up to zero.
+ *
+ * So under the toggle that band goes RED and throbs. No new server signal and no new thresholds: the
+ * bands are already in the DOM as classes (`data-class` on the fill), and `--suit-heart` is the app's
+ * existing red, contrast-tested in both palettes.
+ *
+ * Two halves, because the fill runs out of width before the question runs out of time:
+ *   - the FILL brightens on the beat, while there is still some of it;
+ *   - the TRACK glows, so at 0% -- a zero-width fill you cannot animate -- the bar is still saying
+ *     something. `overflow: hidden` on `.timer` clips its children, not its own shadow.
+ * `:has()` on the track is the same "the state is already in the DOM" move as the correct-card ring.
+ */
+@keyframes juice-timer-throb {
+  0%,
+  100% {
+    filter: none;
+  }
+  50% {
+    filter: brightness(1.4) saturate(1.15);
+  }
+}
+
+@keyframes juice-timer-alarm {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgb(0 0 0 / 0%);
+  }
+  50% {
+    box-shadow: 0 0 14px color-mix(in srgb, var(--suit-heart) 55%, transparent);
+  }
+}
+
+/* `.ticking` is doing real work here: without it a bar frozen in the last band keeps throbbing
+   behind the reveal, hurrying you along on a question that is already answered. */
+body.juice .timer-fill.spent.ticking {
+  background: var(--suit-heart);
+  animation: juice-timer-throb 620ms ease-in-out infinite;
+}
+
+body.juice .timer:has(.timer-fill.spent.ticking) {
+  animation: juice-timer-alarm 620ms ease-in-out infinite;
+}
+
+/* --- 6. the milestone sweep ------------------------------------------------ *
+ * The points gauge carries the milestone notches, so it is the thing that says WHERE the next skip
+ * is -- and it was the one part of the HUD that said nothing when one was collected. The award
+ * arrived as a corner toast, third or fourth in a chain of them, while the bar it was measured
+ * against sat still and merely got longer.
+ *
+ * So the bar acknowledges it: a light crosses the gauge, once, on the beat the milestone lands
+ * (`app._answer_stream` appends `.meter-sweep` when `toast.awards_skip`). No new signal -- the server
+ * already knows, because it is the thing that awarded the skip.
+ *
+ * Two details worth keeping:
+ *   - the shine is WHITE at low alpha rather than a colour: the track is a red-to-green gradient, so
+ *     any tint would read as a different score on the way past;
+ *   - `.meter` is `overflow: hidden` in all three base sheets, so the sweep can start and end off the
+ *     ends of the bar and be clipped to it, which is what makes it a pass rather than a fade. */
+@keyframes juice-meter-sweep {
+  from {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(520%) skewX(-18deg);
+  }
+}
+
+/* the reduced-motion stand-in: the same acknowledgement, with no travel */
+@keyframes juice-meter-flush {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+body.juice .meter-sweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 22%;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgb(255 255 255 / 0%),
+    rgb(255 255 255 / 75%),
+    rgb(255 255 255 / 0%)
+  );
+  animation: juice-meter-sweep 780ms cubic-bezier(0.3, 0, 0.2, 1) 1 both;
+}
+
+/* --- honesty about motion -------------------------------------------------- *
+ * The base sheets already collapse their transitions under `prefers-reduced-motion`; this file adds
+ * the effects that most need it, so it repeats the rule for its own. The floaters and the marks stay
+ * VISIBLE and simply do not move: the information they carry is the number and the tick, not the
+ * animation. */
+@media (prefers-reduced-motion: reduce) {
+  body.juice .candidate.revealed.wrong,
+  body.juice .candidate.revealed.correct,
+  body.juice .candidate.revealed .mark,
+  body.juice .candidate:has(.floater.gain) {
+    animation: none;
+  }
+
+  /* the hover and press cues stay, they just stop being animated: a state change is information,
+     the 120ms it takes to get there is not */
+  body.juice .candidate:not(:disabled) {
+    transition: none;
+  }
+
+  /* ...but the correct card should still be marked, since its animation carried the only on-card
+     signal that the answer was right */
+  body.juice .candidate:has(.floater.gain) {
+    border-color: var(--suit-club);
+  }
+
+  body.juice .floater {
+    animation: none;
+    opacity: 1;
+    transform: translate(-50%, -24px);
+  }
+
+  body.juice .streak {
+    transition: none;
+  }
+
+  /* The finale keeps every piece, and stops moving. The numbers are the point of it -- they must be
+     legible at rest -- and the confetti is dropped entirely rather than parked mid-air, because
+     sixteen emoji frozen over the page is worse than no confetti. */
+  body.juice .card:has(.finale),
+  body.juice .pop,
+  body.juice .digit {
+    animation: none;
+  }
+
+  body.juice .confetti {
+    display: none;
+  }
+
+  body.juice .points-meter.full {
+    animation: none;
+  }
+
+  /* A sweep is travel and nothing else -- there is no state left behind when it finishes, so unlike
+     the marks and floaters there is nothing to keep visible. It becomes a single brief flush of the
+     bar instead: the milestone is still acknowledged where it was earned, without anything crossing
+     the screen. */
+  body.juice .meter-sweep {
+    animation: juice-meter-flush 700ms ease-in-out 1 both;
+    width: 100%;
+    background: rgb(255 255 255 / 30%);
+  }
+
+  /* the countdown keeps the COLOUR and loses the beat: "you are nearly out of time" is information,
+     the throb is only how loudly it is said */
+  body.juice .timer-fill.spent.ticking,
+  body.juice .timer:has(.timer-fill.spent.ticking) {
+    animation: none;
+  }
+
+  body.juice .timer:has(.timer-fill.spent.ticking) {
+    box-shadow: 0 0 10px color-mix(in srgb, var(--suit-heart) 45%, transparent);
+  }
+}

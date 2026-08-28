@@ -1,0 +1,382 @@
+{{- /* Everything inside <body>: the app bar, the layout, the toasts and the topics dialog.
+Rendered on page load by shell.gohtml, and patched WHOLE on every interaction ("fat morph").
+
+The Tao of Datastar: "Morphing ensures that only modified parts of the DOM are updated,
+preserving state and improving performance. This allows you to send down large chunks of the
+DOM tree". So this is the unit of update, and the server stops having to remember which
+fragments a change touches -- the class of bug that let a clamped `difficulty` sit stale in
+the sidebar.
+
+Two things stay OUTSIDE this region, on <body>, precisely because they must not be
+re-created by a morph: the signal declarations, and `data-init` (which in stream mode opens
+the timer connection -- re-running it per patch would leak a held connection each time). */ -}}
+    <header class="topbar">
+      <button type="button" class="nav-toggle" aria-label="Toggle sidebar"
+              data-attr:aria-expanded="$_navOpen"
+              data-on:click="$_navOpen = !$_navOpen">
+        <span class="bars" aria-hidden="true"></span>
+      </button>
+      <h1>{{ .Variant.Title }}</h1>
+      {{- /* The theme toggle, on the CHROME side of the bar -- left of the spacer, with the
+      hamburger. Not in the drawer, because the drawer starts closed and "this is too bright
+      right now" is fixed the moment it is noticed. Not in the HUD either: the bar is two
+      clusters split by `.topbar-spacer`, chrome on the left and game state on the right, and
+      a palette is not a move in the game. It also should not neighbour Skip -- that is the
+      one control that SPENDS something.
+
+      Three states in one button: auto (the OS decides, the default) -> light -> dark. Auto
+      is a real state, not a synonym for light: it is the only one that follows the machine
+      when it switches at sunset, and it is what `data-theme` being ABSENT means. The glyphs
+      are symbol-font TEXT, not emoji, so they take the app bar's white. */ -}}
+      <button type="button" class="theme-toggle button"
+              data-attr:aria-label="'Colour theme: ' + $_theme + '. Activate to change.'"
+              data-attr:title="'Theme: ' + $_theme"
+              data-on:click="$_theme = $_theme === 'auto' ? 'light' : ($_theme === 'light' ? 'dark' : 'auto');
+                document.cookie = '{{ .ThemeCookie }}=' + $_theme + ';path={{ .CookiePath }};max-age=31536000;samesite=lax'">
+        <span aria-hidden="true"
+              data-text="$_theme === 'light' ? '☀' : ($_theme === 'dark' ? '☾' : '◐')">◐</span>
+      </button>
+      <span class="topbar-spacer"></span>
+
+      {{- /* THE HUD: live state and the one action you take *during* a question.
+
+      Sorted by when you touch it: live state and Skip live here, always visible; anything
+      that restarts the quiz lives in the drawer, which starts closed.
+
+      The streak GROWS with the run and warms through two colour bands. `Math.min` caps the
+      growth at 8 -- an unbounded scale eventually reflows the app bar. It SAYS "streak",
+      because a bare "3x" is a rebus; the word is dropped again under 560px, where the bar
+      has no room for it, and the `aria-label` carries it at every width. */ -}}
+      <span class="streak"
+            data-attr:aria-label="'streak ' + $_streak"
+            data-class="{hot: $_streak >= 3, blazing: $_streak >= 6, cold: $_streak < 1}"
+            data-style:transform="'scale(' + (1 + Math.min($_streak, 8) * 0.06) + ')'">
+        <span class="streak-label" aria-hidden="true">streak</span>
+        <span aria-hidden="true" data-text="$_streak"></span><span aria-hidden="true">&times;</span>
+      </span>
+
+      {{- /* The fraction is wrapped so the CSS can shed it on a narrow bar: under 400px the
+      bar keeps the POINTS, because points are what the skips are earned against. */ -}}
+      <span class="topbar-score">
+        <span class="score-fraction"><span data-text="$_correct"></span>/<span data-text="$_attempted"></span>&nbsp;·&nbsp;</span><span data-text="$_points"></span> pts
+      </span>
+
+      {{- /* The points gauge, promoted out of the sidebar. The NOTCHES are why it earns space
+      up here: each one is a skip you can earn, so the bar answers "how close am I to another
+      skip" at a glance. The gradient stays on the track with a mask over the unearned part,
+      so a colour means the same number of points wherever the bar has reached. */ -}}
+      <div class="meter points-meter hud-meter" role="img"
+           data-class="{full: $_pointsPct >= 100}"
+           data-attr:aria-label="'points ' + $_points + ' of {{ .PointsGoal }}'">
+        <div class="meter-mask" data-style:width="(100 - $_pointsPct) + '%'"></div>
+        {{- range .MilestoneTicks }}
+        <span class="meter-tick" style="left: {{ . }}%"
+              data-class="{earned: $_pointsPct >= {{ . }}}"></span>
+        {{- end }}
+      </div>
+
+      {{- /* Skip: an in-play action, so it is in the HUD rather than the drawer. `s` works
+      too -- same guards as the digit accelerators, plus the button's own disabled conditions
+      restated, because a window handler does not inherit them. */ -}}
+      <button type="button" class="skip warning button is-warning"
+              data-attr:disabled="$_skipsLeft <= 0 || !$_playing"
+              data-on:click="@post('{{ .Prefix }}/skip{{ .VariantQuery }}')"
+              data-on:keydown__window="evt.key === 's'
+                && $_skipsLeft > 0 && $_playing && !$_answering && !$_topicsOpen
+                && !evt.target.closest?.('{{ .TypingTargets }}')
+                && @post('{{ .Prefix }}/skip{{ .VariantQuery }}')">
+        Skip <span class="skip-count" data-text="$_skipsLeft"></span>
+      </button>
+    </header>
+
+    <div class="layout" data-class="{'nav-closed': !$_navOpen}">
+      {{- /* Dismiss-on-outside-click, but NOT when the click was the toggle itself: the
+      hamburger sits outside the drawer, so opening it also counted as an outside click and
+      the two handlers cancelled each other out. */ -}}
+      <aside class="sidebar"
+             data-on:click__outside="$_navOpen && window.matchMedia('{{ .DrawerOverlayQuery }}').matches && !evt.target.closest('.nav-toggle') && ($_navOpen = false)">
+        {{- /* What is left of the old `#score` panel: the dial, in a collapsed group. The
+        numbers and the points gauge moved to the HUD; the dial stays because it is pleasant
+        and panel had one, but it spends a lot of space on a single number.
+
+        `data-preserve-attr="open"`: `open` is state the PLAYER set, and the server has no
+        idea about it -- so a fat morph, which rewrites `#app` from markup that never carries
+        the attribute, snapped every disclosure shut on every answer, skip and restart. */ -}}
+        <details class="panel box progress" id="progress" data-preserve-attr="open">
+          <summary>Progress</summary>
+          {{- /* The panel Dial, by hand. One 90-radius arc, coloured by band and revealed
+          with stroke-dashoffset -- so the value is a signal expression and no markup is
+          patched. `PI * 90 = 282.74` is the full sweep. */ -}}
+          <svg class="dial" viewBox="0 0 200 110" role="img" aria-label="percentage correct">
+            <path class="dial-track" d="M 10 100 A 90 90 0 0 1 190 100" />
+            <path class="dial-value" d="M 10 100 A 90 90 0 0 1 190 100"
+                  data-style:stroke-dashoffset="282.74 * (1 - $_scorePct / 100)"
+                  data-class="{poor: $_scorePct < 30, weak: $_scorePct >= 30 && $_scorePct < 49, fair: $_scorePct >= 49 && $_scorePct < 59, ok: $_scorePct >= 59 && $_scorePct < 75, good: $_scorePct >= 75}" />
+            <text class="dial-text" x="100" y="95" data-text="$_scorePct + '%'">0%</text>
+          </svg>
+          <p class="score-line">
+            <span data-text="$_correct"></span> of <span data-text="$_attempted"></span> right
+            &middot; <span data-text="$_points"></span> / {{ .PointsGoal }} points
+          </p>
+        </details>
+
+        {{- /* The debug panel: for reaching states that take minutes of honest play. Rendered
+        only when the session is armed -- `?debug` on a page load, or DSQUIZ_DEBUG=1. Not
+        styled beyond a warning tint on purpose: it should look like scaffolding. */ -}}
+        {{- if .Debug }}
+        <section class="panel box debug" id="debug">
+          <strong>Debug</strong>
+          <div class="debug-row">
+            <button type="button" class="button is-small" data-on:click="@post('{{ .Prefix }}/debug/points/100{{ .VariantQuery }}')">+100 pts</button>
+            <button type="button" class="button is-small" data-on:click="@post('{{ .Prefix }}/debug/points/-100{{ .VariantQuery }}')">&minus;100</button>
+          </div>
+          <div class="debug-row">
+            {{- /* the goal decides completion AND where the skip milestones fall, so a small
+            goal exercises the whole ladder in a minute */ -}}
+            <button type="button" class="button is-small" data-on:click="@post('{{ .Prefix }}/debug/goal/200{{ .VariantQuery }}')">goal 200</button>
+            <button type="button" class="button is-small" data-on:click="@post('{{ .Prefix }}/debug/goal/1000{{ .VariantQuery }}')">goal 1000</button>
+          </div>
+          <div class="debug-row">
+            <button type="button" class="button is-small" data-on:click="@post('{{ .Prefix }}/debug/reveal{{ .VariantQuery }}')">show reveal</button>
+            <button type="button" class="button is-small" data-on:click="@post('{{ .Prefix }}/debug/complete{{ .VariantQuery }}')">show finale</button>
+          </div>
+          <p class="hint">
+            goal {{ .PointsGoal }} &middot; qid {{ .QID }} &middot;
+            {{ if .Playing }}playing{{ else }}finished{{ end }} &middot; build {{ .BuildStamp }}
+          </p>
+        </section>
+        {{- end }}
+
+        <section class="panel box controls">
+          <label>
+            Difficulty <output data-text="$difficulty"></output>
+            {{- /* `change`, not `input`: fires on release, like panel's value_throttled --
+            but debounced, because with the KEYBOARD `change` fires on every arrow keypress
+            and a settings change restarts the quiz, so holding an arrow key wiped the score.
+            `value` is server-rendered too: a range input with no value defaults to the
+            midpoint of its span, which is what the browser paints before datastar's binding
+            has run. */ -}}
+            <input type="range" min="{{ .MinDifficulty }}" max="{{ .MaxDifficulty }}" step="1"
+                   value="{{ .Settings.Difficulty }}"
+                   data-bind:difficulty data-on:change__debounce.400ms="@post('{{ .Prefix }}/settings{{ .VariantQuery }}')" />
+          </label>
+          {{- /* `checked` is server-rendered for the same reason as the slider `value`s, and
+          it matters more here: an unchecked box on first paint is state the binding would
+          push back up, quietly turning ladder mode off. */ -}}
+          <label class="checkbox">
+            <input type="checkbox" {{ if .Settings.LadderMode }}checked {{ end }}
+                   data-bind:ladder-mode data-on:change="@post('{{ .Prefix }}/settings{{ .VariantQuery }}')" />
+            Ladder mode (can lose points)
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" {{ if .Settings.TargetOn }}checked {{ end }}
+                   data-bind:target-on data-on:change="@post('{{ .Prefix }}/settings{{ .VariantQuery }}')" />
+            Target percentage required
+          </label>
+          <label>
+            Target <output data-text="$targetPct"></output>%
+            <input type="range" min="70" max="90" step="10" value="{{ .Settings.TargetPct }}"
+                   data-attr:disabled="!$targetOn"
+                   data-bind:target-pct data-on:change__debounce.400ms="@post('{{ .Prefix }}/settings{{ .VariantQuery }}')" />
+          </label>
+          {{- /* Topics before the filter, and the filter folded away behind "Advanced",
+          because they answer the same question at two very different prices: a topic is a
+          name you recognise, the filter is a pattern language with six rules. The STATUS line
+          stays outside the fold: it says what the working set currently is. */ -}}
+          {{- if .Topics }}
+          {{- /* Opening the picker closes the drawer on a narrow screen: the button is IN the
+          drawer, so on a phone you would otherwise be looking at a dialog stacked on top of
+          the thing you opened it from. */ -}}
+          <button type="button" class="light button is-light"
+                  data-on:click="$_topicsOpen = true; window.matchMedia('{{ .DrawerOverlayQuery }}').matches && ($_navOpen = false)">Topics&hellip;</button>
+          {{- end }}
+          <div class="filter-status" id="filter-status">{{ .FilterStatus }}</div>
+          <details class="advanced" data-preserve-attr="open">
+            <summary>Advanced: bidding tree filter</summary>
+            {{- /* `$filterText` is the *draft* -- typed but not applied -- which is client
+            state by definition. Every keystroke asks the server what it would select; only
+            Enter commits. The validation stays where the matcher is, so the browser knows
+            nothing about bidding. */ -}}
+            <label>
+              Bidding tree filter
+              <input type="text" class="input" list="topic-names" placeholder="e.g. 1D-1M-1N, or a topic"
+                     value="{{ .FilterText }}"
+                     data-bind:filter-text
+                     data-on:input__debounce.300ms="@get('{{ .Prefix }}/filter/preview{{ .VariantQuery }}')"
+                     data-on:keydown="evt.key === 'Enter' && (evt.target.blur(), @post('{{ .Prefix }}/filter/apply{{ .VariantQuery }}'))" />
+            </label>
+            {{- /* native autocomplete: the topic names, no javascript of ours */ -}}
+            <datalist id="topic-names">
+              {{- range .Topics }}
+              <option value="{{ .Name }}"></option>
+              {{- end }}
+            </datalist>
+            <details class="filter-help" data-preserve-attr="open">
+              <summary>Filter syntax</summary>
+              <ul>
+                <li><code>1D-1M-1N</code> a bid; suits C D H S N. Separate calls with a dash or a
+                  space &mdash; <code>1D 1H</code>, <code>1D-1H</code> and <code>1D--1H</code> are the same</li>
+                <li><code>M</code> / <code>m</code> any major / any minor &mdash; <em>the only place case matters</em></li>
+                <li><code>1*</code> / <code>*</code> any suit at that level / any call</li>
+                <li><code>Pass</code> <code>X</code> <code>XX</code> pass, double, redouble</li>
+                <li><code>(2H)</code> brackets = the opponents' call; <code>(*)</code> = they did something</li>
+                <li><code>1D-1M, 2C</code> comma separates alternatives &mdash; either one matches</li>
+              </ul>
+              <p>
+                A pattern describes <strong>your</strong> auction: opponent calls you do not mention
+                are stepped over, so <code>1D-1H</code> matches 1D (Pass) 1H, 1D (1S) 1H and
+                1D (X) 1H. Bracket a call to pin the opponents down at that exact point. Too few
+                matches falls back to the whole system.
+              </p>
+            </details>
+          </details>
+
+          <p class="hint"><em>Changes restart the quiz.</em></p>
+          {{- /* Restart also CLOSES the drawer, but only where the drawer is an overlay.
+          Below 900px it covers the quiz, so "start again" that leaves you looking at the
+          settings panel you just used is a second tap for no reason. Only the explicit
+          button does this -- the sliders and checkboxes restart the quiz too, and you may be
+          adjusting several. */ -}}
+          <button type="button" class="danger button is-danger"
+                  data-on:click="@post('{{ .Prefix }}/restart{{ .VariantQuery }}');
+                    window.matchMedia('{{ .DrawerOverlayQuery }}').matches && ($_navOpen = false)">Restart</button>
+          {{- /* Presentation, not quiz rules -- and collapsed, because the settings column
+          was the tallest thing on the page. `data-bind` in the *value* form: both signal
+          names start with an underscore. */ -}}
+          <details class="appearance" data-preserve-attr="open">
+            <summary>Appearance</summary>
+            {{- /* Both pickers hand focus BACK after they commit. A <select> keeps focus once
+            clicked, and the digit accelerators ignore keystrokes aimed at a form control --
+            so picking a font or a stylesheet silently disabled 1-9 for the rest of the
+            session. These two are safe to blur because a change is the whole interaction; the
+            difficulty slider and the filter box are NOT. */ -}}
+            {{- /* The Bulma option is the reason for the `class="light button is-light"`
+            pairs throughout these templates: Bulma is class-based, so the framework's class
+            strings have to be IN the markup, and they ship on every patch whichever
+            stylesheet is active. That is the cost the comparison is measuring, so it is paid
+            in the open. DEBUG ONLY: the A/B/C is settled and the three variants differ in
+            details a player has no way to care about. */ -}}
+            {{- if .Debug }}
+            <label>
+              Base CSS
+              {{- /* Bulma wants `<div class="select">` AROUND the select -- a wrapper element,
+              not a class on the select. A plain div for the other two sheets, which is
+              exactly the kind of markup tax that does not show up in a line count. */ -}}
+              <div class="select">
+                <select data-bind="_css" data-on:change="evt.target.blur()">
+                  <option value="hand">Hand-rolled</option>
+                  <option value="pico">Pico classless</option>
+                  <option value="bulma">Bulma (spike)</option>
+                </select>
+              </div>
+            </label>
+            {{- end }}
+            {{- /* The game-feel experiment, on by default. `checked` is rendered statically to
+            match the declared default of `$_juice`: an unchecked box would be what
+            `data-bind` uploads into the signal on first paint, turning it off before anyone
+            chose to. */ -}}
+            <label class="checkbox">
+              <input type="checkbox" checked data-bind="_juice" />
+              Game feel (shake, floating points, streak)
+            </label>
+            {{- /* Sound is the one appearance preference that starts OFF, and NOT for the
+            usual conservative reason: the others change how the page looks to the person who
+            asked for them, while audio arrives in whatever room the laptop is in. Note the
+            missing `checked` -- it has to agree with the declared default of `$_sound`, or
+            the first paint would upload `true` into the signal and the quiz would start
+            making noise on its own. */ -}}
+            <label class="checkbox">
+              <input type="checkbox" data-bind="_sound" />
+              Sound (countdown tick, scoring chimes)
+            </label>
+            <label>
+              Font
+              <div class="select">
+                <select data-bind="_font" data-on:change="evt.target.blur()">
+                <option value="notes">Open Sans (as the notes)</option>
+                <option value="system">System UI</option>
+                <option value="rounded">Rounded</option>
+                <option value="serif">Serif</option>
+                <option value="mono">Monospace</option>
+                </select>
+              </div>
+            </label>
+          </details>
+        </section>
+      </aside>
+
+      <main class="main">
+        {{- /* the one fragment that is patched as elements. `card` is OUR class and also one
+        of Bulma's -- and for once they mean the same thing, so the Bulma variant inherits its
+        surface for free.
+
+        COMING BACK FROM THE SYSTEM NOTES TAKES THE KEYBOARD BACK. Read the notes, click
+        inside them to scroll, come back to the quiz, and 1-9 do nothing while the mouse still
+        works. Nothing here is broken when that happens -- the notes are an <iframe>, so a
+        click inside them puts focus in ANOTHER DOCUMENT, and every accelerator here is a
+        `__window` listener on ours. Bringing the pointer back to the question is the gesture
+        that means "I am playing again", so that is where the focus is taken back. Narrow on
+        purpose -- only when the thing holding focus is an iframe -- and `window.focus()` as
+        well as the blur, because the parent document has to be the one holding focus. */ -}}
+        <section class="card" id="quiz"
+                 data-on:mouseenter="document.activeElement?.tagName === 'IFRAME'
+                   && (document.activeElement.blur(), window.focus())">{{ .QuizBody }}</section>
+
+        {{- /* The timer's markup never changes; only the signal does. Which side produces that
+        signal is the experiment (DSQUIZ_TIMER):
+
+        client -- the browser walks $_timeLeftPct down from the allowance the server stated
+                  with the question. No connection held, no per-tick server work.
+        stream -- a held SSE connection pushes the value, which is panel's model exactly.
+
+        Either way nothing here is trusted for scoring: the bonus is recomputed server-side
+        from the question's start time when the answer arrives.
+
+        In stream mode the connection is opened by `data-init` on <body>, NOT here: this
+        element is inside the morph target, so a per-patch `data-init` would open a fresh held
+        connection on every interaction.
+
+        The interval gates on `$_ticking`, the server's "a live, unanswered question is being
+        timed", not on `$_playing` -- which is only false once the whole quiz is over, so the
+        bar kept draining after a question was answered. Assigning ONLY while ticking is what
+        freezes the bar rather than resetting it.
+
+        The last three seconds also TICK, when sound is on. It rides this interval rather than
+        having one of its own: the rate limit is the SAMPLE -- the blip is padded with silence
+        out to a full second, and play() on an element that is already playing does nothing.
+        `$_timeLeftPct * $_questionMs < 300000` is "under three seconds left" without a
+        division. */ -}}
+        <div class="timer" id="timer"
+             {{ if ne .TimerMode "stream" }}data-on-interval__duration.100ms="$_ticking && !$_answering && ($_timeLeftPct = Math.max(0, $_timeLeftPct - 10000 / $_questionMs)) && $_sound && $_timeLeftPct * $_questionMs < 300000 && document.getElementById('sfx-tick')?.play()?.catch(() => {})"{{ end }}>
+          {{- /* `ticking` is the same condition the interval assigns under, and it is here for
+          the game-feel layer: the last band throbs, and a bar that is FROZEN behind a reveal
+          must not -- urgency about a question you have already answered is a lie. */ -}}
+          <div class="timer-fill" data-style:width="$_timeLeftPct + '%'"
+               data-class="{spent: $_timeLeftPct < 17, low: $_timeLeftPct >= 17 && $_timeLeftPct < 49, mid: $_timeLeftPct >= 49 && $_timeLeftPct < 65, high: $_timeLeftPct >= 65, ticking: $_ticking && !$_answering}"></div>
+        </div>
+
+        <div class="toasts" id="toasts" aria-live="polite"></div>
+
+        {{ if .Topics }}{{ template "topics.gohtml" . }}{{ end }}
+
+        <details class="notes" data-preserve-attr="open">
+          <summary>Notation</summary>
+          <ul>
+            <li>Bids in brackets e.g (1♥), (bid), (any), (1NT) etc. indicate the opponents made the bid.</li>
+            <li>The opponents' bids are often automatically removed from the question</li>
+            <li>~ means roughly/approximately (points are guides, not absolute)</li>
+            <li>X or Dbl means double</li>
+            <li>GF/FG means game forcing</li>
+            <li>NF means non-forcing</li>
+            <li>M means major, oM other major</li>
+            <li>m means minor, om other minor</li>
+            <li>Hx/HHx means Honour + x (small card), Honour Honour x etc.</li>
+          </ul>
+        </details>
+
+        <details class="notes" data-preserve-attr="open">
+          <summary>System Notes</summary>
+          <iframe src="{{ .Variant.SystemNotesURL }}" title="system notes" loading="lazy"></iframe>
+        </details>
+      </main>
+    </div>

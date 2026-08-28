@@ -1,0 +1,36 @@
+{{- /* Shown in #quiz after a wrong answer, instead of panel's 4.2s centre-screen toast.
+
+Non-blocking and in place: the prompt stays, the right answer is marked, the choice you took
+is marked, and nothing advances until you say so. The clock for the NEXT question starts when
+it is served, so reading this costs you no time bonus. */ -}}
+<h2 class="intro">{{ .Intro }}</h2>
+<p class="answer">&ldquo;<strong>{{ .Answer }}</strong>&rdquo;</p>
+<div class="candidates" role="group" aria-label="answer choices, revealed">
+  {{- range $index, $candidate := .Candidates }}
+  <div class="candidate revealed
+              {{ if eq $index $.CorrectIndex }}correct{{ else if eq $index $.WrongIndex }}wrong{{ end }}">
+    <span class="mark" aria-hidden="true">{{ if eq $index $.CorrectIndex }}&#10003;{{ else if eq $index $.WrongIndex }}&#10007;{{ end }}</span>
+    <span class="candidate-text">{{ $candidate }}</span>
+  </div>
+  {{- end }}
+</div>
+{{- /* The window keydown lives on the WRAPPER and excludes BUTTON, because a focused button
+already activates on Enter/Space natively. Binding both to the button fired two
+`@post('/next')`s: the second superseded and aborted the first, after the server had already
+advanced the question -- so state moved on while the browser kept the stale reveal.
+
+Form controls are excluded with `closest`, not a tagName list: Enter in the filter box
+commits a filter and must not also advance the question. BUTTON stays a tagName test -- it is
+specifically the element the event fired on that activates natively.
+
+ActivationTargets, not TypingTargets: Space ACTIVATES a focused checkbox or radio, so those
+keep their claim on this key even though they have none on a digit. */ -}}
+<div class="reveal-actions"
+     data-on:keydown__window="(evt.key === 'Enter' || evt.key === ' ')
+       && !$_topicsOpen
+       && evt.target.tagName !== 'BUTTON'
+       && !evt.target.closest?.('{{ .ActivationTargets }}')
+       && @post('{{ .Prefix }}/next{{ .VariantQuery }}')">
+  <button type="button" class="next button is-primary" autofocus data-on:click="@post('{{ .Prefix }}/next{{ .VariantQuery }}')">Next question</button>
+  <span class="reveal-hint">or press Enter</span>
+</div>

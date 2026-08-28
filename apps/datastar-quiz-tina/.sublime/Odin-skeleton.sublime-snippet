@@ -1,0 +1,432 @@
+<snippet>
+	<content><![CDATA[
+package ${1:main}
+
+import "base:runtime"
+import "core:fmt"
+import "core:log"
+import "core:mem"
+import "core:os"
+import "core:reflect"
+import "core:strings"
+import "core:sync"
+import "core:sys/posix"
+import win "core:sys/windows"
+
+
+main_program :: proc() -> (exit_code: int) { 	// consider moving this to a different file to separate from operational setup
+	${2:fmt.println("Hello")}
+	return 0 // return non-zero to signal failure to the OS / shell; `main` passes this to `os.exit`
+}
+
+
+main :: proc() { 	// Operational setup before calling `main_program`
+	exit_code: int
+	defer os.exit(exit_code) // deferred first so it runs last
+	defer restore_console_codepage() // see CONSOLE_UTF8
+
+	// (1) Profiler setup
+	when SPALL_ENABLE {
+		spall_profiler_setup()
+		defer spall_profiler_destroy()
+	}
+	SPALL_SCOPED_EVENT(name = #procedure)
+	// (2) Back trace improvements. Runtime check, not a `when`: nothing is captured until an assert
+	// or a segfault, so there is no cost worth compiling out. See ODIN_BACKTRACE below.
+	backtrace := backtrace_enabled()
+	if backtrace {
+		register_segfault_handler()
+	}
+	// assigned out here, not inside the `if` - a context write inside a block does not outlive it
+	context.assertion_failure_proc = backtrace ? trace.assertion_failure_proc : context.assertion_failure_proc
+	// (3) Memory tracking allocator to debug leaks and bad frees (double frees)
+	when TRACKING_ALLOCATOR != "off" {
+		alloc_interface, tracking_allocator := make_tracking_allocator_context()
+		context.allocator = alloc_interface
+		defer tracking_allocator_finalise(tracking_allocator)
+	}
+	// (4) Logger setup to stdout
+	context.logger = make_logging_context()
+	defer destroy_logging_context()
+
+	exit_code = main_program()
+}
+
+
+/*
+___________________________________________________________________________________________________________________
+	Operational Setup - profiling, logging, telemetry etc. (not program semantics related)
+
+	- Build with `-define:SPALL_ENABLE=true` option to emit a spall profiling `trace.spall` file (adds 2+ seconds)
+		* https://github.com/colrdavidson/spall-web
+	- Backtraces on asserts and segfaults are ON by default and need no define at all. Set the
+	  `ODIN_BACKTRACE` env var to `0`, `false` or `off` to turn them off for a run. Symbol names and
+	  line numbers come from the debug info, so build with `-debug` to get a readable trace - without
+	  it the trace still prints, as bare `0x...` addresses
+	- Build with `-define:TRACKING_ALLOCATOR=off|basic|backtrace` to choose how allocations are
+	  tracked. Defaults to `basic` in a `-debug` build and `off` otherwise (see below)
+	- Build with `-define:CONSOLE_UTF8=false` to leave the Windows console codepage alone. On by
+	  default on Windows only, where it is what makes non-ASCII output legible (see below)
+___________________________________________________________________________________________________________________
+*/
+SPALL_ENABLE :: #config(SPALL_ENABLE, ${3:false})
+
+/*
+Whether to put the Windows console into UTF-8 for the duration of the process.
+
+`fmt` emits UTF-8 bytes and `core:os` hands them to `WriteFile` unconverted, so a console left on the
+OEM codepage decodes them one byte at a time: `859.7µs` prints as `859.7┬Ás`. Nothing to fix on the
+POSIX side, hence the platform-shaped default.
+
+`@(init)` rather than a step in `main`, because `odin test` builds get their entry point from
+`core:testing` and never call our `main` - and the test runner's timing summary is the output that
+shows the mojibake most often.
+
+The codepage belongs to the console rather than the process, so `main` puts it back on the way out -
+otherwise every run leaves the shell it was launched from on a codepage it did not ask for. A `test`
+build cannot: `core:testing` ends through `os.exit`, which reaches no `@(fini)` and no defer, so a
+test run does leave the console on UTF-8.
+*/
+CONSOLE_UTF8 :: #config(CONSOLE_UTF8, ODIN_OS == .Windows)
+
+when CONSOLE_UTF8 && ODIN_OS == .Windows {
+	// `.ACP` is 0, which is what `GetConsoleOutputCP` returns on failure - stdout being a pipe rather
+	// than a console. Nothing was changed in that case, so there is nothing to put back.
+	@(private = "file")
+	console_codepage_before: win.CODEPAGE
+	@(private = "file")
+	console_input_codepage_before: win.CODEPAGE
+
+	@(init)
+	@(cold)
+	set_console_utf8 :: proc "contextless" () {
+		console_codepage_before = win.GetConsoleOutputCP()
+		console_input_codepage_before = win.GetConsoleCP()
+		win.SetConsoleOutputCP(.UTF8)
+		win.SetConsoleCP(.UTF8) // input as well, so non-ASCII typed or piped into the program decodes
+	}
+
+	@(cold)
+	restore_console_codepage :: proc "contextless" () {
+		if console_codepage_before != .ACP {
+			win.SetConsoleOutputCP(console_codepage_before)
+		}
+		if console_input_codepage_before != .ACP {
+			win.SetConsoleCP(console_input_codepage_before)
+		}
+	}
+} else {
+	restore_console_codepage :: proc "contextless" () {}
+}
+
+/*
+How allocations are tracked. One setting with three states rather than two booleans, because two
+booleans describe four combinations and only three of them mean anything - "no tracking, but with
+backtraces" used to compile silently and do nothing.
+
+	off        the raw allocator, no bookkeeping         ~44 ns per allocation
+	basic      mem.Tracking_Allocator                    ~599 ns, +72 bytes per LIVE allocation
+	backtrace  trace.Tracking_Allocator                  ~1385 ns, +208 bytes per LIVE allocation
+
+`basic` reports leaks and bad frees at the location that called `make`. `backtrace` additionally
+records a stack per allocation, which is what tells you WHICH caller of a shared helper leaked rather
+than just naming the helper - worth the extra cost during a leak hunt, not before one.
+
+Those timings are per allocation and both tracked modes take a mutex on every alloc and free, so the
+cost lands on allocation-heavy and multi-threaded code and is invisible to a program that allocates
+at startup and then works out of arenas. Measure rather than assume.
+
+The default follows `-debug`, which is the same line the backtrace symbols fall on: diagnostics in
+the builds you debug, nothing in the builds you measure. Without this, `run_release` and
+`run_release_nochecks` - the recipes whose whole purpose is timing - would have measured a 13.6x
+allocation tax and a lock. Override it in either direction; `-define:TRACKING_ALLOCATOR=backtrace`
+on a release build is exactly right for a leak that only reproduces optimized.
+*/
+when ODIN_DEBUG {
+	TRACKING_ALLOCATOR_DEFAULT :: "basic"
+} else {
+	TRACKING_ALLOCATOR_DEFAULT :: "off"
+}
+TRACKING_ALLOCATOR :: #config(TRACKING_ALLOCATOR, ${4:TRACKING_ALLOCATOR_DEFAULT})
+
+// A typo would otherwise pick the `off` arm below and silently disable tracking, which is the one
+// failure mode a three-state setting could still have.
+when TRACKING_ALLOCATOR != "off" && TRACKING_ALLOCATOR != "basic" && TRACKING_ALLOCATOR != "backtrace" {
+	#panic("TRACKING_ALLOCATOR must be \"off\", \"basic\" or \"backtrace\"")
+}
+
+import "core:debug/trace"
+import spall "core:prof/spall"
+
+
+// Profiling global / thread local data
+global_spall_ctx: spall.Context
+global_spall_backing: []u8
+@(thread_local)
+thread_local_spall_buffer: spall.Buffer
+
+// setup the spall profiler and prepare the main thread with a telemetry recording buffer. Other threads need additional
+// setup for the telemetry buffer
+@(cold)
+spall_profiler_setup :: proc() {
+	global_spall_ctx = spall.context_create("trace.spall") // global
+	global_spall_backing = make([]u8, spall.BUFFER_DEFAULT_SIZE)
+	thread_local_spall_buffer = spall.buffer_create(global_spall_backing, u32(sync.current_thread_id()))
+}
+
+// telemetry buffer setup for an extra thread. Must be run from the extra thread due to the thread local spall buffer
+//
+// the "spall_recording_buffer" is available as a package level thread local `thread_local_spall_buffer`
+//
+// cleanup: spall.buffer_destroy(&global_spall_ctx, &thread_local_spall_buffer) and then delete(spall_backing_buffer)
+@(cold)
+@(require_results)
+spall_thread_local_setup :: proc(allocator := context.allocator) -> (spall_backing_buffer: []u8) {
+	spall_backing_buffer = make([]u8, spall.BUFFER_DEFAULT_SIZE)
+	thread_local_spall_buffer = spall.buffer_create(spall_backing_buffer, u32(sync.current_thread_id()))
+	return
+}
+
+@(cold)
+spall_profiler_destroy :: proc() {
+	spall.buffer_destroy(&global_spall_ctx, &thread_local_spall_buffer)
+	spall.context_destroy(&global_spall_ctx)
+	delete(global_spall_backing) // buffer_destroy only flushes + zeroes the Buffer struct; the backing slice must be freed here
+}
+
+@(no_instrumentation)
+spall_event_start :: #force_inline proc "contextless" (name: string, args: string = "", location := #caller_location) {
+	when SPALL_ENABLE {
+		spall._buffer_begin(&global_spall_ctx, &thread_local_spall_buffer, name, args, location)
+	}
+}
+
+@(no_instrumentation)
+spall_event_end :: #force_inline proc "contextless" () {
+	when SPALL_ENABLE {
+		spall._buffer_end(&global_spall_ctx, &thread_local_spall_buffer)
+	}
+}
+
+@(deferred_none = _spall_scoped_event_end)
+@(no_instrumentation)
+SPALL_SCOPED_EVENT :: #force_inline proc "contextless" (
+	name: string,
+	args: string = "",
+	location := #caller_location,
+) {
+	when SPALL_ENABLE {
+		spall._buffer_begin(&global_spall_ctx, &thread_local_spall_buffer, name, args, location)
+	}
+}
+
+@(private)
+@(no_instrumentation)
+_spall_scoped_event_end :: #force_inline proc "contextless" () {
+	when SPALL_ENABLE {
+		spall._buffer_end(&global_spall_ctx, &thread_local_spall_buffer)
+	}
+}
+
+// Whether asserts and segfaults print a backtrace. On unless the env var disables it, so a crash
+// explains itself the first time rather than after a rebuild with a flag flipped.
+//
+// Stack buffer rather than an allocating lookup: this runs before the tracking allocator is
+// installed, so an allocation here would be the first entry in every leak report.
+@(cold)
+@(require_results)
+backtrace_enabled :: proc() -> bool {
+	SPALL_SCOPED_EVENT(name = #procedure)
+	BACKTRACE_ENV_KEY :: "ODIN_BACKTRACE"
+	env_value_buf := [8]u8{}
+	if value, err := os.lookup_env(env_value_buf[:], BACKTRACE_ENV_KEY); err == nil {
+		switch value {
+		case "0", "false", "off", "FALSE", "OFF":
+			return false
+		}
+	}
+	// A value too long for the buffer cannot be any of the disabling words, so a truncation error
+	// is not a reason to change the answer.
+	return true
+}
+
+// A `when` rather than a runtime check because the two modes return different types:
+// `^mem.Tracking_Allocator` vs `^trace.Tracking_Allocator`.
+when TRACKING_ALLOCATOR == "off" {
+	// `core:mem` is only used by the procedures below, which this config does not compile. Scoped
+	// here rather than top-level so a genuinely unused import still fails in the other configs.
+	_ :: mem
+}
+
+when TRACKING_ALLOCATOR != "off" {
+	when TRACKING_ALLOCATOR == "basic" {
+		@(cold)
+		@(require_results)
+		make_tracking_allocator_context :: proc(
+			allocator := context.allocator,
+			loc := #caller_location,
+		) -> (
+			mem.Allocator,
+			^mem.Tracking_Allocator,
+		) {
+			SPALL_SCOPED_EVENT(name = #procedure)
+			tracking_allocator := new(mem.Tracking_Allocator, allocator = allocator, loc = loc)
+			mem.tracking_allocator_init(tracking_allocator, context.allocator)
+			return mem.tracking_allocator(tracking_allocator), tracking_allocator
+		}
+
+		@(cold)
+		tracking_allocator_finalise :: proc(tracking_allocator: ^mem.Tracking_Allocator) {
+			SPALL_SCOPED_EVENT(name = #procedure)
+
+			if len(tracking_allocator.allocation_map) > 0 || len(tracking_allocator.bad_free_array) > 0 {
+				for _, v in tracking_allocator.allocation_map {
+					log.errorf("Memory Leak:\t%v", v)
+				}
+				for bad_free in tracking_allocator.bad_free_array {
+					log.errorf("%v allocation %p was freed badly\n", bad_free.location, bad_free.memory)
+				}
+			}
+
+			mem.tracking_allocator_destroy(tracking_allocator)
+		}
+	} else {
+		@(cold)
+		@(require_results)
+		make_tracking_allocator_context :: proc(
+			allocator := context.allocator,
+			loc := #caller_location,
+		) -> (
+			mem.Allocator,
+			^trace.Tracking_Allocator,
+		) {
+			SPALL_SCOPED_EVENT(name = #procedure)
+			tracking_allocator := new(trace.Tracking_Allocator, allocator = allocator, loc = loc)
+			trace.tracking_allocator_init(tracking_allocator, context.allocator)
+			return trace.tracking_allocator(tracking_allocator), tracking_allocator
+		}
+
+		// Reports through `trace.tracking_allocator_print_results` (stderr, one backtrace per entry)
+		// rather than the `log.errorf` the other branch uses, because the whole point of this branch
+		// is the multi-line stack and a logger prefix on every frame would bury it.
+		@(cold)
+		tracking_allocator_finalise :: proc(tracking_allocator: ^trace.Tracking_Allocator) {
+			SPALL_SCOPED_EVENT(name = #procedure)
+			trace.tracking_allocator_print_results(tracking_allocator)
+			trace.tracking_allocator_destroy(tracking_allocator)
+		}
+	}
+}
+
+@(cold)
+@(require_results)
+make_logging_context :: proc() -> log.Logger {
+	SPALL_SCOPED_EVENT(name = #procedure)
+	LOG_LEVEL_ENV_KEY :: "LOG_LEVEL"
+	log_level := log.Level.Info
+	env_value_buf := [32]u8{}
+	if log_level_env_var, err := os.lookup_env(env_value_buf[:], LOG_LEVEL_ENV_KEY); err == nil {
+		normalized_env_var := strings.to_pascal_case(log_level_env_var, allocator = context.temp_allocator)
+		if level, level_ok := reflect.enum_from_name(log.Level, normalized_env_var); level_ok {
+			log_level = level
+		} else {
+			fmt.eprintfln(
+				"%v env var value \"%v\" is not a valid log.Level value, defaulting to \"Info\"",
+				LOG_LEVEL_ENV_KEY,
+				normalized_env_var,
+			)
+		}
+	}
+	return log.create_console_logger(log_level)
+}
+
+@(cold)
+destroy_logging_context :: proc() {
+	SPALL_SCOPED_EVENT(name = #procedure)
+	log.destroy_console_logger(context.logger)
+}
+
+
+// Segfault handler. `core:debug/trace` provides capture/resolve/print but installs no handler, so
+// this supplies it. Derived from https://github.com/laytan/back (MIT, (c) 2023 Laytan Laats).
+//
+// Covers the silent faults only - a nil deref or divide-by-zero otherwise prints nothing at all,
+// while asserts already trace and bounds checks print their own file:line.
+//
+// Formats through an arena over a stack buffer: heap corruption is the usual reason to be here, so
+// the global allocator may be the thing that is broken.
+@(cold)
+register_segfault_handler :: proc() {
+	when ODIN_OS == .Windows {
+		win.SetUnhandledExceptionFilter(
+			proc "stdcall" (info: ^win.EXCEPTION_POINTERS) -> win.LONG {
+				context = runtime.default_context()
+
+				space: [16 * mem.Kilobyte]byte
+				arena: mem.Arena
+				mem.arena_init(&arena, space[:])
+				allocator := mem.arena_allocator(&arena)
+				context.allocator, context.temp_allocator = allocator, allocator
+
+				fmt.eprint("Exception ")
+				if info.ExceptionRecord != nil {
+					fmt.eprintfln(
+						"(Type: %x, Flags: %x)",
+						info.ExceptionRecord.ExceptionCode,
+						info.ExceptionRecord.ExceptionFlags,
+					)
+				}
+
+				locations, err := trace.resolve(trace.capture(), allocator, allocator)
+				if err != nil {
+					fmt.eprintfln("Could not get backtrace: %v", err)
+					// CONTINUE_SEARCH, not EXECUTE_HANDLER: only report, still let the process die.
+					return win.EXCEPTION_CONTINUE_SEARCH
+				}
+
+				fmt.eprintln("[back trace]")
+				trace.print(locations)
+				return win.EXCEPTION_CONTINUE_SEARCH
+			},
+		)
+	} else when ODIN_OS ==
+		.Linux || ODIN_OS == .Darwin || ODIN_OS == .FreeBSD || ODIN_OS == .OpenBSD || ODIN_OS == .NetBSD {
+		posix.signal(
+			.SIGSEGV,
+			proc "c" (code: posix.Signal) {
+				context = runtime.default_context()
+
+				space: [16 * mem.Kilobyte]byte
+				arena: mem.Arena
+				mem.arena_init(&arena, space[:])
+				allocator := mem.arena_allocator(&arena)
+				context.allocator, context.temp_allocator = allocator, allocator
+
+				if locations, err := trace.resolve(trace.capture(), allocator, allocator); err == nil {
+					fmt.eprintfln("Exception (Code: %i)\n[back trace]", code)
+					trace.print(locations)
+				} else {
+					fmt.eprintfln("Exception (Code: %i)\nCould not get backtrace: %v", code, err)
+				}
+
+				// Returning would resume the faulting instruction and fault forever.
+				runtime.exit(int(code))
+			},
+		)
+	}
+	// wasm/freestanding reach neither branch, leaving this a no-op
+}
+
+// Only one platform's package is used per build; these keep the other from failing the unused-import
+// vet check.
+_ :: win
+_ :: posix
+_ :: runtime
+]]></content>
+	<!-- type the tabTrigger and press Tab; or browse Tools -> Snippets... -->
+	<tabTrigger>main</tabTrigger>
+	<!-- shown beside the trigger in the completion popup -->
+	<description>Odin program skeleton (logging, tracking allocator, backtraces)</description>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.odin</scope>
+</snippet>

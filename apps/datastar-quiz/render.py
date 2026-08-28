@@ -18,6 +18,7 @@ piece of deliberate duplication in this port.
 
 from __future__ import annotations
 
+import functools
 import json
 import re
 from collections.abc import MutableMapping
@@ -523,6 +524,12 @@ def quiz_body(session: state.Session) -> str:
 # markup and the server agree on the name.
 
 
+# MEMOISED, all four of them. The yappi profile of a 60-user minute counted 37,868 calls to
+# `datastar_kebab`, 25,236 to `topic_slug` and 12,632 to `topic_signal_key` -- five regex passes each,
+# recomputed on every render, for values that are pure functions of a topic name that never changes
+# within a process. `maxsize` rather than an unbounded cache as a matter of habit: nothing user-typed
+# reaches these today (the names come from the topics file), and a bound means it cannot start to.
+@functools.lru_cache(maxsize=1024)
 def datastar_kebab(text: str) -> str:
     out = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1-\2", text)
     out = re.sub(r"([a-z0-9])([A-Z])", r"\1-\2", out)
@@ -532,32 +539,45 @@ def datastar_kebab(text: str) -> str:
     return out.lower()
 
 
+@functools.lru_cache(maxsize=1024)
 def datastar_camel(text: str) -> str:
     return re.sub(r"-(.)", lambda m: m.group(1).upper(), datastar_kebab(text))
 
 
+@functools.lru_cache(maxsize=1024)
 def topic_slug(name: str) -> str:
     """The attribute form of a topic name: `data-bind:topics.<slug>`."""
     slug = datastar_kebab(re.sub(r"[^0-9A-Za-z\s_-]+", " ", name))
     return re.sub(r"-{2,}", "-", slug).strip("-") or "topic"
 
 
+@functools.lru_cache(maxsize=1024)
 def topic_signal_key(name: str) -> str:
     """The name that same binding actually writes into the signal store."""
     return datastar_camel(topic_slug(name))
 
 
-def topic_choices(session: state.Session) -> list[dict]:
-    topics = corpus.topics_for(session.variant.bml_file, session.variant.key)
-    return [
+def topic_choices(session: state.Session) -> tuple[dict, ...]:
+    """The topics picker's rows. Built once per variant, not once per render.
+
+    A TUPLE, and shared between sessions: the rows are read-only everywhere (the templates iterate
+    them, `_topics_text_from` reads two keys), and an immutable container says so. The topics
+    themselves were already `functools.cache`d -- only this derivation was not.
+    """
+    return _topic_choices(session.variant.bml_file, session.variant.key)
+
+
+@functools.cache
+def _topic_choices(bml_file: str, variant_key: str) -> tuple[dict, ...]:
+    return tuple(
         {
             "name": topic.name,
             "slug": topic_slug(topic.name),
             "key": topic_signal_key(topic.name),
             "description": topic.description,
         }
-        for topic in topics.values()
-    ]
+        for topic in corpus.topics_for(bml_file, variant_key).values()
+    )
 
 
 def filter_status(check: corpus.FilterCheck, *, in_force: str, pending_hint: str = "") -> str:

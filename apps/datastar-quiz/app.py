@@ -38,6 +38,7 @@ from litestar.static_files import create_static_files_router
 
 import corpus
 import engine
+import profiling
 import render
 import sfx
 import state
@@ -93,6 +94,10 @@ URL_PREFIX = "/" + os.environ.get("DSQUIZ_PREFIX", "").strip("/") if os.environ.
 # Autoreload is deliberately NOT a trigger, unlike panel: `just serve` uses `--reload` for the
 # convenience of it, and that should not silently arm a route that rewrites the score.
 DEBUG_MODE = os.environ.get("DSQUIZ_DEBUG", "")
+
+# Parse both systems' bid tables when the server starts rather than when a request needs them; see
+# the `on_startup` note in `create_app`.
+PREWARM = os.environ.get("DSQUIZ_PREWARM", "1") != "0"
 
 TIMER_TICK_SECONDS = 0.1
 # A held stream needs an upper bound, or an abandoned tab keeps a worker slot and a session alive
@@ -834,6 +839,34 @@ def sound(name: FromPath[str]) -> Response[bytes]:
     return Response(audio, media_type="audio/wav")
 
 
+# --- yappi (see profiling.py; nothing here is reachable unless DSQUIZ_YAPPI is set) ------------
+
+
+@get("/debug/yappi", media_type=MediaType.TEXT, sync_to_thread=False)
+def yappi_report() -> str:
+    """The profile so far. Text, so `curl` is enough and no viewer is needed to read it."""
+    return profiling.report()
+
+
+@post("/debug/yappi/reset", media_type=MediaType.TEXT, sync_to_thread=False)
+def yappi_reset() -> str:
+    """Throw away what has been collected, so the next report covers one known window -- a load run
+    that started AFTER the server's own startup work, which otherwise dominates the first report."""
+    profiling.reset()
+    return "profile cleared" + chr(10)
+
+
+@post("/debug/yappi/save", media_type=MediaType.TEXT, sync_to_thread=False)
+def yappi_save() -> str:
+    """Write the text report and a callgrind file into .reports/ and say where they went.
+
+    A route rather than only a shutdown hook because a load-test server is usually killed rather than
+    stopped politely, and a profile that only survives a graceful shutdown is one you keep losing.
+    """
+    path = profiling.save()
+    return (f"{path}" if path else "profiling is off") + chr(10)
+
+
 def create_app() -> Litestar:
     return Litestar(
         # Fat morph sends the whole page per interaction, and compression is what makes that cheap:
@@ -865,6 +898,19 @@ def create_app() -> Litestar:
             brotli_gzip_fallback=True,
             minimum_size=256,
         ),
+        # Parsing the corpora at STARTUP, not on whoever asks first. All of it is cached and happened
+        # once either way -- but it happened inside a request, and the yappi profile caught it: 1.3s
+        # of `load_bid_tables` plus 4.3s of `prepare_sequence_bids` landing on the first visitor to
+        # open the second system. `DSQUIZ_PREWARM=0` puts it back to lazy, which is worth having while
+        # iterating under `--reload`, where every save would otherwise pay for both corpora.
+        #
+        # The profiler start is here for a different reason: granian spawns a worker, and a profiler
+        # started at import would measure the parent. It is a no-op unless DSQUIZ_YAPPI is set.
+        on_startup=[
+            *([lambda _app: corpus.prewarm()] if PREWARM else []),
+            *([lambda _app: profiling.start()] if profiling.ENABLED else []),
+        ],
+        on_shutdown=[lambda _app: profiling.save()] if profiling.ENABLED else [],
         route_handlers=[
             index,
             answer,
@@ -883,6 +929,8 @@ def create_app() -> Litestar:
             debug_complete,
             debug_reveal,
             devtools_workspace,
+            # NOT registered when profiling is off, so there is no endpoint to reach even by accident
+            *([yappi_report, yappi_reset, yappi_save] if profiling.ENABLED else []),
             sound,
             # `no-cache` means REVALIDATE, not "do not cache": the browser keeps the file and asks
             # with its etag, so an unchanged sheet costs a 304 and a changed one arrives immediately.

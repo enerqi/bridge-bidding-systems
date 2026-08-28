@@ -1,0 +1,85 @@
+{{- /* The document: head, <body> with the signal declarations, and #app holding the page
+itself. Server-rendered from current session state -- no client-side bootstrap, no
+hydration, so view-source is the state of the quiz and a reload resumes it exactly.
+
+#app is what interactions patch, whole ("fat morph" -- see app.gohtml). Only the toast slot
+is patched finer, because a single answer shows several in sequence. */ -}}
+<!DOCTYPE html>
+{{- /* `data-theme` goes on the ROOT, not on <body>, and that is not a preference: the canvas
+and the scrollbars take `color-scheme` from the root and nowhere else, and Pico and Bulma
+both document `data-theme` on <html>, so putting it there switches the frameworks' own dark
+themes for free.
+
+It is `false` -- not 'auto', not '' -- when the OS should decide: datastar removes an
+attribute set to false, and NO attribute is what leaves `color-scheme: light dark` in
+charge. The attribute is rendered TWICE over: once statically from the cookie, which is what
+makes the first paint right, and once as `data-attr`, which keeps it right after a click.
+Without the static half a remembered choice arrives a frame late. */ -}}
+<html lang="en"{{ .ThemeAttr }}
+      data-attr:data-theme="$_theme && $_theme !== 'auto' ? $_theme : false">
+  <head>
+    <meta charset="utf-8" />
+    <title>{{ .Variant.Title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {{- /* The CSS A/B/C: `$_css` swaps the whole stylesheet with no reload and no server
+    involvement. The href is BUILT from the signal rather than a chain of ternaries, which
+    makes the file naming the contract: `hand` is `app.css` and anything else is
+    `app-<signal>.css`.
+
+    The empty branch is not defensive noise. This element is in <head>, so it is processed
+    BEFORE `data-signals` on <body> has declared anything, and an undefined signal reads as
+    '' -- which built `/static/app-.css` and fetched a 404 on every single page load before
+    the real value arrived a tick later. */ -}}
+    <link rel="stylesheet"
+          data-attr:href="$_css ? ($_css === 'hand' ? '{{ .Prefix }}/static/app.css' : '{{ .Prefix }}/static/app-' + $_css + '.css') : '{{ .CSSHref }}'"
+          href="{{ .CSSHref }}" />
+    {{- /* The game-feel layer, loaded AFTER the base sheet: every rule in it is scoped to
+    `body.juice`, so it is inert until the Appearance toggle turns it on. One file rather
+    than three copies is the whole reason it is separate -- the experiment can be deleted by
+    deleting a file and one signal. */ -}}
+    <link rel="stylesheet" href="{{ .Prefix }}/static/juice.css" />
+    {{- /* inline, so a bare deployment does not 404 looking for one */ -}}
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13'>&#9824;</text></svg>" />
+    {{- /* vendored, not the CDN: works offline and pins the version we tested against */ -}}
+    <script type="module" src="{{ .Prefix }}/static/datastar.js"></script>
+  </head>
+  {{- /* `data-init` runs once on load. The drawer starts CLOSED at every width: what is left
+  in it is difficulty, the filter, topics, ladder mode, the target, Restart and Appearance,
+  every one of which restarts the quiz or is a one-off preference.
+
+  `juice` on the <body>, not inside `#app`: it must survive every morph, and every rule in
+  `juice.css` hangs off it. */ -}}
+  <body data-signals="{{ .InitialSignals }}" data-attr:data-font="$_font"
+        data-class="{juice: $_juice}"
+        data-init="$_navOpen = false{{ if eq .TimerMode "stream" }}; @get('{{ .Prefix }}/timer{{ .VariantQuery }}'){{ end }}">
+    {{- /* The morph target. Its contents are `app.gohtml`, INCLUDED rather than duplicated:
+    this file and the fat patch must render the same markup, and when they were two copies
+    they drifted within the hour. */ -}}
+    <div id="app">
+      {{ template "app.gohtml" . }}
+    </div>
+
+    {{- /* --- sound ---
+
+    OUTSIDE `#app`, and that is the whole design. The morph target is rewritten on every
+    interaction; an <audio> element inside it would be replaced mid-playback, and the browser
+    would re-fetch each file every time. Out here they are loaded once per page and survive
+    everything.
+
+    `data-attr:src` rather than a static `src`: with sound off (the default) these elements
+    have no source, so a player who never turns it on never requests a WAV. Turning it on
+    sets all five sources at once and `preload="auto"` fetches them immediately. `?v=` is the
+    build stamp, so a changed synth reaches a browser that has the old file cached.
+
+    The sounds themselves are synthesised in internal/sfx and served from `/sfx/<name>` --
+    no binary assets in the repo. There is no volume control, deliberately: setting `.volume`
+    needs real JavaScript, and the levels are baked into the samples instead. */ -}}
+    {{ range .SfxNames }}
+    <audio id="sfx-{{ . }}" preload="auto"
+           data-attr:src="$_sound ? '{{ $.Prefix }}/sfx/{{ . }}?v={{ $.BuildStamp }}' : false"></audio>
+    {{- end }}
+    {{- /* The sink the beats are appended to. Cleared at the start of every answer stream, so
+    it holds at most the handful of markers one answer produced. */ -}}
+    <div id="sfx" hidden aria-hidden="true"></div>
+  </body>
+</html>

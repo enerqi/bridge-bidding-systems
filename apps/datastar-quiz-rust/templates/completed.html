@@ -1,0 +1,51 @@
+{#- Replaces #quiz once the points goal (and the target percentage, if required) is met.
+
+This is the payoff for a quiz that takes several minutes, and it used to be three static party emoji
+and a sentence. The finale is built from pieces CSS can animate individually, which is the only
+reason any of this needs markup rather than a stylesheet:
+
+  * every party emoji is its OWN span, because a single text node cannot be staggered;
+  * every digit of every number is its own span (the `figure` helper), so they fly in from different
+    directions and assemble;
+  * the confetti is a fixed list of glyph / drift / spin / delay tuples rendered as inline custom
+    properties -- the drift is a percentage of the CARD, not of the viewport, so the party cannot
+    spill past the window edge and scroll the page. Fixed rather than random on purpose: the server
+    renders this screen, and a reload should show the same party. The offsets are spread by hand,
+    because a formula (`i * 37 % 100`) looks combed rather than scattered.
+
+Inert without the game-feel toggle: `juice.css` scopes every rule to `body.juice`, so with it off
+this is the same "party and a sentence" as before, in more spans. `aria-hidden` on the decoration --
+a screen reader wants the numbers and the sentence, not sixteen confetti. -#}
+<div class="finale">
+  <div class="confetti" aria-hidden="true">
+    {%- for bit in confetti %}
+    <span class="confetti-bit" style="--drift: {{ bit.drift }}%; --spin: {{ bit.spin }}deg; --i: {{ bit.step }}">{{ bit.glyph }}</span>
+    {%- endfor %}
+  </div>
+
+  <h2 class="celebrate" aria-hidden="true">
+    {%- for index in 0..3 %}
+    <span class="pop" style="--i: {{ index }}">&#127881;</span>
+    {%- endfor %}
+  </h2>
+
+  <p class="celebrate-text">Quiz complete!</p>
+
+  <div class="finale-figures">
+    <span class="finale-stat">
+      {{ self::figure(*points, "big", "")|safe }}
+      <span class="finale-label">points of {{ goal }}</span>
+    </span>
+    <span class="finale-stat">
+      {{ self::figure(*percentage, "", "%")|safe }}
+      <span class="finale-label">{{ correct }} of {{ attempted }} right</span>
+    </span>
+    <span class="finale-stat">
+      {{ self::figure(*elapsed, "", "s")|safe }}
+      <span class="finale-label">start to finish</span>
+    </span>
+  </div>
+
+  <p class="celebrate-text">Well done, now take a break&hellip;</p>
+  <img src="{{ prefix }}/media/completed.jpeg" alt="cat sleeping next to computer mouse" width="600" />
+</div>

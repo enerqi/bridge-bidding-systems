@@ -12,6 +12,13 @@ set script-interpreter := ["uv", "run", "--no-project", "-p", "3.14", "python"]
 
 bml_home := env_var_or_default("BML_TOOLS_DIRECTORY", replace(home_directory(), "\\", "/") + "/dev/bml")
 
+# `bridge-markup` is the ODIN implementation of BML and is what `bml` builds with now; the python above
+# stays the reference (`just bml-py` renders with it, `just bml-parity` byte-compares the two over the
+# whole corpus). MARKUP_HOME mirrors the odin-sims justfile's variable of the same name.
+markup_home := env_var_or_default("MARKUP_HOME", replace(home_directory(), "\\", "/") + "/dev/bridge-markup")
+sims_dir := "deal-simulations/odin-sims"
+bml2html_exe := sims_dir + "/target/release/bml2html.exe"
+
 
 # The deal-simulation recipes live in the odin-sims justfile (it owns the build flags and the output
 # directory defaults), reached from here as a module: `just sims gen-all 48`, `just sims gen-one 2c-opener`,
@@ -28,9 +35,14 @@ mod sims 'deal-simulations/odin-sims'
 # .include-deps.json cache of every file's `#INCLUDE` directives) and is now an unconditional rebuild,
 # because the dependency tracking cost more than the work it was skipping. Measured, 19 .bml files:
 #
-#     doit, everything already up to date (no-op) ... 2.68s
-#     doit -a, forced rebuild of all 46 tasks ....... 2.54s
-#     this recipe, all 19 rebuilt in parallel ....... 0.41s
+#     doit, everything already up to date (no-op) ......... 2.68s
+#     doit -a, forced rebuild of all 46 tasks .............. 2.54s
+#     python bml2html.py, 19 subprocesses in parallel ...... 0.41s
+#     bml2html.exe, 19 files in ONE process ................ 0.03s
+#
+# The last line is the Odin renderer (`bridge-markup`, `just sims bml2html`). The python needed a process
+# PER FILE because its `bml` module keeps parse state in module globals; the Odin library owns its state
+# per parse, so the corpus is 19 tasks on one thread pool. Output is byte-identical, CRLF included.
 #
 # Only ONE file in the corpus has `#INCLUDE` directives (bidding-system.bml, 13 of them), so the
 # include cache existed to produce 18 empty lists -- and it could not be a doit `file_dep` anyway,
@@ -58,17 +70,59 @@ watch:
     watchexec --no-global-ignore --exts bml,css just publish
 
 # FILES defaults to every *.bml; name a subset to convert just those, e.g. `just bml nt-bidding.bml`.
-# One subprocess per file because `bml` accumulates module-global state (`bml.content` / `bml.meta`)
-# across `content_from_file`, so a single process cannot safely convert several documents.
+# One process for the whole corpus - see the note above on why the python could not be.
 # ---
-# convert *.bml -> *.html (in parallel) and refresh bml.css from the bml tools directory
+# convert *.bml -> *.html (one process, one thread per file) and refresh bml.css from the bml tools directory
 [group('bml')]
 [script]
 bml *FILES:
+    import os, subprocess, sys
+    from glob import glob
+    from shutil import copy2
+
+    exe = os.path.normpath(r"{{bml2html_exe}}")
+    # Built through the sims module so the collection flag and the target directory stay defined in one
+    # place. Cheap when nothing changed; the compile dominates this recipe either way.
+    if subprocess.run(["just", "sims", "build-bml2html"], stdout=subprocess.DEVNULL).returncode != 0:
+    	sys.exit("could not build " + exe + " - is MARKUP_HOME (enerqi/bridge-markup) cloned?")
+
+    files = r"""{{FILES}}""".split() or sorted(glob("*.bml"))
+    missing = [f for f in files if not os.path.isfile(f)]
+    if missing:
+    	sys.exit("no such bml file: " + ", ".join(missing))
+
+    # Run from HERE, not from the sims directory: `#INCLUDE` and the output paths both resolve against
+    # the working directory, exactly as they did under bml2html.py. It prints its own count and timing.
+    if subprocess.run([exe] + files).returncode != 0:
+    	sys.exit("bml2html failed")
+
+    # CONTENT, not mtime: this build rewrites every output unconditionally, so an mtime comparison
+    # would always say "newer" and the guard would never hold.
+    def same_bytes(a, b):
+    	if not os.path.exists(b) or os.path.getsize(a) != os.path.getsize(b):
+    		return False
+    	with open(a, "rb") as fa, open(b, "rb") as fb:
+    		return fa.read() == fb.read()
+
+    css = "bml.css"
+    source = os.path.join(r"{{bml_home}}", css)
+    if os.path.isfile(source) and not same_bytes(source, css):
+    	copy2(source, css)
+    	print("refreshed " + css)
+
+# The python reference, kept runnable: it is the oracle `bml-parity` compares against, and the escape
+# hatch if the Odin renderer is ever suspected. One subprocess per file because the `bml` module
+# accumulates module-global state (`bml.content` / `bml.meta`) across `content_from_file`, so a single
+# process cannot safely convert several documents. Writes the same *.html in place - run `just bml`
+# afterwards to put the Odin output back.
+# ---
+# convert *.bml -> *.html with the PYTHON reference implementation (slower; the parity oracle)
+[group('bml')]
+[script]
+bml-py *FILES:
     import os, subprocess, sys, time
     from concurrent.futures import ThreadPoolExecutor
     from glob import glob
-    from shutil import copy2
 
     tools = r"{{bml_home}}"
     bml2html = os.path.join(tools, "bml2html.py")
@@ -88,21 +142,17 @@ bml *FILES:
     if failed:
     	sys.exit("bml2html failed for: " + ", ".join(failed))
 
-    # CONTENT, not mtime: this build rewrites every output unconditionally, so an mtime comparison
-    # would always say "newer" and the guard would never hold.
-    def same_bytes(a, b):
-    	if not os.path.exists(b) or os.path.getsize(a) != os.path.getsize(b):
-    		return False
-    	with open(a, "rb") as fa, open(b, "rb") as fb:
-    		return fa.read() == fb.read()
+    print("built %d html in %.2fs (python reference)" % (len(files), time.perf_counter() - started))
 
-    css = "bml.css"
-    source = os.path.join(tools, css)
-    if os.path.isfile(source) and not same_bytes(source, css):
-    	copy2(source, css)
-    	print("refreshed " + css)
-
-    print("built %d html in %.2fs" % (len(files), time.perf_counter() - started))
+# Divergence between the two implementations is the real risk of the port, and it is silent: a wrong
+# page still renders. The harness lives in the markup repo (it owns the renderer and its goldens) and
+# reads this corpus through BRIDGE_DIR; it renders every file BOTH ways and compares the bytes, so it
+# needs no .html on disk here and touches none.
+# ---
+# byte-compare the Odin renderer against the python reference over the whole .bml corpus
+[group('bml')]
+bml-parity *FILES:
+    just --justfile {{markup_home}}/justfile --working-directory {{markup_home}} parity {{FILES}}
 
 # The published set is a hand-picked subset of the corpus, not every root document.
 # ---

@@ -1,0 +1,1231 @@
+/* The Pico half of the CSS A/B (see DESIGN.md, and the Base picker in the sidebar).
+ *
+ * Pico classless styles the elements we already emit -- body type, headings, buttons, inputs,
+ * select, <details>, <dialog>, <kbd>, focus rings, light/dark -- so everything in here is what a
+ * base stylesheet CANNOT know: this app's layout, its domain colours, and the four widgets panel
+ * used to provide. That division is the point of the experiment: this file's length against
+ * app.css's is the honest measure of what adopting a base buys.
+ *
+ * Deliberately NOT here (Pico covers it): button / input / select / textarea styling, typography and
+ * spacing scale, <details> disclosure, <dialog> chrome, <kbd>, focus-visible, colour scheme.
+ */
+
+/* RELATIVE, not `/static/...`: an @import resolves against the STYLESHEET's own URL, which is the
+   only URL in this app that the deployment prefix does not have to be pasted into by hand. Rooted at
+   `/static/` it 404s the moment the app is served under a prefix (`/bridge-system-quiz/static/...`),
+   and the failure is silent and mid-page: every `--pico-*` token vanishes, so `.card` fell through
+   to its `#fff` fallback and sat white on a dark canvas -- dark mode looked broken while the rest of
+   the page, which uses this sheet's own tokens, looked fine. */
+@import url("pico.classless.min.css");
+
+:root {
+  --primary: light-dark(#14564a, #123f36);
+  --primary-dark: light-dark(#0e3f37, #0b2b25);
+  --card-accent: light-dark(#2e8b57, #3fae6d);
+  --face: light-dark(#fdfcf7, #1d2724);
+  /* The surface ladder -- see the long note in `app.css`. Short version: the answer cards were
+     1.03:1 against the surface behind them, `--face` cannot change (the suit colours are pinned to
+     it), and a fill difference cannot reach 3:1 up in the near-whites. So the cards sit in a
+     recessed well and carry a 3.17:1 border of their own. Restated here rather than inherited,
+     because each stylesheet is standalone by design. */
+  --well: light-dark(#e0e9e4, #0e1613);
+  --card-edge: light-dark(#7f938b, #6b7d76);
+  --meter-empty: light-dark(#e3eeea, #26332e);
+  /* darkened from bml.css's values -- see tests/test_suit_colours.py */
+  --suit-club: light-dark(#1e7a45, #4bbd7a);
+  --suit-diamond: light-dark(#b35300, #ff9d3d);
+  --suit-heart: light-dark(#cc0000, #ff6b6b);
+  --suit-spade: light-dark(#000000, #e8eff0);
+  --ui-font: "Open Sans", "Segoe UI", system-ui, -apple-system, Roboto, var(--suit-symbols), sans-serif;
+  --display-font: "Nunito", "Trebuchet MS", "Segoe UI", system-ui, var(--suit-symbols), sans-serif;
+  /* hand Pico our font choice, so the picker still works */
+  --pico-font-family: var(--ui-font);
+  --pico-border-radius: 10px;
+  /* the panel/card surface, lifted from Bulma's `.box` -- see the `.panel, .card` rule below */
+  --panel-radius: 0.75rem;
+  /* Pico ramps the ROOT font size with the viewport -- 100% up to 131.25% at >=1536px -- so on a wide
+     monitor everything rendered ~31% larger than the hand-rolled stylesheet and the variant looked
+     "zoomed in". Fluid typography is a reasonable default for a text site; here it makes the A/B
+     incomparable, since the point is to compare component styling and not type scale. Pinned. */
+  --pico-font-size: 100%;
+  /* Pico ships its own dark theme; the block at the bottom of this file supplies the tokens it
+     cannot know, so `light dark` is honest here too. */
+  /* the app bar's height, so the sidebar's own scroll region -- and the sticky countdown on a
+     phone -- can be sized off it rather than off a guess; being 13px out was enough to put a
+     scrollbar back on the page.
+     3.875rem = 62px = the hamburger's 44px touch target plus the bar's 0.55rem of padding, which
+     is what the bar has ACTUALLY measured since the touch targets went in. It said 3rem for
+     months, so the drawer opened 14px under the bar and anything sticking to `--topbar-h` would
+     have hidden behind it. A coarse pointer lands on the same number (Skip and the theme toggle
+     grow to the same 44px floor), so one value is right for both. */
+  --topbar-h: 3.875rem;
+  /* ELEVATION -- one light, overhead. Every rung is `x = 0`, `blur = 2x offset`, and each is a
+     DIRECT cast plus a tighter AMBIENT one (contact occlusion, half the offset). Depth only reads as
+     depth while every shadow on the page agrees about where the light is; before this the app had
+     seven ad-hoc alphas, a drawer lit from nowhere (`0 0 40px`) and Pico's own left-lit, blue-tinted
+     shadow under the notes. Rungs: 1 things resting on a surface (answer cards, disclosures), 2 the
+     panels and the quiz card, 3 what floats over them (toasts, a lifted card), 4 what covers them
+     (dialog, mobile drawer). See DESIGN.md "Elevation and shadow".
+     The cast takes the ink's hue rather than pure black: a neutral-black shadow over a tinted page
+     reads as dirt. */
+  /* Both palettes, one declaration each, via `light-dark()` -- see the theming note above. Dark
+     inverts the job: a cast shadow barely registers on a dark ground, so elevation there is carried
+     by LIGHTENING the surface and these mostly hold an edge. The alphas roughly double and rung 1's
+     hairline flips from a dark ring to a light one; the GEOMETRY is identical, so nothing changes
+     rung when the scheme flips. */
+  --elev-inset: inset 0 2px 6px light-dark(rgb(18 33 26 / 10%), rgb(0 0 0 / 35%));
+  --elev-1:
+    0 1px 2px light-dark(rgb(18 33 26 / 10%), rgb(0 0 0 / 30%)),
+    0 0 0 1px light-dark(rgb(18 33 26 / 4%), rgb(230 239 233 / 7%));
+  --elev-2:
+    0 4px 8px light-dark(rgb(18 33 26 / 12%), rgb(0 0 0 / 35%)),
+    0 2px 4px light-dark(rgb(18 33 26 / 8%), rgb(0 0 0 / 25%));
+  --elev-3:
+    0 8px 16px light-dark(rgb(18 33 26 / 16%), rgb(0 0 0 / 45%)),
+    0 4px 8px light-dark(rgb(18 33 26 / 10%), rgb(0 0 0 / 28%));
+  --elev-4:
+    0 16px 32px light-dark(rgb(18 33 26 / 30%), rgb(0 0 0 / 60%)),
+    0 8px 16px light-dark(rgb(18 33 26 / 18%), rgb(0 0 0 / 35%));
+  /* TYPE, in two roles -- DESIGN.md "Type: three roles, and only one of them may have personality".
+     `--ui-font` is what you READ: the prompt, the five answers, every control. It is what the
+     Appearance picker changes, because a reading face is a legitimate preference.
+     `--display-font` is the game's VOICE: app bar, HUD numbers, toasts, the finale. Personality is
+     nearly free on three words seen a hundred times and expensive on a sentence read against a
+     clock, so it lives here and nowhere else. Rounded terminals are the cheapest "this is a game,
+     not a form" signal there is, and cost no legibility on a humanist face.
+     `--suit-symbols` sits in EVERY stack, before the generic: the suits are text glyphs, and a face
+     without them falls back silently -- so a spade could arrive in a different font from the bid
+     beside it. Naming the symbol fonts makes that fallback deterministic instead of last-resort.
+     Nothing may follow a generic family in a stack; a generic always matches. */
+  --suit-symbols: "Segoe UI Symbol", "Noto Sans Symbols2", "DejaVu Sans";
+  color-scheme: light dark;
+  scrollbar-color: light-dark(rgb(20 86 74 / 35%), rgb(230 239 233 / 30%)) transparent;
+}
+
+/* Pico's primary was #0172ad, so the Apply button, the ticked checkboxes, the links and every focus
+   ring came out blue under a green app bar -- the variant read as two colour languages at once. Pico
+   derives hover / border / underline from these, so re-tinting is six declarations rather than a hunt
+   through the components.
+   On `body`, NOT `:root`: Pico declares these under `:root:not([data-theme=dark])`, specificity
+   (0,1,1), which beats a plain `:root` -- the first attempt changed nothing at all. Custom properties
+   inherit, so declaring them one level down wins without having to mirror Pico's theme selectors, and
+   it works the same in both palettes. */
+/* The canvas, restated. Pico does set a background on `:root`, so this is belt-and-braces rather
+   than a fix -- but it is the rule the other two sheets need (see `app.css`), and a variant that
+   silently relied on the framework for it would break the moment the framework changed. */
+html {
+  min-height: 100%;
+  background: var(--pico-background-color);
+}
+
+body {
+  --pico-primary: light-dark(#14564a, #7fc8a4);
+  --pico-primary-background: light-dark(#14564a, #1d6b56);
+  --pico-primary-border: light-dark(#14564a, #1d6b56);
+  --pico-primary-hover: light-dark(#0e3f37, #a9d8bf);
+  --pico-primary-hover-background: light-dark(#0e3f37, #248065);
+  --pico-primary-underline: light-dark(rgb(20 86 74 / 50%), rgb(127 200 164 / 50%));
+  --pico-primary-focus: light-dark(rgb(20 86 74 / 37.5%), rgb(127 200 164 / 37.5%));
+  --pico-primary-inverse: #fff;
+  --pico-form-element-active-border-color: light-dark(#14564a, #7fc8a4);
+}
+
+body[data-font="system"] {
+  --ui-font: system-ui, -apple-system, "Segoe UI", Roboto, var(--suit-symbols), sans-serif;
+}
+
+body[data-font="serif"] {
+  --ui-font: "Iowan Old Style", "Palatino Linotype", Georgia, "Times New Roman", var(--suit-symbols), serif;
+}
+
+body[data-font="mono"] {
+  --ui-font: "Cascadia Code", "JetBrains Mono", Consolas, "Courier New", var(--suit-symbols), monospace;
+}
+
+body[data-font="rounded"] {
+  --ui-font: "Nunito", "Trebuchet MS", "Segoe UI", system-ui, var(--suit-symbols), sans-serif;
+}
+
+/* Pico treats `body > header|main|footer` as page containers: centred, padded, and capped at
+   1450px. The app bar is chrome and wants the whole width, and the layout below it is a plain div
+   that is NOT so constrained -- leaving the two misaligned until this is undone. */
+body > header {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* --- suit colours (domain: no base stylesheet has a 4-colour deck) --- */
+
+.ccolor,
+.dcolor,
+.hcolor,
+.scolor {
+  font-variant-emoji: text;
+}
+
+.ccolor {
+  color: var(--suit-club);
+}
+
+.dcolor {
+  color: var(--suit-diamond);
+}
+
+.hcolor {
+  color: var(--suit-heart);
+}
+
+.scolor {
+  color: var(--suit-spade);
+}
+
+/* --- app bar --- */
+
+.topbar {
+  box-shadow: var(--elev-2);
+  position: sticky;
+  top: 0;
+  min-height: var(--topbar-h);
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 0.55rem 1rem;
+}
+
+.topbar h1 {
+  /* the game's voice, not the reading face -- see the type note in `:root` */
+  font-family: var(--display-font);
+  margin: 0;
+  font-size: 1.25rem;
+  /* Pico colours headings with --pico-color, which here would be the page ink on a dark bar */
+  color: inherit;
+}
+
+.topbar-spacer {
+  flex: 1;
+}
+
+.topbar-score {
+  /* the game's voice, not the reading face -- see the type note in `:root` */
+  font-family: var(--display-font);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.95rem;
+  opacity: 0.9;
+  /* NOWRAP, and it does not shrink. On a 390px phone this was the widest thing the bar could not
+     fit, so it wrapped to three lines -- "0/0", "· 0", "pts", read vertically -- and took the bar
+     from 48px to 78px. A score is one line or it is not a score; the title is the flex item that
+     gives way (it has `min-width: 0` and an ellipsis), and below 400px the fraction drops out
+     entirely rather than the bar overflowing. */
+  white-space: nowrap;
+  flex: none;
+}
+
+.nav-toggle {
+  width: auto;
+  /* Pico gives every button `margin-bottom: var(--pico-spacing)` -- 16px, on a flex item, so it is
+     16px of the APP BAR's height. The bar was 78px tall on a phone instead of 48 and nobody could
+     see where it came from: the hamburger is 44px and the bar's padding is 8.8. Skip and the theme
+     toggle already zeroed it; this one did not. */
+  margin: 0;
+  background: transparent;
+  border: 0;
+  padding: 0.4rem;
+  line-height: 0;
+}
+
+/* The theme toggle: app-bar chrome, so it reads like the hamburger rather than like a form button.
+   Sized to a 32px floor with a mouse and 44px on a coarse pointer, same as Skip -- it sits between
+   the score and Skip, and a 24px target there is a mis-tap on the thing beside it. */
+.theme-toggle {
+  width: auto;
+  margin: 0;
+  min-height: 32px;
+  padding: 0.3rem 0.5rem;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: white;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+@media (hover: hover) {
+  .theme-toggle:hover {
+    background: rgb(255 255 255 / 15%);
+  }
+}
+
+@media (pointer: coarse) {
+  .theme-toggle {
+    min-height: 44px;
+  }
+}
+
+.bars,
+.bars::before,
+.bars::after {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: white;
+  border-radius: 2px;
+}
+
+.bars::before,
+.bars::after {
+  content: "";
+  position: relative;
+}
+
+.bars::before {
+  top: -6px;
+}
+
+.bars::after {
+  top: 4px;
+}
+
+/* --- layout + drawer --- */
+
+.layout {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 1.5rem;
+  /* Vertical padding is tighter than horizontal on purpose: the usable height is
+     100dvh - topbar - this, and the settings column has to fit inside it or the page grows a
+     scrollbar just to show the last panel. */
+  /* the gutters grow with the window (clamped), so a wide monitor gets real margins rather than the
+     same 1.5rem it gets on a laptop */
+  padding: 1rem clamp(1.5rem, 4vw, 4rem);
+  align-items: start;
+}
+
+.layout.nav-closed {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.layout.nav-closed .sidebar {
+  display: none;
+}
+
+.sidebar {
+  display: grid;
+  gap: 1rem;
+  /* START, not the default `normal` (which acts as stretch). As a phone drawer this becomes
+     `position: fixed; top: 3rem; bottom: 0` -- a grid with a DEFINITE height -- so all the leftover
+     space was handed to the auto rows and every panel grew to fill it. Measured at 390x800: the
+     COLLAPSED `Progress` group was 145px tall against a natural 48, which is why folding it away
+     saved nothing, and an open one carried ~90px of dead air under the dial. The desktop column is
+     `sticky` with an auto height, so it never showed the bug. */
+  align-content: start;
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100dvh - var(--topbar-h) - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  /* room at the end so a panel's shadow is not sliced off flush against the scroll edge, which is
+     what made a scrollable sidebar look broken rather than scrollable */
+  padding-bottom: 0.75rem;
+}
+
+/* The reading column. 74rem (1184px) was wider than most windows, so on a 1100-1300px monitor the
+   quiz ran edge to edge with no margin at all -- it read as a phone layout stretched, not as a page.
+   62rem still gives the choice grid its three 16rem columns; what it adds is the whitespace either
+   side that says where the content stops. Centred in whatever track it is in, so it stays centred
+   with the drawer open as well as closed. */
+.main {
+  max-width: 62rem;
+  width: 100%;
+  margin-inline: auto;
+}
+
+/* Pico gives `section` a `margin-bottom`, which lands on top of the sidebar grid's own `gap` and
+   showed as double-width bands of page background between the panels. The grid owns the spacing. */
+.sidebar > section,
+.main > section {
+  margin: 0;
+}
+
+/* Surface recipe taken from Bulma's `.box`, which reads better than either alternative here: a
+   0.75rem radius, one wide low-opacity shadow, and a 2%-alpha ring INSTEAD of a border. Pico's own
+   card is 0.25rem radius with a heavier layered shadow, and this adapter was also drawing a hard
+   1px `--pico-muted-border-color` edge on top of it -- three things all saying "box", which is what
+   made the side panels look flatter and squarer than the Bulma variant.
+
+   Stated outright rather than through `--pico-card-*`: the point is a surface that does NOT vary
+   with the base stylesheet, since the panels are ours in all three. Tokens are declared with the
+   rest at the top of the file. */
+.panel,
+.card {
+  background: var(--pico-card-background-color, #fff);
+  border: 0;
+  border-radius: var(--panel-radius);
+  padding: 1rem;
+  box-shadow: var(--elev-2);
+}
+
+.panel {
+  /* a faint tint, or a white panel on Pico's near-white page has no edge at all */
+  background: light-dark(color-mix(in srgb, var(--primary) 4%, white), color-mix(in srgb, var(--face) 80%, black));
+}
+
+/* Pico styles every button as its primary; these three carry meaning here and were all blue. */
+button.warning {
+  background: #d29922;
+  border-color: #d29922;
+  /* dark ink in BOTH palettes: the face is amber either way, so this does not follow the theme */
+  color: #12211a;
+}
+
+button.danger {
+  background: #cf222e;
+  border-color: #cf222e;
+  color: white;
+}
+
+button.light {
+  background: light-dark(#eef5f2, #223029);
+  border-color: light-dark(rgb(20 86 74 / 20%), rgb(230 239 233 / 20%));
+  color: light-dark(#12211a, #e6efe9);
+}
+
+.card {
+  border-top: 4px solid var(--card-accent);
+}
+
+.controls {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.controls label,
+.controls input,
+.controls select,
+.controls button {
+  margin: 0;
+}
+
+.score-line {
+  margin: 0.3rem 0;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sidebar {
+    position: fixed;
+    /* the TOKEN, not a repeat of its value: a coarse pointer makes the bar 3.5rem (Skip's 44px
+       floor), and a hardcoded 3rem put the drawer 8px under it */
+    top: var(--topbar-h);
+    bottom: 0;
+    left: 0;
+    max-height: none;
+    z-index: 30;
+    width: min(20rem, 88vw);
+    padding: 1rem;
+    overflow-y: auto;
+    background: var(--pico-background-color, #fff);
+    box-shadow: var(--elev-4);
+  }
+}
+
+/* --- the four panel widgets: dial, points meter, timer, toasts --- */
+
+.dial {
+  display: block;
+  width: 100%;
+  max-width: 190px;
+  margin: 0 auto 0.4rem;
+}
+
+.dial-track,
+.dial-value {
+  fill: none;
+  stroke-width: 16;
+  stroke-linecap: round;
+}
+
+.dial-track {
+  stroke: var(--meter-empty);
+}
+
+.dial-value {
+  stroke-dasharray: 282.74;
+  stroke: #999;
+  transition: stroke-dashoffset 180ms ease-out;
+}
+
+.dial-value.poor {
+  stroke: #ff0000;
+}
+
+.dial-value.weak {
+  stroke: #ff6600;
+}
+
+.dial-value.fair {
+  stroke: #ffcc00;
+}
+
+.dial-value.ok {
+  stroke: #99cc00;
+}
+
+.dial-value.good {
+  stroke: #00cc00;
+}
+
+.dial-text {
+  text-anchor: middle;
+  font-size: 1.5rem;
+  font-weight: 700;
+  fill: currentcolor;
+}
+
+.meter {
+  position: relative;
+  height: 0.9rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.points-meter {
+  background: linear-gradient(to right, #ff6600, #99cc00, #00cc00);
+}
+
+.meter-mask {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  background: var(--meter-empty);
+  transition: width 120ms linear;
+}
+
+.meter-tick {
+  position: absolute;
+  bottom: 0;
+  height: 45%;
+  width: 2px;
+  background: rgb(18 33 26 / 45%);
+}
+
+.meter-tick.earned {
+  opacity: 0.25;
+}
+
+.timer {
+  margin: 1.2rem 0;
+  height: 2rem;
+  background: var(--meter-empty);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.timer-fill {
+  height: 100%;
+  width: 100%;
+  background: #00cc00;
+  transition: width 100ms linear;
+}
+
+.timer-fill.spent {
+  background: #444;
+}
+
+.timer-fill.low {
+  background: #ff6600;
+}
+
+.timer-fill.mid {
+  background: #ffcc00;
+}
+
+.timer-fill.high {
+  background: #00cc00;
+}
+
+.toasts {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  display: grid;
+  gap: 0.5rem;
+  justify-items: end;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.toast {
+  /* the game's voice, not the reading face -- see the type note in `:root` */
+  font-family: var(--display-font);
+  box-shadow: var(--elev-3);
+  padding: 0.8rem 1.4rem;
+  border-radius: var(--pico-border-radius);
+  font-weight: 600;
+  color: white;
+}
+
+.toast.success {
+  background: #2da44e;
+}
+
+.toast.info {
+  background: #0969da;
+}
+
+.toast.warning {
+  background: #bf5b00;
+}
+
+/* --- the question card --- */
+
+.intro {
+  margin: 0 0 0.8rem;
+  font-size: 1.3rem;
+}
+
+.answer {
+  margin: 0 0 1.4rem;
+  padding: 0.6rem 1rem;
+  font-size: 2rem;
+  text-align: center;
+  background: var(--face);
+  border-radius: var(--pico-border-radius);
+}
+
+.candidates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 0.8rem;
+  /* recessed, so the near-white cards have something to be raised out of (see `app.css`) */
+  padding: 0.8rem;
+  border-radius: 14px;
+  background: var(--well);
+  box-shadow: var(--elev-inset);
+}
+
+/* Pico's button sets `--pico-color: var(--pico-primary-inverse)` (white, for a filled primary
+   button), so inheriting it on a pale card face made the text invisible. The card face is the point
+   here -- these are cards, not primary actions -- so the ink is stated outright. */
+.candidate {
+  /* rung 1: the thing you press rests ON the well, it is not painted into it */
+  box-shadow: var(--elev-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.4rem;
+  width: auto;
+  margin: 0;
+  font-size: 2rem;
+  background: var(--face);
+  /* the ink follows the face, which is a `light-dark()` pair -- Pico's own `--pico-color` is not
+     used here because the card is our surface, not one of its components */
+  color: light-dark(#12211a, #e6efe9);
+  /* 3.17:1 on the face: the boundary WCAG 1.4.11 asks for, and the only
+     separation that survives a bad monitor */
+  border-color: var(--card-edge);
+}
+
+.accel {
+  flex: none;
+  font-size: 0.8rem;
+  line-height: 1;
+  color: light-dark(#14564a, #a9d8bf);
+  background: light-dark(rgb(20 86 74 / 10%), rgb(230 239 233 / 12%));
+}
+
+.candidate.revealed {
+  display: flex;
+  align-items: center;
+  padding: 0.4rem 1.1rem;
+  border: 1px solid var(--meter-empty);
+  border-radius: var(--pico-border-radius);
+  opacity: 0.55;
+}
+
+.candidate.revealed.correct {
+  opacity: 1;
+  border-color: var(--suit-club);
+}
+
+.candidate.revealed.wrong {
+  opacity: 1;
+  border-color: var(--suit-heart);
+}
+
+.candidate.revealed .mark {
+  flex: none;
+  width: 1.2em;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.candidate.revealed.correct .mark {
+  color: var(--suit-club);
+}
+
+.candidate.revealed.wrong .mark {
+  color: var(--suit-heart);
+}
+
+.reveal-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.reveal-actions button {
+  width: auto;
+  margin: 0;
+}
+
+.reveal-hint {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* --- completion + notes --- */
+
+.celebrate {
+  margin: 0.2rem 0;
+  font-size: 3rem;
+  text-align: center;
+}
+
+.celebrate-text {
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+#quiz img {
+  display: block;
+  margin: 1rem auto;
+  max-width: 100%;
+  border-radius: var(--pico-border-radius);
+}
+
+/* Pico 2 styles the disclosure *marker* and the summary type, but gives `<details>` no surface of
+   its own -- so on Pico's own page background the two panels under the question were a heading and a
+   triangle floating on nothing, indistinguishable from the page. The hand-rolled sheet makes them
+   white cards; matched here with Pico's own card tokens so it follows its light/dark theme. */
+.main > .notes {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--pico-muted-border-color, rgb(20 86 74 / 12%));
+  border-radius: var(--pico-border-radius);
+  background: var(--pico-card-background-color, #fff);
+  /* NOT `--pico-card-box-shadow`: Pico's is six layers, offset to the RIGHT and tinted
+     blue-grey, so the notes were the one thing on the page lit from a different direction. */
+  box-shadow: var(--elev-1);
+}
+
+/* Same problem one level down: the sidebar's disclosures sit on a tinted panel in the same ink as
+   the body text around them, so they did not read as controls.
+
+   Set through Pico's OWN token rather than a `color` rule: Pico styles the closed state with
+   `details summary:not([role])`, specificity (0,1,2), which out-specifies `.filter-help > summary`
+   (0,1,1) -- a colour declared there is simply ignored, which is what the first attempt did. Either
+   match its specificity or hand it the variable it is already reading. The variable is the honest
+   one: it keeps Pico's own hover / focus / open transitions working off the same value. */
+.filter-help,
+.advanced,
+.appearance,
+.main > .notes {
+  --pico-accordion-close-summary-color: light-dark(#14564a, #7fc8a4);
+}
+
+.main > .notes > summary {
+  font-weight: 600;
+}
+
+.notes iframe {
+  width: 100%;
+  height: 40vh;
+  border: 0;
+}
+
+/* Pico claims `aria-busy="true"` as its LOADING COMPONENT: `white-space: nowrap` on the element plus
+   a spinner `::before`. The choice group carries that attribute while an answer is in flight (see
+   quiz.html.j2), and on a grid of wrapped multi-line choices Pico's version was a mess -- every
+   candidate's text snapped to one line and spilled out of its box (buttons measured 122px tall
+   before the answer, 74px with the text overflowing during it), for the whole 2.5-3.5s the toast
+   sequence takes. The attribute is correct ARIA and stays; Pico's interpretation of it does not.
+   General lesson: in a classless stylesheet, ARIA state attributes are also style hooks. */
+.candidates[aria-busy="true"] {
+  white-space: normal;
+}
+
+.candidates[aria-busy="true"]::before {
+  display: none;
+}
+
+.filter-status {
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+/* Pico's `dialog` IS the overlay: fixed, full-viewport, flex-centred, translucent, with a backdrop
+   filter -- and it expects `dialog > article` to be the card. This app has a native `<dialog>`
+   toggled by `data-attr:open` and no article, so under Pico the topics picker rendered as a
+   full-screen wash with bare unstyled content floating in the middle of it.
+
+   Adding an `<article>` would hand Pico the card for free, and it is tempting. Not done, because
+   Pico's overlay covers the viewport and swallows clicks: the picker would be modal under one
+   stylesheet and not the others, and the A/B is only worth anything if the app behaves the same in
+   all three. So the card geometry is stated here, matching `app.css`. `[open]` is kept in the
+   selector so Pico's own `dialog:not([open]) { display: none }` still wins when it is closed. */
+.topics-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  /* stretch, EXPLICITLY: Pico's own `dialog` rule is a centring flex overlay (`align-items: center`),
+     which this rule only half-overrides -- the children then shrink-to-fit and the topic list came
+     out 208px wide inside an 896px card, so its columns never appeared. */
+  align-items: stretch;
+  position: fixed;
+  inset: 5vh auto auto 50%;
+  transform: translateX(-50%);
+  min-width: 0;
+  height: auto;
+  min-height: 0;
+  /* Wide enough for the topic list to flow into columns -- see `.topic-list`. */
+  /* WIDTH, not just max-width. The card is fixed-positioned, so it shrink-to-fits its content --
+     and a grid of `minmax(13rem, 1fr)` tracks is happy at one column, so the picker stayed narrow
+     and the columns never appeared. Stating the width is what lets the list use them. */
+  width: min(56rem, 92vw);
+  max-width: 92vw;
+  max-height: 90dvh;
+  /* the card itself never scrolls; `.topics-scroll` inside it does */
+  overflow: hidden;
+  /* ABOVE the drawer (which is z-index 30 as a mobile overlay). The Topics button lives IN the
+     drawer, so on a phone the picker opened behind the thing you opened it from and looked like a
+     no-op. Desktop hid the bug: there the sidebar is a column and never overlaps the dialog. */
+  z-index: 50;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--pico-border-radius);
+  background: var(--pico-card-background-color, #fff);
+  backdrop-filter: none;
+  box-shadow: var(--elev-4);
+}
+
+.topics-dialog h2 {
+  margin-top: 0;
+}
+
+.topics-dialog p,
+.topics-dialog li {
+  font-size: 0.9rem;
+}
+
+/* The card is a COLUMN: a scroller in the middle, the buttons pinned outside it. The whole dialog
+   used to scroll, so nineteen topics pushed Apply / Clear / Close half off the bottom edge. */
+.topics-scroll {
+  overflow-y: auto;
+  /* a flex item will not shrink below its content without this, so the scroller would grow the card
+     instead of scrolling inside it */
+  min-height: 0;
+  margin-bottom: 0.2rem;
+}
+
+/* As many columns as the card is wide enough for. Nineteen topics stacked in one column is ~880px
+   of list, which scrolls on any laptop; at three columns they are all visible at once, which is the
+   point of a picker you scan rather than read. One column on a phone, where 13rem does not fit twice. */
+.topic-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0.35rem 1.25rem;
+  margin-bottom: 0.6rem;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.8rem 0;
+}
+
+.dialog-actions button {
+  width: auto;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* the collapsed presentation group in the settings panel */
+.appearance summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.appearance[open] {
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* --- dark palette: our tokens layered over Pico's own dark theme ---
+   Same reasoning as app.css: the spade stops being black, and the other three lighten until each
+   clears 4.5:1 on the dark card face. */
+/* --- the completion screen's figures (see templates/completed.html.j2) ---
+   Layout only. The assembling animation lives in `juice.css`, so with the game-feel toggle off this
+   is a legible score summary rather than a broken one -- which is why the two are split. */
+.finale-figures {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.6rem;
+  margin: 1rem 0 1.4rem;
+}
+
+.finale-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.figure {
+  /* the game's voice, not the reading face -- see the type note in `:root` */
+  font-family: var(--display-font);
+  font-size: 2.4rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--card-accent);
+}
+
+.figure.big {
+  font-size: 3.4rem;
+}
+
+.figure-unit {
+  /* the game's voice, not the reading face -- see the type note in `:root` */
+  font-family: var(--display-font);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--card-accent);
+}
+
+.finale-label {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+/* COLOUR emoji, asked for by name. `--suit-symbols` puts "Segoe UI Symbol" in every stack ahead of
+   the generic so the SUIT glyphs land in a chosen face rather than a last-resort one -- and that same
+   font also has the party popper, in monochrome, so the finale's poppers and confetti turned into
+   black line art. The two wants are opposite: the suits want a text face (they are coloured by CSS,
+   see `font-variant-emoji: text` above), the party wants the colour emoji font. So the party names
+   it. `font-variant-emoji: emoji` asks for the colour presentation as well as the face; browsers
+   that do not know the property ignore it and the font choice still does the work. */
+.pop,
+.confetti-bit {
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+  font-variant-emoji: emoji;
+}
+
+/* inline-block so each character can be transformed on its own */
+.digit,
+.pop {
+  display: inline-block;
+}
+
+/* --- the debug panel (dev only; see `app.DEBUG_MODE`) ---
+   Deliberately plain and a bit ugly: scaffolding should look like scaffolding, so nobody mistakes it
+   for part of the quiz or leaves it armed on a deployment. */
+.panel.debug {
+  background: light-dark(#fff6e0, #2a2312);
+  box-shadow: inset 0 0 0 2px light-dark(#d29922, #8a6a1a);
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.debug-row {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.debug-row button {
+  font-size: 0.8rem;
+  padding: 0.2rem 0.45rem;
+  width: auto;
+  margin: 0;
+}
+
+/* --- the HUD (app bar): live state + Skip ---
+   The score used to be in the app bar AND duplicated in a sidebar `#score` panel, while Skip -- an
+   action you take mid-question -- sat in the sidebar beside the controls that restart the quiz. Now
+   everything you need while playing is up here, and the drawer holds only what restarts the quiz. */
+.hud-meter {
+  width: 7rem;
+  height: 0.5rem;
+  flex: none;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 25%);
+}
+
+/* The mask covers the UNEARNED part, so it has to be OPAQUE: the track carries the red-to-green
+   gradient, and anything translucent lets that gradient show through -- which makes the gauge look
+   full at every score. (It was `rgb(255 255 255 / 22%)` for one commit, chosen to stop an opaque
+   pale-green block reading as a stray rectangle on the green bar, and that is exactly what it broke.)
+   The app bar's own dark green is the answer: opaque, so the gradient is hidden, and it reads as an
+   unfilled groove in the bar rather than a foreign colour sitting on top of it. */
+.hud-meter .meter-mask {
+  background: var(--primary-dark);
+}
+
+.hud-meter .meter-tick {
+  background: rgb(255 255 255 / 55%);
+}
+
+.hud-meter .meter-tick.earned {
+  opacity: 0.45;
+}
+
+.topbar .skip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  width: auto;
+  margin: 0;
+}
+
+.skip-count {
+  font-variant-numeric: tabular-nums;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 18%);
+}
+
+/* The app bar is the one place where running out of width is likely, so the pieces drop in order of
+   what you can live without: the gauge first (the points number says the same thing less precisely),
+   then the score fraction. Skip and the streak never drop -- one is an action, the other is the
+   reason to keep going. */
+@media (max-width: 760px) {
+  .hud-meter {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .topbar h1 {
+    font-size: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .topbar-score {
+    font-size: 0.8rem;
+  }
+}
+
+/* the dial's new home: a folded group, because it spends a lot of space on one number */
+.panel.progress > summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.panel.progress[open] {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.panel.progress .dial {
+  max-width: 130px;
+}
+
+/* --- overflow insurance ---------------------------------------------------- *
+ * Two places where content can be wider than its box, both of which show up as a horizontal
+ * scrollbar on the whole page rather than as a local problem:
+ *   - auction text and bml descriptions are joined with invisible separators and can contain long
+ *     unbroken tokens (`invite(~10/11)`), so they get an explicit break opportunity;
+ *   - the app bar is a nowrap flex row, and a flex item will not shrink below its content unless it
+ *     is told it may -- `min-width: 0` plus an ellipsis on the title is what lets the HUD survive a
+ *     narrow window instead of pushing the page wider.
+ */
+.answer,
+.candidate-text,
+.finale-label {
+  overflow-wrap: anywhere;
+}
+
+.topbar h1 {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-score,
+.topbar .skip,
+.streak {
+  min-width: 0;
+}
+
+/* --- touch and small screens ------------------------------------------------ *
+ * Measured on an emulated 390x844 phone: the hamburger was a 33x15px target and Skip 70x27, both well
+ * under the ~44px minimum a finger needs. And at 2rem an auction wraps to three lines, so each choice
+ * became a 103px-tall card and the page ran to 1207px of scroll -- the type scale is what to fix, not
+ * the layout, which had no horizontal overflow at any width. */
+.nav-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* A coarse pointer gets the bigger targets; a mouse does not need them, and a 44px-tall Skip would
+   make the app bar taller for everyone. */
+.topbar .skip {
+  /* a floor even with a mouse: 27px was the measured height, which is a small target for the one
+     action you take mid-question */
+  min-height: 32px;
+}
+
+@media (pointer: coarse) {
+  .topbar .skip {
+    min-height: 44px;
+    padding-inline: 0.8rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .answer {
+    font-size: 1.4rem;
+    padding: 0.45rem 0.6rem;
+    /* every rem of dead space between the prompt and the choices is a choice pushed under the
+       fold -- the phone complaint is that five answers do not fit at once */
+    margin-bottom: 0.9rem;
+  }
+
+  .candidate,
+  .candidate.button {
+    font-size: 1.3rem;
+    min-height: 2.9rem;
+  }
+
+  .intro {
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* a phone has no room for a 16rem minimum column: one choice per row, full width */
+  .candidates {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0.5rem;
+    /* one column, so the gap only ever costs height: 0.8rem x 4 was a sixth of a card */
+    gap: 0.5rem;
+  }
+
+  .card {
+    padding: 0.7rem;
+  }
+
+  .notes iframe {
+    height: 55vh;
+  }
+}
+
+/* --- the app bar on a phone ------------------------------------------------- *
+ * Three fixes, all measured at 390x844 (iPhone 12) and 360x740 (Galaxy S9):
+ *   - the score no longer wraps (see `.topbar-score` above), which is what made the bar 78px tall
+ *     and its contents read vertically;
+ *   - the gaps and the theme toggle tighten, so the title keeps some width before the ellipsis;
+ *   - below 400px the correct/attempted FRACTION drops. That is the next rung of the same
+ *     shedding ladder as the gauge at 760px: points survive because they are what the skips are
+ *     earned against, and the fraction is still on the drawer's dial. */
+@media (max-width: 520px) {
+  .topbar {
+    gap: 0.5rem;
+    padding-inline: 0.6rem;
+  }
+
+  .theme-toggle {
+    padding: 0.3rem;
+  }
+}
+
+/* 400px, so BOTH common phone widths are on the same side of it: 390 (iPhone 12/13/14) and 360
+   (Galaxy S9 and most of android). Measured with the fraction in, the title had 86-116px left --
+   "U16 Squad S..." -- and the bar read as five things fighting; without it the title gets ~118px
+   at both widths and the live number is still there. Nothing is lost: the fraction is on the
+   drawer's dial, and the aria-labels in the bar never dropped it. */
+@media (max-width: 400px) {
+  .score-fraction {
+    display: none;
+  }
+}
+
+/* THE COUNTDOWN GOES ABOVE THE QUESTION AND STICKS TO THE BAR (phone/tablet widths only).
+ * It used to sit below the card in flow, which on a phone put it in the worst possible place: with
+ * five choices it is already at the fold, and the browser's own URL bar -- which slides back in the
+ * moment you scroll up -- covers whatever is at the bottom of the viewport. So the one element that
+ * is worthless off-screen was the one most likely to be off-screen.
+ * `order: -1` moves it visually only; the DOM (and so the screen-reader order, and every template)
+ * is untouched. It is also slimmer here: it is a bar, not a panel, and the height it gives back is
+ * most of an answer card. */
+@media (max-width: 900px) {
+  .main {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .timer {
+    order: -1;
+    position: sticky;
+    top: var(--topbar-h);
+    z-index: 12;
+    height: 1.4rem;
+    margin: 0 0 0.8rem;
+  }
+}
+
+/* THE THEME SWITCH. Both palettes live in `light-dark()` pairs on the tokens above, not in a
+   `@media (prefers-color-scheme: dark)` block -- which is what makes an always-available toggle
+   possible at all. A media query answers to the OS and to nothing else, so a palette written that
+   way can only be overridden by writing it a second time; `light-dark()` resolves against the
+   element's COMPUTED `color-scheme`, so forcing one is a single declaration. It also moves the
+   browser's own surfaces -- canvas, scrollbars, form controls -- which a class on <body> would not.
+
+   `$_theme` is mirrored onto <html> as `data-theme`, and is absent when it is `auto` (the default),
+   where `color-scheme: light dark` hands the choice back to the OS. On the ROOT, because that is the
+   only element the canvas and the scrollbars read their scheme from -- the black-rim lesson again,
+   see the `html` rule above. Pico and Bulma document the same attribute in the same place, so their
+   own dark themes follow this toggle without being told about it. */
+:root[data-theme="dark"] {
+  color-scheme: only dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: only light;
+}

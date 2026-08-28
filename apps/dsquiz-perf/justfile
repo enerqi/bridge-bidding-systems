@@ -1,0 +1,274 @@
+# Locust performance tests for the datastar quiz.
+#
+# Reachable from the repo root as a just module (`mod dsperf 'apps/dsquiz-perf'` there):
+#     just dsperf smoke, just dsperf headless, ...
+#
+# SHELL, as in deal-simulations/odin-sims: `cmd.exe` starts in ~9ms and is always available, and just
+# launches a shell per recipe line.
+#  - alternatives: `nu -c` ~41ms, `powershell -NoLogo -NoProfile -Command` ~143ms
+#  - cost: poor language for a multi-line recipe, hence `[script]` -> python for anything with logic
+[windows]
+set shell := ["cmd.exe", "/c"]
+[unix]
+set shell := ["bash", "-c"]
+set minimum-version := "1.49.0"  # [script] (1.49); also [group] 1.27, set lazy 1.47
+set unstable  # [script]
+set lazy
+# `python` alone is not a reliable cross-platform lookup (cf. python/python3/python3.x). uv resolves
+# and downloads on every platform, and --no-project keeps this justfile plumbing out of the perf
+# project's own environment (which is the load INJECTOR, and pulls in gevent).
+set script-interpreter := ["uv", "run", "--no-project", "-p", "3.14", "python"]
+
+# `source_directory()`, not `justfile_directory()`: as a module from the repo root the latter is the
+# ROOT justfile's directory, and `--project` would then point uv at the wrong project.
+project := source_directory()
+host := env_var_or_default("DSQUIZ_PERF_HOST", "http://127.0.0.1:5008")
+scenarios := "locustfiles"
+
+# uv boilerplate: --directory as well as --project, because the -f paths are relative. NOT `quote()`:
+# it emits POSIX single-quoting, which cmd.exe passes through as literal characters.
+locust := "uv run --project " + project + " --directory " + project + " locust"
+
+# `just --choose` builds its own chooser command and SINGLE-quotes the preview:
+#     fzf --multi --preview 'just --unstable --color always --justfile "..." --show {}'
+# cmd.exe does not treat `'` as a quote, so fzf received `--unstable` as an option of its own and died
+# with "unknown option: --unstable" -- the chooser, not just, was doing the complaining. Double quotes
+# are what cmd honours (measured inside cmd: the double-quoted form previews, the single-quoted form
+# exits 2), and bash honours them too, so one string serves both.
+#
+# `[script]` because the value has quotes inside quotes: python hands `just` an argv list and the
+# chooser as an environment variable, so no shell has to be talked out of re-parsing it. There is no
+# `set chooser` -- it is `--chooser` or `JUST_CHOOSER` -- and `setdefault` leaves a JUST_CHOOSER you
+# have set yourself alone.
+# ---
+# interactive chooser (assumes fzf)
+[group('dev')]
+[script]
+default:
+	import os, subprocess
+
+	justfile = r"{{ join(source_directory(), 'justfile') }}"
+	env = {**os.environ}
+	env.setdefault("JUST_CHOOSER", 'fzf --multi --preview "just --justfile ' + justfile + ' --show {}"')
+	try:
+		rc = subprocess.run(["just", "--justfile", justfile, "--choose"], env=env).returncode
+	except KeyboardInterrupt:
+		rc = 130
+	raise SystemExit(rc)
+
+# the web UI, every scenario. Nothing runs until you press Start in the browser (:8089)
+[group('run')]
+run *args:
+	{{locust}} -f {{scenarios}} --host {{host}} {{args}}
+
+alias r := run
+
+# one named scenario in the web UI, e.g. `just scenario player`
+[group('run')]
+scenario name *args:
+	{{locust}} -f locustfiles/{{name}}_scenario.py --host {{host}} {{args}}
+
+# headless: USERS users, RATE spawned per second, for TIME. Writes .reports/<project> (<scenario>) <stamp>.html
+[group('run')]
+headless users="100" rate="10" time="180" *args:
+	{{locust}} -f {{scenarios}} --host {{host}} --headless -u {{users}} -r {{rate}} -t {{time}} {{args}}
+
+alias h := headless
+
+# Thresholds are relaxed here on purpose: a 30-second run is dominated by the server's cold start
+# (first render ~550ms against ~2ms warm), so the real ones would fail on sample size alone.
+# `[script]` because there is no portable one-liner for setting environment variables -- cmd.exe wants
+# `set "X=1" && ...`, bash wants `X=1 ...`, and `uv run` has only `--env-file`.
+# ---
+# is the plumbing right? two users, 30 seconds, players only -- run before any real test
+[group('run')]
+[script]
+smoke *args:
+	import os, subprocess
+
+	relaxed = ("ANSWER_P95_MS", "PAGE_P95_MS", "PREVIEW_P95_MS", "P50_MS", "P95_MS", "P99_MS")
+	env = {**os.environ, **{"DSQUIZ_PERF_" + name: "5000" for name in relaxed}}
+
+	argv = [
+		"uv", "run", "--project", r"{{project}}", "--directory", r"{{project}}", "locust",
+		"-f", "locustfiles/player_scenario.py", "--host", r"{{host}}",
+		"--headless", "-u", "2", "-r", "2", "-t", "30", *r'''{{args}}'''.split(),
+	]
+	try:
+		rc = subprocess.run(argv, env=env).returncode
+	except KeyboardInterrupt:
+		rc = 130  # a run is stopped with ctrl-c; that is not a traceback
+	raise SystemExit(rc)
+
+# py-spy SAMPLES the running server from outside: it attaches by pid and reads stacks, so the app has
+# no profiler in it, no decorator, no import, and nothing to take out afterwards. Point it at a LOW
+# load -- 100 users is plenty. Under saturation every stack is queueing and the profile tells you what
+# the queue is made of rather than what is slow.
+#
+# Two processes and only one of them is the app: granian's listener is a Rust master with no python in
+# it, and the worker underneath is what runs the templates and the matching (`common/server_pid.py`).
+#
+# Writes .reports/profile (...).svg -- a flamegraph, opens in any browser. `--format speedscope`
+# gives a JSON for speedscope.app instead; `--format raw` gives folded stacks, which is the one to
+# grep. `--pid N` profiles a server this cannot find. Every other flag is handed to py-spy, notably
+# `--native` for C and Rust frames (granian is Rust; brotli and msgspec are C extensions), which
+# costs more overhead and needs the debug symbols to be worth reading.
+#   just profile 100 20 60 --native
+#   just profile 100 20 60 --format raw
+# ---
+# profile the SERVER with py-spy while a load runs against it -> flamegraph in .reports/
+[group('run')]
+[script]
+profile users="100" rate="20" time="60" *args:
+	import subprocess, sys
+	from datetime import datetime, timezone
+	from pathlib import Path
+
+	project = Path(r"{{project}}")
+	sys.path.insert(0, str(project))
+	from common.server_pid import find_server_process
+
+	flags = r'''{{args}}'''.split()
+	fmt = flags[flags.index("--format") + 1] if "--format" in flags else "flamegraph"
+	suffix = {"flamegraph": "svg", "speedscope": "json", "raw": "txt"}.get(fmt, "svg")
+
+	# whatever we did not consume goes STRAIGHT to py-spy, so its own flags need no wrapper here.
+	# `--native` is the one worth knowing: it walks C and Rust frames as well as python, which is most
+	# of what this server is -- granian is Rust, brotli and msgspec are C extensions, and without it
+	# their time appears as one opaque python frame.
+	consumed = {"--format", "--pid", "--rate"}
+	rate = flags[flags.index("--rate") + 1] if "--rate" in flags else "20"
+	passthrough = [
+		flag
+		for index, flag in enumerate(flags)
+		if flag not in consumed and (index == 0 or flags[index - 1] not in consumed)
+	]
+
+	host = r"{{host}}"
+	port = int(host.rsplit(":", 1)[-1].strip("/")) if ":" in host.rsplit("/", 1)[-1] else 80
+	if "--pid" in flags:
+		pid = int(flags[flags.index("--pid") + 1])
+	else:
+		process = find_server_process(port)
+		pid = process.pid
+		print(f"profiling pid {pid} ({process.name()}), the app worker behind {host}")
+
+	reports = project / ".reports"
+	reports.mkdir(parents=True, exist_ok=True)
+	stamp = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H_%M_%S")
+	# concatenation, not an f-string: a doubled brace is just's interpolation opener, so the escaping
+	# an f-string needs in order to emit one literal brace makes the recipe unparseable
+	out = reports / ("profile (" + r"{{users}}" + "u " + fmt + ") " + stamp + "." + suffix)
+
+	# py-spy runs for the load's duration plus a little, so the profile starts before the first request
+	# and is still sampling when the last one lands. `--subprocesses` because granian may respawn a
+	# worker mid-run, and a profile that stops at that moment is worse than one that follows it.
+	duration = int(r"{{time}}") + 5
+	spy = subprocess.Popen([
+		"uv", "run", "--project", str(project), "py-spy", "record",
+		"--pid", str(pid), "--output", str(out), "--format", fmt,
+		"--duration", str(duration), "--rate", rate, "--subprocesses",
+		*passthrough,
+	])
+
+	locust = [
+		"uv", "run", "--project", str(project), "--directory", str(project), "locust",
+		"-f", "locustfiles", "--host", host, "--headless",
+		"-u", r"{{users}}", "-r", r"{{rate}}", "-t", r"{{time}}",
+	]
+	try:
+		subprocess.run(locust, check=False)
+		spy.wait(timeout=120)
+	except KeyboardInterrupt:
+		spy.terminate()
+		raise SystemExit(130) from None
+
+	if out.exists():
+		print()
+		print("profile:", out)
+	else:
+		# the usual cause on Windows is a permissions refusal reading another process
+		print("py-spy wrote nothing -- see its output above", file=sys.stderr)
+		raise SystemExit(1)
+
+# See the README: on Windows the injector is ONE python process, so watch its own CPU before
+# believing the numbers.
+# ---
+# a few hundred players for ten minutes
+[group('run')]
+soak users="400" rate="20" time="600" *args:
+	{{locust}} -f {{scenarios}} --host {{host}} --headless -u {{users}} -r {{rate}} -t {{time}} {{args}}
+
+# the held-SSE countdown, which needs the server started with DSQUIZ_TIMER=stream
+[group('run')]
+timer-stream users="100" rate="20" time="180" *args:
+	{{locust}} -f locustfiles/timer_stream_scenario.py,locustfiles/player_scenario.py --host {{host}} --headless -u {{users}} -r {{rate}} -t {{time}} {{args}}
+
+# Needs docker and the gc-docker-images/locust image (see the Confluence guide); the container reaches
+# a server on this machine as host.docker.internal. Windows only -- on Linux `locust --processes N`
+# does the same thing without a container.
+# ---
+# multiple load-injector PROCESSES, which locust's --processes cannot do on Windows
+[group('run')]
+[windows]
+docker *args:
+	cd /d {{project}} && docker-run-locust.cmd {{args}}
+
+# the report from the most recent run
+[group('run')]
+[script]
+report:
+	import subprocess, sys
+	from pathlib import Path
+
+	reports = sorted((Path(r"{{project}}") / ".reports").glob("*.html"), key=lambda p: p.stat().st_mtime)
+	if not reports:
+		raise SystemExit("no reports yet -- run `just headless`")
+
+	newest = reports[-1]
+	print(newest)
+	if sys.platform == "win32":
+		# `start` is a cmd BUILTIN, so it needs a shell, and the empty argument is its title slot --
+		# without it a quoted path is read as the window title and nothing opens
+		subprocess.run(["cmd", "/c", "start", "", str(newest)], check=False)
+	else:
+		subprocess.run(["xdg-open", str(newest)], check=False)
+
+sources := "common locustfiles"
+
+# format, lint and typecheck, as the other python projects here do
+[group('qa')]
+qa: format lint typecheck
+
+alias q := qa
+
+# ruff format (writes)
+[group('qa')]
+format *args:
+	uv run --project {{project}} --directory {{project}} ruff format --quiet {{args}} {{sources}}
+
+# ruff lint
+[group('qa')]
+lint *args:
+	uv run --project {{project}} --directory {{project}} ruff check --quiet {{args}} {{sources}}
+
+# astral ty type check
+[group('qa')]
+typecheck *args:
+	uv run --project {{project}} --directory {{project}} ty check --quiet {{args}} {{sources}}
+
+alias tc := typecheck
+
+# delete generated reports
+[group('qa')]
+[script]
+clean:
+	import shutil
+	from pathlib import Path
+
+	reports = Path(r"{{project}}") / ".reports"
+	if reports.exists():
+		shutil.rmtree(reports)
+		print(f"removed {reports}")
+	else:
+		print("nothing to remove")

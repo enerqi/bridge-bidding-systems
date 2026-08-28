@@ -1,0 +1,62 @@
+.env*
+*.sqlite
+*node_modules
+
+# Build artifacts. Odin names these per platform, so the same `-build-mode` produces a different
+# extension on each one and both halves of the list are needed for a repo that CI builds on three
+# platforms. Every recipe in the justfile passes `-out:target/...`, so in practice these only catch
+# an ad-hoc `odin build .` run from the repository root.
+#
+#   build mode      Windows     Linux       macOS
+#   (default)       .exe        <dirname>   <dirname>
+#   obj             .obj        .o          .o
+#   shared          .dll        .so         .dylib
+#   static          .lib        .a          .a
+#   llvm-ir         .ll         .ll         .ll
+#   -debug          .pdb        (in binary) .dSYM bundle
+#
+# The default executable has no extension on Linux and macOS - it takes the name of the package
+# directory - so no pattern can catch it. The skeleton sidesteps this by naming its output
+# `main.exe` on every platform (see `main_name` in the justfile); a bare `odin build .` is the one
+# case that will show up in `git status`.
+*.exe
+*.obj
+*.dll
+*.lib
+*.exp
+*.ilk
+*.pdb
+*.o
+*.so
+*.so.*
+*.dylib
+*.a
+*.dSYM/
+*.bc
+*.ll
+
+# Crash dumps. Worth having in a skeleton that ships sanitizer recipes and a segfault handler.
+# Deliberately not a bare `core` - that would swallow a package directory of that name.
+core.[0-9]*
+vgcore.*
+
+# profile data
+*.spall
+
+# Editor and debugger state
+*.sublime-workspace
+*.suo
+*.rdbg
+
+# Machine-specific absolute collection paths; regenerate with `just ols-config` after cloning. If
+# every collection you configure is a relative path, ols.json is the same on every machine - delete
+# this line and commit it instead.
+ols.json
+
+# OS file-manager droppings
+.DS_Store
+Thumbs.db
+
+# Our project outputs artifacts to target/**. A build dir is another common custom directory for artifacts.
+build
+target

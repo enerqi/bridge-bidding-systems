@@ -1,0 +1,189 @@
+# Rust port of the datastar bidding quiz.
+#
+# Reachable from the repo root as a just module (`mod dsrs 'apps/datastar-quiz-rust'` there):
+#     just dsrs serve, just dsrs test, ...
+#
+# SHELL, as in the other three apps: `cmd.exe` starts in ~9ms and is always available, and just
+# launches a shell per recipe line.
+#  - alternatives: `nu -c` ~41ms, `powershell -NoLogo -NoProfile -Command` ~143ms
+#  - cost: poor language for a multi-line recipe, hence `[script]` -> python for anything with logic
+[windows]
+set shell := ["cmd.exe", "/c"]
+[unix]
+set shell := ["bash", "-c"]
+set minimum-version := "1.49.0"  # [script] (1.49); also [group] 1.27, set lazy 1.47
+set unstable  # [script]
+set lazy
+set script-interpreter := ["uv", "run", "--no-project", "-p", "3.14", "python"]
+
+# `source_directory()`, NOT `justfile_directory()`: as a module from the repo root the latter is the
+# ROOT justfile's directory.
+project := source_directory()
+repo := parent_directory(parent_directory(source_directory()))
+# 5070: python is on 5008, Go on 5060, and running them side by side is the point.
+port := env_var_or_default("DSQUIZ_PORT", "5070")
+
+# interactive chooser (assumes fzf)
+[group('dev')]
+[script]
+default:
+	import os, subprocess
+
+	justfile = r"{{ join(source_directory(), 'justfile') }}"
+	env = {**os.environ}
+	env.setdefault("JUST_CHOOSER", 'fzf --multi --preview "just --justfile ' + justfile + ' --show {}"')
+	try:
+		rc = subprocess.run(["just", "--justfile", justfile, "--choose"], env=env).returncode
+	except KeyboardInterrupt:
+		rc = 130
+	raise SystemExit(rc)
+
+# THE RELEASE PROFILE IS THE ONE THAT COUNTS. A debug build of this app is roughly an order of
+# magnitude slower -- the matcher is generic, iterator-heavy code that depends entirely on inlining --
+# so every serve recipe builds with --release. `just dsrs dev-build` is there for a fast edit loop.
+# ---
+# run the server (every core, client-side countdown, no debug panel)
+[group('serve')]
+serve *args:
+	cd {{project}} && cargo run --release --quiet -- --port {{port}} {{args}}
+
+alias s := serve
+
+# THE LIKE-FOR-LIKE RUN. The python app is one asyncio loop in one process -- one core, whatever the
+# machine has. Tokio will use all 24 by default, so a naive comparison says "Rust is 20x faster" when
+# it means "Rust used 20 cores". This is the number that says what the RUNTIME costs; `serve` is the
+# deployment question.
+# ---
+# run the server with ONE tokio worker thread -- the honest comparison against the python
+[group('serve')]
+serve-1core *args:
+	cd {{project}} && cargo run --release --quiet -- --port {{port}} --threads 1 {{args}}
+
+# run with the debug panel armed for every session
+[group('serve')]
+dev *args:
+	cd {{project}} && cargo run --release --quiet -- --port {{port}} --debug 1 {{args}}
+
+alias d := dev
+
+# run with the held-SSE countdown instead of the client interval.
+#
+# This is the mode nobody would ship on python -- every open tab is a connection pushing a signal
+# patch every 100ms at a single event loop -- and the one the harness has a scenario for. Here it is
+# a task and an interval.
+# ---
+# run with the held-SSE countdown (DSQUIZ_TIMER=stream)
+[group('serve')]
+serve-streamed *args:
+	cd {{project}} && cargo run --release --quiet -- --port {{port}} --timer stream {{args}}
+
+# run prefixed and with the debug panel forbidden, exactly as the deployment box would
+[group('serve')]
+serve-deployed *args:
+	cd {{project}} && cargo run --release --quiet -- --port {{port}} --prefix bridge-system-quiz --debug 0 {{args}}
+
+# The corpus, the templates and the assets are all embedded, so the release binary IS the
+# deployment: one file, no runtime, no interpreter, nothing to `uv sync` on the box.
+# ---
+# build the release binary
+[group('build')]
+build:
+	cd {{project}} && cargo build --release
+
+# a debug build, for a fast edit loop. NOT for measuring anything.
+[group('build')]
+dev-build:
+	cd {{project}} && cargo build
+
+# run the tests
+[group('qa')]
+test *args:
+	cd {{project}} && cargo test {{args}}
+
+alias t := test
+
+# THERE IS NO `test-race` HERE, and that is the finding rather than an omission.
+#
+# The Go port needs `go test -race` because its session state is guarded by a mutex the compiler
+# does not check: forgetting to take it is a data race that only a runtime detector finds. Here the
+# state lives behind a `Mutex` whose contents are unreachable without locking it, so the same class
+# of bug does not compile. `just dsrs test` covers the rest.
+# ---
+# format, lint and check (rustfmt + clippy)
+[group('qa')]
+[script]
+qa:
+	import subprocess
+
+	project = r"{{project}}"
+	failed = []
+	if subprocess.run(["cargo", "fmt", "--check"], cwd=project).returncode:
+		failed.append("cargo fmt --check")
+	if subprocess.run(
+		["cargo", "clippy", "--all-targets", "--", "-D", "warnings"], cwd=project
+	).returncode:
+		failed.append("cargo clippy")
+	raise SystemExit("failed: " + ", ".join(failed) if failed else 0)
+
+alias q := qa
+
+# format the source
+[group('qa')]
+format:
+	cd {{project}} && cargo fmt
+
+# the microbenchmarks: scoring, question generation, and the filter -- which is where the CPU goes.
+#
+# Everything except `web` is free of the HTTP stack so these run with no server in the way and can be
+# compared against the python's own numbers (check_filter("1C") 15.8ms warm, a topic 43ms, over
+# 7,627 auctions) and the Go port's.
+# ---
+# run the microbenchmarks
+[group('qa')]
+bench *args:
+	cd {{project}} && cargo bench {{args}}
+
+# REGENERATE THE SHARED CORPUS. The auctions and topics are exported from the python app -- the
+# implementation that owns the BML parser -- and checked in here AND in the Go port, so all three
+# provably draw questions from the same corpus. Run this after editing a .bml file or a topics toml.
+#
+# It also refreshes the filter goldens, which is what holds the ported matcher to the reference: 132
+# probes over both systems, each recording the status and a digest of the exact auctions selected.
+# ---
+# re-export the corpus + the filter goldens from the python app, into both ports
+[group('corpus')]
+[script]
+export-corpus:
+	import shutil, subprocess
+	from pathlib import Path
+
+	repo = Path(r"{{repo}}")
+	python_app = repo / "apps" / "datastar-quiz"
+	rust = Path(r"{{project}}")
+	go = repo / "apps" / "datastar-quiz-golang"
+
+	for tool in ("tools/export_corpus.py", "tools/export_filter_goldens.py"):
+		rc = subprocess.run(
+			["uv", "run", "--project", str(python_app), "--directory", str(python_app), "python", tool]
+		).returncode
+		if rc:
+			raise SystemExit(rc)
+
+	# the exporter writes into the Go port (which owns the paths it was written against); this copies
+	# the same bytes here, so the two embedded corpora are provably identical
+	for name in ("squad.json", "swedish.json"):
+		shutil.copy2(go / "internal" / "corpus" / "data" / name, rust / "corpus" / name)
+	shutil.copy2(
+		go / "internal" / "corpus" / "testdata" / "filter_goldens.json",
+		rust / "tests" / "testdata" / "filter_goldens.json",
+	)
+	shutil.copy2(
+		go / "internal" / "render" / "testdata" / "topic_names.json",
+		rust / "tests" / "testdata" / "topic_names.json",
+	)
+	print("now: just dsrs test  (the goldens are asserted in tests/corpus.rs)")
+
+# what the binary actually holds: the prepared corpus, and what one Bid costs
+[group('qa')]
+sizes:
+	cd {{project}} && cargo test --release --test corpus -- --nocapture the_prepared_corpus_is_small

@@ -36,6 +36,12 @@ telemetry = [
     "opentelemetry-distro>=0.65b0",
     "opentelemetry-exporter-otlp-proto-grpc==1.*",
 ]
+# yappi, the instrumenting profiler (`profiling.py`, `just serve-profiled`). An extra rather than a
+# dependency because it is only ever wanted deliberately: sampling with py-spy cannot profile this
+# server usefully (it suspends the single event loop, and its nonblocking mode loses ~35% of samples
+# to torn reads), so the alternative is instrumentation, and instrumentation is not something to have
+# installed on the deployment box.
+profiling = ["yappi>=1.6"]
 
 [dependency-groups]
 dev = [
@@ -46,6 +52,10 @@ dev = [
     "pytest-xdist==3.*",
     "ruff>=0.16",  # astral linter + formatter
     "ty>=0.0.66",  # astral type checker
+    # ALSO in the dev group, not only the `profiling` extra: profiling is a local activity, and having
+    # it here means `just typecheck` can resolve `import yappi` for real rather than being told to
+    # ignore it. The extra is what a non-dev environment would select.
+    "yappi>=1.6",
 ]
 
 [tool.ty.environment]

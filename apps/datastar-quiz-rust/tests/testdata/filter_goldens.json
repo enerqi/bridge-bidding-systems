@@ -1,0 +1,1436 @@
+{
+ "squad": [
+  {
+   "text": "",
+   "min_hits": 8,
+   "status": "all",
+   "hits": 1652,
+   "digest": "be7ab93b488bd96140605cac52f00e4096ed368b1f4aa38351b77e2190772b56",
+   "canonical": "",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "   ",
+   "min_hits": 8,
+   "status": "all",
+   "hits": 1652,
+   "digest": "be7ab93b488bd96140605cac52f00e4096ed368b1f4aa38351b77e2190772b56",
+   "canonical": "",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 327,
+   "digest": "fe62d36537e1ff531c0b412f5a826c007db731b8ac1593ebf4930c1476883044",
+   "canonical": "1C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1c",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 327,
+   "digest": "fe62d36537e1ff531c0b412f5a826c007db731b8ac1593ebf4930c1476883044",
+   "canonical": "1C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1D-1M-1N",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 67,
+   "digest": "c6f228ac85752e7b970e3add504c647ed389bafa09b0c18b0a5b2b26d3b09f96",
+   "canonical": "1D-1M-1N",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1D--1M",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 171,
+   "digest": "d784054c9d4a43b952c0a3085900125776605d4f2c22f3bfeb77a57171475163",
+   "canonical": "1D-1M",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1D 1M",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 171,
+   "digest": "d784054c9d4a43b952c0a3085900125776605d4f2c22f3bfeb77a57171475163",
+   "canonical": "1D-1M",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1m",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 618,
+   "digest": "798ff2277e1dc96a51a316f44e686b85e2b0190bff29b926dc8174006c288772",
+   "canonical": "1m",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1M",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 465,
+   "digest": "32928b5d3858c1918f7c22970fefe8338f9d172bb34e6df27e3243bc001c5df0",
+   "canonical": "1M",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "2C",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 76,
+   "digest": "164027dc3e620436c574922b217b8fff4590ea1469c66a4b00dda510b12af447",
+   "canonical": "2C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1N",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 105,
+   "digest": "542cc2f67ac64af0b31b6d7c90238d52b8b0e7eac5ec900df4403aa076d23ea6",
+   "canonical": "1N",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C-(X)",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 8,
+   "digest": "774df27ed8c675ba1d04cfa2b3dc7bd3229d5eab57abd2ba833beeebe554de39",
+   "canonical": "1C-(X)",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C-(*)",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 77,
+   "digest": "74fe91ca0b85aaee638b5ad9f95c0d9e2204dc775abbcadaaab1eb9270dcdc1c",
+   "canonical": "1C-(*)",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1H-(X)-2H",
+   "min_hits": 8,
+   "status": "too_few",
+   "hits": 1,
+   "digest": "23c5910b8b10cfa86e40099cf01e5c2b36f4dd0a903f0c60e5517ea177f4d390",
+   "canonical": "1H-(X)-2H",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "*-*-*",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 1337,
+   "digest": "c8b812185d0ce730875accf01bc0072da2c290394d77fdb6a913813e9033188d",
+   "canonical": "*-*-*",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "*-*-*-*-*-*",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 96,
+   "digest": "e4d739c5439f5ed3aa682ecfd9284d099835608579d43a5c9943e14dc11e3711",
+   "canonical": "*-*-*-*-*-*",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C-1D-1H-1S",
+   "min_hits": 8,
+   "status": "too_few",
+   "hits": 3,
+   "digest": "a07624ad098cfea7f7bfe49f1557b8b226aa7425c4e7fd84cd7752268616bb78",
+   "canonical": "1C-1D-1H-1S",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1M-2M",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 54,
+   "digest": "3b87d33a6e2666c09f95f2c5a2fa82ced21c4aaa6219a065588bfb5715d85a56",
+   "canonical": "1M-2M",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1M-3M",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 46,
+   "digest": "80401090eb68967b9eabf71a675c483d95de9d5bb05308bd3dececc7b78d54d6",
+   "canonical": "1M-3M",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1m-2m",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 47,
+   "digest": "71965877b52f25b3c331ff6e21068ce3934116535a292f6d2d65b2423a6b6267",
+   "canonical": "1m-2m",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "2M",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 34,
+   "digest": "48a6ed436f719628c6ecd0fff7c574985913f1ff711c6da1536a1b1e5894c3e7",
+   "canonical": "2M",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "3*",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 49,
+   "digest": "c9edc1d092bb5f4f7c04461fce141470cc531a71b4f87310a4e919c1c2cba63d",
+   "canonical": "3*",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1*",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 1188,
+   "digest": "c9470aa390802a9d9ac53b0828b23c100eaffc4e7f4343abbb162db937710beb",
+   "canonical": "1*",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "4N",
+   "min_hits": 8,
+   "status": "too_few",
+   "hits": 0,
+   "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "canonical": "4N",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C, 1D",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 618,
+   "digest": "798ff2277e1dc96a51a316f44e686b85e2b0190bff29b926dc8174006c288772",
+   "canonical": "1C, 1D",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C, 1D, 1H, 1S",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 1083,
+   "digest": "87bcefa6a17ad4d77a728efff59802572b6f68cba64f7d43c0922111bf44337d",
+   "canonical": "1C, 1D, 1H, 1S",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1N-2C",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 27,
+   "digest": "bb3f445ff04ce530a1235fed6db68b01e9bf1d9c4456cd399035f38435a0c624",
+   "canonical": "1N-2C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1N-2D/2H",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 36,
+   "digest": "f82ddd43173cdded68605dd2898b5942d9ec853be1da1aa70b0f7c6c4e02b495",
+   "canonical": "1N-2D/2H",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1M-3S/4C",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 29,
+   "digest": "52c7d0292fe971a2c5eeb75450a2c5fce7be9b9afdb4af4da7c954bf65aecc3f",
+   "canonical": "1M-3S/4C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C-2oM",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 14,
+   "digest": "5dabdac45e68650756459034ef42e3fe19371769e542f4d5639173d575415a6c",
+   "canonical": "1C-2OM",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "P",
+   "min_hits": 8,
+   "status": "too_few",
+   "hits": 0,
+   "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "canonical": "P",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C-P",
+   "min_hits": 8,
+   "status": "too_few",
+   "hits": 7,
+   "digest": "e9b20ab11766e586fad5e623ceac8fac90ff4eb2a93c2f896a3256d601fd0d25",
+   "canonical": "1C-P",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C-XX",
+   "min_hits": 8,
+   "status": "too_few",
+   "hits": 2,
+   "digest": "10c3a519257132fad8f10f78b8e6ca67503f463afdffb14eb50a59bbb371427a",
+   "canonical": "1C-XX",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "nonsense!!",
+   "min_hits": 8,
+   "status": "error",
+   "hits": 1652,
+   "digest": "be7ab93b488bd96140605cac52f00e4096ed368b1f4aa38351b77e2190772b56",
+   "canonical": "",
+   "errors": [
+    "nonsense!!"
+   ],
+   "topic_names": []
+  },
+  {
+   "text": "1C, nonsense!!",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 327,
+   "digest": "fe62d36537e1ff531c0b412f5a826c007db731b8ac1593ebf4930c1476883044",
+   "canonical": "1C",
+   "errors": [
+    "nonsense!!"
+   ],
+   "topic_names": []
+  },
+  {
+   "text": "2C-2D-2H",
+   "min_hits": 8,
+   "status": "too_few",
+   "hits": 6,
+   "digest": "bc594e3ef90fc800687e8915eef048750fd1b88d859a107441597de9549dee90",
+   "canonical": "2C-2D-2H",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1S-2N",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 17,
+   "digest": "8ce86a3893cabe68ecaeec92d286130b389a028d32b21b2842cdeb0194e406bf",
+   "canonical": "1S-2N",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "4C-4D",
+   "min_hits": 8,
+   "status": "too_few",
+   "hits": 1,
+   "digest": "afd679cd3f9a81fd9ce02e6434a24f848937f09909fabcc3b3781e06036e284c",
+   "canonical": "4C-4D",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "(1H)-2C",
+   "min_hits": 8,
+   "status": "too_few",
+   "hits": 6,
+   "digest": "3d5d244e19bb5f0d9ea0d151a57bd44bbcdc923374c5c0e500f7e032215f0ec3",
+   "canonical": "(1H)-2C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "(*)-2C",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 40,
+   "digest": "205771fc1606959a4c9256b631aa7f16a82e173678e880f6ef95012408a7eb67",
+   "canonical": "(*)-2C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1D-(1S)-1H",
+   "min_hits": 8,
+   "status": "too_few",
+   "hits": 0,
+   "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "canonical": "1D-(1S)-1H",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C opening",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 327,
+   "digest": "fe62d36537e1ff531c0b412f5a826c007db731b8ac1593ebf4930c1476883044",
+   "canonical": "1C opening",
+   "errors": [],
+   "topic_names": [
+    "1C opening"
+   ]
+  },
+  {
+   "text": "1D opening",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 291,
+   "digest": "84fabbbeff9e6c6810845946aa8cc8f17c26e296ab17808bfe7b9005c333c904",
+   "canonical": "1D opening",
+   "errors": [],
+   "topic_names": [
+    "1D opening"
+   ]
+  },
+  {
+   "text": "Major openings",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 465,
+   "digest": "32928b5d3858c1918f7c22970fefe8338f9d172bb34e6df27e3243bc001c5df0",
+   "canonical": "Major openings",
+   "errors": [],
+   "topic_names": [
+    "Major openings"
+   ]
+  },
+  {
+   "text": "1NT opening",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 105,
+   "digest": "542cc2f67ac64af0b31b6d7c90238d52b8b0e7eac5ec900df4403aa076d23ea6",
+   "canonical": "1NT opening",
+   "errors": [],
+   "topic_names": [
+    "1NT opening"
+   ]
+  },
+  {
+   "text": "2C opening",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 76,
+   "digest": "164027dc3e620436c574922b217b8fff4590ea1469c66a4b00dda510b12af447",
+   "canonical": "2C opening",
+   "errors": [],
+   "topic_names": [
+    "2C opening"
+   ]
+  },
+  {
+   "text": "2NT opening",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 47,
+   "digest": "7adeb159a60a551081e3707e2c2ebd3b20bf3e5dd97d6af6c886dd469f63a46a",
+   "canonical": "2NT opening",
+   "errors": [],
+   "topic_names": [
+    "2NT opening"
+   ]
+  },
+  {
+   "text": "Weak twos",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 50,
+   "digest": "5dac50988ac9141850220a3d0f19bf875bbeeb14d550f1bc68dbc30c3ef09ba4",
+   "canonical": "Weak twos",
+   "errors": [],
+   "topic_names": [
+    "Weak twos"
+   ]
+  },
+  {
+   "text": "Preempts",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 38,
+   "digest": "a047af9b3574e16845bb6a75407c187b4b5924d8d12b02c3a1d0782d72f76b9c",
+   "canonical": "Preempts",
+   "errors": [],
+   "topic_names": [
+    "Preempts"
+   ]
+  },
+  {
+   "text": "Responses to 1C",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 293,
+   "digest": "130297b2734f52969f27e407d488086a508c96f32f4980868eed4a01ee9ebda2",
+   "canonical": "Responses to 1C",
+   "errors": [],
+   "topic_names": [
+    "Responses to 1C"
+   ]
+  },
+  {
+   "text": "Major raises",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 150,
+   "digest": "55f4833c52c372b317f151ec15b2335243df8a8753e997814b72c11c674451d3",
+   "canonical": "Major raises",
+   "errors": [],
+   "topic_names": [
+    "Major raises"
+   ]
+  },
+  {
+   "text": "Notrump responses",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 190,
+   "digest": "f645c9a15f326c82503dd2dcaac32f41b2172d13b2286fb4a447737c591ced64",
+   "canonical": "Notrump responses",
+   "errors": [],
+   "topic_names": [
+    "Notrump responses"
+   ]
+  },
+  {
+   "text": "NT Opening responses",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 147,
+   "digest": "b72dafd133f1ebbea2a0a535f1c50c63b0e28e2f212d424c129e77b1b5b344b1",
+   "canonical": "NT Opening responses",
+   "errors": [],
+   "topic_names": [
+    "NT Opening responses"
+   ]
+  },
+  {
+   "text": "We Double",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 36,
+   "digest": "2b76a7127ece59547be4dd61c7eae8e7ce5fe8ef8a5dd261b8b1d62713157844",
+   "canonical": "We Double",
+   "errors": [],
+   "topic_names": [
+    "We Double"
+   ]
+  },
+  {
+   "text": "Opponents Start High",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 21,
+   "digest": "dad6a9c2a836e487dd306f3aa0243e1832c82185f6ca571857b7846a8679d456",
+   "canonical": "Opponents Start High",
+   "errors": [],
+   "topic_names": [
+    "Opponents Start High"
+   ]
+  },
+  {
+   "text": "Opponents interfere",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 397,
+   "digest": "ef8b34249706898f43ca9367f6fde3700e44c2b2e5f333836fa30d89c7247f54",
+   "canonical": "Opponents interfere",
+   "errors": [],
+   "topic_names": [
+    "Opponents interfere"
+   ]
+  },
+  {
+   "text": "Opponents double",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 61,
+   "digest": "1c23b8315cd781b69dba30b21d312158d09eca82ec4d445b77f7c2649c65ee26",
+   "canonical": "Opponents double",
+   "errors": [],
+   "topic_names": [
+    "Opponents double"
+   ]
+  },
+  {
+   "text": "Opponents opened",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 246,
+   "digest": "2e5270ff42f19768c4cd2810a5f3d74a2542f1e176d6bece689193653cc59e51",
+   "canonical": "Opponents opened",
+   "errors": [],
+   "topic_names": [
+    "Opponents opened"
+   ]
+  },
+  {
+   "text": "Long auctions",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 96,
+   "digest": "e4d739c5439f5ed3aa682ecfd9284d099835608579d43a5c9943e14dc11e3711",
+   "canonical": "Long auctions",
+   "errors": [],
+   "topic_names": [
+    "Long auctions"
+   ]
+  }
+ ],
+ "swedish": [
+  {
+   "text": "",
+   "min_hits": 8,
+   "status": "all",
+   "hits": 7627,
+   "digest": "5711c7dac02a5b9d0779a5af63209ef9a90d97997de242de4ea996f7c9946c56",
+   "canonical": "",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "   ",
+   "min_hits": 8,
+   "status": "all",
+   "hits": 7627,
+   "digest": "5711c7dac02a5b9d0779a5af63209ef9a90d97997de242de4ea996f7c9946c56",
+   "canonical": "",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 1390,
+   "digest": "8f918578cf173aac918669ec82a5a5d4c1e202c87b0991c38ed56a8958ff9c19",
+   "canonical": "1C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1c",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 1390,
+   "digest": "8f918578cf173aac918669ec82a5a5d4c1e202c87b0991c38ed56a8958ff9c19",
+   "canonical": "1C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1D-1M-1N",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 153,
+   "digest": "ebb212748e090eb57c22c1191279f2905f8049ebac9a28604a650cd8e1f71b92",
+   "canonical": "1D-1M-1N",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1D--1M",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 412,
+   "digest": "da61780519a219572d0d16b9aa137ffa2d409af42b0d8ad2993442dd9009ea08",
+   "canonical": "1D-1M",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1D 1M",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 412,
+   "digest": "da61780519a219572d0d16b9aa137ffa2d409af42b0d8ad2993442dd9009ea08",
+   "canonical": "1D 1M",
+   "errors": [],
+   "topic_names": [
+    "1D 1M"
+   ]
+  },
+  {
+   "text": "1m",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 2276,
+   "digest": "979d435866f400b26a618ff60abf7e85afd66962ca420c1f12a2c374db3dc460",
+   "canonical": "1m",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1M",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 1485,
+   "digest": "c7c9a05eb9047031683c8616b4e9ea52da8c79098e3ff9be212dd9394b3da36a",
+   "canonical": "1M",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "2C",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 433,
+   "digest": "28ff51a83a8ff8959d394d7d1f18a36ee464064653cafc3f6f686dbcc5b5f910",
+   "canonical": "2C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1N",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 747,
+   "digest": "ef7bfba3cb174bc29b287d646213453804d0e0f96f37c52920e5aa561eaa5a2a",
+   "canonical": "1N",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C-(X)",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 63,
+   "digest": "7cc91ff61b72d85030f97cd87316b67818abfa4b22a7f2506b283198c10e5058",
+   "canonical": "1C-(X)",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C-(*)",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 521,
+   "digest": "20165263424b70a77583a36d8cf80ff778286a75672844e8d83805bfd97fcfba",
+   "canonical": "1C-(*)",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1H-(X)-2H",
+   "min_hits": 8,
+   "status": "too_few",
+   "hits": 7,
+   "digest": "267c1f4d258260e27ed8714e7b764886c6e72cc33aec32485b21b419e30c146d",
+   "canonical": "1H-(X)-2H",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "*-*-*",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 6725,
+   "digest": "1a1297c53045f7395588291c2e6ebb0ad02be884ce656de9deba4315aac237dd",
+   "canonical": "*-*-*",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "*-*-*-*-*-*",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 792,
+   "digest": "6252fbdae8f242fb16eb8a75071f919fe73c79898e45cdb9205d7c9d110cca58",
+   "canonical": "*-*-*-*-*-*",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C-1D-1H-1S",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 23,
+   "digest": "0fe262779f3aaf5ece8ca14bbdf169021b2524d1fc6d11cdeab76def2fad06ab",
+   "canonical": "1C-1D-1H-1S",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1M-2M",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 164,
+   "digest": "599e36c7f19e67470d436c759222b1f083111757185f99056305f34da30ca072",
+   "canonical": "1M-2M",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1M-3M",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 55,
+   "digest": "a4b041d7e09e83fbf375fdb3d4e1da95d7ab4976d0e5803767546d02ae7267d6",
+   "canonical": "1M-3M",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1m-2m",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 460,
+   "digest": "a21ab149912777325589896289445558f6b368fc713286ecd57665e74a90c750",
+   "canonical": "1m-2m",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "2M",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 159,
+   "digest": "db5478cc7be2ee73cef0c6122b407bb1eea0f17653d7050903c7d4702bbd2d95",
+   "canonical": "2M",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "3*",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 121,
+   "digest": "2d3645f78d7649598ce9b2ed8f28c1557f960c4a15035194f8ca266fb5a137d9",
+   "canonical": "3*",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1*",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 4400,
+   "digest": "d3a0b98df204f4917be51cc61b0999ff44151c29681568efaa6dc75af0179682",
+   "canonical": "1*",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "4N",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 39,
+   "digest": "d520565c571849ae384aa845727d0a3bde112caf668dab1ec1b915d7db6cb986",
+   "canonical": "4N",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C, 1D",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 2276,
+   "digest": "979d435866f400b26a618ff60abf7e85afd66962ca420c1f12a2c374db3dc460",
+   "canonical": "1C, 1D",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C, 1D, 1H, 1S",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 3761,
+   "digest": "5765ab55e5d60d18cf21d3c8731df9a8d4e0946c93e10531ad7b4a1eabc40882",
+   "canonical": "1C, 1D, 1H, 1S",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1N-2C",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 123,
+   "digest": "a6698befed316d76e5d21881e97b74e5d7a5c18aaef135c1f36b6547e58440a4",
+   "canonical": "1N-2C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1N-2D/2H",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 264,
+   "digest": "6c5585fa809f6f387d362c4fe982205055b90148817a47a924efc037f9f07502",
+   "canonical": "1N-2D/2H",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1M-3S/4C",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 55,
+   "digest": "c012ad58deeac3d4718eca2e05c31615b6576dd523b7f419eeb4be51bb29de6a",
+   "canonical": "1M-3S/4C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C-2oM",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 143,
+   "digest": "3dc39a41c47228cdcb3e98754bb67290dd4aaeebde2b9650b49cd8d328fc8a09",
+   "canonical": "1C-2OM",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "P",
+   "min_hits": 8,
+   "status": "too_few",
+   "hits": 2,
+   "digest": "eb8b29881bba4934d7ca19b5a749fc3a46047c7cb8b275a6a6372e4cb549abd0",
+   "canonical": "P",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C-P",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 34,
+   "digest": "65841fb817c73f082cddb96ecf639279ce6ee7dd87afdaef8eb937f109d63b63",
+   "canonical": "1C-P",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C-XX",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 8,
+   "digest": "2f31f01226a380ac30df3d17e4ec90eea38672df9de06d448ee3f21f2a105e2a",
+   "canonical": "1C-XX",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "nonsense!!",
+   "min_hits": 8,
+   "status": "error",
+   "hits": 7627,
+   "digest": "5711c7dac02a5b9d0779a5af63209ef9a90d97997de242de4ea996f7c9946c56",
+   "canonical": "",
+   "errors": [
+    "nonsense!!"
+   ],
+   "topic_names": []
+  },
+  {
+   "text": "1C, nonsense!!",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 1390,
+   "digest": "8f918578cf173aac918669ec82a5a5d4c1e202c87b0991c38ed56a8958ff9c19",
+   "canonical": "1C",
+   "errors": [
+    "nonsense!!"
+   ],
+   "topic_names": []
+  },
+  {
+   "text": "2C-2D-2H",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 53,
+   "digest": "81ae6772b1818a46212c5139a0e8e32da9dabe955074d42c3fd7943a558b789d",
+   "canonical": "2C-2D-2H",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1S-2N",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 113,
+   "digest": "a5dfad68539238de5f29472e2fcd84f5192de3fd607e321eaac44cae8865aad2",
+   "canonical": "1S-2N",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "4C-4D",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 19,
+   "digest": "2d523c411e4058970d39f1c10fbcd53c71727ad24d229c00cd8c0aaf3cdafe47",
+   "canonical": "4C-4D",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "(1H)-2C",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 28,
+   "digest": "32a59e1a5100719cb829968655cb4d19f9bee8adf081fe94a3640ed4239f2f19",
+   "canonical": "(1H)-2C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "(*)-2C",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 135,
+   "digest": "8847bad22248dd5f748279215aa2d14e3523ace354cbc5a347a29d425ad2b90e",
+   "canonical": "(*)-2C",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1D-(1S)-1H",
+   "min_hits": 8,
+   "status": "too_few",
+   "hits": 2,
+   "digest": "60f6cc79632ad491ca01b4abfb9fe771be73524c244d773e77cbfcf9c12cae48",
+   "canonical": "1D-(1S)-1H",
+   "errors": [],
+   "topic_names": []
+  },
+  {
+   "text": "1C opening",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 1390,
+   "digest": "8f918578cf173aac918669ec82a5a5d4c1e202c87b0991c38ed56a8958ff9c19",
+   "canonical": "1C opening",
+   "errors": [],
+   "topic_names": [
+    "1C opening"
+   ]
+  },
+  {
+   "text": "1C negative",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 295,
+   "digest": "f40e48708673cd44f11a3ffde4b889242b3d587bdac89ee3210466dc7adce9ac",
+   "canonical": "1C negative",
+   "errors": [],
+   "topic_names": [
+    "1C negative"
+   ]
+  },
+  {
+   "text": "1C other",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 946,
+   "digest": "731d1dfa62ea9559462ac7b0a94830bb2b38b6c5a2fefc1f88243596908ae42f",
+   "canonical": "1C other",
+   "errors": [],
+   "topic_names": [
+    "1C other"
+   ]
+  },
+  {
+   "text": "1D opening",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 994,
+   "digest": "49e7c29438a2b05a699ff654e4dcfec7faa50535573537f63ee43e98a8ce4547",
+   "canonical": "1D opening",
+   "errors": [],
+   "topic_names": [
+    "1D opening"
+   ]
+  },
+  {
+   "text": "1D 1M",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 412,
+   "digest": "da61780519a219572d0d16b9aa137ffa2d409af42b0d8ad2993442dd9009ea08",
+   "canonical": "1D 1M",
+   "errors": [],
+   "topic_names": [
+    "1D 1M"
+   ]
+  },
+  {
+   "text": "1D 2C/2D",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 234,
+   "digest": "180bd25958b61f5f4d8f228634458b37a860827d20499697d29e1998df8645dd",
+   "canonical": "1D 2C/2D",
+   "errors": [],
+   "topic_names": [
+    "1D 2C/2D"
+   ]
+  },
+  {
+   "text": "Major openings",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 1485,
+   "digest": "c7c9a05eb9047031683c8616b4e9ea52da8c79098e3ff9be212dd9394b3da36a",
+   "canonical": "Major openings",
+   "errors": [],
+   "topic_names": [
+    "Major openings"
+   ]
+  },
+  {
+   "text": "Major Raises",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 560,
+   "digest": "0a848a207f8b77932b386ebaa8a07eb67336df765b5580ca87160e007cb3ccc0",
+   "canonical": "Major Raises",
+   "errors": [],
+   "topic_names": [
+    "Major Raises"
+   ]
+  },
+  {
+   "text": "Major 1N Continuations",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 166,
+   "digest": "d52c0580155a88b70ef6c90da6c7221f9ae64a1af09e26c6ecd5e330599c7dc6",
+   "canonical": "Major 1N Continuations",
+   "errors": [],
+   "topic_names": [
+    "Major 1N Continuations"
+   ]
+  },
+  {
+   "text": "Major opening with 2 over 1 GF",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 500,
+   "digest": "02f7cda81c99d69382754e0c1ad657893e3dad189caf16ed8182f427405c8adc",
+   "canonical": "Major opening with 2 over 1 GF",
+   "errors": [],
+   "topic_names": [
+    "Major opening with 2 over 1 GF"
+   ]
+  },
+  {
+   "text": "1NT opening",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 747,
+   "digest": "ef7bfba3cb174bc29b287d646213453804d0e0f96f37c52920e5aa561eaa5a2a",
+   "canonical": "1NT opening",
+   "errors": [],
+   "topic_names": [
+    "1NT opening"
+   ]
+  },
+  {
+   "text": "1NT Stayman and Red Transfers",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 380,
+   "digest": "177d37aab21f0f0dd4bd9d2132db4ef05a89aa479f73fc665c2113c5768b5e2a",
+   "canonical": "1NT Stayman and Red Transfers",
+   "errors": [],
+   "topic_names": [
+    "1NT Stayman and Red Transfers"
+   ]
+  },
+  {
+   "text": "1NT High Responses",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 309,
+   "digest": "9cb9d4aaff5844005c01af13950c42d05c6ae8b67aaed4757be7048b7bd988f7",
+   "canonical": "1NT High Responses",
+   "errors": [],
+   "topic_names": [
+    "1NT High Responses"
+   ]
+  },
+  {
+   "text": "1NT Interference",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 227,
+   "digest": "cd79b82e4afa220234dc045a848dc4c21f3344a2f515c310593aa9aab1b5d338",
+   "canonical": "1NT Interference",
+   "errors": [],
+   "topic_names": [
+    "1NT Interference"
+   ]
+  },
+  {
+   "text": "1NT Escapes",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 51,
+   "digest": "c33fc1b876a7ea933ca0861593da3534e71450fd397c72e2870ead0123c9318d",
+   "canonical": "1NT Escapes",
+   "errors": [],
+   "topic_names": [
+    "1NT Escapes"
+   ]
+  },
+  {
+   "text": "2C opening",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 433,
+   "digest": "28ff51a83a8ff8959d394d7d1f18a36ee464064653cafc3f6f686dbcc5b5f910",
+   "canonical": "2C opening",
+   "errors": [],
+   "topic_names": [
+    "2C opening"
+   ]
+  },
+  {
+   "text": "2C 2D Enquiry",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 182,
+   "digest": "907d1dff69a808fb88b1b0b426942baecf2bfd51e5fe247ecab6370a95e7e918",
+   "canonical": "2C 2D Enquiry",
+   "errors": [],
+   "topic_names": [
+    "2C 2D Enquiry"
+   ]
+  },
+  {
+   "text": "2C High Responses",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 226,
+   "digest": "705b0017e791627224ef89e0f8462712e956eb48cf0a44a9f15a7412b2250e9d",
+   "canonical": "2C High Responses",
+   "errors": [],
+   "topic_names": [
+    "2C High Responses"
+   ]
+  },
+  {
+   "text": "2C interference",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 60,
+   "digest": "11e4fc2aa88cf7142bb0d6c449dc6a8f3dff10ac7ee3a70d41169d7f66231648",
+   "canonical": "2C interference",
+   "errors": [],
+   "topic_names": [
+    "2C interference"
+   ]
+  },
+  {
+   "text": "2D opening",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 281,
+   "digest": "a3378ec509bca2b6443f932bdb7f7deebfe9b60db09014e250995defb7f0d519",
+   "canonical": "2D opening",
+   "errors": [],
+   "topic_names": [
+    "2D opening"
+   ]
+  },
+  {
+   "text": "2D interference",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 19,
+   "digest": "22a88f792848f74bd56797d3a1b379d8bcbbc0852dc7729c67dacdeac12d3fd3",
+   "canonical": "2D interference",
+   "errors": [],
+   "topic_names": [
+    "2D interference"
+   ]
+  },
+  {
+   "text": "Weak twos",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 159,
+   "digest": "db5478cc7be2ee73cef0c6122b407bb1eea0f17653d7050903c7d4702bbd2d95",
+   "canonical": "Weak twos",
+   "errors": [],
+   "topic_names": [
+    "Weak twos"
+   ]
+  },
+  {
+   "text": "Weak two interference",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 22,
+   "digest": "a023ab7ed5856ab46fb2f6f9c7c34e1ebff50fbc40928a530aa816c1b1e1eb88",
+   "canonical": "Weak two interference",
+   "errors": [],
+   "topic_names": [
+    "Weak two interference"
+   ]
+  },
+  {
+   "text": "2NT opening",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 221,
+   "digest": "b0ed332aca2cb5fd4d554df449490535b57b88188cf96161a7270e155c299e4b",
+   "canonical": "2NT opening",
+   "errors": [],
+   "topic_names": [
+    "2NT opening"
+   ]
+  },
+  {
+   "text": "2NT interference",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 17,
+   "digest": "e6036dfd80790ea80fd649642464f29c14ac057371361e330a85b5cc06ce3525",
+   "canonical": "2NT interference",
+   "errors": [],
+   "topic_names": [
+    "2NT interference"
+   ]
+  },
+  {
+   "text": "Preempts",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 222,
+   "digest": "5f59d3e3adfa784ce4e701798577268ebd0b25e8b8946659cccbe63cc0462e81",
+   "canonical": "Preempts",
+   "errors": [],
+   "topic_names": [
+    "Preempts"
+   ]
+  },
+  {
+   "text": "Opponents Start High",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 555,
+   "digest": "6dbcc8d09815385daa6f44c99fb2b0da707856cafdc38712f65818debf4983f5",
+   "canonical": "Opponents Start High",
+   "errors": [],
+   "topic_names": [
+    "Opponents Start High"
+   ]
+  },
+  {
+   "text": "We Double",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 503,
+   "digest": "fe34b1cabb1e95e40df8bdf66cf666788d16c28eafb8bd8de5cb4910b111f5c5",
+   "canonical": "We Double",
+   "errors": [],
+   "topic_names": [
+    "We Double"
+   ]
+  },
+  {
+   "text": "Opponents interfere",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 1507,
+   "digest": "c69cd306132c76d4519c59324408ae165ceab8acf9b69726f95b148010bc89bd",
+   "canonical": "Opponents interfere",
+   "errors": [],
+   "topic_names": [
+    "Opponents interfere"
+   ]
+  },
+  {
+   "text": "Opponents double",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 272,
+   "digest": "393435d18682d2d15d09caf2c5874148e10dbe45da1f57aa477d9d320ce2490e",
+   "canonical": "Opponents double",
+   "errors": [],
+   "topic_names": [
+    "Opponents double"
+   ]
+  },
+  {
+   "text": "Opponents opened",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 1842,
+   "digest": "984539d6ebb26dc0bbd957dfbdfe0fa28a4204ec4f8aff96b74747dd174ad8ab",
+   "canonical": "Opponents opened",
+   "errors": [],
+   "topic_names": [
+    "Opponents opened"
+   ]
+  },
+  {
+   "text": "Long auctions",
+   "min_hits": 8,
+   "status": "ok",
+   "hits": 792,
+   "digest": "6252fbdae8f242fb16eb8a75071f919fe73c79898e45cdb9205d7c9d110cca58",
+   "canonical": "Long auctions",
+   "errors": [],
+   "topic_names": [
+    "Long auctions"
+   ]
+  }
+ ]
+}

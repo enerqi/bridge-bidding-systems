@@ -1,0 +1,8 @@
+# the built binary -- `just dsgo build` puts it here; the corpus, templates and assets are
+# embedded, so this file IS the deployment and has no business in the repo
+/quizd
+/quizd.exe
+
+# profiles and traces from `just dsgo pprof` / `just dsgo trace`
+/trace.out
+/*.prof

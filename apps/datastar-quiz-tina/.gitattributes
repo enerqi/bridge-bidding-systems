@@ -1,0 +1,46 @@
+# LF everywhere, in the index AND in the working directory, on every platform. This matches the Odin
+# project's own .editorconfig, which declares `end_of_line = lf` despite Odin being developed mainly on
+# Windows.
+#
+# `text=auto` alone only guarantees LF in the *index*; what lands in the working directory is then left
+# to each developer's `core.autocrlf`, which Git for Windows sets to `true` in its system config. That
+# gives Windows checkouts CRLF files while .editorconfig (end_of_line = lf) and the tools that rewrite
+# files in place - odinfmt above all - emit LF, so a formatting pass leaves a file with mixed endings
+# and Git reports "<line-endings changed since checkout>". Adding `eol=lf` pins the working directory
+# too and overrides core.autocrlf, so the whole toolchain agrees. Odin, just, nu and Sublime all read
+# LF happily on Windows.
+#
+# Keep this in sync with .editorconfig's `end_of_line` and odinfmt.json's `newline_style`.
+* text=auto eol=lf
+
+# Windows-only scripts are the exception: some interpreters need CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Never touch the contents of these. Everything here is gitignored, so this only matters for a file
+# committed deliberately or force-added - but that is exactly the case where `* text=auto eol=lf`
+# above would otherwise corrupt it. Kept in step with .gitignore's build-artifact list, which spells
+# out which extension belongs to which platform.
+*.exe binary
+*.pdb binary
+*.lib binary
+*.dll binary
+*.obj binary
+*.o binary
+*.so binary
+*.dylib binary
+*.a binary
+*.bc binary
+*.spall binary
+
+# Editor configuration, not project source. Linguist reads `.sublime-build` / `.sublime-project` as
+# JSON with Comments and `.sublime-snippet` as XML, so in a repository this small they visibly skew
+# the language bar away from the Odin the project is actually written in. `vendored` rather than
+# `generated`: these are hand-written, they just are not the project's own code - which stays true
+# after `odin-skel new` copies them, so this rule survives into a scaffolded project.
+#
+# The trailing `**` is load-bearing. gitattributes borrows gitignore's pattern syntax but not its
+# directory semantics: a pattern matching a directory does NOT recursively cover the paths inside it,
+# so a bare `.sublime/` would apply to nothing at all.
+.sublime/** linguist-vendored=true

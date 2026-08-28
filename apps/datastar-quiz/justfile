@@ -1,82 +1,193 @@
 # Datastar/Litestar port of the panel bidding quiz.
 #
-# Reachable from the repo root as a just module once this line is added to the root justfile:
-#     mod dsquiz 'apps/datastar-quiz'
-# then `just dsquiz serve`, `just dsquiz test`, ... Until then, run these from this directory.
-set shell := ["nu", "-c"]
+# Reachable from the repo root as a just module (`mod dsquiz 'apps/datastar-quiz'` there):
+#     just dsquiz serve, just dsquiz test, ...
+#
+# SHELL, as in deal-simulations/odin-sims: `cmd.exe` starts in ~9ms and is always available, and just
+# launches a shell per recipe line.
+#  - alternatives: `nu -c` ~41ms, `powershell -NoLogo -NoProfile -Command` ~143ms
+#  - cost: poor language for a multi-line recipe, hence `[script]` -> python for anything with logic
+[windows]
+set shell := ["cmd.exe", "/c"]
+[unix]
+set shell := ["bash", "-c"]
+set minimum-version := "1.49.0"  # [script] (1.49); also [group] 1.27, set lazy 1.47
+set unstable  # [script]
+set lazy
+# `python` alone is not a reliable cross-platform lookup (cf. python/python3/python3.x). uv resolves
+# and downloads on every platform, and --no-project means no pyproject.toml / local .venv lookup --
+# these scripts are justfile plumbing, NOT part of the app's environment. Recipes opt in with the
+# bare `[script]` attribute (no interpreter argument).
+set script-interpreter := ["uv", "run", "--no-project", "-p", "3.14", "python"]
 
 # `source_directory()`, NOT `justfile_directory()`: when this file is used as a module from the repo
 # root (`just dsquiz test`), `justfile_directory()` is the ROOT justfile's directory, so `--project`
 # pointed uv at the root project and every import failed. `source_directory()` is this file's own
 # directory either way.
 project := source_directory()
-# forward slashes: nu's `glob` treats a windows backslash as an escape and refuses the pattern, so
-# anything used as a glob prefix is normalised (`bml_home` and `deploy_dir` are written that way too)
-project_glob := replace(source_directory(), "\\", "/")
-repo := replace(parent_directory(parent_directory(source_directory())), "\\", "/")
+repo := parent_directory(parent_directory(source_directory()))
 port := env_var_or_default("DSQUIZ_PORT", "5008")
-bml_home := env_var_or_default("BML_TOOLS_DIRECTORY", replace(home_directory(), "\\", "/") + "/dev/bml")
+bml_home := env_var_or_default("BML_TOOLS_DIRECTORY", join(home_directory(), "dev", "bml"))
+datastar_home := env_var_or_default("DATASTAR_HOME", join(home_directory(), "dev", "datastar"))
 deploy_dir := env_var_or_default("DSQUIZ_DEPLOY_DIR", "X:/quiz-ds/")
 
+# `just --choose` builds its own chooser command and SINGLE-quotes the preview:
+#     fzf --multi --preview 'just --unstable --color always --justfile "..." --show {}'
+# cmd.exe does not treat `'` as a quote, so fzf received `--unstable` as an option of its own and died
+# with "unknown option: --unstable" -- the chooser, not just, was doing the complaining. Double quotes
+# are what cmd honours (measured inside cmd: the double-quoted form previews, the single-quoted form
+# exits 2), and bash honours them too, so one string serves both.
+#
+# `[script]` because the value has quotes inside quotes: python hands `just` an argv list and the
+# chooser as an environment variable, so no shell has to be talked out of re-parsing it. There is no
+# `set chooser` -- it is `--chooser` or `JUST_CHOOSER` -- and `setdefault` leaves a JUST_CHOOSER you
+# have set yourself alone.
+# ---
 # interactive chooser (assumes fzf)
 [group('dev')]
+[script]
 default:
-    @just --choose
+	import os, subprocess
+
+	justfile = r"{{ join(source_directory(), 'justfile') }}"
+	env = {**os.environ}
+	env.setdefault("JUST_CHOOSER", 'fzf --multi --preview "just --justfile ' + justfile + ' --show {}"')
+	try:
+		rc = subprocess.run(["just", "--justfile", justfile, "--choose"], env=env).returncode
+	except KeyboardInterrupt:
+		rc = 130
+	raise SystemExit(rc)
 
 # serve under granian with autoreload; panel is on 5006, so default to 5008
 [group('serve')]
 serve *args:
-    uv run --project {{project}} --directory {{project}} granian --interface asgi --port {{port}} --reload {{args}} app:app
+	uv run --project {{project}} --directory {{project}} granian --interface asgi --port {{port}} --reload {{args}} app:app
 
 alias s := serve
 
 # serve with the debug panel armed for every session: +/- points, set the goal, jump to the reveal or
 # the finale. Without this you can still arm it per session with `?debug` on the URL; `DSQUIZ_DEBUG=0`
 # forbids both (what a deployment should set -- see DEPLOY.md).
+#
+# `[script]` for the sake of ONE environment variable, because there is no portable one-liner for it:
+# cmd.exe wants `set "X=1" && ...` and bash wants `X=1 ...`, and `uv run` has only `--env-file`. The
+# other env-setting serve recipes below are the same shape.
 # ---
 # serve with the debug panel armed for every session
 [group('serve')]
+[script]
 dev *args:
-    #!nu
-    $env.DSQUIZ_DEBUG = "1"
-    uv run --project {{project}} --directory {{project}} granian --interface asgi --port {{port}} --reload {{args}} app:app
+	import os, subprocess
+
+	argv = [
+		"uv", "run", "--project", r"{{project}}", "--directory", r"{{project}}",
+		"granian", "--interface", "asgi", "--port", r"{{port}}", "--reload",
+		*r'''{{args}}'''.split(), "app:app",
+	]
+	try:
+		rc = subprocess.run(argv, env={**os.environ, "DSQUIZ_DEBUG": "1"}).returncode
+	except KeyboardInterrupt:
+		rc = 130  # a server is stopped with ctrl-c; that is not a traceback
+	raise SystemExit(rc)
 
 alias d := dev
 
 # serve with the held-SSE countdown instead of the client interval (see COMPARISON.md)
 [group('serve')]
+[script]
 serve-streamed *args:
-    #!nu
-    $env.DSQUIZ_TIMER = "stream"
-    uv run --project {{project}} --directory {{project}} granian --interface asgi --port {{port}} --reload {{args}} app:app
+	import os, subprocess
+
+	argv = [
+		"uv", "run", "--project", r"{{project}}", "--directory", r"{{project}}",
+		"granian", "--interface", "asgi", "--port", r"{{port}}", "--reload",
+		*r'''{{args}}'''.split(), "app:app",
+	]
+	try:
+		rc = subprocess.run(argv, env={**os.environ, "DSQUIZ_TIMER": "stream"}).returncode
+	except KeyboardInterrupt:
+		rc = 130
+	raise SystemExit(rc)
 
 # serve under granian as in production: no reload, and pick up worker/runtime defaults
 [group('serve')]
 serve-prod *args:
-    uv run --project {{project}} --directory {{project}} granian --interface asgi --host 0.0.0.0 --port {{port}} {{args}} app:app
+	uv run --project {{project}} --directory {{project}} granian --interface asgi --host 0.0.0.0 --port {{port}} {{args}} app:app
 
 # serve under uvicorn via the litestar CLI: the pure-python fallback (e.g. FreeBSD, no granian wheels)
 [group('serve')]
 serve-uvicorn *args:
-    uv run --project {{project}} --directory {{project}} litestar --app app:app run --port {{port}} --reload {{args}}
+	uv run --project {{project}} --directory {{project}} litestar --app app:app run --port {{port}} --reload {{args}}
 
 # what the deployment box runs (see DEPLOY.md): uvicorn, no reload, no dev group, prefixed and with
 # the debug panel forbidden. Useful locally to rehearse the real thing -- http://localhost:5008/bridge-system-quiz/
 # ---
 # serve exactly as the deployment box does (prefixed, no reload, debug forbidden)
 [group('serve')]
+[script]
 serve-deployed *args:
-    #!nu
-    $env.DSQUIZ_PREFIX = "bridge-system-quiz"
-    $env.DSQUIZ_DEBUG = "0"
-    uv run --project {{project}} --directory {{project}} --no-dev litestar --app app:app run --port {{port}} {{args}}
+	import os, subprocess
+
+	argv = [
+		"uv", "run", "--project", r"{{project}}", "--directory", r"{{project}}", "--no-dev",
+		"litestar", "--app", "app:app", "run", "--port", r"{{port}}", *r'''{{args}}'''.split(),
+	]
+	env = {**os.environ, "DSQUIZ_PREFIX": "bridge-system-quiz", "DSQUIZ_DEBUG": "0"}
+	try:
+		rc = subprocess.run(argv, env=env).returncode
+	except KeyboardInterrupt:
+		rc = 130
+	raise SystemExit(rc)
 
 # serve with OpenTelemetry tracing (see apps/quiz/run-jaeger-tracing.cmd for a local jaeger)
 [group('serve')]
+[script]
 serve-traced *args:
-    #!nu
-    $env.DSQUIZ_OTEL = "1"
-    uv run --project {{project}} --extra telemetry --directory {{project}} opentelemetry-instrument litestar --app app:app run --port {{port}} {{args}}
+	import os, subprocess
+
+	argv = [
+		"uv", "run", "--project", r"{{project}}", "--extra", "telemetry", "--directory", r"{{project}}",
+		"opentelemetry-instrument", "litestar", "--app", "app:app", "run", "--port", r"{{port}}",
+		*r'''{{args}}'''.split(),
+	]
+	try:
+		rc = subprocess.run(argv, env={**os.environ, "DSQUIZ_OTEL": "1"}).returncode
+	except KeyboardInterrupt:
+		rc = 130
+	raise SystemExit(rc)
+
+# yappi INSTRUMENTS every python call, so the server runs several times slower and the report answers
+# "where does the time go", never "how fast is it" (that is what apps/dsquiz-perf measures). Sampling
+# was tried first and cannot do this job: py-spy pauses the process to read stacks, and one asyncio
+# loop on one core means pausing it IS the outage -- 100Hz against 100 users took the P90 from ~50ms
+# to 18s -- while its `--nonblocking` mode loses ~35% of samples to torn reads.
+#
+#   just serve-profiled                     # then drive load at it
+#   curl http://127.0.0.1:5008/debug/yappi   # the report so far
+#   curl -X POST .../debug/yappi/reset       # start a clean window (drops the startup work)
+#   curl -X POST .../debug/yappi/save        # write .reports/yappi (...).txt + .callgrind
+#
+# `DSQUIZ_YAPPI_CLOCK=wall` measures elapsed rather than CPU time, which puts the answer route's
+# deliberate `asyncio.sleep` at the top and buries everything else -- cpu is the default for that
+# reason. Off, none of this exists: no import, no routes, no hooks (see tests/test_profiling.py).
+# ---
+# serve with the yappi profiler armed (report at /debug/yappi)
+[group('serve')]
+[script]
+serve-profiled *args:
+	import os, subprocess
+
+	argv = [
+		"uv", "run", "--project", r"{{project}}", "--directory", r"{{project}}", "--extra", "profiling",
+		"granian", "--interface", "asgi", "--port", r"{{port}}",
+		*r'''{{args}}'''.split(), "app:app",
+	]
+	env = {**os.environ, "DSQUIZ_YAPPI": "1"}
+	try:
+		rc = subprocess.run(argv, env=env).returncode
+	except KeyboardInterrupt:
+		rc = 130  # the shutdown hook writes the report on a polite stop
+	raise SystemExit(rc)
 
 # xdist spreads load with `--dist loadfile`: all tests in a file go to the same worker, though no file-level
 # shared state currently required
@@ -84,11 +195,14 @@ serve-traced *args:
 # run the tests
 [group('qa')]
 test *args:
-    uv run --project {{project}} --directory {{project}} pytest -n 4 --dist loadfile {{args}}
+	uv run --project {{project}} --directory {{project}} pytest -n 4 --dist loadfile {{args}}
 
 alias t := test
 
-sources := "*.py tests tools"
+# `.`, NOT `*.py tests tools`: cmd.exe does no glob expansion, so the pattern reached ruff verbatim
+# and silently matched nothing -- the top-level modules went unchecked while tests/ and tools/ passed.
+# Both tools walk the directory themselves and honour their own excludes (.venv included).
+sources := "."
 
 # format, lint and typecheck (astral ruff + ty), as the other python projects do
 [group('qa')]
@@ -99,17 +213,17 @@ alias q := qa
 # ruff format (writes)
 [group('qa')]
 format *args:
-    uv run --project {{project}} --directory {{project}} ruff format --quiet {{args}} {{sources}}
+	uv run --project {{project}} --directory {{project}} ruff format --quiet {{args}} {{sources}}
 
 # ruff lint
 [group('qa')]
 lint *args:
-    uv run --project {{project}} --directory {{project}} ruff check --quiet {{args}} {{sources}}
+	uv run --project {{project}} --directory {{project}} ruff check --quiet {{args}} {{sources}}
 
 # astral ty type check
 [group('qa')]
 typecheck *args:
-    uv run --project {{project}} --directory {{project}} ty check --quiet {{args}} {{sources}}
+	uv run --project {{project}} --directory {{project}} ty check --quiet {{args}} {{sources}}
 
 alias tc := typecheck
 
@@ -122,36 +236,46 @@ alias tc := typecheck
 # ---
 # copy the app + apps/quiz + the bml corpus/tools to DEST (default DSQUIZ_DEPLOY_DIR, else X:/quiz-ds/)
 [group('deploy')]
+[script]
 deploy dest=deploy_dir:
-    #!nu
-    let dest = ({{quote(dest)}} | str trim --right --char '/')
-    let app = ($dest | path join apps datastar-quiz)
-    let quiz = ($dest | path join apps quiz)
-    let bml = ($dest | path join bml)
-    mkdir $app $quiz $bml
+	import shutil
+	from pathlib import Path
 
-    # glob patterns are BUILT BY INTERPOLATION, not `path join`: on windows path join inserts a
-    # backslash, which nu's glob then reads as an escape ("error accessing path", os error 123)
-    #
-    # the .bml corpus, at the deploy root because that is where quiz.py looks for it
-    glob $"{{repo}}/*.bml" | each {|f| cp $f $dest }
-    # the bml tools -- BML_TOOLS_DIRECTORY points here on the box
-    glob $"{{bml_home}}/*.py" | each {|f| cp $f $bml }
-    # the panel app's domain modules (imported as-is, never copied into this app), the topics files
-    # bidfilter reads from beside itself, and the jpeg the /media router serves
-    for pattern in ['*.py' '*_topics.toml' '*.jpeg'] {
-        glob $"{{repo}}/apps/quiz/($pattern)" | each {|f| cp $f $quiz }
-    }
-    # this app: flat modules, the lock, and the two asset dirs. Those are replaced wholesale, so a
-    # renamed stylesheet or template cannot linger on the box as a stale file that still resolves.
-    glob $"{{project_glob}}/*.py" | each {|f| cp $f $app }
-    for name in ['pyproject.toml' 'uv.lock'] { cp ({{quote(project)}} | path join $name) $app }
-    for name in ['static' 'templates'] {
-        let target = ($app | path join $name)
-        if ($target | path exists) { rm -r -f $target }
-        cp -r ({{quote(project)}} | path join $name) $app
-    }
-    print $"deployed to ($dest) -- now on the box: cd (($dest | path basename))/apps/datastar-quiz; uv sync --no-dev; then restart the service"
+	dest = Path(r"{{dest}}".rstrip("/\\"))
+	app, quiz, bml = dest / "apps" / "datastar-quiz", dest / "apps" / "quiz", dest / "bml"
+	for directory in (app, quiz, bml):
+		directory.mkdir(parents=True, exist_ok=True)
+
+	repo, project = Path(r"{{repo}}"), Path(r"{{project}}")
+
+	def copy(sources, target):
+		count = 0
+		for source in sorted(sources):
+			shutil.copy2(source, target / source.name)
+			count += 1
+		return count
+
+	# the .bml corpus, at the deploy root because that is where quiz.py looks for it
+	copy(repo.glob("*.bml"), dest)
+	# the bml tools -- BML_TOOLS_DIRECTORY points here on the box
+	copy(Path(r"{{bml_home}}").glob("*.py"), bml)
+	# the panel app's domain modules (imported as-is, never copied into this app), the topics files
+	# bidfilter reads from beside itself, and the jpeg the /media router serves
+	for pattern in ("*.py", "*_topics.toml", "*.jpeg"):
+		copy((repo / "apps" / "quiz").glob(pattern), quiz)
+	# this app: flat modules and the lock
+	copy(project.glob("*.py"), app)
+	copy((project / name for name in ("pyproject.toml", "uv.lock")), app)
+	# the two asset dirs, replaced WHOLESALE, so a renamed stylesheet or template cannot linger on the
+	# box as a stale file that still resolves
+	for name in ("static", "templates"):
+		shutil.rmtree(app / name, ignore_errors=True)
+		shutil.copytree(project / name, app / name)
+
+	print(
+		f"deployed to {dest} -- now on the box: cd {dest.name}/apps/datastar-quiz; "
+		"uv sync --no-dev; then restart the service"
+	)
 
 # payload sizes + SSE frame pacing against a RUNNING server; `--base` defaults to the local dev one.
 # Needs `--directory` as well as `--project`: the script path is relative, and `--project` alone
@@ -161,27 +285,31 @@ deploy dest=deploy_dir:
 # measure payload sizes + SSE frame pacing against a running server
 [group('deploy')]
 measure *args:
-    uv run --project {{project}} --directory {{project}} python tools/measure.py {{args}}
+	uv run --project {{project}} --directory {{project}} python tools/measure.py {{args}}
 
 # list the routes litestar has registered
 [group('dev')]
 routes:
-    uv run --project {{project}} --directory {{project}} litestar --app app:app routes
+	uv run --project {{project}} --directory {{project}} litestar --app app:app routes
 
 # re-vendor the CSS frameworks the two spikes import (see DESIGN.md); pinned versions, not @latest
 [group('assets')]
+[script]
 vendor-css:
-    #!nu
-    let static = ({{quote(project)}} | path join static)
-    let sheets = [
-        [name url];
-        ["pico.classless.min.css" "https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.classless.min.css"]
-        ["bulma.min.css" "https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"]
-    ]
-    for sheet in $sheets {
-        http get $sheet.url | save --force ($static | path join $sheet.name)
-        print $"vendored ($sheet.name)"
-    }
+	import urllib.request
+	from pathlib import Path
+
+	static = Path(r"{{project}}") / "static"
+	sheets = {
+		"pico.classless.min.css": "https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.classless.min.css",
+		"bulma.min.css": "https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css",
+	}
+	for name, url in sheets.items():
+		# written only after the whole body is in hand: a half-downloaded stylesheet still parses,
+		# and would sit there looking like a working vendored file
+		body = urllib.request.urlopen(url, timeout=60).read()
+		(static / name).write_bytes(body)
+		print(f"vendored {name} ({len(body):,} bytes)")
 
 # re-vendor static/datastar.js (+ its source map) from the datastar checkout
 # (DATASTAR_HOME, else ~/dev/datastar)
@@ -193,13 +321,16 @@ vendor-css:
 # ---
 # re-vendor static/datastar.js + its source map from the datastar checkout (DATASTAR_HOME)
 [group('assets')]
+[script]
 vendor-datastar:
-    #!nu
-    let home = ($env.DATASTAR_HOME? | default ($nu.home-path | path join dev datastar))
-    let static = ({{quote(project)}} | path join static)
-    for name in ["datastar.js" "datastar.js.map"] {
-        let src = ($home | path join bundles $name)
-        if not ($src | path exists) { error make {msg: $"datastar bundle not found at ($src)"} }
-        cp $src ($static | path join $name)
-        print $"vendored ($src)"
-    }
+	import shutil
+	from pathlib import Path
+
+	bundles = Path(r"{{datastar_home}}") / "bundles"
+	static = Path(r"{{project}}") / "static"
+	for name in ("datastar.js", "datastar.js.map"):
+		source = bundles / name
+		if not source.exists():
+			raise SystemExit(f"datastar bundle not found at {source}")
+		shutil.copy2(source, static / name)
+		print(f"vendored {source}")

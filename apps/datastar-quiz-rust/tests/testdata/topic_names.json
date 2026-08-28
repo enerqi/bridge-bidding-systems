@@ -1,0 +1,146 @@
+{
+ "1C opening": {
+  "slug": "1-c-opening",
+  "key": "1COpening"
+ },
+ "1D opening": {
+  "slug": "1-d-opening",
+  "key": "1DOpening"
+ },
+ "Major openings": {
+  "slug": "major-openings",
+  "key": "majorOpenings"
+ },
+ "1NT opening": {
+  "slug": "1-nt-opening",
+  "key": "1NtOpening"
+ },
+ "2C opening": {
+  "slug": "2-c-opening",
+  "key": "2COpening"
+ },
+ "2NT opening": {
+  "slug": "2-nt-opening",
+  "key": "2NtOpening"
+ },
+ "Weak twos": {
+  "slug": "weak-twos",
+  "key": "weakTwos"
+ },
+ "Preempts": {
+  "slug": "preempts",
+  "key": "preempts"
+ },
+ "Responses to 1C": {
+  "slug": "responses-to-1-c",
+  "key": "responsesTo1C"
+ },
+ "Major raises": {
+  "slug": "major-raises",
+  "key": "majorRaises"
+ },
+ "Notrump responses": {
+  "slug": "notrump-responses",
+  "key": "notrumpResponses"
+ },
+ "NT Opening responses": {
+  "slug": "nt-opening-responses",
+  "key": "ntOpeningResponses"
+ },
+ "We Double": {
+  "slug": "we-double",
+  "key": "weDouble"
+ },
+ "Opponents Start High": {
+  "slug": "opponents-start-high",
+  "key": "opponentsStartHigh"
+ },
+ "Opponents interfere": {
+  "slug": "opponents-interfere",
+  "key": "opponentsInterfere"
+ },
+ "Opponents double": {
+  "slug": "opponents-double",
+  "key": "opponentsDouble"
+ },
+ "Opponents opened": {
+  "slug": "opponents-opened",
+  "key": "opponentsOpened"
+ },
+ "Long auctions": {
+  "slug": "long-auctions",
+  "key": "longAuctions"
+ },
+ "1C negative": {
+  "slug": "1-c-negative",
+  "key": "1CNegative"
+ },
+ "1C other": {
+  "slug": "1-c-other",
+  "key": "1COther"
+ },
+ "1D 1M": {
+  "slug": "1-d-1-m",
+  "key": "1D1M"
+ },
+ "1D 2C/2D": {
+  "slug": "1-d-2-c-2-d",
+  "key": "1D2C2D"
+ },
+ "Major Raises": {
+  "slug": "major-raises",
+  "key": "majorRaises"
+ },
+ "Major 1N Continuations": {
+  "slug": "major-1-n-continuations",
+  "key": "major1NContinuations"
+ },
+ "Major opening with 2 over 1 GF": {
+  "slug": "major-opening-with-2-over-1-gf",
+  "key": "majorOpeningWith2Over1Gf"
+ },
+ "1NT Stayman and Red Transfers": {
+  "slug": "1-nt-stayman-and-red-transfers",
+  "key": "1NtStaymanAndRedTransfers"
+ },
+ "1NT High Responses": {
+  "slug": "1-nt-high-responses",
+  "key": "1NtHighResponses"
+ },
+ "1NT Interference": {
+  "slug": "1-nt-interference",
+  "key": "1NtInterference"
+ },
+ "1NT Escapes": {
+  "slug": "1-nt-escapes",
+  "key": "1NtEscapes"
+ },
+ "2C 2D Enquiry": {
+  "slug": "2-c-2-d-enquiry",
+  "key": "2C2DEnquiry"
+ },
+ "2C High Responses": {
+  "slug": "2-c-high-responses",
+  "key": "2CHighResponses"
+ },
+ "2C interference": {
+  "slug": "2-c-interference",
+  "key": "2CInterference"
+ },
+ "2D opening": {
+  "slug": "2-d-opening",
+  "key": "2DOpening"
+ },
+ "2D interference": {
+  "slug": "2-d-interference",
+  "key": "2DInterference"
+ },
+ "Weak two interference": {
+  "slug": "weak-two-interference",
+  "key": "weakTwoInterference"
+ },
+ "2NT interference": {
+  "slug": "2-nt-interference",
+  "key": "2NtInterference"
+ }
+}

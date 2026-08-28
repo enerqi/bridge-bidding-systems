@@ -1,0 +1,120 @@
+# Locust performance tests for the datastar quiz (apps/datastar-quiz).
+#
+# A project of its own rather than an extra of the app's: the load injector must not share a
+# dependency set with the system under test -- locust pulls in gevent, which monkey-patches the
+# standard library, and nothing that runs inside the server should be able to import it by accident.
+[project]
+name = "dsquiz-perf"
+version = "0.1.0"
+description = "Locust performance tests for the datastar/litestar bidding quiz"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "locust>=2.42",
+    "gclocust",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15",
+    "ty>=0.0.35",
+    # py-spy attaches to the RUNNING server by pid and samples its stacks -- no import, no decorator,
+    # nothing added to the app, and nothing left behind when the profile is over. `just profile` drives
+    # it. psutil comes with locust, and is what finds the granian worker to point it at.
+    "py-spy>=0.4",
+]
+
+# gclocust is the shared helper library (throughput pacing, report naming, threshold checks).
+# Default to the sibling checkout, the way this repo already treats `bml`, `norn` and
+# `bridge-markup` -- five levels up from here is <home>, so this resolves to ~/dev/gclocust.
+#
+# On a machine with GitLab credentials (UV_INDEX_GITLAB_USERNAME / _PASSWORD) drop this block and
+# add the index instead, as gclocust's own pyproject does:
+#
+#   [[tool.uv.index]]
+#   url = "https://git.int.gigaclear.net/api/v4/projects/428/packages/pypi/simple"
+#   name = "gitlab"
+[tool.uv.sources]
+gclocust = { path = "../../../../../dev/gclocust", editable = true }
+
+[tool.ty]
+# astral ty defaults are fine, as in the app's own project
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+
+[tool.ruff.lint]
+# The same set as apps/datastar-quiz (gc-pyproject's canonical block).
+select = [
+    "A",        # flake8-builtins — shadowing builtins (`id`, `type`, `list` as parameter / variable names)
+    "ANN",      # flake8-annotations — missing type annotations on public functions/methods (see ANN401 ignore)
+    "ARG",      # flake8-unused-arguments — unused function/method/lambda args
+    "ASYNC",    # flake8-async — blocking calls inside async functions (open(), time.sleep, requests, subprocess)
+    "B",        # flake8-bugbear — likely bugs / design flaws (mutable default args, B008, B904 raise-from, etc.)
+    "BLE",      # flake8-blind-except — bare `except:` / `except Exception:` without re-raise or logging
+    "C4",       # flake8-comprehensions — wasteful list/set/dict comprehensions and generator misuse
+    "DTZ",      # flake8-datetimez — naive datetime usage (force tz-aware)
+    "E",        # pycodestyle errors — PEP 8 errors (whitespace, indentation, statement separation)
+    "EM",       # flake8-errmsg — exception message must be variable, not literal/f-string inside `raise`
+    "F",        # Pyflakes — unused imports/vars, undefined names, redefinitions
+    "FIX001",   # flake8-fixme — line contains FIXME (ban only; TODO/XXX/HACK left informational)
+    "FLY",      # flynt — static `str.join`/`%`-format/`.format` → f-string
+    "G",        # flake8-logging-format — `logger.info("x %s", v)` not `logger.info(f"x {v}")`
+    "I001",     # isort — import block sort/group order (only the "unsorted" rule, not the broader I)
+    "INP",      # flake8-no-pep420 — missing `__init__.py` (no implicit namespace packages)
+    "ISC",      # flake8-implicit-str-concat — catch accidental adjacent-string-literal concatenation
+    "LOG",      # flake8-logging — modern logging API misuse (complements G's format-string focus)
+    "N",        # pep8-naming — class CamelCase, function snake_case, constant SCREAMING_SNAKE
+    "PERF",     # Perflint — `.append` in loops vs list-comp, unnecessary list() in `any()`/`all()`, etc.
+    "PGH004",   # pygrep-hooks — ban blanket `# noqa` (require specific code)
+    "PIE",      # flake8-pie — misc anti-patterns (unnecessary dict/list/pass, duplicate class fields)
+    "PT",       # flake8-pytest-style — pytest idioms (parametrize tuples, fixture scope, raises usage)
+    "PTH",      # flake8-use-pathlib — prefer `pathlib.Path` over `os.path` / `os.makedirs` / `open(...)`
+    "Q",        # flake8-quotes — consistent quote style (matches `ruff format`)
+    "RET",      # flake8-return — unnecessary `else` after return, redundant `return None`, etc.
+    "RSE",      # flake8-raise — unnecessary parens on `raise Foo()`
+    "RUF",      # Ruff-specific — extras the Ruff team owns (RUF005 list-concat, RUF012 mutable class attrs, etc.)
+    "S",        # flake8-bandit — security smells (eval, pickle, hardcoded passwords, subprocess shell=True)
+    "SIM",      # flake8-simplify — collapse `if-else` ternaries, `dict.get`, contextlib.suppress, etc.
+    "SLF",      # flake8-self — access to `_private` members from outside the owning class
+    "T10",      # flake8-debugger — leftover `breakpoint()` / `pdb.set_trace()`
+    "T20",      # flake8-print — leftover `print()` / `pprint()`
+    "TCH",      # flake8-type-checking — push annotation-only imports under `if TYPE_CHECKING:` (see TC002/TC003 ignores)
+    "TRY",      # tryceratops — exception-handling smells (long try blocks, raise-from, abstract-raise)
+    "UP",       # pyupgrade — modernise syntax for `target-version` (typing.Optional → `| None`, super(), f-strings)
+    "W",        # pycodestyle warnings — trailing whitespace, blank-line newlines, etc.
+    "YTT",      # flake8-2020 — incorrect `sys.version` / `sys.version_info` comparisons
+]
+
+ignore = [
+    "S101",     # flake8-bandit — keep `assert` statements; we use them as sanity checks, not just test scaffolding.
+                #     Stripped under `python -O` but production code never runs with -O.
+    "PT001",    # flake8-pytest-style — parentheses-on-fixture style (`@pytest.fixture()` vs `@pytest.fixture`).
+                #     Bikeshed; ruff's preference flips between releases. Don't churn over it.
+    "TRY002",   # tryceratops — "create your own exception type". Generic `Exception`/`RuntimeError` is fine for
+                #     library-internal raise sites; not every error needs a bespoke class.
+    "TRY003",   # tryceratops — "avoid long messages outside the exception class". Long human-readable messages
+                #     at the raise site are more useful than a class hierarchy that hides them.
+    "ISC001",   # flake8-implicit-str-concat — single-line implicit string concat. `ruff format` flags the same
+                #     thing differently and the two can fight. Disable to let the formatter own this.
+    "ANN401",   # flake8-annotations — ban `typing.Any`. We use `Any` deliberately at plugin / decorator
+                #     boundaries: FieldDefinition values, `*args`/`**kwargs` forwarders, runtime-introspected
+                #     callbacks. Tightening here would require a flood of per-line noqas.
+    "TC002",    # flake8-type-checking — third-party imports used only in annotations should move under
+                #     `if TYPE_CHECKING:`. Refused: forces extra import block, no runtime gain (already lazy via
+                #     `from __future__ import annotations`), confuses tooling that resolves runtime types.
+    "TC003",    # flake8-type-checking — same as TC002 but for stdlib imports. Same reasoning.
+]
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+# INP001: locust loads a locustfile BY PATH, so these are deliberately not a package -- an
+#     `__init__.py` here would make `-f locustfiles/player_scenario.py` import differently from
+#     `-f locustfiles`.
+# E402: the sys.path fix that lets them import `common` has to run before the imports it enables.
+# RUF029/ANN: locust's task methods are plain methods; the annotations are already there.
+"locustfiles/*" = ["INP001", "E402", "S311"]
+# S311: `random` is how a load test varies its users; nothing here is a security decision.
+"common/profiles.py" = ["S311"]

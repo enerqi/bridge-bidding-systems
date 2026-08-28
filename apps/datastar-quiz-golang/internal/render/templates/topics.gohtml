@@ -1,0 +1,63 @@
+{{- /* The topics picker. A native <dialog>, opened by a local signal rather than a server
+round trip -- "toggling element visibility" is exactly what the Tao of Datastar says signals
+are for, and the server has no interest in whether a panel is open.
+
+Ticking boxes changes `$topics` (no underscore, so it is uploaded) but commits nothing: the
+working set only changes on Apply.
+
+Escape closes it, and closing DISCARDS -- same path as the Close button. A NON-modal dialog
+(`open`, not `showModal()`) gets no Escape handling from the browser, so it is wired by hand;
+the guard on `$_topicsOpen` keeps the key free for anything else when the picker is shut. */ -}}
+<dialog class="topics-dialog" id="topics-dialog" data-attr:open="$_topicsOpen"
+        data-on:keydown__window="evt.key === 'Escape' && $_topicsOpen
+          && ($_topicsOpen = false, @get('{{ .Prefix }}/filter/topics-reset{{ .VariantQuery }}'))">
+  <h2>Topics</h2>
+  <p>
+    Pick any number &mdash; an auction matching <em>any</em> selected topic is included. Nothing
+    changes until you press <strong>Apply</strong>, which replaces whatever is in the filter box.
+  </p>
+  {{- /* Everything that can grow is inside ONE scroller, and the buttons are outside it. The
+  whole card used to scroll, so with nineteen topics Apply / Clear / Close were sliced in half
+  at the bottom edge -- the actions of a dialog should never be the thing you have to scroll
+  to find. The list itself flows into as many columns as the card is wide enough for. */ -}}
+  <div class="topics-scroll">
+    <div class="topic-list">
+      {{- range .Topics }}
+      <label class="checkbox">
+        <input type="checkbox" {{ .Bind }}
+               data-on:change="@get('{{ $.Prefix }}/filter/preview-topics{{ $.VariantQuery }}')" />
+        {{ .Name }}
+      </label>
+      {{- end }}
+    </div>
+    <div id="topics-status" class="filter-status"></div>
+    {{- if .TopicsHaveDescriptions }}
+    <details data-preserve-attr="open">
+      <summary>What the topics mean</summary>
+      <ul class="topic-legend">
+        {{- range .Topics }}{{ if .Description }}
+        <li><strong>{{ .Name }}</strong> &mdash; {{ .Description }}</li>
+        {{- end }}{{ end }}
+      </ul>
+    </details>
+    {{- end }}
+  </div>
+  <div class="dialog-actions">
+    <button type="button" class="button is-primary" data-on:click="$_topicsOpen = false; @post('{{ .Prefix }}/filter/apply-topics{{ .VariantQuery }}')">Apply</button>
+    {{- /* `@setAll(false, {include: /^topics\./})`, NOT `$topics = {}`. The boxes are bound
+    one signal at a time (`data-bind:topics.<slug>`), so `topics` is a NAMESPACE, not a value:
+    assigning an empty object to it replaces the branch the bindings are watching instead of
+    writing to the leaves, and every box stayed ticked. `@setAll` walks the signal tree and
+    writes each matching leaf.
+
+    The `@get` after it is not decoration: the status line under the list is server-rendered
+    from the ticks, so without it Clear leaves "N topics selected" under an empty list. */ -}}
+    <button type="button" class="light button is-light"
+            data-on:click="@setAll(false, {include: /^topics\./}); @get('{{ .Prefix }}/filter/preview-topics{{ .VariantQuery }}')">Clear</button>
+    {{- /* Close is CANCEL: it discards the ticks and puts them back to the filter in force.
+    The dialog's first line promises that nothing changes until Apply, and keeping an
+    abandoned draft is the one way to break that promise without touching the filter. */ -}}
+    <button type="button" class="light button is-light"
+            data-on:click="$_topicsOpen = false; @get('{{ .Prefix }}/filter/topics-reset{{ .VariantQuery }}')">Close</button>
+  </div>
+</dialog>
