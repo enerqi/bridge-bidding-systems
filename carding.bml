@@ -249,7 +249,6 @@ Note, rare holdings don't follow the general rules and need some first principle
   dummy Hx and your have Hxxx)
 - Assume a Q or J lead from the hidden declarer hand includes the card below when it comes to covering decisions
 - Split honours with 3 honours at least with 2 being touching honours.
-- when splitting honours (playing a high honour on their low card) play the standard lead card, e.g. K(10)9x, (Q)J10x - top of the sequence
 - beware another style is to split with the lowest equal honour, e.g. K10(9)+, Q(J)10+
 
 Times to consider playing high:
@@ -260,6 +259,20 @@ Times to consider playing high:
 - partner maybe end played
 - deception
 - KQxx may depend on how many tricks we need
+
+*** splitting honours
+
+Splitting is playing a high honour on their low card.
+
+From an honour sequence HH+ or HHH+
+
+- (Hh+) highest from 2 honours
+- (hhH+) lowest from 3 honours
+
+Playing (Hh) fits with the common treatment to play high from a strict HH doubleton.
+
+Playing (hhH) is however opposite to discards signalling a strong sequence with suit control where we throw high from
+e.g. (Q)J109+
 
 ** 3rd Hand Plays
 
@@ -317,20 +330,17 @@ an interior sequence, 9 some sequence with 109.
 
 ** Our Suit Contract Agreements
 
-**** 3rd and Low (not for Partner's suit)
+**** 3rd and Low (new or Unsupported partner)
 
 - Leading 3rd and Low from broken honour sequences means 3rd highest from even and lowest from odd.
 - This provides clearer immediate count than 4th highest leads, which is more important when trying to cash out against
-  suit contracts.
+  suit contracts or decide on ruffs, but provides no honour location information
 - (NOT 3rd/5th, 5th highest when holding 5+ cards and 3rd highest with 3 or 4 cards)
 
-**** Leading Partner's Suit
+**** Leading Partner's Supported Suit
 
-- when leading partner's 5+ card *unsupported* suit we lead *count* (low from xxx or Hxx)
-- when we *supported* partner's suit we lead *reverse attitude* - top from (x)xx+ and low from Hxx(x)
+- *reverse attitude* (Hxx low, Top of nothing xxx, 2nd from xxxx+), same as NT supported leads. Count info less important
 - an *honour* lead is *standard* from a sequence or Hx and can use the usual A/Q/J attitude and K count signal semantics
-
-Note, leading our own long suit, supported or not follows the usual 3rd and Low.
 
 **** 3rd from xxx/xxxx in new suit
 
@@ -366,21 +376,22 @@ Ace lead maybe speculative without a supporting honour. Other leads no change.
 
 ** Our NT Contract Agreements
 
-*** 4th Highest (not for Partner's suit)
+*** 4th Highest (new or Unsupported partner)
 
 With 4th highest leads from broken honour sequences the count is less clear, though the rule of 11 helps (11 minus spot
 card lead is how many higher cards than the spot lead in the other hands). In NT we are less likely to want to burn a
 high spot card such as the 3rd highest.
 
-**** Leading Partner's Suit
+**** Leading Partner's Supported Suit
 
-- when leading partner's 5+ card *unsupported* suit we lead *count* (low from xxx or Hxx)
-- when we *supported* partner's suit we lead *reverse attitude* - top from (x)xx+ and low from Hxx(x)
+- *reverse attitude* (Hxx low, Top of nothing xxx, 2nd from xxxx+), same as suit contract supported leads
 - an *honour* lead is *standard* from a sequence or Hx and can use the usual A/Q/J attitude and K count signal semantics
 
-Leading our own long suit, supported or not follows the usual 4th highest
+Note reverse attitude is a common option (pickup partnerships) for making any leads in partner's suit, regardless if
+supported or not.
 
 **** Top of nothing from xxx in new suit
+High, medium, low is the normal play sequence to disambiguate xxx from a doubleton
 
 **** 2nd from xxxx+ in new suit
 

@@ -1135,10 +1135,10 @@ By responder example:
 3D = [6--5+ (rebid 3!d over 2!h preference with 5--5), maximum](#1H--1S--3D)
 3H = [natural invite long offensive suit, singleton support usually ok](#1H--1S--3H)
 3S = [invitational 4--5--2--2 maximum, 6 losers, 14--15 hcp](#1H--1S--3S)
-3N = [singleton splinter with !s support, extra shape, maximum, 6--4+](#1H--1S--3N/4x)
-4CD = [void-splinter with !s support](#1H--1S--3N/4x)
-4H = [to play, ~8.5 PT, too strong to open 4H (e.g. 8 cards and 10 hcp)](#1H--1S--3N/4x)
-4S = [to play, probably minimum 5--6 in the majors, or 4 card support and shapely (4--7)](#1H--1S--3N/4x)
+3N = [singleton splinter with !s support, extra shape, maximum, 6--4+](#1H--1S--3N/4*)
+4CD = [void-splinter with !s support](#1H--1S--3N/4*)
+4H = [to play, ~8.5 PT, too strong to open 4H (e.g. 8 cards and 10 hcp)](#1H--1S--3N/4*)
+4S = [to play, probably minimum 5--6 in the majors, or 4 card support and shapely (4--7)](#1H--1S--3N/4*)
 
 *** 1H--1S--1N
 
@@ -1993,7 +1993,7 @@ then 2!c is a puppet to 2!d as per normal system over the 1N rebid.
             3S = GF, !s shortage, offensive hand
             4CD = GF, shapely 2 suiter
     2S = !h support, [HCR](#HCR cue bids and 2N Raise in Competition)
-        (3S) = compete, handle as [2NT Invite Plus Interference](#2NT Invite Plus Interference)
+        (3S) = compete, handle as [2NT Invite Plus Interference](#2N Invite Plus Interference)
             P = no shortage, no control
             X = extra values, singleton/void - SPECIAL non-penalty agreement
             3N = extra values, !s control
