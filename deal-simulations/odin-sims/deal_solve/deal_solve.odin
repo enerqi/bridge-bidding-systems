@@ -19,15 +19,59 @@ package deal_solve
 */
 
 import "core:fmt"
+import "core:os"
 import "core:slice"
+import "core:strconv"
 import "core:strings"
 
 import dds "dds:."
 import "norn:norn"
 
-// One-time DDS setup: size the per-thread transposition tables and build its constant lookups. MUST
-// be called before any solve. `threads = 0` lets DDS pick a count from the core count.
+/*
+One-time DDS setup: size the per-thread transposition tables and build its constant lookups. MUST be
+called before any solve. `threads = 0` lets DDS pick a count from the core count.
+
+MEASURED COST, on a 24-core machine: `SetMaxThreads(0)` commits **172MB** at init and a real `--dd`
+generation peaks at **542MB**, all of it held until `shutdown`. `DDS_MAX_MB` swaps that for
+`SetResources(mb)` - the same budget, capped. The whole curve, 24 deals of `slam-makes-dd`, seed 11
+(`just dds-timing`):
+
+	  16MB   DDS DIES ("Memory::GetPtr: 0 vs. 0", immediately)
+	  32MB   6.38s   35MB peak      <- starved: SLOWER than the cap saves
+	  48MB   4.68s   43MB peak
+	  64MB   4.74s   45MB peak
+	 128MB   4.08s   72MB peak      <- 4% slower than default, 7.5x less memory
+	 256MB   4.12s   85MB peak
+	default  3.95s  542MB peak
+
+So a cap is close to free above ~128MB and actively harmful below ~48MB, and 16MB is not a
+configuration but a crash - hence the floor below, which refuses rather than letting the solver die
+inside a batch.
+
+An env var rather than an argument because it is a property of the MACHINE the process is running on
+rather than of what any one caller is doing: every program here (sim, analyse_deal, the workbench)
+wants the same answer, and none of them should have to have an opinion about it.
+*/
 init :: proc(threads: i32 = 0) {
+	// Below this DDS does not run slowly, it dies mid-batch. Measured at 16MB; 32 is the smallest value
+	// that completed, and it was slower than no cap at all.
+	DDS_FLOOR_MB :: 32
+	if capped := os.get_env("DDS_MAX_MB", context.temp_allocator); capped != "" {
+		mb, ok := strconv.parse_int(capped)
+		switch {
+		case !ok || mb <= 0:
+			fmt.eprintfln("deal_solve: DDS_MAX_MB=%q is not a positive number - using the default tables", capped)
+		case mb < DDS_FLOOR_MB:
+			fmt.eprintfln(
+				"deal_solve: DDS_MAX_MB=%d is below the %dMB floor (the solver dies there) - using the default tables",
+				mb,
+				DDS_FLOOR_MB,
+			)
+		case:
+			dds.SetResources(i32(mb), threads)
+			return
+		}
+	}
 	dds.SetMaxThreads(threads)
 }
 
@@ -108,8 +152,11 @@ annotate :: proc(builder: ^strings.Builder, deal: norn.Deal, format: norn.Output
 	// Output_Format, this fails to compile until the new format is put on one side or the other, so
 	// annotation can never silently skip — or corrupt — a format nobody classified here.
 	switch format {
-	case .Line, .Numeric, .Handviewer:
-		return // machine-parsed output: no annotation, skip the solve entirely
+	case .Line, .Numeric, .Handviewer, .Lin:
+		// Machine-parsed output: no annotation, and skip the solve entirely. `Lin` belongs here even though
+		// it is a record rather than a line - it has no comment syntax to put a par caption in, and a
+		// viewer would take anything extra as a malformed token.
+		return
 	case .Html_Handviewer, .Html_Cards, .Pretty, .Pbn:
 	// annotated below
 	}
@@ -188,7 +235,7 @@ annotate :: proc(builder: ^strings.Builder, deal: norn.Deal, format: norn.Output
 		write_par_opc_guide(builder, ns_par, have_par, ds, "; ", false)
 		strings.write_string(builder, " }")
 
-	case .Line, .Numeric, .Handviewer:
+	case .Line, .Numeric, .Handviewer, .Lin:
 	// unreachable: filtered out by the classifier switch above
 	}
 }

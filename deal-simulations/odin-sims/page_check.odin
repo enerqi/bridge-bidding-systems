@@ -60,7 +60,8 @@ CHECK_DEAL :: `[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]`
 // the last and by board 6 the active board is off screen). And three boards would all stay in the layout:
 // the page parks the boards outside a small window (`LAYOUT_WINDOW`) to keep resizing cheap, so it takes six
 // for parking — and the layout-shift compensation that goes with it — to run at all.
-CHECK_DEALS_MULTI :: `[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]` +
+CHECK_DEALS_MULTI ::
+	`[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]` +
 	`[Deal "N:KQ97.KJ3.KQ2.QJ4 - A8532.A4.J43.K76 -"]` +
 	`[Deal "N:T98.QJT9.AKQ.AKQ - AJ2.K87.J65.J432 -"]` +
 	`[Deal "N:A5432.AKQ.A2.A32 - KQ76.J54.KQ3.K54 -"]` +
@@ -225,7 +226,12 @@ main :: proc() {
 		box, _ := sa.location(board, .Border, .Root)
 		check(
 			(int(box.width) >= MIN_BOARD_WIDTH) == styled,
-			fmt.tprintf("the board is %dpx wide (want %s %d: `width: fit-content` resolved)", box.width, ">=" if styled else "<", MIN_BOARD_WIDTH),
+			fmt.tprintf(
+				"the board is %dpx wide (want %s %d: `width: fit-content` resolved)",
+				box.width,
+				">=" if styled else "<",
+				MIN_BOARD_WIDTH,
+			),
 		)
 		check(
 			(int(box.height) <= MAX_BOARD_HEIGHT) == styled,
@@ -309,6 +315,7 @@ main :: proc() {
 	if styled {
 		// Before `check_the_window_bugs`: that one focuses a hand, and a focused hand is sized by a
 		// different rule (`4vh`) than the board's ordinary cards.
+		check_the_secondary_hand_lines_are_shown(root)
 		check_the_card_size_tracks_the_window(&view, root)
 		check_the_window_bugs(&view, root)
 		check_the_carousel(&view)
@@ -363,14 +370,24 @@ check_the_window_bugs :: proc(view: ^sa.Windowless_View, root: sa.Element) {
 		pb, _ := sa.location(panel, .Border, .Root)
 		check(
 			int(pb.y + pb.height) <= VIEW_HEIGHT,
-			fmt.tprintf("the panel fits the window with the opponent grid open (bottom at %d of %d)", pb.y + pb.height, VIEW_HEIGHT),
+			fmt.tprintf(
+				"the panel fits the window with the opponent grid open (bottom at %d of %d)",
+				pb.y + pb.height,
+				VIEW_HEIGHT,
+			),
 		)
 		// And the trick-target row is inside it, which is the part that went missing.
 		if foot, err := sa.select_first(root, ".cca-foot"); err == nil {
 			fb, _ := sa.location(foot, .Border, .Root)
 			check(
 				fb.y >= pb.y && int(fb.y + fb.height) <= int(pb.y + pb.height) + 2,
-				fmt.tprintf("the trick-target row is inside the panel (row %d..%d, panel %d..%d)", fb.y, fb.y + fb.height, pb.y, pb.y + pb.height),
+				fmt.tprintf(
+					"the trick-target row is inside the panel (row %d..%d, panel %d..%d)",
+					fb.y,
+					fb.y + fb.height,
+					pb.y,
+					pb.y + pb.height,
+				),
 			)
 		}
 	}
@@ -392,7 +409,10 @@ check_the_window_bugs :: proc(view: ^sa.Windowless_View, root: sa.Element) {
 			// 1x1 here — measured 0x0, i.e. nothing to click.
 			if x, xerr := sa.select_first(card, ".x"); xerr == nil {
 				xb, _ := sa.location(x, .Border, .Root)
-				check(xb.width > 10 && xb.height > 10, fmt.tprintf("the help card's close button is clickable (%dx%d)", xb.width, xb.height))
+				check(
+					xb.width > 10 && xb.height > 10,
+					fmt.tprintf("the help card's close button is clickable (%dx%d)", xb.width, xb.height),
+				)
 			}
 		}
 	}
@@ -480,11 +500,14 @@ check_the_card_size_tracks_the_window :: proc(view: ^sa.Windowless_View, root: s
 // a plain unit), and both parse to 0, which the caller reports as a failure.
 @(private = "file")
 seat_font_px :: proc(root: sa.Element) -> f64 {
-	res, err := sa.eval_element(root, `(function () {
+	res, err := sa.eval_element(
+		root,
+		`(function () {
 		var el = document.querySelector('.slide.active .seat-n') || document.querySelector('.seat-n');
 		if (!el) { return ''; }
 		return '' + getComputedStyle(el).fontSize;
-	})()`)
+	})()`,
+	)
 	if err != nil {
 		return 0
 	}
@@ -688,8 +711,40 @@ near :: proc(value: u8, target: int) -> bool {
 // slider and its value were painted past the panel's border, the value ending up outside the white box
 // entirely (found in the real window, reproduced here at that window's size). `width: max-content` under
 // the existing `max-width` is the fix; this asserts the containment rather than the rule.
+/*
+THE SECONDARY LINES UNDER A HAND - the OPC valuation and the shape with its frequency.
+
+They are in the html on every hand, and in a browser they are on screen. In Sciter they were NOT, and the
+reason is one `@media` query: the phone block (`@media (max-width: 640px)`) opens with
+`.opc, .shape { display: none; }`, and this engine cannot parse a width query. It does not skip the block -
+it takes the rules inside as ordinary ones - so the phone`s rules applied to a 1200px desktop window and the
+two lines were hidden on every board.
+
+That is also why the `@media sciter` block above re-states them at a specificity the phone rule cannot
+reach: the order is fixed (the sciter block must stay above the width query, which discards everything after
+it), so specificity is the only lever left.
+*/
+check_the_secondary_hand_lines_are_shown :: proc(root: sa.Element) {
+	for kind in ([]string{".opc", ".shape"}) {
+		found, err := sa.select_all(root, kind, context.temp_allocator)
+		if err != nil || len(found) == 0 {
+			check(false, fmt.tprintf("the page has %s lines (%v)", kind, err))
+			continue
+		}
+		box, berr := sa.location(found[0], .Border, .Root)
+		// A hidden line still measures 1x1 here rather than 0x0, so "has a box" is not the question - the
+		// question is whether it has a LINE OF TEXT`s worth of box. The neighbouring `.hcp` is 18px tall.
+		check(
+			berr == nil && box.height >= 8 && box.width >= 20,
+			fmt.tprintf("%s is shown rather than hidden by the phone block`s first rule (%dx%d)", kind, box.width, box.height),
+		)
+	}
+}
+
 check_the_panel_contains_its_own_table :: proc(root: sa.Element) {
-	res, err := sa.eval_element(root, `(function () {
+	res, err := sa.eval_element(
+		root,
+		`(function () {
 		var p = document.querySelector('.cca-panel');
 		if (!p) { return 'no panel'; }
 		var pr = p.getBoundingClientRect();
@@ -702,7 +757,8 @@ check_the_panel_contains_its_own_table :: proc(root: sa.Element) {
 			if (over > worst) { worst = over; name = sel; }
 		});
 		return worst + ' ' + name;
-	})()`)
+	})()`,
+	)
 	if err != nil {
 		check(false, fmt.tprintf("the panel's contents are measurable (%v)", err))
 		return
@@ -716,10 +772,7 @@ check_the_panel_contains_its_own_table :: proc(root: sa.Element) {
 	}
 	check(
 		ok && over <= 0,
-		fmt.tprintf(
-			"nothing in the CCA panel is painted outside it (worst overhang %s)",
-			strings.trim_space(text),
-		),
+		fmt.tprintf("nothing in the CCA panel is painted outside it (worst overhang %s)", strings.trim_space(text)),
 	)
 }
 
@@ -731,12 +784,15 @@ check_the_panel_contains_its_own_table :: proc(root: sa.Element) {
 // `<input type=hslider>` instead. Pixels rather than geometry, because the geometry was never the thing
 // that was wrong.
 check_the_slider_paints_the_box_it_claims :: proc(view: ^sa.Windowless_View, root: sa.Element) {
-	res, err := sa.eval_element(root, `(function () {
+	res, err := sa.eval_element(
+		root,
+		`(function () {
 		var s = document.getElementById('nc-cca-target');
 		if (!s) { return '0 0 0'; }
 		var r = s.getBoundingClientRect();
 		return Math.round(r.left) + ' ' + Math.round(r.right) + ' ' + Math.round((r.top + r.bottom) / 2);
-	})()`)
+	})()`,
+	)
 	if err != nil {
 		check(false, fmt.tprintf("the slider's box is measurable (%v)", err))
 		return
@@ -801,12 +857,15 @@ check_the_header_buttons_stay_put :: proc(view: ^sa.Windowless_View, root: sa.El
 		pump(view, 60)
 		pump(view, 120)
 
-		res, err := sa.eval_element(root, `(function () {
+		res, err := sa.eval_element(
+			root,
+			`(function () {
 			var head = document.querySelector('.cca-head'), side = document.querySelector('.cca-side');
 			if (!head || !side) { return '-1 -1 -1'; }
 			var hr = head.getBoundingClientRect(), sr = side.getBoundingClientRect();
 			return Math.round(sr.left) + ' ' + Math.round(sr.top) + ' ' + Math.round(hr.height);
-		})()`)
+		})()`,
+		)
 		if err != nil {
 			check(false, fmt.tprintf("the CCA header is measurable (%v)", err))
 			return
@@ -849,12 +908,15 @@ check_the_row_survives_a_second_digit :: proc(view: ^sa.Windowless_View, root: s
 		pump(view, 60)
 		pump(view, 120)
 
-		res, err := sa.eval_element(root, `(function () {
+		res, err := sa.eval_element(
+			root,
+			`(function () {
 			var row = document.querySelector('.cca-slider');
 			if (!row) { return '-1 -1 -1'; }
 			var r = row.getBoundingClientRect();
 			return Math.round(r.left) + ' ' + Math.round(r.width) + ' ' + Math.round(r.height);
-		})()`)
+		})()`,
+		)
 		if err != nil {
 			check(false, fmt.tprintf("the trick-target row is measurable (%v)", err))
 			return
@@ -909,7 +971,12 @@ check_the_slider_does_not_move_with_the_headline :: proc(view: ^sa.Windowless_Vi
 	}
 	check(
 		drift <= 1,
-		fmt.tprintf("the slider stays put when the headline's length changes (moved %d px: %d then %d)", drift, seen[0], seen[1]),
+		fmt.tprintf(
+			"the slider stays put when the headline's length changes (moved %d px: %d then %d)",
+			drift,
+			seen[0],
+			seen[1],
+		),
 	)
 }
 
@@ -919,7 +986,9 @@ check_the_slider_does_not_move_with_the_headline :: proc(view: ^sa.Windowless_Vi
 // inline style applied at once. Unstyled the pair reads as a black bar with a pale dot parked on it, so the
 // script dresses the knob inline. This is the check that the dressing still lands.
 check_the_slider_knob_is_dressed :: proc(root: sa.Element) {
-	res, err := sa.eval_element(root, `(function () {
+	res, err := sa.eval_element(
+		root,
+		`(function () {
 		var s = document.getElementById('nc-cca-target');
 		var k = s && s.querySelector('.nc-slider-knob');
 		if (!k) { return '0 none'; }
@@ -927,7 +996,8 @@ check_the_slider_knob_is_dressed :: proc(root: sa.Element) {
 		// background reads back empty even when set (the engine keeps it under its own name), so the size is
 		// the honest witness: the engine's own knob is 11px and the page asks for 1.15em.
 		return Math.round(parseFloat(cs.width) || 0) + ' ' + cs.backgroundColor;
-	})()`)
+	})()`,
+	)
 	if err != nil {
 		check(false, fmt.tprintf("the slider's knob is measurable (%v)", err))
 		return
@@ -941,7 +1011,10 @@ check_the_slider_knob_is_dressed :: proc(root: sa.Element) {
 	}
 	check(
 		width >= 12,
-		fmt.tprintf("the slider's knob is sized by the page, not left at the engine's 11px (%s)", strings.trim_space(text)),
+		fmt.tprintf(
+			"the slider's knob is sized by the page, not left at the engine's 11px (%s)",
+			strings.trim_space(text),
+		),
 	)
 }
 
@@ -963,9 +1036,9 @@ check_the_knob_travels_to_both_ends :: proc(view: ^sa.Windowless_View, root: sa.
 	}
 
 	for spec in ([]struct {
-		value: string,
-		end:   string,
-	}{{"1", "left"}, {"13", "right"}}) {
+			value: string,
+			end:   string,
+		}{{"1", "left"}, {"13", "right"}}) {
 		// Through the page's own path (`window.ccaSetTarget`), not by assigning `.value`: the knob is drawn by
 		// the page, so "set the target" has to mean re-render, exactly as an edit does.
 		set := strings.concatenate(
@@ -1039,10 +1112,13 @@ check_the_knob_travels_to_both_ends :: proc(view: ^sa.Windowless_View, root: sa.
 // What the slider is actually showing — the page clamps a target to the board, so this is not always what
 // was asked for.
 slider_value :: proc(root: sa.Element) -> string {
-	res, err := sa.eval_element(root, `(function () {
+	res, err := sa.eval_element(
+		root,
+		`(function () {
 		var s = document.getElementById('nc-cca-target');
 		return s ? '' + s.value : '?';
-	})()`)
+	})()`,
+	)
 	if err != nil {
 		return "?"
 	}
@@ -1053,12 +1129,15 @@ slider_value :: proc(root: sa.Element) -> string {
 
 // The slider's box and the row through its middle — the geometry both pixel checks start from.
 slider_row :: proc(root: sa.Element) -> (left: int, right: int, row: int, ok: bool) {
-	res, err := sa.eval_element(root, `(function () {
+	res, err := sa.eval_element(
+		root,
+		`(function () {
 		var s = document.getElementById('nc-cca-target');
 		if (!s) { return '0 0 0'; }
 		var r = s.getBoundingClientRect();
 		return Math.round(r.left) + ' ' + Math.round(r.right) + ' ' + Math.round((r.top + r.bottom) / 2);
-	})()`)
+	})()`,
+	)
 	if err != nil {
 		return 0, 0, 0, false
 	}
@@ -1081,7 +1160,9 @@ slider_row :: proc(root: sa.Element) -> (left: int, right: int, row: int, ok: bo
 // and the slider was left stranded 100px from anything. The panel takes its width from the TABLE now, so
 // the right edge of the row and the right edge of the table are the same place.
 check_the_trick_target_row :: proc(root: sa.Element) {
-	res, err := sa.eval_element(root, `(function () {
+	res, err := sa.eval_element(
+		root,
+		`(function () {
 		var h = document.querySelector('.ct-head'), s = document.querySelector('.cca-slider');
 		var f = document.querySelector('.cca-foot');
 		if (!h || !s || !f) { return '-1 -1'; }
@@ -1089,7 +1170,8 @@ check_the_trick_target_row :: proc(root: sa.Element) {
 		if (!(sr.width > 0)) { return '-1 -1'; }
 		// how far the row's right edge is from the slider's, and how much clear air is left of the slider
 		return Math.round(fr.right - sr.right) + ' ' + Math.round(sr.left - hr.right);
-	})()`)
+	})()`,
+	)
 	if err != nil {
 		check(false, fmt.tprintf("the trick-target row is measurable (%v)", err))
 		return
@@ -1149,7 +1231,9 @@ check_the_panel_parks_clear_of_the_board :: proc(view: ^sa.Windowless_View) {
 		pump(view, 200)
 	}
 
-	res, err := sa.eval_element(root, `(function () {
+	res, err := sa.eval_element(
+		root,
+		`(function () {
 		var p = document.querySelector('.cca-panel');
 		var slide = document.querySelector('.slide');
 		if (!p || !slide) { return '-1 no-panel'; }
@@ -1168,7 +1252,8 @@ check_the_panel_parks_clear_of_the_board :: proc(view: ^sa.Windowless_View) {
 			if (c) { bite(c.getBoundingClientRect(), sel); }
 		});
 		return worst + ' ' + (name || 'nothing');
-	})()`)
+	})()`,
+	)
 	if err == nil {
 		defer sa.value_clear(&res)
 		text, _ := sa.value_to_string(&res, context.temp_allocator)
@@ -1179,7 +1264,10 @@ check_the_panel_parks_clear_of_the_board :: proc(view: ^sa.Windowless_View) {
 		}
 		check(
 			area == 0,
-			fmt.tprintf("with room below the board the panel covers nothing (worst overlap %s)", strings.trim_space(text)),
+			fmt.tprintf(
+				"with room below the board the panel covers nothing (worst overlap %s)",
+				strings.trim_space(text),
+			),
 		)
 	} else {
 		check(false, fmt.tprintf("the panel's overlap is measurable (%v)", err))
@@ -1250,12 +1338,15 @@ check_the_page_follows_the_view_size :: proc(view: ^sa.Windowless_View) {
 // 1075 -> 1575 resize, the old 646px width clamped against the new viewport and the panel came to rest at
 // 919..1604, 29px off the right edge, having relaid out 685px wide in the meantime.
 check_the_panel_is_inside_the_view :: proc(root: sa.Element, view_width: i32) {
-	res, err := sa.eval_element(root, `(function () {
+	res, err := sa.eval_element(
+		root,
+		`(function () {
 		var p = document.querySelector('.cca-panel');
 		if (!p) { return 'no panel'; }
 		var r = p.getBoundingClientRect();
 		return Math.round(r.left) + ' ' + Math.round(r.right);
-	})()`)
+	})()`,
+	)
 	if err != nil {
 		check(false, fmt.tprintf("the panel's box is measurable (%v)", err))
 		return
@@ -1309,13 +1400,16 @@ check_a_single_board_is_centred :: proc(view: ^sa.Windowless_View) {
 }
 
 scroll_off_centre :: proc(root: sa.Element) -> int {
-	res, err := sa.eval_element(root, `(function () {
+	res, err := sa.eval_element(
+		root,
+		`(function () {
 		var vp = document.querySelector('.viewport');
 		var a = document.querySelector('.slide.active');
 		if (!vp || !a) { return '-1'; }
 		var r = a.getBoundingClientRect(), v = vp.getBoundingClientRect();
 		return '' + Math.round(Math.abs((r.left + r.right) / 2 - (v.left + v.right) / 2));
-	})()`)
+	})()`,
+	)
 	if err != nil {
 		return -1
 	}

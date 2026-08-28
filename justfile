@@ -254,6 +254,39 @@ opc:
 [group('modules')]
 mod dsquiz 'apps/datastar-quiz'
 
+# THIRD implementation of the same quiz, in Go, for the runtime comparison: same hypermedia
+# architecture, same corpus (exported from the python app and embedded), same routes, driven by the
+# same dsperf harness. `just dsgo serve-1core` is the like-for-like run against the python's single
+# asyncio loop; `just dsgo serve` is the deployment question. apps/datastar-quiz-golang/README.md.
+
+# datastar quiz port (Go, net/http + datastar-go): serve, serve-1core, test, bench, qa, pprof, ...
+[group('modules')]
+mod dsgo 'apps/datastar-quiz-golang'
+
+# FOURTH implementation, in Odin on Tina (github.com/pmbanugo/tina) -- a shared-nothing,
+# thread-per-core framework with no allocation after boot. Same corpus, same routes, same dsperf
+# harness. It is the allocation question the other three cannot ask: memory is sized at startup and
+# the process sheds load rather than growing. One shard, matching the python's single asyncio loop
+# and `just dsgo serve-1core`. Needs a tina checkout at ~/dev/tina (TINA_HOME overrides).
+# apps/datastar-quiz-tina/README.md.
+
+# datastar quiz port (Odin, tina http + its datastar SDK): serve, lint, lint-strict, test, qa, ...
+[group('modules')]
+mod dstina 'apps/datastar-quiz-tina'
+
+# FOURTH implementation, in Rust: same architecture, same corpus, same routes, driven by the same
+# dsperf harness. Where the Go port answers "what does a compiled runtime cost", this one answers
+# "what does no GC and no per-call allocation cost on top of that".
+# `just dsrs serve-1core` is the like-for-like run. apps/datastar-quiz-rust/README.md.
+
+# datastar quiz port (Rust, tokio + axum + datastar-rs): serve, serve-1core, test, bench, qa, ...
+[group('modules')]
+mod dsrs 'apps/datastar-quiz-rust'
+
+# locust performance tests against a RUNNING datastar quiz: smoke, headless, soak, report, qa
+[group('modules')]
+mod dsperf 'apps/dsquiz-perf'
+
 # copy PANEL quiz app files to deployment folder (flattened: app + bml corpus in one directory)
 [group('apps')]
 deploy-quiz:

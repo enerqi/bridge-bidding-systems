@@ -52,6 +52,18 @@
 	--accent-ink: #11111b; /* text ON the accent */
 	--good: #a6e3a1;
 
+	/* BML syntax colour, one token per class the colorizer marks (see the script in workbench.html).
+	   Six hues off the same wheel as the rest of this file, chosen so a bid row reads at a glance: the
+	   CALL is the thing being looked up, so it is the brightest thing on the line. */
+	--syn-key: #cba6f7; /* #INCLUDE, #+TITLE:, the directives */
+	--syn-head: #f9e2af; /* * ** *** section headers */
+	--syn-bid: #a6e3a1; /* our call, left of the = */
+	--syn-opp: #fab387; /* an opposition call, in brackets */
+	--syn-suit: #f38ba8; /* !c !d !h !s */
+	--syn-link: #94e2d5; /* [label](#Anchor) */
+	--syn-error: #f38ba8; /* the parse said this is wrong */
+	--syn-warn: #f9e2af; /* the parse said this may be wrong */
+
 	/* fields */
 	--field: #313244;
 	--field-hover: #3a3c52;
@@ -94,9 +106,69 @@ header {
 }
 
 header .title {
-	width: *;
+	margin-right: 1.2em;
 	font-weight: bold;
 	color: var(--ink);
+	white-space: nowrap;
+}
+
+/* ---- the tabs ------------------------------------------------------------------------------------ */
+
+/* The navigation. `width: *` is HERE now rather than on the title, so the tabs take the slack and the
+   controls at the right-hand end stay put — the title is a label and has no business growing. */
+.tabs {
+	width: *;
+	flow: horizontal;
+}
+
+/* A tab is a button, deliberately: `<button>` is what raises `.BUTTON_CLICK`, which is the only event the
+   one window handler listens for. Painted as a strip rather than as a control — the selected one is joined
+   to the view below it by having the same background and no bottom edge of its own. */
+.tab {
+	appearance: none;
+	margin-right: 0.15em;
+	padding: 0.45em 0.9em;
+	border: 0;
+	border-bottom: 2px solid transparent;
+	border-radius: 0;
+	background: transparent;
+	color: var(--ink-soft);
+	font-size: var(--text-small);
+	white-space: nowrap;
+}
+
+/* The four states, written out for the same reason every other control's are: this engine paints none of
+   them for a bare button (see the file header), and `test_controls_have_interaction_states` fails if one
+   goes. `:disabled` LAST so it wins over hover and active — a tab for a place that does not exist yet must
+   not light up under the pointer. */
+.tab:hover {
+	background: var(--line-soft);
+	color: var(--ink);
+}
+
+.tab:active {
+	background: var(--line);
+}
+
+.tab:focus {
+	color: var(--ink);
+	border-bottom-color: var(--ink-dim);
+}
+
+/* WHERE YOU ARE. The accent underline is the whole signal, so it is on the class the host sets rather than
+   on a pseudo-state: `:current` and friends belong to the engine's own controls, and a tab strip made of
+   buttons has no state the engine would set for us. */
+.tab.sel {
+	color: var(--ink);
+	background: var(--bg);
+	border-bottom-color: var(--accent);
+	font-weight: bold;
+}
+
+.tab:disabled {
+	background: transparent;
+	color: var(--ink-dim);
+	border-bottom-color: transparent;
 }
 
 /* The scenario count. `margin-right` because the About button sits immediately after it in this row and the
@@ -109,9 +181,18 @@ header .engine {
 	white-space: nowrap;
 }
 
-/* ---- the two columns ---------------------------------------------------------------------------- */
+/* ---- the deals view: a bar, then the columns ------------------------------------------------------ */
 
+/* ONE SPLIT IDIOM FOR THE WHOLE WINDOW. The deals view and the notes view are the same shape - a one-line
+   bar of toggles, then a row of panes that the bar shows and hides - so they are the same two classes,
+   `.bar` and `.split`, rather than two arrangements that drift apart. The panes themselves say how wide
+   they are (`width: *` shares what is left; a fixed width for a list). */
 .panes {
+	size: *;
+	flow: vertical;
+}
+
+.split {
 	size: *;
 	flow: horizontal;
 }
@@ -204,8 +285,19 @@ aside .head {
 	margin-right: 0.25em;
 }
 
+/* HEIGHT: AUTO IS LOAD-BEARING, and the reason is the global zoom.
+
+   The engine`s own sheet gives `input[type=text]` a fixed `height: 1.4em`, and the caption inside it does
+   NOT stay centred in that box as `zoom` goes up: measured in pixels on the painted view, the ink sits 13px
+   below the top and 13px above the bottom at 100%, and 22px/11px at 133% - the text walks downwards until
+   it is clipped by the bottom border, which is what a zoomed window looked like. Letting the control size
+   itself to its own content keeps it centred at every step (10/10, 12/12, measured the same way).
+
+   The padding then carries the box height that `1.4em` used to: without it an unzoomed field is 27px where
+   it was 33px, and every row in this window is built round that size. */
 input[type="text"] {
-	padding: 0.25em 0.4em;
+	height: auto;
+	padding: 0.45em 0.4em;
 	border: 1px solid var(--field-line);
 	border-radius: var(--radius);
 	background: var(--field);
@@ -231,8 +323,10 @@ input.wide {
 	width: *;
 }
 
+/* The same fixed height, the same drift, the same fix - see `input[type="text"]` above. */
 select {
-	padding: 0.2em 0.4em;
+	height: auto;
+	padding: 0.4em 0.4em;
 	border: 1px solid var(--field-line);
 	border-radius: var(--radius);
 	background: var(--field);
@@ -386,12 +480,16 @@ button.small {
 
 /* ---- the card page, hosted in a <frame> ---------------------------------------------------------- */
 
-/* Same shape as `.about`: shown with an inline `display`, and it replaces the panes rather than floating
-   over them. The frame fills what is left below its own one-line bar. */
+/* A PANE of the deals view, not a view of its own: it sits beside the work in the `.split` and the bar`s
+   `hand page` button shows it with an inline `display`. `width: *` so it shares what the scenario list
+   leaves; a left seam so the two panes read as two, the way the notes preview does. The frame fills what is
+   left below the pane`s own one-line bar. */
 .pageview {
 	display: none;
-	size: *;
+	width: *;
+	height: *;
 	flow: vertical;
+	border-left: 1px solid var(--line);
 	background: var(--surface);
 }
 
@@ -481,7 +579,7 @@ popup[role="tooltip"] {
 
 /* `<plaintext>` is the engine's code-editor element: scrolling, selection and a host-side interface
    (`content=`, `lines`, `selectRange`) for free. The analysis report is aligned monospace text, so it
-   wants exactly this rather than a <div> — and it is the same widget a BML editor would need later. */
+   wants exactly this rather than a <div> — and it is the same widget the BML editor below uses. */
 #report {
 	size: *;
 	padding: 0.4em 0.5em;
@@ -494,3 +592,268 @@ popup[role="tooltip"] {
 	overflow: scroll-indicator;
 	white-space: pre;
 }
+
+
+/* ---- the BML editor ----------------------------------------------------------------------------- */
+
+/* The fourth view, and the same shape as `.pageview`: shown with an inline `display` by the host, and it
+   REPLACES the panes rather than floating over them (an out-of-flow percentage height is 1px here). */
+.editview {
+	display: none;
+	size: *;
+	flow: vertical;
+	background: var(--surface);
+}
+
+.bar {
+	flow: horizontal;
+	padding: 0.4em 0.7em;
+	border-bottom: 1px solid var(--line);
+}
+
+.bar > * {
+	margin-right: 0.5em;
+}
+
+.bar .label {
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+	white-space: nowrap;
+}
+
+/* The file name and the save/preview state. `width: *` pushes `close` to the right-hand end of the bar,
+   the way `.pagebar .title` does. */
+.bar .title {
+	width: *;
+	color: var(--ink-soft);
+	font-size: var(--text-small);
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+/* The file sidebar. Same width and seam as the scenario list on the deals view — two lists of the same kind
+   of thing should not be two different widths — and the host folds it away with an inline `display` when the
+   panes want the room (`set_shown`, never the `hidden` attribute). */
+aside.files {
+	width: 250px;
+	height: *;
+	flow: vertical;
+	border-right: 1px solid var(--line);
+	background: var(--surface);
+}
+
+/* The folder, above its files. It can be a long path in a 250px column, so it wraps rather than being
+   clipped: the tail of a path is the informative half, and `text-overflow: ellipsis` would eat exactly
+   that. */
+#bml-dir {
+	color: var(--ink-dim);
+	word-wrap: break-word;
+}
+
+#bml-list {
+	width: *;
+	height: *;
+	overflow-y: scroll-indicator;
+}
+
+/* `behavior: button` for the same reason the scenario rows have it: a plain <div> raises no `.BUTTON_CLICK`
+   and the host would never hear a click. */
+#bml-list .row {
+	behavior: button;
+	padding: 0.35em 0.8em;
+	border-bottom: 1px solid var(--line-soft);
+	color: var(--ink-soft);
+	font-size: var(--text-small);
+	cursor: pointer;
+}
+
+#bml-list .row:hover {
+	background: var(--line-soft);
+	color: var(--ink);
+}
+
+#bml-list .row.sel {
+	background: var(--line);
+	color: var(--accent);
+}
+
+/* The file with unsaved changes, so the dot is on the thing that would lose them rather than only in the
+   status line. */
+#bml-list .row.dirty::after {
+	content: " 2";
+	color: var(--accent);
+}
+
+/* The heading palette (CTRL+R), one row of the editor's own flow between the bar and the panes. Hidden
+   here, shown by the host with an inline `display` — the same shape `.panel-help` uses, and for the same
+   reason: the stylesheet has to hide it before the host touches anything, or it flashes on at startup. */
+.goto {
+	display: none;
+	flow: vertical;
+	padding: 0.4em 0.7em;
+	border-bottom: 1px solid var(--line);
+	background: var(--surface);
+}
+
+#bml-goto-input {
+	width: *;
+	margin-bottom: 0.35em;
+}
+
+/* A HEIGHT CAP rather than a height: the list is at most GOTO_ROWS long, and a short list should not leave
+   a hole under it. `max-height` in `em` so it tracks the font size the zoom keys change. */
+#bml-goto-list {
+	width: *;
+	max-height: 16em;
+	overflow-y: scroll-indicator;
+}
+
+/* `behavior: button` for the third time in this file, and for the third time because a plain <div> raises
+   no `.BUTTON_CLICK` and the host would never hear the click. The row is a name, a depth and a file, laid
+   out as one flow row: the name takes the space and the file sits at the right-hand end. */
+#bml-goto-list .hit {
+	behavior: button;
+	flow: horizontal;
+	padding: 0.3em 0.5em;
+	border-radius: 4px;
+	color: var(--ink-soft);
+	font-size: var(--text-small);
+	cursor: pointer;
+}
+
+#bml-goto-list .hit:hover {
+	background: var(--line-soft);
+	color: var(--ink);
+}
+
+/* The keyboard's selection, and it has to read as strongly as a hover does — this is the row ENTER acts on,
+   and the pointer is not necessarily anywhere near it. */
+#bml-goto-list .hit.sel {
+	background: var(--line);
+	color: var(--accent);
+}
+
+/* How deep the heading is, as leading dots. Dim and monospaced so the column of them lines up and reads as
+   structure rather than as part of the name. */
+#bml-goto-list .depth {
+	color: var(--ink-dim);
+	font-family: monospace;
+	margin-right: 0.4em;
+}
+
+#bml-goto-list .name {
+	width: *;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+/* The chapter the heading is in, on every row: two files can hold the same heading, and this is which one
+   this is. Dim, because it is the answer to a question you only sometimes ask. */
+#bml-goto-list .where {
+	color: var(--ink-dim);
+	margin-left: 0.8em;
+	white-space: nowrap;
+}
+
+
+#bml-text {
+	width: *;
+	height: *;
+	padding: 0.4em 0.5em;
+	background: var(--sunken);
+	color: var(--ink);
+	font-family: monospace;
+	font-size: var(--mono);
+	overflow: scroll-indicator;
+	white-space: pre;
+	/* THE CARET, and the reason the editor read as view-only. Sciter's caret colour is
+	   `text-selection-caret-color` — NOT the browsers' `caret-color`, which this engine does not have — and
+	   its default is the engine's black. On this sheet's near-black `--sunken` that is an invisible caret in
+	   a widget that was taking every keystroke, which looks exactly like a pane you cannot type into.
+
+	   THE SELECTION COLOURS ARE DELIBERATELY NOT SET HERE. Painting the selection background in `--accent`
+	   made a stale EMPTY selection visible - a thin accent bar sitting nowhere near the caret, left over from
+	   a range the widget had finished with. The engine's own selection paint does not have that artefact, and
+	   a caret is the thing that had to be visible. */
+	text-selection-caret-color: var(--accent);
+}
+
+/* The other text widgets sit on the same dark field, so they get the same caret. */
+input[type="text"],
+textarea {
+	text-selection-caret-color: var(--accent);
+}
+
+/* The preview is the norn BML output — a light-background page with its own stylesheet — so this element
+   gets no colours, only a size and the seam between the two halves. A frame with no size collapses to
+   nothing, which reads as "preview did nothing". */
+frame#bml-page {
+	width: *;
+	height: *;
+	border: 0;
+	border-left: 1px solid var(--line);
+}
+
+/* The colours the colorizer's marks resolve to. `::mark(name)` is the pseudo-element a `Range.applyMark`
+   paints through; the names are the script's, and the two lists have to agree — `test_bml_marks_are_styled`
+   is what says so. Nothing here changes layout: a mark that changed the metrics would reflow the line
+   under the caret as it was typed.
+
+   THE `> text` IS LOAD-BEARING and its absence is silent. A mark lives on a TEXT NODE, so the pseudo-element
+   belongs to the `<text>` element holding that node — one per line, made by the widget — and not to the
+   `<plaintext>`. `#bml-text::mark(...)` parses, matches nothing, and paints nothing: every token stays the
+   colour of ordinary text and there is no warning anywhere. The SDK's own samples spell it
+   `plaintext > text::mark(error)`, which is the tell. */
+#bml-text > text::mark(bml-key) {
+	color: var(--syn-key);
+}
+
+#bml-text > text::mark(bml-head) {
+	color: var(--syn-head);
+	font-weight: bold;
+}
+
+#bml-text > text::mark(bml-bid) {
+	color: var(--syn-bid);
+}
+
+#bml-text > text::mark(bml-opp) {
+	color: var(--syn-opp);
+}
+
+#bml-text > text::mark(bml-suit) {
+	color: var(--syn-suit);
+}
+
+#bml-text > text::mark(bml-link) {
+	color: var(--syn-link);
+}
+
+#bml-text > text::mark(bml-op) {
+	color: var(--ink-dim);
+}
+
+/* The parse's diagnostics. A wavy underline rather than a colour, because a problem is not a token kind:
+   the text under it keeps whatever the colorizer made of it and gains a mark of its own. `:hover` shifts
+   the colour so the pointer confirms it found the thing before the popup appears (the SDK's marks sample
+   does the same, and it is the only feedback a hover can give while the idle timer runs). */
+#bml-text > text::mark(bml-error) {
+	text-decoration: wavy underline var(--syn-error);
+}
+
+#bml-text > text::mark(bml-error):hover {
+	text-decoration: wavy underline var(--ink);
+}
+
+#bml-text > text::mark(bml-warn) {
+	text-decoration: wavy underline var(--syn-warn);
+}
+
+#bml-text > text::mark(bml-warn):hover {
+	text-decoration: wavy underline var(--ink);
+}
+
+/* The squiggle's message goes in the editor's STATUS LINE (`#bml-status`), which is already styled. Why not
+   a popup, which is what the SDK's marks sample uses: a plaintext has no popup method at all, so the hover
+   handler threw `TypeError: not a function` on every hover - and a mouseidle handler that throws leaves the
+   window not accepting clicks at all. See the document's script. */

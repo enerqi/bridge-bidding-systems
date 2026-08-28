@@ -22,8 +22,27 @@
        `test_every_control_is_documented` fails if a control has a title without a hint or vice versa, so
        a new control cannot ship undocumented. -->
 
+  <!-- THE HEADER IS THE NAVIGATION, and there is no "close" anywhere below it.
+       The two places this application has are co-equal — the deals and the notes — and `View` models them
+       as one enum precisely because they REPLACE each other. A `close` button said "stop showing this" and
+       left the answer to "so what am I looking at instead?" implicit; a tab says where you are and where you
+       can go, which is the same click doing more work.
+       THE HAND PAGE IS NOT ONE OF THEM ANY MORE. It was a third tab, and that made looking at the deals you
+       just generated a different PLACE from the controls that generated them. It is a pane of the deals view
+       now, opened from the bar there - so the two places in this strip are two activities rather than three
+       screens.
+       `data-view` names the view a tab selects; the host reads it (see `view_of`), so adding a place is a
+       tab here and an enum member there, with no new button case.
+       ABOUT IS NOT A TAB, and that is deliberate: it is a modal errand with a licence obligation in it,
+       entered from anywhere and left by going back to wherever you were. It keeps its own close. -->
   <header>
     <span class="title">Bridge workbench</span>
+    <div class="tabs" id="tabs">
+      <button class="tab" data-view="panes" title="Generate deals, and analyse one"
+              data-hint="The controls: pick a scenario and generate a set of practice deals, or analyse a single deal you already have.">deals</button>
+      <button class="tab" data-view="editor" title="Edit the bidding-system notes"
+              data-hint="Edit the .bml notes of this bidding system, with a live preview of the rendered page beside them.">notes</button>
+    </div>
     <span class="engine" id="engine"></span>
     <button id="about" class="ghost small" title="Versions and third-party credits"
             data-hint="Versions, and the licence credits for the engine and the double-dummy solver.">about</button>
@@ -41,6 +60,10 @@
       <div class="about-line" id="about-versions"></div>
       <div class="about-line">
         The deal generator and the single-deal advisor of this bidding-system repository, in one window.
+      </div>
+      <div class="about-line">
+        Everything scales: <b>CTRL+wheel</b>, or <b>CTRL+plus</b> / <b>CTRL+minus</b>, and
+        <b>CTRL+0</b> back to normal.
       </div>
 
       <div class="about-head">Third-party components</div>
@@ -60,34 +83,139 @@
     </div>
   </div>
 
-  <!-- The card page, IN this window. `<frame>` is Sciter's sub-document element: the host puts a document
-       into it with the frame behavior's `loadHtml` (a string — no temp file) or `loadFile`, and
-       `frame.document` comes back as an element, so the outer window can still read what it is showing.
-       Hidden the same way the About panel is (an inline `display`, never the `hidden` attribute), and it
-       REPLACES the panes for the same reason: a floating overlay wants a percentage height out of flow,
-       which this engine lays out 1px tall.
 
-       The page it shows is the norn card page — a browser page. It lays out here because of the
-       `@media sciter { ... }` block in `norn/html_cards_header.html.tmpl`, which only applies when a host
-       sets the `sciter` media var (see `set_media_vars` in main). -->
-  <div class="pageview" id="pageview">
-    <div class="pagebar">
-      <span class="title" id="page-title">card page</span>
-      <!-- Debug builds only (the host shows it; the stylesheet hides it): writes the hosted page's geometry
-           and the handful of computed styles that differ in this engine into the transcript and to stderr.
-           A windowless probe cannot see a real window's hover, drag or scrollbars, so this is how a live
-           window's numbers get out of it and into a bug report. -->
-      <button id="page-dump" class="ghost small" title="Dump this page's geometry to the transcript"
-              data-hint="Write the hosted page's boxes and computed styles into the transcript below (and to stderr) — for reporting a layout bug from the real window.">dump</button>
-      <button id="page-close" title="Back to the controls"
-              data-hint="Close the page and go back to the generate and analyse panels.">close</button>
+  <!-- The BML EDITOR. The fourth top-level view, shown and hidden exactly like `.pageview` and `.about`
+       (an inline `display`, never the `hidden` attribute) and replacing the panes rather than floating over
+       them, for the same reason: an out-of-flow percentage height lays out 1px tall here.
+
+       `<plaintext>` is the engine's code editor - lines, selection, scrolling, and a host-side `content=`
+       - and the SAME widget the transcript uses. What it does NOT bring is syntax colour, so the inline
+       script at the end of this document colours it: BML is line-oriented (a header, a directive, a bid
+       row), so one pass of per-line scanning and a `Range.applyMark` per token is the whole colorizer.
+       The SDK's `Tokenizer` is no help - it lexes javascript, css and html only.
+
+       The PREVIEW is a second `<frame>`, and the rendering behind it is in-process: bridge-markup (the
+       Odin implementation of BML) parses the BUFFER, so what is previewed is what is on screen rather
+       than what was last saved. The reference python renders a FILE and could not do this. -->
+  <div class="editview" id="editview">
+    <div class="bar">
+      <!-- The files are a LIST IN A SIDEBAR rather than a dropdown, because a dropdown answers "which of
+           these" and the question here is "what is in this folder" — the names are worth having on screen
+           while editing, and a chapter is picked far more often than a folder is. This button folds the
+           sidebar away when the two panes want the width instead. -->
+      <!-- The glyph is the settled convention for "toggle the side panel": a rectangle with one edge band
+           filled, which is what VS Code's `layout-sidebar-left`, JetBrains and the GNOME sidebar buttons all
+           draw. `◧` (SQUARE WITH LEFT HALF BLACK) is unicode's nearest, so no icon font is needed — a
+           hamburger would be wrong, since that means "menu" rather than "side panel". The word stays beside
+           it: every other control in this window is a word, and one bare glyph in a row of them reads as an
+           ornament. -->
+      <button id="bml-files-toggle" class="ghost" title="Show or hide the list of files"
+              data-hint="Fold the list of files away to give the source and the preview the whole window, or bring it back.">◧ files</button>
+      <button id="bml-folder" class="ghost" title="Choose a folder of .bml files"
+              data-hint="Pick a different folder to edit the .bml notes of. The system's own notes are found at startup, so this is for a copy, a branch, or somebody else's.">folder…</button>
+      <!-- A TOGGLE: the second press closes the pane, which is also how the document's memory is handed back.
+           The label is rewritten by the host to say which of the two the next press does. -->
+      <button id="bml-preview" title="Render the text as it stands, or close the preview"
+              data-hint="Render the text in the editor - not the saved file - into the panel on the right. Once it is up it FOLLOWS what you type, re-rendering when the typing stops. Press it again to close the preview, which gives the source the whole width and frees what the rendered page was holding.">preview</button>
+      <!-- ONE toggle, lit while the document is folded - the same shape as `links` beside it. Two buttons
+           (`section`/`whole`) came first and read as two unrelated commands rather than as two halves of one
+           state. FOLDED means: every heading, in order, the section the caret is in open, and the other
+           bodies shown as an ellipsis. Whether a file starts folded depends on its SIZE, and whichever way
+           you leave it is remembered for that file. -->
+      <button id="bml-fold" class="ghost" title="Fold the document to its headings, with the caret's section open"
+              data-hint="Fold the preview: every heading stays, the section the caret is in is open, and the other bodies become an ellipsis - so the outline is still there to navigate by. Big documents cost hundreds of MB rendered in full, so they start folded.">fold</button>
+      <button id="bml-links" class="ghost" title="Also check that every [label](#Anchor) resolves"
+              data-hint="Also report cross-references that land on no heading. Off by default: a CHAPTER links to headings in its sibling files on purpose, so this is only meaningful on a whole document (bidding-system.bml) or once you know the anchor should be here.">links</button>
+      <button id="bml-save" class="ghost" title="Write the editor's text back to the file"
+              data-hint="Overwrite the .bml file on disk with the text in the editor. There is no undo for this beyond the editor's own.">save</button>
+      <button class="help-toggle ghost small" id="help-bml" title="What is this editor for?"
+              data-hint="Explain what this editor is for and what the preview shows.">?</button>
+      <!-- No close here either; the header's tabs are the way out, and the text stays in the editor. -->
+      <span class="title" id="bml-status"></span>
     </div>
-    <frame id="page"></frame>
+    <div class="panel-help" id="help-bml-text">
+      These are the notes themselves - the <code>.bml</code> chapters this whole repository is written in,
+      the ones that build into the html system documents. Edit one here and press <b>preview</b> to see the
+      rendered page beside it, without saving and without a build. The preview parses the text in the
+      editor, so it shows what you have typed rather than what is on disk, and once it is open it is LIVE:
+      it re-renders itself when the typing stops. It waits longer on a document that is expensive to render
+      (the assembled system takes about a second), and <code>WORKBENCH_LIVE_MS</code> sets that wait - 0
+      turns it off and leaves <b>preview</b> as the only thing that renders. <b>save</b> writes the file.
+      <b>preview</b> is a toggle: pressing it again closes the panel, which also hands back what the rendered
+      page was holding. <b>fold</b> collapses the document to its headings, leaving the section the caret
+      is in open and the other bodies as an ellipsis, so the whole outline is still there to navigate by.
+      A small chapter opens unfolded and a big one starts folded (the assembled system costs a few hundred
+      MB rendered in full); whichever way you leave it is remembered for that file.
+      <b>CTRL+R</b> opens the heading palette: type part of a heading's name and the caret jumps there, in
+      this file or any other chapter in the folder (the letters only have to be in order, so <code>lbn</code>
+      finds Lebensohl). Spaces and punctuation are <i>separators</i>, not characters, so
+      <code>1h 1s</code> finds <code>1H-1S</code>, <code>1H--1S</code> and <code>1H/1S</code> alike — you
+      never have to type the dashes. It is how to get about a 1000-heading corpus without scrolling: up/down
+      choose, enter jumps the caret there (and scrolls the preview to the same heading), esc closes.
+      Anything the parser objects to is <b>underlined in the source</b> as well as written to the transcript
+      below - hover a squiggle to read it. A red one means something is being DROPPED from the page (a
+      misspelled directive, an <code>#INCLUDE</code> that cannot be read); a yellow one is a warning. Press
+      <b>links</b> to check cross-references too: that one is off by default because a chapter links to
+      headings in its sibling chapters on purpose, so it only tells the truth on a whole document.
+    </div>
+    <!-- The heading palette (CTRL+R). IN THE FLOW, between the bar and the panes, rather than floating over
+         them: an out-of-flow percentage height lays out 1px tall in this engine (the same reason the four
+         views replace each other instead of stacking), and a palette that is one row of the editor is no
+         worse to use — Sublime's own is at the top of the window too. Hidden by the stylesheet until the
+         host shows it. -->
+    <div class="goto" id="bml-goto">
+      <input type="text" id="bml-goto-input" class="wide"
+             placeholder="go to heading — 1h 1s, lbn, stayman … up/down to choose, enter to jump, esc to close"
+             title="Go to a heading in any .bml file in this folder"
+             data-hint="Type part of a heading's name — the letters need only be in order, so `lbn` finds Lebensohl, and spaces and punctuation are separators rather than characters, so `1h 1s` finds 1H-1S, 1H--1S and 1H/1S alike. Every chapter in the folder is searched, the open one first; up/down choose, enter jumps the caret there, esc closes.">
+      <div id="bml-goto-list"
+           data-hint="The headings that match, best first. The name is on the left and the chapter it is in on the right; the leading dots are how deep the heading is."></div>
+    </div>
+    <div class="split">
+      <!-- The folder's .bml files, one clickable row each, filled by the host from `app.bml_names`. Same
+           shape as the scenario list on the left of the deals view, and for the same reason: a row needs
+           `behavior: button` to be clickable at all in this engine, and the host reads the name back off
+           the `data-file` the render wrote. -->
+      <aside class="files" id="bml-files">
+        <div class="head" id="bml-dir" title="The folder these files are in"
+             data-hint="The folder the list below is from. Press folder… in the bar to change it."></div>
+        <div id="bml-list"
+             data-hint="The .bml files in this folder. Click one to edit it; unsaved changes are kept until you pick the same file again."></div>
+      </aside>
+      <plaintext id="bml-text" title="The .bml source"
+                 data-hint="The .bml source. Headers, directives, bids and suit symbols are coloured; press preview to render it."></plaintext>
+      <frame id="bml-page"></frame>
+    </div>
   </div>
 
+  <!-- THE DEALS VIEW: the controls, the scenario list, and the HAND PAGE beside them.
+
+       The hand page used to be a third TAB, and that was wrong about what this application is. Generating a
+       set of deals and looking at them is one activity, not two places: the scenario, the format and the
+       output directory live on this side and the result of pressing generate lives on the other, and a tab
+       made you leave the controls to see what they had just produced. So it is a PANE here, opened and
+       closed beside the work, the same shape the notes view has had all along (source, and the rendered
+       page beside it) - one splitter idiom in the window instead of two.
+
+       The bar is the notes bar`s twin, down to the `◧` glyph: fold the list away, open or close the pane,
+       and give the pane everything except the list. Nothing here is a mode - each is a toggle whose label
+       says what the next press does.
+  -->
   <div class="panes">
+    <div class="bar">
+      <button id="deal-list-toggle" class="ghost" title="Show or hide the list of scenarios"
+              data-hint="Fold the scenario list away to give the controls and the hand page the whole window, or bring it back.">◧ scenarios</button>
+      <!-- Disabled until something has been shown in it: a button that is always there says the place
+           EXISTS, which one that appears and disappears does not - and nothing moves when a page arrives. -->
+      <button id="deal-page" disabled title="Show or hide the hand page beside the controls"
+              data-hint="Open the hand page beside these controls - the cards, the trick table and the play advice for the deals you just generated. Press it again to close the pane, which hands back what the page was holding.">hand page</button>
+      <button id="deal-wide" class="ghost" disabled title="Give the hand page the whole width"
+              data-hint="Let the hand page have everything except the scenario list, for reading a set of deals. Press it again to bring the controls back beside it.">wide</button>
+    </div>
+
+    <div class="split">
     <!-- Filled by the host from `bidding.registry`: one row per scenario, carrying its index. -->
-    <aside>
+    <aside id="scenario-list">
       <div class="head">scenarios</div>
       <div id="scenarios"
            data-hint="Each scenario is a bidding situation from this system. Pick one, then press generate."></div>
@@ -114,12 +242,15 @@
                  data-hint="How many deals to KEEP. The generator keeps dealing until it has this many that fit the scenario, so a rare scenario deals many more than this.">
           <label for="format">format</label>
           <select id="format" title="What kind of page or file to write"
-                  data-hint="html-cards is the interactive page — cards, trick table, play advice. html-handviewer is lighter. pretty, line and pbn are plain text for other tools.">
+                  data-hint="html-cards is the interactive page — cards, trick table, play advice. html-handviewer is lighter. The rest are text, each with its own extension (.txt .line .lin .hv.txt .pbn .num) so two formats of one scenario cannot overwrite each other; a small text run is also shown in the pane below. lin writes BBO records - paste a line after play.intobridge.com/hand?lin= - while handviewer writes bridgebase query strings.">
             <option value="html-cards">html-cards</option>
             <option value="html-handviewer">html-handviewer</option>
             <option value="pretty">pretty</option>
             <option value="line">line</option>
+            <option value="handviewer">handviewer</option>
             <option value="pbn">pbn</option>
+            <option value="lin">lin</option>
+            <option value="numeric">numeric</option>
           </select>
           <label for="seed">seed</label>
           <input type="text" id="seed" class="num" placeholder="fresh" title="Repeat the same deals"
@@ -192,9 +323,9 @@
           <label for="target">target</label>
           <input type="text" id="target" class="num" value="0" title="Highlight the column for this many tricks"
                  data-hint="Highlight the trick count you need: 9 for 3NT, 10 for four of a major, 12 for a small slam.">
-          <input type="checkbox" id="as-page" title="Show the interactive card page instead of the text report"
-                 data-hint="Draw the deal as the interactive card page in this window — cards, the trick table and the play advice — instead of writing the text report into the pane below.">
-          <label for="as-page">as card page</label>
+          <input type="checkbox" id="as-page" title="Show the interactive hand page instead of the text report"
+                 data-hint="Draw the deal as the interactive hand page in the pane beside these controls — cards, the trick table and the play advice — instead of writing the text report into the pane below.">
+          <label for="as-page">as hand page</label>
           <button id="analyse" title="Analyse the deal above"
                   data-hint="Read the deal above and write the report into the pane below.">analyse</button>
           <button id="clear" class="ghost" title="Empty the transcript"
@@ -209,6 +340,492 @@
            from the `data-hint` of whatever the pointer or the keyboard is on. -->
       <div class="hintbar" id="hint"></div>
     </div>
+
+    <!-- THE HAND PAGE, in this window and beside the controls that made it.
+
+         `<frame>` is Sciter`s sub-document element: the host puts a document into it with the frame
+         behavior`s `loadHtml` (a string - no temp file) or `loadFile`, and `frame.document` comes back as an
+         element, so the outer window can still read what it is showing.
+
+         Hidden with an inline `display` (never the `hidden` attribute - see `set_shown`), which is also
+         what hands its memory back: a 48-deal page is ~86MB of laid-out document, and closing the pane
+         should cost that back rather than park it off screen.
+
+         The page it shows is the norn card page - a browser page. It lays out here because of the
+         `@media sciter { ... }` block in `norn/html_cards_header.html.tmpl`, which only applies when a host
+         sets the `sciter` media var (see `set_media_vars` in main). -->
+    <div class="pageview" id="pageview">
+      <div class="pagebar">
+        <span class="title" id="page-title">hand page</span>
+        <!-- Debug builds only (the host shows it; the stylesheet hides it): writes the hosted page`s
+             geometry and the handful of computed styles that differ in this engine into the transcript and
+             to stderr. A windowless probe cannot see a real window`s hover, drag or scrollbars, so this is
+             how a live window`s numbers get out of it and into a bug report. -->
+        <button id="page-dump" class="ghost small" title="Dump this page`s geometry to the transcript"
+                data-hint="Write the hosted page`s boxes and computed styles into the transcript below (and to stderr) — for reporting a layout bug from the real window.">dump</button>
+        <!-- No close here: `hand page` in the bar above is the one control that opens and closes it, and
+             two ways to close a pane is one more than a window needs. -->
+      </div>
+      <frame id="page"></frame>
+    </div>
+    </div>
   </div>
+
+<!-- The BML COLORIZER, and the only script in this document.
+     Everything else here is driven from Odin, on purpose: the host owns the state and the document is a
+     projection of it. Colour is the exception, and it has to be, because the API that paints it exists
+     ONLY in the document's own runtime - a mark is applied to a `Range` over a text node, and the host
+     bindings have no Range.
+     Why not the SDK's `samples.sciter/colorizer`: that is a wrapper round the engine's `Tokenizer`, which
+     lexes javascript, css and html and nothing else. BML is none of those. It is also LINE-ORIENTED - a
+     header, a directive, a bid row, a paragraph - so a per-line scan is not a shortcut here, it is the
+     grammar. The token classes are the ones `bml.sublime-syntax` picks out, which is where they were
+     tuned against the real corpus.
+     `applyMark` and `highlight` are the same engine call under two names, and `::mark(x)` styles the
+     result (see the stylesheet). Every line is CLEARED before it is marked, so re-colorizing after a
+     keystroke does not accumulate marks on the text that did not change. -->
+<script>
+
+  var BML_MARKS = ["bml-key", "bml-head", "bml-bid", "bml-opp", "bml-suit", "bml-link", "bml-op"];
+
+  var BML_DIRECTIVE = /^\s*(#\+[A-Za-z_]+:|#INCLUDE|#CUT|#ENDCUT|#COPY|#ENDCOPY|#PASTE|#HIDE|#VUL|#SEAT|#TITLE)/;
+  var BML_HEADER    = /^\s*\*+\s/;
+  var BML_SUIT      = /!(?:c|d|h|s)/g;
+  var BML_LINK      = /\[[^\]\r\n]*\]\(#[^)\r\n]*\)/g;
+
+  // One line's text. A `<plaintext>` line is a `<text>` element holding a single text node; the host's
+  // `content=` write is what creates them.
+  function bmlLineText(el) {
+    var node = el.firstChild;
+    if (!node) return null;
+    var t = node.nodeValue;
+    if (typeof t == "string") return t;
+    t = el.textContent;
+    return (typeof t == "string") ? t : null;
+  }
+
+  // Marks applied since the last `bmlColorize`. The COUNT is the return value of that function, and it is
+  // the only thing a host-side test can see: a mark leaves no attribute behind and reads back through a
+  // Range or not at all, so "did the colorizer do anything" has to be answered from in here.
+  var bmlMarked = 0;
+
+  function bmlMark(el, from, to, name) {
+    if (to <= from) return;
+    var node = el.firstChild;
+    if (!node) return;
+    var r = new Range();
+    r.setStart(node, from);
+    r.setEnd(node, to);
+    r.applyMark(name);
+    bmlMarked += 1;
+  }
+
+  function bmlClear(el, length) {
+    var node = el.firstChild;
+    if (!node || length <= 0) return;
+    var r = new Range();
+    r.setStart(node, 0);
+    r.setEnd(node, length);
+    r.clearMark(BML_MARKS);
+  }
+
+  function bmlMarkAll(el, text, re, name) {
+    var m;
+    re.lastIndex = 0;
+    while ((m = re.exec(text)) !== null) {
+      bmlMark(el, m.index, m.index + m[0].length, name);
+      if (m[0].length === 0) re.lastIndex += 1; // a zero-width match would spin here
+    }
+  }
+
+  function bmlColorizeLine(el) {
+    var text = bmlLineText(el);
+    if (text === null) return;
+    bmlClear(el, text.length);
+    if (!text.length) return;
+
+    if (BML_DIRECTIVE.test(text)) { bmlMark(el, 0, text.length, "bml-key"); return; }
+    if (BML_HEADER.test(text))    { bmlMark(el, 0, text.length, "bml-head"); return; }
+
+    // A bid row is `<call> = <description>`, and the call is what the eye needs to find. An opposition
+    // call is written in brackets and gets its own colour, the way the notes themselves distinguish them.
+    var eq = text.indexOf("=");
+    if (eq > 0) {
+      var call = text.slice(0, eq);
+      var lead = call.length - call.replace(/^\s+/, "").length;
+      var end  = eq - (call.length - call.replace(/\s+$/, "").length);
+      var opp  = /^\s*\(/.test(call);
+      bmlMark(el, lead, end, opp ? "bml-opp" : "bml-bid");
+      bmlMark(el, eq, eq + 1, "bml-op");
+    }
+
+    // Suit symbols and cross-references, wherever they are - including inside a call, which is why these
+    // run after the call above rather than instead of it.
+    bmlMarkAll(el, text, BML_SUIT, "bml-suit");
+    bmlMarkAll(el, text, BML_LINK, "bml-link");
+  }
+
+  // Colour the buffer, and hand back HOW MANY MARKS it applied.
+  //
+  // TWO passes over the same loop, because they answer to different costs. A WHOLE pass is what the host
+  // calls after it writes the buffer (there is no event for a `content=` write) and it re-marks every line.
+  // A DIRTY pass is what TYPING gets, and it skips any line whose text is the one it was last marked with.
+  //
+  // The difference is the felt latency of the editor. Marking is a `Range` per token and the whole-buffer
+  // pass costs ~35us a line - 50ms on a 1400-line chapter and 190ms on the 5300-line one, measured, and it
+  // ran after EVERY burst of keystrokes. Typing normally changes ONE line, so a dirty pass marks one line
+  // and reads the rest, which is a text-node read per line and no Range work at all.
+  //
+  // The last-marked text is kept ON THE LINE ELEMENT rather than in an array beside it, because a line is
+  // inserted or removed by pressing enter or backspace and every index after it would then be wrong -
+  // whereas the element carries its own answer wherever the widget moves it. A newline therefore re-marks
+  // exactly the two lines it made out of one, not the thousand below them.
+  //
+  // A WHOLE pass stays the host's entry point on purpose: it must not matter whether the widget reuses its
+  // line elements across a `content=` write, and a stale flag there would leave a freshly loaded file
+  // uncoloured with nothing to see but the absence of colour.
+  function bmlColorizePass(all) {
+    var editor = document.$("#bml-text");
+    if (!editor) return 0;
+    bmlMarked = 0;
+    var lines = editor.children;
+    for (var i = 0; i < lines.length; i++) {
+      var el = lines[i];
+      var text = bmlLineText(el);
+      if (!all && text !== null && el.bmlSeen === text) continue;
+      // Did this line LOSE text? That is the edit that leaves paint behind, and the old text is right here.
+      if (typeof el.bmlSeen == "string" && text !== null && text.length < el.bmlSeen.length) bmlShrank = true;
+      bmlColorizeLine(el);
+      el.bmlSeen = text;
+    }
+    if (lines.length < bmlLastLines) bmlShrank = true;
+    bmlLastLines = lines.length;
+    return bmlMarked;
+  }
+
+  function bmlColorize()      { bmlColorEnabled = true; return bmlColorizePass(true); }
+  function bmlColorizeDirty() { return bmlColorEnabled ? bmlColorizePass(false) : 0; }
+
+  // Off only for bisecting (`WORKBENCH_COLOUR=0`, read by the host): when something odd happens WHILE TYPING
+  // - a caret in the wrong place, paint that should not be there - the first question is whether the
+  // colorizer is in it, and the cheapest answer is a run without it. A whole pass turns it back on, so the
+  // host loading a file always colours what it loaded.
+  var bmlColorEnabled = true;
+
+  // A DELETE is the edit this widget leaves paint behind after: a block of selection colour on text that is
+  // gone. Two things say it is stale PAINT rather than anything live - it survives moving the caret away
+  // (which repaints the caret and nothing else), and it goes when the next DELETE re-lays the widget out.
+  // The selection model is measured clean besides: neither colour pass moves `selectionStart`/`selectionEnd`
+  // (`zz_selection_probe`), so there is no stray selection to collapse, only pixels to invalidate.
+  //
+  // So: any edit that made the text SHORTER - fewer lines, or a line that lost characters - asks the widget
+  // to paint itself again. Growing edits are left alone; typing must not repaint the whole editor per
+  // keystroke, and it has never been the one that leaves anything behind.
+  //
+  // In a try/catch like everything else that runs from an event here: a handler that throws leaves this
+  // window not accepting clicks at all.
+  var bmlLastLines = 0;
+  var bmlShrank = false;
+
+  function bmlRepaintIfShrunk(editor) {
+    if (!bmlShrank) return;
+    bmlShrank = false;
+    try { editor.requestPaint(); } catch (x) {}
+  }
+
+  /* ------------------------------------------------------------------ diagnostics (the squiggles)
+
+     The parse's own diagnostics, marked on the text they are about. The library reports a line, a column
+     and a length in the SOURCE (see bridge-markup's positions.odin), and this is the other end of that:
+     one mark per diagnostic, `bml-error` or `bml-warn`, styled as a wavy underline.
+
+     Two marks rather than one because the severities mean different things - a misspelled directive means
+     a block is being dropped, an unresolved cross-reference may just be a link into a sibling chapter.
+
+     The messages are kept HERE, keyed by line, because that is what the hover has to answer from: a mark
+     leaves nothing behind on the element, so `range.marks()` says "there is an error under the pointer"
+     and nothing at all about what it says. */
+
+  var BML_PROBLEM_MARKS = ["bml-error", "bml-warn"];
+  var bmlProblems = [];
+  var bmlProblemLines = []; // the LINE ELEMENTS the marks above were applied to
+
+  // Clearing runs on every burst of typing, so it costs what the PROBLEMS cost and not what the buffer
+  // costs. Two things get it there:
+  //
+  //  * nothing marked, nothing to clear - and most files parse clean, so this is the usual answer;
+  //  * the lines that WERE marked are remembered as elements rather than as line numbers. An element travels
+  //    with its text wherever the widget moves it, so deleting a line above a squiggle still clears the
+  //    right one - a remembered INDEX would by then be pointing at its neighbour, and the stale underline
+  //    would stay on the text for as long as the file was open.
+  //
+  // The walk was over every line in the buffer, which on a 3000-line chapter is 3000 `Range`s per keystroke,
+  // and the live preview re-applies the marks after every render - so on a file with one diagnostic in it,
+  // typing paid for the whole buffer twice over.
+  //
+  // IN A TRY/CATCH because the elements are held across edits: a line that was deleted is detached, and what
+  // a detached element answers to `Range` is not something to find out the hard way. A handler that THROWS
+  // leaves this window not accepting clicks at all (see the hover below, which learned it first), and a
+  // squiggle that outlives its text is worth none of that.
+  function bmlClearProblems() {
+    if (!bmlProblems.length && !bmlProblemLines.length) return;
+    for (var i = 0; i < bmlProblemLines.length; i++) {
+      try {
+        var el = bmlProblemLines[i];
+        var node = el.firstChild;
+        if (!node) continue;
+        var text = bmlLineText(el);
+        if (text === null || !text.length) continue;
+        var r = new Range();
+        r.setStart(node, 0);
+        r.setEnd(node, text.length);
+        r.clearMark(BML_PROBLEM_MARKS);
+      } catch (x) {
+        // a line that is no longer in the document; its marks went with it
+      }
+    }
+    bmlProblems = [];
+    bmlProblemLines = [];
+  }
+
+  /* Mark a fresh set of problems, and hand back how many marks were applied - the host's only view of the
+     result, exactly as with the colorizer.
+
+     A diagnostic is `{line, col, len, severity, message}`, all 1-based and all in BYTES, which for this
+     corpus is characters. `len = 0` means "to the end of the line" and `col = 0` means the whole line, the
+     library's own conventions for a position it only partly knows. A line number past the end of the
+     buffer is DROPPED rather than clamped: it means the text has moved on since the parse, and a squiggle
+     on the wrong line is worse than none. */
+  function bmlSetProblems(json) {
+    bmlClearProblems();
+    var editor = document.$("#bml-text");
+    if (!editor) return 0;
+    var list;
+    try { list = JSON.parse(json); } catch (x) { return 0; }
+    if (!list || !list.length) return 0;
+
+    var lines = editor.children;
+    var applied = 0;
+    for (var i = 0; i < list.length; i++) {
+      var d = list[i];
+      var index = (d.line | 0) - 1;
+      if (index < 0 || index >= lines.length) continue;
+      var text = bmlLineText(lines[index]);
+      if (text === null) continue;
+      var from = d.col > 0 ? d.col - 1 : 0;
+      if (from > text.length) continue;
+      var to = d.len > 0 ? from + d.len : text.length;
+      if (to > text.length) to = text.length;
+      if (to <= from) { from = 0; to = text.length; }
+      if (to <= from) continue;
+      bmlMark(lines[index], from, to, d.severity === "warning" ? "bml-warn" : "bml-error");
+      applied += 1;
+      bmlProblems.push(d);
+      bmlProblemLines.push(lines[index]); // what `bmlClearProblems` will take it off again
+    }
+    return applied;
+  }
+
+  // The message for a position, or "" - what the hover shows, and the only part of the hover a windowless
+  // test can drive (the editor has no box in a hidden view, so there is no point to hit).
+  function bmlProblemAt(line, col) {
+    var best = "";
+    for (var i = 0; i < bmlProblems.length; i++) {
+      var d = bmlProblems[i];
+      if ((d.line | 0) !== (line | 0)) continue;
+      var from = d.col > 0 ? d.col : 1;
+      var to = d.len > 0 ? from + d.len : 1e9;
+      if (col >= from && col < to) return d.message;
+      if (!best) best = d.message; // something on this line, if not under that column
+    }
+    return best;
+  }
+
+  // Typing. `change` is the plaintext's own edit notification; the timer coalesces a burst of keystrokes
+  // into one pass, as the SDK's colorizer does. It also drops the squiggles: their positions were computed
+  // for the text as it was, and an edit above one moves it without anything noticing.
+  //
+  // The pass is the DIRTY one - the lines that changed - and that is what makes a held-down key or a fast
+  // sentence feel like typing rather than like waiting. A whole pass here re-marked the entire chapter
+  // every 40ms.
+  document.on("change", "#bml-text", function () {
+    var editor = this;
+    editor.timer(40, function () { bmlClearProblems(); bmlColorizeDirty(); bmlRepaintIfShrunk(editor); });
+    return false;
+  });
+
+  /* THE CARET LEAVES PAINT BEHIND ON AN EMPTY LINE, and this is what puts it right.
+
+     On a line with no text the engine draws the caret a whole CELL wide - a block, not a bar - and when the
+     caret moves off that line the block stays on screen. It is stale paint and nothing else: the widget`s
+     own `selectionStart`/`selectionEnd` are measured clean either side of everything this document does
+     (`test_colouring_does_not_move_the_caret_or_the_selection`), moving the caret away does not clear it,
+     and typing ON THAT LINE does - which is the line the widget repaints.
+
+     It has always done this. It became VISIBLE when the caret got a colour: the engine`s default is black,
+     which on this sheet`s near-black background is a ghost nobody could see. The caret had to be visible
+     (an editor with no caret reads as a viewer), so the ghost has to be cleaned up instead.
+
+     `requestPaint` invalidates the widget and the next frame draws it again - a repaint, not a layout, so
+     it is cheap enough to do on a keypress. Only the keys that MOVE the caret without changing the text
+     need it: an edit repaints its own line anyway, and a delete is handled by `bmlRepaintIfShrunk` above.
+     The mouse is here for the same reason - a click puts the caret somewhere else.
+
+     ON THE WAY UP, both of them. The widget moves the caret while it HANDLES the key, so invalidating on the
+     way down repaints the caret where it still is and the ghost is laid down again immediately afterwards.
+     A held arrow repeats without a keyup, so the ghosts of a long press are cleaned up when the key is
+     finally released - which is when anyone would look.
+
+     `event.code` rather than `event.key`: this engine fills in the former (measured - the card page reads
+     both for that reason). The event is never claimed - navigating is the widget`s own job. */
+  var BML_CARET_KEYS = {
+    "ArrowUp": true, "ArrowDown": true, "ArrowLeft": true, "ArrowRight": true,
+    "Home": true, "End": true, "PageUp": true, "PageDown": true,
+  };
+
+  document.on("keyup", "#bml-text", function (event) {
+    if (!BML_CARET_KEYS[event.code]) return false;
+    var editor = this;
+    try { editor.requestPaint(); } catch (x) {}
+    return false;
+  });
+
+  document.on("mouseup", "#bml-text", function () {
+    var editor = this;
+    try { editor.requestPaint(); } catch (x) {}
+    return false;
+  });
+
+  /* Hover over a squiggle to read what it says - IN THE STATUS LINE, not in a popup.
+
+     It was a floating popup element first, the way the SDK's marks sample does it, and that FROZE THE
+     WINDOW: the handler threw `TypeError: not a function` on the editor's popup method, which a plaintext
+     does not have - and
+     a mouseidle handler that throws every time the pointer rests over a mark leaves the window not
+     accepting clicks at all. The only trace was an unhandled promise rejection from `sciter:debug-peer.js`,
+     which names the engine's debug peer rather than this line.
+
+     So: no popup, no coordinates, nothing floating. The message goes where every other message about the
+     editor goes, the previous text is put back when the pointer leaves, and the WHOLE handler is wrapped in
+     a try/catch - a hover is a convenience and must never be able to wedge the application again.
+
+     `rangeFromPoint` is what turns a pointer into a position: `range.marks()` says whether a problem mark
+     is under it, and `range.startContainer` identifies the LINE, because a plaintext line is a `<text>`
+     element holding one text node (both measured). */
+  var bmlStatusBeforeTip = null;
+
+  function bmlShowTip(message) {
+    var status = document.$("#bml-status");
+    if (!status) return;
+    if (bmlStatusBeforeTip === null) bmlStatusBeforeTip = status.innerText || "";
+    status.innerText = message;
+  }
+
+  function bmlHideTip() {
+    if (bmlStatusBeforeTip === null) return;
+    var status = document.$("#bml-status");
+    if (status) status.innerText = bmlStatusBeforeTip;
+    bmlStatusBeforeTip = null;
+  }
+
+  // The message under the pointer, or "" - separated from the event so a test can drive it.
+  function bmlMessageAt(x, y) {
+    var editor = document.$("#bml-text");
+    if (!editor || !bmlProblems.length) return "";
+    var range = editor.rangeFromPoint(x, y);
+    if (!range) return "";
+    var marks = range.marks();
+    if (!marks || (!marks.includes("bml-error") && !marks.includes("bml-warn"))) return "";
+    var lines = editor.children;
+    for (var i = 0; i < lines.length; i++) {
+      if (lines[i].firstChild === range.startContainer) {
+        return bmlProblemAt(i + 1, range.startOffset + 1);
+      }
+    }
+    return "";
+  }
+
+  document.on("mouseidle", "#bml-text", function (evt) {
+    try {
+      var message = bmlMessageAt(evt.x, evt.y);
+      if (message) bmlShowTip(message); else bmlHideTip();
+    } catch (x) {
+      bmlHideTip();
+    }
+    return false; // never claim the event: the editor's own mouse handling comes first
+  });
+
+  document.on("mouseleave", "#bml-text", function () {
+    bmlHideTip();
+    return false;
+  });
+
+  /* ------------------------------------------------------------------------------ global zoom
+
+     One window-wide scale for the whole shell - text, buttons, lists, the lot. CSS `zoom` on the root
+     element is what does it, and it is a LAYOUT property in this engine rather than a paint one: a 57x31px
+     button measures 86x46 at `zoom: 1.5` and exactly 57x31 again when the property is removed (measured on
+     6.0.4.9). That is why nothing else here has to change: every px in the stylesheet is scaled by the
+     engine, including the sidebar's fixed width.
+
+     `getComputedStyle(el).fontSize` keeps reporting the UNZOOMED size, so the factor is the only truth
+     about the current scale and it is kept where both ends can read it: the root's inline style.
+
+     THE ZOOM LIVES HERE rather than in the host, against this document's usual rule, for one reason: the
+     WHEEL. `wheel` with `ctrlKey` is a script event, and a mouse wheel's delta does not reach a host
+     handler at all (`MOUSE_PARAMS` carries no delta field), so the host cannot own the input. It drives
+     the keyboard half through these same functions, and reads the factor back with `wbZoom()`. */
+
+  var WB_ZOOM_MIN = 0.7;
+  var WB_ZOOM_MAX = 2.5;
+  var WB_ZOOM_STEP = 1.1; // multiplicative, so a step out undoes a step in exactly
+
+  function wbZoom() {
+    var value = parseFloat(document.documentElement.style.getPropertyValue("zoom"));
+    return (value > 0) ? value : 1;
+  }
+
+  // Set the scale and hand back what it ended up as, which is not what was asked for at the limits. A
+  // factor of 1 REMOVES the property rather than setting it, so an unzoomed window carries no inline style
+  // and reads back as exactly 1 rather than as 0.9999.
+  function wbSetZoom(factor) {
+    var f = parseFloat(factor);
+    if (!(f > 0)) f = 1;
+    if (f < WB_ZOOM_MIN) f = WB_ZOOM_MIN;
+    if (f > WB_ZOOM_MAX) f = WB_ZOOM_MAX;
+    // Two decimals: the steps are multiplicative, so without rounding the factor drifts to 1.0000000002
+    // and "is it back to normal" stops being answerable.
+    f = Math.round(f * 100) / 100;
+    if (f === 1) {
+      document.documentElement.style.setProperty("zoom", "");
+    } else {
+      document.documentElement.style.setProperty("zoom", String(f));
+    }
+    return wbZoom();
+  }
+
+  // One notch. `direction` is +1 in, -1 out, 0 back to normal.
+  function wbZoomStep(direction) {
+    if (!direction) return wbSetZoom(1);
+    return wbSetZoom(direction > 0 ? wbZoom() * WB_ZOOM_STEP : wbZoom() / WB_ZOOM_STEP);
+  }
+
+  /* CTRL+wheel, the gesture every application has. Claimed (`return true`) so the wheel does not also
+     scroll whatever is under the pointer - a zoom that scrolled at the same time would be unusable.
+
+     A wheel over a `<frame>` belongs to the framed document and never reaches this handler, so the card
+     page and the preview keep their own scrolling. They are documents in their own right and are not
+     scaled by this. */
+  document.on("wheel", function (evt) {
+    if (!evt.ctrlKey) return;
+    var delta = evt.deltaY;
+    if (!delta) delta = -(evt.wheelDelta || 0); // whichever the engine fills in
+    if (!delta) return;
+    wbZoomStep(delta < 0 ? 1 : -1);
+    return true;
+  });
+
+</script>
+
 </body>
 </html>
