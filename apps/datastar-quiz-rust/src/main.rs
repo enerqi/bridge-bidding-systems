@@ -29,6 +29,10 @@ use dsquiz::session::{self, Store};
 use dsquiz::web::{self, AppState, Config};
 use dsquiz::{render, sfx};
 
+// TWEAK 2 (experiment): see the note in Cargo.toml.
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
 
@@ -44,9 +48,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     sfx::warm();
     let warm = started.elapsed();
 
-    let mut runtime = tokio::runtime::Builder::new_multi_thread();
+    // TWEAK 1 (experiment): a single worker gets the CURRENT-THREAD scheduler rather than the
+    // multi-thread one with `worker_threads(1)`. The multi-thread scheduler pays for work-stealing
+    // queues, a remote-queue check per tick and cross-thread wakers whether or not a second worker
+    // exists, and `--threads 1` is the like-for-like configuration the comparison is measured in.
+    let mut runtime = if args.threads == 1 {
+        tokio::runtime::Builder::new_current_thread()
+    } else {
+        tokio::runtime::Builder::new_multi_thread()
+    };
     runtime.enable_all();
-    if args.threads > 0 {
+    if args.threads > 1 {
         runtime.worker_threads(args.threads);
     }
     let runtime = runtime.build()?;

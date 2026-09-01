@@ -82,7 +82,9 @@ bml *FILES:
 
     exe = os.path.normpath(r"{{bml2html_exe}}")
     # Built through the sims module so the collection flag and the target directory stay defined in one
-    # place. Cheap when nothing changed; the compile dominates this recipe either way.
+    # place. That recipe compares the exe against its sources and the flags it was built with, so this is
+    # ~0.15s when nothing changed - it used to be an unconditional 2.9s odin build, i.e. ~99% of a `watch`
+    # iteration, against 0.03s to render all 19 files.
     if subprocess.run(["just", "sims", "build-bml2html"], stdout=subprocess.DEVNULL).returncode != 0:
     	sys.exit("could not build " + exe + " - is MARKUP_HOME (enerqi/bridge-markup) cloned?")
 
@@ -274,6 +276,18 @@ mod dsgo 'apps/datastar-quiz-golang'
 [group('modules')]
 mod dstina 'apps/datastar-quiz-tina'
 
+# FIFTH implementation, and the SECOND in Odin: the same app on odin-http (github.com/laytan/odin-http),
+# a plain nbio event-loop server over shared memory. Everything except `web/` is the tina port's
+# source unchanged, so the pair isolates the HTTP runtime and nothing else -- fixed per-connection
+# buffers sized at boot against arenas that grow per request, shared-nothing shards against threads
+# and one mutex. One event-loop thread by default, the like-for-like budget; `just dsoh
+# serve-all-cores` for the deployment question. Needs an odin-http checkout at ~/dev/odin-http
+# (ODIN_HTTP_HOME overrides). apps/datastar-quiz-odin-http/README.md.
+
+# datastar quiz port (Odin, odin-http + a hand-written datastar writer): serve, lint, test, qa, ...
+[group('modules')]
+mod dsoh 'apps/datastar-quiz-odin-http'
+
 # FOURTH implementation, in Rust: same architecture, same corpus, same routes, driven by the same
 # dsperf harness. Where the Go port answers "what does a compiled runtime cost", this one answers
 # "what does no GC and no per-call allocation cost on top of that".
@@ -282,6 +296,19 @@ mod dstina 'apps/datastar-quiz-tina'
 # datastar quiz port (Rust, tokio + axum + datastar-rs): serve, serve-1core, test, bench, qa, ...
 [group('modules')]
 mod dsrs 'apps/datastar-quiz-rust'
+
+# SIXTH implementation, in F# on .NET 10. Two things it asks that none of the others can. First,
+# the SSE writer is FIRST-PARTY LIBRARY CODE in the app's own language: `StarFederation.Datastar.FSharp`
+# is the core of starfederation/datastar-dotnet (the C# package is a shim over it), and it writes
+# UTF-8 straight into the response's IBufferWriter -- where the Go SDK had to be worked around, the
+# Rust stream is hand-rolled and both Odin ports hand-wrote a writer. Second, a DEPLOY-TIME CODEGEN
+# axis: JIT / ReadyToRun / Native AOT as three columns for startup, resident set, throughput and
+# binary size -- which nothing in this repo measures today. `just dsfs serve-1core` is the
+# like-for-like run (DOTNET_PROCESSOR_COUNT=1). apps/datastar-quiz-fsharp/README.md.
+
+# datastar quiz port (F#, Oxpecker + StarFederation.Datastar.FSharp): serve, serve-1core, test, qa, ...
+[group('modules')]
+mod dsfs 'apps/datastar-quiz-fsharp'
 
 # locust performance tests against a RUNNING datastar quiz: smoke, headless, soak, report, qa
 [group('modules')]

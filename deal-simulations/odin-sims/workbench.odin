@@ -105,71 +105,90 @@ Job :: struct {
 }
 
 App :: struct {
-	using host:    sa.Host_Handler,
-	window:        sa.Window,
-	handler:       sa.Event_Handler,
+	using host:         sa.Host_Handler,
+	window:             sa.Window,
+	handler:            sa.Event_Handler,
 	// The drop handler is a SECOND handler, on the document root rather than on the window: measured, the
 	// EXCHANGE group does not reach a window handler at all (the drop was refused in silence, which looks
 	// exactly like the window not accepting drops). On the root it covers every element in the document,
 	// so the whole window is the drop target.
-	drops:         sa.Event_Handler,
+	drops:              sa.Event_Handler,
 
 	// The catalogue, straight from the bidding system. `selected` indexes it.
-	scenarios:     []cli.Scenario,
-	selected:      int,
+	scenarios:          []cli.Scenario,
+	selected:           int,
 
 	// Shared with the worker. `post_callback` says THAT something changed; the lock is what makes it safe
 	// to read WHAT.
-	mutex:         sync.Mutex,
-	transcript:    strings.Builder,
-	failure:       string,
+	mutex:              sync.Mutex,
+	transcript:         strings.Builder,
+	failure:            string,
 
 	// The card page, rendered by the worker and shown by the engine thread (PAGE). A whole document
 	// rather than a line, so it travels here like `failure` does.
-	page:          string,
+	page:               string,
 
 	// The deal OCR read out of a dropped image, travelling to the engine thread (DEAL) so the analyse
 	// box shows what was actually read — the OCR is a guess at a picture, and an unreadable digit is a
 	// thing to see and correct rather than to have silently analysed.
-	deal:          string,
+	deal:               string,
 
 	// The one flag that travels the other way (engine thread -> worker). Atomic because the worker reads
 	// it between scenarios and the UI writes it at most once per job.
-	cancel:        bool,
+	cancel:             bool,
 
 	// The BML editor, all engine-thread state. `docs` is where the `.bml` corpus was found (empty if it
 	// was not), `bml_names` the files in it, and `bml_open` the one in the editor — a name rather than an
 	// index, so a re-listed directory cannot silently change which file `save` writes to.
 	// The view About was entered from, so closing it goes back there rather than to the panes.
-	before_about:  View,
+	before_about:       View,
 
 	// Is there a hand page to show? The deals bar`s `hand page` and `wide` are disabled until there is, and `do_click`
 	// does NOT honour a disabled button (measured — the behavior runs and the click is delivered), so the
 	// tab handler asks this rather than trusting the attribute. Rule 1: the model is the truth and the
 	// `disabled` attribute is the projection of it.
-	page_ready:    bool,
+	page_ready:         bool,
+
+	// Is a transcript redraw already on its way? Claimed by `transcribe` (any thread) and cleared by the
+	// handler that draws it, so a burst of lines costs ONE post instead of one each.
+	transcript_pending: b32,
+
+	// The file currently in the pane, so the chip for it can say so. Empty for a page that came from
+	// `analyse` rather than off disk - that page is not a format of a scenario, and no chip should claim it.
+	shown_path:         string,
+
+	// What is in the deals folder, scenario name -> the formats generated for it. One `read_dir` fills it
+	// (see `scan_outputs`); the list rows and the format chips are both projections of it.
+	outputs:            map[string]Format_Set,
+
+	// Where the splitter between the controls and the hand page was last left, as the engine's own length
+	// strings joined by commas (`250px,1*,2*`). Held here rather than read on demand for one reason: `wide`
+	// HIDES the controls, and a hidden pane drops out of the frameset's state, so the three-pane reading has
+	// to be taken while all three are still there. Written to the prefs file, so a dragged split survives a
+	// restart the way the zoom does.
+	split_state:        string,
 
 	// Is there a rendered preview in the frame? Once there is, it FOLLOWS the buffer — opening another file
 	// re-renders it, because a preview of the file you were looking at a moment ago is worse than no
 	// preview: it looks like the file you just clicked.
-	previewed:     bool,
-	docs:          string,
-	bml_names:     []string,
-	bml_open:      string,
-	bml_crlf:      bool, // the line endings the file arrived with, so saving does not rewrite all of them
-	bml_armed:     bool, // a switch away from unsaved text was refused once; the next one goes through
+	previewed:          bool,
+	docs:               string,
+	bml_names:          []string,
+	bml_open:           string,
+	bml_crlf:           bool, // the line endings the file arrived with, so saving does not rewrite all of them
+	bml_armed:          bool, // a switch away from unsaved text was refused once; the next one goes through
 	// Check `[label](#Anchor)` as well? Off by default, and the button says so: a CHAPTER of this corpus
 	// links to headings in its sibling files on purpose, so on one chapter the check is mostly noise. On
 	// `bidding-system.bml`, which includes them all, every warning it raises is a real broken link.
-	bml_links:     bool,
+	bml_links:          bool,
 	// How much of the notes the preview shows, and whether the pane is up at all. `bml_scope` is per FILE
 	// (see `scope_for_file`): remembered if it was chosen, otherwise decided by the document's size.
-	bml_scope:     Preview_Scope,
+	bml_scope:          Preview_Scope,
 	// Has the scope been settled for the file that is open? The size-based default is applied ONCE per file;
 	// after that the state is whatever it is, or a press of `section`/`whole` would be undone by the very
 	// re-render it asks for.
-	bml_scope_set: bool,
-	bml_showing:   bool, // is the preview pane up? `preview` closes it, and closing it frees the document
+	bml_scope_set:      bool,
+	bml_showing:        bool, // is the preview pane up? `preview` closes it, and closing it frees the document
 	// THE PREVIEW IS LIVE: once the pane is up it follows the buffer, on a debounce, without being asked.
 	// `bml_live_base` is the idle a keystroke has to survive before a render (0 turns the whole thing off),
 	// `bml_preview_cost` is how long the LAST render took - which is what the debounce is scaled by, so a
@@ -177,33 +196,33 @@ App :: struct {
 	// re-entrancy guard: a render pumps the engine, so a second one must not start inside the first.
 	// `bml_rendered` fingerprints the text the pane is showing, so a timer that fires over an unchanged
 	// buffer (an arrow key, a modifier, an edit that was undone) costs nothing.
-	bml_live_base:    time.Duration,
-	bml_preview_cost: time.Duration,
-	bml_rendering:    bool,
-	bml_rendered:     u64,
+	bml_live_base:      time.Duration,
+	bml_preview_cost:   time.Duration,
+	bml_rendering:      bool,
+	bml_rendered:       u64,
 
 	// The heading palette (CTRL+R). `goto_all` is the whole corpus's headings, OWNED (see `build_goto_index`
 	// - the files' text is read, the headings cloned out of it and the text dropped); `goto_rows` is what the
 	// list on screen is showing, in list order, so a click or ENTER can name a destination by row rather
 	// than by re-running the ranking and hoping it comes out the same. `goto_sel` is the highlighted row.
-	goto_open:     bool,
-	goto_sel:      int,
-	goto_all:      []outline.Heading,
-	goto_rows:     []outline.Heading,
+	goto_open:          bool,
+	goto_sel:           int,
+	goto_all:           []outline.Heading,
+	goto_rows:          []outline.Heading,
 	// The preview scroll that has not landed yet, and how many times it has been tried. A frame's
 	// sub-document is laid out on the engine's schedule, so the scroll is RETRIED on a timer until the
 	// numbers say it moved - see `scroll_preview_to_heading`.
-	scroll_want:   string,
-	scroll_tries:  int,
-	frame_handler: sa.Event_Handler,
-	prefs:         prefs.Prefs,
-	prefs_path:    string,
+	scroll_want:        string,
+	scroll_tries:       int,
+	frame_handler:      sa.Event_Handler,
+	prefs:              prefs.Prefs,
+	prefs_path:         string,
 
 	// Engine-thread only, so no lock.
-	job:           Job,
-	worker:        ^thread.Thread,
-	running:       bool,
-	allocator:     runtime.Allocator,
+	job:                Job,
+	worker:             ^thread.Thread,
+	running:            bool,
+	allocator:          runtime.Allocator,
 }
 
 // Which of the three mutually exclusive top-level views is on screen. They REPLACE each other rather than
@@ -476,8 +495,44 @@ transcribe :: proc(app: ^App, line: string) {
 	// `context.allocator` as the default heap on every thread, which is why the clone below is enough.
 	strings.write_string(&app.transcript, line)
 	strings.write_byte(&app.transcript, '\n')
+	trim_transcript(app)
 	sync.unlock(&app.mutex)
-	sa.post_callback(app.window, TRANSCRIPT)
+
+	// ONE POST PER BURST. The engine thread redraws the WHOLE transcript for each of these, so a post per
+	// line is quadratic in the length of the run and it is the worker, not the user, setting the pace: a
+	// fast loop can queue thousands before the first is dispatched. The flag is claimed here and cleared by
+	// the handler, so a line written while a redraw is in flight schedules exactly one more.
+	if !sync.atomic_exchange(&app.transcript_pending, true) {
+		sa.post_callback(app.window, TRANSCRIPT)
+	}
+}
+
+/*
+THE TRANSCRIPT IS BOUNDED, because the pane it goes into is not virtualised.
+
+The report pane is a `<plaintext>` and costs ~22KB per LINE, measured — so an unbounded transcript is a
+memory bug waiting for a long enough run, and the redraw that rewrites its whole content gets slower with
+every line. Keeping the tail is the right half to keep: the end of a run is what says how it went.
+
+Called with the mutex HELD (both callers are inside it). Cutting on a line boundary means the pane never
+shows half a line, and the marker says the middle is gone rather than leaving someone to wonder.
+*/
+TRANSCRIPT_CAP :: 512 * 1024
+TRANSCRIPT_KEEP :: 384 * 1024 // what is left after a trim, so trimming is rare rather than per line
+
+trim_transcript :: proc(app: ^App) {
+	text := strings.to_string(app.transcript)
+	if len(text) <= TRANSCRIPT_CAP {
+		return
+	}
+	tail := text[len(text) - TRANSCRIPT_KEEP:]
+	if cut := strings.index_byte(tail, '\n'); cut >= 0 {
+		tail = tail[cut + 1:]
+	}
+	kept := strings.clone(tail, context.temp_allocator)
+	strings.builder_reset(&app.transcript)
+	strings.write_string(&app.transcript, "… earlier lines dropped (the report pane keeps the tail)\n")
+	strings.write_string(&app.transcript, kept)
 }
 
 // The failing exit: the message travels in the struct (two words cannot carry a string), and FAILED is
@@ -502,6 +557,9 @@ on_posted :: proc(handler: ^sa.Host_Handler, posted: sa.Posted) {
 		set_progress(app, int(posted.lparam))
 
 	case TRANSCRIPT:
+		// Cleared BEFORE the draw, not after: a line written while this redraw is running belongs to the
+		// next one, and clearing afterwards would drop it.
+		sync.atomic_store(&app.transcript_pending, false)
 		draw_transcript(app)
 
 	case FAILED:
@@ -560,13 +618,20 @@ job_ended :: proc(app: ^App) {
 	job_free(&app.job, app.allocator)
 	sync.atomic_store(&app.cancel, false)
 	app.running = false
+	ui_thread_priority(false)
 	set_enabled(app, "#generate", true)
 	set_enabled(app, "#analyse", true)
 	set_enabled(app, "#cancel", false)
 
-	// "view page" resolves from the SELECTION rather than from what this run happened to write, so there
-	// is no state to update here — a batch that just wrote 110 pages leaves the selected scenario's page
-	// exactly where the button looks for it.
+	// The pane segment IS re-asked here, and this is the one place it must be: a run writes pages to disk
+	// without putting any of them in the frame, so "is there a page to show" has just changed for a control
+	// that has no other way to find out. (Which scenario's page it would show still comes from the
+	// SELECTION, not from what this run happened to write - a batch of 110 leaves the selected scenario's
+	// page exactly where the segment looks for it.)
+	scan_outputs(app) // the run just wrote files; the tags and the chips are how that shows
+	draw_scenarios(app)
+	refresh_pane_segment(app)
+	note_selected_page(app)
 }
 
 job_free :: proc(job: ^Job, allocator: runtime.Allocator) {
@@ -583,6 +648,34 @@ job_free :: proc(job: ^Job, allocator: runtime.Allocator) {
 	job^ = {}
 }
 
+/*
+THE WINDOW OUTRANKS THE WORK, for as long as the work is running.
+
+A generate run saturates this machine on purpose: the worker thread drives `cli.run`, and on the html-cards
+path `combo`'s own pool takes up to 16 more (`min(physical cores, POOL_MAX_WORKERS)`). All of them are
+normal-priority, and so is the thread pumping the window - so the UI thread waits its turn with everything
+else, and a turn it does not get inside about five seconds is what Windows paints "(Not Responding)" for.
+The app is working perfectly at that moment, which is the worst version of this: the window says it has
+crashed while the terminal behind it prints a scenario a second.
+
+Raising the ENGINE thread rather than lowering the workers is the version that holds: `combo` starts its
+pool inside norn where this program has no say, and lowering only what we own would leave the pool at the
+same priority as the pump. A pump that runs a few milliseconds more often costs the batch nothing
+measurable - it is idle almost all of that time - and it is the difference between a window that repaints
+its progress bar and one that looks dead.
+
+Windows-only, because that is where the symptom was reported and where `SetThreadPriority` is one call.
+Restored when the job ends, so nothing outside a run is affected.
+*/
+ui_thread_priority :: proc(boosted: bool) {
+	when ODIN_OS == .Windows {
+		win.SetThreadPriority(
+			win.GetCurrentThread(),
+			win.THREAD_PRIORITY_ABOVE_NORMAL if boosted else win.THREAD_PRIORITY_NORMAL,
+		)
+	}
+}
+
 // Start a job. The argument lists are already cloned into `app.allocator` by the caller (they were read
 // out of the DOM, whose strings are temp memory).
 start_job :: proc(app: ^App, job: Job, status: string) {
@@ -591,6 +684,8 @@ start_job :: proc(app: ^App, job: Job, status: string) {
 	}
 	app.job = job
 	app.running = true
+	// The pump outranks the work while the work is on - see `ui_thread_priority`.
+	ui_thread_priority(true)
 	set_progress(app, 0)
 	set_status(app, status)
 	set_enabled(app, "#generate", false)
@@ -652,9 +747,12 @@ generate_job :: proc(app: ^App) -> (job: Job, err: string) {
 			scenarios = clone_strings(names[:], app.allocator),
 			out_dir   = strings.clone(out_dir, app.allocator),
 			ext       = extension_for(format),
-			// For the echo below: a small text run is worth showing in the pane, a 48-scenario batch of html
-			// is not.
-			echo      = text_format(format) && n <= ECHO_MAX_DEALS,
+			// For the echo below. THREE conditions, and the third was the missing one: a text format, a
+			// small enough run, AND ONE SCENARIO. `every scenario` in `pretty` echoed all 110 runs - about
+			// 74,000 lines into a `<plaintext>` that is not virtualised, one full-content rewrite per line -
+			// and the window stopped answering for the length of the batch with the progress bar never
+			// getting a frame to paint in. A batch writes files; the glance is for the one you asked for.
+			echo      = text_format(format) && n <= ECHO_MAX_DEALS && len(names) == 1,
 		}, ""
 }
 
@@ -763,6 +861,120 @@ Output_Kind :: enum {
 // The dropdown says what the next RUN will write; it is not a statement about what exists. Following it made
 // the button lie in both directions: switch to `pbn` after generating pages and it reported nothing to view,
 // switch to `html-cards` after a text run and it offered a page that was not there. So this asks the
+/*
+WHAT HAS BEEN GENERATED, FOR EVERY SCENARIO AT ONCE.
+
+The window`s hierarchy is FOLDER -> SCENARIO -> FORMAT: the bar says which folder, the list says which
+scenario, and until now nothing said which formats were in it. Browsing the list told you the names of
+scenarios that might have nothing behind them, and the only way to find out was to press something.
+
+It is ONE `read_dir` rather than a probe per row. Seven extensions across 101 scenarios is 707 `stat` calls
+per redraw, on a directory that by default lives on a network share; a single listing is one round trip and
+answers the whole question. Re-read when the folder could have changed - the field is left, a run ends, the
+window starts - and never per keystroke.
+
+`.hv.txt` is matched BEFORE `.txt`, or every handviewer file would be read as pretty text: the longest
+extension wins, which is the only rule this needs. The two html formats share `.html` on purpose and are
+still told apart by looking INSIDE the file (`file_kind`); the tag says `html` for both, because what the
+tag is for is "there is something here", and the kind is decided when it is opened.
+*/
+Deal_Format :: enum {
+	Html,
+	Pbn,
+	Lin,
+	Handviewer,
+	Line,
+	Numeric,
+	Text,
+}
+
+Format_Set :: bit_set[Deal_Format]
+
+// Longest-first, which is what makes `.hv.txt` win over `.txt`.
+FORMAT_EXTENSIONS :: [Deal_Format]string {
+	.Html       = ".html",
+	.Pbn        = ".pbn",
+	.Lin        = ".lin",
+	.Handviewer = ".hv.txt",
+	.Line       = ".line",
+	.Numeric    = ".num",
+	.Text       = ".txt",
+}
+
+// What the tag says. Short because it sits in a list row 250px wide.
+FORMAT_TAGS :: [Deal_Format]string {
+	.Html       = "html",
+	.Pbn        = "pbn",
+	.Lin        = "lin",
+	.Handviewer = "hv",
+	.Line       = "line",
+	.Numeric    = "num",
+	.Text       = "text",
+}
+
+format_of_extension :: proc(file: string) -> (base: string, format: Deal_Format, ok: bool) {
+	extensions := FORMAT_EXTENSIONS
+	longest := 0
+	for extension, candidate in extensions {
+		if !strings.has_suffix(file, extension) || len(extension) <= longest {
+			continue
+		}
+		base, format, ok, longest = file[:len(file) - len(extension)], candidate, true, len(extension)
+	}
+	return
+}
+
+// Read the deals folder and remember what is in it. Cheap enough to call whenever the folder could have
+// changed, and deliberately silent about a folder that is not there: an unset or mistyped path is a state
+// the window shows in the status line, not an error to raise here.
+scan_outputs :: proc(app: ^App) {
+	clear_outputs(app)
+	typed := strings.trim_space(read_text(app, "#outdir"))
+	if typed == "" {
+		return
+	}
+	dir, abs_err := filepath.abs(typed, context.temp_allocator)
+	if abs_err != nil {
+		return
+	}
+	handle, open_err := os.open(dir)
+	if open_err != nil {
+		return
+	}
+	defer os.close(handle)
+	files, read_err := os.read_dir(handle, -1, context.temp_allocator)
+	if read_err != nil {
+		return
+	}
+	for file in files {
+		if file.type == .Directory {
+			continue
+		}
+		base, format, ok := format_of_extension(file.name)
+		if !ok {
+			continue
+		}
+		if have, found := &app.outputs[base]; found {
+			have^ += {format}
+			continue
+		}
+		app.outputs[strings.clone(base, app.allocator)] = {format}
+	}
+}
+
+clear_outputs :: proc(app: ^App) {
+	for name in app.outputs {
+		delete(name, app.allocator)
+	}
+	clear(&app.outputs)
+}
+
+// What the given scenario has, as tags in the order the enum declares them - so a row always reads the same
+// way and two rows can be compared at a glance.
+formats_for :: proc(app: ^App, name: string) -> Format_Set {
+	return app.outputs[name] or_else {}
+}
+
 // filesystem instead, and the format dropdown is left to mean what it says.
 //
 // Note what this does NOT do: create the directory. `resolve_out_dir` does, because generating into a
@@ -830,25 +1042,236 @@ file_kind :: proc(path: string) -> Output_Kind {
 	return .Cards
 }
 
-// Say what picking a scenario means for the "view page" button, in the status line: the page it would open,
-// or that there is none yet. Cheap, and it answers the question before the click rather than after.
+/*
+WHAT PICKING A SCENARIO DOES.
+
+Two things. It says what the selection HAS in the status line and on the chip row below the bar, and IF THE
+PANE IS ALREADY OPEN it shows that scenario's page there.
+
+The follow is conditional on purpose. A hand page is up to ~86MB of laid-out document, so arrowing down a
+101-scenario list must not load one per row — an OPEN pane is someone saying they are looking at pages, and
+a closed one is not. And the follow never opens the pane by itself: opening it is the segment's job, and a
+list click that changed the shape of the window would be doing two things at once.
+
+The handviewer kind is never followed, in either state. Those pages embed bridgebase.com and want a real
+browser, and no click in a LIST should launch one. THE CHIP IS WHERE THAT LIVES NOW: the chip for a format
+that leaves the window carries an ↗ mark, so pressing it is a deliberate act by someone who can see what it
+is about to do. The standalone `browser` button that used to appear for this went with it — it said the same
+thing for the newest output only, in a second place, and two controls for one act is one too many.
+*/
 note_selected_page :: proc(app: ^App) {
 	if app.running {
 		return // the status line belongs to the run while one is going
 	}
 	path, _, ok, why := selected_output(app)
-	if ok {
-		set_status(app, fmt.tprintf("output: %s", path))
+	refresh_pane_segment(app)
+	draw_output_chips(app)
+	if !ok {
+		set_status(app, why)
 		return
 	}
-	set_status(app, why)
+	set_status(app, fmt.tprintf("output: %s", path))
+	if page_pane_shown(app) {
+		show_selected_page(app, follow = true)
+	}
+}
+
+/*
+The file the pane is showing, so one chip can say "this one". Cleared for a page built in memory.
+
+AND IT REDRAWS THE CHIPS, which is not tidiness - it is the fix for a reported bug. The chips were drawn by
+`note_selected_page` BEFORE the follow loaded anything, so on the first click of a scenario the row went up
+with the PREVIOUS file's chip lit (or none at all), and only a second selection - or pressing a chip - ever
+agreed with what was in the pane. Every path that shows a file passes through here, so this is the one place
+that knows the answer has changed.
+
+The redraw is pure projection: it reads `app.outputs` and the DOM and loads nothing, so it cannot re-enter
+the show it was called from.
+*/
+remember_shown_path :: proc(app: ^App, path: string) {
+	if app.shown_path != "" {
+		delete(app.shown_path, app.allocator)
+	}
+	app.shown_path = strings.clone(path, app.allocator) if path != "" else ""
+	// The pane`s own `browser` button acts on this, so it is alive exactly when there is a FILE behind what
+	// is on screen - not for a page `analyse` built in memory.
+	set_enabled(app, "#page-browser", app.shown_path != "")
+	draw_output_chips(app)
+}
+
+/*
+THE THIRD LEVEL OF THE HIERARCHY: EVERY FORMAT, ALWAYS, IN THREE STATES.
+
+The folder is in the bar, the scenario is in the list, and this row is the format. It shows all seven every
+time - not just the ones that exist - because a row that only listed what was there could say "this scenario
+has html and text" but never "and no pbn": absence had no shape, and comparing two scenarios meant comparing
+two DIFFERENT sets of chips. A fixed row in a fixed order is read by position, and the greyed ones are the
+answer to the question the old row could not express.
+
+	dim + dead   nothing generated in this format
+	neutral      there is a file; pressing it shows that file
+	lit          this is what the pane is showing
+
+The lit state matters because the chips are the only thing that says WHICH of several files you are looking
+at. `selected_output` resolves the NEWEST, so with a page and a pbn on disk the window would otherwise show
+one of them with nothing on screen saying which.
+
+Nothing here probes the filesystem for existence - that is the one `read_dir` the list rows also use. The
+ONE file it does read is the selected scenario`s `.html`, and only its head (`file_kind`), because the two
+html formats share the extension and a HANDVIEWER page has to be marked as going to the browser rather than
+into the pane.
+*/
+draw_output_chips :: proc(app: ^App) {
+	row := find(app, "#outputs")
+	if row == nil {
+		return
+	}
+	if app.selected < 0 || app.selected >= len(app.scenarios) {
+		sa.set_html(row, "")
+		set_shown(app, "#outputs", false)
+		return
+	}
+	name := app.scenarios[app.selected].name
+	have := formats_for(app, name)
+	extensions := FORMAT_EXTENSIONS
+	tags := FORMAT_TAGS
+
+	// Where each chip`s file would be. Resolved once for the row rather than per chip.
+	typed := strings.trim_space(read_text(app, "#outdir"))
+	dir := ""
+	if typed != "" {
+		if absolute, abs_err := filepath.abs(typed, context.temp_allocator); abs_err == nil {
+			dir = absolute
+		}
+	}
+
+	b := strings.builder_make(context.temp_allocator)
+	fmt.sbprintf(&b, `<span class="head">%s</span>`, escape_html(name, context.temp_allocator))
+	for format in Deal_Format {
+		exists := format in have
+		path := ""
+		if exists && dir != "" {
+			path, _ = filepath.join({dir, fmt.tprintf("%s%s", name, extensions[format])}, context.temp_allocator)
+		}
+		// THE BROWSER MARK GOES WHERE A BROWSER ACTUALLY OPENS, which is NOT where it was first put.
+		//
+		// `hv` is `-f handviewer`: bridgebase QUERY STRINGS, one deal a line, in a `.hv.txt`. It is text -
+		// `file_kind` says so, pressing it shows it in the pane as text, and it always did. The mark on it
+		// was reading the FORMAT`s name and promising a browser that nothing was ever going to open
+		// (reported: "why does hv have the browser link arrow but no way to open in browser").
+		//
+		// The one output this window cannot host is an `html-handviewer` PAGE: an `<iframe>` per deal onto
+		// bridgebase.com, which in the frame makes dozens of https requests and then reports javascript as
+		// disabled. Both html formats write `.html`, so which one this is comes from inside the file, and
+		// the mark follows that - the same answer the press will act on.
+		browser := exists && format == .Html && path != "" && file_kind(path) == .Handviewer
+		// The mark for "this one leaves the window". A GLYPH rather than a drawing: a diagonal is the one
+		// shape a border box cannot be, and the svg the rest of these icons stopped being loses its right
+		// and bottom edges under this engine`s `zoom` (measured - see the note in ui/workbench.css).
+		mark := browser ? ` <span class="away">↗</span>` : ""
+
+		state := ""
+		title := fmt.tprintf("Nothing generated for %s in this format yet", name)
+		if exists {
+			state = "have"
+			title = browser ? fmt.tprintf("Open %s in your browser", path) : fmt.tprintf("Show %s", path)
+			if path != "" && path == app.shown_path {
+				state = "have on"
+				title = fmt.tprintf("%s — this is what the pane is showing", path)
+			}
+		}
+		fmt.sbprintf(
+			&b,
+			`<button class="chip %s" data-open="%s"%s title="%s">%s%s</button>`,
+			state,
+			extensions[format],
+			"" if exists else " disabled",
+			escape_html(title, context.temp_allocator),
+			tags[format],
+			mark,
+		)
+	}
+	sa.set_html(row, strings.to_string(b))
+	set_shown(app, "#outputs", true)
+}
+
+// Open one named format for the selected scenario - the chip`s own file, rather than whichever output is
+// newest. Same three destinations as everything else here: a cards page into the frame, text into the frame
+// as text, a handviewer page into the browser.
+open_output_format :: proc(app: ^App, extension: string) {
+	if app.selected < 0 || app.selected >= len(app.scenarios) {
+		return
+	}
+	name := app.scenarios[app.selected].name
+	// The refusal is the model`s: `do_click` runs a disabled button`s behavior and the click arrives here
+	// like any other, so a chip for a format that was never generated is turned away HERE.
+	_, format, known := format_of_extension(fmt.tprintf("x%s", extension))
+	if !known || format not_in formats_for(app, name) {
+		set_status(app, fmt.tprintf("nothing generated for %s in that format yet", name))
+		return
+	}
+	typed := strings.trim_space(read_text(app, "#outdir"))
+	dir, abs_err := filepath.abs(typed, context.temp_allocator)
+	if abs_err != nil {
+		set_status(app, fmt.tprintf("deals folder: %q is not a usable path", typed))
+		return
+	}
+	path, _ := filepath.join({dir, fmt.tprintf("%s%s", name, extension)}, context.temp_allocator)
+	switch file_kind(path) {
+	case .Cards:
+		if show_page_file(app, path) {
+			set_status(app, path)
+		} else {
+			set_status(app, "the hand page could not be loaded into the pane")
+		}
+	case .Handviewer:
+		open_in_browser(path)
+		set_status(app, fmt.tprintf("handviewer pages embed bridgebase.com — opened %s in your browser", path))
+	case .Text:
+		if show_text_file(app, path) {
+			set_status(app, path)
+		} else {
+			set_status(app, fmt.tprintf("could not read %s", path))
+		}
+	}
+}
+
+// Show the selected scenario's output in the pane. `follow` says which of the two callers this is: the
+// selection moving (which must not open the pane, and leaves a handviewer page alone), or a deliberate
+// press. Resolved on every call rather than tracked, because the fields it depends on — the scenario, the
+// output directory, the format — are all editable between one call and the next.
+show_selected_page :: proc(app: ^App, follow: bool) {
+	path, kind, found, why := selected_output(app)
+	if !found {
+		if !follow {
+			set_status(app, why)
+		}
+		return
+	}
+	switch kind {
+	case .Cards:
+		if !show_page_file(app, path) {
+			set_status(app, "the hand page could not be loaded into the pane")
+		}
+	case .Text:
+		if !show_text_file(app, path) {
+			set_status(app, fmt.tprintf("could not read %s", path))
+		}
+	case .Handviewer:
+		if follow {
+			// Deliberately nothing: see the block above. The `browser` button is on screen saying so.
+			return
+		}
+		open_in_browser(path)
+		set_status(app, fmt.tprintf("handviewer pages embed bridgebase.com — opened %s in your browser", path))
+	}
 }
 
 /*
 The file extension a format implies, for the per-scenario output path.
 
 ONE EXTENSION PER FORMAT, and the reason is not tidiness: every text format used to write `<scenario>.txt`,
-so generating a scenario as `pretty` and then as `line` OVERWROTE the first, and "view page" could not tell
+so generating a scenario as `pretty` and then as `line` OVERWROTE the first, and nothing could tell
 which of the two it was about to open. Now the name says what is in it:
 
 	pbn          .pbn      the file interchange format, and the one other tools read
@@ -1032,10 +1455,7 @@ mark_tab :: proc(app: ^App, view: View) {
 	for tab in ([]struct {
 			selector: string,
 			view:     View,
-		} {
-			{`.tab[data-view="panes"]`, .Panes},
-			{`.tab[data-view="editor"]`, .Editor},
-		}) {
+		}{{`.tab[data-view="panes"]`, .Panes}, {`.tab[data-view="editor"]`, .Editor}}) {
 		element := find(app, tab.selector)
 		if element == nil {
 			continue
@@ -1051,8 +1471,42 @@ mark_tab :: proc(app: ^App, view: View) {
 // page regenerating.
 page_ready :: proc(app: ^App, ready: bool) {
 	app.page_ready = ready
-	set_enabled(app, "#deal-page", ready)
-	set_enabled(app, "#deal-wide", ready)
+	refresh_pane_segment(app)
+}
+
+/*
+WHAT THE SEGMENT BEING ALIVE MEANS: there is a page to SHOW - which is not the same as one being loaded.
+
+It used to mean the second, and that was wrong the moment `view page` stopped being a loader. A generate
+run writes pages to DISK; it does not put one in the frame. So after pressing generate the segment stayed
+dead, and with `view page` reduced to the browser hatch there was nothing left on screen that would load
+one: a shut pane, a dead control, and a directory full of pages. A dead end, and the report of it is what
+found this.
+
+So the question the segment asks is the one `view page` used to ask on the click - does the SELECTED
+scenario resolve to something this window can host - plus "or is one already in the frame". Which means it
+is alive at STARTUP too, when the selected scenario has a page from an earlier session. Those deals may be
+old, and that is fine: the page says which scenario it is and the status line says which file it came from.
+Refusing to show a file that is sitting right there would be the worse answer.
+
+A handviewer page does NOT count: hosting one is not something this window can do (it goes to the browser),
+so a segment offering to put it in the pane would be offering something that cannot happen.
+*/
+page_available :: proc(app: ^App) -> bool {
+	if app.page_ready {
+		return true
+	}
+	_, kind, found, _ := selected_output(app)
+	return found && kind != .Handviewer
+}
+
+// Enable or disable the three segments together. The whole group dims: a lit segment inside a dead group
+// would claim the pane is open when there is nothing to open.
+refresh_pane_segment :: proc(app: ^App) {
+	available := page_available(app)
+	for name in ([]string{"closed", "split", "wide"}) {
+		set_enabled(app, fmt.tprintf(`.segbtn[data-pane="%s"]`, name), available)
+	}
 }
 
 /*
@@ -1080,6 +1534,99 @@ pane_is_wide :: proc(app: ^App) -> bool {
 	return effective_display_is_hidden(app, ".work")
 }
 
+// WHERE THE HAND PAGE IS, as one value with three states rather than two independent toggles. A pane
+// cannot be wide and shut, and two buttons said it could: `wide` on a closed pane had to open it and
+// closing a wide pane had to un-widen it, corrections that existed only because the control was the wrong
+// shape. Derived from the document, like everything else here — the enum is a reading of the display
+// properties, not a second copy of them.
+Pane_Mode :: enum {
+	Closed,
+	Split,
+	Wide,
+}
+
+// Is what the pane is showing the selected scenario's output? Compared by NAME rather than by path, so a
+// scenario whose page is in a folder the field has since been pointed away from is not mistaken for the
+// current one. An in-memory page (no file) belongs to nothing and answers false.
+shown_page_is_the_selection :: proc(app: ^App) -> bool {
+	if !app.page_ready || app.shown_path == "" {
+		return false
+	}
+	if app.selected < 0 || app.selected >= len(app.scenarios) {
+		return false
+	}
+	base, _, ok := format_of_extension(filepath.base(app.shown_path))
+	return ok && base == app.scenarios[app.selected].name
+}
+
+pane_mode :: proc(app: ^App) -> Pane_Mode {
+	if !page_pane_shown(app) {
+		return .Closed
+	}
+	return .Wide if pane_is_wide(app) else .Split
+}
+
+// The document's spelling of a mode, and the only place it is decoded — a `data-pane` on the segment, the
+// same idiom the tab strip's `data-view` uses.
+pane_mode_of :: proc(name: string) -> (mode: Pane_Mode, ok: bool) {
+	switch name {
+	case "closed":
+		return .Closed, true
+	case "split":
+		return .Split, true
+	case "wide":
+		return .Wide, true
+	}
+	return .Closed, false
+}
+
+pane_mode_name :: proc(mode: Pane_Mode) -> string {
+	switch mode {
+	case .Closed:
+		return "closed"
+	case .Split:
+		return "split"
+	case .Wide:
+		return "wide"
+	}
+	return "closed"
+}
+
+// Put the page where the pressed segment says. Every transition is expressible because the three states
+// are one value: there is nothing to correct afterwards.
+set_pane_mode :: proc(app: ^App, mode: Pane_Mode) {
+	/*
+	OPENING THE PANE SHOWS THE SELECTED SCENARIO. Two cases, and the second was reported.
+
+	The frame may be EMPTY - after a generate run the pages are on disk and nothing has been put in the
+	frame - and then this press is what fetches one. An empty pane would otherwise be the reward for
+	pressing generate and asking to see the result.
+
+	Or the frame may hold SOMEBODY ELSE'S page: the pane was closed, the selection moved (a closed pane is
+	not followed, deliberately - see `note_selected_page`), and re-opening it brought back the file from
+	before. The window then showed one scenario while the list, the chips and the status line all said
+	another, with no chip lit because none of them was what was on screen ("the selected format button for
+	a scenario needs a refresh when the hand page goes from hidden to shown, all options are still
+	unselected"). So opening the pane re-asks the same question the follow asks.
+
+	A page `analyse` built in memory is not a scenario's output and has no file, so it belongs to no
+	scenario and is replaced too - the pane is a view of the deals view's selection whenever the deals view
+	opens it.
+	*/
+	if mode != .Closed && !shown_page_is_the_selection(app) {
+		show_selected_page(app, follow = false)
+	}
+	switch mode {
+	case .Closed:
+		show_page_pane(app, false)
+	case .Split:
+		set_pane_wide(app, false)
+		show_page_pane(app, true)
+	case .Wide:
+		set_pane_wide(app, true)
+	}
+}
+
 scenario_list_shown :: proc(app: ^App) -> bool {
 	return !effective_display_is_hidden(app, "#scenario-list")
 }
@@ -1098,6 +1645,7 @@ show_page_pane :: proc(app: ^App, shown: bool) {
 	if !shown {
 		set_shown(app, ".work", true)
 	}
+	relayout_split(app)
 	draw_deal_bar(app)
 	if shown {
 		focus_page(app)
@@ -1111,22 +1659,197 @@ set_pane_wide :: proc(app: ^App, wide: bool) {
 	if wide && !page_pane_shown(app) {
 		show_page_pane(app, true)
 	}
+	// The reading has to be taken BEFORE the controls go: a hidden pane is not in the frameset's state, so
+	// once `.work` is `display: none` the three-entry array this restores from no longer exists.
+	if wide && !pane_is_wide(app) {
+		remember_split_state(app)
+	}
 	set_shown(app, ".work", !wide)
+	if !wide {
+		restore_split_state(app)
+	}
+	relayout_split(app)
 	draw_deal_bar(app)
 	remember_deals_layout(app)
+}
+
+/*
+THE SPLIT ITSELF - dragging it, and remembering where it was dragged to.
+
+The panes live in a `<frameset>`, whose frame-set behavior owns their widths and puts a real `<splitter>`
+between them. `frameset.state` is that model, and it is reachable from here the way `plaintext` and `frame`
+are: `element_asset` then `asset_get` / `asset_set`. FOUR MEASURED FACTS, three of them silent:
+
+  * `state` reads back as an array of length STRINGS with their units - `["250px", "1*", "2*"]`;
+  * writing it as an array of NUMBERS returns SUCCESS AND DOES NOTHING. That one cost nothing here only
+    because it was probed before it was believed;
+  * writing strings works and FLEX UNITS SURVIVE, so what is stored is a proportion rather than a pixel
+    count - which is what makes it meaningful at another window size, and after a `wide`;
+  * re-authoring the `cols` attribute after the first layout is ignored. `state` is the live model.
+
+And a fifth that decides the shape of everything below: a pane hidden with `display: none` DROPS OUT of
+the state (three entries become two) and the survivors take its space. So `wide` can stay the cheap thing
+it always was - `display: none` on the work - and the remembered proportion is simply the three-entry
+state read back before it went, restored when it comes back.
+*/
+DEAL_SPLIT_PANES :: 3 // the scenario list, the controls, the hand page
+
+deal_split_asset :: proc(app: ^App) -> (asset: ^sciter.Som_Asset_T, ok: bool) {
+	element := find(app, "#deal-split")
+	if element == nil {
+		return nil, false
+	}
+	found, err := sa.element_asset(element, "frameset")
+	if err != nil || found == nil {
+		return nil, false
+	}
+	return found, true
+}
+
+// The pane widths as the engine spells them, newest first in the caller's temp memory. Empty if the
+// frameset is not there or is not laid out yet - a caller stores nothing rather than storing a guess.
+read_split_state :: proc(app: ^App, allocator := context.allocator) -> []string {
+	asset := deal_split_asset(app) or_else nil
+	if asset == nil {
+		return nil
+	}
+	value, err := sa.asset_get(asset, "state")
+	defer sa.value_clear(&value)
+	if err != nil {
+		return nil
+	}
+	count, lerr := sa.value_len(&value)
+	if lerr != nil || count == 0 {
+		return nil
+	}
+	widths := make([]string, count, allocator)
+	for i in 0 ..< count {
+		item, ierr := sa.value_at(&value, i)
+		defer sa.value_clear(&item)
+		if ierr != nil {
+			continue
+		}
+		text, terr := sa.value_to_display_string(&item, allocator = allocator)
+		if terr == nil {
+			widths[i] = text
+		}
+	}
+	return widths
+}
+
+// Set them. STRINGS, always - see the block above; an array of numbers is accepted and ignored.
+write_split_state :: proc(app: ^App, widths: []string) -> bool {
+	if len(widths) == 0 {
+		return false
+	}
+	asset := deal_split_asset(app) or_else nil
+	if asset == nil {
+		return false
+	}
+	want := sa.value_make_array(len(widths))
+	defer sa.value_clear(&want)
+	for text, i in widths {
+		item := sa.value_from(text)
+		defer sa.value_clear(&item)
+		if sa.value_set_at(&want, i, &item) != nil {
+			return false
+		}
+	}
+	return sa.asset_set(asset, "state", &want) == nil
+}
+
+// The state is only worth keeping while all three panes are in it: a two-entry array is the reading taken
+// while something was hidden, and restoring that later would put the wrong width on the wrong pane.
+remember_split_state :: proc(app: ^App) {
+	widths := read_split_state(app, context.temp_allocator)
+	if len(widths) != DEAL_SPLIT_PANES {
+		return
+	}
+	joined := strings.join(widths, ",", context.temp_allocator)
+	if app.split_state != "" {
+		delete(app.split_state, app.allocator)
+	}
+	app.split_state = strings.clone(joined, app.allocator)
+}
+
+// The panes in the order the frameset holds them. The state array is positional and only counts the panes
+// that are SHOWN, so this is the mapping between "the three widths worth remembering" and "the widths this
+// frameset will accept right now".
+DEAL_SPLIT_SELECTORS :: [DEAL_SPLIT_PANES]string{"#scenario-list", ".work", "#pageview"}
+
+// The remembered three, cut down to the panes actually on screen. The pane that is hidden is not always the
+// last one - `wide` hides the MIDDLE one - so this cannot be a prefix.
+visible_split_widths :: proc(app: ^App, remembered: []string, allocator := context.allocator) -> []string {
+	if len(remembered) != DEAL_SPLIT_PANES {
+		return nil
+	}
+	widths := make([dynamic]string, 0, DEAL_SPLIT_PANES, allocator)
+	for selector, i in DEAL_SPLIT_SELECTORS {
+		if !effective_display_is_hidden(app, selector) {
+			append(&widths, remembered[i])
+		}
+	}
+	return widths[:]
+}
+
+// Put the remembered proportion back. Nothing to restore is not a failure - a first run has never had a
+// splitter dragged, and the document's own `cols` is the right answer then. Neither is a pane being shut:
+// the widths of the ones still there are restored, and the third comes back with its own share when it does.
+restore_split_state :: proc(app: ^App) {
+	if app.split_state == "" {
+		return
+	}
+	remembered := strings.split(app.split_state, ",", context.temp_allocator)
+	widths := visible_split_widths(app, remembered, context.temp_allocator)
+	if len(widths) == 0 {
+		return
+	}
+	_ = write_split_state(app, widths)
+}
+
+/*
+SHOWING OR HIDING A PANE NEEDS THE FRAMESET RE-LAID OUT BY HAND.
+
+Reported: closing the hand page left the controls at their old width with the freed half BLANK, and the
+layout only caught up when something was clicked in the empty area. The `display: none` takes effect - the
+pane is gone - but the frame-set behavior recomputes the widths of the panes it is left with on its own
+schedule, and the next click is what happens to provide it. A window that looks broken until you poke it.
+
+`update_element(el, render = true)` is the ask: style, layout and paint for that subtree, synchronously.
+It is cheap here because the frameset has three children and the expensive one (a hand page of ~86MB) is
+either being hidden or already laid out. Every show/hide of a pane goes through this, so there is one place
+to look when a pane does not resize.
+*/
+relayout_split :: proc(app: ^App) {
+	if element := find(app, "#deal-split"); element != nil {
+		_ = sa.update_element(element, render = true)
+	}
 }
 
 show_scenario_list :: proc(app: ^App, shown: bool) {
 	set_shown(app, "#scenario-list", shown)
+	relayout_split(app)
 	draw_deal_bar(app)
 	remember_deals_layout(app)
 }
 
-// The bar says what the next press does, the way the notes bar`s `preview`/`close` does - a label that
-// names the state instead would leave "what happens if I press it" to be guessed.
+// The lit segment says where the page IS. That is the opposite of what the two buttons this replaced did
+// (their labels named the NEXT PRESS, because a lone toggle has nowhere to show its state) and it is the
+// reason a three-position control is worth the markup: with every state on screen at once, showing which
+// one is current says more than any label could.
+//
+// Read from the document, written to the document. `pane_mode` derives the answer from the display
+// properties, so the lit segment cannot drift from where the page actually is.
 draw_deal_bar :: proc(app: ^App) {
-	set_text_at(app, "#deal-page", page_pane_shown(app) ? "close page" : "hand page")
-	set_text_at(app, "#deal-wide", pane_is_wide(app) ? "with controls" : "wide")
+	mode := pane_mode(app)
+	for name in ([]string{"closed", "split", "wide"}) {
+		element := find(app, fmt.tprintf(`.segbtn[data-pane="%s"]`, name))
+		if element == nil {
+			continue
+		}
+		lit := name == pane_mode_name(mode)
+		_ = sa.set_attribute(element, "class", "segbtn on" if lit else "segbtn")
+	}
 }
 
 // The layout, remembered across sessions. Three booleans in the host prefs file beside the zoom - the same
@@ -1134,6 +1857,7 @@ draw_deal_bar :: proc(app: ^App) {
 DEALS_PANE_PREF :: "deals.pane"
 DEALS_WIDE_PREF :: "deals.wide"
 DEALS_LIST_PREF :: "deals.list"
+DEALS_SPLIT_PREF :: "deals.split"
 
 remember_deals_layout :: proc(app: ^App) {
 	if app.prefs_path == "" {
@@ -1142,6 +1866,14 @@ remember_deals_layout :: proc(app: ^App) {
 	prefs.set(&app.prefs, DEALS_PANE_PREF, page_pane_shown(app) ? "open" : "closed")
 	prefs.set(&app.prefs, DEALS_WIDE_PREF, pane_is_wide(app) ? "wide" : "with-controls")
 	prefs.set(&app.prefs, DEALS_LIST_PREF, scenario_list_shown(app) ? "open" : "closed")
+	// Only while all three panes are in the frameset — `remember_split_state` enforces that itself, because
+	// a shorter array is a reading taken while something was hidden and restoring it would put the wrong
+	// width on the wrong pane. A layout saved while the pane is shut therefore keeps the proportion from
+	// the last time all three were up, which is the one worth coming back to.
+	remember_split_state(app)
+	if app.split_state != "" {
+		prefs.set(&app.prefs, DEALS_SPLIT_PREF, app.split_state)
+	}
 	_ = prefs.save(&app.prefs, app.prefs_path)
 }
 
@@ -1150,6 +1882,14 @@ remember_deals_layout :: proc(app: ^App) {
 restore_deals_layout :: proc(app: ^App) {
 	if remembered, found := prefs.get(&app.prefs, DEALS_LIST_PREF); found {
 		show_scenario_list(app, remembered != "closed")
+	}
+	// The SPLIT is restored though the pane is not: the proportion is what someone dragged, and a window
+	// that opens with the columns where they left them is the point of remembering it at all. It is applied
+	// whether or not the pane is open, because the two panes still in the frameset take the share the
+	// remembered array gives them.
+	if remembered, found := prefs.get(&app.prefs, DEALS_SPLIT_PREF); found && remembered != "" {
+		app.split_state = strings.clone(remembered, app.allocator)
+		restore_split_state(app)
 	}
 	draw_deal_bar(app)
 }
@@ -1209,6 +1949,7 @@ show_page_html :: proc(app: ^App, html: string, title: string) -> bool {
 	if err != nil || sa.value_is_error(&result) {
 		return false
 	}
+	remember_shown_path(app, "") // built here, not read from disk: no chip owns it
 	set_text_at(app, "#page-title", title)
 	page_ready(app, true)
 	// The pane OPENS itself when a page arrives: pressing generate and then having to press something else
@@ -1229,6 +1970,8 @@ show_page_file :: proc(app: ^App, path: string) -> bool {
 	if err != nil || sa.value_is_error(&result) {
 		return false
 	}
+	remember_shown_path(app, path)
+	remember_shown_path(app, path)
 	set_text_at(app, "#page-title", path)
 	page_ready(app, true)
 	show_page_pane(app, true)
@@ -3216,7 +3959,14 @@ show_text_file :: proc(app: ^App, path: string) -> bool {
 		note,
 		escape_html(body, context.temp_allocator),
 	)
-	return show_page_html(app, document, path)
+	if !show_page_html(app, document, path) {
+		return false
+	}
+	// `show_page_html` clears the shown path - it is for a page built in memory, which no chip owns - and
+	// this document IS built in memory, but it is a VIEW OF A FILE. So the path goes back on afterwards,
+	// or a text output could never be the lit chip.
+	remember_shown_path(app, path)
+	return true
 }
 
 // Hand a file to whatever the desktop opens it with. The same call the About panel's link uses; a path
@@ -3568,17 +4318,43 @@ draw_scenarios :: proc(app: ^App) {
 		return
 	}
 	b := strings.builder_make(context.temp_allocator)
+	tags := FORMAT_TAGS
 	for scenario, i in app.scenarios {
+		// WHAT HAS BEEN GENERATED FOR THIS ONE, on the row itself. Browsing the list used to be browsing
+		// names that might have nothing behind them; the tags turn it into browsing what is THERE. They come
+		// out of the single `read_dir` in `scan_outputs`, so a row costs no filesystem call of its own.
+		have := formats_for(app, scenario.name)
+		marks := strings.builder_make(context.temp_allocator)
+		for format in Deal_Format {
+			if format in have {
+				fmt.sbprintf(&marks, `<span class="tag">%s</span>`, tags[format])
+			}
+		}
 		fmt.sbprintf(
 			&b,
-			`<div class="row %s" data-index="%d"><span class="name">%s</span><span class="title">%s</span></div>`,
+			`<div class="row %s" data-index="%d"><span class="name">%s</span><span class="title">%s</span><span class="have">%s</span></div>`,
 			"sel" if i == app.selected else "",
 			i,
 			escape_html(scenario.name, context.temp_allocator),
 			escape_html(cli.scenario_title(scenario), context.temp_allocator),
+			strings.to_string(marks),
 		)
 	}
 	sa.set_html(list, strings.to_string(b))
+}
+
+// WHILE `every scenario` IS ON, EVERY ROW IS MARKED. One class on the list rather than a class per row:
+// the rows are replaced wholesale on every redraw, and a per-row mark would have to be re-decided each
+// time - this survives a redraw because it is on the element the redraw does not touch.
+//
+// The selected row keeps its own mark ON TOP of the wash. Both questions are live at once and they are
+// different: what the run will cover, and which scenario the chips and the pane are about.
+draw_scenario_scope :: proc(app: ^App) {
+	list := find(app, "#scenarios")
+	if list == nil {
+		return
+	}
+	_ = sa.set_attribute(list, "class", "all" if read_bool(app, "#all") else "")
 }
 
 // `set_html` is a parser, so anything that reaches it is escaped first. The scenario names are ours, but
@@ -3843,6 +4619,23 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		if fe.code == .GOT {
 			show_hint(app, hint_for(fe.target))
 		}
+		// LEAVING THE DEALS FOLDER RE-ASKS WHAT THERE IS TO SHOW. That field says where the pages are READ
+		// from as well as written to, so it decides whether the selected scenario has one - which is what
+		// the pane segment is alive by and what the status line reports. Nothing else in this document
+		// needs an edit event: every other field is read on the click that uses it.
+		//
+		// On the way OUT, not per keystroke. The edit behavior raises `.VALUE_CHANGED` for every character
+		// (the palette's query is built on exactly that), and each answer here asks the filesystem for six
+		// candidate paths - a probe per format - which is nothing locally and not nothing on the network
+		// share this field points at by default. A half-typed path resolves to nothing anyway, so the
+		// answer during typing would be noise as well as work.
+		if fe.code == .LOST {
+			if id, _ := sa.attribute(fe.target, "id", context.temp_allocator); id == "outdir" {
+				scan_outputs(app) // a different folder is a different set of files
+				draw_scenarios(app)
+				note_selected_page(app)
+			}
+		}
 		return false
 	}
 
@@ -3884,6 +4677,26 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		case .About:
 		// not a tab; About is entered from its own button
 		}
+		return true
+	}
+
+	// THE PANE SEGMENT, before the ids and for the same reason the tabs are: the document names the
+	// destination (`data-pane`) and this is the only place that spelling is decoded, so a fourth position
+	// would be a button plus an enum member and no new case here.
+	if wanted, _ := sa.attribute(be.target, "data-pane", context.temp_allocator); wanted != "" {
+		mode, known := pane_mode_of(wanted)
+		if !known {
+			return false
+		}
+		// The refusal is the MODEL's, not the attribute's: `do_click` runs a disabled button's behavior and
+		// delivers the click like any other, so a segment that only LOOKED dead would open an empty pane.
+		// `page_available` and not `page_ready`: a page sitting on disk for the selected scenario counts,
+		// and opening the pane is what loads it.
+		if !page_available(app) {
+			set_status(app, "no hand page yet — generate or analyse something, or pick a scenario that has one")
+			return true
+		}
+		set_pane_mode(app, mode)
 		return true
 	}
 
@@ -3942,32 +4755,19 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		show_about(app, false)
 		return true
 
-	case "view-page":
-		// The page for the SCENARIO THAT IS SELECTED, wherever it came from — this run, an earlier batch, or
-		// yesterday's. Resolved on the click rather than tracked: the fields it depends on (the scenario, the
-		// output directory, the format) are all editable, and a button whose enabled state chases three
-		// controls goes stale in a way nobody can see.
-		path, kind, found, why := selected_output(app)
-		if !found {
-			set_status(app, why)
+	case "page-browser":
+		// WHATEVER IS IN THE PANE, IN A REAL BROWSER. Reported as a gap and it was one: the chips could put
+		// a page in the pane and, for the one kind this window cannot host, hand it to a browser - but a
+		// cards page you were LOOKING at had no way out at all, and a browser is where a 48-deal page has
+		// more room, a find-in-page and a print. It acts on `shown_path` rather than on the selection, so
+		// what leaves is what is on screen; a page built in memory by `analyse` has no file and the button
+		// is dead for it, which is the honest answer rather than writing a temp file nobody asked for.
+		if app.shown_path == "" {
+			set_status(app, "nothing in the pane has a file to open — generate or pick one first")
 			return true
 		}
-		switch kind {
-		case .Cards:
-			if !show_page_file(app, path) {
-				set_status(app, "the hand page could not be loaded into the pane")
-			}
-		case .Handviewer:
-			// A handviewer page is an `<iframe>` per deal onto bridgebase.com. Hosting it here means dozens of
-			// https requests and a site that then reports javascript as disabled — it wants a browser, so it
-			// gets one. Measured, and the reason this is not simply loaded into the frame.
-			open_in_browser(path)
-			set_status(app, fmt.tprintf("handviewer pages embed bridgebase.com — opened %s in your browser", path))
-		case .Text:
-			if !show_text_file(app, path) {
-				set_status(app, fmt.tprintf("could not read %s", path))
-			}
-		}
+		open_in_browser(app.shown_path)
+		set_status(app, fmt.tprintf("opened %s in your browser", app.shown_path))
 		return true
 
 	case "page-dump":
@@ -3975,23 +4775,10 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		dump_page(app)
 		return true
 
-	case "deal-page":
-		// Nothing behind it yet. The button is disabled in the document as well, but that is the look and not
-		// the enforcement: `do_click` runs a disabled button`s behavior and the click arrives here all the
-		// same, so the model is what refuses.
-		if !app.page_ready {
-			set_status(app, "no hand page yet — generate or analyse something, or press view page")
-			return true
-		}
-		show_page_pane(app, !page_pane_shown(app))
-		return true
-
-	case "deal-wide":
-		if !app.page_ready {
-			set_status(app, "no hand page yet — generate or analyse something, or press view page")
-			return true
-		}
-		set_pane_wide(app, !pane_is_wide(app))
+	case "all":
+		// The list is the projection of what the run will cover. Read from the CHECKBOX rather than
+		// remembered - the same rule the pane segment and `current_view` follow.
+		draw_scenario_scope(app)
 		return true
 
 	case "deal-list-toggle":
@@ -4085,6 +4872,12 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 
 	// Not a button: a scenario row. The click may land on one of the row's own spans, so walk up looking
 	// for the `data-index` the render wrote. (The bindings have no `closest`; `parent` is the primitive.)
+	// A format chip: open THAT file, rather than the newest one `selected_output` would resolve.
+	if extension, _ := sa.attribute(be.target, "data-open", context.temp_allocator); extension != "" {
+		open_output_format(app, extension)
+		return true
+	}
+
 	if index, is_row := row_index(be.target); is_row {
 		app.selected = index
 		draw_scenarios(app)
@@ -4337,7 +5130,13 @@ main :: proc() {
 	restore_zoom(app)
 	restore_deals_layout(app)
 
+	// What is already in the deals folder, BEFORE the list is drawn: the rows carry their format tags from
+	// the first frame, so a window opened on a folder from an earlier session says what is in it rather
+	// than looking empty until something is pressed.
+	scan_outputs(app)
 	draw_scenarios(app)
+	draw_scenario_scope(app)
+	note_selected_page(app)
 	// The opening view. Said out loud rather than left implicit: the panes are what the stylesheet shows,
 	// but the TAB that says so is marked here, and nothing else would have marked it until the first click.
 	show_view(app, .Panes)
@@ -4380,6 +5179,10 @@ main :: proc() {
 	delete(app.bml_names, app.allocator)
 	delete(app.bml_open, app.allocator)
 	delete(app.docs, app.allocator)
+	delete(app.split_state, app.allocator)
+	delete(app.shown_path, app.allocator)
+	clear_outputs(app)
+	delete(app.outputs)
 	free_goto_index(app)
 	delete(app.scroll_want, app.allocator)
 	prefs.destroy(&app.prefs)
@@ -4423,7 +5226,7 @@ mem_report :: proc(app: ^App, page_path: string) {
 
 	path := page_path
 	if path == "" {
-		// The same resolution "view page" uses, so the measured page is one the application would show.
+		// The same resolution the selection uses, so the measured page is one the application would show.
 		if resolved, kind, found, _ := selected_output(app); found && kind == .Cards {
 			path = resolved
 		}
@@ -4534,13 +5337,100 @@ set_sciter_media_var :: proc(window: sa.Window) {
 
 // The document, with the stylesheet spliced into its `/*CSS*/` marker. A `#load`ed constant cannot be
 // sliced at a run-time index, hence the local copy.
+/*
+THE STYLESHEET IS CUT INTO `<style>` BLOCKS THAT FIT, AUTOMATICALLY. Nobody has to think about this again.
+
+AN INLINE `<style>` IS CAPPED AT 32 KiB IN THIS ENGINE, ALL OR NOTHING: at one byte over, the WHOLE block is
+discarded - its first rule included - with no warning, and the engine`s CSS diagnostics go quiet for that
+sheet at the same moment. The card page hit this first (`norn`; `page-check` asserts its byte count), and
+this file hit it the moment the deals view grew its format chips, at 35,781 bytes.
+
+WHAT IT LOOKS LIKE WHEN IT HAPPENS is the reason this is worth automating rather than watching: nothing
+says "stylesheet". Every `behavior: button` in the document stops attaching, so scenario rows, file rows and
+palette entries answer `do_click` with `handled = false`, and three unrelated tests fail as though the event
+routing had broken. It cost most of an afternoon the first time and it would cost it again.
+
+THE SCOPE OF THE CAP IS ONE `<style>` ELEMENT - two blocks of 20 KB both apply, measured - so the fix is to
+emit several. The first version of this had a marker comment in the stylesheet and a test telling whoever
+tripped it to MOVE THE MARKER, which is the same cliff one step further back: it still fails, still fails
+loudly-but-late, and still needs a person to understand the trap. So the sheet is now cut HERE, at parse
+time, into as many blocks as it takes.
+
+The cut points are TOP-LEVEL RULE BOUNDARIES and nothing else, which is what makes this safe:
+
+  * BLOCK COMMENTS are skipped whole, because this file`s own comments contain braces (they quote
+    `@set name { … }` and `@media` blocks) and a naive brace count would cut inside a sentence;
+  * depth is tracked, so an `@media` or `@set` block is never cut in half;
+  * the order of the rules is preserved exactly, so the cascade is what the file says it is.
+
+A block that would exceed `CSS_BUDGET` starts a new one. The budget is well under the cap because the cost
+of another `<style>` element is nothing and the cost of being wrong is the whole sheet. ONE RULE BIGGER THAN
+THE BUDGET still goes out whole - splitting it would be worse than shipping it - and the test says so.
+*/
+CSS_CAP :: 32 * 1024 // the engine`s hard limit for ONE inline <style> (measured: 32,741 applies, 32,769 does not)
+CSS_BUDGET :: 24 * 1024 // what this aims at, leaving room for a big rule to land on top of a full block
+
+// What one `<style>` becomes two with. Named because the tests assert on it.
+CSS_JOIN :: "</style>\n<style>\n"
+
+/*
+Cut a stylesheet into blocks that each fit, at top-level rule boundaries.
+
+Returns slices INTO the input - no copying - so the caller can concatenate them with the join. A sheet that
+already fits comes back as one block, which is the common case and costs one pass.
+*/
+css_blocks :: proc(css: string, budget := CSS_BUDGET, allocator := context.allocator) -> []string {
+	blocks := make([dynamic]string, 0, 4, allocator)
+	depth := 0
+	block_start := 0
+	rule_start := 0
+	i := 0
+	for i < len(css) {
+		// A comment is skipped WHOLE: the braces inside this file`s prose are not structure.
+		if i + 1 < len(css) && css[i] == '/' && css[i + 1] == '*' {
+			closing := strings.index(css[i + 2:], "*/")
+			if closing < 0 {
+				break // unterminated: the rest is comment, and there is nothing left to cut
+			}
+			i += 2 + closing + 2
+			continue
+		}
+		switch css[i] {
+		case '{':
+			depth += 1
+		case '}':
+			depth -= 1
+			if depth <= 0 {
+				depth = 0
+				// End of a top-level rule. Take everything up to here as one candidate, and close the
+				// current block BEFORE it if adding it would go over.
+				rule_end := i + 1
+				if rule_end - block_start > budget && rule_start > block_start {
+					append(&blocks, css[block_start:rule_start])
+					block_start = rule_start
+				}
+				rule_start = rule_end
+			}
+		}
+		i += 1
+	}
+	if block_start < len(css) {
+		append(&blocks, css[block_start:])
+	}
+	return blocks[:]
+}
+
 compose_document :: proc(allocator := context.allocator) -> string {
 	html := string(UI_HTML)
 	marker := strings.index(html, CSS_MARKER)
 	if marker < 0 {
 		return html // no marker: the document is still valid, just unstyled
 	}
-	return strings.concatenate({html[:marker], string(UI_CSS), html[marker + len(CSS_MARKER):]}, allocator)
+	blocks := css_blocks(string(UI_CSS), CSS_BUDGET, context.temp_allocator)
+	// The marker sits inside a `<style>` in the document, so every block after the first closes that
+	// element and opens one of its own.
+	styled := strings.join(blocks, CSS_JOIN, context.temp_allocator)
+	return strings.concatenate({html[:marker], styled, html[marker + len(CSS_MARKER):]}, allocator)
 }
 
 // `transcribe` without the cross-thread message: for the engine thread, before any worker exists.
@@ -4623,6 +5513,10 @@ test_app_destroy :: proc(app: ^App) {
 	job_free(&app.job, app.allocator)
 	free_goto_index(app)
 	delete(app.scroll_want, app.allocator)
+	delete(app.split_state, app.allocator) // cloned by `remember_split_state`, as `main` frees at exit
+	delete(app.shown_path, app.allocator)
+	clear_outputs(app)
+	delete(app.outputs)
 	delete(app.bml_open, app.allocator) // `open_bml` clones it onto the heap, as `main` frees at exit
 }
 
@@ -4770,7 +5664,6 @@ test_the_document_carries_every_control_the_host_touches :: proc(t: ^testing.T) 
 			"#all",
 			"#generate",
 			"#cancel",
-			"#view-page",
 			"#fill",
 			"#status",
 			"#deal",
@@ -4788,6 +5681,7 @@ test_the_document_carries_every_control_the_host_touches :: proc(t: ^testing.T) 
 			"#about-sciter-link",
 			"#about-versions",
 			"#about-book",
+			"#deal-split",
 			"#pageview",
 			"#page",
 			"#page-title",
@@ -4895,8 +5789,9 @@ test_every_control_is_documented :: proc(t: ^testing.T) {
 			`.tab[data-view="panes"]`,
 			`.tab[data-view="editor"]`,
 			"#deal-list-toggle",
-			"#deal-page",
-			"#deal-wide",
+			`.segbtn[data-pane="closed"]`,
+			`.segbtn[data-pane="split"]`,
+			`.segbtn[data-pane="wide"]`,
 			"#bml-files-toggle",
 			"#bml-folder",
 			"#bml-fold",
@@ -5566,8 +6461,1186 @@ framed_root :: proc(t: ^testing.T, app: ^App) -> (root: sa.Element, ok: bool) {
 	return element, true
 }
 
-// "view page" opens what the selected scenario HAS, newest first — not what the format dropdown names.
+// The SELECTION opens what the scenario HAS, newest first — not what the format dropdown names. (A chip
+// names one format instead; this is the answer for "just show me it".)
 //
+/*
+WHICH FORMATS EXIST, WITHOUT PRESSING ANYTHING - the third level of folder -> scenario -> format.
+
+Browsing the list used to be browsing NAMES: nothing said whether a scenario had anything behind it, and
+the pane could only ever open the newest output, so a pbn written before the page was unreachable without
+changing the format dropdown (which says what the next RUN will write, not what is on disk).
+
+Two projections of ONE `read_dir`, both pinned here: a tag per format on the row, and a chip per format for
+the selected scenario that opens THAT file. The single listing is the point - seven extensions across 101
+scenarios would be 707 `stat` calls a redraw, on a directory that is a network share by default.
+*/
+@(test)
+test_the_formats_that_exist_are_visible_and_pressable :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	app.handler = sa.Event_Handler {
+		subscription = {.BEHAVIOR_EVENT, .MOUSE, .FOCUS, .KEY},
+		on_event     = on_event,
+		user_data    = &app,
+	}
+	sa.attach_window_handler(app.window, &app.handler)
+	defer sa.detach_window_handler(app.window, &app.handler)
+	pump(&app)
+
+	type_into(&app, "#outdir", PARITY_DIR)
+	app.selected = 0
+	name := app.scenarios[0].name
+	directory, _ := filepath.abs(PARITY_DIR, context.temp_allocator)
+	cards, _ := filepath.join({directory, fmt.tprintf("%s.html", name)}, context.temp_allocator)
+	pbn, _ := filepath.join({directory, fmt.tprintf("%s.pbn", name)}, context.temp_allocator)
+	CARDS_DOC :: `<html><head><meta charset="utf-8"></head><body><div class="track" id="nc-track"></div></body></html>`
+	PBN_DOC :: "[Event \"probe\"]\n[Deal \"N:AKQ.234.567.8765 ... \"]\n"
+	if werr := os.write_entire_file(cards, transmute([]u8)string(CARDS_DOC)); werr != nil {
+		testing.expectf(t, false, "could not write %s: %v", cards, werr)
+		return
+	}
+	defer os.remove(cards)
+	if werr := os.write_entire_file(pbn, transmute([]u8)string(PBN_DOC)); werr != nil {
+		testing.expectf(t, false, "could not write %s: %v", pbn, werr)
+		return
+	}
+	defer os.remove(pbn)
+
+	scan_outputs(&app)
+	testing.expect_value(t, formats_for(&app, name), Format_Set{.Html, .Pbn})
+
+	// `.hv.txt` must beat `.txt`, or every handviewer file reads as pretty text. The longest extension wins.
+	base, format, ok := format_of_extension("2c-opener.hv.txt")
+	testing.expect(t, ok, "an .hv.txt file is a format")
+	testing.expect_value(t, base, "2c-opener")
+	testing.expect_value(t, format, Deal_Format.Handviewer)
+
+	// THE ROW carries the tags, so the list says what is behind each name.
+	draw_scenarios(&app)
+	pump(&app)
+	row := find(&app, `#scenarios .row[data-index="0"] .have`)
+	testing.expect(t, row != nil, "the row has no format tags")
+	if row == nil {return}
+	tags, _ := sa.text(row, context.temp_allocator)
+	testing.expectf(t, strings.contains(tags, "html"), "the tags name the page: %q", tags)
+	testing.expectf(t, strings.contains(tags, "pbn"), "and the pbn: %q", tags)
+
+	// THE CHIPS are the same answer for the SELECTED scenario, one press each.
+	note_selected_page(&app)
+	pump(&app)
+	testing.expect(t, !effective_display_is_hidden(&app, "#outputs"), "the chips row should be up")
+	chip := find(&app, `#outputs .chip[data-open=".pbn"]`)
+	testing.expect(t, chip != nil, "no chip for the pbn")
+	if chip == nil {return}
+
+	// SELECTING A SCENARIO LIGHTS THE CHIP FOR WHAT THE FOLLOW JUST LOADED - reported: on the first click of
+	// a scenario the row came up with nothing lit (or the PREVIOUS file's chip lit), and only a second click
+	// agreed with the pane. The chips were drawn by `note_selected_page` BEFORE the follow loaded anything,
+	// so the redraw now hangs off `remember_shown_path`, which every path that shows a file goes through.
+	set_pane_mode(&app, .Split) // an open pane is what makes the selection follow
+	pump(&app)
+	remember_shown_path(&app, "") // nothing shown yet, as on a fresh window
+	note_selected_page(&app)
+	pump(&app)
+	followed, _ := sa.select_all(find(&app, "#outputs"), ".chip.on", context.temp_allocator)
+	testing.expect_value(t, len(followed), 1)
+	if len(followed) == 1 {
+		// The invariant is what matters, not which extension wins: the LIT CHIP IS THE FILE IN THE PANE.
+		// (Which one that is depends on modification times - both files here were written moments apart.)
+		which, _ := sa.attribute(followed[0], "data-open", context.temp_allocator)
+		in_pane, _ := sa.text(find(&app, "#page-title"), context.temp_allocator)
+		testing.expectf(
+			t,
+			strings.has_suffix(in_pane, which),
+			"the lit chip (%s) is not what the pane is showing (%s)",
+			which,
+			in_pane,
+		)
+	}
+
+	// Pressing the pbn chip opens THE PBN - not the newest output, which is what `selected_output` resolves
+	// and which here is the html page. This is also what moves the lit chip off the html one.
+	click(&app, `#outputs .chip[data-open=".pbn"]`)
+	pump(&app)
+	title, _ := sa.text(find(&app, "#page-title"), context.temp_allocator)
+	testing.expect_value(t, title, pbn)
+
+	// THE LIT CHIP SAYS WHICH FILE IS UP. With a page and a pbn both on disk, nothing else on screen does:
+	// `selected_output` resolves the newest, and the pane's title is a path in a corner.
+	lit, _ := sa.select_all(find(&app, "#outputs"), ".chip.on", context.temp_allocator)
+	testing.expect_value(t, len(lit), 1)
+	if len(lit) == 1 {
+		which, _ := sa.attribute(lit[0], "data-open", context.temp_allocator)
+		testing.expect_value(t, which, ".pbn")
+	}
+
+	// EVERY FORMAT IS ON THE ROW, ALWAYS - the ones with no file are present and DEAD. A row that listed
+	// only what existed could say "this has html and text" but never "and no pbn", and two scenarios then
+	// showed two different sets of chips, which is not something you can compare at a glance.
+	all_chips, _ := sa.select_all(find(&app, "#outputs"), ".chip", context.temp_allocator)
+	testing.expect_value(t, len(all_chips), len(Deal_Format))
+	dead := find(&app, `#outputs .chip[data-open=".lin"]`)
+	testing.expect(t, dead != nil, "the lin chip should be there even with no lin file")
+	if dead != nil {
+		state, _ := sa.element_state(dead)
+		testing.expect(t, .DISABLED in state, "a format with no file is dead, not absent")
+	}
+
+	// And the refusal is the MODEL's, because `do_click` runs a disabled button's behavior all the same.
+	before, _ := sa.text(find(&app, "#page-title"), context.temp_allocator)
+	click(&app, `#outputs .chip[data-open=".lin"]`)
+	pump(&app)
+	after_dead, _ := sa.text(find(&app, "#page-title"), context.temp_allocator)
+	testing.expect_value(t, after_dead, before)
+
+	// A scenario with nothing generated still shows the row - seven dead chips, which is the answer
+	// "nothing here yet" written out rather than an empty space that could mean anything.
+	app.selected = len(app.scenarios) - 1
+	note_selected_page(&app)
+	pump(&app)
+	if formats_for(&app, app.scenarios[app.selected].name) == {} {
+		testing.expect(t, !effective_display_is_hidden(&app, "#outputs"), "the row stays up")
+		alive, _ := sa.select_all(find(&app, "#outputs"), ".chip.have", context.temp_allocator)
+		testing.expect_value(t, len(alive), 0)
+	}
+}
+
+/*
+THE STYLESHEET CANNOT HIT THE ENGINE`S INLINE CAP AGAIN - the guard for a trap that does not look like one.
+
+AN INLINE `<style>` IS CAPPED AT 32 KiB, ALL OR NOTHING: at one byte over, the WHOLE block is discarded,
+first rule included, with no warning and no CSS diagnostics. This file passed it while the deals view was
+growing (35,781 bytes), and what broke was not the LOOK - `behavior: button` stopped attaching, so scenario
+rows, file rows and palette entries all answered `do_click` with `handled = false`, and three unrelated
+tests failed as if the event routing had broken.
+
+`css_blocks` now cuts the sheet into blocks that fit, so the answer to "will this happen again" is no rather
+than "not until someone adds 3 KB". What this pins is the cutting itself, on the REAL stylesheet and on the
+two inputs that would break a naive version of it - a comment containing braces (this file has several) and
+a nested block that must not be cut in half.
+*/
+@(test)
+test_the_stylesheet_is_cut_into_blocks_that_fit :: proc(t: ^testing.T) {
+	blocks := css_blocks(string(UI_CSS), CSS_BUDGET, context.temp_allocator)
+	testing.expect(t, len(blocks) > 0, "the stylesheet produced no blocks at all")
+
+	// Every block fits, and nothing was lost or reordered: the blocks joined back together ARE the file.
+	rejoined := strings.builder_make(context.temp_allocator)
+	for block, i in blocks {
+		testing.expectf(
+			t,
+			len(block) <= CSS_CAP,
+			"block %d is %d bytes, over the engine`s %d cap",
+			i,
+			len(block),
+			CSS_CAP,
+		)
+		strings.write_string(&rejoined, block)
+	}
+	testing.expect_value(t, strings.to_string(rejoined), string(UI_CSS))
+
+	// And the document really carries them as separate elements.
+	document := compose_document(context.temp_allocator)
+	testing.expect_value(t, strings.count(document, CSS_JOIN), len(blocks) - 1)
+
+	// A SHEET THAT ALREADY FITS IS ONE BLOCK - the common case, and no `<style>` element is spent on it.
+	small := css_blocks("a { color: red; }\nb { color: blue; }", CSS_BUDGET, context.temp_allocator)
+	testing.expect_value(t, len(small), 1)
+}
+
+/*
+THE TWO INPUTS THAT WOULD MAKE A NAIVE CUTTER PRODUCE A BROKEN SHEET.
+
+Both are real: this project`s stylesheet quotes `@set name { … }` and `@media` blocks inside its comments,
+and it uses `@media` for the phone layout of the hosted page. Cutting on a brace count alone would put a
+block boundary inside a sentence, or inside a media block - and a `<style>` that starts with half a rule is
+a `<style>` the engine discards from that point on. Neither failure would look like a cutting bug.
+*/
+@(test)
+test_the_cutter_never_cuts_inside_a_comment_or_a_block :: proc(t: ^testing.T) {
+	// A tiny budget, so every top-level rule is its own block and the boundaries are easy to name.
+	braces_in_a_comment := `/* a comment that quotes @set thing { rules } and @media (x) { y } */
+one { color: red; }
+two { color: blue; }`
+	blocks := css_blocks(braces_in_a_comment, 1, context.temp_allocator)
+	for block, i in blocks {
+		trimmed := strings.trim_space(block)
+		testing.expectf(
+			t,
+			!strings.has_prefix(trimmed, "rules }") && !strings.has_prefix(trimmed, "y }"),
+			"block %d starts inside a comment: %q",
+			i,
+			trimmed,
+		)
+	}
+	rejoined := strings.concatenate(blocks, context.temp_allocator)
+	testing.expect_value(t, rejoined, braces_in_a_comment)
+
+	// A NESTED BLOCK stays whole: the two rules inside the media block are never a boundary.
+	nested := `@media (max-width: 640px) {
+	one { color: red; }
+	two { color: blue; }
+}
+three { color: green; }`
+	media := css_blocks(nested, 1, context.temp_allocator)
+	testing.expect_value(t, len(media), 2) // the media block, then the rule after it
+	testing.expect(t, strings.has_prefix(strings.trim_space(media[0]), "@media"), "the media block is one piece")
+	testing.expectf(
+		t,
+		strings.count(media[0], "{") == strings.count(media[0], "}"),
+		"the media block was cut in half: %q",
+		media[0],
+	)
+	testing.expect_value(t, strings.concatenate(media, context.temp_allocator), nested)
+}
+
+/*
+OPENING THE PANE SHOWS THE SELECTED SCENARIO, whatever was in it before.
+
+Reported: "the selected format button for a scenario needs a refresh when the hand page goes from hidden to
+shown, all options are still unselected". The chips were not stale - they were RIGHT. The pane was showing
+the file from before it was closed, the selection had moved on in the meantime (a closed pane is not
+followed, deliberately: a hand page is up to 86MB and arrowing down a list must not load one per row), and
+so no chip matched what was on screen. Nothing was wrong with the chips; the window was showing one
+scenario while everything around it named another.
+
+So opening the pane re-asks the same question the follow asks. This pins the case that was reported and the
+one it must not break: a page that IS the selection is not reloaded when the pane comes back.
+*/
+@(test)
+test_opening_the_pane_shows_the_scenario_that_is_selected :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	type_into(&app, "#outdir", PARITY_DIR)
+	directory, _ := filepath.abs(PARITY_DIR, context.temp_allocator)
+	CARDS_DOC :: `<html><head><meta charset="utf-8"></head><body><div class="track" id="nc-track"></div></body></html>`
+
+	first := app.scenarios[0].name
+	second := app.scenarios[1].name
+	first_page, _ := filepath.join({directory, fmt.tprintf("%s.html", first)}, context.temp_allocator)
+	second_page, _ := filepath.join({directory, fmt.tprintf("%s.html", second)}, context.temp_allocator)
+	for path in ([]string{first_page, second_page}) {
+		if werr := os.write_entire_file(path, transmute([]u8)string(CARDS_DOC)); werr != nil {
+			testing.expectf(t, false, "could not write %s: %v", path, werr)
+			return
+		}
+	}
+	defer os.remove(first_page)
+	defer os.remove(second_page)
+	scan_outputs(&app)
+
+	// Look at the first scenario with the pane open.
+	app.selected = 0
+	note_selected_page(&app)
+	set_pane_mode(&app, .Split)
+	pump(&app)
+	testing.expect_value(t, app.shown_path, first_page)
+
+	// Close it, and move on. A closed pane does not follow - that is the rule that makes the list cheap to
+	// arrow through - so the frame still holds the FIRST scenario`s page.
+	set_pane_mode(&app, .Closed)
+	app.selected = 1
+	note_selected_page(&app)
+	pump(&app)
+	testing.expect_value(t, app.shown_path, first_page)
+	dark, _ := sa.select_all(find(&app, "#outputs"), ".chip.on", context.temp_allocator)
+	testing.expect_value(t, len(dark), 0) // nothing on screen belongs to this scenario, and nothing claims to
+
+	// Opening it again shows the scenario the window is otherwise all about.
+	set_pane_mode(&app, .Split)
+	pump(&app)
+	testing.expect_value(t, app.shown_path, second_page)
+	lit, _ := sa.select_all(find(&app, "#outputs"), ".chip.on", context.temp_allocator)
+	testing.expect_value(t, len(lit), 1)
+
+	// And a page that IS the selection is left alone: closing and opening does not re-read the file.
+	set_pane_mode(&app, .Closed)
+	pump(&app)
+	testing.expect(t, shown_page_is_the_selection(&app), "the pane still holds the selected scenario`s page")
+	set_pane_mode(&app, .Split)
+	pump(&app)
+	testing.expect_value(t, app.shown_path, second_page)
+}
+
+/*
+THE REPORT PANE IS A READOUT. `<plaintext>` IS AN EDITOR, and that is why this needs saying twice.
+
+It was chosen for the run log because it holds thousands of lines and lets them be selected and copied - but
+what it IS, is the editor behind the notes view. So the log had a caret and took typing, and an edit there
+means nothing: the next `TRANSCRIPT` message replaces the whole content. Reported ("why is the output box
+editable"), and `readonly` is the fix.
+
+What this pins is the BEHAVIOUR rather than the attribute: text typed at it does not change what the pane
+holds. An attribute check would pass on a spelling this engine ignores.
+*/
+@(test)
+test_the_report_pane_cannot_be_typed_into :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	app.handler = sa.Event_Handler {
+		subscription = {.BEHAVIOR_EVENT, .MOUSE, .FOCUS, .KEY},
+		on_event     = on_event,
+		user_data    = &app,
+	}
+	sa.attach_window_handler(app.window, &app.handler)
+	defer sa.detach_window_handler(app.window, &app.handler)
+	pump(&app)
+
+	transcribe_local(&app, "norn: scenario written")
+	pump(&app)
+	before, ok := report_content(&app, context.temp_allocator)
+	testing.expect(t, ok, "the report pane has no content")
+	if !ok {return}
+
+	report := find(&app, "#report")
+	testing.expect(t, report != nil, "no report pane")
+	if report == nil {return}
+	_ = sa.set_focus(report)
+	pump(&app)
+	// The keys a person would type into it, through the same door a real keystroke comes in by.
+	for character in ([]u32{'x', 'y', 'z'}) {
+		_, _ = sa.send_key(report, .CHAR, character)
+	}
+	pump(&app)
+
+	after, still := report_content(&app, context.temp_allocator)
+	testing.expect(t, still, "the report pane lost its content entirely")
+	testing.expect_value(t, after, before)
+}
+
+/*
+THE ICON MEANS ONE THING ON EVERY SEGMENT: THE FILLED PART IS THE HAND PAGE.
+
+Reported: "the whole width button is lighter and the light part of the middle button is on the left half".
+Both were true, and the cause was the icon taking `currentColor` from its button. On a dark segment that is
+a light block on a dark screen - right. On the LIT segment `currentColor` is `--accent-ink` on an accent
+ground, so the filled half went dark and the EMPTY half became the bright one: the same drawing said "page
+on the right" unlit and "page on the left" lit.
+
+The icon carries its own ground and ink now, and this asserts the property that fixes: the filled half of
+`split` is on the RIGHT of its icon, at rest and when the segment is lit - because that is where the pane
+is. Pixels, because this is about what the thing LOOKS like; the geometry was never wrong.
+*/
+@(test)
+test_the_pane_icons_say_the_same_thing_lit_or_not :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	if !show_page_html(&app, MINIMAL_PAGE, "a page") { 	// wakes the group
+		testing.fail_now(t, "the page did not load into the frame")
+	}
+	pump(&app)
+
+	// `split` lit (the page IS beside the controls), then `wide` lit so `split` is the neutral one.
+	for mode in ([]Pane_Mode{.Split, .Wide}) {
+		set_pane_mode(&app, mode)
+		pump(&app)
+		sa.paint_windowless(&g_view)
+
+		icon := find(&app, `.segbtn[data-pane="split"] .icon`)
+		testing.expect(t, icon != nil, "the split segment has no icon")
+		if icon == nil {return}
+		box, err := sa.location(icon, .Content, .Root)
+		testing.expect_value(t, err, nil)
+		if box.width < 6 || box.height < 4 {
+			continue
+		}
+		left := half_brightness(box, left = true)
+		right := half_brightness(box, left = false)
+		testing.expectf(
+			t,
+			right > left,
+			"with %v lit, the split icon is brighter on the LEFT (%d) than the right (%d) - the fill is the hand page, and the pane is on the right",
+			mode,
+			left,
+			right,
+		)
+	}
+}
+
+// Mean brightness of one half of a box, as a number to compare with the other half.
+@(private = "file")
+half_brightness :: proc(box: sa.Rect, left: bool) -> int {
+	from := box.x if left else box.x + box.width / 2
+	to := box.x + box.width / 2 if left else box.x + box.width
+	total, count := 0, 0
+	for y in box.y ..< box.y + box.height {
+		for x in from ..< to {
+			if x < 0 || y < 0 || x >= 1120 || y >= 780 {
+				continue
+			}
+			r, g, b, _ := sa.windowless_pixel(&g_view, x, y)
+			total += int(r) + int(g) + int(b)
+			count += 1
+		}
+	}
+	return total / max(count, 1)
+}
+
+/*
+THE BROWSER MARK IS ON THE CHIP THAT OPENS A BROWSER, AND ON NO OTHER.
+
+Reported: "why does hv have the browser link arrow but no way to open in browser... html format has no open
+in browser feature". Both halves were true and they are different bugs.
+
+`hv` is `-f handviewer`: bridgebase QUERY STRINGS, one deal a line, written to `.hv.txt`. It is TEXT, it
+always opened as text in the pane, and the mark on it was reading the format`s NAME rather than what would
+happen - a promise nothing kept. The output that really needs a browser is an `html-handviewer` PAGE, an
+`<iframe>` per deal onto bridgebase.com; both html formats write `.html`, so the kind comes from inside the
+file and the mark now follows the same answer the press acts on.
+
+And the other half: a cards page you were LOOKING at had no way out of the window at all. That is the pane`s
+own `browser` button, tested below.
+*/
+@(test)
+test_the_browser_mark_follows_the_file_not_the_format_name :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	type_into(&app, "#outdir", PARITY_DIR)
+	app.selected = 0
+	name := app.scenarios[0].name
+	directory, _ := filepath.abs(PARITY_DIR, context.temp_allocator)
+	cards, _ := filepath.join({directory, fmt.tprintf("%s.html", name)}, context.temp_allocator)
+	hv, _ := filepath.join({directory, fmt.tprintf("%s.hv.txt", name)}, context.temp_allocator)
+	CARDS_DOC :: `<html><head><meta charset="utf-8"></head><body><div class="track" id="nc-track"></div></body></html>`
+	HANDVIEWER_DOC :: `<html><head><meta charset="utf-8"></head><body><iframe src="https://www.bridgebase.com/tools/handviewer.html?lin=x"></iframe></body></html>`
+	HV_QUERIES :: "n=sAThJ8dJ9cAJT7542&s=s632hA9754d43cK83&e=sQ9875hK32dA865c6&w=sKJ4hQT6dKQT72cQ9&a=_&v=n&d=n\n"
+
+	if werr := os.write_entire_file(hv, transmute([]u8)string(HV_QUERIES)); werr != nil {
+		testing.expectf(t, false, "could not write %s: %v", hv, werr)
+		return
+	}
+	defer os.remove(hv)
+	if werr := os.write_entire_file(cards, transmute([]u8)string(CARDS_DOC)); werr != nil {
+		testing.expectf(t, false, "could not write %s: %v", cards, werr)
+		return
+	}
+	defer os.remove(cards)
+
+	scan_outputs(&app)
+	note_selected_page(&app)
+	pump(&app)
+
+	// `.hv.txt` is text. No mark, and pressing it puts the text in the pane rather than launching anything.
+	hv_chip := find(&app, `#outputs .chip[data-open=".hv.txt"]`)
+	testing.expect(t, hv_chip != nil, "no hv chip")
+	if hv_chip == nil {return}
+	hv_html, _ := sa.html(hv_chip, allocator = context.temp_allocator)
+	testing.expectf(t, !strings.contains(hv_html, "away"), "the hv chip must not promise a browser: %s", hv_html)
+	testing.expect_value(t, file_kind(hv), Output_Kind.Text)
+
+	// A CARDS page is hosted here, so no mark either.
+	cards_chip := find(&app, `#outputs .chip[data-open=".html"]`)
+	testing.expect(t, cards_chip != nil, "no html chip")
+	if cards_chip == nil {return}
+	cards_html, _ := sa.html(cards_chip, allocator = context.temp_allocator)
+	testing.expectf(t, !strings.contains(cards_html, "away"), "a cards page opens in the pane: %s", cards_html)
+
+	// The SAME chip carries the mark once the file behind it is a handviewer page - the kind is read from
+	// inside the file, because both html formats share the extension.
+	if werr := os.write_entire_file(cards, transmute([]u8)string(HANDVIEWER_DOC)); werr == nil {
+		scan_outputs(&app)
+		note_selected_page(&app)
+		pump(&app)
+		marked := find(&app, `#outputs .chip[data-open=".html"]`)
+		testing.expect(t, marked != nil, "the html chip went away")
+		if marked != nil {
+			marked_html, _ := sa.html(marked, allocator = context.temp_allocator)
+			testing.expectf(
+				t,
+				strings.contains(marked_html, "away"),
+				"a handviewer page IS the browser case: %s",
+				marked_html,
+			)
+		}
+	}
+}
+
+// WHATEVER IS IN THE PANE CAN LEAVE THE WINDOW. The chips answer "which file"; this answers "not here" -
+// a browser has more room for a 48-deal page, a find-in-page and a print. It follows what is SHOWN rather
+// than what is selected, and it is dead for a page `analyse` built in memory, which has no file to hand
+// over: writing a temp file nobody asked for would be the wrong kind of helpful.
+@(test)
+test_the_pane_can_send_what_it_shows_to_a_browser :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	pump(&app)
+
+	button := find(&app, "#page-browser")
+	testing.expect(t, button != nil, "the pane has no browser button")
+	if button == nil {return}
+	dead, _ := sa.element_state(button)
+	testing.expect(t, .DISABLED in dead, "nothing is shown yet, so there is nothing to open")
+
+	// A page built in memory (what `analyse` produces) has no file behind it - still dead.
+	if !show_page_html(&app, MINIMAL_PAGE, "a page") {
+		testing.fail_now(t, "the page did not load into the frame")
+	}
+	pump(&app)
+	still_dead, _ := sa.element_state(button)
+	testing.expect(t, .DISABLED in still_dead, "an in-memory page has no file to open in a browser")
+
+	// A page read off disk does.
+	type_into(&app, "#outdir", PARITY_DIR)
+	app.selected = 0
+	name := app.scenarios[0].name
+	directory, _ := filepath.abs(PARITY_DIR, context.temp_allocator)
+	cards, _ := filepath.join({directory, fmt.tprintf("%s.html", name)}, context.temp_allocator)
+	CARDS_DOC :: `<html><head><meta charset="utf-8"></head><body><div class="track" id="nc-track"></div></body></html>`
+	if werr := os.write_entire_file(cards, transmute([]u8)string(CARDS_DOC)); werr != nil {
+		testing.expectf(t, false, "could not write %s: %v", cards, werr)
+		return
+	}
+	defer os.remove(cards)
+
+	testing.expect(t, show_page_file(&app, cards), "the page did not load from disk")
+	pump(&app)
+	alive, _ := sa.element_state(button)
+	testing.expect(t, .DISABLED not_in alive, "a page with a file behind it can go to a browser")
+	testing.expect_value(t, app.shown_path, cards)
+}
+
+/*
+THE DEALS BAR LINES UP - one row, one centre line, and the lit segment filling its button.
+
+Reported from the window with a picture: "alignment is bad, highlight for tristate button not even cover all
+button space, icons not centred, including for scenarios button. scenarios, generate every scenario and
+deals folder all not centred". Three faults in one row, and all three are the same kind of thing - a
+horizontal flow does NOT centre children of different heights, and an inline-block sits on the BASELINE.
+
+What this pins:
+
+  * every control in the bar shares the bar`s centre line (a button, a checkbox, a small label and a text
+    field are four different heights, so this is the assertion that they are laid on one axis rather than
+    stacked from the top);
+  * each segment FILLS the group, so the lit one`s accent ground covers the whole button rather than
+    leaving a strip of the group`s background under it;
+  * each icon sits on its button`s centre, not on its text baseline.
+
+Boxes rather than pixels here: this is layout, and the geometry is the thing that was wrong. The tolerance
+is 2px, which is a rounding at a fractional zoom rather than a misalignment anyone can see.
+*/
+@(test)
+test_the_deals_bar_lines_up :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	if !show_page_html(&app, MINIMAL_PAGE, "a page") { 	// wakes the segment group
+		testing.fail_now(t, "the page did not load into the frame")
+	}
+	pump(&app)
+
+	// AT EVERY ZOOM, not just at 100%. The report came with a picture of a ZOOMED window, and a first
+	// version of this test that ran at rest passed on the broken bar: a row of mixed heights can look
+	// settled at one scale and come apart at another, because the paddings, the borders and the text all
+	// grow by different roundings. So the whole check runs again at each step.
+	defer for _ in 0 ..< 8 {_ = zoom_step(&app, -1)} 	// leave the window as it was found
+	for step in 0 ..= 6 {
+		if step > 0 {
+			_ = zoom_step(&app, 1)
+			pump(&app)
+		}
+		check_the_bar_lines_up(t, &app, step)
+	}
+}
+
+@(private = "file")
+check_the_bar_lines_up :: proc(t: ^testing.T, app: ^App, step: int) {
+	bar := find(app, ".panes .bar")
+	testing.expect(t, bar != nil, "the deals view has no bar")
+	if bar == nil {return}
+	bar_box, berr := sa.location(bar, .Padding, .Root)
+	testing.expect_value(t, berr, nil)
+	bar_centre := bar_box.y + bar_box.height / 2
+
+	// ONE CENTRE LINE for everything in the row.
+	for selector in ([]string{"#deal-list-toggle", "#all", ".barlabel-check", ".seg", ".barlabel", ".bar #outdir"}) {
+		element := find(app, selector)
+		testing.expectf(t, element != nil, "the bar is missing %s", selector)
+		if element == nil {
+			continue
+		}
+		box, err := sa.location(element, .Border, .Root)
+		if err != nil {
+			continue
+		}
+		centre := box.y + box.height / 2
+		testing.expectf(
+			t,
+			abs(centre - bar_centre) <= 2,
+			"at zoom step %d, %s sits at %d against the bar`s centre %d (off by %d)",
+			step,
+			selector,
+			centre,
+			bar_centre,
+			abs(centre - bar_centre),
+		)
+	}
+
+	// THE SEGMENTS FILL THE GROUP. `.Padding` on the group is the box inside its border, which is what
+	// a segment should cover top to bottom - anything less is the strip the report showed under the lit one.
+	group := find(app, "#deal-pane-mode")
+	testing.expect(t, group != nil, "no segment group")
+	if group != nil {
+		inner, gerr := sa.location(group, .Padding, .Root)
+		testing.expect_value(t, gerr, nil)
+		for name in ([]string{"closed", "split", "wide"}) {
+			segment := find(app, fmt.tprintf(`.segbtn[data-pane="%s"]`, name))
+			if segment == nil {
+				continue
+			}
+			box, err := sa.location(segment, .Border, .Root)
+			if err != nil {
+				continue
+			}
+			testing.expectf(
+				t,
+				box.height >= inner.height - 1,
+				"the %s segment is %dpx tall in a %dpx group - the lit ground would not cover it",
+				name,
+				box.height,
+				inner.height,
+			)
+		}
+	}
+
+	// AND THE ICONS ARE CENTRED IN THEIR BUTTONS.
+	for selector in ([]string{"#deal-list-toggle", `.segbtn[data-pane="split"]`}) {
+		button := find(app, selector)
+		if button == nil {
+			continue
+		}
+		icon, ierr := sa.select_first(button, ".icon")
+		if ierr != nil {
+			testing.expectf(t, false, "%s has no icon", selector)
+			continue
+		}
+		button_box, _ := sa.location(button, .Border, .Root)
+		icon_box, _ := sa.location(icon, .Border, .Root)
+		button_centre := button_box.y + button_box.height / 2
+		icon_centre := icon_box.y + icon_box.height / 2
+		testing.expectf(
+			t,
+			abs(icon_centre - button_centre) <= 2,
+			"the icon in %s sits %dpx off its button`s centre",
+			selector,
+			abs(icon_centre - button_centre),
+		)
+	}
+}
+
+/*
+THE ICONS ARE STILL RECTANGLES WHEN THE WINDOW IS ZOOMED - and an honest note about what this can see.
+
+The icons shipped as inline `<svg>`. Reported from the real window: "the more we zoom in, the more the icons
+look wrong - starts looking like rectangles, ends more like an r". A throwaway probe reproduced exactly that
+by painting the icon markup inside an element with `zoom: 2.0` and reading the pixels back: perfect at 1:1,
+TOP-AND-LEFT-ONLY zoomed, with or without a viewBox, at any element size, `overflow: visible` or not. They
+are bordered boxes now, which is the fix: a border is drawn by the box painter and laid out by the same box
+model as everything else here, so it scales with the document like every other length in this window.
+
+WHAT THIS TEST DOES NOT PROVE. Aimed at the OLD svg icon inside this document it PASSES - so the defect does
+not reproduce here, and the difference worth suspecting is the RASTERIZER: this harness is a windowless
+software view, while the real window is on a GPU backend by default (`WORKBENCH_GFX` exists to force one).
+That makes `WORKBENCH_GFX=raster` the bisect if a drawing ever looks wrong again in the window and right in
+a test, and it means the reported bug`s only witness is a real window.
+
+So what is pinned here is the weaker, still worth having property: at every zoom step to the ceiling, the
+`closed` segment`s icon has ink on all four edges AND A HOLE IN THE MIDDLE. That catches a shape that
+collapses, fills in or loses a side for any reason this harness CAN see - and it is written the way it is
+because of two things learned by writing it worse first: a disabled segment is painted in `--line` and reads
+as no ink at all (so a page is loaded to wake it), and a lit segment is a filled accent block (so the
+neutral one is the one measured).
+*/
+@(test)
+test_an_icon_is_still_a_rectangle_when_the_window_is_zoomed :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	pump(&app)
+	defer for _ in 0 ..< 12 {_ = zoom_step(&app, -1)} 	// leave the window as it was found
+
+	// THE SEGMENT HAS TO BE AWAKE TO BE MEASURED. A disabled one is painted in `--line` (#313244), which is
+	// below any sane ink threshold - a pixel test aimed at it reports "no edges" whatever it is drawing, and
+	// would fail the correct icon as loudly as the broken one. A page in the pane is what enables it, and
+	// opening the pane leaves `closed` as the NEUTRAL segment (the lit one is a filled accent block, which
+	// is the other thing this test must not be pointed at).
+	if !show_page_html(&app, MINIMAL_PAGE, "a page") {
+		testing.fail_now(t, "the page did not load into the frame")
+	}
+	set_pane_mode(&app, .Split)
+	pump(&app)
+
+	factor := 1.0
+	for step in 0 ..= 10 {
+		if step > 0 {
+			factor = zoom_step(&app, 1)
+		}
+		pump(&app)
+		sa.paint_windowless(&g_view)
+
+		icon := find(&app, `.segbtn[data-pane="closed"] .icon`)
+		testing.expect(t, icon != nil, "the closed segment has no icon")
+		if icon == nil {return}
+		box, err := sa.location(icon, .Border, .Root)
+		testing.expect_value(t, err, nil)
+		if box.width < 6 || box.height < 5 || box.y + box.height >= 780 {
+			continue // off the bottom of a windowless view, or too small to say anything about
+		}
+
+		testing.expectf(t, edge_has_ink(box, .Top), "no top edge at zoom %.2f", factor)
+		testing.expectf(t, edge_has_ink(box, .Left), "no left edge at zoom %.2f", factor)
+		testing.expectf(t, edge_has_ink(box, .Bottom), "NO BOTTOM EDGE at zoom %.2f - the svg-under-zoom bug", factor)
+		testing.expectf(t, edge_has_ink(box, .Right), "NO RIGHT EDGE at zoom %.2f - the svg-under-zoom bug", factor)
+		// An OUTLINE, not a blob: the middle of the `closed` icon is the bar behind it.
+		testing.expectf(t, !centre_is_ink(box), "the closed icon is filled in at zoom %.2f", factor)
+	}
+}
+
+@(private = "file")
+Edge :: enum {
+	Top,
+	Bottom,
+	Left,
+	Right,
+}
+
+@(private = "file")
+pixel_is_ink :: proc(x, y: i32) -> bool {
+	if x < 0 || y < 0 || x >= 1120 || y >= 780 {
+		return false
+	}
+	r, g, b, _ := sa.windowless_pixel(&g_view, x, y)
+	return int(r) + int(g) + int(b) > 3 * 120 // the bar is #181825..#313244, the icon`s ink #a6adc8+
+}
+
+// Is anything painted along one edge of a box? A hairline border lands either side of the boundary once the
+// zoom is fractional, so each edge is a two-pixel band.
+@(private = "file")
+edge_has_ink :: proc(box: sa.Rect, edge: Edge) -> bool {
+	switch edge {
+	case .Top, .Bottom:
+		y := box.y if edge == .Top else box.y + box.height - 1
+		inward: i32 = 1 if edge == .Top else -1
+		for x in box.x ..< box.x + box.width {
+			if pixel_is_ink(x, y) || pixel_is_ink(x, y + inward) {
+				return true
+			}
+		}
+	case .Left, .Right:
+		x := box.x if edge == .Left else box.x + box.width - 1
+		inward: i32 = 1 if edge == .Left else -1
+		for y in box.y ..< box.y + box.height {
+			if pixel_is_ink(x, y) || pixel_is_ink(x + inward, y) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// The middle third of the box: ink there means a filled shape rather than an outline.
+@(private = "file")
+centre_is_ink :: proc(box: sa.Rect) -> bool {
+	lit := 0
+	total := 0
+	for y in box.y + box.height / 3 ..< box.y + 2 * box.height / 3 {
+		for x in box.x + box.width / 3 ..< box.x + 2 * box.width / 3 {
+			total += 1
+			if pixel_is_ink(x, y) {
+				lit += 1
+			}
+		}
+	}
+	return total > 0 && lit * 2 > total
+}
+
+/*
+WHY THE WINDOW STOPPED ANSWERING DURING `every scenario` IN `pretty`, and the three things that fixed it.
+
+Reported from the real window: the batch ran (the terminal was printing a scenario a second), the progress
+bar never painted, and Windows marked the window Not Responding for the length of the run. The work was on
+the worker thread, so it was the ENGINE thread that was buried, and this is what buried it:
+
+  * `echo` was true for the batch. `every scenario` in `pretty` at 48 deals is ~110 runs of ~700 lines, so
+    about SEVENTY-FOUR THOUSAND lines went through `transcribe`;
+  * each of those posted a `TRANSCRIPT` callback, and each callback rewrites the WHOLE content of the report
+    pane - quadratic, and paced by a worker that can queue thousands before the first is dispatched;
+  * the pane is a `<plaintext>`, which is not virtualised and costs ~22KB a LINE, so the same run was also
+    building a document of some gigabytes.
+
+The fixes are one per cause: a batch does not echo (the glance is for the scenario you asked for), a burst
+of lines costs ONE post, and the transcript keeps its tail rather than growing without limit.
+*/
+@(test)
+test_a_batch_does_not_pour_its_deals_into_the_pane :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	type_into(&app, "#outdir", PARITY_DIR)
+	type_into(&app, "#count", "4")
+	type_into(&app, "#format", "pretty")
+	app.selected = 0
+
+	one, one_err := generate_job(&app)
+	defer job_free(&one, app.allocator)
+	testing.expect_value(t, one_err, "")
+	testing.expect_value(t, len(one.scenarios), 1)
+	testing.expect(t, one.echo, "one scenario of pretty text is exactly what the pane is for")
+
+	// The same run over every scenario is NOT a glance, however small each one is.
+	tick(&app, "#all")
+	batch, batch_err := generate_job(&app)
+	defer job_free(&batch, app.allocator)
+	testing.expect_value(t, batch_err, "")
+	testing.expect_value(t, len(batch.scenarios), len(app.scenarios))
+	testing.expect(t, !batch.echo, "a batch writes files; it must not echo every deal of every scenario")
+}
+
+// A BURST OF LINES COSTS ONE POST, and the transcript keeps its tail. Both are about the ENGINE thread: it
+// redraws the whole pane per message, and the pane costs ~22KB a line, so an unbounded transcript with a
+// post per line is what "not responding" was made of.
+@(test)
+test_the_transcript_coalesces_its_posts_and_keeps_its_tail :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	// The flag IS the post: `transcribe` posts only when it claims it, and the handler clears it before
+	// drawing. So one claim outstanding across any number of lines is the assertion.
+	testing.expect(t, !bool(sync.atomic_load(&app.transcript_pending)), "nothing pending on a fresh app")
+	transcribe(&app, "the first line claims it")
+	testing.expect(t, bool(sync.atomic_load(&app.transcript_pending)), "the first line schedules a redraw")
+	for i in 0 ..< 5000 {
+		transcribe(&app, fmt.tprintf("[%d/5000] a scenario wrote a page", i))
+	}
+	testing.expect(
+		t,
+		bool(sync.atomic_load(&app.transcript_pending)),
+		"5000 more lines are still the ONE redraw that was already scheduled",
+	)
+
+	// Drawing clears it, and the next line schedules the next one.
+	sync.atomic_store(&app.transcript_pending, false)
+	transcribe(&app, "and a line after the redraw schedules another")
+	testing.expect(t, bool(sync.atomic_load(&app.transcript_pending)), "the next burst claims it again")
+
+	// THE TAIL IS WHAT IS KEPT. A run says how it went at the END, and the pane cannot hold the middle of a
+	// 74,000-line batch at 22KB a line.
+	for i in 0 ..< 20000 {
+		transcribe(&app, fmt.tprintf("[%d] norn: scenario written, 48 accepted from 1229 deals", i))
+	}
+	sync.lock(&app.mutex)
+	text := strings.clone(strings.to_string(app.transcript), context.temp_allocator)
+	sync.unlock(&app.mutex)
+	testing.expectf(
+		t,
+		len(text) <= TRANSCRIPT_CAP,
+		"the transcript is %d bytes, past its %d cap",
+		len(text),
+		TRANSCRIPT_CAP,
+	)
+	testing.expect(t, strings.contains(text, "earlier lines dropped"), "and it says the middle went")
+	testing.expect(t, strings.contains(text, "[19999]"), "the LAST line is the one that must survive")
+	// Cut on a line boundary: the pane never shows half a line.
+	for line in strings.split_lines(strings.trim_right_space(text), context.temp_allocator) {
+		if strings.has_prefix(line, "[") {
+			testing.expectf(t, strings.contains(line, "] norn: scenario written"), "half a line survived: %q", line)
+			break
+		}
+	}
+}
+
+/*
+`EVERY SCENARIO` OVERRIDES THE SELECTION, SO IT SHOWS ITSELF IN THE LIST.
+
+It used to sit in the generate panel between `double-dummy hooks` and `fixed table` - two harmless per-run
+switches - while doing something neither of them does: ignoring the scenario you have selected and running
+all 101, one page each. A consequential control reading as a third checkbox, two rows below the thing it
+contradicts.
+
+It is in the bar next to the list now, and the LIST is where its state is legible: while it is on, every row
+takes the soft wash and a left edge, and the selected row keeps its own stronger mark on top. Both questions
+stay answered at once - what the run will cover, and which scenario the chips and the pane are about - which
+is why the selection is neither cleared nor disabled while it is on.
+
+The class goes on the LIST, not on each row: the rows are replaced wholesale on every redraw and a per-row
+mark would have to be re-decided every time.
+*/
+@(test)
+test_every_scenario_shows_itself_in_the_list :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	app.handler = sa.Event_Handler {
+		subscription = {.BEHAVIOR_EVENT, .MOUSE, .FOCUS, .KEY},
+		on_event     = on_event,
+		user_data    = &app,
+	}
+	sa.attach_window_handler(app.window, &app.handler)
+	defer sa.detach_window_handler(app.window, &app.handler)
+	pump(&app)
+
+	// It lives in the BAR, beside the list control - not in the generate panel with the run settings.
+	box := find(&app, ".bar #all")
+	testing.expect(t, box != nil, "`every scenario` is not in the bar")
+	if box == nil {return}
+	list := find(&app, "#scenarios")
+	testing.expect(t, list != nil, "no scenario list")
+	if list == nil {return}
+
+	off, _ := sa.attribute(list, "class", context.temp_allocator)
+	testing.expect(t, !strings.contains(off, "all"), "the list should not be marked before it is ticked")
+
+	click(&app, "#all")
+	pump(&app)
+	testing.expect(t, read_bool(&app, "#all"), "the click should tick the box")
+	on, _ := sa.attribute(list, "class", context.temp_allocator)
+	testing.expectf(t, strings.contains(on, "all"), "the list should be marked while it is on, class=%q", on)
+
+	// THE SELECTION SURVIVES IT. The run covers everything; the selection still says which scenario the
+	// chips and the pane are about, and the two marks are meant to be readable at the same time.
+	app.selected = 3
+	draw_scenarios(&app)
+	pump(&app)
+	marked, merr := sa.select_all(list, ".row.sel", context.temp_allocator)
+	testing.expect_value(t, merr, nil)
+	testing.expect_value(t, len(marked), 1)
+	still_on, _ := sa.attribute(list, "class", context.temp_allocator)
+	testing.expectf(t, strings.contains(still_on, "all"), "a redraw must not lose the mark, class=%q", still_on)
+
+	// And the run really does cover everything while it is on - the mark is not decoration.
+	type_into(&app, "#outdir", PARITY_DIR)
+	job, err := generate_job(&app)
+	defer job_free(&job, app.allocator)
+	testing.expect_value(t, err, "")
+	testing.expect_value(t, len(job.scenarios), len(app.scenarios))
+
+	click(&app, "#all")
+	pump(&app)
+	back, _ := sa.attribute(list, "class", context.temp_allocator)
+	testing.expect(t, !strings.contains(back, "all"), "unticking takes the mark off again")
+}
+
+// THE DEALS FOLDER IS IN THE BAR, AND CHANGING IT RE-ASKS WHAT THERE IS TO SHOW. It is not a setting of
+// generating - it says where this window reads as well as where it writes, which is why the pane segment's
+// aliveness follows it. Typing a folder with pages in it must wake the segment without anything else being
+// pressed, and typing it away again must put it back to sleep.
+@(test)
+test_the_deals_folder_decides_what_there_is_to_show :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	app.handler = sa.Event_Handler {
+		subscription = {.BEHAVIOR_EVENT, .MOUSE, .FOCUS, .KEY},
+		on_event     = on_event,
+		user_data    = &app,
+	}
+	sa.attach_window_handler(app.window, &app.handler)
+	defer sa.detach_window_handler(app.window, &app.handler)
+	pump(&app)
+
+	// It lives in the BAR now, on the same row as the pane segment, rather than in the generate panel.
+	field := find(&app, ".bar #outdir")
+	testing.expect(t, field != nil, "the deals folder is not in the bar")
+	segment := find(&app, `.segbtn[data-pane="split"]`)
+	if field == nil || segment == nil {return}
+	field_box, ferr := sa.location(field, .Border, .Root)
+	segment_box, serr := sa.location(segment, .Border, .Root)
+	testing.expect_value(t, ferr, nil)
+	testing.expect_value(t, serr, nil)
+	testing.expectf(
+		t,
+		abs(field_box.y - segment_box.y) < field_box.height,
+		"the folder (y=%d) and the segment (y=%d) should share the bar's row",
+		field_box.y,
+		segment_box.y,
+	)
+	testing.expectf(
+		t,
+		field_box.width > 100,
+		"the folder field is %dpx wide - it takes the bar's slack",
+		field_box.width,
+	)
+
+	app.selected = 0
+	name := app.scenarios[0].name
+	directory, _ := filepath.abs(PARITY_DIR, context.temp_allocator)
+	cards, _ := filepath.join({directory, fmt.tprintf("%s.html", name)}, context.temp_allocator)
+	CARDS_DOC :: `<html><head><meta charset="utf-8"></head><body><div class="track" id="nc-track"></div></body></html>`
+	if werr := os.write_entire_file(cards, transmute([]u8)string(CARDS_DOC)); werr != nil {
+		testing.expectf(t, false, "could not write %s: %v", cards, werr)
+		return
+	}
+	defer os.remove(cards)
+
+	// Pointing at a folder with pages in it is enough on its own: no button is pressed here. Leaving the
+	// field is the moment that re-asks, so the test does what a person does - put the caret in it, set the
+	// text, then go somewhere else. (`set_element_value` alone raises no edit event at all: measured, the
+	// window's handler never woke, which is why the focus move is here and not a synthesised event.)
+	leave_the_folder_field :: proc(app: ^App, field: sa.Element, text: string) {
+		_ = sa.set_focus(field)
+		pump(app)
+		type_into(app, "#outdir", text)
+		if elsewhere := find(app, "#scenarios"); elsewhere != nil {
+			_ = sa.set_focus(elsewhere)
+		}
+		pump(app)
+	}
+
+	leave_the_folder_field(&app, field, PARITY_DIR)
+	testing.expect(t, page_available(&app), "a folder with a page for this scenario has something to show")
+	alive, _ := sa.element_state(segment)
+	testing.expect(t, .DISABLED not_in alive, "so the segment is alive")
+
+	// And pointing somewhere with nothing in it puts the window back where it was.
+	leave_the_folder_field(&app, field, "target/debug/wb-empty-folder-probe")
+	testing.expect(t, !page_available(&app), "an empty folder has nothing to show")
+	dead, _ := sa.element_state(segment)
+	testing.expect(t, .DISABLED in dead, "and the segment is dead again")
+}
+
+/*
+A PAGE ON DISK IS A PAGE TO SHOW - reported from the window, and it was a dead end rather than a blemish.
+
+A generate run writes its pages to DISK and puts none of them in the frame. The segment used to ask whether
+one had been LOADED, so after pressing generate it stayed dead - and with `view page` reduced to the browser
+hatch there was then nothing on screen that would load one. Shut pane, dead control, a directory full of
+pages, and no way from one to the other.
+
+So the question is now "is there a page to show", which a file for the selected scenario answers, and
+OPENING the pane is what loads it. The same answer covers a fresh start on an output directory from an
+earlier session: those deals may be old, but the page names its scenario and the status line names the file,
+and refusing to show something that is sitting right there would be the worse behaviour.
+*/
+@(test)
+test_a_page_on_disk_wakes_the_segment_and_opening_loads_it :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	app.handler = sa.Event_Handler {
+		subscription = {.BEHAVIOR_EVENT, .MOUSE, .FOCUS, .KEY},
+		on_event     = on_event,
+		user_data    = &app,
+	}
+	sa.attach_window_handler(app.window, &app.handler)
+	defer sa.detach_window_handler(app.window, &app.handler)
+	pump(&app)
+
+	type_into(&app, "#outdir", PARITY_DIR)
+	app.selected = 0
+	name := app.scenarios[0].name
+	directory, _ := filepath.abs(PARITY_DIR, context.temp_allocator)
+	cards, _ := filepath.join({directory, fmt.tprintf("%s.html", name)}, context.temp_allocator)
+	os.remove(cards)
+
+	// Nothing on disk, nothing in the frame: dead, and it says so rather than opening an empty pane.
+	note_selected_page(&app)
+	pump(&app)
+	testing.expect(t, !page_available(&app), "with no file and no page there is nothing to show")
+	segment := find(&app, `.segbtn[data-pane="split"]`)
+	testing.expect(t, segment != nil, "no split segment")
+	if segment == nil {return}
+	dead, _ := sa.element_state(segment)
+	testing.expect(t, .DISABLED in dead, "the segment should be dead")
+
+	// A page appears on disk, the way a generate run leaves one. NOTHING is loaded into the frame by that.
+	CARDS_DOC :: `<html><head><meta charset="utf-8"></head><body><div class="track" id="nc-track"></div></body></html>`
+	if werr := os.write_entire_file(cards, transmute([]u8)string(CARDS_DOC)); werr != nil {
+		testing.expectf(t, false, "could not write %s: %v", cards, werr)
+		return
+	}
+	defer os.remove(cards)
+
+	note_selected_page(&app) // what a run ending, or the selection moving, asks
+	pump(&app)
+	testing.expect(t, !app.page_ready, "nothing has been loaded into the frame yet")
+	testing.expect(t, page_available(&app), "but there IS a page to show")
+	alive, _ := sa.element_state(segment)
+	testing.expect(t, .DISABLED not_in alive, "so the segment is alive")
+
+	// And pressing it is what fetches the file: the pane opens with the page in it, not empty.
+	click(&app, `.segbtn[data-pane="split"]`)
+	pump(&app)
+	testing.expect_value(t, pane_mode(&app), Pane_Mode.Split)
+	testing.expect(t, app.page_ready, "opening an empty pane loads the selection into it")
+	title, _ := sa.text(find(&app, "#page-title"), context.temp_allocator)
+	testing.expect_value(t, title, cards)
+}
+
+/*
+PICKING A SCENARIO SHOWS ITS PAGE - but only into a pane that is already open, and never a handviewer.
+
+Three rules, and every one of them is a decision rather than an implementation detail, so all three are
+pinned here:
+
+  * an OPEN pane follows the selection. That is what makes the list a way of reading through what has been
+    generated rather than a thing to press `view page` after.
+  * a SHUT pane stays shut and loads NOTHING. A hand page is up to ~86MB of laid-out document, and arrowing
+    down a 101-scenario list must not load one per row; a shut pane is someone not looking at pages.
+  * a HANDVIEWER page is never followed in either state, because showing one means launching a BROWSER
+    (those pages are an iframe per deal onto bridgebase.com) and no click in a list should do that. The
+    `browser` button appears instead, and it is hidden again for every other kind.
+*/
+@(test)
+test_picking_a_scenario_follows_only_into_an_open_pane :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	type_into(&app, "#outdir", PARITY_DIR)
+	app.selected = 0
+	name := app.scenarios[0].name
+	directory, _ := filepath.abs(PARITY_DIR, context.temp_allocator)
+	cards, _ := filepath.join({directory, fmt.tprintf("%s.html", name)}, context.temp_allocator)
+	os.remove(cards)
+
+	CARDS_DOC :: `<html><head><meta charset="utf-8"></head><body><div class="track" id="nc-track"></div></body></html>`
+	if werr := os.write_entire_file(cards, transmute([]u8)string(CARDS_DOC)); werr != nil {
+		testing.expectf(t, false, "could not write %s: %v", cards, werr)
+		return
+	}
+	defer os.remove(cards)
+
+	// A SHUT pane: the selection says what is there and loads nothing.
+	testing.expect(t, !page_pane_shown(&app), "the pane starts shut")
+	note_selected_page(&app)
+	pump(&app)
+	testing.expect(t, !page_pane_shown(&app), "a selection must not open the pane by itself")
+	testing.expect(t, !app.page_ready, "and must not have loaded anything into it")
+
+	// OPEN it (as generating or analysing would) and the same selection now lands in it.
+	if !show_page_html(&app, MINIMAL_PAGE, "a page") {
+		testing.fail_now(t, "the page did not load into the frame")
+	}
+	pump(&app)
+	note_selected_page(&app)
+	pump(&app)
+	title, _ := sa.text(find(&app, "#page-title"), context.temp_allocator)
+	testing.expect_value(t, title, cards)
+
+	// A HANDVIEWER page is NOT followed: the pane keeps what it had, and the chip for it (which carries the
+	// ↗ mark) is what opens it, deliberately.
+	HANDVIEWER_DOC :: `<html><head><meta charset="utf-8"></head><body><iframe src="https://www.bridgebase.com/tools/handviewer.html?lin=x"></iframe></body></html>`
+	if werr := os.write_entire_file(cards, transmute([]u8)string(HANDVIEWER_DOC)); werr != nil {
+		testing.expectf(t, false, "could not rewrite %s: %v", cards, werr)
+		return
+	}
+	note_selected_page(&app)
+	pump(&app)
+	after, _ := sa.text(find(&app, "#page-title"), context.temp_allocator)
+	testing.expect_value(t, after, cards) // unchanged: nothing was loaded over it
+}
+
 // Two failures this pins, both reported from the window: following the dropdown made the button claim there
 // was nothing to view after switching the format (the pages were right there), and an earlier version tracked
 // "the last page this run wrote", which after a 110-scenario batch is never the one you were looking at.
@@ -6327,7 +8400,18 @@ test_colouring_does_not_move_the_caret_or_the_selection :: proc(t: ^testing.T) {
 	set_bml_source(
 		&app,
 		strings.join(
-			{"#+TITLE: probe", "", "* Head one", "", "1C = strong, see [x](#Head two)", "  1D = weak", "", "* Head two", "", "2C = game force"},
+			{
+				"#+TITLE: probe",
+				"",
+				"* Head one",
+				"",
+				"1C = strong, see [x](#Head two)",
+				"  1D = weak",
+				"",
+				"* Head two",
+				"",
+				"2C = game force",
+			},
 			"\n",
 			context.temp_allocator,
 		),
@@ -6426,7 +8510,7 @@ test_a_zoomed_field_keeps_its_text_centred :: proc(t: ^testing.T) {
 	defer test_app_destroy(&app)
 	set_input(&app, "#outdir", "www")
 	pump(&app)
-	defer for _ in 0 ..< 3 {_ = zoom_step(&app, -1)} // leave the window as it was found
+	defer for _ in 0 ..< 3 {_ = zoom_step(&app, -1)} 	// leave the window as it was found
 
 	for step in 0 ..= 3 {
 		if step > 0 {
@@ -6508,7 +8592,14 @@ test_a_dirty_colour_pass_skips_the_lines_that_did_not_change :: proc(t: ^testing
 	set_bml_source(
 		&app,
 		strings.join(
-			{"#+TITLE: a title", "", "* Opening bids", "", "1C = 16+ hcp, see [relay](#Relay)", "  (1H) = an overcall of 8+ !h"},
+			{
+				"#+TITLE: a title",
+				"",
+				"* Opening bids",
+				"",
+				"1C = 16+ hcp, see [relay](#Relay)",
+				"  (1H) = an overcall of 8+ !h",
+			},
 			"\n",
 			context.temp_allocator,
 		),
@@ -7136,12 +9227,12 @@ test_a_tab_selects_its_view :: proc(t: ^testing.T) {
 	testing.expect(t, tab_is_selected(&app, "panes"), "back to the deals tab")
 }
 
-// THE BAR`S BUTTONS ARE DEAD UNTIL THERE IS A PAGE, and the refusal is the MODEL`s. Worth asserting because
+// THE PANE SEGMENT IS DEAD UNTIL THERE IS A PAGE, and the refusal is the MODEL`s. Worth asserting because
 // the engine does not enforce it: `do_click` runs a disabled button`s behavior and the click is delivered
 // like any other, so a check that only read the attribute would pass while the application opened an empty
 // pane.
 @(test)
-test_the_hand_pane_button_is_dead_until_there_is_a_page :: proc(t: ^testing.T) {
+test_the_pane_segment_is_dead_until_there_is_a_page :: proc(t: ^testing.T) {
 	app: App
 	if !test_app(t, &app) {return}
 	defer test_app_destroy(&app)
@@ -7154,13 +9245,13 @@ test_the_hand_pane_button_is_dead_until_there_is_a_page :: proc(t: ^testing.T) {
 	defer sa.detach_window_handler(app.window, &app.handler)
 	pump(&app)
 
-	button := find(&app, "#deal-page")
-	testing.expect(t, button != nil, "no hand-page button")
-	if button == nil {return}
-	state, _ := sa.element_state(button)
-	testing.expect(t, .DISABLED in state, "the hand-page button should start disabled")
+	split := find(&app, `.segbtn[data-pane="split"]`)
+	testing.expect(t, split != nil, "no split segment")
+	if split == nil {return}
+	state, _ := sa.element_state(split)
+	testing.expect(t, .DISABLED in state, "the segment should start disabled")
 
-	click(&app, "#deal-page")
+	click(&app, `.segbtn[data-pane="split"]`)
 	pump(&app)
 	testing.expect(t, !page_pane_shown(&app), "a click with nothing behind it must not open the pane")
 
@@ -7169,19 +9260,176 @@ test_the_hand_pane_button_is_dead_until_there_is_a_page :: proc(t: ^testing.T) {
 	if !shown {return}
 	pump(&app)
 	testing.expect(t, page_pane_shown(&app), "the page opened the pane")
-	state2, _ := sa.element_state(button)
-	testing.expect(t, .DISABLED not_in state2, "a page unlocks the button")
-
-	// And the pane is a TOGGLE from there: closed on the next press, open on the one after, with the page
-	// still in it - closing must not need the page regenerating.
-	click(&app, "#deal-page")
-	pump(&app)
-	testing.expect(t, !page_pane_shown(&app), "the second press closes it")
-	click(&app, "#deal-page")
-	pump(&app)
-	testing.expect(t, page_pane_shown(&app), "and the third opens it again")
+	state2, _ := sa.element_state(split)
+	testing.expect(t, .DISABLED not_in state2, "a page unlocks the segment")
 	title, _ := sa.text(find(&app, "#page-title"), context.temp_allocator)
 	testing.expect_value(t, title, "a page")
+}
+
+// EVERY TRANSITION IS ONE PRESS, which is the point of three positions instead of two toggles. Closed to
+// wide used to be two presses in a particular order (`hand page`, then `wide`), and closing a wide pane had
+// a correction hidden in it - the pane un-widened itself on the way out so the controls came back. Both are
+// now "put it there", and the pane`s CONTENT survives all of it: nothing here reloads a page.
+@(test)
+test_the_pane_segment_reaches_every_position_in_one_press :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	app.handler = sa.Event_Handler {
+		subscription = {.BEHAVIOR_EVENT, .MOUSE, .FOCUS, .KEY},
+		on_event     = on_event,
+		user_data    = &app,
+	}
+	sa.attach_window_handler(app.window, &app.handler)
+	defer sa.detach_window_handler(app.window, &app.handler)
+	pump(&app)
+	if !show_page_html(&app, MINIMAL_PAGE, "a page") {
+		testing.fail_now(t, "the page did not load into the frame")
+	}
+	pump(&app)
+	testing.expect_value(t, pane_mode(&app), Pane_Mode.Split)
+
+	// closed -> wide, in ONE press, from the position furthest from it.
+	click(&app, `.segbtn[data-pane="closed"]`)
+	pump(&app)
+	testing.expect_value(t, pane_mode(&app), Pane_Mode.Closed)
+	click(&app, `.segbtn[data-pane="wide"]`)
+	pump(&app)
+	testing.expect_value(t, pane_mode(&app), Pane_Mode.Wide)
+	testing.expect(t, page_pane_shown(&app), "wide implies open - a wide shut pane is not a state")
+
+	// wide -> split brings the controls back beside the page, with the page still in it.
+	click(&app, `.segbtn[data-pane="split"]`)
+	pump(&app)
+	testing.expect_value(t, pane_mode(&app), Pane_Mode.Split)
+	title, _ := sa.text(find(&app, "#page-title"), context.temp_allocator)
+	testing.expect_value(t, title, "a page")
+}
+
+// THE LIT SEGMENT SAYS WHERE THE PAGE IS. It is derived from the display properties on every draw rather
+// than remembered, so this asserts the projection AND that exactly one of the three claims to be current -
+// two lit segments is what a second copy of the state looks like once it has drifted.
+@(test)
+test_the_lit_segment_says_where_the_page_is :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	pump(&app)
+
+	for mode in ([]Pane_Mode{.Closed, .Split, .Wide, .Closed}) {
+		set_pane_mode(&app, mode)
+		pump(&app)
+		lit, count := test_lit_segment(&app)
+		testing.expectf(t, count == 1, "%v lit %d segments, not exactly one", mode, count)
+		testing.expect_value(t, lit, pane_mode_name(mode))
+	}
+}
+
+@(private = "file")
+test_lit_segment :: proc(app: ^App) -> (name: string, count: int) {
+	for candidate in ([]string{"closed", "split", "wide"}) {
+		element := find(app, fmt.tprintf(`.segbtn[data-pane="%s"]`, candidate))
+		if element == nil {
+			continue
+		}
+		class, _ := sa.attribute(element, "class", context.temp_allocator)
+		if strings.contains(class, "on") {
+			name = candidate
+			count += 1
+		}
+	}
+	return
+}
+
+/*
+THE SPLIT`S STATE, and the trap under it.
+
+`frameset.state` is the pane widths, and the FORM matters: it reads back as length STRINGS with their units
+and it accepts nothing else. Writing an array of NUMBERS returns success and changes nothing - measured with
+a throwaway probe before any of this was written, and pinned here because a silent no-op is exactly the kind
+of thing a later refactor puts back while every test still passes.
+
+Flex units survive the round trip, which is what makes the remembered layout a PROPORTION rather than a
+pixel count - the reason it is still meaningful in a window of another size.
+*/
+@(test)
+test_the_split_state_round_trips_as_strings :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	pump(&app)
+
+	// THE STATE ONLY COUNTS THE PANES THAT ARE SHOWN, and the hand pane starts shut - so a window that has
+	// generated nothing reports TWO. Measured, and the reason `visible_split_widths` exists at all.
+	testing.expectf(
+		t,
+		len(read_split_state(&app, context.temp_allocator)) == DEAL_SPLIT_PANES - 1,
+		"a shut pane should leave 2 entries",
+	)
+	if !show_page_html(&app, MINIMAL_PAGE, "a page") {
+		testing.fail_now(t, "the page did not load into the frame")
+	}
+	pump(&app)
+
+	widths := read_split_state(&app, context.temp_allocator)
+	testing.expectf(t, len(widths) == DEAL_SPLIT_PANES, "the frameset reported %d panes, not 3", len(widths))
+	if len(widths) != DEAL_SPLIT_PANES {return}
+
+	testing.expect(t, write_split_state(&app, {"180px", "1*", "3*"}), "the state would not take strings")
+	pump(&app)
+	after := read_split_state(&app, context.temp_allocator)
+	testing.expectf(t, len(after) == DEAL_SPLIT_PANES, "%d panes after writing, not 3", len(after))
+	if len(after) != DEAL_SPLIT_PANES {return}
+	testing.expect_value(t, after[0], "180px")
+	testing.expect_value(t, after[2], "3*") // the FLEX unit survived - the proportion is what is kept
+
+	// And the panes really moved: the list is the width that was asked for, not the one it was authored at.
+	list := find(&app, "#scenario-list")
+	testing.expect(t, list != nil, "no scenario list")
+	if list != nil {
+		box, err := sa.location(list, .Border, .Root)
+		testing.expect_value(t, err, nil)
+		testing.expectf(t, box.width > 170 && box.width < 195, "the list is %dpx wide, not about 180", box.width)
+	}
+}
+
+// WIDE REMEMBERS THE PROPORTION IT LEFT. The reading has to be taken before the controls are hidden, because
+// a hidden pane DROPS OUT of the frameset`s state (three entries become two, measured) - so a remember that
+// ran a moment later would store a two-pane array and hand the wrong widths to the wrong panes on the way
+// back. Hence the read on the way out and the restore on the way in.
+@(test)
+test_wide_restores_the_width_the_split_was_dragged_to :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	pump(&app)
+	if !show_page_html(&app, MINIMAL_PAGE, "a page") {
+		testing.fail_now(t, "the page did not load into the frame")
+	}
+	pump(&app)
+
+	// Stand in for a drag: the state is what a drag writes, so writing it is the same starting point.
+	testing.expect(t, write_split_state(&app, {"250px", "3*", "1*"}), "the state would not take strings")
+	pump(&app)
+
+	set_pane_mode(&app, .Wide)
+	pump(&app)
+	testing.expect_value(t, pane_mode(&app), Pane_Mode.Wide)
+	during := read_split_state(&app, context.temp_allocator)
+	testing.expectf(
+		t,
+		len(during) == DEAL_SPLIT_PANES - 1,
+		"a hidden pane should leave 2 entries, not %d",
+		len(during),
+	)
+
+	set_pane_mode(&app, .Split)
+	pump(&app)
+	back := read_split_state(&app, context.temp_allocator)
+	testing.expectf(t, len(back) == DEAL_SPLIT_PANES, "%d panes after coming back, not 3", len(back))
+	if len(back) != DEAL_SPLIT_PANES {return}
+	testing.expect_value(t, back[1], "3*")
+	testing.expect_value(t, back[2], "1*")
 }
 
 // About is the one thing with a `close`, because it is an errand rather than a place. Closing it goes back

@@ -321,6 +321,7 @@ main :: proc() {
 		check_the_carousel(&view)
 		check_a_single_board_is_centred(&view)
 		check_the_page_follows_the_view_size(&view)
+		check_the_toolbar_fits_a_narrow_pane(&view)
 		check_the_panel_parks_clear_of_the_board(&view)
 	}
 
@@ -736,7 +737,12 @@ check_the_secondary_hand_lines_are_shown :: proc(root: sa.Element) {
 		// question is whether it has a LINE OF TEXT`s worth of box. The neighbouring `.hcp` is 18px tall.
 		check(
 			berr == nil && box.height >= 8 && box.width >= 20,
-			fmt.tprintf("%s is shown rather than hidden by the phone block`s first rule (%dx%d)", kind, box.width, box.height),
+			fmt.tprintf(
+				"%s is shown rather than hidden by the phone block`s first rule (%dx%d)",
+				kind,
+				box.width,
+				box.height,
+			),
 		)
 	}
 }
@@ -1371,6 +1377,77 @@ check_the_panel_is_inside_the_view :: proc(root: sa.Element, view_width: i32) {
 // script ran BEFORE the frame had a size, so the padding came out 0 and the analysed deal sat flush
 // against the left edge until the window was resized (which a desktop window nobody drags never is). The
 // page now re-fits on a deferred tick; this is that fix, asserted where a windowless view can see it.
+/*
+THE TOOLBAR AT PANE WIDTH - the check that would have caught a bug this file was wide enough to miss.
+
+Every other check here runs at one view size, 1280px, and at that width the control pill has room for its
+one row. The workbench hosts this page in a PANE which is half a window or less, and there the row simply
+overflowed: `flow: horizontal` (what `display: flex` becomes here) DOES NOT WRAP, and `width: max-content`
+let the row be as wide as its contents, so `Par` and `CCA` sat hard against the card`s edge with their
+borders cut off. Reported from the real window, invisible to a windowless check at 1280.
+
+`flow: horizontal-flow` + `max-width: 100%` in norn`s `@media sciter` block is the fix. This asserts the
+CONSEQUENCE at a pane width rather than the property: every control ends up inside the toolbar`s own box.
+*/
+check_the_toolbar_fits_a_narrow_pane :: proc(view: ^sa.Windowless_View) {
+	PANE_WIDTH :: 520 // a hand-page pane in a 1120px window, roughly, and narrower than the row`s contents
+	if err := sa.resize_windowless(view, PANE_WIDTH, VIEW_HEIGHT); err != nil {
+		check(false, fmt.tprintf("the view resizes to a pane width (%v)", err))
+		return
+	}
+	for _ in 0 ..< 4 {
+		pump(view, 200) // the page`s own size watch runs on a timer
+	}
+	defer {
+		_ = sa.resize_windowless(view, VIEW_WIDTH, VIEW_HEIGHT)
+		pump(view, 200)
+	}
+
+	root, rerr := sa.root(view.window)
+	if rerr != nil {
+		check(false, "the narrow view has a root")
+		return
+	}
+	toolbar, terr := sa.select_first(root, ".toolbar")
+	if terr != nil {
+		check(false, "the page has a .toolbar")
+		return
+	}
+	// ONE PIXEL OF TOLERANCE, measured rather than assumed: with `max-width: 100%` and
+	// `box-sizing: border-box` the pill`s BORDER box still lands one pixel past the cap in this engine
+	// (521 against a 520 view), and it does so whether or not the box sizing is stated. What matters is the
+	// row wrapping instead of running off; a hairline of the rounded corner is not the reported bug.
+	bar, _ := sa.location(toolbar, .Border, .Root)
+	check(
+		int(bar.x + bar.width) <= PANE_WIDTH + 1,
+		fmt.tprintf("the toolbar (%d..%d) fits a %dpx pane", bar.x, bar.x + bar.width, PANE_WIDTH),
+	)
+
+	// And no CONTROL hangs out of it. The box above can fit while its contents overflow - that is exactly
+	// what a non-wrapping row does - so the buttons are measured too. `Par` and `CCA` are the two that were
+	// cut, being last, and they are named so a failure says which end went.
+	worst := 0
+	worst_name := ""
+	for selector in ([]string{"#nc-prev", "#nc-next", "#nc-reset", "#nc-par-toggle", "#nc-cca-toggle"}) {
+		element, err := sa.select_first(toolbar, selector)
+		if err != nil {
+			continue
+		}
+		box, berr := sa.location(element, .Border, .Root)
+		if berr != nil {
+			continue
+		}
+		over := int(box.x + box.width) - int(bar.x + bar.width)
+		if over > worst {
+			worst, worst_name = over, selector
+		}
+	}
+	check(
+		worst <= 0,
+		fmt.tprintf("every control is inside the toolbar at %dpx (worst %s by %dpx)", PANE_WIDTH, worst_name, worst),
+	)
+}
+
 check_a_single_board_is_centred :: proc(view: ^sa.Windowless_View) {
 	page, ok := render_page(CHECK_DEAL)
 	if !ok {

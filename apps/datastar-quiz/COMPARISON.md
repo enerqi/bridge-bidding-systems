@@ -544,6 +544,98 @@ Two smaller things the Rust column is honest about:
   instead of ~1,000 -- Nagle waiting on a delayed ACK, and nothing to do with Rust. It is one line in
   `main.rs`, and without it this column would have read five times worse than it is.
 
+## The sixth implementation: the same app in F#
+
+`apps/datastar-quiz-fsharp/` is the architecture a sixth time, on .NET 10 + Oxpecker + the ViewEngine
+DSL, with `StarFederation.Datastar.FSharp` for the datastar contract. Same routes, same exported corpus,
+same choreography, same harness. Where the Go port asked *"what does a compiled runtime cost"* and the
+Rust one *"what does no GC and no allocation buy"*, this port asks two questions neither can:
+
+**What does it cost when the SSE writer is FIRST-PARTY LIBRARY CODE in the app's own language** —
+`StarFederation.Datastar.FSharp` is the core of `starfederation/datastar-dotnet`, and the C# package is
+a shim over it — **and what does the deploy-time codegen axis buy**: JIT, ReadyToRun and Native AOT are
+three ways to ship the same IL, and nothing else in this repo measures that.
+
+The answer to the first is a flat no, for a reason worth recording: every writer the SDK offers takes an
+`HttpResponse` and writes to `httpResponse.BodyWriter`, which leaves **no seam for a compressor** — and
+brotli q5 on the streams is one of the ground rules. The frames are built as text and handed to a
+compressing writer instead, which is what the Rust port does one layer down. The library is good code
+(UTF-8 straight into `IBufferWriter<byte>`, byte-literal prefixes, zero-allocation line splitting); it
+is simply not shaped for a pipeline with a stage in it.
+
+The answer to the second is the interesting one.
+
+| 400 users, ONE core | python (one loop) | go | rust | tina | **F# (jit)** |
+|---|---|---|---|---|---|
+| aggregate P50 / P95 | 4 / 72 ms | 1 / 4 ms | 2 / 19 ms | 1 / 2 ms | **1 / 4 ms** |
+| `POST /answer` TTFB P50 / P95 | 2 / 62 ms | 1 / 3 ms | 1 / 5 ms | 1 / 2 ms | **1 / 3 ms** |
+| `/answer` whole stream, mean | ~1.1 s | 1.004 s | 1.013 s | 1.029 s | **0.99 s** |
+| resident set | ~120 MB | 171 MB | **53 MB** | 207-216 MB | **118 MB** |
+| server CPU, cores | ~0.89 (pinned) | ~0.10 | 0.110 | 1.049 (*idle too*) | **0.161** |
+| requests / failures | — | — | — | — | **24,575 / 0** |
+
+On latency it lands on Go's numbers and ahead of Rust's P95, on a first attempt with no tuning pass.
+That is not a claim about the languages: it is what a mature server stack does with an app whose work
+per request is a dictionary lookup, a memoised filter check and ~20 KB of markup.
+
+### The codegen axis, which is the actual finding
+
+Same source, three publishes. One core, `hey -n 3000 -c 4`, a warm-up pass discarded so the JIT column
+is not charged for its own tiering:
+
+| | JIT | ReadyToRun | **Native AOT** |
+|---|---|---|---|
+| deployable size | 7.2 MB *(+ a .NET install)* | 115.0 MB, 355 files | **15.9 MB, 2 files** |
+| process start → first response | 681 ms | 618 ms | **553 ms** |
+| corpus parse + prepare | 241 ms | 180 ms | **84 ms** |
+| `GET /` identity | 4,372 req/s | 4,995 req/s | **10,975 req/s** |
+| `GET /` brotli | 1,662 req/s | 1,609 req/s | **3,419 req/s** |
+| `GET /filter/preview` brotli | 7,124 req/s | 5,863 req/s | **9,753 req/s** |
+| resident set, idle | 96.5 MB | 97.3 MB | **66.2 MB** |
+| idle CPU | 0.120 cores | 0.130 cores | **0.000 cores** |
+
+**Native AOT is 2.5× the throughput of the JIT build on the page route and a third less memory**, and
+its corpus prepare is 2.9× faster — most of what looked like a slow F# corpus loader was JIT warm-up.
+Put beside the other ports' one-core per-route table, the AOT column reads: `GET /` identity 10,975
+against Rust's 10,933 and Go's 1,337; `GET /` brotli 3,419 against Go's 785 and Rust's 955.
+
+It also cost three fixes, none of them predictable from the documentation:
+
+1. **`vswhere.exe` must be on PATH** or the native link step fails with "not recognized". Nothing to do
+   with F#.
+2. **Oxpecker and FSharp.Core emit aggregate trim/AOT warnings** (IL2104, IL3053). ILC compiles the app
+   anyway; a project with `TreatWarningsAsErrors` fails a publish that otherwise works.
+3. **Two things in the app died AT STARTUP while the build succeeded.** Oxpecker's `routef` builds its
+   route template by reflecting over the handler's parameters, and F#'s `printfn` reflects over its
+   format specifiers — `MethodInfo.MakeGenericMethod`, which AOT cannot do. Both have direct
+   replacements (`route` + `TryGetRouteValue`, and string concatenation), and the app now uses them
+   everywhere. **This is the shape of F# AOT trouble: not "it does not compile", but "it compiles, links,
+   and throws on the first line that formats a string".**
+
+### What the port measured about itself
+
+- **Asset pre-compression at quality 11 was indefensible, and only measuring showed it.** Nine assets,
+  1,973 KB: q5 saves 930 KB in 25 ms, q11 saves 951 KB in **1,484 ms**. 59× the time for the last 21 KB,
+  and it dominated the whole startup. The default is 5, matching the streams.
+- **On a one-core budget .NET uses workstation GC** even with `System.GC.Server=true` in the
+  runtimeconfig. The startup line reports which collector is actually live, because the recipe cannot.
+- **`ServerGarbageCollector` is not the property name** (it is `ServerGarbageCollection`); the
+  misspelling is silently ignored, which is how this port spent its first hour on workstation GC.
+
+### Two bugs the port surfaced
+
+Both were invisible in a browser, which is the pattern the [earlier bug section](#bugs-the-port-surfaced-and-what-they-have-in-common) describes.
+
+- **The view engine escapes `'` to `&#39;` in attribute values.** Correct HTML, decoded before datastar
+  sees it, and the page works by hand. But the shared harness reads the page with regexes written
+  against the literal quotes the other four ports emit, and it is declared unchanged across ports — so
+  it read the variant query as `?squad&#39;)` and could not find the reveal's Next action at all. 16 of
+  18 page loads failed the smoke test. The Go port fought the same class of problem from the other side:
+  `html/template` treats `data-on:*` as JavaScript and rewrote `/` as `\/`.
+- **`<path>` as a void element breaks the score dial.** Inside `<svg>` the HTML parser is in *foreign
+  content*, where no element is void, so `<path ...>` with no closing tag swallows every sibling after it
+  and the dial's `<text>` ends up inside the path. A render test caught this one before a browser did.
+
 ## Would I build the next one this way
 
 For this app: the datastar version is nicer to reason about and slower to make pretty. The 2× line

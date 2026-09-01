@@ -13,6 +13,14 @@
 	    widget (button, input) taken out of flow collapses to 1x1 — so nothing here is positioned.
 	  * `@media (name: "value")` matches unconditionally (it is not a feature test). Name the flag.
 
+	SIZE: THIS FILE IS CUT INTO SEVERAL `<style>` BLOCKS ON ITS WAY INTO THE DOCUMENT, and you do not have
+	to think about it. An inline `<style>` is capped at 32 KiB in this engine, ALL OR NOTHING - one byte
+	over and the entire block is dropped, first rule included, in silence - and this file passed that while
+	the deals view was growing. What it looked like was NOT a styling bug: `behavior: button` stopped
+	attaching, so list rows and palette entries stopped answering clicks. `css_blocks` in workbench.odin
+	now cuts the sheet at top-level rule boundaries into blocks that fit, comments and `@media` blocks kept
+	whole, order preserved. Write rules here without counting bytes.
+
 	Card-page note for later: the norn card page is a browser page and uses flex/grid throughout. Hosting
 	it here is stage 2 and the plan is an append-only `@media sciter { ... }` override block in
 	norn/html_cards_header.html.tmpl — NOT a second stylesheet.
@@ -192,8 +200,15 @@ header .engine {
 	flow: vertical;
 }
 
+/* Both views' panes are `.split`, but only the notes view's is a plain `<div>` that needs a flow: the
+   deals view's is a `<frameset>`, whose frame-set behavior lays its own children out (and inserts the
+   splitters between them). Handing that element a `flow` as well is telling two layout managers to run
+   in one box, so the flow is scoped to the div. */
 .split {
 	size: *;
+}
+
+div.split {
 	flow: horizontal;
 }
 
@@ -236,6 +251,29 @@ aside .head {
 #scenarios .row.sel {
 	background: var(--line);
 	color: var(--accent);
+}
+
+/* WHILE `every scenario` IS ON, THE LIST SAYS SO. `#scenarios.all` is written by the host from the
+   checkbox, and every row takes a soft wash - enough to read as "all of these are in", not enough to
+   compete with the selected row, which keeps its stronger background and its accent text on top of it.
+   The two levels are the point: the run covers everything, and the selection still says which scenario the
+   chips and the pane are about. */
+#scenarios.all .row {
+	background: var(--line-soft);
+}
+
+#scenarios.all .row.sel {
+	background: var(--line);
+}
+
+/* The marker on the left edge, so the wash is not the only thing carrying it - a background this soft is
+   the first casualty of a bright room or a cheap panel. */
+#scenarios.all .row {
+	border-left: 3px solid var(--line);
+}
+
+#scenarios.all .row.sel {
+	border-left: 3px solid var(--accent);
 }
 
 #scenarios .row .name {
@@ -437,6 +475,332 @@ button.small {
 	font-weight: normal;
 }
 
+/* ---- icons, and the three-position pane control -------------------------------------------------- */
+
+/*
+THE ICONS ARE CSS BOXES, and that is a measurement rather than a taste.
+
+Inline `<svg>` was tried first, on the strength of a probe showing that `fill="currentColor"` works and that
+a viewBox scales correctly. It does - AT 1:1. Under the window's own `zoom` this engine draws a stroked
+`<rect>` WITH ITS RIGHT AND BOTTOM EDGES MISSING: a rounded corner, reported from the real window as "the
+more we zoom in, the more the icons look wrong - starts looking like rectangles, ends more like an r".
+Re-probed by painting the icon at `zoom: 2.0` and reading the pixels back: correct at 1:1,
+top-and-left-only zoomed, and unchanged by dropping the viewBox, matching it 1:1 to the element size,
+sizing in CSS rather than attributes, or setting `overflow: visible`.
+
+Every icon here is a RECTANGLE, so a bordered box IS the drawing - and a border is laid out by the same box
+model as the rest of the window, which is exactly why it survives a zoom that an svg does not. The shapes:
+
+	closed   an empty outline                    the pane is shut
+	split    an outline with its right half in   the page beside the controls
+	wide     a filled outline                    the page has the width
+	side     an outline with its LEFT half in    the sidebar toggle (the `◧` convention)
+
+`em` throughout, so they follow the bar's font size and the zoom together.
+*/
+/*
+THE ICON IS A LITTLE SCREEN, AND IT KEEPS ITS OWN COLOURS.
+
+It used to be drawn in `currentColor` on the button's own ground, which reads correctly on a dark button -
+a light block on a dark screen - AND INVERTS ON THE LIT ONE: there `currentColor` is `--accent-ink` (nearly
+black) on an accent ground, so the filled half went dark and the EMPTY half was the bright part. On the
+`split` segment that put the light area on the left while `wide` was light all over, which is the report:
+"the whole width button is lighter and the light part of the middle button is on the left half".
+
+The mapping has to be the same on every segment or it says nothing: THE FILLED PART IS THE HAND PAGE. So the
+icon carries its own ground and its own ink rather than inheriting the button's, and lighting a segment is
+left to the button's background - which is what the lit state is FOR. `--sunken` is the dark of a pane, so
+the metaphor is literal: a small screen with the page's share of it lit.
+*/
+.icon {
+	display: inline-block;
+	width: 1.05em;
+	height: 0.85em;
+	border: 1px solid var(--ink-soft);
+	border-radius: 2px;
+	background: var(--sunken);
+	flow: horizontal;
+	/* An inline-block sits on the BASELINE by default; this says otherwise. On its own it changes nothing
+	   measurable now that the button with a word beside its icon centres its own content - what it does is
+	   keep an icon dropped into any OTHER context off the baseline. The negative margin that used to be
+	   here was compensating for an alignment rather than fixing one, and it is gone. */
+	vertical-align: middle;
+}
+
+/* The fill and the space beside it, in FLEX UNITS rather than percentages: a percentage width on a child
+   is the one length that reads differently in this engine, and `1*` says what is meant anyway - halves. */
+.icon > .fill {
+	width: 1*;
+	height: *;
+	background: var(--ink-soft);
+}
+
+.icon > .gap {
+	width: 1*;
+	height: *;
+}
+
+/* The same mark on the pane`s own button, which is a word plus a glyph rather than a box plus a word. */
+button.icon-text > .away {
+	margin-right: 0.4em;
+}
+
+/* The "leaves the window" mark on a chip. A glyph, not a box: a diagonal is the one shape a border cannot
+   draw, and the svg the other icons stopped being is unreliable under zoom. */
+.chip .away {
+	font-size: 0.85em;
+}
+
+/* A button that is a drawing PLUS a word (`scenarios`, `browser`) — the icon needs air on its right, and
+   the padding is tightened because the drawing already carries some. */
+/* A button whose content is a BOX plus TEXT lays that content out itself: left to right, centred on the
+   button's own middle. Left to the default inline flow the pair is laid on a text baseline, and the button
+   then sits a few pixels high in the bar - measured, and growing with the zoom (3px at 133%, 4px at 160%),
+   which is why it read as "icons not centred" in a zoomed window and looked fine at rest. */
+button.icon-text {
+	flow: horizontal;
+	vertical-align: middle;
+	padding: 0.3em 0.7em;
+}
+
+button.icon-text .icon {
+	margin-right: 0.45em;
+}
+
+/* WHERE THE HAND PAGE IS, as one control with three positions. The segments are one control visually -
+   a single rounded outline, hairlines between - because they are one VALUE: closed, beside the controls,
+   or the whole width. Three separate buttons said something else, and the corrections that followed
+   (`wide` having to open a closed pane, `close` having to un-widen a wide one) were the evidence. */
+/* `vertical-align: middle` HERE IS LOAD-BEARING, unlike the same property on `.bar`: taking it off drops
+   the whole group 3px above the row's centre from 133% zoom upward (measured, and the test says so). The
+   group is a flow of its own inside the bar's flow, and it is the inner one that has to agree. */
+.seg {
+	flow: horizontal;
+	vertical-align: middle;
+	margin-left: 0.5em;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	background: var(--surface);
+}
+
+/* No radius on the segments themselves: the GROUP is the rounded thing, and a rounded child inside it
+   paints a notch at each corner. */
+/* `height: *` so a segment FILLS the group by construction rather than by coincidence - the lit segment's
+   accent IS its background, so any gap between button and group shows as a strip of the group's surface
+   under the highlight ("highlight for tristate button not even cover all button space"). Measured honestly:
+   the segments already filled without this at every zoom the test reaches, so it holds the property the
+   test asserts rather than being the fix for what was reported. */
+button.segbtn {
+	appearance: none;
+	height: *;
+	padding: 0.25em 0.55em;
+	border: none;
+	border-radius: 0;
+	border-left: 1px solid var(--line);
+	background: transparent;
+	color: var(--ink-soft);
+	font-weight: normal;
+	cursor: pointer;
+}
+
+button.segbtn:first-child {
+	border-left: none;
+}
+
+button.segbtn:hover {
+	background: var(--field-hover);
+	color: var(--ink);
+}
+
+button.segbtn:active {
+	background: var(--line-soft);
+}
+
+/* The lit segment says where the page IS. `.on` is written by `draw_deal_bar`, which reads the answer
+   off the document rather than off a flag - the same rule `current_view` follows.
+
+   IT IS THE ACCENT, not a slightly lighter grey. The first version painted `--line` (#313244) on
+   `--surface` (#181825) with the icon in `--accent`, and in the real window that read as three identical
+   buttons - reported as "cannot tell which is selected". A selected segment in a group of three is the one
+   place in this window where the state IS the only information, so it takes the strongest thing the
+   palette has: the accent as the GROUND, with the icon knocked out of it. */
+button.segbtn.on {
+	background: var(--accent);
+	color: var(--accent-ink);
+}
+
+button.segbtn.on:hover {
+	background: var(--accent-hover);
+	color: var(--accent-ink);
+}
+
+/* Dead until something has been shown in the pane. The whole group dims, not just the icons: a lit
+   segment in a dead group would claim the pane is open when there is nothing to open. */
+button.segbtn:disabled {
+	background: transparent;
+	color: var(--line);
+	cursor: default;
+}
+
+/* The icons no longer take the button's colour (see `.icon`), so a dead group has to dim them explicitly -
+   otherwise the segments read as live while nothing behind them is. */
+button.segbtn:disabled .icon,
+button:disabled .icon {
+	border-color: var(--line);
+	background: transparent;
+}
+
+button.segbtn:disabled .icon > .fill,
+button:disabled .icon > .fill {
+	background: var(--line);
+}
+
+.seg[disabled] {
+	border-color: var(--line-soft);
+}
+
+/* `every scenario`, in the bar next to the list it overrides. */
+.barcheck {
+	margin-left: 0.9em;
+}
+
+/* The two small labels are the one thing the container's `vertical-align: middle` does not settle: a bare
+   inline runs at its own text line, so it kept sitting 7px above the row's centre (measured) while every
+   BLOCK-ish control beside it was centred. Given a box of their own they take part in the same alignment. */
+.barlabel-check {
+	display: inline-block;
+	vertical-align: middle;
+	margin-left: 0.35em;
+	color: var(--ink-soft);
+	font-size: var(--text-small);
+}
+
+/* The folder field in the bar. Its label is not a `.line`'s label - it sits inline in a row of controls
+   rather than in a form's left column - so it gets its own spacing and the dim ink the bar uses. */
+.barlabel {
+	display: inline-block;
+	vertical-align: middle;
+	margin-left: 0.9em;
+	margin-right: 0.45em;
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+}
+
+/* The field takes the slack of the bar, the way `#bml-status` does in the notes bar. */
+.bar input.wide {
+	width: *;
+	margin-right: 0.2em;
+}
+
+/* ---- what has been generated ---------------------------------------------------------------------- */
+
+/* The format chips: one line under the bar, naming the selected scenario and what exists for it. */
+.outputs {
+	flow: horizontal;
+	padding: 0.25em 0.6em;
+	border-bottom: 1px solid var(--line);
+	background: var(--surface);
+}
+
+.outputs .head {
+	margin-right: 0.6em;
+	padding-top: 0.25em;
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+}
+
+/* THE CHIPS, IN THREE STATES, and the states are the whole point: every format is always on the row, so
+   the greyed ones say "nothing generated in this format" - a thing the old row, which listed only what
+   existed, had no way of saying.
+
+   Neutral for "there is a file, press to show it", accent for "this is what the pane is showing". The
+   same two-step the segments use, and for the same reason: with several files for one scenario, the lit
+   chip is the only thing on screen that says WHICH one is up. */
+button.chip {
+	appearance: none;
+	margin-right: 0.35em;
+	padding: 0.1em 0.5em;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	background: transparent;
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+	font-weight: normal;
+	cursor: default;
+}
+
+button.chip.have {
+	background: var(--line);
+	color: var(--ink);
+	cursor: pointer;
+}
+
+button.chip.have:hover {
+	background: var(--field-hover);
+}
+
+button.chip.have.on {
+	border-color: var(--accent);
+	background: var(--accent);
+	color: var(--accent-ink);
+	font-weight: bold;
+}
+
+button.chip.have.on:hover {
+	background: var(--accent-hover);
+}
+
+/* Nothing generated: present, named, and plainly not pressable. `:disabled` has to be written out - the
+   engine paints no state feedback of its own for a button (see the header). */
+button.chip:disabled {
+	border-color: var(--line-soft);
+	background: transparent;
+	color: var(--line);
+}
+
+/* The browser mark on a chip that will leave the window. Nudged to sit on the text's baseline rather than
+   the box's, and given air so it reads as a mark on the word rather than a second word. */
+button.chip .icon {
+	margin-left: 0.3em;
+	margin-bottom: -1px;
+}
+
+/* The same information on every row of the list, small and dim: it is an annotation of the name, not a
+   second column competing with it. */
+#scenarios .row .have {
+	display: block;
+	margin-top: 0.15em;
+}
+
+/* `display: inline-block` IS THE FIX, not decoration: an inline box takes no margin, no padding and no
+   background in this engine, so the first version rendered as one run-on word - `htmlpbnlinhvlinenumtext`
+   (seen in the window). Anything that needs a box of its own inside a line of text needs this. */
+#scenarios .row .have .tag {
+	display: inline-block;
+	margin-right: 0.3em;
+	padding: 0 0.35em;
+	border-radius: 3px;
+	background: var(--line-soft);
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+}
+
+/* ---- the splitters ------------------------------------------------------------------------------- */
+
+/* `<splitter>` is a real element of the frame-set behavior, so it is styled like one. It is deliberately
+   nearly invisible at rest and picks up the accent under the pointer: a permanent bar between the panes
+   would draw the eye to the furniture rather than to the deals. The width is the GRAB TARGET as much as
+   the look — 5px is what the SDK's own frameset sample settles on, and anything thinner is a hunt. */
+splitter {
+	width: 5px;
+	background: var(--line-soft);
+	cursor: e-resize;
+}
+
+splitter:hover {
+	background: var(--accent);
+}
+
 /* ---- the about panel ---------------------------------------------------------------------------- */
 
 /* A block that REPLACES the panes rather than floating over them: an overlay would want
@@ -605,6 +969,12 @@ popup[role="tooltip"] {
 	background: var(--surface);
 }
 
+/* A ROW OF CONTROLS OF DIFFERENT HEIGHTS - a button, a checkbox, two small labels and a text field - and
+   getting them onto one centre line is done on the CHILDREN, not here. `vertical-align: middle` on this
+   element was tried first and measured as a NO-OP (the alignment test passes with and without it), so it is
+   not left here for the next person to disprove. What the row actually needed is two rules, each written
+   where it applies: a bare inline label needs a box of its own (`.barlabel`, `.barlabel-check`), and a
+   button whose content is an icon PLUS a word needs to lay that content out itself (`button.icon-text`). */
 .bar {
 	flow: horizontal;
 	padding: 0.4em 0.7em;

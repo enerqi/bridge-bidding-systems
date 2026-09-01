@@ -39,6 +39,10 @@ flate2 = "1"
 parking_lot = "0.12"
 lru = "0.18"
 rand = "0.10"
+# TWEAK 2 (experiment): the global allocator. Rust's default on Windows is the system heap
+# (`HeapAlloc`), which is a locked, general-purpose allocator; this app allocates several small
+# `String`s per request through it. mimalloc is the usual one-line answer.
+mimalloc = { version = "0.1", default-features = false }
 
 [[bench]]
 name = "micro"

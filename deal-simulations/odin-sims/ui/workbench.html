@@ -197,23 +197,109 @@
        closed beside the work, the same shape the notes view has had all along (source, and the rendered
        page beside it) - one splitter idiom in the window instead of two.
 
-       The bar is the notes bar`s twin, down to the `◧` glyph: fold the list away, open or close the pane,
-       and give the pane everything except the list. Nothing here is a mode - each is a toggle whose label
-       says what the next press does.
+       The bar is the notes bar`s twin: fold the list away, and one three-position control for where the
+       hand page is - closed, beside the controls, or the whole width. Nothing here is a mode in the sense
+       of being remembered somewhere else: every one of them is READ BACK OFF THE DOCUMENT.
+
+       THE ICONS ARE CSS BOXES, NOT `<svg>`, AND THAT IS A MEASUREMENT RATHER THAN A PREFERENCE. Inline
+       svg was tried first and shipped; under the window`s own `zoom` THE ENGINE DRAWS A STROKED `<rect>`
+       WITH ITS RIGHT AND BOTTOM EDGES MISSING - a rounded corner, which is why the report was "starts
+       looking like rectangles, ends more like an r". Reproduced in a throwaway probe by painting the icon
+       at `zoom: 2.0` and reading the pixels: perfect at 1:1, top-and-left-only zoomed, with or without a
+       viewBox, whatever the element size is set in.
+
+       These icons are RECTANGLES, so a `<i>` with a border IS the drawing, and a border is laid out by the
+       same box model as everything else in the window - it zooms because the whole document zooms. The
+       colour still comes from `currentColor`, so `:hover`, `[disabled]` and `.on` recolour them with the
+       rules that were already in the stylesheet, and there is still no icon font and no second file for a
+       document that is `#load`ed into the exe as one string.
   -->
   <div class="panes">
     <div class="bar">
-      <button id="deal-list-toggle" class="ghost" title="Show or hide the list of scenarios"
-              data-hint="Fold the scenario list away to give the controls and the hand page the whole window, or bring it back.">◧ scenarios</button>
-      <!-- Disabled until something has been shown in it: a button that is always there says the place
-           EXISTS, which one that appears and disappears does not - and nothing moves when a page arrives. -->
-      <button id="deal-page" disabled title="Show or hide the hand page beside the controls"
-              data-hint="Open the hand page beside these controls - the cards, the trick table and the play advice for the deals you just generated. Press it again to close the pane, which hands back what the page was holding.">hand page</button>
-      <button id="deal-wide" class="ghost" disabled title="Give the hand page the whole width"
-              data-hint="Let the hand page have everything except the scenario list, for reading a set of deals. Press it again to bring the controls back beside it.">wide</button>
+      <!-- The settled "toggle the side panel" glyph - a rectangle with one edge band filled, which is what
+           VS Code, JetBrains and GNOME all draw - as a drawing rather than as `◧`, whose shape was whatever
+           the system font had. The word stays beside it: this is the only labelled control in the bar and
+           the segments below have no room for one. -->
+      <button id="deal-list-toggle" class="ghost icon-text" title="Show or hide the list of scenarios"
+              data-hint="Fold the scenario list away to give the controls and the hand page the whole window, or bring it back."><i class="icon"><i class="fill"></i><i class="gap"></i></i>scenarios</button>
+
+      <!-- WHAT THE RUN WILL COVER, beside the list rather than inside the generate panel. It sat between
+           `double-dummy hooks` and `fixed table` there, which are settings of a run; this is not one. It
+           OVERRIDES THE SELECTION - 101 scenarios, one page each, minutes of work and a folder full of
+           files - and it read as a third harmless switch two rows below the thing it contradicts.
+
+           Here it is next to the list, and it SHOWS ITSELF IN THE LIST: while it is on, every row carries
+           the soft highlight that says "this one too", with the selected row still marked on top of it. So
+           the answer to "what will generate do" is on screen as a shape rather than as a checkbox somebody
+           has to remember ticking. The selection is not cleared or disabled while it is on - it still says
+           which scenario the chips and the pane are about, and that is a different question. -->
+      <input type="checkbox" id="all" class="barcheck" title="Every scenario, one page each"
+             data-hint="Ignore the selection and generate every scenario in the list, one page each — the batch that fills the deals folder. While it is on, every row in the list is highlighted to show what the run will cover.">
+      <label for="all" class="barlabel-check">generate every scenario</label>
+
+      <!-- WHERE THE HAND PAGE IS, as ONE control with three positions rather than two toggles that had to
+           be pressed in the right order. `closed` / `beside the controls` / `the whole width` are three
+           values of one thing - a pane cannot be wide and shut - and two independent buttons said otherwise:
+           `wide` on a closed pane had to open it, and closing a wide pane had to un-widen it, both of which
+           are corrections rather than behaviour. The segment that is lit says where the page IS; pressing
+           another says where to put it.
+
+           The group is dead until something has been shown in the pane. A control that is always there says
+           the place EXISTS, which one that appears and disappears does not - and nothing moves when a page
+           arrives. -->
+      <div class="seg" id="deal-pane-mode">
+        <button class="segbtn" data-pane="closed" disabled title="Close the hand page"
+                data-hint="Close the hand page. That is also what hands back what it was holding - a 48-deal page is about 86MB of laid-out document."><i class="icon"></i></button>
+        <button class="segbtn" data-pane="split" disabled title="Show the hand page beside the controls"
+                data-hint="Put the hand page beside these controls - the cards, the trick table and the play advice for the deals you just generated. Drag the bar between them to give either one more room."><i class="icon"><i class="gap"></i><i class="fill"></i></i></button>
+        <button class="segbtn" data-pane="wide" disabled title="Give the hand page the whole width"
+                data-hint="Let the hand page have everything except the scenario list, for reading a set of deals. Coming back restores the width you last dragged it to."><i class="icon"><i class="fill"></i></i></button>
+      </div>
+
+      <!-- THE FOLDER IS IN THE BAR, not in the generate panel, because it is not a setting of generating.
+           It says where this window WRITES and where it READS, and the second half is what moved it: the
+           pane segment above is alive or dead according to whether the selected scenario has a page IN THIS
+           FOLDER, so a control that decides what the whole view can show cannot be the fifth row of one
+           panel. It is the deals view's answer to the notes view's `folder…` - the same question asked of
+           the other half of the window.
+
+           `deals folder` rather than `output dir`: what is in it is deals, and it is read at least as often
+           as it is written to, so naming it after the writing half was only ever half true. The id stays
+           `outdir` - it is what every flag, test and host lookup already calls it, and renaming a contract
+           to match a label is how the two drift. -->
+      <label for="outdir" class="barlabel">deals folder</label>
+      <input type="text" id="outdir" class="wide"
+             title="Where the pages are written, and where this window looks for the ones already there"
+             data-hint="Where the pages are written and where they are read back from. The scenario list and the hand page both look here, so this decides what there is to look at. Created if it does not exist; a relative path is taken from this program's working directory."
+             placeholder="created if missing; a relative path resolves against the working directory">
     </div>
 
-    <div class="split">
+    <!-- WHICH FORMATS EXIST FOR THE SELECTED SCENARIO, and a way to open each of them. The window's
+         hierarchy is folder (the bar above) -> scenario (the list) -> FORMAT, and this is the level that
+         had nothing showing it: the pane could only ever open the NEWEST output, so a pbn written before
+         the page was unreachable without changing the format dropdown - which says what the next run will
+         write, not what is on disk. Filled by the host from one `read_dir`; hidden when the selection has
+         nothing. -->
+    <div class="outputs" id="outputs" style="display:none"
+         data-hint="The files that exist for the scenario selected in the list. Press one to open that format - the page in the pane, a pbn or text file as text, a handviewer page in your browser."></div>
+
+    <!-- A `<frameset>`, NOT a `<div class=split>`, and that is the difference between panes you can drag and
+         panes you cannot. Sciter's frame-set behavior takes any block children (`docs/md/behaviors/
+         behavior-frame-set.md`: "may contain as `<frame>` elements as any other block containers"), puts a
+         real `<splitter>` between them, and exposes `frameset.state` - the pane widths - to the host for
+         reading and writing. Four things about it were MEASURED before this was written, because three of
+         them are silent:
+
+           * `state` reads back as an array of length STRINGS with their units (`["250px","1*","2*"]`);
+           * writing it as an array of NUMBERS returns success and does nothing at all;
+           * writing it as strings works, and FLEX UNITS SURVIVE - so what is remembered across a `wide`
+             and across a session is a proportion, not a pixel count;
+           * re-authoring the `cols` attribute after the first layout is ignored: `state` is the live model.
+
+         And the pane a `display: none` hides simply drops out of the state (three entries become two) with
+         the survivors taking its space - which is why closing the pane can stay `display: none`, the one
+         thing that hands its memory back. -->
+    <frameset class="split" id="deal-split" cols="250px,1*,2*">
     <!-- Filled by the host from `bidding.registry`: one row per scenario, carrying its index. -->
     <aside id="scenario-list">
       <div class="head">scenarios</div>
@@ -221,6 +307,7 @@
            data-hint="Each scenario is a bidding situation from this system. Pick one, then press generate."></div>
     </aside>
 
+    <splitter/>
     <div class="work">
       <!-- Generate: the controls become an argv slice, which `cli.parse_args` validates. Nothing here
            re-implements a flag. -->
@@ -257,33 +344,18 @@
                  data-hint="Leave empty for different deals every run. Put a number in to get the SAME deals back — for comparing a change, or re-finding a hand.">
         </div>
         <div class="line">
-          <label for="outdir">output dir</label>
-          <input type="text" id="outdir" class="wide"
-                 title="Where the pages are written; created if missing"
-                 data-hint="Where the pages are written. Created if it does not exist; a relative path is taken from this program's working directory."
-                 placeholder="created if missing; a relative path resolves against the working directory">
-        </div>
-        <div class="line">
           <input type="checkbox" id="dd" title="Also run the double-dummy solver"
                  data-hint="Also run the solver: it filters deals the scenario asks it to (only hands where game actually makes, say) and prints the par result on the page. Slower.">
           <label for="dd">double-dummy hooks (--dd)</label>
           <input type="checkbox" id="fixed" title="Same dealer and vulnerability every deal"
                  data-hint="Keep dealer and vulnerability the same on every deal instead of rotating them — one less thing changing while you practise.">
           <label for="fixed">fixed table</label>
-          <input type="checkbox" id="all" title="Every scenario, one page each"
-                 data-hint="Ignore the selection and run every scenario in the list, one page each. This is the batch that fills the deals folder.">
-          <label for="all">every scenario</label>
         </div>
         <div class="line">
           <button id="generate" title="Deal and write the pages"
                   data-hint="Start dealing. Progress is per scenario, and the transcript below names each page as it is written.">generate</button>
           <button id="cancel" class="ghost" disabled title="Stop after the current scenario"
                   data-hint="Asks the run to stop. It finishes the scenario it is on first — one page, not the whole batch.">cancel</button>
-          <!-- Follows the SELECTION, not this run: it opens the page for whichever scenario is picked in the
-               list, whether this run wrote it, an earlier batch did, or nobody has yet (it says so). No
-               `disabled` — the fields it depends on are all editable, so it resolves on the click. -->
-          <button id="view-page" class="ghost" title="Show the selected scenario's page"
-                  data-hint="Open the page for the scenario selected in the list — from this run or any earlier one. Says so if there is none yet.">view page</button>
           <div class="track" title="Progress through the scenarios"
                data-hint="How far through the scenarios this run is."><div id="fill"></div></div>
           <span class="status" id="status" data-hint="What the last run did, or why it would not start.">idle</span>
@@ -333,7 +405,12 @@
         </div>
       </div>
 
-      <plaintext id="report" title="The report, and the log of what each run wrote"
+      <!-- `readonly`, because `<plaintext>` IS AN EDITOR. It was chosen for the report pane as a widget that
+           holds a lot of lines and lets them be selected and copied - but an editor is what it is, so the
+           run log took a caret and typing, and a window that lets you edit its own output is offering an
+           edit that means nothing (the next redraw replaces the whole content anyway). Reported, and the
+           attribute is the whole fix: selection and copying stay, the caret and the typing go. -->
+      <plaintext id="report" readonly title="The report, and the log of what each run wrote"
                  data-hint="Reports and run log. Selectable, so you can copy a line out."></plaintext>
 
       <!-- The hint bar. One line, always the same height so nothing below it moves, written by the host
@@ -354,9 +431,17 @@
          The page it shows is the norn card page - a browser page. It lays out here because of the
          `@media sciter { ... }` block in `norn/html_cards_header.html.tmpl`, which only applies when a host
          sets the `sciter` media var (see `set_media_vars` in main). -->
+    <splitter/>
     <div class="pageview" id="pageview">
       <div class="pagebar">
         <span class="title" id="page-title">hand page</span>
+        <!-- OUT OF THE WINDOW, whatever is in the pane. The chips answer "which file"; this answers "not
+             here" - a browser has more room for a 48-deal page, a find-in-page and a print, and it is the
+             only way to read the one format this window cannot host at all (an html-handviewer page, which
+             is an iframe per deal onto bridgebase.com). Disabled until the pane holds something with a FILE
+             behind it: a page `analyse` built in memory has nothing to hand over. -->
+        <button id="page-browser" class="ghost small icon-text" disabled title="Open this page in your web browser"
+                data-hint="Open what the pane is showing in your web browser — more room for a big page, and the only way to read a handviewer page, which embeds bridgebase.com."><span class="away">↗</span>browser</button>
         <!-- Debug builds only (the host shows it; the stylesheet hides it): writes the hosted page`s
              geometry and the handful of computed styles that differ in this engine into the transcript and
              to stderr. A windowless probe cannot see a real window`s hover, drag or scrollbars, so this is
@@ -368,7 +453,7 @@
       </div>
       <frame id="page"></frame>
     </div>
-    </div>
+    </frameset>
   </div>
 
 <!-- The BML COLORIZER, and the only script in this document.

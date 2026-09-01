@@ -7,7 +7,7 @@ use async_stream::stream;
 use axum::body::{Body, Bytes};
 
 use axum::extract::{Path, State as AxumState};
-use axum::http::{HeaderMap, StatusCode, Uri, header};
+use axum::http::{HeaderMap, HeaderValue, StatusCode, Uri, header};
 use axum::response::{IntoResponse, Response};
 use datastar::prelude::*;
 use serde_json::{Map, Value};
@@ -221,7 +221,7 @@ fn play_session(state: &State, headers: &HeaderMap, query: &str) -> (Arc<Session
     session_for(state, headers, state.corpus.requested_variant(query))
 }
 
-fn cookie_header(state: &State, session: &Session) -> (header::HeaderName, String) {
+fn cookie_header(state: &State, session: &Session) -> (header::HeaderName, HeaderValue) {
     let path = if state.config.prefix.is_empty() {
         "/"
     } else {
@@ -229,11 +229,12 @@ fn cookie_header(state: &State, session: &Session) -> (header::HeaderName, Strin
     };
     (
         header::SET_COOKIE,
-        format!(
+        HeaderValue::try_from(format!(
             "{}={}; Path={path}; HttpOnly; SameSite=Lax",
             session::COOKIE,
             session.sid
-        ),
+        ))
+        .expect("session id is hex, so the cookie is always a valid header value"),
     )
 }
 
@@ -294,7 +295,7 @@ fn respond(state: &State, session: &Session, headers: &HeaderMap, events: Vec<Ev
     sse_response(cookie, encoding, Body::from(joined))
 }
 
-fn sse_response(cookie: (header::HeaderName, String), encoding: Encoding, body: Body) -> Response {
+fn sse_response(cookie: (header::HeaderName, HeaderValue), encoding: Encoding, body: Body) -> Response {
     let mut response = Response::builder()
         .header(header::CONTENT_TYPE, "text/event-stream")
         .header(header::CACHE_CONTROL, "no-cache")
@@ -416,10 +417,17 @@ pub async fn index(AxumState(state): AxumState<State>, uri: Uri, headers: Header
     // which is what an ambiguous later page load (`?debug`, naming no variant) resolves against.
     state.store.remember(&session);
 
+    // TWEAK 3 (experiment): constant header values are `HeaderValue::from_static`, which is a
+    // borrow of a `&'static str` rather than a `String` allocated per response. The cookie is the
+    // one genuinely dynamic value, and `HeaderValue::try_from(String)` takes ownership of the
+    // `format!` buffer instead of copying it again.
     (
         [
-            (header::CONTENT_TYPE, "text/html; charset=utf-8".to_owned()),
-            (header::CACHE_CONTROL, "no-store".to_owned()),
+            (
+                header::CONTENT_TYPE,
+                HeaderValue::from_static("text/html; charset=utf-8"),
+            ),
+            (header::CACHE_CONTROL, HeaderValue::from_static("no-store")),
             cookie_header(&state, &session),
         ],
         page,
@@ -427,11 +435,26 @@ pub async fn index(AxumState(state): AxumState<State>, uri: Uri, headers: Header
         .into_response()
 }
 
+/// `haystack.contains(needle)`, ASCII-case-insensitively, without allocating. `needle` must be
+/// lowercase.
+fn contains_ignore_ascii_case(haystack: &str, needle: &str) -> bool {
+    let (haystack, needle) = (haystack.as_bytes(), needle.as_bytes());
+    if needle.is_empty() || haystack.len() < needle.len() {
+        return needle.is_empty();
+    }
+    haystack
+        .windows(needle.len())
+        .any(|window| window.eq_ignore_ascii_case(needle))
+}
+
 fn debug_allowed(state: &State, query: &str) -> bool {
     match state.config.debug_mode.as_str() {
         "0" => false,
         "1" => true,
-        _ => query.to_ascii_lowercase().contains("debug"),
+        // TWEAK 3 (experiment): a case-insensitive scan rather than `to_ascii_lowercase()`, which
+        // allocated a copy of the whole query string on every page load to answer one substring
+        // question.
+        _ => contains_ignore_ascii_case(query, "debug"),
     }
 }
 
