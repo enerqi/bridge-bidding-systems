@@ -247,14 +247,14 @@ Remember any maximum 5--5+ minors hand rebids 3C over 1M, so a shapely 5--5+ is 
 *** 1D--1H--2H
 
 2H = normal/weaker !h raise, often flat 11--13, maybe 3 !hs if have singleton
-    2S = GF natural, often double fit slam hunting
+    2S = GF natural 2+ honours, often double fit slam hunting
     2N = natural, 4 !hs, NF invitational
         P = minimum, probably 3 card support
         new = maximum, 3 card support
         3H = minimum, 4 card support
         3S/4CD = splinter
         4H = maximum, 4 card support
-    3CD = GF natural, maybe longer 5 card minor, often double fit slam hunting
+    3CD = GF natural 2+ honours, maybe longer 5 card minor, often double fit slam hunting
     3H = 5+ !hs, NF invitational
     3S = 5+ !hs, splinter
     3N = natural, 4!hs, choice of game
@@ -430,7 +430,7 @@ so 15 hcp) may have to open 1C to show their strength, potentially without a sto
         3S = minimum, 4 card support
         4CDH = splinter
         4S = maximum, 4 card support
-    3CDH = GF natural, maybe longer 5 card minor, often double fit slam hunting
+    3CDH = GF natural 2+ honours, maybe longer 5 card minor, often double fit slam hunting
     3S = 5+ !ss, NF invitational
     3N = natural, 4!ss
     4CDH = 5+ !ss, splinter
@@ -1704,7 +1704,7 @@ Limit plus raise when played with single suiter invitational jump shifts (not mi
 - With game values and 3 card support, use either the Nebulous 2C response or bid a 5 card side suit with slam interest
   if looking for support for the suit from partner
 - Note, Picture raises are used after a 2/1 new suit
-- Consider if a 4 card raise is suitable for a splinter, there are two ranges ~10--12 hcp and 13--15 hcp
+- Consider if a 4 card raise is suitable for a splinter (~13--15 hcp, two tiers singleton and void)
 - With game values and almost no chance of slam consider bidding game directly
 - The system allows strong 16+ hcp splinter responders to bid 2N then show their shortage
 
@@ -1753,7 +1753,7 @@ Limit plus raise when played with single suiter invitational jump shifts (not mi
         4H = !s other major shortage
     4H = to play
     other = general control bidding
-3N = artificial GF, some void, any !h length
+3N = artificial GF, some void, NOT good 5 card side suit, any !h length
     4C = ask
         4H = !c void
         4DS = !d/!s void
@@ -2561,7 +2561,7 @@ Limit plus raise when played with single suiter invitational jump shifts (not mi
 - With game values and 3 card support, use either the Nebulous 2C response or bid a 5 card side suit with slam interest
   if looking for support for the suit from partner
 - Note, Picture raises are used after a 2/1 new suit
-- Consider if a 4 card raise is suitable for a splinter, there are two ranges ~10--12 hcp and 13--15 hcp
+- Consider if a 4 card raise is suitable for a splinter (~13--15 hcp, two tiers singleton and void)
 - With game values and almost no chance of slam consider bidding game directly
 - The system allows strong 16+ hcp splinter responders to bid 2N then show their shortage
 
@@ -2606,7 +2606,7 @@ Limit plus raise when played with single suiter invitational jump shifts (not mi
         4x = control bids
     4CDH = !c/!d/!h shortage, strong ~16+ hcp splinter
     4S = to play
-3N = artificial GF, some void, any !s length
+3N = artificial GF, some void, NOT good 5 card side suit, any !s length
     4C = ask
         4S = !c void
         4DH = !d/!h void

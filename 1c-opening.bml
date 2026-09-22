@@ -483,7 +483,7 @@ Continuations are very similar to a modern precision majors first rebid style.
 2M = weak NT raise, 4 (rarely poor 5) card support
     2N = waiting, often slammish and flattish or not want to splinter
     3M = invite
-    3x = GF, natural
+    3x = GF, natural 2+ honours
     3N = play suggestion even vs 4 card support
 2H = (over 1!s) 5+ !hs strong, maybe 6!h--3!s support
     2S = 5 !ss, opposite ordering to usual 6+!ss bid to limit strength with less shape
@@ -527,6 +527,12 @@ Continuations are very similar to a modern precision majors first rebid style.
 3N = 4--4--4--1 singleton in partner's major, 16--20 hcp
 4x = splinter, 4+ card support, ~19--21 hcp
 4M = weak NT, 5 card support
+
+*** Interference over 1C--1HS
+
+- 1 level: system on
+- 2+ level: system off
+
 
 ** 1C--1N
 
@@ -1285,6 +1291,26 @@ Compared to the [1D opening interference](#1D interference):
 
 ** 4th interferes, maybe 2nd, Responder positive
 
+**** 1 level interference 4th only
+
+- *system on*
+- support doubles by weak NT hand if more offensive
+
+1C--1H--(1S)
+    P = weak
+    X = weak, 3 card support
+    1N = weak hand, NT friendly, 2 or 3 (with double NT stop) card support
+    2C = Lakebeach
+    2D = Odwrotka
+    others = system on
+
+1C--1S--(X)
+    P = weak
+    XX = weak, support
+    2C = Lakebeach
+    2D = Odwrotka
+    others = system on
+
 **** X by 4th after some 1 level transfer bid, e.g:
 
 1C--(X)--1H--(X)
@@ -1327,6 +1353,9 @@ Compared to the [1D opening interference](#1D interference):
 
 **** 1 level overcall by 4th:
 
+As it's 1 level should we make it generic system on????
+swap 2N for limit plus raise system??? but no defined point range unless assume 8 to 11, or 8 to 13 to have medium
+
 1C--(1D)--1H--(1S)
     P = weak, no stop
     X = strong, 3 card support (cannot win 2 level so not weak)
@@ -1336,10 +1365,6 @@ Compared to the [1D opening interference](#1D interference):
     2N = jump 2NT limit plus raise system as over 1M
     3H = weak 5 card max support
     others = strong
-
-*** 1 level double by 4th
-
-... system on
 
 **** Suit bid where opener can support responder at 2 level after interference:
 

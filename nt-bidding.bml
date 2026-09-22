@@ -154,7 +154,7 @@ Stayman, promissory
 - major + minor transfers over transfers prioritise safe 3N over slam try
 
 2D = transfer to !hs, 5+ cards
-    2H = normal bid
+    2H = normal bid (includes 4 card support min 4--3--3--3)
         2S = artificial, 5!hs invitational
             2N = deny
                 3CD = 5 card side suit
@@ -245,11 +245,14 @@ Stayman, promissory
             4D = [Double Fit RKB](#Double Fit RKB), min (2+Q+Q or 3)/6 keycards
         3D = transfer, 6+ !hs, game invite OR slam invite including stronger splinter hand (minimum with fitting values ok)
             3H = reject invite
-                3S = !s shortage, slam try, stronger splinter (minimum with fitting values ok)
-                3N = (semi)balanced slam try
+                3S = !s shortage, slam try, stronger splinter (dead minimum with fitting values ok)
+                3N = serious, honour slam try
                 4CD = shortage, slam try, stronger splinter
-            3S = artificial accept, control bidding etc. follow
-                3N = serious
+            3S = accept, 3 card support + control bid
+                3N = serious, honour slam try
+                4CD = shortage, slam try, stronger splinter
+            3N = accept, 2 card support
+            4CD = accept, 3 card support + control bid, denies !s control
         3H = artificial NT needs help, prefer 5--3 fit, 5!hs 5--4--2--2, 5--4--3--1 singleton honour / 5--3--3--2 no stop
             3N = to play, very rare to have 3 !hs
             4H = 3 card support
@@ -263,14 +266,31 @@ Stayman, promissory
 
 **** Transfer breaks
 
-2N = minimal break, total fit more than hcp
+2S = max, 4+ card support, trick source 3+ top 5 honours
     3D = retransfer
         3H = complete transfer
             3S/4CD = shortage
-            3N = (semi)balanced slam try
-3H = maximal break
+            3N = serious, honour slam try
+    other = control bids without retransfer, hints non-serious
+2N = either minimal break (not trash i.e. 4--3--3--3) OR max 4--3--3--3 break
+    3D = retransfer
+        3H = complete transfer
+            3S/4CD = shortage
+            3N = serious, honour slam try
+    other = control bids without retransfer, hints non-serious
+3C = max, 4+ card support, trick source 3+ top 5 honours
+    3D = retransfer
+        3H = complete transfer
+            3S/4CD = shortage
+            3N = serious, honour slam try
+    other = control bids without retransfer, hints non-serious
+3D = max, 4+ card support, trick source 3+ top 5 honours
+    3H = to play
     suit = shortage, slam try
-    3N = (semi)balanced slam try
+    3N = serious, honour slam try
+3H = maximal break, at least one doubleton, no strong trick source
+    suit = shortage, slam try
+    3N = serious, honour slam try
     4S = EKB
     4N = RKB
 
@@ -282,7 +302,7 @@ Stayman, promissory
 - major + minor transfers over transfers prioritise safe 3N over slam try
 
 2H = transfer to !ss, 5+ cards
-    2S = normal bid
+    2S = normal bid (includes 4 card support min 4--3--3--3)
         2N = transfer, 4+ !cs, GF, later 4C set minor as trump, 4D RKB, 4S minor RKB if no 4D free
             3C = 2 card !s support, unsure 3N, maybe good minor support
                 3D = 5--3--1--4, !d shortage
@@ -371,11 +391,12 @@ Stayman, promissory
             3S = !s support, maybe also !h support
             3N = implies 2--2--(5--4), minors stopped
             4CD = control, either 4 card !h support or well fitting 3--3 majors
-        3H = transfer, 6+ !ss, game invite OR slam invite including stronger splinter hand (minimum with fitting values ok)
+        3H = transfer, 6+ !ss, game invite OR slam invite including stronger splinter hand (dead minimum with fitting values ok)
             3S = reject invite
-                3N = (semi)balanced slam try
+                3N = serious, honour slam try
                 4CDH = shortage, slam try, stronger splinter
-            3N = artificial accept, control bidding etc. follow
+            3N = accept, 2 card support
+            4x = accept, 3 card support + control bid
         3S = artificial NT needs help, prefer 5--3 fit, 5!ss 5--4--2--2, 5--4--3--1 singleton honour / 5--3--3--2 no stop
             3N = to play, very rare to have 3 !ss
             4S = 3 card support
@@ -386,14 +407,26 @@ Stayman, promissory
 
 **** Transfer breaks
 
-2N = minimal break, total fit more than hcp
+2N = either minimal break (not trash e.g. 4--3--3--3) OR max 4--3--3--3 break
     3H = retransfer
-        3S = retransferred
-            3N = serious, slam try, despite opener's spread out values
+        3S = complete transfer
             4CDH = shortage
-3S = maximal break
-    3N = (semi)balanced slam try
-    4CDH = shortage, slam try
+            3N = serious, honour slam try
+    other = control bids without retransfer, hints non-serious
+3CD = max, 4+ card support, trick source 3+ top 5 honours
+    3H = retransfer
+        3S = complete transfer
+            4CDH = shortage, slam try
+            3N = serious, honour slam try
+    other = control bids without retransfer, hints non-serious
+3H = max, 4+ card support, trick source 3+ top 5 honours
+    3S = to play
+    3N = serious, honour slam try
+    suit = shortage, slam try
+3S = maximal break, at least one doubleton, no strong trick source
+    3N = serious, honour slam try
+    suit = shortage, slam try
+
 
 *** 1N--2S/2N
 

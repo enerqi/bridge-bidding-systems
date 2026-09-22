@@ -148,16 +148,15 @@ Accepting slam tries in general suggests values in the right place, controls and
     4N = quantitative
     5CD = splinter, !s support
     5S = !s slam try (awkward)
-3N = 3--4--3--3 exactly (no side doubleton for 4!h bid)
+3N = super accept (3)4+ card support, catchall (rare 3--4--3--3, if control heavy)
     4D = retransfer to !h
     4H/other = !h slam try
-4C = super accept (3)4+ card support, source of tricks / concentration of values
+4C = super accept (3)4+ card support, trick source 3+ top 5 honours
     4D = retransfer to !h
     4H/other = !h slam try, happy if declaring
-4D = super accept (3)4+ card support, source of tricks / concentration of values
+4D = super accept (3)4+ card support, trick source 3+ top 5 honours
     4H = to play
     other = !h slam try
-4H = super accept (3)4+ card support, catchall
 
 
 **** 2N--3H
@@ -176,10 +175,10 @@ Accepting slam tries in general suggests values in the right place, controls and
     4N = quantitative
     5CD = splinter, !h support
     5H = !h slam try (awkward)
-4CD = super accept (3)4+ card support, source of tricks / concentration of values, some doubleton
+4CD = super accept (3)4+ card support, trick source 3+ top 5 honours
     4H = retransfer to !s
     4S/other = !s slam try, happy if declaring
-4H = super accept (3)4+ card support, source of tricks / concentration of values, some doubleton
+4H = super accept (3)4+ card support, trick source 3+ top 5 honours
     4S = to play
     other = !s slam try
 4S = super accept (3)4+ card support, catchall
