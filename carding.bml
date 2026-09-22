@@ -16,8 +16,8 @@ attitude and at times weight suit preference more highly. Some signal count mech
 - discarding from partner's lead suit is present/remaining count by default as attitude should be known
 - top of honour sequences (similar to standard lead), Q from (Q)J109x etc., showing a perfect (remaining) sequence that
   you can afford to discard from, which helps partner not worry about that suit or just understand its strength. Note
-  this unecessary high card play can also apply when just following suit, particularly when throwing it under declarer's
-  winner
+  this unnecessary high card play can also apply when just following suit - (1) when throwing it under declarer's
+  winner or (2) unnatural 3rd position high card instead of the usual lowest of equivalent cards
 - in dummy's "strong" suit it shows *count* (you were going to count signal anyway), never attitude, giving partner that
   count info before declarer/dummy even leads the suit
 - throwing *all* your cards in a suit can be clearer than a simple count echo, making it clear that declarer, the hidden
@@ -260,7 +260,7 @@ Times to consider playing high:
 - deception
 - KQxx may depend on how many tricks we need
 
-*** splitting honours
+*** splitting honours in 2nd
 
 Splitting is playing a high honour on their low card.
 
@@ -271,8 +271,8 @@ From an honour sequence HH+ or HHH+
 
 Playing (Hh) fits with the common treatment to play high from a strict HH doubleton.
 
-Playing (hhH) is however opposite to discards signalling a strong sequence with suit control where we throw high from
-e.g. (Q)J109+
+Playing (hhH) is however opposite to our discards for signalling a strong sequence with suit control where we throw high
+from e.g. (Q)J109+
 
 ** 3rd Hand Plays
 
@@ -330,38 +330,66 @@ an interior sequence, 9 some sequence with 109.
 
 ** Our Suit Contract Agreements
 
-**** 3rd and Low (new or Unsupported partner)
+Normal honour sequence (touching or interior) leads and signals, regardless of whether supported or not.
 
-- Leading 3rd and Low from broken honour sequences means 3rd highest from even and lowest from odd.
-- This provides clearer immediate count than 4th highest leads, which is more important when trying to cash out against
-  suit contracts or decide on ruffs, but provides no honour location information
-- (NOT 3rd/5th, 5th highest when holding 5+ cards and 3rd highest with 3 or 4 cards)
+*** Leading New or Unsupported Partner Suit
 
-**** Leading Partner's Supported Suit
+**** 3rd and Low
 
-- *reverse attitude* (Hxx low, Top of nothing xxx, 2nd from xxxx+), same as NT supported leads. Count info less important
-- an *honour* lead is *standard* from a sequence or Hx and can use the usual A/Q/J attitude and K count signal semantics
+Count centric leads. This provides clearer immediate count than 4th highest leads, which is more important when trying
+to cash out against suit contracts or decide on ruffs, but provides no honour location information
 
-**** 3rd from xxx/xxxx in new suit
+- 3rd highest from even and lowest from odd. (note NOT "3rd/5th", 5th highest when holding 5+ cards and 3rd highest with 3 or 4 cards)
+- broken honours and no interior sequence to lead
+- bad holdings. Different to NT where we can lead 2nd from rubbish. 2nd looks too much like a doubleton, which is
+  important to distinguish at suits contracts
 
-More 3rd and Low (NOT MUD, which tries to convey both attitude and count, but neither is crystal clear early).
+Examples:
 
-Different to NT where we can lead 2nd from rubbish. 2nd looks too much like a doubleton, which is important to
-distinguish at suits contracts.
+- xx(x)
+- Hx(x)
+- xx(x)x
+- Hx(x)x
+- xxxx(x)
+- Hxxx(x)
+- xx(x)xxx
+- Hx(x)xxx
 
-**** Ace Lead for Attitude
+*** Leading Partner's Supported Suit
 
-**** King Lead for Count
+**** Reverse Attitude
+
+Count info less important after supporting partner. They can usually work out you have 3+ cards or sometimes that an
+unsupported Honour lead is from Hx opposite a 6+ suit
+
+- lowest attitude
+- top nothing
+- 2nd from bad 4+ suit
+
+Examples:
+
+- (x)x
+- (H)x
+- (x)xx
+- x(x)xx
+- x(x)xxx
+- Hx(x)
+- Hxx(x)
+- Hxxx(x)
+
+*** Ace Lead for Attitude
+
+*** King Lead for Count
 
 Count asking from from AK+ or KQ+
 
 As with NT leads, an alternative method to clear up this ambiguity when playing King count lead is some Rusinow style
-leads, Q from KQ, J from QJ, 10 from J10 and 9 from 109. Harder to decipher when leading a doubleton, which is more
-common in suit contracts than NT (e.g. from 10x or 9x).
+leads, Q from KQ, J from QJ, 10 from J10 and 9 from 109. However, would be harder to decipher when leading a doubleton,
+which is more common in suit contracts than NT (e.g. from 10x or 9x).
 
-**** Queen/Jack for Attitude
+*** Queen/Jack for Attitude
 
-**** primary signal reverse attitude, secondary signal standard count, reverse attitude discards
+*** Primary signal reverse attitude, secondary signal standard count, reverse attitude discards
 
 *** Cash Out Situation Adjustments v.s. Suit
 
@@ -376,33 +404,54 @@ Ace lead maybe speculative without a supporting honour. Other leads no change.
 
 ** Our NT Contract Agreements
 
-*** 4th Highest (new or Unsupported partner)
+Normal honour sequence (touching or interior) leads and signals, regardless of whether supported or not.
+
+*** Leading New or Unsupported Partner Suit
+
+**** 4th Highest from Broken
 
 With 4th highest leads from broken honour sequences the count is less clear, though the rule of 11 helps (11 minus spot
 card lead is how many higher cards than the spot lead in the other hands). In NT we are less likely to want to burn a
 high spot card such as the 3rd highest.
 
-**** Leading Partner's Supported Suit
+**** Top of nothing and 2nd Highest from Bad
 
-- *reverse attitude* (Hxx low, Top of nothing xxx, 2nd from xxxx+), same as suit contract supported leads
-- an *honour* lead is *standard* from a sequence or Hx and can use the usual A/Q/J attitude and K count signal semantics
+From 9xxx or worse. The 9 lead is probably a doubleton, rarely 987x+ sequence to unblock
+
+- (x)xx
+- x(x)xx
+- x(x)xxx
+
+Play High, medium, low from xxx (easier to distinguish from doubleton)
+
+*** Leading Partner's Supported Suit
+
+**** Reverse Attitude
+
+- lowest attitude (clearest message to show honour)
+- top nothing
+- 2nd from bad 4+ suit
+
+Examples:
+
+- (x)x
+- (H)x
+- (x)xx
+- x(x)xx
+- x(x)xxx
+- Hx(x)
+- Hxx(x)
+- Hxxx(x)
 
 Note reverse attitude is a common option (pickup partnerships) for making any leads in partner's suit, regardless if
-supported or not.
+supported or not, but we require support.
 
-**** Top of nothing from xxx in new suit
-High, medium, low is the normal play sequence to disambiguate xxx from a doubleton
-
-**** 2nd from xxxx+ in new suit
-
-A 9xxx or worse holding.
-
-**** King Power Lead
+*** King Power Lead
 
 - Asks partner to give count or unblock.
 - NOT in *partner's known* suit: play standard leads there
 
-**** Queen Ambiguity
+*** Queen Ambiguity
 
 - Asks for attitude
 - Conventionally maybe from AKQx to get J attitude
@@ -420,9 +469,9 @@ from KQ, J from QJ, 10 from J10 and 9 from 109. As with any Rusinow style leads 
 leading a doubleton, but that can easily be avoided at NT, plus when leading partner's suits we play standard honour
 leads
 
-**** primary signal reverse attitude, secondary signal standard count, reverse attitude discards
+*** Primary signal reverse attitude, secondary signal standard count, reverse attitude discards
 
-**** Smith Peter (Echo) on declarer's lead
+*** Smith Peter (Echo) on declarer's lead
 
 - trick 2 signal on declarer's lead in a different suit that indicates attitude for the opening lead: high encourage,
   low discourage
