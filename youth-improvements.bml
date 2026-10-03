@@ -12,8 +12,8 @@ style with partner than learning lots of new ideas and content. Some new ideas h
 
 * English U21 System Extras
 
-The above mentioned baseline natural system is based on the English U16 system. The U21 system includes some
-extra agreements, many of which can be found in this document.
+The above mentioned baseline natural system is based on the English U16 system in 2025. The U21 system at that time
+includes some extra agreements, many of which can be found in this document.
 
 - 2N opening is 20--21 as [NT Ranges](#NT Ranges) suggests
 - "2-Way Checkback", which we call [Two-Way New Minor Forcing xyNT](#Two-Way New Minor Forcing xyNT). It doesn't use 2N
@@ -3586,11 +3586,12 @@ Only over !cs is there something different.
 
 ** Problem
 
-When both opponents overcall/interfere and partner responds then how can opener show a good suit or suits with
+When both opponents overcall/interfere (maybe partner responds weakly) then how can opener show a good suit or suits with
 competitive values at the 3 level and yet also show stronger ~16+ hcp hands?
 
 - 1C--(1S)--X--(2S)
 - 1D--(1H)--1S--(2H)
+- 1D--(1S)--P--(2S)
 
 - only when we can have a competitive long suit and have not been supported by responder. So, it will not apply when
   opening 1NT
@@ -3610,6 +3611,12 @@ show 3 card support for responder's suit. If opener really had a natural 2N rebi
   2N = competitive hand
     3CD = will play if opener is competitive with that suit
   3CD = ~16+ hcp, natural
+
+** alternative 2N meaning?
+
+- If *partner passes* then we could play 2N as *Scrambling*, two places to play rather than distinguishing strength ranges
+- But if partner bid then there's usually only unbid 2 suits so takeout doubles to scramble are standard and 2N as
+  Good-Bad is still sound
 
 * Advancer's Good 2N
 
@@ -4650,6 +4657,10 @@ When responder bids with light hands such as 4/5 hcp (due to the wide ranging 1 
 high with no space to play a suit contract below the 3 level. In the face of competition we often bid to show strength,
 possibly going too high.
 
+A rarer concern, but in bidding systems that include an aggressive NT ladder (e.g. Dutch Doubleton, 10--12 1NT opening
+NV vs VUL) we almost need to cut down the number of balanced hands that start with opening 1 of a suit, otherwise we are
+stuck with very wide NT rebids.
+
 ** Solution
 
 One convention that addresses this is the Mexican 2D which specifically shows 18--19 balanced without a 5 card major.
@@ -4801,6 +4812,7 @@ stop searching easier as over 1N opening:
 
 - 2S/2N minor transfers
 - 3C majors 5--5 GF (instead of 5 card Stayman)
+- alternatively 2S puppet to 2N GF then stayman etc; 2N/3C minor transfers
 - 3D minors GF
 - 3HS shortage, 3 suiter type 5--4 minors as over 1N
 

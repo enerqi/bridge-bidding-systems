@@ -36,22 +36,20 @@ Meta agreements and some slam finding conventions
   a perfect minimum range hand
 - serious slam trys opposite very limited hands imply that we have the assets for slam and that only controls matter
 - very limited hands should therefore show controls below the trump suit and not worry about extra values
-- somewhat limited hands (e.g. 11--15) can e.g. bypass 4M with some extras and a missing control
-- somewhat limited hands (e.g. 11--15?) may skip control showing if minimum and bad fitting
-- neither cue bids nor last train show better hands than the other, flexibility is needed to get the most useful
+- wider but somewhat limited hands (e.g. 11--15) can e.g. bypass 4M with some extras and a missing control
+- wider but somewhat limited hands (e.g. 11--15) may skip control showing if minimum and bad fitting
+- neither control bids nor last train show better hands than the other, flexibility is needed to get the most useful
   information
-- skipping cue bids up the line to use last train would usually imply someone has a wide range and so it's a more
-  quantitative ask
-- after both partners cue bid, should we last train at all? perhaps only if both are ambiguous wide ranging? how wide?
+- skipping control bids up the line to use last train would usually imply someone has a wide range and so it's a more
+  quantitative/extras ask
 - splinters usually imply a hand that won't go to slam without a fitting hand from partner - consider if bidding on
   regardless that maybe it's best to find a way to control bid without revealing your shape, however, maybe the fitting
   hand was required for the grand slam and not the small slam
 - statistically do not expect a splinter to line up well against a strong 20+ balanced hand - it is likely they have
   some wasted values, though you maybe ok opposite a shapely hand (e.g. Acol 2) that is more based on tricks
 - the responder to a splinter can go on with enough extras despite not fitting (e.g. ~13+ opening values outside splinter suit)
-- the cue bidding style means we do not show shortage in partner's suit, even though with a big trump fit it can make sense
+- the control bidding style means we do not show shortage in partner's suit, though creatively with an extra big trump fit it can make sense
 - supporting partner's suit after agreeing a different trump suit is natural double fit finding if we have only shown 2 suits
-- with only the trump suit shown, the first slam try control bid is honour showing
 - 3N is natural, not serious in only a few specific situations, e.g. 1M--2N--3C--3N
 
 ** What is 4N?
@@ -438,86 +436,69 @@ Examples:
 
 ** Cue Bids
 
-More Robson style - “first control bid is honour showing and the next is ambiguous”
-...but jump cue with a void, or use void-splinters if possible
-...maybe shortage asks, when not worried about overall controls
-   when a clear purpose, so what situations make ruffing value or wasted honours important
-   “If partner is short here, these cards are garbage”
+More precisely called control bidding.
 
-? void-splinters instead of strict 2 tier
-  e.g 1H--3S scroll bid, 3n where
-      1H--3N !s void,
-      1H--4CD void
+Italian/Mixed style, showing 1st or 2nd round controls up the line, either honour or shortage based in general.
 
-- 1st above game unless already shown
+There are trade offs with any style. The 1st OR 2nd style can make it hard to know whether we can take the ace opposite
+e.g. a singleton and cross ruff many tricks in a big trump fit. Restricting to 1st round control on the first control
+bidding round or restricting to honour controls can run out of bidding space.
 
-
-
-"""
-| Factor | Favours Italian/Mixed Cues | Favours Ace-Showing Cues |
-|---|---|---|
-| **Hand shape** | Both hands balanced or semi-balanced (5-3-3-2, 4-4-3-2, 5-4-2-2) | At least one hand shapely (singletons, voids, 6-4, 5-5) |
-| **Shape already shown?** | No prior splinter or shortness-showing bid | Splinter or shape-showing bid already made |
-| **What matters most** | Binary "are we off two cashers?" check | Accurate trick-counting opposite known shape |
-| **Bidding space** | Tight (high-level agreement, e.g. 4M after splinter) | Plentiful (low agreement, e.g. 3♣ or 3♦) |
-| **Trump suit level** | High (4-level agreement) | Low (3-level agreement) |
-| **Partnership skill** | Strong expert pair, comfortable with inference and captaincy | Improver/intermediate, or new partnership |
-| **Failure mode you fear most** | Missing a slam because you couldn't locate a useful king | Bidding slam off two cashing tricks due to ambiguous cue |
-| **Auction type** | NT-based slam tries, balanced strong-club auctions | Major-suit auctions with shapely opener or responder |
-| **Honour distribution** | Honours scattered across several suits | Honours concentrated, shape carries the value |
-| **Tolerance for ambiguity** | High — willing to trade specificity for speed | Low — wants explicit, unambiguous content |
-
-A useful way to read the table: if most of your row-answers fall in the left column on a given hand-type, Italian cues earn their keep; if most fall right, ace-showing is doing real work. Most partnerships face a *mix* of these situations across a session, which is why expert pairs increasingly play hybrid agreements — for instance, ace-showing in partner's known long suit (where shape ambiguity is most damaging) but mixed cues in unbid suits (where space efficiency matters most).
-"""
-
-so want to shape out one hand and see how things fit with it...
-hand unsure if partner shapely cues honours
-maybe add space to shape out over transfer break...2n then 4x splinter vs 3x side suit
-auctions like 1h-1s-1n have autosplinter, vs GF and show suits
+Hands looking for honour support may try a 2/1 GF new before supporting, sometimes with a picture bid follow on.
+Splinters are great for showing spread out values and a suit that you don't want partner to have many honours in. Void
+splinters are great because they are specific about being shortage and first round control, but are often too rare to
+play in preference to the 2-tiered (on hcp strength) singleton or void splinters when the splinter bidder is wide ranging.
 
 
-Balanced/flattish hands - italian to show holes quicker?
-
-Above game control bid 1st round in any style if not bidding 2nd time
-
-Robson style stricter than old US A/void first then K/singleton later
-voids via splinter or jumps
-
-Robson 1M-3M new suit then naturalish slam tries, some A/K+ honour
-
-A shortage ask tries to give you:
-Precise shape info (void/singleton location)
-While still keeping honour controls meaningful
-BUT takes some space...Every artificial ask replaces 1–2 natural cue bids
-    only do when hands shapely?
-    maybe when worried if partner is short in your honour high suit (so you mirror in suits with poor honours)
-
-- also when IMPLIED cue bids, non jump new suit at 4 level stuff
-    double jumps or single new suit in GF is splinter
-    not flagging bidding rules situation
-    implied trump suit must be 6+ decent suit
-what about when repeating a minor? 2d-3M-4c seems an exception
-
-1c-2d-3d-3s-4c seems like implied for spades (no diamond raise), but in theory big minor 2 suiter possible
-
-
-....................
-
-Italian style, showing 1st or 2nd round control.
-
-Initiation should not be made with just a second round control or two of course.
-Initiator probably has 2 first round controls and a second round control in the third
-suit unless very distributional. Responder can afford to have a less decent hand and
-let the initiator push them.
-
-- Assume 3 level bids are natural, even if possibly cues to start slam probes
-- Jumping to 4 level ambiguously (4 minor or new major after 1st round of bidding) is a cue bid
+- Assume 3 level bids are natural, shaping out, honour based control bids to start slam probes
 - control bid of my already naturally bid suit shows 2 top 3 honours (AK, AQ, KQ)
-- control bid of partner's secondary (not trump) suit shows 1 top 3 honours
-- bidding past game implies control of the other remaining suits
-- 5 level cue bids are dangerous, would imply a void or possibly controls in partner's suit pushing for a different
-  specific cue bid if Lackwood cannot help
-- 5 level cue bids are 1st round controls
+- control bid of partner's secondary (not trump) suit shows 1 top honour
+- above game or 5 level control bids are dangerous, would imply a void or possibly controls in partner's suit pushing
+  for a different specific control bid if Lackwood cannot help
+- above game or 5 level then control bids are 1st round controls
+
+*** situational specific control bidding style adjustment
+
+- splinter follow on: honour showing, and in the splinter suit specifically Ace showing
+- partner's first suit: honour showing, unless creatively just looking for controls with own playing strength trick source
+- partner's 5+ card second suit: honour showing again
+- partner's two honour side 4+ card suit: honour showing
+- partner likely singleton (e.g. they are known 5--5+ in other suits): not a King control
+- opponent's suit: either 1st round OR singleton
+- balanced partner: unbal hand's initial control bid is honour showing UNLESS specific tools to distinguish honours from
+  shortages encoded
+
+**** two honour side suits examples
+
+- 1M--2N--3C--3D--3S: Jacoby 2N then shows game accept + 5--4--2--2 and reasonable honours
+- 1N--2H--3D: trick source transfer break, 3+ of top 5 honours
+- 1m--1M--2M: decent side suit, potentially double fit finding sequence (would splinter with bad spread out values)
+
+**** unbal control bidder vs flat partner examples
+
+- 1N--2C--2S--3H--3N--4x (3H spade slam try) honour showing. No way to specially show shortages so use default honours vs flat hand
+- 1N--2H--3S--3N: honours control start, shortages bid immediately
+
+**** situational honour showing examples
+- 2D--2N--3D--3M: NT finding or slam try prelude, but honour assumption
+
+**** situational shortage showing examples
+
+- 1M--2N--3CDM--control: Jacoby bidder with 16+ splinter hand, when they don't relay
+- 1N--2H--3S--4x: specific shortage showing tool, honours go via 3N serious
+- 2C--2D--2M--3D--suit: (3D artificial slam try) shortage showing follow ups
+- 2C--2D--3C--3D--suit: (3D artificial slam try) shortage specifically, known no side major
+
+
+*** implied cue bids
+
+When is a 4 level new suit an implied cue bid - slam try with support for partner's last bid suit?
+
+- 6+ card decent suit expected
+- we bid or opponents bid once already (a different suit or NT)
+- non flag bidding situation, flag bidding higher priority
+- non-jump (jump new often a splinter)
+
 
 *** Opponents Double Our Cue Bid
 
@@ -1371,69 +1352,3 @@ alone.
 
 As splinters are cooperative, they can never be strong enough to force a keycard response (like EKB), hence next step or
 4N RKB even over high void splinters.
-
-
-** LTC Aside
-
-Losing trick count is an old method defined as
-
-- 3 losers per suit, 2 partners so 24 losers max
-- 24 minus the combined losers suggests the number of available tricks
-- Aces and Kings are not losers, except the singleton King
-- Queens vary depending on supporting honours
-- Maybe used to limit opener's hand instead of pure hcps for suit contracts, examples such as...
-- 11--15 1 level opener ~7 losers max
-- 16+ hand 6 losers max
-- GF rebids after a response in standard bidding ~5 losers max
-- GF opener ~3 losers max
-- 2 level preempt 6/7 losers
-- 3 level preempt 7/8 losers
-
-LTC honour values:
-- Void = 0
-- A = 0
-- A K = 0
-- A K Q = 0
-- A K x [x x. . .] = 1
-- A Q x [x. . .] = 1 (tripleton or more)
-- A x = 1
-- A x x [x. . .] = 2
-- K = 1
-- K x = 1
-- K x x [x. . .] = 2
-- K Q = 1
-- Q J [x. . .] = 2
-
-Side suit adjustments to LTC include:
-
-- A J 10 [x...] = 1.5 losers
-- Q x x = 2.5 losers
-- Q 10 x = 2 losers (Queen honor support)
-- A Q = .5 losers
-- A Q x = 1 loser
-- J 10 x = 3 losers
-- Q x = 2 losers (but are considered a "plus")
-
-** Cover Cards Aside
-
-Cover cards are easier to calculate and reason about than LTC, so whilst opener may define themselves in terms of
-losers, responder may quantify their strength in terms of cover cards, essentially playing tricks.
-
-(Opener's LTC - responder's cover cards) = total losers
-
-- Counts winners that "cover" opener's losers, much like quick tricks
-- A/K = 1
-- Singleton = 1 (if there is a trump length)
-- Q = 1 iff in a useful suit, e.g. opener's suit or a bid side suit
-- J = 0.5 iff in a long combined suit
-- 4th trump = 0.5
-- QJ = 0.5, maybe in other suit  (QJXX in trumps is 2 cover cards 1 + 0.5 + 0.5 - Q + 4th trump + J)
-- xx = 0.5, maybe in other suit for ruffing
-
-Naturally, responder may need to re-evaluate cover card usefulness if partner shown to be short in a suit
-
-Suit raises are roughly:
-
-- Single = 1.5 / 2
-- Limit = 2.5 / 3
-- Game = 3.5 / 4

@@ -33,7 +33,7 @@ some of the responses. We can't just use different major transfers for 5--5 majo
   transfer
 - major sign off hands cannot reliably play at the 3 level, maybe forced to 3N and bidding the major again is a slam
   try, so pass, Texas transfer or chance playing in 3N
-- 6--4 major hands transfer
+- 6--4 major hands transfer typically, maybe stayman if only game looking (cannot game/slam distinguish over 3C--3D...)
 - 5--5 major sign off hands just transfer to !s then bid 4H
 - 5--5 major slam try+ hands use muppet Stayman
 - 5--3 major hands just transfer, note there's special transfer break support for not missing the 3--5 inverse fit
@@ -63,8 +63,7 @@ Accepting slam tries in general suggests values in the right place, controls and
 - NOT game values 5--5 majors (transfer to !ss then bid 4!h)
 - NOT 5!hs + 4!ss
 - NOT 5--3 major hands, they should transfer as there's special transfer break support for those shapes
-- NOT 6--4 major hands, no room to untangle some auctions, ignore shorter major, opener can still transfer break with 5
-  card other major and only 2 cards in responder's 6 card major
+- Only game going 6--4 major hands, optional, no room to untangle some auctions
 
 3D = 4!ss OR nothing -- no 5 card major and not !hs
     3H = 4 !ss
@@ -72,9 +71,11 @@ Accepting slam tries in general suggests values in the right place, controls and
             3N = !s slam try
         3N = no fit
             4CD = natural slam try, as immediately over 3D, may still be 2 or 3 suited
-    3S = 5!ss (also had 4!hs)
+            4H = to play, 6!h--4!s typically
+    3S = 5!ss, rarely 6!ss (also had 4!hs)
         3N = 2 card !s suit only
             4H = 5--5 in !h + !s, mild slam interest (3!h -> 3!s transfer weak 5--5, immediate 4H forcing 5--5)
+            4S = to play, 6!s--4!h typically
         4CDH = super accepts, as transfer break, (3)4 card !s support, good hand, trick source / concentrated values
         4S = cathcall 3+ card !s support
     4C = natural slam try, may also have !ds
