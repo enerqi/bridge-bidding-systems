@@ -12,7 +12,7 @@
 # run the desktop workbench (release)
 [group('workbench')]
 workbench *args: mktarget_dirs
-	odin run workbench.odin -file {{norn}} {{dds}} {{sciter}} {{markup}} -keep-executable -o:speed -microarch:native -linker:{{linker}} -out:{{ target_path("release", workbench_name) }} -- {{args}}
+	odin run workbench {{norn}} {{dds}} {{sciter}} {{markup}} -keep-executable -o:speed -microarch:native -linker:{{linker}} -out:{{ target_path("release", workbench_name) }} -- {{args}}
 
 # `-debug` for a steppable build with the tracking allocator's leak report at exit; also what to run when
 # attaching the SDK's `inspector` (the window is created with .ENABLE_DEBUG either way).
@@ -20,7 +20,7 @@ workbench *args: mktarget_dirs
 # run the desktop workbench (debug)
 [group('workbench')]
 workbench-debug *args: mktarget_dirs
-	odin run workbench.odin -file {{norn}} {{dds}} {{sciter}} {{markup}} -keep-executable -debug -linker:{{linker}} -out:{{ target_path("debug", workbench_name) }} -- {{args}}
+	odin run workbench {{norn}} {{dds}} {{sciter}} {{markup}} -keep-executable -debug -linker:{{linker}} -out:{{ target_path("debug", workbench_name) }} -- {{args}}
 
 # The SDK's inspector: DOM tree, computed styles, script console and debugger, over a socket, against a
 # RUNNING workbench. Needs `just workbench-debug` on the other side (the release build grants neither the
@@ -49,7 +49,7 @@ workbench-norebuild *args:
 # run the desktop workbench's document + argv tests (needs the Sciter engine, not a display)
 [group('test')]
 test-workbench *args: mktarget_dirs
-	odin test workbench.odin -file {{norn}} {{dds}} {{sciter}} {{markup}} -debug -define:ODIN_TEST_THREADS=1 -show-timings -linker:{{linker}} -out:{{ target_path("debug", "test-workbench.exe") }} {{args}}
+	odin test workbench {{norn}} {{dds}} {{sciter}} {{markup}} -debug -define:ODIN_TEST_THREADS=1 -show-timings -linker:{{linker}} -out:{{ target_path("debug", "test-workbench.exe") }} {{args}}
 
 # Does the norn CARD PAGE still lay out inside Sciter? The workbench hosts it in a <frame>, and it fits
 # only because of the `@media sciter` block in norn/html_cards_header.html.tmpl plus the footer's JS shims

@@ -77,6 +77,10 @@
 	--field-hover: #3a3c52;
 	--field-line: #45475a;
 
+	/* the focus ring: the accent, faint (a field) and stronger (a button) */
+	--focus-ring: rgba(137, 180, 250, 0.25);
+	--focus-ring-strong: rgba(137, 180, 250, 0.35);
+
 	--radius: 4px;
 	--radius-lg: 8px;
 
@@ -87,6 +91,47 @@
 	--text: 16px;
 	--text-small: 0.85em; /* labels, the dim second line of a scenario row, the engine version */
 	--mono: 14px; /* the report pane */
+}
+
+/* THE LIGHT THEME: the same tokens, catppuccin "latte" for the dark set's "mocha", so every hue keeps its
+   meaning (blue is the accent, green our call, peach the opponents'). Chosen in the settings view and put on
+   the root as `theme="light"` by the host (`theme.odin`), which then restyles the tree - descendants keep
+   their old colours until it does, measured. Depth is MIRRORED, not copied: in the dark set the editor is
+   the darkest surface, so here it is the lightest - the source text is always the highest-contrast thing.
+
+   The frames (the notes preview, the hand page) are NOT themed: they are the published pages. */
+html[theme="light"] {
+	--bg: #eff1f5;
+	--surface: #e6e9ef;
+	--sunken: #ffffff;
+	--line: #ccd0da;
+	--line-soft: #dce0e8;
+
+	--ink: #4c4f69;
+	--ink-soft: #5c5f77;
+	--ink-dim: #8c8fa1;
+
+	--accent: #1e66f5;
+	--accent-hover: #4a83f7;
+	--accent-active: #1554d6;
+	--accent-ink: #ffffff;
+	--good: #40a02b;
+
+	--syn-key: #8839ef;
+	--syn-head: #df8e1d;
+	--syn-bid: #40a02b;
+	--syn-opp: #fe640b;
+	--syn-suit: #d20f39;
+	--syn-link: #179299;
+	--syn-error: #d20f39;
+	--syn-warn: #df8e1d;
+
+	--field: #ffffff;
+	--field-hover: #f5f6f9;
+	--field-line: #bcc0cc;
+
+	--focus-ring: rgba(30, 102, 245, 0.25);
+	--focus-ring-strong: rgba(30, 102, 245, 0.35);
 }
 
 html {
@@ -200,12 +245,15 @@ header .engine {
 	flow: vertical;
 }
 
-/* Both views' panes are `.split`, but only the notes view's is a plain `<div>` that needs a flow: the
-   deals view's is a `<frameset>`, whose frame-set behavior lays its own children out (and inserts the
-   splitters between them). Handing that element a `flow` as well is telling two layout managers to run
-   in one box, so the flow is scoped to the div. */
+/* Every split is a plain `<div>` laying its panes out left to right; see "the dividers" below. */
 .split {
 	size: *;
+	/* THE SPLIT IS THE WINDOW'S, never more. A pane whose content is taller than the window scrolls inside
+	   itself (`.work` below; the list, the editors and the frames already do). Without this the tallest
+	   pane's content pushed the whole view taller than the window at high zoom - a page scrollbar appeared,
+	   narrowed the bar above, and the bar wrapped (measured at 177%: the filter squeezed to 27px). The
+	   frameset this replaced clipped its panes; a plain flow has to be told. */
+	overflow: hidden;
 }
 
 div.split {
@@ -286,10 +334,22 @@ aside .head {
 	font-size: var(--text-small);
 }
 
+/* "NOTHING MATCHED", in both of the places a list here is a projection of a query: the scenario list under
+   its filter, and the heading palette. A list that simply goes blank reads as a broken widget rather than
+   as an answer, so the answer is written where the rows would have been. One rule for both - the palette
+   has emitted this element since it was written and never had a style for it. */
+#scenarios .empty,
+#bml-goto-list .empty {
+	padding: 0.5em 0.8em;
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+}
+
 .work {
 	size: *;
 	flow: vertical;
 	padding: 0.7em 0.9em;
+	overflow-y: scroll-indicator; /* taller than the window at high zoom: it scrolls, the window does not */
 }
 
 /* ---- the two command panels --------------------------------------------------------------------- */
@@ -350,7 +410,7 @@ input[type="text"]:hover {
    `outline`'s behaviour here is not something this file should assume. */
 input[type="text"]:focus {
 	border-color: var(--accent);
-	box-shadow: 0 0 0 2px rgba(137, 180, 250, 0.25);
+	box-shadow: 0 0 0 2px var(--focus-ring);
 }
 
 input.num {
@@ -420,7 +480,7 @@ button:active {
 }
 
 button:focus {
-	box-shadow: 0 0 0 2px rgba(137, 180, 250, 0.35);
+	box-shadow: 0 0 0 2px var(--focus-ring-strong);
 }
 
 /* The secondary button: same shape, no accent. Its own three states, because it shares none of the
@@ -567,6 +627,22 @@ button.icon-text .icon {
 	margin-right: 0.45em;
 }
 
+/* THE STANDARD PICTURES (new, folder, save, check, rescan, words, settings, about): Material Icons, FILLED
+   paths, `fill="currentColor"` so every button state recolours them as it does the word. Filled on
+   purpose - a STROKED svg outline lost its right and bottom edges under zoom on the GPU rasterizer, and the
+   windowless (raster) tests cannot see that, so these want one look in the real window at 150%. */
+button.icon-text svg.ic {
+	width: 1.15em;
+	height: 1.15em;
+	margin-right: 0.4em;
+}
+
+/* A gap between groups of buttons in a bar: file actions | this editor's commands | reference. */
+.bar .barsep {
+	display: inline-block;
+	width: 0.6em;
+}
+
 /* WHERE THE HAND PAGE IS, as one control with three positions. The segments are one control visually -
    a single rounded outline, hairlines between - because they are one VALUE: closed, beside the controls,
    or the whole width. Three separate buttons said something else, and the corrections that followed
@@ -634,6 +710,34 @@ button.segbtn.on:hover {
 	color: var(--accent-ink);
 }
 
+/* AND THE ICON ON THE LIT SEGMENT INVERTS WITH IT. Reported from the window: "the highlighted tri state
+   button loses its border, the border and interior are all the selected colour, outline of the button
+   picture hard to read".
+
+   The arithmetic behind that: `.icon` hard-codes `border: 1px solid var(--ink-soft)` (#a6adc8) and
+   `background: var(--sunken)` (#11111b), which is right on every DARK button in this window and wrong on
+   the one accent one — #a6adc8 against the accent's #89b4fa is two light blues touching, so the outline
+   disappears while the near-black interior stays loud. The drawing became a dark blob with no edge.
+
+   ONLY THE OUTLINE CHANGES, and that is the whole lesson of this fix. Inverting the icon properly — a
+   transparent interior so the accent is the ground, with the fill in `--accent-ink` — was written first
+   and IMMEDIATELY BROKE `test_the_pane_icons_say_the_same_thing_lit_or_not`, which has guarded since the
+   last round that the FILLED half is the BRIGHTER half. Inverted, the filled half went dark and the empty
+   one became the bright one, so the drawing said "page on the left" while lit and "page on the right"
+   while not: the exact defect that test was written for, reintroduced from the other side.
+
+   So the interior stays `--sunken` and the fill stays `--ink-soft` — near-black body, light-grey filled
+   half, which is legible on the accent as it is on the dark buttons — and the border alone takes
+   `--accent-ink`. The outline then reads as the edge of a dark shape on a light ground rather than as
+   light blue on light blue.
+
+   The general rule the two rounds add up to: an icon with a FIXED ground and ink is right exactly until it
+   is put on a ground of a different lightness, and the accent is the only such ground in this window. Fix
+   the part that lost its contrast, not every part. */
+button.segbtn.on .icon {
+	border-color: var(--accent-ink);
+}
+
 /* Dead until something has been shown in the pane. The whole group dims, not just the icons: a lit
    segment in a dead group would claim the pane is open when there is nothing to open. */
 button.segbtn:disabled {
@@ -686,9 +790,275 @@ button:disabled .icon > .fill {
 	font-size: var(--text-small);
 }
 
+/* THE TWO FIELDS SHARE THE BAR'S SLACK, in the proportion their contents ask for: a filter query is a
+   few characters (`1c 2h`) and a folder is a path, so the folder takes two shares to the filter's one.
+
+   NEITHER OF THEM HAS A MIN-WIDTH, and that is deliberate. `.bar` is `flow: horizontal`, which does not
+   wrap - a floor under either field is an overflow at a narrow window rather than a narrow field, which is
+   exactly the trap the hosted card page's toolbar fell into (`flow: horizontal` + `width: max-content`,
+   clipped at pane width). Two proportional fields shrink together and stay on the row. */
+.bar input.filter {
+	width: *;
+	margin-right: 0.2em;
+}
+
+/* THE GROUPS ICON: stacked lanes, some of them filled, which is what "a list with a selection in it" looks
+   like drawn with nothing but rectangles. It cannot reuse `.fill`/`.gap` — those are sized for the
+   HORIZONTAL flow the other icons use (`width: 1*; height: *`), and this one stacks. */
+.icon.stack {
+	flow: vertical;
+}
+
+.icon.stack > .lane {
+	width: *;
+	height: 1*;
+}
+
+.icon.stack > .lane.on {
+	background: var(--ink-soft);
+}
+
+/* THE GROUPS BUTTON WHILE SOMETHING IS SELECTED. The full accent ground, the same lit language the pane
+   segment uses, and for the reason that round was reported: a lit state a few percent of luminance apart
+   from its neighbours read as identical buttons. `button` here is `border: none`, so an outline-only
+   treatment would have nothing to draw on. */
+button.icon-text.on {
+	background: var(--accent);
+	color: var(--accent-ink);
+}
+
+button.icon-text.on:hover {
+	background: var(--accent-hover);
+}
+
+/* AND THE ICON'S OUTLINE INVERTS WITH IT — only the outline, exactly as on the lit pane segment, and the
+   two are written the same way on purpose. `.icon` hard-codes `--ink-soft` for its border, which is right
+   on every dark button here and is light-blue-on-light-blue against the accent. The body stays `--sunken`
+   and the filled lanes stay `--ink-soft`, so the filled part is still the BRIGHT part in both states —
+   inverting the whole drawing was tried on the segment and immediately broke the guard that says so. */
+button.icon-text.on .icon {
+	border-color: var(--accent-ink);
+}
+
+/* THE LIST HEADER IS A KEY HINT NOW, not a repeated label. Dim, because it is reference rather than
+   content, with the keys themselves picked out — a wall of even-weight small text is a wall nobody reads,
+   and the two keys are the only part worth landing on. */
+aside .head.keys b {
+	color: var(--ink-soft);
+	font-weight: bold;
+}
+
+/* ---- the group chips and the group picker --------------------------------------------------------- */
+
+/* THE SELECTED GROUPS, in the bar beside the filter they compose with. Deliberately NOT styled like the
+   format chips below: those mean "a file that exists, press to open" and these mean "a filter, press to
+   remove", and two rows of identical pills a few pixels apart with opposite senses is how somebody presses
+   the wrong one. These are accent-tinted (they are doing something to the list right now), the format
+   chips are neutral, and only these carry an ×. */
+.tagchips {
+	flow: horizontal;
+	vertical-align: middle;
+	margin-right: 0.3em;
+}
+
+.tagchip {
+	behavior: button;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 0.3em;
+	padding: 0.1em 0.4em;
+	border: 1px solid var(--accent);
+	border-radius: 3px;
+	color: var(--accent);
+	font-size: var(--text-small);
+	cursor: pointer;
+}
+
+.tagchip:hover {
+	background: var(--accent);
+	color: var(--accent-ink);
+}
+
+.tagchip .x {
+	margin-left: 0.35em;
+	color: var(--ink-dim);
+}
+
+/* The × takes the chip's colour on hover, so the whole pill reads as one target rather than as a label
+   with a small button on the end. The hit area is the CHIP - see `draw_tag_chips`. */
+.tagchip:hover .x {
+	color: var(--accent-ink);
+}
+
+/* THE PICKER IS THE REPORT PANE'S SPACE. `size: *` the way `#report` is, so hiding one gives the other
+   everything - no height is authored here and none should be. */
+.tagpicker {
+	size: *;
+	flow: vertical;
+	padding: 0.6em 0.8em;
+	background: var(--surface);
+	border: 1px solid var(--line);
+}
+
+.tagpicker-head {
+	flow: horizontal;
+	margin-bottom: 0.5em;
+	padding-bottom: 0.35em;
+	border-bottom: 1px solid var(--line);
+}
+
+.tagpicker-head .title {
+	width: *;
+	color: var(--ink);
+	font-weight: bold;
+}
+
+.tagpicker-head .keys {
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+}
+
+/* `behavior: button` for the same reason the scenario rows have it: without a native controller a plain
+   <div> delivers no `.BUTTON_CLICK` and the host never hears the row at all. */
+.tagrow {
+	behavior: button;
+	flow: horizontal;
+	padding: 0.3em 0.4em;
+	border-bottom: 1px solid var(--line-soft);
+	cursor: pointer;
+}
+
+.tagrow:hover {
+	background: var(--line-soft);
+}
+
+.tagrow.on {
+	color: var(--accent);
+}
+
+/* The digit is the control here, so it is drawn as a key rather than as text - this picker is meant to be
+   used without the pointer ever arriving. */
+.tagrow .key {
+	display: inline-block;
+	width: 1.6em;
+	margin-right: 0.5em;
+	padding: 0 0.3em;
+	border: 1px solid var(--line);
+	border-radius: 3px;
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+	text-align: center;
+}
+
+.tagrow.on .key {
+	border-color: var(--accent);
+	color: var(--accent);
+}
+
+.tagrow .tick {
+	display: inline-block;
+	width: 1.2em;
+}
+
+.tagrow .name {
+	display: inline-block;
+	width: 9em;
+	font-weight: bold;
+}
+
+/* The description takes the slack, so the count sits at the right-hand end whatever the names are. */
+.tagrow .what {
+	width: *;
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+}
+
+/* HOW MANY SCENARIOS THE GROUP HOLDS. What says a group is worth selecting before it is selected. */
+.tagrow .count {
+	display: inline-block;
+	color: var(--ink-soft);
+	font-size: var(--text-small);
+	text-align: right;
+}
+
+/* THE KEYS LIST IS A VIEW, like `.about` — hidden by default and shown by the host with an inline
+   `display`, REPLACING the panes rather than floating over them (an out-of-flow percentage height lays out
+   1px tall here). It was a child of `.work` first, which made it a deals-view thing: CTRL+/ in the notes
+   view then opened it where nothing shows it. */
+.keyspanel {
+	display: none;
+	size: *;
+	flow: vertical;
+	padding: 0.9em 1.1em;
+	background: var(--surface);
+	overflow-y: scroll-indicator;
+}
+
+/* VERTICAL, and each row lays out its own two columns. It was `flow: horizontal-flow` over alternating
+   key/description boxes, which is a TILING flow: it packed as many PAIRS onto a line as would fit, so five
+   shortcuts shared a row and the last ran off the right edge. `display: grid` does not exist in this
+   engine, but nothing here needed one - a two-column list is rows, and `.tagrow` two rules up was already
+   the pattern.
+
+   The reading width is capped because this panel is as wide as the work pane, which on a wide window is
+   most of a screen: a line of prose that long is one nobody tracks back to the start of. */
+.keysgrid {
+	flow: vertical;
+	max-width: 52em;
+}
+
+.keysgrid .group {
+	margin-top: 0.7em;
+	margin-bottom: 0.2em;
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+}
+
+.keysgrid .group:first-child {
+	margin-top: 0;
+}
+
+/* The row itself: keys left at a fixed width so the descriptions line up, prose taking the rest. The same
+   arrangement `.tagrow` uses, and for the same reason. */
+.keysgrid .krow {
+	flow: horizontal;
+	padding: 0.15em 0;
+}
+
+.keysgrid .k {
+	width: 11em;
+}
+
+/* Each key as its own little cap, the way the picker's digits are drawn - a key is a thing you press, and
+   a row of them run together as text is a row nobody scans. */
+.keysgrid .k b {
+	display: inline-block;
+	margin-right: 0.3em;
+	padding: 0 0.35em;
+	border: 1px solid var(--line);
+	border-radius: 3px;
+	color: var(--ink-soft);
+	font-size: var(--text-small);
+	font-weight: normal;
+}
+
+.keysgrid .d {
+	width: *;
+	color: var(--ink-soft);
+	font-size: var(--text-small);
+}
+
+/* The OR rule, said once where it is being used. It is the only thing about this control that cannot be
+   worked out by pressing it: two groups on could as easily have meant an intersection. */
+.tagpicker-foot {
+	margin-top: 0.6em;
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+}
+
 /* The field takes the slack of the bar, the way `#bml-status` does in the notes bar. */
 .bar input.wide {
-	width: *;
+	width: 2*;
 	margin-right: 0.2em;
 }
 
@@ -785,20 +1155,33 @@ button.chip .icon {
 	font-size: var(--text-small);
 }
 
-/* ---- the splitters ------------------------------------------------------------------------------- */
+/* ---- the dividers -------------------------------------------------------------------------------- */
 
-/* `<splitter>` is a real element of the frame-set behavior, so it is styled like one. It is deliberately
-   nearly invisible at rest and picks up the accent under the pointer: a permanent bar between the panes
-   would draw the eye to the furniture rather than to the deals. The width is the GRAB TARGET as much as
-   the look — 5px is what the SDK's own frameset sample settles on, and anything thinner is a hunt. */
-splitter {
+/* Every `.split` is a horizontal flow of panes with a `.divider` between each pair (not a `<frameset>` - see
+   the note on `#deal-split` in the markup for the measured faults that ended it). Widths are inline CSS,
+   written by the host and the drag script; BORDER-BOX, so a number is the whole pane and a pane's padding
+   cannot skew a drag or a proportion. The divider is nearly invisible at rest and takes the accent under the
+   pointer: 5px is the grab target, and anything thinner is a hunt. */
+.split > * {
+	box-sizing: border-box;
+	height: *;
+}
+
+.split > .divider {
 	width: 5px;
+	min-width: 5px;
 	background: var(--line-soft);
 	cursor: e-resize;
 }
 
-splitter:hover {
+.split > .divider:hover {
 	background: var(--accent);
+}
+
+/* For the length of a drag, nothing inside a frame may take the mouse: the hand page and the notes preview
+   are documents of their own and would swallow the moves over them (see the drag script). */
+.split.dragging frame {
+	pointer-events: none;
 }
 
 /* ---- the about panel ---------------------------------------------------------------------------- */
@@ -1207,19 +1590,23 @@ frame#bml-page {
    the text under it keeps whatever the colorizer made of it and gains a mark of its own. `:hover` shifts
    the colour so the pointer confirms it found the thing before the popup appears (the SDK's marks sample
    does the same, and it is the only feedback a hover can give while the idle timer runs). */
-#bml-text > text::mark(bml-error) {
+#bml-text > text::mark(bml-error),
+#scn-text > text::mark(bml-error) {
 	text-decoration: wavy underline var(--syn-error);
 }
 
-#bml-text > text::mark(bml-error):hover {
+#bml-text > text::mark(bml-error):hover,
+#scn-text > text::mark(bml-error):hover {
 	text-decoration: wavy underline var(--ink);
 }
 
-#bml-text > text::mark(bml-warn) {
+#bml-text > text::mark(bml-warn),
+#scn-text > text::mark(bml-warn) {
 	text-decoration: wavy underline var(--syn-warn);
 }
 
-#bml-text > text::mark(bml-warn):hover {
+#bml-text > text::mark(bml-warn):hover,
+#scn-text > text::mark(bml-warn):hover {
 	text-decoration: wavy underline var(--ink);
 }
 
@@ -1227,3 +1614,176 @@ frame#bml-page {
    a popup, which is what the SDK's marks sample uses: a plaintext has no popup method at all, so the hover
    handler threw `TypeError: not a function` on every hover - and a mouseidle handler that throws leaves the
    window not accepting clicks at all. See the document's script. */
+
+/* ---- the scenario editor ------------------------------------------------------------------------ */
+
+/* THE SAME SHAPE AS THE NOTES EDITOR, and it borrows nothing by accident: the rules below are the ones
+   that name `#bml-*` ids and therefore could not be shared, plus the marks the scenario grammar has and
+   BML does not. The structural classes (`.bar`, `.split`, `.files`, `.panel-help`) ARE shared, which is
+   what keeps the two views looking like one application. */
+.scnview {
+	display: none;
+	size: *;
+	flow: vertical;
+	background: var(--surface);
+}
+
+#scn-dir {
+	color: var(--ink-dim);
+	word-wrap: break-word;
+}
+
+#scn-list {
+	width: *;
+	height: *;
+	overflow-y: scroll-indicator;
+}
+
+/* `behavior: button`, without which a row raises no `.BUTTON_CLICK` and the host never hears a click —
+   the same reason the notes' file rows and the scenario list's rows have it. */
+#scn-list .row {
+	behavior: button;
+	padding: 0.35em 0.8em;
+	border-bottom: 1px solid var(--line-soft);
+	color: var(--ink-soft);
+	font-size: var(--text-small);
+	cursor: pointer;
+}
+
+#scn-list .row:hover {
+	background: var(--line-soft);
+	color: var(--ink);
+}
+
+#scn-list .row.sel {
+	background: var(--line);
+	color: var(--accent);
+}
+
+#scn-list .row.dirty::after {
+	content: " •";
+	color: var(--accent);
+}
+
+/* THE FOLDERS, above the files: every folder the deals list reads, folder -> file being the hierarchy.
+   Capped so a long list of folders scrolls rather than squeezing the files out; the file list below takes
+   the slack (`height: *`). */
+#scn-sources {
+	max-height: 40%;
+	overflow-y: scroll-indicator;
+	border-bottom: 1px solid var(--line);
+	font-size: var(--text-small);
+}
+
+#scn-sources .head,
+#scn-sources .empty,
+#scn-list .empty {
+	padding: 0.35em 0.8em;
+	color: var(--ink-dim);
+}
+
+#scn-sources .row {
+	behavior: button;
+	flow: vertical;
+	padding: 0.3em 0.8em;
+	border-top: 1px solid var(--line-soft);
+	color: var(--ink-soft);
+	cursor: pointer;
+}
+
+#scn-sources .row:hover {
+	background: var(--line-soft);
+	color: var(--ink);
+}
+
+#scn-sources .row.sel {
+	color: var(--accent);
+}
+
+#scn-sources .path {
+	word-wrap: break-word;
+}
+
+#scn-sources .what {
+	flow: horizontal;
+	color: var(--ink-dim);
+}
+
+#scn-sources .what .lbl {
+	width: *;
+}
+
+/* Forget a remembered folder. A button of its own so the click is ITS click, not the row's. */
+#scn-sources .forget {
+	behavior: button;
+	padding: 0 0.4em;
+	color: var(--ink-dim);
+	cursor: pointer;
+}
+
+#scn-sources .forget:hover {
+	color: var(--accent);
+}
+
+#scn-text {
+	width: *;
+	height: *;
+	padding: 0.4em 0.5em;
+	background: var(--sunken);
+	color: var(--ink);
+	font-family: monospace;
+	font-size: var(--mono);
+	overflow: scroll-indicator;
+	white-space: pre;
+	text-selection-caret-color: var(--accent);
+}
+
+/* The check's answer. `readonly` in the markup rather than here, because `<plaintext>` IS an editor and
+   without it the report takes a caret and typing the next check throws away — the same rule `#report`
+   in the deals view follows. */
+#scn-report {
+	width: *;
+	height: *;
+	padding: 0.4em 0.5em;
+	border-left: 1px solid var(--line);
+	background: var(--sunken);
+	color: var(--ink-soft);
+	font-family: monospace;
+	font-size: var(--mono);
+	overflow: scroll-indicator;
+	white-space: pre;
+}
+
+/* The scenario grammar's tokens. `> text` is load-bearing here for the same reason it is for the BML
+   marks: a mark lives on the TEXT NODE, so the pseudo-element belongs to the per-line `<text>` element
+   the widget makes, and `#scn-text::mark(...)` would parse, match nothing and paint nothing in silence.
+   The names are the script's (`SCN_MARKS`), and the two lists have to agree. */
+#scn-text > text::mark(scn-key) {
+	color: var(--syn-key);
+}
+
+#scn-text > text::mark(scn-op) {
+	color: var(--syn-opp);
+}
+
+#scn-text > text::mark(scn-word) {
+	color: var(--syn-link);
+}
+
+#scn-text > text::mark(scn-num) {
+	color: var(--syn-head);
+}
+
+/* A NAME is the bidding system's own vocabulary — the half of this language that a form of ranges and
+   checkboxes cannot express — so it gets the colour a call gets in the notes. */
+#scn-text > text::mark(scn-name) {
+	color: var(--syn-bid);
+}
+
+#scn-text > text::mark(scn-str) {
+	color: var(--ink-soft);
+}
+
+#scn-text > text::mark(scn-comment) {
+	color: var(--ink-dim);
+}

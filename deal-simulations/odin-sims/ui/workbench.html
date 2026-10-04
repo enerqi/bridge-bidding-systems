@@ -42,10 +42,21 @@
               data-hint="The controls: pick a scenario and generate a set of practice deals, or analyse a single deal you already have.">deals</button>
       <button class="tab" data-view="editor" title="Edit the bidding-system notes"
               data-hint="Edit the .bml notes of this bidding system, with a live preview of the rendered page beside them.">notes</button>
+      <!-- THE THIRD PLACE, and it is a place rather than a pane for the same reason the notes are one: it is
+           a FOLDER OF FILES you edit, and the thing beside the text is the answer to "is this file any good"
+           rather than a second view of the deals. What the deals view lists is SCENARIOS (compiled and
+           loaded, in one list); what this lists is the `.scenario` FILES in one folder. Two different
+           questions, so two different lists. -->
+      <button class="tab" data-view="scenarios" title="Write and edit .scenario files"
+              data-hint="Write your own scenarios as text: edit a .scenario file, check what it means and how often it happens, then save - saving puts it in the deals list.">scenarios</button>
     </div>
     <span class="engine" id="engine"></span>
-    <button id="about" class="ghost small" title="Versions and third-party credits"
-            data-hint="Versions, and the licence credits for the engine and the double-dummy solver.">about</button>
+    <!-- SETTINGS, then ABOUT: the conventional top-right pair. Both are errands rather than places, opened
+         from anywhere and left by going back (close, esc, ctrl+w). -->
+    <button id="prefs" class="ghost small icon-text" title="Settings: theme"
+            data-hint="Settings - the colour theme (dark, light, or whatever Windows is set to). Remembered for the next start."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>settings</button>
+    <button id="about" class="ghost small icon-text" title="Versions and third-party credits"
+            data-hint="Versions, and the licence credits for the engine and the double-dummy solver."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>about</button>
   </header>
 
   <!-- The About panel. Not decoration: the Sciter engine's EULA requires a link to Terra Informatica in
@@ -78,11 +89,108 @@
       <div class="about-line" id="about-book"></div>
 
       <div class="line">
-        <button id="about-close">close</button>
+        <button id="about-close" title="Close (esc, ctrl+w)">close</button>
       </div>
     </div>
   </div>
 
+
+<!-- SETTINGS. The About panel's shape and classes, for the same reasons: it REPLACES the panes (an
+     overlay collapses in this engine), and it is left by going back. The theme is one value with three
+     positions, so it is the `.seg` control the hand-page placement uses, and the lit segment is the
+     remembered choice (`draw_prefs`). The host owns the colours: see `theme.odin`. -->
+  <div class="about" id="prefs-panel">
+    <div class="about-card">
+      <div class="legend">Settings</div>
+      <div class="about-head">Theme</div>
+      <div class="line">
+        <div class="seg" id="prefs-theme">
+          <button class="segbtn" data-theme="dark" title="Dark"
+                  data-hint="The dark theme - the window's original look.">dark</button>
+          <button class="segbtn" data-theme="light" title="Light"
+                  data-hint="The light theme.">light</button>
+          <button class="segbtn" data-theme="system" title="Follow Windows"
+                  data-hint="Follow Windows' own light or dark app setting (Settings, Personalisation, Colours). Read when chosen and at each start.">system</button>
+        </div>
+        <span class="barlabel" id="prefs-theme-note"></span>
+      </div>
+      <div class="about-line">
+        The notes preview and the hand pages keep their own light look in either theme: they are the
+        published pages, shown as a reader will see them.
+      </div>
+      <div class="line">
+        <button id="prefs-close" title="Close (esc, ctrl+w)">close</button>
+      </div>
+    </div>
+  </div>
+
+<!-- EVERY KEY IN ONE PLACE (CTRL+/), and A VIEW rather than a pane - the same shape as About, shown and
+     hidden by `show_view` and replacing the panes rather than floating over them.
+
+     IT LIVED IN `.work` FIRST, sharing the report pane with the group picker, and that was the wrong
+     reading of what it is. `.work` belongs to the DEALS view, so CTRL+/ in the notes view opened this
+     where the notes view shows nothing - invisible, and it left the deals view's report pane hidden for
+     when you came back. The picker really is a pane of the deals view (it describes the list beside it);
+     a list of the window's keys is a place the notes view has as much use for.
+
+         WHY IT EARNS ITS PLACE. The window now has eight shortcuts, and the previous round's lesson was
+         that a key nothing on screen mentions is a key nobody has. Three affordances were added one at a
+         time (a placeholder, a button, a header hint) and they each name ONE key; this is the list. The
+         `?`-panel idiom already in this document (`help-generate`, `help-analyse`) is per-panel help,
+         which is the wrong shape for something that spans the whole window.
+
+         STATIC MARKUP rather than host-rendered, because it is reference text with no state in it - and
+         a test asserts that every key the handler implements is named here, which is what stops the two
+         drifting. -->
+    <div class="keyspanel" id="keyspanel" style="display:none" tabindex="0"
+         data-hint="Every keyboard shortcut in this window. CTRL+/ opens and closes it.">
+      <div class="tagpicker-head">
+        <span class="title">keys</span>
+        <span class="keys">esc or ctrl+/ closes</span>
+      </div>
+      <!-- ONE BLOCK PER ROW, each laying out its own two columns. The first version made the whole grid
+           a `flow: horizontal-flow` of alternating key/description boxes and let it wrap - which packs as
+           many PAIRS onto a line as will fit, so five shortcuts shared one row and the last ran off the
+           right edge. A wrapping flow is for things that tile; a two-column list is rows, and a row is a
+           block. This is the shape `.tagrow` already uses and it was right there. -->
+      <div class="keysgrid">
+        <div class="group">the window</div>
+        <div class="krow"><span class="k"><b>ctrl+1</b><b>ctrl+2</b><b>ctrl+3</b></span><span class="d">the deals view · the notes · your scenario files</span></div>
+        <div class="krow"><span class="k"><b>ctrl+tab</b></span><span class="d">the next place along the tab strip (shift: the previous one)</span></div>
+        <div class="krow"><span class="k"><b>ctrl+=</b><b>ctrl+-</b><b>ctrl+0</b></span><span class="d">zoom in · out · back to normal</span></div>
+        <div class="krow"><span class="k"><b>ctrl+/</b></span><span class="d">this list</span></div>
+        <div class="krow"><span class="k"><b>esc</b><b>ctrl+w</b></span><span class="d">close this list, or the about panel</span></div>
+
+        <div class="group">the deals view</div>
+        <div class="krow"><span class="k"><b>ctrl+r</b></span><span class="d">filter the scenario list, by name or description</span></div>
+        <div class="krow"><span class="k"><b>ctrl+g</b></span><span class="d">pick which groups the list is drawn from</span></div>
+        <div class="krow"><span class="k"><b>ctrl+b</b></span><span class="d">fold the scenario list away, or bring it back</span></div>
+        <div class="krow"><span class="k"><b>ctrl+\</b></span><span class="d">the hand page: closed → beside the controls → the whole width</span></div>
+        <div class="krow"><span class="k"><b>ctrl+o</b></span><span class="d">open the next format this scenario has (shift: the previous one)</span></div>
+        <div class="krow"><span class="k"><b>ctrl+enter</b></span><span class="d">generate — shift: analyse the deal instead</span></div>
+
+        <div class="group">while the filter has the caret</div>
+        <div class="krow"><span class="k"><b>↑</b><b>↓</b></span><span class="d">move the selection through what is left</span></div>
+        <div class="krow"><span class="k"><b>enter</b><b>esc</b></span><span class="d">done typing, the keys move to the list · clear the filter</span></div>
+
+        <div class="group">while the scenario list has the focus</div>
+        <div class="krow"><span class="k"><b>↑</b><b>↓</b></span><span class="d">step through the scenarios</span></div>
+        <div class="krow"><span class="k"><b>home</b><b>end</b><b>pgup</b><b>pgdn</b></span><span class="d">the ends of the list · a screenful at a time</span></div>
+        <div class="krow"><span class="k"><b>enter</b></span><span class="d">show this scenario's hand page, opening the pane if it is shut</span></div>
+
+        <div class="group">while the groups picker is open</div>
+        <div class="krow"><span class="k"><b>1</b>…<b>9</b></span><span class="d">toggle that group — several at once shows the scenarios in any of them</span></div>
+        <div class="krow"><span class="k"><b>enter</b><b>backspace</b></span><span class="d">close · clear every group</span></div>
+
+        <div class="group">the notes view</div>
+        <div class="krow"><span class="k"><b>ctrl+r</b></span><span class="d">go to any heading in the corpus, by name</span></div>
+
+        <div class="group">the scenarios view</div>
+        <div class="krow"><span class="k"><b>ctrl+enter</b></span><span class="d">check — parse what is in the editor and measure how often it happens</span></div>
+        <div class="krow"><span class="k"><b>ctrl+s</b></span><span class="d">save the file, and put it in the deals list</span></div>
+        <div class="krow"><span class="k"><b>ctrl+b</b></span><span class="d">fold the file list away, or bring it back</span></div>
+      </div>
+    </div>
 
   <!-- The BML EDITOR. The fourth top-level view, shown and hidden exactly like `.pageview` and `.about`
        (an inline `display`, never the `hidden` attribute) and replacing the panes rather than floating over
@@ -111,8 +219,12 @@
            ornament. -->
       <button id="bml-files-toggle" class="ghost" title="Show or hide the list of files"
               data-hint="Fold the list of files away to give the source and the preview the whole window, or bring it back.">◧ files</button>
-      <button id="bml-folder" class="ghost" title="Choose a folder of .bml files"
-              data-hint="Pick a different folder to edit the .bml notes of. The system's own notes are found at startup, so this is for a copy, a branch, or somebody else's.">folder…</button>
+      <!-- FILE ACTIONS FIRST, in the order every editor uses - open, save - with the standard pictures;
+           the commands particular to this editor come after them. -->
+      <button id="bml-folder" class="ghost icon-text" title="Choose a folder of .bml files"
+              data-hint="Pick a different folder to edit the .bml notes of. The system's own notes are found at startup, so this is for a copy, a branch, or somebody else's."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>folder…</button>
+      <button id="bml-save" class="ghost icon-text" title="Write the editor's text back to the file (ctrl+s)"
+              data-hint="Overwrite the .bml file on disk with the text in the editor. There is no undo for this beyond the editor's own."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>save</button>
       <!-- A TOGGLE: the second press closes the pane, which is also how the document's memory is handed back.
            The label is rewritten by the host to say which of the two the next press does. -->
       <button id="bml-preview" title="Render the text as it stands, or close the preview"
@@ -126,8 +238,6 @@
               data-hint="Fold the preview: every heading stays, the section the caret is in is open, and the other bodies become an ellipsis - so the outline is still there to navigate by. Big documents cost hundreds of MB rendered in full, so they start folded.">fold</button>
       <button id="bml-links" class="ghost" title="Also check that every [label](#Anchor) resolves"
               data-hint="Also report cross-references that land on no heading. Off by default: a CHAPTER links to headings in its sibling files on purpose, so this is only meaningful on a whole document (bidding-system.bml) or once you know the anchor should be here.">links</button>
-      <button id="bml-save" class="ghost" title="Write the editor's text back to the file"
-              data-hint="Overwrite the .bml file on disk with the text in the editor. There is no undo for this beyond the editor's own.">save</button>
       <button class="help-toggle ghost small" id="help-bml" title="What is this editor for?"
               data-hint="Explain what this editor is for and what the preview shows.">?</button>
       <!-- No close here either; the header's tabs are the way out, and the text stays in the editor. -->
@@ -171,7 +281,10 @@
       <div id="bml-goto-list"
            data-hint="The headings that match, best first. The name is on the left and the chapter it is in on the right; the leading dots are how deep the heading is."></div>
     </div>
-    <div class="split">
+    <!-- DRAGGABLE DIVIDERS, the same plain flow as the deals view (reported: "the divider between the notes
+         editor and the preview is not moving" - there was none). The drag is the script's, at the end of
+         this file; a pane the host hides takes its divider with it (`show_needed_dividers`). -->
+    <div class="split" id="bml-split">
       <!-- The folder's .bml files, one clickable row each, filled by the host from `app.bml_names`. Same
            shape as the scenario list on the left of the deals view, and for the same reason: a row needs
            `behavior: button` to be clickable at all in this engine, and the host reads the name back off
@@ -182,9 +295,94 @@
         <div id="bml-list"
              data-hint="The .bml files in this folder. Click one to edit it; unsaved changes are kept until you pick the same file again."></div>
       </aside>
+      <div class="divider"></div>
       <plaintext id="bml-text" title="The .bml source"
                  data-hint="The .bml source. Headers, directives, bids and suit symbols are coloured; press preview to render it."></plaintext>
+      <div class="divider"></div>
       <frame id="bml-page"></frame>
+    </div>
+  </div>
+
+  <!-- THE SCENARIO EDITOR: `.scenario` files, and what they mean.
+
+       THE SAME SHAPE AS THE NOTES, deliberately - a bar, a folder of files on the left, the source in the
+       middle, and the answer on the right - because it is the same activity: edit a text file, look at what
+       it renders to, save it. Learning one editor should be learning both.
+
+       WHAT IS ON THE RIGHT is the one real difference, and it is what a scenario has instead of a rendered
+       page. `check` parses the BUFFER (not the file: the same bargain the BML preview makes) and writes
+       three things nobody can get from reading their own text - what the parser UNDERSTOOD, spelled back
+       canonically; every diagnostic, with the line squiggled in the source as well; and HOW OFTEN the
+       condition happens, measured over sample deals. That last one is the answer to the question a
+       scenario language cannot help getting wrong: a condition tight enough to be unreachable looks
+       exactly like a correct one until a generate run sits there all afternoon.
+
+       IT IS A `<plaintext readonly>` rather than a frame: the answer is a report, and the report pane in
+       the deals view is the same widget for the same reason. `readonly` because a `<plaintext>` IS an
+       editor - without it the report takes a caret and typing that the next check throws away. -->
+  <div class="scnview" id="scnview">
+    <div class="bar">
+      <button id="scn-files-toggle" class="ghost" title="Show or hide the list of files"
+              data-hint="Fold the list of files away to give the source and the report the whole window, or bring it back.">◧ files</button>
+      <!-- FILE ACTIONS FIRST, in the order every editor uses - new, open, save - with the standard
+           pictures; then what is particular to scenarios (check, rescan), then the reference (words).
+           RESCAN, NOT RELOAD: saving, new... and folder... already rebuild the deals list from the folders,
+           so this is only for files that changed OUTSIDE this window. It was called `reload`, which read
+           as "reload this file into the editor". The id stays `scn-reload`. -->
+      <button id="scn-new" class="ghost icon-text" title="Create a new .scenario file"
+              data-hint="Create a new .scenario file. It starts as a working scenario with the grammar in a comment above it, so there is something to edit rather than an empty buffer."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"/></svg>new…</button>
+      <button id="scn-folder" class="ghost icon-text" title="Add a folder of .scenario files"
+              data-hint="Pick a folder your .scenario files live in. It is added to the folders the deals list reads, and remembered for the next start."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>folder…</button>
+      <button id="scn-save" class="ghost icon-text" title="Write the file, and put it in the deals list (ctrl+s)"
+              data-hint="Overwrite the .scenario file on disk with the text in the editor, and rebuild the deals list from it. There is no undo for this beyond the editor's own."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>save</button>
+      <span class="barsep"></span>
+      <button id="scn-check" class="icon-text" title="Parse what is in the editor, and measure how often it happens (ctrl+enter)"
+              data-hint="Parse the text in the editor - not the saved file - and report what it means, anything wrong with it, and how often each scenario happens in a sample of random deals."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>check</button>
+      <button id="scn-reload" class="ghost icon-text" title="Read every scenario folder again"
+              data-hint="Read every scenario folder again and rebuild the deals list from them. Saving already does this - rescan is for files changed outside this window."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>rescan</button>
+      <span class="barsep"></span>
+      <button id="scn-words" class="ghost icon-text" title="List the words a scenario file may use"
+              data-hint="List the grammar and every named helper this bidding system exposes to scenario files - the vocabulary is what a form of ranges and checkboxes fundamentally cannot say."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>words</button>
+      <button class="help-toggle ghost small" id="help-scn" title="What is this editor for?"
+              data-hint="Explain what a .scenario file is and what check, save and rescan do.">?</button>
+      <span class="title" id="scn-status"></span>
+    </div>
+    <div class="panel-help" id="help-scn-text">
+      A <code>.scenario</code> file is a scenario written as TEXT instead of compiled into this program. Each
+      one is a name, a description and one line per seat; the seat lines AND together, and within a line the
+      operators are <b>and</b>, <b>or</b>, <b>not</b> and parentheses over <code>hcp</code>, the four suits,
+      <code>controls</code>, <code>longest</code>, <code>balanced</code>, <code>holds(spades, ace)</code>,
+      comparisons and ranges (<code>hcp in 15..17</code>) — plus this bidding system's own named helpers,
+      which are what a form of ranges and checkboxes cannot express. Press <b>words</b> for the whole list.
+      <b>check</b> parses what is in the editor and says three things: what it UNDERSTOOD, spelled back in
+      canonical form; anything wrong with it, underlined in the source as well as listed; and how often each
+      scenario happens over a sample of random deals — which is how you find out that a condition is too
+      tight before a generate run sits there all afternoon. <b>save</b> writes the file AND puts it in the deals
+      list (at the bottom, after the built-in scenarios; type its name in the deals filter to find it).
+      The deals list reads every folder listed under <b>folders</b> at the top of the sidebar — click one
+      to edit the files in it, × to forget it. <b>folder…</b> adds a folder there and remembers it for the next start;
+      <code>BRIDGE_SCENARIOS</code> adds more from the environment. <b>rescan</b> reads them all again, for
+      files changed outside this window.
+    </div>
+    <div class="split" id="scn-split">
+      <aside class="files" id="scn-files">
+        <!-- THE FOLDERS FIRST, then the files of the one being edited: folder -> file is the hierarchy, so
+             it reads top-down. Several folders feed the deals list (the remembered ones and
+             BRIDGE_SCENARIOS) while this view edits one, and nothing on screen used to say so. Drawn by the
+             host (`draw_scenario_sources`); clicking a row edits that folder, its × forgets it. -->
+        <div id="scn-sources"
+             data-hint="Every folder the deals list reads .scenario files from, where it was configured, and what it gave. Click one to edit the files in it; × forgets a remembered folder."></div>
+        <div class="head" id="scn-dir" title="The folder these files are in"
+             data-hint="The folder the files below are from - the one marked in the folders list above."></div>
+        <div id="scn-list"
+             data-hint="The .scenario files in this folder. Click one to edit it; unsaved changes are kept until you pick the same file again."></div>
+      </aside>
+      <div class="divider"></div>
+      <plaintext id="scn-text" title="The .scenario source"
+                 data-hint="The .scenario source. Keywords, seat names, quantities and the system's own helper names are coloured; press check to parse it."></plaintext>
+      <div class="divider"></div>
+      <plaintext id="scn-report" readonly title="What the parse understood, and how often it happens"
+                 data-hint="What check found: the scenarios it parsed, spelled back canonically, anything wrong with them, and how often each one happens."></plaintext>
     </div>
   </div>
 
@@ -222,6 +420,49 @@
            the segments below have no room for one. -->
       <button id="deal-list-toggle" class="ghost icon-text" title="Show or hide the list of scenarios"
               data-hint="Fold the scenario list away to give the controls and the hand page the whole window, or bring it back."><i class="icon"><i class="fill"></i><i class="gap"></i></i>scenarios</button>
+
+      <!-- TYPE TO FIND A SCENARIO. A hundred rows two lines tall is a wall, and the only instrument
+           against it was the scrollbar - which is the wrong one for a list whose NAMES are the thing
+           somebody knows (`1c-any-2h-or-2n`) and whose POSITION is the thing they do not.
+
+           The matching is the heading palette's, `outline.score_name` unchanged: a subsequence, and the
+           query's spaces and punctuation are SEPARATORS rather than characters. So `1c 2h` finds
+           `1c-any-2h-or-2n` without anyone typing the dashes the registry happens to spell it with - the
+           same failure that rule was written for in the notes (`1h 1s` against `1H-1S`, `1H--1S`, `1H/1S`).
+
+           A FIELD IN THE BAR RATHER THAN A PALETTE OVER THE LIST, and the difference is not decoration.
+           The notes view's CTRL+R is modal because it GOES somewhere and closes behind you; a filter is a
+           STATE of the list - narrowed to the swedish-club auctions, you stay narrowed while you generate,
+           read the chips and come back - and an overlay cannot be a state you leave on. CTRL+R still puts
+           the caret here, so one key means "find a place by name" in both halves of the window.
+
+           The placeholder carries the key. The notes palette has no visible trigger at all and had to be
+           found in the help panel, which is the same complaint one level down: a shortcut nothing on
+           screen mentions is a shortcut for whoever wrote it. -->
+      <input type="text" id="scenario-filter" class="filter"
+             title="Narrow the list to the scenarios you name (CTRL+R)"
+             data-hint="Narrow the list to the scenarios whose name or description matches what you type. Spaces and dashes are separators, so `1c 2h` finds `1c-any-2h-or-2n`. CTRL+R puts the caret here, the up and down arrows move the selection, and escape clears it."
+             placeholder="filter  (ctrl+r)">
+
+      <!-- THE GROUPS THAT ARE SELECTED, one removable chip each, and NOTHING AT ALL when none are. They
+           sit here beside the text filter because the two compose - the groups widen, the typing narrows -
+           and deliberately NOT in the `.outputs` chip row below, which is a few pixels away and means the
+           opposite thing: a format chip is a file that exists and pressing it OPENS it, a group chip is a
+           filter and pressing it REMOVES it. Same shape, opposite sense, so they get a different place and
+           the × these have and those have not. Filled by the host; CTRL+G is what turns one on. -->
+      <!-- THE PICKER NEEDS A DOOR. CTRL+G is the way it is meant to be opened, and a shortcut nothing on
+           screen mentions is a shortcut for whoever wrote it - which is the complaint already recorded
+           against the notes view's CTRL+R palette, one level down. The text filter got away with a
+           placeholder because a field IS visible; a picker that only exists once a key is pressed has
+           nothing to put a placeholder on, so it gets a button.
+
+           `.on` while any group is selected, so the control says the list is narrowed even when the chips
+           beside it have scrolled out of a cramped bar. -->
+      <button id="deal-groups" class="ghost icon-text" title="Pick the scenario groups (CTRL+G)"
+              data-hint="Choose which groups of scenarios the list is drawn from — several at once shows the scenarios in any of them. CTRL+G opens it too."><i class="icon stack"><i class="lane on"></i><i class="lane"></i><i class="lane on"></i></i>groups</button>
+
+      <div class="tagchips" id="tagchips" style="display:none"
+           data-hint="The scenario groups the list is narrowed to. Press one to stop filtering by it. CTRL+G picks them."></div>
 
       <!-- WHAT THE RUN WILL COVER, beside the list rather than inside the generate panel. It sat between
            `double-dummy hooks` and `fixed table` there, which are settings of a run; this is not one. It
@@ -283,32 +524,31 @@
     <div class="outputs" id="outputs" style="display:none"
          data-hint="The files that exist for the scenario selected in the list. Press one to open that format - the page in the pane, a pbn or text file as text, a handviewer page in your browser."></div>
 
-    <!-- A `<frameset>`, NOT a `<div class=split>`, and that is the difference between panes you can drag and
-         panes you cannot. Sciter's frame-set behavior takes any block children (`docs/md/behaviors/
-         behavior-frame-set.md`: "may contain as `<frame>` elements as any other block containers"), puts a
-         real `<splitter>` between them, and exposes `frameset.state` - the pane widths - to the host for
-         reading and writing. Four things about it were MEASURED before this was written, because three of
-         them are silent:
-
-           * `state` reads back as an array of length STRINGS with their units (`["250px","1*","2*"]`);
-           * writing it as an array of NUMBERS returns success and does nothing at all;
-           * writing it as strings works, and FLEX UNITS SURVIVE - so what is remembered across a `wide`
-             and across a session is a proportion, not a pixel count;
-           * re-authoring the `cols` attribute after the first layout is ignored: `state` is the live model.
-
-         And the pane a `display: none` hides simply drops out of the state (three entries become two) with
-         the survivors taking its space - which is why closing the pane can stay `display: none`, the one
-         thing that hands its memory back. -->
-    <frameset class="split" id="deal-split" cols="250px,1*,2*">
+    <!-- A PLAIN HORIZONTAL FLOW with ordinary `.divider` elements, NOT a `<frameset>` (2026-10-04). The frameset
+         behavior was dropped after a run of measured faults, each found by a fix for the last: its `state`
+         did not match its panes, a hidden pane still reported its old box, a `display: none` splitter broke
+         it so that writing widths threw, it divided flex shares over content boxes, and its own drag
+         arithmetic double-applied the window's zoom. The end of it was a screenshot of the hand page's bar
+         drawn on top of the controls. Now the widths are plain CSS - `250px` for the list, flex `N*` for the
+         others, `box-sizing: border-box` so a number is the whole pane - written by the host from its model
+         (`apply_deal_layout`) and by the drag script (end of this file). Nothing in between to disagree. -->
+    <div class="split" id="deal-split">
     <!-- Filled by the host from `bidding.registry`: one row per scenario, carrying its index. -->
     <aside id="scenario-list">
-      <div class="head">scenarios</div>
+      <!-- THE HEADER EARNS ITS LINE. It used to say `scenarios`, which the button in the bar above it
+           already says and the list below it makes obvious - a whole row spent repeating the one thing
+           nobody could be confused about. It carries the two keys that act on this list instead, always on
+           screen rather than on hover (the hint bar) or behind a `?`, because the cost of not knowing them
+           is scrolling a hundred rows by hand and never finding the groups at all. -->
+      <div class="head keys">
+        <b>ctrl+r</b> filter&nbsp;&nbsp;·&nbsp;&nbsp;<b>ctrl+g</b> groups&nbsp;&nbsp;·&nbsp;&nbsp;<b>ctrl+/</b> keys
+      </div>
       <div id="scenarios"
            data-hint="Each scenario is a bidding situation from this system. Pick one, then press generate."></div>
     </aside>
 
-    <splitter/>
-    <div class="work">
+    <div class="divider"></div>
+    <div class="work" id="work">
       <!-- Generate: the controls become an argv slice, which `cli.parse_args` validates. Nothing here
            re-implements a flag. -->
       <div class="panel">
@@ -413,6 +653,31 @@
       <plaintext id="report" readonly title="The report, and the log of what each run wrote"
                  data-hint="Reports and run log. Selectable, so you can copy a line out."></plaintext>
 
+      <!-- THE GROUP PICKER (CTRL+G), WHICH IS THE REPORT PANE'S SPACE BORROWED. At startup the pane holds
+           one sentence and is otherwise the largest empty box in the window, so this takes it and hands it
+           back on close - the two swap `display` and neither needs a height, both being `size: *` children
+           of `.work`.
+
+           A SIBLING RATHER THAN AN OVERLAY, and that is an engine fact rather than a preference: an
+           out-of-flow percentage height lays out 1px tall here, which is the same reason the notes view's
+           heading palette is a row in the flow instead of a box floating over the editor. It still reads
+           as modal, because covering a region and taking the keys is what modal means in a window.
+
+           IT IS DRIVEN BY DIGITS. Five groups means five keys and no typing, and the shape still works at
+           fifty - which is the point once scenarios can be defined from text. There is no cursor on
+           purpose: a cursor plus digits would be two ways to do one thing. -->
+      <div class="tagpicker" id="tagpicker" style="display:none" tabindex="0"
+           data-hint="Pick the scenario groups the list is drawn from. A number toggles one, several can be on at once, enter closes and backspace clears.">
+        <div class="tagpicker-head">
+          <span class="title">groups</span>
+          <span class="keys">a number toggles · space · enter closes · backspace clears · ctrl+g</span>
+        </div>
+        <div id="tagpicker-list"></div>
+        <div class="tagpicker-foot">Several groups show the scenarios in <b>any</b> of them. The filter box then narrows what is left.</div>
+      </div>
+
+
+
       <!-- The hint bar. One line, always the same height so nothing below it moves, written by the host
            from the `data-hint` of whatever the pointer or the keyboard is on. -->
       <div class="hintbar" id="hint"></div>
@@ -431,10 +696,21 @@
          The page it shows is the norn card page - a browser page. It lays out here because of the
          `@media sciter { ... }` block in `norn/html_cards_header.html.tmpl`, which only applies when a host
          sets the `sciter` media var (see `set_media_vars` in main). -->
-    <splitter/>
+    <div class="divider"></div>
     <div class="pageview" id="pageview">
       <div class="pagebar">
         <span class="title" id="page-title">hand page</span>
+        <!-- THE PAGE'S OWN ZOOM, apart from the window's: zoom the controls up and the boards stay a size
+             you can read a deal at. 100% is the page as a browser draws it. CTRL+wheel over the page does
+             the same; the window's CTRL+wheel/plus/minus leaves the page where it is. -->
+        <div class="seg" id="page-zoom">
+          <button class="segbtn" id="page-zoom-out" title="Smaller hand page (ctrl+wheel over the page)"
+                  data-hint="Make the hand page smaller - only the page, not the rest of the window. CTRL+wheel over the page does the same.">−</button>
+          <button class="segbtn" id="page-zoom-reset" title="Hand page back to 100%"
+                  data-hint="Put the hand page back to 100% - the size a browser draws it - whatever the window's own zoom is."><span id="page-zoom-level">100%</span></button>
+          <button class="segbtn" id="page-zoom-in" title="Bigger hand page (ctrl+wheel over the page)"
+                  data-hint="Make the hand page bigger - only the page, not the rest of the window. CTRL+wheel over the page does the same.">+</button>
+        </div>
         <!-- OUT OF THE WINDOW, whatever is in the pane. The chips answer "which file"; this answers "not
              here" - a browser has more room for a 48-deal page, a find-in-page and a print, and it is the
              only way to read the one format this window cannot host at all (an html-handviewer page, which
@@ -453,7 +729,7 @@
       </div>
       <frame id="page"></frame>
     </div>
-    </frameset>
+    </div>
   </div>
 
 <!-- The BML COLORIZER, and the only script in this document.
@@ -505,13 +781,15 @@
     bmlMarked += 1;
   }
 
-  function bmlClear(el, length) {
+  // `marks` is the list this editor's colorizer applies, so a buffer is only ever cleared of its own:
+  // the scenario editor and the notes editor share this code and share nothing else.
+  function bmlClear(el, length, marks) {
     var node = el.firstChild;
     if (!node || length <= 0) return;
     var r = new Range();
     r.setStart(node, 0);
     r.setEnd(node, length);
-    r.clearMark(BML_MARKS);
+    r.clearMark(marks || BML_MARKS);
   }
 
   function bmlMarkAll(el, text, re, name) {
@@ -526,7 +804,7 @@
   function bmlColorizeLine(el) {
     var text = bmlLineText(el);
     if (text === null) return;
-    bmlClear(el, text.length);
+    bmlClear(el, text.length, BML_MARKS);
     if (!text.length) return;
 
     if (BML_DIRECTIVE.test(text)) { bmlMark(el, 0, text.length, "bml-key"); return; }
@@ -569,9 +847,17 @@
   // A WHOLE pass stays the host's entry point on purpose: it must not matter whether the widget reuses its
   // line elements across a `content=` write, and a stale flag there would leave a freshly loaded file
   // uncoloured with nothing to see but the absence of colour.
-  function bmlColorizePass(all) {
-    var editor = document.$("#bml-text");
+  // `sel` and `lineFn` are what make this serve BOTH editors - the notes and the scenario files. They
+  // default to the notes, so every call that predates the second editor still means what it said.
+  //
+  // The "how many lines last time" memory moved ON TO THE EDITOR ELEMENT for the same reason the
+  // per-line memory is on the line: two editors sharing one global would have each one's edits telling
+  // the other that it had shrunk, and a repaint nobody asked for is the mildest thing that follows from
+  // two buffers sharing one variable.
+  function bmlColorizePass(all, sel, lineFn) {
+    var editor = document.$(sel || "#bml-text");
     if (!editor) return 0;
+    var mark = lineFn || bmlColorizeLine;
     bmlMarked = 0;
     var lines = editor.children;
     for (var i = 0; i < lines.length; i++) {
@@ -580,16 +866,81 @@
       if (!all && text !== null && el.bmlSeen === text) continue;
       // Did this line LOSE text? That is the edit that leaves paint behind, and the old text is right here.
       if (typeof el.bmlSeen == "string" && text !== null && text.length < el.bmlSeen.length) bmlShrank = true;
-      bmlColorizeLine(el);
+      mark(el);
       el.bmlSeen = text;
     }
-    if (lines.length < bmlLastLines) bmlShrank = true;
-    bmlLastLines = lines.length;
+    if (lines.length < (editor.wbLastLines | 0)) bmlShrank = true;
+    editor.wbLastLines = lines.length;
     return bmlMarked;
   }
 
   function bmlColorize()      { bmlColorEnabled = true; return bmlColorizePass(true); }
   function bmlColorizeDirty() { return bmlColorEnabled ? bmlColorizePass(false) : 0; }
+
+  /* ---------------------------------------------------------------- the scenario colorizer
+
+     `.scenario` is line-oriented in the same way BML is - a comment, a header, a `key: value` body line -
+     so it is the same shape of pass with a different rule per line. What differs is INSIDE the line: an
+     expression is a stream of words, so this classifies them in ONE scan rather than running a regex per
+     token class over the line. Two passes would let two marks land on the same word (`clubs` is both a
+     quantity and, inside `holds(clubs, ace)`, an argument) and which one then paints is not something to
+     find out by looking. */
+
+  var SCN_MARKS = ["scn-key", "scn-op", "scn-word", "scn-num", "scn-name", "scn-str", "scn-comment"];
+
+  var SCN_HEADER = /^(\s*)(scenario)\b/i;
+  var SCN_WORDS  = /[A-Za-z_][A-Za-z0-9_]*/g;
+  var SCN_NUMS   = /\d+/g;
+
+  // The operators, and the generic atoms. Anything else that is a word is a NAME - one of the bidding
+  // system's own helpers, or a misspelling of one, and the parser is what tells those two apart.
+  var SCN_OPS   = { "and": 1, "or": 1, "not": 1, "in": 1 };
+  var SCN_ATOMS = {
+    "hcp": 1, "controls": 1, "longest": 1, "balanced": 1, "holds": 1,
+    "spades": 1, "hearts": 1, "diamonds": 1, "clubs": 1,
+    "two": 1, "three": 1, "four": 1, "five": 1, "six": 1, "seven": 1, "eight": 1, "nine": 1,
+    "ten": 1, "jack": 1, "queen": 1, "king": 1, "ace": 1
+  };
+
+  function scnColorizeLine(el) {
+    var text = bmlLineText(el);
+    if (text === null) return;
+    bmlClear(el, text.length, SCN_MARKS);
+    if (!text.length) return;
+
+    // A comment is the whole line: the parser strips from `#` to the end, and so does this.
+    if (/^\s*#/.test(text)) { bmlMark(el, 0, text.length, "scn-comment"); return; }
+
+    var head = SCN_HEADER.exec(text);
+    if (head) {
+      bmlMark(el, head[1].length, head[1].length + head[2].length, "scn-key");
+      var quote = text.indexOf('"');
+      if (quote >= 0) bmlMark(el, quote, text.length, "scn-str");
+      return;
+    }
+
+    // `north:` / `tags:` - the key, up to and including its colon. The expression after it is where the
+    // words are, so the scan starts there and the key cannot be re-marked as a name.
+    var body = 0;
+    var colon = text.indexOf(":");
+    if (colon > 0) { bmlMark(el, 0, colon + 1, "scn-key"); body = colon + 1; }
+
+    var rest = text.slice(body);
+    var m;
+    SCN_WORDS.lastIndex = 0;
+    while ((m = SCN_WORDS.exec(rest)) !== null) {
+      var word = m[0].toLowerCase();
+      var name = SCN_OPS[word] ? "scn-op" : (SCN_ATOMS[word] ? "scn-word" : "scn-name");
+      bmlMark(el, body + m.index, body + m.index + m[0].length, name);
+    }
+    SCN_NUMS.lastIndex = 0;
+    while ((m = SCN_NUMS.exec(rest)) !== null) {
+      bmlMark(el, body + m.index, body + m.index + m[0].length, "scn-num");
+    }
+  }
+
+  function scnColorize()      { return bmlColorizePass(true,  "#scn-text", scnColorizeLine); }
+  function scnColorizeDirty() { return bmlColorEnabled ? bmlColorizePass(false, "#scn-text", scnColorizeLine) : 0; }
 
   // Off only for bisecting (`WORKBENCH_COLOUR=0`, read by the host): when something odd happens WHILE TYPING
   // - a caret in the wrong place, paint that should not be there - the first question is whether the
@@ -609,7 +960,9 @@
   //
   // In a try/catch like everything else that runs from an event here: a handler that throws leaves this
   // window not accepting clicks at all.
-  var bmlLastLines = 0;
+  // `bmlShrank` is a one-shot flag between a colour pass and the repaint that follows it in the same
+  // handler, so one is enough for both editors; the LINE COUNT it is derived from is per editor and lives
+  // on the element (`wbLastLines`), because that one is a memory across passes.
   var bmlShrank = false;
 
   function bmlRepaintIfShrunk(editor) {
@@ -632,8 +985,14 @@
      and nothing at all about what it says. */
 
   var BML_PROBLEM_MARKS = ["bml-error", "bml-warn"];
-  var bmlProblems = [];
-  var bmlProblemLines = []; // the LINE ELEMENTS the marks above were applied to
+
+  // PER EDITOR, and kept ON the editor element - the notes and the scenario files are two buffers with
+  // two parses, and a shared list would have each one's `clear` taking the other's squiggles off. The
+  // element is also what survives the buffer being replaced, which an index into a global would not.
+  function bmlProblemsOf(editor) {
+    if (!editor.wbProblems) { editor.wbProblems = []; editor.wbProblemLines = []; }
+    return editor;
+  }
 
   // Clearing runs on every burst of typing, so it costs what the PROBLEMS cost and not what the buffer
   // costs. Two things get it there:
@@ -652,11 +1011,14 @@
   // a detached element answers to `Range` is not something to find out the hard way. A handler that THROWS
   // leaves this window not accepting clicks at all (see the hover below, which learned it first), and a
   // squiggle that outlives its text is worth none of that.
-  function bmlClearProblems() {
-    if (!bmlProblems.length && !bmlProblemLines.length) return;
-    for (var i = 0; i < bmlProblemLines.length; i++) {
+  function bmlClearProblems(sel) {
+    var editor = document.$(sel || "#bml-text");
+    if (!editor) return;
+    bmlProblemsOf(editor);
+    if (!editor.wbProblems.length && !editor.wbProblemLines.length) return;
+    for (var i = 0; i < editor.wbProblemLines.length; i++) {
       try {
-        var el = bmlProblemLines[i];
+        var el = editor.wbProblemLines[i];
         var node = el.firstChild;
         if (!node) continue;
         var text = bmlLineText(el);
@@ -669,8 +1031,8 @@
         // a line that is no longer in the document; its marks went with it
       }
     }
-    bmlProblems = [];
-    bmlProblemLines = [];
+    editor.wbProblems = [];
+    editor.wbProblemLines = [];
   }
 
   /* Mark a fresh set of problems, and hand back how many marks were applied - the host's only view of the
@@ -681,10 +1043,11 @@
      library's own conventions for a position it only partly knows. A line number past the end of the
      buffer is DROPPED rather than clamped: it means the text has moved on since the parse, and a squiggle
      on the wrong line is worse than none. */
-  function bmlSetProblems(json) {
-    bmlClearProblems();
-    var editor = document.$("#bml-text");
+  function bmlSetProblems(json, sel) {
+    bmlClearProblems(sel);
+    var editor = document.$(sel || "#bml-text");
     if (!editor) return 0;
+    bmlProblemsOf(editor);
     var list;
     try { list = JSON.parse(json); } catch (x) { return 0; }
     if (!list || !list.length) return 0;
@@ -705,18 +1068,20 @@
       if (to <= from) continue;
       bmlMark(lines[index], from, to, d.severity === "warning" ? "bml-warn" : "bml-error");
       applied += 1;
-      bmlProblems.push(d);
-      bmlProblemLines.push(lines[index]); // what `bmlClearProblems` will take it off again
+      editor.wbProblems.push(d);
+      editor.wbProblemLines.push(lines[index]); // what `bmlClearProblems` will take it off again
     }
     return applied;
   }
 
   // The message for a position, or "" - what the hover shows, and the only part of the hover a windowless
   // test can drive (the editor has no box in a hidden view, so there is no point to hit).
-  function bmlProblemAt(line, col) {
+  function bmlProblemAt(line, col, sel) {
+    var editor = document.$(sel || "#bml-text");
+    if (!editor || !editor.wbProblems) return "";
     var best = "";
-    for (var i = 0; i < bmlProblems.length; i++) {
-      var d = bmlProblems[i];
+    for (var i = 0; i < editor.wbProblems.length; i++) {
+      var d = editor.wbProblems[i];
       if ((d.line | 0) !== (line | 0)) continue;
       var from = d.col > 0 ? d.col : 1;
       var to = d.len > 0 ? from + d.len : 1e9;
@@ -736,6 +1101,18 @@
   document.on("change", "#bml-text", function () {
     var editor = this;
     editor.timer(40, function () { bmlClearProblems(); bmlColorizeDirty(); bmlRepaintIfShrunk(editor); });
+    return false;
+  });
+
+  // The scenario editor, the same bargain. Registered separately rather than as one selector list, because
+  // the two editors run different rules and the handler has to name which.
+  document.on("change", "#scn-text", function () {
+    var editor = this;
+    editor.timer(40, function () {
+      bmlClearProblems("#scn-text");
+      scnColorizeDirty();
+      bmlRepaintIfShrunk(editor);
+    });
     return false;
   });
 
@@ -799,24 +1176,24 @@
      element holding one text node (both measured). */
   var bmlStatusBeforeTip = null;
 
-  function bmlShowTip(message) {
-    var status = document.$("#bml-status");
+  function bmlShowTip(message, statusSel) {
+    var status = document.$(statusSel || "#bml-status");
     if (!status) return;
     if (bmlStatusBeforeTip === null) bmlStatusBeforeTip = status.innerText || "";
     status.innerText = message;
   }
 
-  function bmlHideTip() {
+  function bmlHideTip(statusSel) {
     if (bmlStatusBeforeTip === null) return;
-    var status = document.$("#bml-status");
+    var status = document.$(statusSel || "#bml-status");
     if (status) status.innerText = bmlStatusBeforeTip;
     bmlStatusBeforeTip = null;
   }
 
   // The message under the pointer, or "" - separated from the event so a test can drive it.
-  function bmlMessageAt(x, y) {
-    var editor = document.$("#bml-text");
-    if (!editor || !bmlProblems.length) return "";
+  function bmlMessageAt(x, y, sel) {
+    var editor = document.$(sel || "#bml-text");
+    if (!editor || !editor.wbProblems || !editor.wbProblems.length) return "";
     var range = editor.rangeFromPoint(x, y);
     if (!range) return "";
     var marks = range.marks();
@@ -824,7 +1201,7 @@
     var lines = editor.children;
     for (var i = 0; i < lines.length; i++) {
       if (lines[i].firstChild === range.startContainer) {
-        return bmlProblemAt(i + 1, range.startOffset + 1);
+        return bmlProblemAt(i + 1, range.startOffset + 1, sel);
       }
     }
     return "";
@@ -842,6 +1219,35 @@
 
   document.on("mouseleave", "#bml-text", function () {
     bmlHideTip();
+    return false;
+  });
+
+  // The scenario editor's squiggles say what they are the same way, into its own status line.
+  document.on("mouseidle", "#scn-text", function (evt) {
+    try {
+      var message = bmlMessageAt(evt.x, evt.y, "#scn-text");
+      if (message) bmlShowTip(message, "#scn-status"); else bmlHideTip("#scn-status");
+    } catch (x) {
+      bmlHideTip("#scn-status");
+    }
+    return false;
+  });
+
+  document.on("mouseleave", "#scn-text", function () {
+    bmlHideTip("#scn-status");
+    return false;
+  });
+
+  document.on("keyup", "#scn-text", function (event) {
+    if (!BML_CARET_KEYS[event.code]) return false;
+    var editor = this;
+    try { editor.requestPaint(); } catch (x) {}
+    return false;
+  });
+
+  document.on("mouseup", "#scn-text", function () {
+    var editor = this;
+    try { editor.requestPaint(); } catch (x) {}
     return false;
   });
 
@@ -886,6 +1292,7 @@
     } else {
       document.documentElement.style.setProperty("zoom", String(f));
     }
+    wbApplyPageZoom(); // the window's zoom lands on the framed page too; put the page's own back
     return wbZoom();
   }
 
@@ -899,14 +1306,210 @@
      scroll whatever is under the pointer - a zoom that scrolled at the same time would be unusable.
 
      A wheel over a `<frame>` belongs to the framed document and never reaches this handler, so the card
-     page and the preview keep their own scrolling. They are documents in their own right and are not
-     scaled by this. */
+     page and the preview keep their own scrolling. The card page's CTRL+wheel is its OWN zoom (above);
+     the window's zoom does reach both frames, which is why the hand page re-applies its factor. */
+  /* THE HAND PAGE HAS ITS OWN ZOOM. Reported: zoomed in for the controls, the boards became too big to
+     read a deal at once. Two engine facts decide the shape, both measured in the windowless harness:
+
+       * the window's zoom DOES reach the framed page - a heading grew 39px -> 58px at 150%, and the
+         window's factor reads back on the framed document's root;
+       * a `zoom` on the framed document's root REPLACES that rather than multiplying it - root zoom 1
+         under a 150% window gives the unzoomed 39px, 0.8 gives 31px.
+
+     So the page's factor is ABSOLUTE: 100% is the page as a browser draws it, whatever the window is at.
+     It is put back after every window zoom (`wbSetZoom` calls this) and after every page load (the host
+     calls it), since both replace the framed root. CTRL+wheel over the page zooms the PAGE: the framed
+     document gets its own wheel handler, because a wheel over a frame never reaches this document's. */
+  var WB_PAGE_ZOOM = 1;
+
+  function wbPageDocument() {
+    var frame = document.$("#page");
+    if (!frame || !frame.frame) return null;
+    return frame.frame.document;
+  }
+
+  function wbApplyPageZoom() {
+    var page = wbPageDocument();
+    if (page && page.documentElement) {
+      page.documentElement.style.setProperty("zoom", String(WB_PAGE_ZOOM));
+      if (!page.wbZoomWheel) {
+        page.wbZoomWheel = true;
+        page.on("wheel", function (evt) {
+          if (!evt.ctrlKey) return;
+          var delta = evt.deltaY;
+          if (!delta) delta = -(evt.wheelDelta || 0);
+          if (!delta) return;
+          wbPageZoomStep(delta < 0 ? 1 : -1);
+          wbZoomed("wb-page-zoom");
+          return true;
+        });
+      }
+    }
+    var level = document.$("#page-zoom-level");
+    if (level) level.textContent = Math.round(WB_PAGE_ZOOM * 100) + "%";
+    return WB_PAGE_ZOOM;
+  }
+
+  // The same clamp and rounding as the window's, for the same reasons.
+  // TELL THE HOST, so a wheel zoom is REMEMBERED. It used to be saved only from the keyboard (the host owns the
+  // prefs file and the wheel is a script event), and a window zoomed with the wheel started at 100% again —
+  // reported. Posted, so the host saves after the zoom has landed.
+  function wbZoomed(name) {
+    document.postEvent(new Event(name, { bubbles: true }));
+  }
+
+  function wbSetPageZoom(factor) {
+    var f = parseFloat(factor);
+    if (!(f > 0)) f = 1;
+    if (f < 0.4) f = 0.4;
+    if (f > WB_ZOOM_MAX) f = WB_ZOOM_MAX;
+    WB_PAGE_ZOOM = Math.round(f * 100) / 100;
+    return wbApplyPageZoom();
+  }
+
+  function wbPageZoomStep(direction) {
+    if (!direction) return wbSetPageZoom(1);
+    return wbSetPageZoom(direction > 0 ? WB_PAGE_ZOOM * WB_ZOOM_STEP : WB_PAGE_ZOOM / WB_ZOOM_STEP);
+  }
+
+  /* THE DIVIDERS. Every `.split` is a horizontal flow of panes with a `.divider` between each pair, and the
+     panes' widths are plain inline CSS: px for a fixed column, `N*` flex for the rest, all border-box. A drag
+     changes only the two panes beside the divider, keeps their sum, and writes every shown pane's width as
+     CSS px (on-screen / zoom, so the zoom applies once) except the LAST, which is `1*` so a window resize
+     still has somewhere to go. The mouse is captured, or a move over the hand page would go to the framed
+     document and be lost. At the end the split is told (`wb-split-dragged`), and for the deals view the host
+     folds the result into its model and renders from that. */
+  var WB_PANE_MIN = 80; // on-screen px a pane cannot be dragged below
+  var wbDrag = null;
+
+  /* THE DRAG LOG, debug builds only (`just sims workbench-debug` sets this): every press, move and release
+     with its coordinates and the widths written, on the console (stderr). A drag misbehaving in a real
+     window has repeatedly failed to reproduce in the windowless harness, so the real window has to be able
+     to say what it saw. */
+  var WB_DRAG_LOG = false;
+  function wbDragLog(what) {
+    if (WB_DRAG_LOG) console.log("wb-drag " + what);
+  }
+
+  function wbIsDivider(element) {
+    return element.classList.contains("divider");
+  }
+
+  // A hidden pane. Its INLINE display first - what `set_shown` writes, and the only reliable sign for a pane
+  // that has been shown before, since a `display: none` element can report its OLD box (measured). Then no
+  // box at all, for a pane the stylesheet hides from the start (the hand page before anything has loaded)
+  // and the host has not touched: it never had a box to be stale about.
+  function wbHidden(element) {
+    if (element.style.getPropertyValue("display") === "none") return true;
+    return element.state.box("width", "border") <= 0;
+  }
+
+  function wbShownPanes(split) {
+    var panes = [];
+    for (var child of split.children) {
+      if (wbIsDivider(child) || wbHidden(child)) continue;
+      panes.push(child);
+    }
+    return panes;
+  }
+
+  function wbPaneBeside(divider, forward) {
+    var node = forward ? divider.nextElementSibling : divider.previousElementSibling;
+    while (node && (wbIsDivider(node) || wbHidden(node)))
+      node = forward ? node.nextElementSibling : node.previousElementSibling;
+    return node;
+  }
+
+  document.on("mousedown", ".split > .divider", function (evt, divider) {
+    var split = divider.parentElement;
+    var left = wbPaneBeside(divider, false);
+    var right = wbPaneBeside(divider, true);
+    if (!left || !right) return;
+    var panes = wbShownPanes(split);
+    wbDrag = {
+      split: split,
+      divider: divider,
+      panes: panes,
+      widths: panes.map(function (pane) { return pane.state.box("width", "border"); }),
+      left: panes.indexOf(left),
+      right: panes.indexOf(right),
+
+      startX: evt.screenX,
+      zoom: wbZoom()
+    };
+    divider.state.capture(true);
+    // THE FRAMES IGNORE THE MOUSE FOR THE LENGTH OF THE DRAG. Dragging toward the hand page puts the pointer
+    // over a framed document, and a framed document takes the mouse events over it for itself - the classic
+    // reason split panes in browsers cover their iframes while dragging. Reported: a drag to the right that
+    // released with the controls clamped to their minimum, which is what a move in the frame's coordinates
+    // would compute. `.dragging` makes every frame in the split `pointer-events: none` until the release.
+    split.classList.add("dragging");
+    wbDragLog("down x=" + evt.screenX + " zoom=" + wbDrag.zoom + " left=" + left.id + " right=" + right.id +
+              " widths=" + wbDrag.widths);
+    return true;
+  });
+
+  /* MOVES AND THE RELEASE ARE TAKEN ANYWHERE, NOT ONLY ON THE DIVIDER, and a move with no button held ENDS
+     the drag. Reported: very small drags made the panes jump - the controls from most of the window to a
+     sliver. The first version listened for both only on the 5px divider and trusted the capture to keep
+     them there; when a release landed elsewhere the drag never ended, and the next time the pointer merely
+     crossed the divider the panes jumped by everything it had travelled since the press. A drag now ends on
+     any release, on any move without the button, and whatever happens it cannot outlive the button. */
+  function wbEndDrag() {
+    if (!wbDrag) return;
+    var d = wbDrag;
+    wbDrag = null;
+    d.divider.state.capture(false);
+    d.split.classList.remove("dragging");
+    wbDragLog("end " + d.panes.map(function (p) { return (p.id || "?") + "=" + p.style.getPropertyValue("width"); }).join(" "));
+    // And where the panes really ARE once everything after the release has run - the host's re-render, the
+    // page's own relayout - with the inline widths that put them there.
+    if (WB_DRAG_LOG) {
+      var panes = d.panes;
+      setTimeout(function () {
+        wbDragLog("settled " + panes.map(function (p) {
+          return (p.id || "?") + "=" + p.state.box("width", "border") + "(" + p.style.getPropertyValue("width") + ")";
+        }).join(" "));
+      }, 500);
+    }
+    d.split.postEvent(new Event("wb-split-dragged", { bubbles: true }));
+  }
+
+  document.on("mousemove", function (evt) {
+    if (!wbDrag) return;
+    // The button came up somewhere we did not hear. Only when the engine says so: an event without a
+    // `buttons` field must not end every drag at its first move.
+    if (typeof evt.buttons === "number" && !(evt.buttons & 1)) { wbEndDrag(); return; }
+    var d = wbDrag;
+    var total = d.widths[d.left] + d.widths[d.right];
+    var leftWidth = d.widths[d.left] + (evt.screenX - d.startX);
+    if (!(leftWidth === leftWidth)) return; // NaN: an event without coordinates
+    wbDragLog("move x=" + evt.screenX + " target=" + (evt.target ? evt.target.tagName : "?") + " left=" + leftWidth);
+    if (leftWidth < WB_PANE_MIN) leftWidth = WB_PANE_MIN;
+    if (leftWidth > total - WB_PANE_MIN) leftWidth = total - WB_PANE_MIN;
+    // ONLY THE TWO PANES BESIDE THE DIVIDER are written, in CSS px (on-screen / zoom). The right one is `1*`
+    // when it is the last pane, so it keeps taking whatever the window has. Every other pane keeps the width
+    // it already had - rewriting them from measurements is what crept the list 1px wider per drag.
+    var last = d.panes.length - 1;
+    d.panes[d.left].style.setProperty("width", Math.round(leftWidth / d.zoom) + "px");
+    d.panes[d.right].style.setProperty("width",
+      d.right === last ? "1*" : Math.round((total - leftWidth) / d.zoom) + "px");
+    return true;
+  });
+
+  document.on("mouseup", function (evt) {
+    if (!wbDrag) return;
+    wbEndDrag();
+    return true;
+  });
+
   document.on("wheel", function (evt) {
     if (!evt.ctrlKey) return;
     var delta = evt.deltaY;
     if (!delta) delta = -(evt.wheelDelta || 0); // whichever the engine fills in
     if (!delta) return;
     wbZoomStep(delta < 0 ? 1 : -1);
+    wbZoomed("wb-zoom");
     return true;
   });
 

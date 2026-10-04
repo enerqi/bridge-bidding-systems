@@ -29,6 +29,7 @@ import "bidding"
 import "deal_solve"
 import "norn:cli"
 import "norn:combo"
+import "scenario_dsl"
 import "sim_hooks"
 import "suit_book"
 
@@ -46,7 +47,66 @@ run_sim :: proc() -> int {
 	hooks := sim_hooks.make_hooks()
 	defer sim_hooks.free_hooks(&hooks)
 
-	return cli.main_program(bidding.registry, sim_hooks.gen_hooks(&hooks))
+	// USER-AUTHORED SCENARIOS, from wherever the user keeps them. `--scenarios <dir>` is consumed HERE
+	// rather than in norn's parser, and that is deliberate: `norn:cli` must not know about
+	// `scenario_dsl`, which is this repository's package — the library parses arguments for a generic
+	// generator, and where THIS user's scenario files live is not a generic question.
+	scenario_dsl.set_vocabulary(bidding.vocabulary)
+	directories, arguments := scenario_arguments(context.temp_allocator)
+	loaded := scenario_dsl.load_directories(directories)
+	defer scenario_dsl.destroy_loaded(&loaded)
+
+	// Diagnostics go to STDERR and do not stop the run: a typo in one scenario file should cost that
+	// scenario, not the 110 compiled ones and not the run somebody asked for.
+	for diagnostic in loaded.diagnostics {
+		fmt.eprintfln("%s", scenario_dsl.diagnostic_text(diagnostic, context.temp_allocator))
+	}
+
+	// COMPILED FIRST, LOADED SECOND. `cli.lookup` takes the first exact match, so a compiled scenario
+	// wins a name clash — a user file cannot silently redefine `1c-any` out from under the recipes,
+	// `page-check` and the filenames already on `w:/deals/` that name it.
+	registry := make([dynamic]cli.Scenario, 0, len(bidding.registry) + len(loaded.scenarios), context.temp_allocator)
+	append(&registry, ..bidding.registry)
+	append(&registry, ..loaded.scenarios)
+
+	return cli.main_program(registry[:], sim_hooks.gen_hooks(&hooks), arguments)
+}
+
+/*
+Where to look for `.scenario` files, and the arguments left for norn once that is answered.
+
+`--scenarios <dir>` is REPEATABLE, and `BRIDGE_SCENARIOS` holds the same list `;`-separated so a shell
+can set it once. Directories are searched in the order given.
+
+IT HAS TO BE STRIPPED, not merely read. `cli.parse_args` treats an unknown option as a usage error — by
+design, since a misspelled flag should not be quietly ignored — so a flag this program consumes must not
+reach it. That is why `cli.main_program` takes an explicit `argv`: everything except `--scenarios` and its
+value is handed on.
+*/
+scenario_arguments :: proc(allocator := context.allocator) -> (directories: []string, rest: []string) {
+	found := make([dynamic]string, 0, 4, allocator)
+	remaining := make([dynamic]string, 0, len(os.args), allocator)
+
+	if from_env := os.get_env("BRIDGE_SCENARIOS", context.temp_allocator); from_env != "" {
+		for part in strings.split(from_env, ";", context.temp_allocator) {
+			if trimmed := strings.trim_space(part); trimmed != "" {
+				append(&found, strings.clone(trimmed, allocator))
+			}
+		}
+	}
+
+	arguments := os.args[1:]
+	for i := 0; i < len(arguments); i += 1 {
+		if arguments[i] == "--scenarios" {
+			if i + 1 < len(arguments) {
+				append(&found, strings.clone(arguments[i + 1], allocator))
+				i += 1 // its value goes with it
+			}
+			continue
+		}
+		append(&remaining, arguments[i])
+	}
+	return found[:], remaining[:]
 }
 
 main :: proc() { 	// Operational setup only; program semantics live in `run_sim` above

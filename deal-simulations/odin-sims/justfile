@@ -134,12 +134,13 @@ lint *args:
 	odin check bidding {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check suit_book {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check outline -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+	odin check scenario_dsl {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check deal_solve {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check analyse {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check sim.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check analyse_deal.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check sim_hooks {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
-	odin check workbench.odin -file {{norn}} {{dds}} {{sciter}} {{markup}} -vet -vet-cast -strict-style -vet-tabs {{args}}
+	odin check workbench {{norn}} {{dds}} {{sciter}} {{markup}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check page_check.odin -file {{norn}} {{dds}} {{sciter}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check bml2html.odin -file {{markup}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check bench.odin -file {{norn}} -vet -vet-cast -strict-style -vet-tabs {{args}}
@@ -301,6 +302,15 @@ test-prefs *args: mktarget_dirs
 [group('test')]
 test-outline *args: mktarget_dirs
 	odin test outline -debug -microarch:native -show-timings -linker:{{linker}} -out:{{ target_path("debug", "test-outline.exe") }} {{args}}
+
+# The scenario LANGUAGE: parsing, diagnostics, and the parity oracle that holds an interpreted condition
+# to the same verdicts as a hand-written Odin one. No engine and no bidding system in it — the vocabulary
+# is injected, so this runs anywhere.
+# ---
+# run the scenario-DSL tests only
+[group('test')]
+test-scenario-dsl *args: mktarget_dirs
+	odin test scenario_dsl {{norn}} -debug -microarch:native -linker:{{linker}} -out:{{ target_path("debug", "test-scenario-dsl.exe") }} {{args}}
 
 # The preview's SECTION WINDOW: which section a caret row is in (counted in the .bml source) and the slice of
 # the rendered page that shows it. Both halves are string work with no engine in them, which is the point -

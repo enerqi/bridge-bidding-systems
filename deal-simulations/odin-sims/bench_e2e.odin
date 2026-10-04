@@ -68,8 +68,9 @@ main :: proc() {
 	// Same wiring as sim.odin: combo prefers this project's published table where it covers a holding.
 	combo.set_suit_book(suit_book.provider())
 
-	// Resolve the scenario predicate from this bidding system's registry.
-	predicate: norn.Predicate
+	// Resolve the scenario condition from this bidding system's registry. `norn.Condition` rather than
+	// `norn.Predicate`: a registry entry is compiled OR interpreted, and the bench takes whichever it is.
+	predicate: norn.Condition
 	found: bool
 	for s in bidding.registry {
 		if s.name == E2E_SCENARIO {
