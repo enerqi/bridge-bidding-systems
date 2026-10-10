@@ -2,22 +2,23 @@
 # `just sims gen-all 48`). Shares the justfile's namespace: `deals_output_dir` / `scratch_dir` come from there.
 #
 # NAMING: gen-all = every registered scenario, gen-some = a named subset, gen-one = one scenario.
-# Suffixes stack in this order: [-cards][-dd], then -norebuild to reuse the last release build.
+# Suffixes stack in this order: [-cards][-par], then -norebuild to reuse the last release build.
 #
 # BATCH -> <DIR>/<scenario>.html, DIR defaulting to deals_output_dir.
 # SINGLE -> <DIR>/<SCENARIO>.html, DIR defaulting to scratch_dir (where you invoked just).
-# -dd adds the per-scenario double-dummy annotate/filter (DD scenarios export serially - the solver is
-# not reentrant). -cards swaps the BBO iframe pages for self-rendered offline card carousels.
+# -par solves every deal and captions it with its par (those scenarios export serially - the solver is
+# not reentrant). A scenario's OWN double-dummy check (`slam-makes-dd`, a file's `double-dummy:` line)
+# always applies, with or without it. -cards swaps the BBO iframe pages for self-rendered offline card carousels.
 
 # generate ALL scenarios (COUNT deals each) -> DIR/<scenario>.html
 [group('generate')]
 gen-all COUNT="48" DIR=deals_output_dir:
 	just sim --html-dir {{DIR}} --count {{COUNT}}
 
-# generate ALL scenarios WITH double-dummy annotations -> DIR/<scenario>.html
+# generate ALL scenarios WITH a double-dummy par caption on every deal -> DIR/<scenario>.html
 [group('generate')]
-gen-all-dd COUNT="48" DIR=deals_output_dir:
-	just sim --html-dir {{DIR}} --count {{COUNT}} --dd
+gen-all-par COUNT="48" DIR=deals_output_dir:
+	just sim --html-dir {{DIR}} --count {{COUNT}} --par
 
 # generate ALL scenarios as offline card carousels -> DIR/<scenario>.html
 [group('generate')]
@@ -26,8 +27,8 @@ gen-all-cards COUNT="48" DIR=deals_output_dir:
 
 # generate ALL scenarios as offline card carousels WITH double-dummy par captions
 [group('generate')]
-gen-all-cards-dd COUNT="48" DIR=deals_output_dir:
-	just sim --html-dir {{DIR}} --count {{COUNT}} --format html-cards --dd
+gen-all-cards-par COUNT="48" DIR=deals_output_dir:
+	just sim --html-dir {{DIR}} --count {{COUNT}} --format html-cards --par
 
 # generate ALL scenarios WITHOUT recompiling (reuses the last release build)
 [group('generate')]
@@ -44,10 +45,10 @@ gen-some NAMES COUNT="48" DIR=deals_output_dir:
 gen-one SCENARIO COUNT="48" DIR=scratch_dir:
 	just sim --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{DIR}}/{{SCENARIO}}.html
 
-# COUNT deals for ONE scenario WITH double-dummy annotations -> DIR/<SCENARIO>.html
+# COUNT deals for ONE scenario WITH a double-dummy par caption -> DIR/<SCENARIO>.html
 [group('generate')]
-gen-one-dd SCENARIO COUNT="48" DIR=scratch_dir:
-	just sim --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{DIR}}/{{SCENARIO}}.html --dd
+gen-one-par SCENARIO COUNT="48" DIR=scratch_dir:
+	just sim --scenario {{SCENARIO}} --count {{COUNT}} --format html --output {{DIR}}/{{SCENARIO}}.html --par
 
 # COUNT deals for ONE scenario as an offline card carousel -> DIR/<SCENARIO>.html
 [group('generate')]
@@ -56,8 +57,8 @@ gen-one-cards SCENARIO COUNT="48" DIR=scratch_dir:
 
 # COUNT deals for ONE scenario as an offline card carousel with double-dummy par -> DIR/<SCENARIO>.html
 [group('generate')]
-gen-one-cards-dd SCENARIO COUNT="48" DIR=scratch_dir:
-	just sim --scenario {{SCENARIO}} --count {{COUNT}} --format html-cards --output {{DIR}}/{{SCENARIO}}.html --dd
+gen-one-cards-par SCENARIO COUNT="48" DIR=scratch_dir:
+	just sim --scenario {{SCENARIO}} --count {{COUNT}} --format html-cards --output {{DIR}}/{{SCENARIO}}.html --par
 
 # COUNT deals for ONE scenario WITHOUT recompiling -> DIR/<SCENARIO>.html
 [group('generate')]

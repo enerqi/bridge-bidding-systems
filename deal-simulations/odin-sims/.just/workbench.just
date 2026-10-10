@@ -46,10 +46,53 @@ workbench-norebuild *args:
 # (`cli.parse_args`, `analyse.parse_args`) with the values the controls named. One test also runs a small
 # seeded generation, which `wb-cli-parity` then diffs against the same run through sim.exe.
 # ---
-# run the desktop workbench's document + argv tests (needs the Sciter engine, not a display)
+# the workbench tests in ONE process - for debugging a test: `just test-workbench-serial -define:ODIN_TEST_NAMES=main.<name>`
 [group('test')]
-test-workbench *args: mktarget_dirs
+test-workbench-serial *args: mktarget_dirs
 	odin test workbench {{norn}} {{dds}} {{sciter}} {{markup}} -debug -define:ODIN_TEST_THREADS=1 -show-timings -linker:{{linker}} -out:{{ target_path("debug", "test-workbench.exe") }} {{args}}
+
+# WHERE THE WORKBENCH TESTS SPEND THEIR TIME. Runs the suite with `-define:WB_TEST_TIMINGS=true`, which logs
+# one `timing` line per windowed test (total, setup, pump count + time, the test's own work), and prints the
+# split over the whole suite plus the slowest TOP tests. The runner's own log has whole-second timestamps,
+# which is too coarse to see a 120ms test.
+# ---
+# time every workbench test: setup vs pumps vs the test's own work, slowest first
+[group('test')]
+[script]
+test-workbench-timings TOP="25": mktarget_dirs
+	import re, subprocess, sys
+	log = "target/debug/test-workbench-timings.txt"
+	with open(log, "w", encoding="utf-8") as out:
+	    code = subprocess.run(["just", "test-workbench-serial", "-define:WB_TEST_TIMINGS=true"], stdout=out, stderr=subprocess.STDOUT).returncode
+	pat = re.compile(r"timing (\S+) total=([\d.]+) setup=([\d.]+) pumps=(\d+) pump=([\d.]+) rest=([-\d.]+)")
+	rows = []
+	for line in open(log, encoding="utf-8", errors="replace"):
+	    m = pat.search(line)
+	    if m:
+	        rows.append((m.group(1), float(m.group(2)), float(m.group(3)), int(m.group(4)), float(m.group(5)), float(m.group(6))))
+	if not rows:
+	    sys.exit(f"no timing lines in {log} (exit {code})")
+	rows.sort(key=lambda r: -r[1])
+	total, setup, pumps, pump, rest = (sum(r[i] for r in rows) for i in (1, 2, 3, 4, 5))
+	print(f"{len(rows)} windowed tests, {total / 1000:.1f}s: setup {setup / 1000:.1f}s, {pumps:.0f} pumps {pump / 1000:.1f}s ({pump / max(pumps, 1):.1f}ms each), the tests' own work {rest / 1000:.1f}s")
+	print(f"median {sorted(r[1] for r in rows)[len(rows) // 2]:.0f}ms; full log in {log}")
+	print(f"{'total':>8} {'setup':>7} {'pumps':>6} {'pump':>8} {'rest':>8}  test (ms)")
+	for name, t, su, n, pt, r in rows[: int("{{TOP}}")]:
+	    print(f"{t:8.0f} {su:7.0f} {n:6d} {pt:8.0f} {r:8.0f}  {name}")
+	sys.exit(code)
+
+# THE WORKBENCH TESTS, AS N PROCESSES AT ONCE - the default (~6s; `test-workbench-serial` is ~18s, one process).
+# THE SAME TESTS IN SHARDS. One process must run them one at a time (Sciter's thread
+# affinity, one shared windowless view, DDS), but N processes are N engines: the exe is built ONCE as a test
+# binary and started N times, each with `-tests:` naming its share. Tests that use `target/debug` as a deals
+# folder stay together in shard 0; the rest are balanced on their last measured times. Logs per shard in
+# target/debug/test-workbench-shard-K.txt. See tools/test_shards.py.
+# ---
+# run the workbench tests as SHARDS parallel processes (one build), with a merged report
+[group('test')]
+test-workbench SHARDS="4": mktarget_dirs
+	odin build workbench {{norn}} {{dds}} {{sciter}} {{markup}} -build-mode:test -debug -define:ODIN_TEST_THREADS=1 -define:WB_TEST_TIMINGS=true -define:ODIN_TEST_FANCY=false -linker:{{linker}} -out:{{ target_path("debug", "test-workbench-sharded.exe") }}
+	uv run --no-project -p 3.14 --script tools/test_shards.py {{ target_path("debug", "test-workbench-sharded.exe") }} {{SHARDS}}
 
 # Does the norn CARD PAGE still lay out inside Sciter? The workbench hosts it in a <frame>, and it fits
 # only because of the `@media sciter` block in norn/html_cards_header.html.tmpl plus the footer's JS shims
@@ -114,7 +157,7 @@ dds-timing SCENARIO="slam-makes-dd" COUNT="24":
 	        env["DDS_MAX_MB"] = size
 	    else:
 	        env.pop("DDS_MAX_MB", None)
-	    argv = [str(exe), "-S", "{{SCENARIO}}", "-n", "{{COUNT}}", "-f", "html-cards", "--dd",
+	    argv = [str(exe), "-S", "{{SCENARIO}}", "-n", "{{COUNT}}", "-f", "html-cards", "--par",
 	            "--seed", "11", "-o", str(out)]
 	    started = time.time()
 	    proc = subprocess.run(argv, env=env, capture_output=True, text=True)
@@ -142,7 +185,7 @@ wb-cli-parity: mktarget_dirs
 	cli = root / "target" / "debug" / "cli-parity.html"
 
 	if not ui.exists():
-	    sys.exit(f"{ui} is missing - run `just test-workbench` first (it writes the in-process page)")
+	    sys.exit(f"{ui} is missing - run `just test-workbench` first (a test writes the in-process page)")
 
 	sim = root / "target" / "release" / "{{sim_name}}"
 	if not sim.exists():

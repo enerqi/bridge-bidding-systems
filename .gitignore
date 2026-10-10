@@ -1,5 +1,8 @@
 __pycache__/
 *.html
+# ...except the workbench's own pages, which are SOURCE: it #loads them into the exe. quiz-template.html is
+# vendored from bridge-system-apps (`just dswasm vendor-template` there), so a fresh clone builds.
+!deal-simulations/odin-sims/ui/*.html
 html/
 deal-simulations/parse-deal
 .ionide/

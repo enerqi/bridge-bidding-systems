@@ -203,9 +203,9 @@ annotate :: proc(builder: ^strings.Builder, deal: norn.Deal, format: norn.Output
 			fmt.sbprintf(builder, `<div class="par" data-target="%d">`, tgt)
 		}
 		strings.write_string(builder, "Par: ")
-		write_par(builder, ns_par, have_par)
+		write_par(builder, ns_par, have_par, glyphs = true)
 		strings.write_string(builder, " &mdash; NS make:")
-		write_makeable(builder, res)
+		write_makeable(builder, res, glyphs = true)
 		write_par_opc_guide(builder, ns_par, have_par, ds, " &middot; ", true)
 		strings.write_string(builder, "</div>")
 		// Machine-readable form: full trick table as a comment (strain x N/E/S/W).
@@ -288,7 +288,7 @@ Makeable_Contract :: struct {
 // Write the contracts NS can make double-dummy as " <level><strain>" tokens, ordered BEST-SCORING
 // first (6NT before 6S before 6C before 1H, etc.); "nothing" if none reach the 1-level.
 @(private)
-write_makeable :: proc(builder: ^strings.Builder, res: ^dds.Table_Results) {
+write_makeable :: proc(builder: ^strings.Builder, res: ^dds.Table_Results, glyphs := false) {
 	list: [dds.DDS_STRAINS]Makeable_Contract
 	n := 0
 	for strain in dds.Strain {
@@ -307,7 +307,8 @@ write_makeable :: proc(builder: ^strings.Builder, res: ^dds.Table_Results) {
 	// arbitrary-but-deterministic order, which is fine — they are genuinely equal.
 	slice.sort_by(list[:n], proc(a, b: Makeable_Contract) -> bool {return a.score > b.score})
 	for m in list[:n] {
-		fmt.sbprintf(builder, " %d%s", m.level, strain_label(m.strain))
+		fmt.sbprintf(builder, " %d", m.level)
+		write_strain(builder, strain_label(m.strain), glyphs)
 	}
 }
 
@@ -576,39 +577,79 @@ denom_trump :: proc(d: dds.Contract_Denom) -> Maybe(norn.Suit) {
 // predicate can't ask this; it needs the solved trick counts. Use as a scenario's second stage so
 // DDS runs only on the deals that already passed the bidding predicate.
 ns_makes_game :: proc(deal: norn.Deal) -> bool {
-	res, ok := solve_table(deal)
-	if !ok {
-		return false
-	}
-	return(
-		ns_makes(res, .NT, 9) ||
-		ns_makes(res, .Spades, 10) ||
-		ns_makes(res, .Hearts, 10) ||
-		ns_makes(res, .Diamonds, 11) ||
-		ns_makes(res, .Clubs, 11) \
-	)
+	return side_makes(deal, .North_South, .Game)
 }
 
 // A `norn.Deal_Filter`: keep the deal only if North-South can make a small slam (12+ tricks) in
 // some strain double-dummy, with either N or S declaring. Pair it with slam-zone scenarios so the
 // export shows deals that actually play for slam, not just ones that bid like it.
 ns_makes_slam :: proc(deal: norn.Deal) -> bool {
+	return side_makes(deal, .North_South, .Slam)
+}
+
+// The rest of the side x goal grid, as plain `norn.Deal_Filter`s (a filter carries no data, so each pair is
+// its own proc). A scenario file's `double-dummy:` line picks one of these (see `makes_filter`).
+ns_makes_grand :: proc(deal: norn.Deal) -> bool {return side_makes(deal, .North_South, .Grand)}
+ew_makes_game :: proc(deal: norn.Deal) -> bool {return side_makes(deal, .East_West, .Game)}
+ew_makes_slam :: proc(deal: norn.Deal) -> bool {return side_makes(deal, .East_West, .Slam)}
+ew_makes_grand :: proc(deal: norn.Deal) -> bool {return side_makes(deal, .East_West, .Grand)}
+
+// Which partnership a "makes" filter asks about, and what it must make: game (3NT, 4 of a major, 5 of a
+// minor), a small slam (12 tricks) or a grand (13), in any strain, either hand declaring.
+Makes_Side :: enum {
+	North_South,
+	East_West,
+}
+
+Makes_Goal :: enum {
+	Game,
+	Slam,
+	Grand,
+}
+
+// The filter for a side and a goal.
+makes_filter :: proc(side: Makes_Side, goal: Makes_Goal) -> norn.Deal_Filter {
+	FILTERS :: [Makes_Side][Makes_Goal]norn.Deal_Filter {
+		.North_South = {.Game = ns_makes_game, .Slam = ns_makes_slam, .Grand = ns_makes_grand},
+		.East_West = {.Game = ew_makes_game, .Slam = ew_makes_slam, .Grand = ew_makes_grand},
+	}
+	filters := FILTERS
+	return filters[side][goal]
+}
+
+// Does `side` make `goal` double-dummy? One table solve.
+side_makes :: proc(deal: norn.Deal, side: Makes_Side, goal: Makes_Goal) -> bool {
 	res, ok := solve_table(deal)
 	if !ok {
 		return false
 	}
-	for strain in dds.Strain {
-		if ns_makes(res, strain, 12) {
-			return true
+	switch goal {
+	case .Game:
+		return(
+			pair_makes(res, side, .NT, 9) ||
+			pair_makes(res, side, .Spades, 10) ||
+			pair_makes(res, side, .Hearts, 10) ||
+			pair_makes(res, side, .Diamonds, 11) ||
+			pair_makes(res, side, .Clubs, 11) \
+		)
+	case .Slam, .Grand:
+		need := i32(12 if goal == .Slam else 13)
+		for strain in dds.Strain {
+			if pair_makes(res, side, strain, need) {
+				return true
+			}
 		}
 	}
 	return false
 }
 
-// True if North or South, as declarer, takes at least `need` tricks in `strain` (double-dummy).
+// True if either hand of `side`, as declarer, takes at least `need` tricks in `strain` (double-dummy).
 @(private)
-ns_makes :: proc(res: ^dds.Table_Results, strain: dds.Strain, need: i32) -> bool {
-	return res.resTable[strain][.North] >= need || res.resTable[strain][.South] >= need
+pair_makes :: proc(res: ^dds.Table_Results, side: Makes_Side, strain: dds.Strain, need: i32) -> bool {
+	if side == .North_South {
+		return res.resTable[strain][.North] >= need || res.resTable[strain][.South] >= need
+	}
+	return res.resTable[strain][.East] >= need || res.resTable[strain][.West] >= need
 }
 
 // Single-strain double-dummy test: true if NS can take `tricks`+ in ONE `strain`, N or S declaring.
@@ -649,7 +690,7 @@ declarer_makes :: proc(deal: norn.Deal, strain: dds.Strain, declarer: dds.Hand, 
 // Write one side's par: the NS-view score plus its par contract(s). `have` is false when SidesParBin
 // failed, in which case we emit "n/a" rather than garbage.
 @(private)
-write_par :: proc(builder: ^strings.Builder, m: ^dds.Par_Results_Master, have: bool) {
+write_par :: proc(builder: ^strings.Builder, m: ^dds.Par_Results_Master, have: bool, glyphs := false) {
 	if !have {
 		strings.write_string(builder, "n/a")
 		return
@@ -661,7 +702,7 @@ write_par :: proc(builder: ^strings.Builder, m: ^dds.Par_Results_Master, have: b
 		} else {
 			strings.write_string(builder, ", ")
 		}
-		write_contract(builder, m.contracts[i])
+		write_contract(builder, m.contracts[i], glyphs)
 	}
 	if m.number > 0 {
 		strings.write_string(builder, "]")
@@ -672,8 +713,9 @@ write_par :: proc(builder: ^strings.Builder, m: ^dds.Par_Results_Master, have: b
 // only ever doubles a non-making contract) is flagged by `underTricks > 0`: append "x" and the
 // undertricks; a making contract shows its overtricks (if any) instead.
 @(private)
-write_contract :: proc(builder: ^strings.Builder, c: dds.Contract_Type) {
-	fmt.sbprintf(builder, "%d%s", c.level, denom_label(c.denom))
+write_contract :: proc(builder: ^strings.Builder, c: dds.Contract_Type, glyphs := false) {
+	fmt.sbprintf(builder, "%d", c.level)
+	write_strain(builder, denom_label(c.denom), glyphs)
 	if c.underTricks > 0 {
 		strings.write_string(builder, "x") // doubled sacrifice
 	}
@@ -683,6 +725,26 @@ write_contract :: proc(builder: ^strings.Builder, c: dds.Contract_Type) {
 	} else if c.overTricks > 0 {
 		fmt.sbprintf(builder, "+%d", c.overTricks)
 	}
+}
+
+// A strain as the caption writes it: the letter (S H D C NT) in text, and in a page a suit's GLYPH, in the
+// card page's suit colour (`.ssym.s` etc.) - `4♠`, `3NT`.
+@(private)
+write_strain :: proc(builder: ^strings.Builder, letter: string, glyphs: bool) {
+	if !glyphs || letter == "NT" {
+		strings.write_string(builder, letter)
+		return
+	}
+	entity := "&spades;"
+	switch letter {
+	case "H":
+		entity = "&hearts;"
+	case "D":
+		entity = "&diams;"
+	case "C":
+		entity = "&clubs;"
+	}
+	fmt.sbprintf(builder, `<span class="ssym %s">%s</span>`, strings.to_lower(letter, context.temp_allocator), entity)
 }
 
 // Contract_Denom label. NB its ordering differs from dds.Strain (NT is 0 here), hence a separate map.

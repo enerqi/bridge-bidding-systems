@@ -115,7 +115,8 @@ show_scenario_editor :: proc(app: ^App) {
 		name := app.scn_names[0]
 		// The remembered FILE only means something in the remembered folder.
 		edited, _ := prefs.get(&app.prefs, SCENARIO_EDIT_DIR_PREF)
-		if remembered, found := prefs.get(&app.prefs, SCENARIO_EDIT_FILE_PREF); found && same_dir(edited, app.scn_dir) {
+		if remembered, found := prefs.get(&app.prefs, SCENARIO_EDIT_FILE_PREF);
+		   found && same_dir(edited, app.scn_dir) {
 			for candidate in app.scn_names {
 				if candidate == remembered {
 					name = candidate
@@ -396,7 +397,8 @@ draw_scenario_sources :: proc(app: ^App) {
 		escaped := escape_html(dir, context.temp_allocator)
 		// The `×` only where forgetting means something: a remembered folder. Its own attribute, checked
 		// before the row's, so a click on it does not also open the folder it is removing.
-		forget := "" if from_env else fmt.tprintf(`<span class="forget" data-forget="%s" title="Forget this folder">×</span>`, escaped)
+		forget :=
+			"" if from_env else fmt.tprintf(`<span class="forget" data-forget="%s" title="Forget this folder">×</span>`, escaped)
 		fmt.sbprintf(
 			&b,
 			`<div class="row%s" data-sdir="%s" title="%s"><span class="path">%s</span><div class="what"><span class="lbl">%s · %s</span>%s</div></div>`,
@@ -768,6 +770,10 @@ NEW_SCENARIO_TEMPLATE :: `# A scenario is a name, a description, and one line pe
 #
 # north-south: and east-west: lines read BOTH hands of a side together:
 #   north-south: hcp >= 32 and (spades >= 8 or hearts >= 8)
+#
+# A double-dummy: line keeps only deals the solver says a side really makes, and puts each
+# kept deal's par on its page (slower - every deal the seat lines accept is solved):
+#   double-dummy: north-south make slam        (or game, or grand; north-south or east-west)
 #
 # Press check to parse this and measure how often it happens. save writes the file;
 # reload then makes it a scenario in the deals list.
@@ -1141,6 +1147,14 @@ a seat line.
 
     north-south: hcp >= 32 and (spades >= 8 or hearts >= 8)
 
+A double-dummy line keeps only the deals a side really makes, double dummy,
+and shows each kept deal's par on its page. Game is 3NT, four of a major
+or five of a minor; slam is 12 tricks, grand 13; any strain, either hand
+declaring. Every deal the seat lines accept is solved, so let them do the
+narrowing. One per scenario.
+
+    double-dummy: north-south make slam      (game | slam | grand)
+
 `,
 	)
 
@@ -1234,7 +1248,6 @@ reload_scenarios :: proc(app: ^App) -> (ok: bool, why: string) {
 	// three is what stops that kind of mismatch.
 	render_groups(app)
 	draw_scenario_sources(app)
-	set_text_at(app, "#engine", fmt.tprintf("%d scenarios", len(app.scenarios)))
 	note_selected_page(app)
 
 	loaded := len(app.loaded.scenarios)

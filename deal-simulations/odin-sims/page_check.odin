@@ -68,10 +68,19 @@ CHECK_DEALS_MULTI ::
 	`[Deal "N:KQJT.AK32.QJ4.A2 - A987.QJ4.K32.K43 -"]` +
 	`[Deal "N:AKQ2.KQ3.AJT.QJ3 - J543.A42.K32.AK2 -"]`
 
+// A board whose LIN record carries the auction and the play (a real vugraph board: 2D by West, 29 cards and
+// a claim), for the play-through bar, with a vugraph header and the open room's names for the board's identity.
+// A full deal, so `analyse` solves it - the page gets the per-card costs.
+CHECK_PLAY_DEAL :: "vg|Spring Cup,Final,I,13,14,LIONS,0,BIG  TIGERS,0|pn|Sam,Wes,Nat,Eve,South,West,North,East|qx|o13|md|3SKT87HT2DJ3CQT754,SAJ3HK4DKQ9852C98,S42HAQ986DAT74CA6,SQ965HJ753D6CKJ32|sv|b|mb|1H|mb|p|mb|p|mb|2D|mb|p|mb|p|mb|p|pc|s4|pc|s5|pc|sK|pc|sA|pc|dQ|pc|d4|pc|d6|pc|d3|pc|d8|pc|d7|pc|h3|pc|dJ|pc|h2|pc|h4|pc|hQ|pc|h5|pc|cA|pc|c2|pc|c4|pc|c8|pc|hA|pc|h7|pc|hT|pc|hK|pc|h9|pc|hJ|pc|c5|pc|c9|pc|c3|mc|7|"
+
 // The view is sized like a modest window rather than a big monitor: the overrides have to work at the size
 // someone actually runs the workbench at.
 VIEW_WIDTH :: 1280
 VIEW_HEIGHT :: 900
+
+// The hand-page PANE of the workbench, narrow and tall (a reported layout: cards size by height).
+PANE_WIDTH :: 900
+PANE_HEIGHT :: 1250
 
 // The thresholds. Generous on purpose — this is a "did the stylesheet apply at all" check, not a pixel
 // snapshot, and the two failure modes it names are an order of magnitude away from the passing numbers
@@ -323,6 +332,8 @@ main :: proc() {
 		check_the_page_follows_the_view_size(&view)
 		check_the_toolbar_fits_a_narrow_pane(&view)
 		check_the_panel_parks_clear_of_the_board(&view)
+		check_the_play_through(&view)
+		check_the_par_toggle(&view)
 	}
 
 	if g_failures > 0 {
@@ -463,7 +474,10 @@ check_the_card_size_tracks_the_window :: proc(view: ^sa.Windowless_View, root: s
 		check(false, fmt.tprintf("the view resizes (%v)", err))
 		return
 	}
+	// The desktop page sets its card size once a size has SETTLED (the size watch polls every 200ms and the
+	// settle waits 350ms more - `setViewUnits` in the footer), so one pump is not always enough.
 	pump(view, 192)
+	pump(view, 224)
 	short := seat_font_px(root)
 
 	// The ratio the viewport-height term implies, with room for the engine's rounding. A constant size (the
@@ -488,6 +502,7 @@ check_the_card_size_tracks_the_window :: proc(view: ^sa.Windowless_View, root: s
 		return
 	}
 	pump(view, 256)
+	pump(view, 288)
 	back := seat_font_px(root)
 	check(
 		back > tall * 0.98 && back < tall * 1.02,
@@ -1600,9 +1615,17 @@ frame :: proc(view: ^sa.Windowless_View, at: int) {
 }
 
 pump :: proc(view: ^sa.Windowless_View, from: int) {
-	for i in 0 ..< 16 {
+	// REAL TIME, NOT A COUNT OF PAINTS (2026-10-09). The page centres its board from 280/380ms TIMERS and
+	// transitions, which run on the WALL clock, and layout only settles in a paint - so a pump has to last
+	// longer than those timers AND paint along the way. It used to get the time from the paints themselves:
+	// 16 paints at ~130ms each, then 4 (the whole check 213s -> 54s). Then the page's desktop CSS dropped its
+	// drop shadows and a paint fell to ~17ms, the four paints were over before any timer fired, and the
+	// centring checks failed - so the time is now asked for directly.
+	started := time.tick_now()
+	for i := 0; time.tick_since(started) < 450 * time.Millisecond; i += 1 {
 		sa.windowless_heartbeat(view, time.Duration(from + i) * 16 * time.Millisecond)
 		sa.paint_windowless(view)
+		time.sleep(16 * time.Millisecond)
 	}
 }
 
@@ -1616,3 +1639,466 @@ check :: proc(ok: bool, what: string) {
 }
 
 _ :: sciter
+
+// The toolbar's Par button hides the par and combo captions and must bring them BACK. It hid them and
+// then left them hidden until the board changed: this engine did not restyle a `display: none` caption when
+// only the TRACK's class was removed (measured - the computed display stayed `none`), so the page now puts
+// the class on each caption too. Needs a board with a real caption, hence the play deal.
+check_the_par_toggle :: proc(view: ^sa.Windowless_View) {
+	page, ok := render_page(CHECK_PLAY_DEAL)
+	if !ok {
+		check(false, "a board renders for the Par toggle check")
+		return
+	}
+	defer delete(page)
+	if err := sa.load_html(view.window, page, "file://page-check/par-toggle.html"); err != nil {
+		check(false, fmt.tprintf("the Par toggle page loads (%v)", err))
+		return
+	}
+	pump(view, 32)
+	root, rerr := sa.root(view.window)
+	if rerr != nil {
+		check(false, "the Par toggle page has a root")
+		return
+	}
+	shown :: proc(root: sa.Element) -> string {
+		v, err := sa.eval_element(root, `(function(){ var p = document.querySelector('.slide.active .par'); return p ? getComputedStyle(p).display : 'no caption'; })()`)
+		if err != nil {
+			return "?"
+		}
+		text, _ := sa.value_to_string(&v, context.temp_allocator)
+		return text
+	}
+	toggle, terr := sa.select_first(root, "#nc-par-toggle")
+	if terr != nil {
+		check(false, "the toolbar has a Par button")
+		return
+	}
+	before := shown(root)
+	sa.do_click(toggle)
+	pump(view, 64)
+	off := shown(root)
+	sa.do_click(toggle)
+	pump(view, 96)
+	back := shown(root)
+	check(
+		before == "block" && off == "none" && back == "block",
+		fmt.tprintf("the Par button hides the caption and brings it back (%s -> %s -> %s)", before, off, back),
+	)
+}
+
+// The play-through bar: it is built by the page's script, so this is the check that its DOM work (innerHTML
+// tables, classList on the seats, the delegated clicks) runs in this engine too. Two tricks forward, then
+// "next card that cost a trick": the trick in the middle of the table has its four cards, West's hand has
+// lost what West played, the note names the card that cost a trick, and the bar sits inside the view.
+check_the_play_through :: proc(view: ^sa.Windowless_View) {
+	page, ok := render_page(CHECK_PLAY_DEAL)
+	if !ok {
+		check(false, "a board with a recorded play renders")
+		return
+	}
+	defer delete(page)
+	if err := sa.load_html(view.window, page, "file://page-check/play.html"); err != nil {
+		check(false, fmt.tprintf("the play page loads (%v)", err))
+		return
+	}
+	pump(view, 32)
+	root, rerr := sa.root(view.window)
+	if rerr != nil {
+		check(false, "the play page has a root")
+		return
+	}
+	bar, berr := sa.select_first(root, ".playbar")
+	if berr != nil {
+		check(false, "the board has a play bar (the script read the `.play` bake)")
+		return
+	}
+	box, _ := sa.location(bar, .Border, .Root)
+	check(
+		box.height > 20 && box.x >= 0 && box.x + box.width <= VIEW_WIDTH,
+		fmt.tprintf("the play bar has a box inside the view (x=%d w=%d h=%d)", box.x, box.width, box.height),
+	)
+
+	// The record's identity: the match in the title, the board by ITS number and room, the names by the seats.
+	if title, err := sa.select_first(root, ".page-title"); err == nil {
+		text, _ := sa.text(title, context.temp_allocator)
+		check(
+			strings.contains(text, "Spring Cup") && strings.contains(text, "LIONS v BIG TIGERS"),
+			fmt.tprintf("the page is titled by its match (%q)", text),
+		)
+	}
+	check(
+		strings.has_prefix(play_info(root), "Board 13 · Open"),
+		fmt.tprintf("the board is called by its own number and room (%q)", play_info(root)),
+	)
+	if name, err := sa.select_first(root, ".seat-n .pname"); err == nil {
+		text, _ := sa.text(name, context.temp_allocator)
+		check(text == "Nat", fmt.tprintf("North's name sits by the N (%q)", text))
+	} else {
+		check(false, "North's name sits by the N")
+	}
+	board_m := element_height(root, ".compass")
+
+	// The trick sits on the line through North and South, whatever West's and East's widths (this deal's East
+	// is wider; it pushed the trick left), and the trick's grid in the middle of its area.
+	area := element_box(root, ".compass .table")
+	grid := element_box(root, ".compass .table .trk")
+	north := element_box(root, ".compass > .seat-n")
+	south := element_box(root, ".compass > .seat-s")
+	middle :: proc(r: sa.Rect) -> i32 {return r.x + r.width / 2}
+	check(
+		abs(middle(area) - middle(north)) <= 3 && abs(middle(area) - middle(south)) <= 3,
+		fmt.tprintf(
+			"the trick is on the line through North and South (%d; N %d, S %d)",
+			middle(area),
+			middle(north),
+			middle(south),
+		),
+	)
+	check(
+		abs(middle(grid) - middle(area)) <= 3,
+		fmt.tprintf("the trick's grid is centred in its area (%d vs %d)", middle(grid), middle(area)),
+	)
+	// A name stands clear of its seat's pill.
+	pill := element_box(root, ".seat-n .lbl")
+	name_box := element_box(root, ".seat-n .pname")
+	check(
+		name_box.x - (pill.x + pill.width) >= 6,
+		fmt.tprintf("North's name stands clear of the pill (%dpx)", name_box.x - (pill.x + pill.width)),
+	)
+	// The par line writes contracts with suit glyphs.
+	_, par_glyph := sa.select_first(root, ".par .ssym")
+	check(par_glyph == nil, "the par line writes its contracts with suit glyphs")
+
+	// North and South are tucked in towards the trick (the empty felt above and below it was ~115px each at
+	// XL), and tucking never puts one hand over another.
+	n_box := element_box(root, ".compass > .seat-n")
+	s_box := element_box(root, ".compass > .seat-s")
+	t_box := element_box(root, ".compass .table")
+	check(
+		t_box.y - (n_box.y + n_box.height) <= 16 && s_box.y - (t_box.y + t_box.height) <= 16,
+		fmt.tprintf(
+			"North and South sit by the trick (gaps %dpx above, %dpx below)",
+			t_box.y - (n_box.y + n_box.height),
+			s_box.y - (t_box.y + t_box.height),
+		),
+	)
+	overlap :: proc(a, b: sa.Rect) -> bool {
+		return a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height
+	}
+	w_box := element_box(root, ".compass .seat-w")
+	e_box := element_box(root, ".compass .seat-e")
+	check(
+		!overlap(n_box, w_box) && !overlap(n_box, e_box) && !overlap(s_box, w_box) && !overlap(s_box, e_box),
+		fmt.tprintf("no hand is drawn over another (N %v, W %v, E %v, S %v)", n_box, w_box, e_box, s_box),
+	)
+
+	press :: proc(view: ^sa.Windowless_View, root: sa.Element, command: string, at: int) {
+		if b, err := sa.select_first(root, fmt.tprintf(`.playbar [data-p="%s"]`, command)); err == nil {
+			sa.do_click(b)
+		} else {
+			check(false, fmt.tprintf("the play bar has a %q button", command))
+		}
+		pump(view, at)
+	}
+	press(view, root, "tnext", 64)
+	press(view, root, "tnext", 96)
+	cards, _ := sa.select_all(root, ".table .trk .pc", context.temp_allocator)
+	check(len(cards) == 4, fmt.tprintf("after two tricks the table shows trick 2's four cards (%d)", len(cards)))
+	if west, err := sa.select_first(root, ".seat-w"); err == nil {
+		text, _ := sa.text(west, context.temp_allocator)
+		check(
+			!strings.contains(text, "AJ3") && strings.contains(text, "J3"),
+			fmt.tprintf("West's hand has lost the ace of spades (%q)", text),
+		)
+	}
+	// The trick's cards are the thing being watched: at least as tall as a line of a hand. They started at a
+	// third of that (the table's own small font), which is what this pins.
+	line_h := element_height(root, ".seat-w .suit")
+	card_h := element_height(root, ".table .trk .pc")
+	check(
+		line_h > 0 && card_h * 10 >= line_h * 9,
+		fmt.tprintf("a trick card (%dpx) is about as tall as a hand's suit line (%dpx)", card_h, line_h),
+	)
+	// The card-size control scales the hands: XL is 40% on the suit lines.
+	press_cards :: proc(view: ^sa.Windowless_View, root: sa.Element, size: string, at: int) {
+		if b, err := sa.select_first(root, fmt.tprintf(`[data-cards="%s"]`, size)); err == nil {
+			sa.do_click(b)
+		} else {
+			check(false, fmt.tprintf("the toolbar has a %q card size", size))
+		}
+		pump(view, at)
+	}
+	press_cards(view, root, "xl", 112)
+	xl_h := element_height(root, ".seat-w .suit")
+	board_xl := element_height(root, ".compass")
+	check(
+		board_xl > board_m && board_xl <= VIEW_HEIGHT - 100,
+		fmt.tprintf(
+			"an XL board (%dpx, %dpx at M) still fits the %dpx view with its bar",
+			board_xl,
+			board_m,
+			VIEW_HEIGHT,
+		),
+	)
+	check(xl_h * 10 >= line_h * 13, fmt.tprintf("XL cards make a suit line taller (%dpx -> %dpx)", line_h, xl_h))
+	press_cards(view, root, "", 120)
+
+	press(view, root, "mistake", 128)
+
+	// A NARROW, TALL PANE, which is where the workbench shows this page and where the trick's grid spilled
+	// out of its area onto East's hand (reported, at M and at XL): the cards size by the view's HEIGHT, so a
+	// tall pane makes them large while the width stays small. Measured with a trick on the table, at both.
+	if err := sa.resize_windowless(view, PANE_WIDTH, PANE_HEIGHT); err != nil {
+		check(false, fmt.tprintf("the view resizes to a pane (%v)", err))
+	} else {
+		for size in ([]string{"", "xl"}) {
+			press_cards(view, root, size, 200)
+			pump(view, 232)
+			pane_area := element_box(root, ".compass .table")
+			w_hand := element_box(root, ".compass .seat-w")
+			e_hand := element_box(root, ".compass .seat-e")
+			label := "M" if size == "" else "XL"
+			// Every place of the trick, the invisible ones too: the grid's own box is not a reliable measure
+			// in this engine (it read the same at M and at XL while the cards grew by a third).
+			pane_cards, _ := sa.select_all(root, ".compass .table .trk .pc", context.temp_allocator)
+			inside := len(pane_cards) == 4
+			worst: sa.Rect
+			for card in pane_cards {
+				card_box, _ := sa.location(card, .Border, .Root)
+				if card_box.x < pane_area.x ||
+				   card_box.x + card_box.width > pane_area.x + pane_area.width ||
+				   card_box.y < pane_area.y ||
+				   card_box.y + card_box.height > pane_area.y + pane_area.height {
+					inside, worst = false, card_box
+				}
+			}
+			check(
+				inside,
+				fmt.tprintf(
+					"%s, in a %dx%d pane: the trick's four cards stay inside its area (area %v, outside %v)",
+					label,
+					PANE_WIDTH,
+					PANE_HEIGHT,
+					pane_area,
+					worst,
+				),
+			)
+			check(
+				pane_area.x >= w_hand.x + w_hand.width && pane_area.x + pane_area.width <= e_hand.x,
+				fmt.tprintf(
+					"%s, in a %dx%d pane: the trick's area is clear of West and East (W %v, area %v, E %v)",
+					label,
+					PANE_WIDTH,
+					PANE_HEIGHT,
+					w_hand,
+					pane_area,
+					e_hand,
+				),
+			)
+		}
+		press_cards(view, root, "", 240)
+		sa.resize_windowless(view, VIEW_WIDTH, VIEW_HEIGHT)
+		pump(view, 272)
+		pump(view, 304) // the page re-sizes its cards once the size has settled (`setViewUnits`)
+	}
+	if note, err := sa.select_first(root, ".playbar .pnote"); err == nil {
+		text, _ := sa.text(note, context.temp_allocator)
+		check(
+			strings.contains(text, "cost 1 trick"),
+			fmt.tprintf("the note names the card that cost a trick (%q)", text),
+		)
+	} else {
+		check(false, "the play bar has a note line")
+	}
+
+	// The trick grid keeps its size and its cards keep their places as the trick fills: "next card that
+	// cost a trick" left West's ♦8 alone on the table, and two more cards must not move it.
+	grid_before := element_box(root, ".table .trk")
+	lead_before := element_box(root, ".table .trk tr:nth-child(2) td:first-child .pc")
+	press(view, root, "next", 136)
+	press(view, root, "next", 144)
+	grid_after := element_box(root, ".table .trk")
+	lead_after := element_box(root, ".table .trk tr:nth-child(2) td:first-child .pc")
+	check(
+		grid_before.width > 0 && grid_before.width == grid_after.width && grid_before.height == grid_after.height,
+		fmt.tprintf("the trick grid keeps its size as cards arrive (%v -> %v)", grid_before, grid_after),
+	)
+	check(
+		lead_before.width > 0 && lead_before.x == lead_after.x && lead_before.y == lead_after.y,
+		fmt.tprintf("the card led stays where it is (%v -> %v)", lead_before, lead_after),
+	)
+	slots, _ := sa.select_all(root, ".table .trk .pc", context.temp_allocator)
+	check(
+		len(slots) == 4,
+		fmt.tprintf("all four places of the trick are filled, three of them by an invisible card (%d)", len(slots)),
+	)
+
+	// The contract is written with its suit glyph.
+	_, glyph_err := sa.select_first(root, ".playbar .pinfo .ssym")
+	check(glyph_err == nil, "the play bar writes the contract with a suit glyph (2♦, not 2D)")
+
+	// CTRL+arrow steps a whole trick and CTRL+SHIFT+arrow a card, and the board does not move. A click first: a
+	// key reaches the document only once something in it holds the focus.
+	KB_RIGHT :: 262
+	KB_LEFT :: 263
+	sa.windowless_mouse(view, .MOUSE_DOWN, {20, VIEW_HEIGHT / 2})
+	sa.windowless_mouse(view, .MOUSE_UP, {20, VIEW_HEIGHT / 2})
+	pump(view, 152)
+	board := board_number(root)
+	key :: proc(view: ^sa.Windowless_View, code: u32, modifiers: sciter.Keyboard_States, at: int) {
+		sa.windowless_key(view, .DOWN, code, modifiers)
+		sa.windowless_key(view, .UP, code, modifiers)
+		pump(view, at)
+	}
+	ctrl := sciter.KEYBOARD_STATE_CONTROL
+	ctrl_shift := sciter.KEYBOARD_STATE_CONTROL + sciter.KEYBOARD_STATE_SHIFT
+	// From trick 3 card 3: a trick forward completes trick 3, a card forward leads trick 4, a card back
+	// returns to the end of trick 3, a trick back to the end of trick 2.
+	steps := [?]struct {
+		code:      u32,
+		modifiers: sciter.Keyboard_States,
+		want:      string,
+		what:      string,
+	} {
+		{KB_RIGHT, ctrl, "trick 3 card 4", "CTRL+RIGHT plays the rest of the trick"},
+		{KB_RIGHT, ctrl_shift, "trick 4 card 1", "CTRL+SHIFT+RIGHT plays a card"},
+		{KB_LEFT, ctrl_shift, "trick 3 card 4", "CTRL+SHIFT+LEFT takes a card back"},
+		{KB_LEFT, ctrl, "trick 2 card 4", "CTRL+LEFT takes a trick back"},
+	}
+	for step, n in steps {
+		key(view, step.code, step.modifiers, 160 + 8 * n)
+		check(strings.contains(play_info(root), step.want), fmt.tprintf("%s (%q)", step.what, play_info(root)))
+	}
+	check(
+		board_number(root) == board,
+		fmt.tprintf("and the board did not move (board %d then %d)", board, board_number(root)),
+	)
+
+	// One hand focused (its pill clicked) still shows the trick, with "Reveal all" under it rather than in its
+	// place - reported: the cards played could not be seen while a hand was focused.
+	// A real mouse click: the page hears pill clicks by delegation on the track, which `do_click` does not reach.
+	// The point comes from the page's own rects: `location` disagreed with `elementFromPoint` here.
+	click_at :: proc(view: ^sa.Windowless_View, root: sa.Element, selector: string, at: int) -> bool {
+		res, err := sa.eval_element(
+			root,
+			fmt.tprintf(
+				`(function () {{ var e = document.querySelector('%s'); if (!e) return ''; var r = e.getBoundingClientRect(); return Math.round(r.left + r.width / 2) + ' ' + Math.round(r.top + r.height / 2); }})()`,
+				selector,
+			),
+		)
+		if err != nil {
+			return false
+		}
+		defer sa.value_clear(&res)
+		text, _ := sa.value_to_string(&res, context.temp_allocator)
+		f := strings.fields(text, context.temp_allocator)
+		if len(f) != 2 {
+			return false
+		}
+		x, _ := strconv.parse_int(f[0])
+		y, _ := strconv.parse_int(f[1])
+		p := [2]i32{i32(x), i32(y)}
+		sa.windowless_mouse(view, .MOUSE_MOVE, p)
+		sa.windowless_mouse(view, .MOUSE_DOWN, p)
+		sa.windowless_mouse(view, .MOUSE_UP, p)
+		pump(view, at)
+		return true
+	}
+	// Every seat's pill takes a click on a TUCKED board. A negative margin on the middle row (the first tuck)
+	// left West's and East's pills unhittable in this engine: the click landed on `.compass`.
+	pills, perr := sa.eval_element(
+		root,
+		`(function () {
+			var mid = document.querySelector('.slide.active .compass > .mid'), out = [];
+			['n', 'e', 's', 'w'].forEach(function (L) {
+				var l = document.querySelector('.slide.active .seat-' + L + ' .lbl');
+				if (!l) { out.push(L + ':none'); return; }
+				var r = l.getBoundingClientRect(), e = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+				if (!e || !e.closest('.lbl')) out.push(L + ':' + (e ? e.tagName + '.' + e.className : 'none'));
+			});
+			return (mid.style.getPropertyValue('margin-top') ? 'tucked' : 'not-tucked') + (out.length ? ' ' + out.join(' ') : '');
+		})()`,
+	)
+	if perr == nil {
+		text, _ := sa.value_to_string(&pills, context.temp_allocator)
+		sa.value_clear(&pills)
+		check(text == "tucked", fmt.tprintf("on a tucked board every seat's pill takes a click (%q)", text))
+	} else {
+		check(false, fmt.tprintf("the pills can be probed (%v)", perr))
+	}
+	if click_at(view, root, ".slide.active .seat-w .lbl", 300) {
+		_, focus_err := sa.select_first(root, ".slide.only-w")
+		check(focus_err == nil, "clicking West's pill focuses West")
+		shown, _ := sa.select_all(root, ".table .trk .pc:not(.ghost)", context.temp_allocator)
+		check(
+			len(shown) == 4,
+			fmt.tprintf("with West focused the table still shows the trick's cards (%d)", len(shown)),
+		)
+		if click_at(view, root, ".slide.active .table .reveal-all", 330) {
+			_, still := sa.select_first(root, ".table .reveal-all")
+			_, focused := sa.select_first(root, ".slide.active[class*=\"only-\"]")
+			check(still != nil && focused != nil, "the button under the trick reveals all four hands")
+		} else {
+			check(false, "with West focused there is a Reveal all button under the trick")
+		}
+	} else {
+		check(false, "West has a pill to focus")
+	}
+}
+
+// The border-box height of the first element `selector` matches, 0 when there is none.
+element_height :: proc(root: sa.Element, selector: string) -> int {
+	element, err := sa.select_first(root, selector)
+	if err != nil {
+		return 0
+	}
+	box, _ := sa.location(element, .Border, .Root)
+	return int(box.height)
+}
+
+// The border box of the first element `selector` matches, zero when there is none.
+element_box :: proc(root: sa.Element, selector: string) -> (box: sa.Rect) {
+	element, err := sa.select_first(root, selector)
+	if err != nil {
+		return {}
+	}
+	box, _ = sa.location(element, .Border, .Root)
+	return box
+}
+
+// The play bar's position line ("2♦ W · trick 3 card 1 · ...").
+play_info :: proc(root: sa.Element) -> string {
+	element, err := sa.select_first(root, ".playbar .pinfo")
+	if err != nil {
+		return ""
+	}
+	text, _ := sa.text(element, context.temp_allocator)
+	return text
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

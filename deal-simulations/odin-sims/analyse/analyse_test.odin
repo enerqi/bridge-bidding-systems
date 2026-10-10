@@ -269,3 +269,104 @@ test_synth_deal_duplicates_the_known_pair :: proc(t: ^testing.T) {
 		testing.expect_value(t, synth[.East][i], card)
 	}
 }
+
+// A multi-game PBN file in standard export order: each game's tags come BEFORE and AFTER its `[Deal]`, and a
+// blank line separates games. Each board reads its own `[Board]` and names, and a game with no `[Contract]`
+// does not borrow the next game's.
+@(test)
+test_pbn_games_are_read_one_at_a_time :: proc(t: ^testing.T) {
+	text := `[Event "Club Teams"]
+[Board "1"]
+[North "Nat"]
+[Deal "N:AJ54.AK2.A32.AK3 Q98.QJT.KQJ.QJT7 KT32.543.654.542 76.9876.T987.986"]
+
+[Event "Club Teams"]
+[Board "2"]
+[North "Nora"]
+[Deal "N:AJ54.AK2.A32.AK3 Q98.QJT.KQJ.QJT7 KT32.543.654.542 76.9876.T987.986"]
+[Declarer "S"]
+[Contract "4S"]
+`
+	boards, err := resolve_boards(text)
+	defer delete(boards)
+	testing.expect_value(t, err, "")
+	testing.expect_value(t, len(boards), 2)
+	testing.expect_value(t, boards[0].table.number, 1)
+	testing.expect_value(t, boards[0].table.players[.North], "Nat")
+	_, first_has_contract := boards[0].contract.?
+	testing.expect(t, !first_has_contract)
+	testing.expect_value(t, boards[1].table.number, 2)
+	testing.expect_value(t, boards[1].table.players[.North], "Nora")
+	_, second_has_contract := boards[1].contract.?
+	testing.expect(t, second_has_contract)
+}
+
+// A vugraph segment names its match, and the page title says so - teams with their spacing tidied.
+@(test)
+test_match_title_from_a_vugraph_header :: proc(t: ^testing.T) {
+	deal :: "md|3SKT87HT2DJ3CQT754,SAJ3HK4DKQ9852C98,S42HAQ986DAT74CA6,SQ965HJ753D6CKJ32|"
+	text := "vg|Spring Cup,Final,I,1,2,LIONS,0,BIG  TIGERS,0|pn|a,b,c,d,e,f,g,h|qx|o1|" + deal + "qx|c1|" + deal
+	boards, err := resolve_boards(text)
+	defer delete(boards)
+	testing.expect_value(t, err, "")
+	testing.expect_value(t, len(boards), 2)
+	testing.expect_value(t, match_title(boards[:]), "Spring Cup · Final · LIONS v BIG TIGERS")
+	testing.expect_value(t, boards[1].table.players[.South], "e")
+	testing.expect_value(t, table_heading(boards[1].table), "board 1, closed room")
+}
+
+// A name from the record cannot break out of the single-quoted attribute or the JSON inside it.
+@(test)
+test_board_table_element_escapes_names :: proc(t: ^testing.T) {
+	table: norn.Board_Table
+	table.number = 4
+	table.room = .Open
+	table.players[.North] = `O'Brien "Ace" <b>&`
+	b := strings.builder_make(context.temp_allocator)
+	write_table_element(&b, table)
+	got := strings.to_string(b)
+	testing.expect_value(
+		t,
+		got,
+		`<div class="board-table" hidden data-table='{"n":4,"room":"Open","players":{"N":"O&#39;Brien \"Ace\" &lt;b>&amp;","E":"","S":"","W":""}}'></div>`,
+	)
+}
+
+// The progress hook hears every board, in order, and a last call when all are done - what the workbench's
+// "board 3 of 16" beside the analyse button is drawn from.
+@(test)
+test_run_reports_progress_per_board :: proc(t: ^testing.T) {
+	Seen :: struct {
+		calls: [dynamic][2]int,
+	}
+	seen: Seen
+	defer delete(seen.calls)
+
+	two := TWO_HAND + "\n\n" + TWO_HAND
+	argv := []string{two}
+	args, perr := parse_args(argv, allow_stdin = false)
+	defer args_free(&args)
+	testing.expect_value(t, perr, "")
+
+	for want_page in ([]bool{false, true}) {
+		clear(&seen.calls)
+		b := strings.builder_make()
+		defer strings.builder_destroy(&b)
+		page := strings.builder_make()
+		defer strings.builder_destroy(&page)
+		sink := builder_page_sink(&b, &page) if want_page else builder_sink(&b)
+		sink.progress_data = &seen
+		sink.progress = proc(data: rawptr, done, total: int) {
+			append(&(^Seen)(data).calls, [2]int{done, total})
+		}
+		testing.expect_value(t, run(sink, &args), Result.Ok)
+		testing.expectf(t, len(seen.calls) >= 2, "page=%v: a call per board (%v)", want_page, seen.calls)
+		if len(seen.calls) >= 2 {
+			testing.expect_value(t, seen.calls[0], [2]int{0, 2})
+			testing.expect_value(t, seen.calls[1], [2]int{1, 2})
+		}
+		if want_page {
+			testing.expect_value(t, seen.calls[len(seen.calls) - 1], [2]int{2, 2})
+		}
+	}
+}

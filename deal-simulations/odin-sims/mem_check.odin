@@ -260,7 +260,7 @@ generate_card_page :: proc(dir: string, count: int) -> (page: string, ok: bool) 
 		fmt.tprintf("%d", count),
 		"-f",
 		"html-cards",
-		"--dd",
+		"--par",
 		"--fixed-table",
 		"--seed",
 		"7",

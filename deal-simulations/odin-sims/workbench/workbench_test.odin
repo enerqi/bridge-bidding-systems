@@ -53,10 +53,35 @@ import sa "sciter:sciter_app"
 @(private = "file")
 g_view: sa.Windowless_View
 
+/*
+PER-TEST TIMINGS, opt in: `just sims test-workbench-serial -define:WB_TEST_TIMINGS=true` (the sharded
+`test-workbench` always has them on). The runner's own log has
+whole-second timestamps, which said only that the suite was "about 0.4s a test". This times every test that
+builds a window (`test_app` .. `test_app_destroy`) and splits it into the setup, the pumps (how many, and
+their time) and the rest - the test's own work - one `timing` line per test, for `just sims
+test-workbench-timings` to sort. Single-threaded runner (ODIN_TEST_THREADS=1), so plain globals do.
+*/
+WB_TEST_TIMINGS :: #config(WB_TEST_TIMINGS, false)
+
+@(private = "file")
+g_timing: struct {
+	started:    time.Tick,
+	setup:      time.Duration,
+	pumps:      int,
+	pump_time:  time.Duration,
+}
+
 // Bring up the engine, the view and one loaded document, and hand back an App wired to it. Returns false
 // when there is no engine to test against, which is a skip rather than a failure.
 @(private = "file")
 test_app :: proc(t: ^testing.T, app: ^App) -> (ok: bool) {
+	g_timing = {
+		started = time.tick_now(),
+	}
+	defer when WB_TEST_TIMINGS {
+		g_timing.setup = time.tick_since(g_timing.started)
+		g_timing.pumps, g_timing.pump_time = 0, 0 // the setup's own pump is counted in `setup`
+	}
 	if !sa.load_engine() {
 		testing.fail_now(t, "the Sciter engine is not loadable - set SCITER_LIB")
 	}
@@ -95,12 +120,24 @@ test_app :: proc(t: ^testing.T, app: ^App) -> (ok: bool) {
 }
 
 // Run the engine over the view: layout, style resolution and the behavior attachment that depends on it.
+//
+// EIGHT HEARTBEATS AND ONE PAINT. It painted after every heartbeat, and a paint of this 1120x780 view in
+// software Skia is ~7.6ms against ~2us for a heartbeat: ~1000 pumps made the paints most of the suite's
+// time (measured 2026-10-09: 70s -> 36s with one paint, every test still passing). The paint itself is
+// NOT optional: without it layout does not settle, and the drag, zoom and fit checks all fail.
 @(private = "file")
 pump_view :: proc() {
+	when WB_TEST_TIMINGS {
+		started := time.tick_now()
+		defer {
+			g_timing.pumps += 1
+			g_timing.pump_time += time.tick_since(started)
+		}
+	}
 	for i in 0 ..< 8 {
 		sa.windowless_heartbeat(&g_view, time.Duration(i) * 16 * time.Millisecond)
-		sa.paint_windowless(&g_view)
 	}
+	sa.paint_windowless(&g_view)
 }
 
 @(private = "file")
@@ -108,8 +145,31 @@ pump :: proc(app: ^App) {
 	pump_view()
 }
 
+// The heartbeats of a pump WITHOUT its paint: events and posted work are processed, layout is not settled.
+// For the steps INSIDE a gesture - the moves of a drag - where only the end state is asserted, and a full
+// pump (a paint, ~16ms) per mouse move was most of what the drag tests cost. Finish with a `pump` before
+// measuring anything.
 @(private = "file")
-test_app_destroy :: proc(app: ^App) {
+beat :: proc() {
+	for i in 0 ..< 8 {
+		sa.windowless_heartbeat(&g_view, time.Duration(i) * 16 * time.Millisecond)
+	}
+}
+
+@(private = "file")
+test_app_destroy :: proc(app: ^App, loc := #caller_location) {
+	when WB_TEST_TIMINGS {
+		total := time.tick_since(g_timing.started)
+		log.infof(
+			"timing %s total=%.1f setup=%.1f pumps=%d pump=%.1f rest=%.1f",
+			loc.procedure,
+			time.duration_milliseconds(total),
+			time.duration_milliseconds(g_timing.setup),
+			g_timing.pumps,
+			time.duration_milliseconds(g_timing.pump_time),
+			time.duration_milliseconds(total - g_timing.setup - g_timing.pump_time),
+		)
+	}
 	strings.builder_destroy(&app.transcript)
 	delete(app.tag_on, app.allocator)
 	delete(app.groups, app.allocator)
@@ -123,9 +183,11 @@ test_app_destroy :: proc(app: ^App) {
 	free_goto_index(app)
 	delete(app.scroll_want, app.allocator)
 	delete(app.shown_path, app.allocator)
+	delete(app.analysed_page, app.allocator)
 	clear_outputs(app)
 	delete(app.outputs)
 	delete(app.bml_open, app.allocator) // `open_bml` clones it onto the heap, as `main` frees at exit
+	delete(app.quiz_path, app.allocator) // `refresh_quiz` is its only writer, and always clones
 	// The scenario editor's folder, its file names and the open file — cloned by `adopt_scenario_dir` and
 	// `open_scenario_file`, and never given back here, so every editor test reported them as leaks.
 	for name in app.scn_names {
@@ -269,13 +331,13 @@ test_the_document_carries_every_control_the_host_touches :: proc(t: ^testing.T) 
 	defer test_app_destroy(&app)
 
 	for selector in ([]string {
-			"#engine",
+			"#scenario-count",
 			"#scenarios",
 			"#count",
 			"#format",
 			"#seed",
 			"#outdir",
-			"#dd",
+			"#par",
 			"#fixed",
 			"#all",
 			"#generate",
@@ -286,7 +348,7 @@ test_the_document_carries_every_control_the_host_touches :: proc(t: ^testing.T) 
 			"#sample",
 			"#contract",
 			"#target",
-			"#as-page",
+			"#as-text",
 			"#analyse",
 			"#clear",
 			"#report",
@@ -388,7 +450,7 @@ test_every_control_is_documented :: proc(t: ^testing.T) {
 			"#format",
 			"#seed",
 			"#outdir",
-			"#dd",
+			"#par",
 			"#fixed",
 			"#all",
 			"#generate",
@@ -412,6 +474,10 @@ test_every_control_is_documented :: proc(t: ^testing.T) {
 			"#bml-folder",
 			"#bml-fold",
 			"#bml-links",
+			"#bml-quiz",
+			"#bml-quiz-open",
+			"#prefs-quiz-template",
+			"#prefs-quiz-dir",
 			"#bml-preview",
 			"#bml-save",
 			"#help-bml",
@@ -725,8 +791,14 @@ test_the_filter_narrows_the_list_to_the_scenarios_it_names :: proc(t: ^testing.T
 	testing.expect_value(t, app.scenarios[shown[0]].name, name)
 
 	// And a query that names nothing says so, rather than leaving a blank box that reads as a broken list.
+	// The count under the list says how far the filter narrowed it.
+	count, _ := sa.text(find(&app, "#scenario-count"), context.temp_allocator)
+	testing.expect_value(t, count, fmt.tprintf("%d of %d scenarios", len(shown), len(app.scenarios)))
+
 	type_filter(&app, "zzzzqqq")
 	testing.expect_value(t, len(scenario_row_elements(&app)), 0)
+	none, _ := sa.text(find(&app, "#scenario-count"), context.temp_allocator)
+	testing.expect_value(t, none, fmt.tprintf("0 of %d scenarios", len(app.scenarios)))
 	empty, eerr := sa.select_all(find(&app, "#scenarios"), ".empty", context.temp_allocator)
 	testing.expect_value(t, eerr, nil)
 	testing.expect_value(t, len(empty), 1)
@@ -1493,7 +1565,7 @@ test_the_generate_argv_is_valid_to_norns_parser :: proc(t: ^testing.T) {
 	type_into(&app, "#count", "24")
 	type_into(&app, "#seed", "7")
 	type_into(&app, "#outdir", "C:/tmp/deals")
-	tick(&app, "#dd")
+	tick(&app, "#par")
 	tick(&app, "#fixed")
 
 	job, err := generate_job(&app)
@@ -1513,7 +1585,7 @@ test_the_generate_argv_is_valid_to_norns_parser :: proc(t: ^testing.T) {
 	testing.expect_value(t, opts.format, norn.Output_Format.Html_Cards)
 	testing.expect_value(t, opts.scenario, job.scenarios[0])
 	testing.expect_value(t, opts.output, "C:/tmp/deals/x.html")
-	testing.expect(t, opts.dd, "--dd must reach the parser")
+	testing.expect(t, opts.par, "--par must reach the parser")
 	testing.expect(t, !opts.randomize_table, "--fixed-table must clear the randomised table")
 	seed, has_seed := opts.seed.?
 	testing.expect(t, has_seed)
@@ -1987,6 +2059,21 @@ test_the_formats_that_exist_are_visible_and_pressable :: proc(t: ^testing.T) {
 	chip := find(&app, `#outputs .chip[data-open=".pbn"]`)
 	testing.expect(t, chip != nil, "no chip for the pbn")
 	if chip == nil {return}
+
+	// `generate` says `regenerate` when the run would replace a file: this scenario has a page and a pbn,
+	// and no lin (asked for: "if a format deal file already exists then perhaps the button should be
+	// regenerate, implying the overwrite").
+	for c in ([]struct {
+			format: string,
+			label:  string,
+		}{{"html-cards", "regenerate"}, {"pbn", "regenerate"}, {"lin", "generate"}}) {
+		set_input(&app, "#format", c.format)
+		refresh_generate_label(&app)
+		label, _ := sa.text(find(&app, "#generate"), context.temp_allocator)
+		testing.expectf(t, label == c.label, "%s: the button says %q, want %q", c.format, label, c.label)
+	}
+	set_input(&app, "#format", "html-cards")
+	refresh_generate_label(&app)
 
 	// SELECTING A SCENARIO LIGHTS THE CHIP FOR WHAT THE FOLLOW JUST LOADED - reported: on the first click of
 	// a scenario the row came up with nothing lit (or the PREVIOUS file's chip lit), and only a second click
@@ -3307,8 +3394,8 @@ test_the_scenario_list_folds_away :: proc(t: ^testing.T) {
 	testing.expect(t, scenario_list_shown(&app), "and comes back")
 }
 
-// "as card page" is what routes an analyse run to the frame instead of to the report pane, and it must not
-// add a `--html` (that would write a file nobody asked for).
+// The hand page is the DEFAULT for an analyse run (the frame, not the report pane), `as text report` the
+// exception, and the page must not add a `--html` (that would write a file nobody asked for).
 @(test)
 test_the_card_page_checkbox_asks_for_the_page_in_memory :: proc(t: ^testing.T) {
 	app: App
@@ -3317,17 +3404,29 @@ test_the_card_page_checkbox_asks_for_the_page_in_memory :: proc(t: ^testing.T) {
 
 	type_into(&app, "#deal", FRAME_DEAL)
 
+	// THE PAGE BY DEFAULT (asked for: "as hand page should be implicit ... as text report would be the new
+	// option").
+	testing.expect(t, !read_bool(&app, "#as-text"), "`as text report` starts unticked")
 	job, err := analyse_job(&app)
 	testing.expect_value(t, err, "")
 	app.job = job
-	testing.expect(t, !job.want_page, "unticked, the run writes the text report")
+	testing.expect(t, job.want_page, "by default the run renders the page")
 
-	tick(&app, "#as-page")
+	tick(&app, "#as-text")
+	job_free(&app.job, app.allocator)
+	text_job, xerr := analyse_job(&app)
+	testing.expect_value(t, xerr, "")
+	app.job = text_job
+	testing.expect(t, !text_job.want_page, "`as text report` writes the text report")
+
+	untick := sa.value_from(false)
+	sa.set_element_value(find(&app, "#as-text"), &untick)
+	sa.value_clear(&untick)
 	job_free(&app.job, app.allocator)
 	ticked, terr := analyse_job(&app)
 	testing.expect_value(t, terr, "")
 	app.job = ticked
-	testing.expect(t, ticked.want_page, "ticked, the run renders the page")
+	testing.expect(t, ticked.want_page, "unticked again, the run renders the page")
 	for arg in ticked.argv {
 		testing.expectf(t, arg != "--html" && arg != "-o", "the page path must not be composed: %s", arg)
 	}
@@ -3336,6 +3435,35 @@ test_the_card_page_checkbox_asks_for_the_page_in_memory :: proc(t: ^testing.T) {
 	defer analyse.args_free(&args)
 	testing.expectf(t, perr == "", "the advisor rejected the composed argv: %s", perr)
 	testing.expect_value(t, args.html_path, "")
+}
+
+// A dropped `.pbn` / `.lin` leaves its PATH in the analyse box (reported: the file was forgotten once
+// analysed), and a box holding a file's path is analysed as that file - `--file`, not as deal text.
+@(test)
+test_a_path_in_the_analyse_box_is_read_as_that_file :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	dir, derr := os.temp_directory(context.temp_allocator)
+	if derr != nil {return}
+	path, jerr := filepath.join({dir, "wb-path-in-box.pbn"}, context.temp_allocator)
+	if jerr != nil {return}
+	if os.write_entire_file(path, transmute([]u8)string(FRAME_DEAL)) != nil {return}
+	defer os.remove(path)
+
+	type_into(&app, "#deal", path)
+	job, err := analyse_job(&app)
+	testing.expect_value(t, err, "")
+	app.job = job
+	testing.expect(
+		t,
+		len(job.argv) >= 2 && job.argv[len(job.argv) - 2] == "--file" && job.argv[len(job.argv) - 1] == path,
+		"a path is read with --file",
+	)
+
+	testing.expect(t, !deal_file_path(FRAME_DEAL), "deal text is not a path")
+	testing.expect(t, !deal_file_path("C:/no/such/file.lin"), "a path to nothing is not a file")
 }
 
 
@@ -3445,7 +3573,6 @@ test_a_dropped_image_carries_the_analyse_panels_settings :: proc(t: ^testing.T) 
 	type_into(&app, "#sample", "200")
 	type_into(&app, "#contract", "3NT")
 	type_into(&app, "#target", "9")
-	tick(&app, "#as-page")
 
 	job, err := ocr_job(&app, "C:/shots/hand.png")
 	testing.expect_value(t, err, "")
@@ -4188,7 +4315,27 @@ editor_corpus :: proc(t: ^testing.T, app: ^App) -> bool {
 	app.docs = dir
 	app.bml_names = list_bml_files(dir, context.temp_allocator)
 	draw_bml_files(app)
-	return len(app.bml_names) > 0
+	if len(app.bml_names) == 0 {
+		return false
+	}
+	// THE SMALLEST CHAPTER IS OPEN, not the first. `show_editor` opens the first file when none is, and
+	// that is `1c-opening.bml` at 57KB: ~100ms to colour and ~120ms to lay out, in each of the ~19 tests
+	// that come through here - and the NEXT test paid again to tear the buffer down. None of them is about
+	// that file; the ones that need the corpus need its HEADINGS, which the palette indexes from disk.
+	smallest, smallest_size := "", i64(-1)
+	for name in app.bml_names {
+		path, jerr := filepath.join({dir, name}, context.temp_allocator)
+		if jerr != nil {continue}
+		info, serr := os.stat(path, context.temp_allocator)
+		if serr != nil {continue}
+		if smallest_size < 0 || info.size < smallest_size {
+			smallest, smallest_size = name, info.size
+		}
+	}
+	if smallest != "" {
+		_, _ = open_bml(app, smallest, repreview = false)
+	}
+	return true
 }
 
 // One element's text out of the PREVIEW frame's sub-document. The frame is a document of its own, so this
@@ -4568,9 +4715,8 @@ test_the_header_survives_a_narrow_window :: proc(t: ^testing.T) {
 		view, verr := sa.location(root, .Border, .Root)
 		testing.expect_value(t, verr, nil)
 
-		// Every control in the bar, and the bar itself. `#engine` is text rather than a control but it is
-		// what was crowding the About button when the engine version used to live in it, so it is measured.
-		for selector in ([]string{"header", "#tabs", "#engine", "#about", `.tab[data-view="editor"]`}) {
+		// Every control in the bar, and the bar itself.
+		for selector in ([]string{"header", "#tabs", "#about", `.tab[data-view="editor"]`}) {
 			element := find(&app, selector)
 			testing.expectf(t, element != nil, "no %s", selector)
 			if element == nil {
@@ -4622,6 +4768,14 @@ test_the_editor_bar_survives_a_narrow_window :: proc(t: ^testing.T) {
 		sa.resize_windowless(&g_view, 1120, 780)
 		pump_view()
 	}
+	// The quiz strip at its WIDEST: a page exists and is out of date, so both buttons and the long state.
+	set_shown(&app, "#bml-quizbar", true)
+	set_shown(&app, "#bml-quiz-open", true)
+	set_text_at(
+		&app,
+		"#bml-quiz-state",
+		"uncontested-bidding-quiz.html · written 3 hours ago · out of date: the notes have changed since - generate again to include them",
+	)
 	testing.expect_value(t, sa.resize_windowless(&g_view, 720, 520), nil)
 	pump_view()
 
@@ -4636,6 +4790,8 @@ test_the_editor_bar_survives_a_narrow_window :: proc(t: ^testing.T) {
 			"#bml-folder",
 			"#bml-fold",
 			"#bml-links",
+			"#bml-quiz",
+			"#bml-quiz-open",
 			"#bml-preview",
 			"#bml-save",
 		}) {
@@ -4654,6 +4810,16 @@ test_the_editor_bar_survives_a_narrow_window :: proc(t: ^testing.T) {
 			view.width,
 		)
 	}
+	strip, serr := sa.location(find(&app, "#bml-quizbar"), .Border, .Root)
+	testing.expect_value(t, serr, nil)
+	testing.expectf(t, strip.height < 50, "at 720px the quiz strip is %dpx tall — it wrapped", strip.height)
+	state, _ := sa.location(find(&app, "#bml-quiz-state"), .Border, .Root)
+	testing.expectf(
+		t,
+		state.x + state.width <= view.x + view.width,
+		"the quiz state should give way, not overflow: ends at %d",
+		state.x + state.width,
+	)
 	bar, berr := sa.location(find(&app, ".bar"), .Border, .Root)
 	testing.expect_value(t, berr, nil)
 	testing.expectf(t, bar.height < 60, "at 720px the editor bar is %dpx tall — its controls wrapped", bar.height)
@@ -6048,6 +6214,17 @@ test_a_squiggle_does_not_survive_the_buffer_it_was_computed_from :: proc(t: ^tes
 
 	// Now open a real file over it.
 	use_bml_dir(&app, dir)
+	// `use_bml_dir` frees what it replaces, so what it leaves behind is this test's to free -
+	// `test_app_destroy` cannot, since other tests hand the same fields TEMP memory.
+	defer {
+		for listed in app.bml_names {
+			delete(listed, app.allocator)
+		}
+		delete(app.bml_names, app.allocator)
+		delete(app.docs, app.allocator)
+		app.bml_names = nil
+		app.docs = ""
+	}
 	pump(&app)
 	opened, why := open_bml(&app, name)
 	testing.expectf(t, opened, "the file did not open: %s", why)
@@ -6517,6 +6694,7 @@ test_a_card_page_run_is_not_echoed :: proc(t: ^testing.T) {
 	type_into(&app, "#outdir", PARITY_DIR)
 	type_into(&app, "#format", "html-cards")
 	job, cards_err := generate_job(&app)
+	defer job_free(&job, app.allocator)
 	testing.expect_value(t, cards_err, "")
 	testing.expect(t, !job.echo, "an html page must not be poured into the transcript")
 
@@ -6543,6 +6721,7 @@ test_a_generated_lin_record_round_trips :: proc(t: ^testing.T) {
 	type_into(&app, "#outdir", PARITY_DIR)
 	type_into(&app, "#format", "lin")
 	job, err := generate_job(&app)
+	app.job = job // so test_app_destroy frees it
 	testing.expect_value(t, err, "")
 	testing.expect_value(t, job.ext, ".lin")
 	testing.expect(t, job.echo, "three deals of text is worth echoing")
@@ -6846,20 +7025,22 @@ test_leaving_an_unsaved_scenario_is_refused_once :: proc(t: ^testing.T) {
 	if !write_scenario_file(dir, "two.scenario", "scenario wb-two \"two\"\n  north: hcp >= 13\n") {return}
 
 	use_scenario_dir(&app, dir)
+	show_view(&app, .Scenarios) // a hidden view has no behaviors, so its editor takes no key
 	pump(&app)
 	testing.expect_value(t, app.scn_open, "one.scenario")
 
 	// TYPE into the buffer, the way an edit really arrives: a host-side `content=` write does not set the
-	// widget's own modified flag, and that flag is exactly what the guard reads.
+	// widget's own modified flag, and that flag is exactly what the guard reads. A `.CHAR` key, as the
+	// notes editor's guard test sends: key DOWN/UP did not mark this buffer modified, and the test then
+	// skipped itself on every run with only a warning to say so.
 	if editor := find(&app, "#scn-text"); editor != nil {
 		_ = sa.set_focus(editor)
 		pump(&app)
-		_, _ = sa.send_key(editor, .DOWN, u32(sciter.Sc_Kb_Codes.X), {})
-		_, _ = sa.send_key(editor, .UP, u32(sciter.Sc_Kb_Codes.X), {})
+		_, _ = sa.send_key(editor, .CHAR, u32('X'))
 		pump(&app)
 	}
+	testing.expect(t, scenario_modified(&app), "a typed character marks the scenario buffer modified")
 	if !scenario_modified(&app) {
-		log.warn("the editor did not report the synthesised keystroke as an edit — skipping the guard")
 		return
 	}
 
@@ -7383,7 +7564,11 @@ test_saving_a_scenario_puts_it_in_the_deals_list :: proc(t: ^testing.T) {
 
 	dir := scratch_scenario_dir(t, "wb-scn-save-lists")
 	if dir == "" {return}
-	if !write_scenario_file(dir, "mine.scenario", "scenario wb-before \"before the edit\"\n  north: hcp >= 12\n") {return}
+	if !write_scenario_file(
+		dir,
+		"mine.scenario",
+		"scenario wb-before \"before the edit\"\n  north: hcp >= 12\n",
+	) {return}
 
 	app.prefs = prefs.load("", context.temp_allocator)
 	defer prefs.destroy(&app.prefs)
@@ -7473,7 +7658,11 @@ test_a_folder_named_twice_is_read_once :: proc(t: ^testing.T) {
 	other_spelling, _ := strings.replace_all(dir, "\\", "/", context.temp_allocator)
 	app.prefs = prefs.load("", context.temp_allocator)
 	defer prefs.destroy(&app.prefs)
-	prefs.set(&app.prefs, SCENARIO_DIRS_PREF, strings.concatenate({dir, ";", other_spelling, "/"}, context.temp_allocator))
+	prefs.set(
+		&app.prefs,
+		SCENARIO_DIRS_PREF,
+		strings.concatenate({dir, ";", other_spelling, "/"}, context.temp_allocator),
+	)
 	reloaded, _ := reload_scenarios(&app)
 	testing.expect(t, reloaded)
 
@@ -7528,7 +7717,13 @@ test_the_forget_button_takes_a_folder_out_of_the_sources :: proc(t: ^testing.T) 
 	pump(&app)
 
 	remembered, _ := prefs.get(&app.prefs, SCENARIO_DIRS_PREF)
-	testing.expectf(t, same_dir(remembered, keep), "only the kept folder should be remembered: %q vs %q", remembered, keep)
+	testing.expectf(
+		t,
+		same_dir(remembered, keep),
+		"only the kept folder should be remembered: %q vs %q",
+		remembered,
+		keep,
+	)
 	_, still := cli.lookup(app.scenarios, "wb-drop")
 	testing.expect(t, !still, "a forgotten folder's scenarios should leave the deals list")
 	_, kept := cli.lookup(app.scenarios, "wb-keep")
@@ -7722,7 +7917,15 @@ test_every_toolbar_icon_paints :: proc(t: ^testing.T) {
 		for icon, i in icons {
 			box, lerr := sa.location(icon, .Border, .Root)
 			testing.expect_value(t, lerr, nil)
-			testing.expectf(t, box.width >= 10 && box.height >= 10, "%v icon %d is %dx%d", theme, i, box.width, box.height)
+			testing.expectf(
+				t,
+				box.width >= 10 && box.height >= 10,
+				"%v icon %d is %dx%d",
+				theme,
+				i,
+				box.width,
+				box.height,
+			)
 			low, high := 765, 0
 			for y in box.y ..< box.y + box.height {
 				for x in box.x ..< box.x + box.width {
@@ -7807,7 +8010,10 @@ test_the_deal_panes_fit_the_window_at_any_zoom :: proc(t: ^testing.T) {
 // The framed page's heading height, a stand-in for "how big are the boards".
 @(private = "file")
 page_heading_height :: proc(app: ^App) -> int {
-	result, err := sa.eval(app.window, `(function(){ var d = document.$("#page").frame.document; return d.$("h1").state.box("height", "border"); })()`)
+	result, err := sa.eval(
+		app.window,
+		`(function(){ var d = document.$("#page").frame.document; return d.$("h1").state.box("height", "border"); })()`,
+	)
 	defer sa.value_clear(&result)
 	if err != nil {
 		return -1
@@ -7937,7 +8143,7 @@ drag_page_divider :: proc(app: ^App, dx: i32) {
 	sa.windowless_mouse(&g_view, .MOUSE_DOWN, {x, y})
 	for step in 1 ..= 10 {
 		sa.windowless_mouse(&g_view, .MOUSE_MOVE, {x + i32(step) * dx / 10, y})
-		pump(app)
+		beat() // the moves only have to be heard; the release below is measured after a full pump
 	}
 	sa.windowless_mouse(&g_view, .MOUSE_UP, {x + dx, y})
 	pump(app)
@@ -7980,9 +8186,31 @@ test_dragging_a_divider_moves_only_its_two_panes_at_any_zoom :: proc(t: ^testing
 			list1, _ := sa.location(find(&app, "#scenario-list"), .Border, .Root)
 			work1, _ := sa.location(find(&app, ".work"), .Border, .Root)
 			page1, _ := sa.location(find(&app, "#pageview"), .Border, .Root)
-			testing.expectf(t, abs(list1.width - list0.width) <= 2, "at %.1fx dx=%d the list moved %d -> %d", zoom, dx, list0.width, list1.width)
-			testing.expectf(t, abs((work1.width - work0.width) - dx) <= 3, "at %.1fx dx=%d the controls changed by %d", zoom, dx, work1.width - work0.width)
-			testing.expectf(t, abs((page1.width - page0.width) + dx) <= 3, "at %.1fx dx=%d the page changed by %d", zoom, dx, page1.width - page0.width)
+			testing.expectf(
+				t,
+				abs(list1.width - list0.width) <= 2,
+				"at %.1fx dx=%d the list moved %d -> %d",
+				zoom,
+				dx,
+				list0.width,
+				list1.width,
+			)
+			testing.expectf(
+				t,
+				abs((work1.width - work0.width) - dx) <= 3,
+				"at %.1fx dx=%d the controls changed by %d",
+				zoom,
+				dx,
+				work1.width - work0.width,
+			)
+			testing.expectf(
+				t,
+				abs((page1.width - page0.width) + dx) <= 3,
+				"at %.1fx dx=%d the page changed by %d",
+				zoom,
+				dx,
+				page1.width - page0.width,
+			)
 		}
 	}
 	result, _ := sa.eval(app.window, "wbSetZoom(1)")
@@ -8019,7 +8247,12 @@ test_the_notes_editor_and_preview_divider_drags :: proc(t: ^testing.T) {
 	sa.windowless_mouse(&g_view, .MOUSE_UP, {x - 120, y})
 	pump(&app)
 	text1, _ := sa.location(find(&app, "#bml-text"), .Border, .Root)
-	testing.expectf(t, abs((text1.width - text0.width) + 120) <= 3, "the editor changed by %d, not -120", text1.width - text0.width)
+	testing.expectf(
+		t,
+		abs((text1.width - text0.width) + 120) <= 3,
+		"the editor changed by %d, not -120",
+		text1.width - text0.width,
+	)
 	set_shown(&app, "#bml-page", false)
 }
 
@@ -8040,7 +8273,10 @@ test_a_wheel_zoom_is_remembered :: proc(t: ^testing.T) {
 	app.prefs = prefs.load("", context.allocator)
 	defer prefs.destroy(&app.prefs)
 
-	result, _ := sa.eval(app.window, `wbSetZoom(1.33); wbZoomed("wb-zoom"); wbSetPageZoom(0.9); wbZoomed("wb-page-zoom")`)
+	result, _ := sa.eval(
+		app.window,
+		`wbSetZoom(1.33); wbZoomed("wb-zoom"); wbSetPageZoom(0.9); wbZoomed("wb-page-zoom")`,
+	)
 	sa.value_clear(&result)
 	pump(&app)
 	pump(&app)
@@ -8078,10 +8314,26 @@ test_a_finished_generate_run_shows_its_page :: proc(t: ^testing.T) {
 	set_input(&app, "#outdir", dir)
 	app.selected = 0
 	name := app.scenarios[0].name
-	path, jerr := filepath.join({dir, strings.concatenate({name, ".html"}, context.temp_allocator)}, context.temp_allocator)
+	path, jerr := filepath.join(
+		{dir, strings.concatenate({name, ".html"}, context.temp_allocator)},
+		context.temp_allocator,
+	)
 	if jerr != nil {return}
 	page := `<html><head><style>body { size: *; }</style></head><body><div class="nc-track"></div><h1>new deals</h1></body></html>`
 	if os.write_entire_file(path, transmute([]u8)page) != nil {return}
+
+	// AN ANALYSED PAGE SURVIVES THE END OF ITS OWN RUN. Reported: the scenario's cards page replaced the
+	// analysed deal a moment after it appeared - the run ending re-armed the follow, and the follow loaded
+	// the selection over a page that no file owns.
+	ANALYSED :: `<html><head></head><body><h1>analysed deal</h1></body></html>`
+	testing.expect(t, show_page_html(&app, ANALYSED, "analysed deal"), "the analysed page should load")
+	pump(&app)
+	app.job.kind = .Analyse
+	job_ended(&app, show_result = true)
+	follow_selection_tick(&app) // the debounce, which a windowless view cannot fire
+	pump(&app)
+	testing.expect_value(t, app.shown_path, "") // still the in-memory page, not the scenario's file
+	testing.expect(t, !app.follow_pending, "an analyse run ending does not arm the follow")
 
 	// Cancelled: nothing arrives.
 	app.job.kind = .Generate
@@ -8150,7 +8402,14 @@ test_every_pane_combination_fills_the_window :: proc(t: ^testing.T) {
 		list: bool,
 		mode: Pane_Mode,
 	}
-	for c in ([]Case{{false, .Split}, {false, .Closed}, {false, .Wide}, {true, .Split}, {true, .Closed}, {true, .Wide}}) {
+	for c in ([]Case {
+			{false, .Split},
+			{false, .Closed},
+			{false, .Wide},
+			{true, .Split},
+			{true, .Closed},
+			{true, .Wide},
+		}) {
 		// What a drag leaves behind: every pane in pixels.
 		_ = write_split_state(&app, {"250px", "40px", "1*"})
 		show_scenario_list(&app, c.list)
@@ -8166,8 +8425,22 @@ test_every_pane_combination_fills_the_window :: proc(t: ^testing.T) {
 			left = min(left, int(box.x))
 			right = max(right, int(box.x + box.width))
 		}
-		testing.expectf(t, left <= 2, "list=%v %v: the first pane starts at %d, not the left edge", c.list, c.mode, left)
-		testing.expectf(t, right >= 1118, "list=%v %v: the panes end at %d, short of the window's 1120", c.list, c.mode, right)
+		testing.expectf(
+			t,
+			left <= 2,
+			"list=%v %v: the first pane starts at %d, not the left edge",
+			c.list,
+			c.mode,
+			left,
+		)
+		testing.expectf(
+			t,
+			right >= 1118,
+			"list=%v %v: the panes end at %d, short of the window's 1120",
+			c.list,
+			c.mode,
+			right,
+		)
 	}
 	show_scenario_list(&app, true)
 	set_pane_mode(&app, .Split)
@@ -8205,13 +8478,24 @@ test_the_scenario_list_divider_drags_after_reopening :: proc(t: ^testing.T) {
 	pump(&app)
 	pump(&app)
 	list1 := pane_box(&app, "#scenario-list")
-	testing.expectf(t, abs((list1.width - list0.width) - 80) <= 3, "the list changed by %d, not 80", list1.width - list0.width)
+	testing.expectf(
+		t,
+		abs((list1.width - list0.width) - 80) <= 3,
+		"the list changed by %d, not 80",
+		list1.width - list0.width,
+	)
 	// And the drag is in the MODEL, so it survives the next re-render.
 	set_pane_mode(&app, .Closed)
 	set_pane_mode(&app, .Split)
 	pump(&app)
 	list2 := pane_box(&app, "#scenario-list")
-	testing.expectf(t, abs(list2.width - list1.width) <= 3, "the dragged list width did not survive a re-render (%d -> %d)", list1.width, list2.width)
+	testing.expectf(
+		t,
+		abs(list2.width - list1.width) <= 3,
+		"the dragged list width did not survive a re-render (%d -> %d)",
+		list1.width,
+		list2.width,
+	)
 }
 
 // THE NOTES VIEW'S DIVIDERS FOLLOW ITS PANES: folding the file list or closing the preview leaves no stray
@@ -8258,7 +8542,11 @@ test_a_rebuild_keeps_the_groups_that_are_on :: proc(t: ^testing.T) {
 
 	dir := scratch_scenario_dir(t, "wb-groups-kept")
 	if dir == "" {return}
-	if !write_scenario_file(dir, "g.scenario", "scenario wb-grouped \"g\"\n  tags: wb-kept-group\n  north: hcp >= 12\n") {return}
+	if !write_scenario_file(
+		dir,
+		"g.scenario",
+		"scenario wb-grouped \"g\"\n  tags: wb-kept-group\n  north: hcp >= 12\n",
+	) {return}
 	app.prefs = prefs.load("", context.allocator)
 	defer prefs.destroy(&app.prefs)
 	prefs.set(&app.prefs, SCENARIO_DIRS_PREF, dir)
@@ -8365,7 +8653,13 @@ test_a_drag_cannot_outlive_the_button :: proc(t: ^testing.T) {
 		drag_page_divider(&app, dx)
 		pump(&app)
 		work1 := pane_box(&app, ".work")
-		testing.expectf(t, abs((work1.width - work0.width) - dx) <= 3, "a %dpx drag moved the controls %d", dx, work1.width - work0.width)
+		testing.expectf(
+			t,
+			abs((work1.width - work0.width) - dx) <= 3,
+			"a %dpx drag moved the controls %d",
+			dx,
+			work1.width - work0.width,
+		)
 	}
 	testing.expect_value(t, pane_box(&app, "#scenario-list").width, list0.width)
 
@@ -8382,10 +8676,17 @@ test_a_drag_cannot_outlive_the_button :: proc(t: ^testing.T) {
 	// The pointer wanders off and back across the divider with NO button held.
 	for step in 0 ..< 12 {
 		sa.windowless_mouse(&g_view, .MOUSE_MOVE, {x - 300 + i32(step) * 50, y}, button = {})
-		pump(&app)
+		beat()
 	}
+	pump(&app)
 	after := pane_box(&app, ".work")
-	testing.expectf(t, abs(after.width - settled.width) <= 3, "a buttonless sweep moved the controls %d -> %d", settled.width, after.width)
+	testing.expectf(
+		t,
+		abs(after.width - settled.width) <= 3,
+		"a buttonless sweep moved the controls %d -> %d",
+		settled.width,
+		after.width,
+	)
 	reset, _ := sa.eval(app.window, "wbSetZoom(1)")
 	sa.value_clear(&reset)
 }
@@ -8461,3 +8762,565 @@ test_the_hand_page_ignores_the_mouse_during_a_drag :: proc(t: ^testing.T) {
 }
 
 
+// ---- the quiz ------------------------------------------------------------------------------------
+//
+// The quiz page is the template with the corpus in its one slot (`quiz.odin`). The extraction itself is
+// held to the python quiz in `quiz_corpus`; what is pinned here is the filling, the refusals, and that the
+// button writes a page and only then offers the browser.
+
+@(test)
+test_the_quiz_template_is_filled_in_its_one_slot :: proc(t: ^testing.T) {
+	page, why := fill_quiz_template("<a>/*QUIZ_CORPUS*/<b>", `[{"d":"</script>"}]`, context.temp_allocator)
+	testing.expect_value(t, why, "")
+	testing.expect_value(t, page, `<a>[{"d":"<\/script>"}]<b>`)
+
+	_, none := fill_quiz_template("<a></a>", "[]", context.temp_allocator)
+	testing.expectf(t, strings.contains(none, "nowhere to put"), "a template without the slot: %q", none)
+	_, two := fill_quiz_template("/*QUIZ_CORPUS*//*QUIZ_CORPUS*/", "[]", context.temp_allocator)
+	testing.expectf(t, strings.contains(two, "two places"), "a template with two slots: %q", two)
+
+	// THE BUILT-IN COPY is what every user gets, so a vendored file that lost its slot (or was replaced by a
+	// FILLED page by mistake) must fail here rather than in someone's hands.
+	testing.expect_value(t, strings.count(QUIZ_TEMPLATE_BUILTIN, QUIZ_CORPUS_SLOT), 1)
+	testing.expect(
+		t,
+		strings.contains(QUIZ_TEMPLATE_BUILTIN, `id="quiz-corpus"`),
+		"the built-in template is the quiz page",
+	)
+}
+
+@(test)
+test_a_quiz_needs_enough_different_meanings :: proc(t: ^testing.T) {
+	small := bml.parse(`* 1N
+
+1N = 15-17
+  2C = stayman
+  2D = transfer
+`)
+	defer bml.destroy(small)
+	_, auctions, why := quiz_page(small, "small.bml", "/*QUIZ_CORPUS*/", allocator = context.temp_allocator)
+	testing.expect_value(t, auctions, 3)
+	testing.expectf(t, strings.contains(why, "at least 8"), "three meanings cannot fill a question: %q", why)
+
+	empty := bml.parse(`* Just prose
+
+No tables here.
+`)
+	defer bml.destroy(empty)
+	_, _, none := quiz_page(empty, "prose.bml", "/*QUIZ_CORPUS*/", allocator = context.temp_allocator)
+	testing.expectf(t, strings.contains(none, "no bid tables"), "a file with no tables: %q", none)
+
+	// A real chapter goes through, with every auction the extraction finds in the page.
+	source, err := os.read_entire_file_from_path(#directory + "/../../../nt-bidding.bml", context.temp_allocator)
+	if err != nil {
+		log.warn("nt-bidding.bml is not where the corpus should be — skipping the real chapter")
+		return
+	}
+	doc := bml.parse(string(source))
+	defer bml.destroy(doc)
+	page, count, real_why := quiz_page(
+		doc,
+		"nt-bidding.bml",
+		"<x>/*QUIZ_CORPUS*/</x>",
+		allocator = context.temp_allocator,
+	)
+	testing.expect_value(t, real_why, "")
+	testing.expect(t, count > 100, "nt-bidding.bml has hundreds of auctions")
+	testing.expect(
+		t,
+		strings.has_prefix(page, `<x>[{"variant":"nt-bidding"`),
+		"the corpus is a JSON array of one system",
+	)
+}
+
+@(test)
+test_the_quiz_button_writes_a_page_and_then_offers_the_browser :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	app.handler = sa.Event_Handler {
+		subscription = {.BEHAVIOR_EVENT, .MOUSE, .FOCUS, .KEY},
+		on_event     = on_event,
+		user_data    = &app,
+	}
+	sa.attach_window_handler(app.window, &app.handler)
+	defer sa.detach_window_handler(app.window, &app.handler)
+
+	dir := filepath.join({"target", "debug", "wb-quiz"}, context.temp_allocator) or_else "."
+	if err := os.make_directory_all(dir); err != nil {
+		log.warnf("could not create %s (%v) — skipping", dir, err)
+		return
+	}
+	template_path := filepath.join({dir, "template.html"}, context.temp_allocator) or_else "template.html"
+	_ = os.write_entire_file(template_path, transmute([]u8)string("<html>/*QUIZ_CORPUS*/</html>"))
+	rows := strings.builder_make(context.temp_allocator)
+	strings.write_string(
+		&rows,
+		"#+TOPIC: Twos = 1N-2*\r\n#+TOPIC: broken line\r\n\r\n* 1N Opening\r\n\r\n1N = 15-17\r\n",
+	)
+	suits := "CDHS"
+	for index in 0 ..< 10 {
+		fmt.sbprintf(&rows, "  2%c = meaning %d\r\n", suits[index % 4], index)
+	}
+	_ = os.write_entire_file(filepath.join({dir, "tiny.bml"}, context.temp_allocator) or_else "tiny.bml", rows.buf[:])
+
+	delete(app.docs, app.allocator)
+	app.docs = strings.clone(dir, app.allocator)
+	defer {
+		delete(app.docs, app.allocator)
+		app.docs = ""
+	}
+	opened, why := open_bml(&app, "tiny.bml")
+	testing.expectf(t, opened, "could not open the scratch file: %s", why)
+	pump(&app)
+
+	app.prefs.values = make(map[string]string, allocator = context.temp_allocator)
+	app.prefs.allocator = context.temp_allocator
+	prefs.set(&app.prefs, QUIZ_DIR_PREF, dir)
+
+	// NOTHING CONFIGURED: the built-in template, and the button simply works. (Skipped when the environment
+	// names an override, which would be what was being tested instead.)
+	if os.get_env("QUIZ_TEMPLATE", context.temp_allocator) == "" {
+		click(&app, "#bml-quiz")
+		pump(&app)
+		// ABSOLUTE, because the browser button hands it to the shell, which has no idea what our cwd was.
+		written := app.quiz_path
+		testing.expectf(
+			t,
+			filepath.is_abs(written) && strings.has_suffix(written, "tiny-quiz.html"),
+			"written to %q",
+			written,
+		)
+		testing.expectf(
+			t,
+			os.exists(written),
+			"the page should be written to %s (status: %q)",
+			written,
+			read_status(&app),
+		)
+		testing.expect(t, is_shown(&app, "#bml-quiz-open"), "a written quiz is offered to the browser")
+		testing.expectf(
+			t,
+			!strings.contains(read_status(&app), "Settings"),
+			"the built-in template needs no note: %q",
+			read_status(&app),
+		)
+		// The file's own topics are counted, and a topic line that could not be read is reported, not dropped.
+		status := read_status(&app)
+		testing.expectf(t, strings.contains(status, "1 topic of its own"), "the file's topics: %q", status)
+		testing.expectf(
+			t,
+			strings.contains(status, "1 topic line not understood") && strings.contains(status, "line 2"),
+			"the bad line: %q",
+			status,
+		)
+		if page, err := os.read_entire_file_from_path(written, context.temp_allocator); err == nil {
+			testing.expect(t, strings.contains(string(page), `id="quiz-corpus"`), "the page is the built-in quiz page")
+			testing.expect(t, strings.contains(string(page), `"name":"Twos"`), "carrying the file's own topic")
+			testing.expect(
+				t,
+				strings.contains(string(page), `"name":"Preempts"`),
+				"and the generic defaults (the page prunes them)",
+			)
+			testing.expect(
+				t,
+				strings.contains(string(page), `"system_notes_url":"/__quiz/notes/0"`),
+				"the notes panel points at the embedded copy",
+			)
+			testing.expect(t, strings.contains(string(page), `"system_notes_html":"<`), "which travels in the page")
+			testing.expect(t, strings.contains(string(page), `"meaning 9"`), "carrying the file's auctions")
+			testing.expect(t, !strings.contains(string(page), QUIZ_CORPUS_SLOT), "in the filled slot")
+		}
+	}
+
+	// AN OVERRIDE THAT CANNOT BE USED falls back to the built-in copy and says so in plain words.
+	prefs.set(
+		&app.prefs,
+		QUIZ_TEMPLATE_PREF,
+		filepath.join({dir, "no-such-template.html"}, context.temp_allocator) or_else "x",
+	)
+	click(&app, "#bml-quiz")
+	pump(&app)
+	testing.expectf(
+		t,
+		strings.contains(read_status(&app), "built-in one was used"),
+		"a missing override: %q",
+		read_status(&app),
+	)
+	testing.expect(t, app.quiz_path != "", "and the quiz is still written")
+
+	// A WORKING OVERRIDE is used, and named.
+	prefs.set(&app.prefs, QUIZ_TEMPLATE_PREF, template_path)
+	click(&app, "#bml-quiz")
+	pump(&app)
+	testing.expectf(
+		t,
+		strings.contains(read_status(&app), "from Settings"),
+		"an override in use: %q",
+		read_status(&app),
+	)
+	if page, err := os.read_entire_file_from_path(app.quiz_path, context.temp_allocator); err == nil {
+		testing.expect(t, strings.has_prefix(string(page), "<html>[{"), "the override's page, filled")
+	}
+
+	// THE VIEW KNOWS WHAT IS ON DISK. A file with no quiz page has no open button...
+	_ = os.write_entire_file(
+		filepath.join({dir, "other.bml"}, context.temp_allocator) or_else "other.bml",
+		rows.buf[:],
+	)
+	_ = os.remove(filepath.join({dir, "other-quiz.html"}, context.temp_allocator) or_else "other-quiz.html")
+	open_bml(&app, "other.bml")
+	pump(&app)
+	testing.expect(t, !is_shown(&app, "#bml-quiz-open"), "a file without a quiz page offers none")
+	testing.expect_value(t, app.quiz_path, "")
+	testing.expectf(t, strings.contains(quiz_state(&app), "no quiz page"), "and says so: %q", quiz_state(&app))
+
+	// ...and coming BACK to a file that has one offers it again, current.
+	open_bml(&app, "tiny.bml")
+	pump(&app)
+	testing.expect(t, is_shown(&app, "#bml-quiz-open"), "returning to a file finds its quiz page")
+	testing.expect(t, strings.has_suffix(app.quiz_path, "tiny-quiz.html"), "and it is that file's page")
+	testing.expectf(
+		t,
+		strings.contains(quiz_state(&app), "tiny-quiz.html · written just now"),
+		"state: %q",
+		quiz_state(&app),
+	)
+	testing.expect(t, !strings.contains(quiz_state(&app), "out of date"), "a quiz written after the notes is current")
+
+	// A quiz OLDER than the saved notes is still offered, marked out of date, with its age in the hint.
+	hour_ago := time.time_add(time.now(), -time.Hour - time.Minute)
+	_ = os.change_times(app.quiz_path, hour_ago, hour_ago)
+	open_bml(&app, "tiny.bml")
+	pump(&app)
+	testing.expect(t, is_shown(&app, "#bml-quiz-open"), "an old quiz is still offered")
+	testing.expectf(
+		t,
+		strings.contains(quiz_state(&app), "1 hour ago · out of date"),
+		"but marked out of date: %q",
+		quiz_state(&app),
+	)
+	if button := find(&app, "#bml-quiz-open"); button != nil {
+		hint, _ := sa.attribute(button, "data-hint", context.temp_allocator)
+		testing.expectf(
+			t,
+			strings.contains(hint, "1 hour ago") && strings.contains(hint, "generate the quiz again"),
+			"hint: %q",
+			hint,
+		)
+	}
+}
+
+@(test)
+test_quiz_ages_read_as_words :: proc(t: ^testing.T) {
+	testing.expect_value(t, age_words(20 * time.Second), "just now")
+	testing.expect_value(t, age_words(time.Minute), "1 minute ago")
+	testing.expect_value(t, age_words(5 * time.Minute), "5 minutes ago")
+	testing.expect_value(t, age_words(3 * time.Hour), "3 hours ago")
+	testing.expect_value(t, age_words(72 * time.Hour), "3 days ago")
+}
+
+@(private = "file")
+quiz_state :: proc(app: ^App) -> string {
+	element := find(app, "#bml-quiz-state")
+	if element == nil {
+		return ""
+	}
+	text, _ := sa.text(element, context.temp_allocator)
+	return text
+}
+
+@(private = "file")
+read_status :: proc(app: ^App) -> string {
+	element := find(app, "#bml-status")
+	if element == nil {
+		return ""
+	}
+	text, _ := sa.text(element, context.temp_allocator)
+	return text
+}
+
+@(private = "file")
+is_shown :: proc(app: ^App, selector: string) -> bool {
+	element := find(app, selector)
+	if element == nil {
+		return false
+	}
+	display, _ := sa.style(element, "display", context.temp_allocator)
+	return display != "none"
+}
+
+// WHILE AN ANALYSE RUNS a spinner stands where `show last` is, and a match counts its boards there; the
+// run ending puts `show last` back. (Asked for: "analyse can be slow on multiple boards ... needs some sort
+// of spinner ux", "maybe over the show last button".)
+@(test)
+test_an_analyse_run_shows_a_spinner_over_show_last :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	testing.expect(t, effective_display_is_hidden(&app, "#analyse-busy"), "idle: no spinner")
+	set_analyse_busy(&app, true)
+	pump(&app)
+	testing.expect(t, !effective_display_is_hidden(&app, "#analyse-busy"), "running: the spinner is up")
+	testing.expect(t, effective_display_is_hidden(&app, "#show-analysed"), "in `show last`'s place")
+	if spinner := find(&app, "#analyse-busy .spinner"); spinner != nil {
+		box, _ := sa.location(spinner, .Border, .Root)
+		testing.expectf(t, box.width > 4 && box.height > 4, "the spinner has a box (%v)", box)
+	}
+
+	on_posted((^sa.Host_Handler)(&app), sa.Posted{wparam = ANALYSE_STEP, lparam = 2 << 16 | 16})
+	label, _ := sa.text(find(&app, "#analyse-busy-text"), context.temp_allocator)
+	testing.expect_value(t, label, "board 3 of 16")
+
+	// An analyse reports in ITS panel: its own bar and status, not the generate panel's (reported: "why are
+	// we using the progress bar from within the generate deals section ... scope is wrong").
+	app.job.kind = .Analyse
+	set_status(&app, "idle")
+	set_progress(&app, 0)
+	app.job.kind = .Generate
+	set_progress(&app, 0)
+	app.job.kind = .Analyse
+	set_progress(&app, 50)
+	set_job_status(&app, "done")
+	pump(&app)
+	analyse_fill, _ := sa.location(find(&app, "#analyse-fill"), .Border, .Root)
+	generate_fill, _ := sa.location(find(&app, "#fill"), .Border, .Root)
+	testing.expectf(t, analyse_fill.width >= 30, "the analyse bar fills (%v)", analyse_fill)
+	testing.expectf(t, generate_fill.width <= 2, "the generate bar does not (%v)", generate_fill)
+	status, _ := sa.text(find(&app, "#status"), context.temp_allocator)
+	testing.expect_value(t, status, "idle")
+	astatus, _ := sa.text(find(&app, "#analyse-status"), context.temp_allocator)
+	testing.expect_value(t, astatus, "done")
+	app.job.kind = .Generate
+
+	set_analyse_busy(&app, false)
+	pump(&app)
+	testing.expect(t, effective_display_is_hidden(&app, "#analyse-busy"), "done: the spinner goes")
+	testing.expect(t, !effective_display_is_hidden(&app, "#show-analysed"), "and `show last` is back")
+}
+
+// An analysed page is titled by how many boards it holds: one analyse can read a whole match, so "analysed
+// deal" (as it was) misnamed a 16-board vugraph page.
+@(test)
+test_an_analysed_page_is_titled_by_its_boards :: proc(t: ^testing.T) {
+	BOARD :: `<div class="slide"><div class="compass"></div></div>`
+	testing.expect_value(t, analysed_title(BOARD), "analysed: 1 board")
+	testing.expect_value(t, analysed_title(BOARD + BOARD + BOARD), "analysed: 3 boards")
+	testing.expect_value(t, analysed_title(`<html></html>`), "analysed")
+}
+
+/*
+AN ANALYSED PAGE KEEPS THE PANE UNTIL SOMETHING ELSE IS ASKED FOR, and comes back without analysing again.
+
+Reported: "clicking the give the hand page the whole screen button just closes the output of the lin analyze
+and puts the selected scenario back on view. no concept of a loaded analyze taking priority, nor much control
+on how to reopen it without rerun analyze". `wide` re-asked the pane-opening question (show the selection)
+although the pane was already open, and an analysed page - belonging to no scenario - always lost it.
+*/
+@(test)
+test_an_analysed_page_keeps_the_pane :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	attach_for_test(&app) // the `show last` click goes through the real handler
+	defer sa.detach_window_handler(app.window, &app.handler)
+
+	type_into(&app, "#outdir", PARITY_DIR)
+	directory, _ := filepath.abs(PARITY_DIR, context.temp_allocator)
+	CARDS_DOC :: `<html><head><meta charset="utf-8"></head><body><div class="track" id="nc-track"></div></body></html>`
+	page, _ := filepath.join({directory, fmt.tprintf("%s.html", app.scenarios[0].name)}, context.temp_allocator)
+	if werr := os.write_entire_file(page, transmute([]u8)string(CARDS_DOC)); werr != nil {
+		testing.expectf(t, false, "could not write %s: %v", page, werr)
+		return
+	}
+	defer os.remove(page)
+	scan_outputs(&app)
+	app.selected = 0
+	note_selected_page(&app)
+
+	testing.expect(t, is_disabled(&app, "#show-analysed"), "nothing analysed yet: `show last` is dead")
+
+	// What the PAGE message does when `analyse` finishes.
+	app.analysed_page = strings.clone(MINIMAL_PAGE, app.allocator)
+	testing.expect(t, show_analysed_page(&app), "the analysed page loads")
+	pump(&app)
+	testing.expect(t, app.showing_analysed, "the pane shows the analysed page")
+
+	// Widening, narrowing, closing and re-opening all keep it.
+	for mode in ([]Pane_Mode{.Wide, .Split, .Closed, .Split, .Wide}) {
+		set_pane_mode(&app, mode)
+		pump(&app)
+		testing.expectf(
+			t,
+			app.showing_analysed && app.shown_path == "",
+			"after %v the pane still shows the analysis",
+			mode,
+		)
+	}
+	testing.expect(t, is_disabled(&app, "#show-analysed"), "it is on screen: `show last` has nothing to do")
+
+	// Asking for the scenario's page (the list, with the pane open) replaces it ...
+	set_pane_mode(&app, .Split)
+	app.selected = 0
+	show_selected_page(&app, follow = false)
+	pump(&app)
+	testing.expect_value(t, app.shown_path, page)
+	testing.expect(t, !app.showing_analysed, "the scenario's page took the pane")
+	testing.expect(t, !is_disabled(&app, "#show-analysed"), "and `show last` can bring the analysis back")
+
+	// ... and `show last` brings the analysis back, without analysing again.
+	click(&app, "#show-analysed")
+	pump(&app)
+	testing.expect(t, app.showing_analysed && app.shown_path == "", "`show last` put the analysis back")
+
+	// The pane's `browser` button opens it too (asked for): the page is written to one temp file first.
+	testing.expect(t, !is_disabled(&app, "#page-browser"), "an analysed page can go to a browser")
+	path, ok := write_analysed_page(app.analysed_page)
+	testing.expect(t, ok, "the analysed page is written to the temp folder")
+	if ok {
+		written, rerr := os.read_entire_file(path, context.temp_allocator)
+		testing.expect(t, rerr == nil && string(written) == MINIMAL_PAGE, "and the file is the page")
+	}
+}
+
+// Is the element disabled - its `:disabled` STATE, for the reason `tab_is_disabled` gives.
+@(private = "file")
+is_disabled :: proc(app: ^App, selector: string) -> bool {
+	element := find(app, selector)
+	if element == nil {
+		return false
+	}
+	state, err := sa.element_state(element)
+	return err == nil && .DISABLED in state
+}
+
+// The settings view's two quiz fields start at the same x: their labels share one width (reported: "align
+// the written to and template text inputs horizontally on the settings page").
+@(test)
+test_the_settings_fields_line_up :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	show_prefs(&app, true)
+	pump(&app)
+	dir, _ := sa.location(find(&app, "#prefs-quiz-dir"), .Border, .Root)
+	template, _ := sa.location(find(&app, "#prefs-quiz-template"), .Border, .Root)
+	testing.expectf(t, dir.width > 0 && template.width > 0, "both fields have a box (%v, %v)", dir, template)
+	testing.expectf(t, abs(dir.x - template.x) <= 1, "the fields start at the same x (%d, %d)", dir.x, template.x)
+}
+
+// An analysed page reaches the pane WITHOUT being copied: the worker builds it in the app's allocator and
+// hands the buffer over through `app.page`, and the PAGE handler takes it as `analysed_page`. The tracking
+// allocator is the witness that nothing is left behind or freed twice.
+@(test)
+test_an_analysed_page_is_handed_over_not_copied :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	argv := []string{FRAME_DEAL}
+	app.job = Job {
+		kind      = .Analyse,
+		want_page = true,
+	}
+	{
+		// What the worker runs, here on the test's own thread. combo's thread pool and caches live for the
+		// PROCESS (as the engine view does), so they go in the default allocator rather than this test's
+		// tracker; the PAGE is built in `app.allocator` explicitly, which is the tracker - the witness.
+		context.allocator = runtime.default_allocator()
+		run_analysis(&app, argv)
+		// And stopped again in the SAME allocator: left running, a later test's `combo.shutdown()` freed it
+		// through that test's tracker (a bad free there).
+		combo.shutdown()
+	}
+	sync.lock(&app.mutex)
+	built := app.page
+	sync.unlock(&app.mutex)
+	testing.expect(t, strings.contains(built, `class="compass"`), "the run built a card page")
+
+	// A REAL card page cannot be loaded into the engine from a test-runner thread (it crashes inside the
+	// engine - see page_check.odin), so the two halves are checked apart. The worker's half: its page frees
+	// cleanly through `app.allocator` (the tracker would report a bad free otherwise). The handler's half: a
+	// small page standing in the same slot is TAKEN, the very buffer.
+	delete(built, app.allocator)
+	built = strings.clone(MINIMAL_PAGE, app.allocator)
+	app.page = built
+
+	on_posted((^sa.Host_Handler)(&app), sa.Posted{wparam = PAGE})
+	pump(&app)
+	testing.expect_value(t, app.page, "")
+	testing.expect(t, raw_data(app.analysed_page) == raw_data(built), "the pane took the worker's buffer itself")
+	testing.expect(t, app.showing_analysed, "and shows it")
+}
+
+
+// In a NARROW controls column the analyse panel's buttons stay inside it and "as text report" stays one
+// line (reported with a screenshot: the analyse button was clipped and the label broke a word per line, all
+// on one row with the three inputs).
+@(test)
+test_the_analyse_controls_fit_a_narrow_column :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	show_view(&app, .Panes)
+	if !show_page_html(&app, MINIMAL_PAGE, "a page", take_keyboard = false) {return}
+	set_pane_mode(&app, .Split)
+	_ = write_split_state(&app, {"250px", "560px", "1*"})
+	relayout_split(&app)
+	pump(&app)
+
+	panel := pane_box(&app, ".work")
+	for selector in ([]string{"#analyse", "#show-analysed", "label[for=as-text]"}) {
+		box, _ := sa.location(find(&app, selector), .Border, .Root)
+		testing.expectf(
+			t,
+			box.width > 0 && box.x + box.width <= panel.x + panel.width,
+			"%s ends at %d, past the controls' %d",
+			selector,
+			box.x + box.width,
+			panel.x + panel.width,
+		)
+	}
+	label, _ := sa.location(find(&app, "label[for=as-text]"), .Border, .Root)
+	button, _ := sa.location(find(&app, "#analyse"), .Border, .Root)
+	testing.expectf(t, label.height < button.height, "the label is one line (%dpx, a button is %dpx)", label.height, button.height)
+}
+
+// The Graphics setting: remembered as `graphics`, lit on the settings page, and honest that it applies at the
+// NEXT start (the layer is chosen before the window exists). Asked for after the frame log showed the default
+// GPU layer spending ~150ms on every resize step.
+@(test)
+test_the_graphics_setting_is_remembered_for_the_next_start :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	attach_for_test(&app)
+	defer sa.detach_window_handler(app.window, &app.handler)
+	app.prefs = prefs.load("", context.allocator)
+	defer prefs.destroy(&app.prefs)
+	app.graphics_started = "gpu"
+
+	show_view(&app, .Panes)
+	pump(&app)
+	click(&app, "#prefs") // the way in that gives the view its behaviors (as the theme test does)
+	pump(&app)
+	note :: proc(app: ^App) -> string {
+		text, _ := sa.text(find(app, "#prefs-gfx-note"), context.temp_allocator)
+		return text
+	}
+	testing.expect_value(t, graphics_choice(&app.prefs), "gpu")
+	testing.expect_value(t, note(&app), "in use now")
+
+	click(&app, `#prefs-panel [data-gfx="software"]`)
+	pump(&app)
+	testing.expect_value(t, graphics_choice(&app.prefs), "software")
+	testing.expect_value(t, note(&app), "applies when the workbench next starts")
+	lit, _ := sa.attribute(find(&app, `#prefs-panel [data-gfx="software"]`), "class", context.temp_allocator)
+	testing.expect_value(t, lit, "segbtn on")
+
+	click(&app, `#prefs-panel [data-gfx="gpu"]`)
+	pump(&app)
+	testing.expect_value(t, note(&app), "in use now")
+}

@@ -26,6 +26,69 @@ report_full_deal :: proc(w: io.Writer, board: norn.Board) {
 	deal_solve.annotate(&b, board.deal, .Pretty)
 	combo.annotate(&b, board.deal, .Pretty)
 	fmt.wprintln(w, strings.to_string(b))
+	report_play(w, board)
+}
+
+// The recorded play, judged double dummy: where it started and ended against double dummy, the claim, and
+// every card that cost a trick with the cards that would not have. Nothing for a board with no play.
+report_play :: proc(w: io.Writer, board: norn.Board) {
+	contract, has_contract := board.contract.?
+	play, has_play := board.play.?
+	if !has_contract || !has_play {
+		return
+	}
+	fmt.wprintf(
+		w,
+		"Play: %d%s by %c, %d card(s)",
+		contract.level,
+		deal_solve.contract_strain_word(contract.strain),
+		deal_solve.seat_letter(contract.declarer),
+		play.count,
+	)
+	if res, has := play.result.?; has {
+		fmt.wprintf(w, ", %d trick(s) to declarer by the record", res)
+	}
+	if play.error != .None {
+		fmt.wprintf(
+			w,
+			" - the record's card %d was rejected (%v), the play stops there",
+			play.error_index + 1,
+			play.error,
+		)
+	}
+	fmt.wprintln(w)
+	cost, ok := deal_solve.play_cost(board.deal, contract, play)
+	if !ok || play.count == 0 {
+		return
+	}
+	fmt.wprintfln(
+		w,
+		"  double dummy: %d trick(s) at the start, %d after the last card",
+		cost.value[0],
+		cost.value[cost.count],
+	)
+	walk := norn.play_walk_start(board.deal, contract)
+	for i in 0 ..< play.count {
+		seat := norn.play_walk_next_seat(&walk).?
+		_ = norn.play_walk_card(&walk, play.cards[i])
+		if cost.cost[i] <= 0 {
+			continue
+		}
+		fmt.wprintf(
+			w,
+			"  trick %d: %c played %s, cost %d (best:",
+			i / norn.SEAT_COUNT + 1,
+			deal_solve.seat_letter(seat),
+			deal_solve.card_word(play.cards[i]),
+			cost.cost[i],
+		)
+		for card in 0 ..< norn.DECK_SIZE {
+			if cost.best[i] & (u64(1) << u64(card)) != 0 {
+				fmt.wprintf(w, " %s", deal_solve.card_word(norn.Card(card)))
+			}
+		}
+		fmt.wprintln(w, ")")
+	}
 }
 
 // One board's report: the combo census + SD summary, and (with --sample) the simulated verdict. A board

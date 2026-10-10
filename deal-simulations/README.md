@@ -36,7 +36,7 @@ just sims gen-all                     # every scenario -> $DEALS_OUTPUT_DIR/<nam
 just sims gen-some 1c-any,2c-opener   # just those two
 just sims gen-one 2c-opener           # one scenario -> ./2c-opener.html (the dir you invoked just from)
 just sims gen-all 48 ./out/           # any recipe takes the output dir as its last argument
-just --list sims                      # all of them (-dd and -cards variants, freq, bench, ...)
+just --list sims                      # all of them (-par and -cards variants, freq, bench, ...)
 ```
 
 Inside `odin-sims/` there is also its own `just` for development: `just sim --scenario 1c-any -n 12`,

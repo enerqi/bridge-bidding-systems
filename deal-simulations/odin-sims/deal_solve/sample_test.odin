@@ -85,9 +85,9 @@ test_sample_hopeless_is_low :: proc(t: ^testing.T) {
 	testing.expect_value(t, err, norn.Pbn_Parse_Error.None)
 
 	c, _ := parse_contract("4S")
-	res, ok := sample_contract(board, {.North, .South}, c, 300, 5)
+	res, ok := sample_contract(board, {.North, .South}, c, 100, 5) // seeded; 100 keeps the margin (was 300)
 	testing.expect(t, ok)
-	testing.expect(t, res.make_pct < 25.0) // ~20 HCP: 4S is against the odds
+	testing.expectf(t, res.make_pct < 25.0, "4S makes %.1f%%", res.make_pct) // ~20 HCP: 4S is against the odds
 	testing.expect(t, res.mean_tricks < f64(res.need)) // averages fewer than the 10 it needs
 }
 
@@ -97,8 +97,9 @@ test_sample_seed_reproducible :: proc(t: ^testing.T) {
 	init()
 	board, _ := norn.parse_pbn_deal(`[Deal "N:AKJ32.K32.Q32.32 - Q54.A54.K54.QJ54 -"]`)
 	c, _ := parse_contract("4S")
-	r1, ok1 := sample_contract(board, {.North, .South}, c, 200, 42)
-	r2, ok2 := sample_contract(board, {.North, .South}, c, 200, 42)
+	// 40, not 200: determinism holds at any size, and each sample is a full solve (~20ms).
+	r1, ok1 := sample_contract(board, {.North, .South}, c, 40, 42)
+	r2, ok2 := sample_contract(board, {.North, .South}, c, 40, 42)
 	testing.expect(t, ok1 && ok2)
 	testing.expect_value(t, r1.make_count, r2.make_count)
 	testing.expect_value(t, r1.mean_tricks, r2.mean_tricks)
@@ -239,6 +240,8 @@ test_constrained_sampling_conditions :: proc(t: ^testing.T) {
 	// NS hold 9 spades (AKQJ8 + T732), 4 missing incl. the spade tricks that a finesse decides.
 	board, _ := norn.parse_pbn_deal(`[Deal "N:AKQJ8.A2.A32.A32 - T732.KQ3.K54.K54 -"]`)
 
+	// 300 layouts each: at 60 the two trick histograms came out IDENTICAL (measured 2026-10-09), so the
+	// void's effect needs this many to show.
 	free_grid, ok1 := sample_grid(board, {.North, .South}, 300, 3)
 	testing.expect(t, ok1)
 

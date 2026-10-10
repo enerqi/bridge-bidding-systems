@@ -686,3 +686,72 @@ test_a_partnership_line_prints_and_reads_back :: proc(t: ^testing.T) {
 	)
 	testing.expect_value(t, again.rules[2].seat, norn.Seat.East)
 }
+
+// ---- the double-dummy line -------------------------------------------------------------------------
+
+// `double-dummy: <side> make <goal>` is recorded on the program (the consumer links the solver), prints
+// back as it was meant, and a bad or second one is a diagnostic rather than silently ignored.
+@(test)
+test_a_double_dummy_line_is_recorded_and_printed :: proc(t: ^testing.T) {
+	cases := []struct {
+		line:  string,
+		want:  Double_Dummy,
+		print: string,
+	} {
+		{"north-south make slam", {.North_South, .Slam}, "north-south make slam"},
+		{"East-West makes game", {.East_West, .Game}, "east-west make game"},
+		{"north-south make grand slam", {.North_South, .Grand}, "north-south make grand"},
+		{"north-south make small slam", {.North_South, .Slam}, "north-south make slam"},
+	}
+	for c in cases {
+		source := strings.concatenate(
+			{"scenario dd \"x\"\n  north: hcp >= 15\n  double-dummy: ", c.line, "\n"},
+			context.temp_allocator,
+		)
+		program, ok := parse_one(t, source)
+		if !ok {continue}
+		defer destroy_program(&program)
+		got, has := program.double_dummy.?
+		testing.expectf(t, has && got == c.want, "%q read as %v", c.line, program.double_dummy)
+		printed := write_program(&program, context.temp_allocator)
+		testing.expectf(
+			t,
+			strings.contains(
+				printed,
+				strings.concatenate({"  double-dummy: ", c.print, "\n"}, context.temp_allocator),
+			),
+			"%q printed as %q",
+			c.line,
+			printed,
+		)
+		// And the printed form reads back the same.
+		again, _ := parse(printed, "printed.scenario", context.temp_allocator)
+		if len(again) == 1 {
+			back, back_has := again[0].double_dummy.?
+			testing.expectf(t, back_has && back == c.want, "%q did not survive the round trip", c.line)
+			destroy_program(&again[0])
+		}
+	}
+
+	none, ok := parse_one(t, "scenario plain \"x\"\n  north: hcp >= 15\n")
+	if ok {
+		_, has := none.double_dummy.?
+		testing.expect(t, !has, "no line, no double-dummy requirement")
+		destroy_program(&none)
+	}
+
+	install_test_vocabulary()
+	for bad in ([]string {
+			"  double-dummy: north make slam\n", // a seat is not a side
+			"  double-dummy: north-south slam\n", // no `make`
+			"  double-dummy: north-south make partscore\n", // no such goal
+			"  double-dummy: north-south make slam\n  double-dummy: east-west make game\n", // two
+		}) {
+		source := strings.concatenate({"scenario dd \"x\"\n  north: hcp >= 15\n", bad}, context.temp_allocator)
+		programs, diagnostics := parse(source, "test.scenario", context.temp_allocator)
+		testing.expectf(t, len(diagnostics) == 1, "%q gave %d diagnostics", bad, len(diagnostics))
+		for &program in programs {
+			destroy_program(&program)
+		}
+	}
+}

@@ -56,9 +56,21 @@ PROGRAM :: "analyse_deal"
 // Sciter `<frame>`). Set it and `run` renders the page there INSTEAD of to `args.html_path` — a caller
 // asking for the page in memory is not also asking for it on disk. Zero value = no page wanted.
 Sink :: struct {
-	out:  io.Writer,
-	err:  io.Writer,
-	page: io.Writer,
+	out:           io.Writer,
+	err:           io.Writer,
+	page:          io.Writer,
+	// Optional: told before each board is analysed (`done` boards finished of `total`) and once more at the
+	// end. A whole match can take a while (a vugraph `.lin` solves every position of every play), and a
+	// windowed host shows "board 3 of 16" from this. Called on the thread running `run`.
+	progress:      proc(data: rawptr, done, total: int),
+	progress_data: rawptr,
+}
+
+// Tell the Sink's progress hook, if it has one.
+report_progress :: proc(sink: Sink, done, total: int) {
+	if sink.progress != nil {
+		sink.progress(sink.progress_data, done, total)
+	}
 }
 
 // The Sink a command-line driver wants: report on stdout, diagnostics on stderr.
@@ -108,7 +120,16 @@ run :: proc(sink: Sink, args: ^Args) -> Result {
 	// Resolve the input to boards. PBN input may hold several `[Deal]` tags (a hand-ocr session, a
 	// `.pbn` file) — one board each; LIN input (a bridge-site URL or bare `md|` record) is one board.
 	// Multiple boards render as one carousel page / a text report per board.
-	boards, berr := resolve_boards(args.text)
+	// A bridge-site URL is decoded HERE, on the heap, for the length of the run: the boards' names and match
+	// headings alias the text they were read from, and the page is rendered long after `resolve_boards` - with
+	// `combo.annotate` emptying the temp allocator between boards.
+	text := args.text
+	if strings.contains(text, "lin=") {
+		decoded := lin_query_param(text)
+		defer delete(decoded)
+		text = decoded
+	}
+	boards, berr := resolve_boards(text)
 	defer delete(boards)
 	if berr != "" {
 		fmt.wprintfln(sink.err, "%s: %s", PROGRAM, berr)
@@ -187,11 +208,16 @@ run :: proc(sink: Sink, args: ^Args) -> Result {
 	}
 
 	for board, i in boards {
+		report_progress(sink, i, len(boards))
 		if i > 0 {
 			fmt.wprintfln(sink.out, "\n%s", strings.repeat("=", 74, context.temp_allocator))
 		}
 		if multi {
-			fmt.wprintfln(sink.out, "Board %d of %d\n", i + 1, len(boards))
+			fmt.wprintf(sink.out, "Board %d of %d", i + 1, len(boards))
+			if heading := table_heading(board.table); heading != "" {
+				fmt.wprintf(sink.out, " - %s", heading)
+			}
+			fmt.wprintln(sink.out, "\n")
 		}
 		report_board(sink, board, args, contract, has_contract)
 	}

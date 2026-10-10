@@ -5,8 +5,9 @@ package analyse
 
 	The deal string may be PBN (a `[Deal "..."]` tag or a bare `N:...` value) OR a LIN deal from a
 	bridge site: a whole BBO / IntoBridge hand URL (`...?lin=pn|...|md|...`) — the `lin=` query parameter
-	is extracted and percent-decoded — or a bare LIN record (`...md|...`). The `md|` deal is read; the
-	auction and play are ignored. LIN input is always one whole board.
+	is extracted and percent-decoded — or bare LIN text (`...md|...`): one hand record, or a whole vugraph
+	segment, which `norn.split_lin_boards` cuts into its boards. The deal, the auction (-> contract) and the
+	play are read.
 */
 
 import "core:fmt"
@@ -18,7 +19,7 @@ import "norn:norn"
 // Resolve raw input text to boards, dispatching on format. LIN input — a bridge-site hand URL
 // (`...?lin=...`) or a bare LIN record (`...md|...`) — is routed to the LIN reader; everything else is
 // treated as PBN. Returns an error MESSAGE ("" == ok) rather than a typed error, since the two readers
-// have distinct error enums. LIN yields exactly one board; PBN may yield several.
+// have distinct error enums. Either may yield several boards (a vugraph segment, a multi-deal `.pbn`).
 resolve_boards :: proc(text: string) -> (boards: [dynamic]norn.Board, errmsg: string) {
 	is_url_lin := strings.contains(text, "lin=")
 	// A bare LIN record has an `md|` token and no `[Deal "` tag (which would mark it as PBN).
@@ -29,11 +30,16 @@ resolve_boards :: proc(text: string) -> (boards: [dynamic]norn.Board, errmsg: st
 		if is_url_lin {
 			lin_str = lin_query_param(text, context.temp_allocator)
 		}
-		b, e := norn.parse_lin_deal(lin_str)
+		// A vugraph file is many boards, one per `qx|`; a single hand record splits into itself.
+		lin_boards, e, failed := norn.parse_lin_boards(lin_str)
 		if e != .None {
+			delete(lin_boards)
+			if failed > 0 {
+				return nil, fmt.tprintf("could not parse LIN board %d of the file: %v", failed + 1, e)
+			}
 			return nil, fmt.tprintf("could not parse LIN deal: %v", e)
 		}
-		append(&boards, b)
+		boards = lin_boards
 		return boards, ""
 	}
 
@@ -120,20 +126,61 @@ parse_boards :: proc(text: string) -> (boards: [dynamic]norn.Board, err: norn.Pb
 		append(&boards, b)
 		return boards, .None
 	}
+	// Each `[Deal "` is one game, and a game is the run of tags round it: from the blank line before its first
+	// tag to the blank line after its last. The reader looks its tags up by name, so it must be handed ONE
+	// game - given "everything from this deal on" it would read a missing `[Contract]` from the next game,
+	// and the `[Board]`/`[Event]`/names tags that come BEFORE `[Deal]` in a standard export not at all.
+	deals := make([dynamic]int, context.temp_allocator)
 	for idx >= 0 {
-		b, e := norn.parse_pbn_deal(text[idx:])
-		if e != .None {
-			delete(boards)
-			return nil, e
-		}
-		append(&boards, b)
+		append(&deals, idx)
 		next := strings.index(text[idx + len(DEAL_TAG):], DEAL_TAG)
 		if next < 0 {
 			break
 		}
 		idx = idx + len(DEAL_TAG) + next
 	}
+	for at, i in deals {
+		start := 0
+		if i > 0 {
+			start = deals[i - 1] + len(DEAL_TAG)
+		}
+		if blank := last_blank_line(text[start:at]); blank >= 0 {
+			start += blank
+		}
+		end := len(text)
+		if i + 1 < len(deals) {
+			end = deals[i + 1]
+			if blank := last_blank_line(text[at:end]); blank >= 0 {
+				end = at + blank
+			}
+		}
+		b, e := norn.parse_pbn_deal(text[start:end])
+		if e != .None {
+			delete(boards)
+			return nil, e
+		}
+		append(&boards, b)
+	}
 	return boards, .None
+}
+
+// Byte offset just past the last blank line in `s` (a line holding nothing but whitespace), or -1 if none.
+@(private = "file")
+last_blank_line :: proc(s: string) -> int {
+	found := -1
+	line_start := 0
+	for i in 0 ..< len(s) {
+		if s[i] != '\n' {
+			continue
+		}
+		// A whole line (ended by this newline) with nothing on it but whitespace; the first fragment of `s`
+		// is the tail of a line that started before it, and does not count.
+		if line_start > 0 && strings.trim_space(s[line_start:i]) == "" {
+			found = i + 1
+		}
+		line_start = i + 1
+	}
+	return found
 }
 
 // Read all of stdin into a string (for `hand-ocr ... | analyse_deal`). Best-effort: stops at EOF or any

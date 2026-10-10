@@ -134,6 +134,7 @@ lint *args:
 	odin check bidding {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check suit_book {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check outline -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+	odin check quiz_corpus {{markup}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check scenario_dsl {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check deal_solve {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check analyse {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
@@ -302,6 +303,21 @@ test-prefs *args: mktarget_dirs
 [group('test')]
 test-outline *args: mktarget_dirs
 	odin test outline -debug -microarch:native -show-timings -linker:{{linker}} -out:{{ target_path("debug", "test-outline.exe") }} {{args}}
+
+# A bidding QUIZ's questions read out of a .bml document - the workbench's `quiz` button. A port of the
+# python quiz's extraction over bridge-markup, held to it auction for auction over EVERY .bml file in the
+# repo by digests in quiz_corpus/testdata/goldens.json. Editing the notes moves those digests: re-record
+# them with `quiz-corpus-goldens` (needs the bridge-system-apps checkout - the python is the oracle).
+# ---
+# run the quiz-corpus tests (parity with the python quiz over the whole corpus)
+[group('test')]
+test-quiz-corpus *args: mktarget_dirs
+	odin test quiz_corpus {{markup}} -debug -show-timings -linker:{{linker}} -out:{{ target_path("debug", "test-quiz-corpus.exe") }} {{args}}
+
+# re-record the python quiz's digests for every .bml file (BRIDGE_APPS_HOME locates the apps repo); DIR also dumps them for diffing
+[group('test')]
+quiz-corpus-goldens dump="":
+	uv run --project "{{ env_var_or_default('BRIDGE_APPS_HOME', home / 'dev/bridge-system-apps') }}" python quiz_corpus/tools/python_goldens.py {{ if dump == "" { "" } else { "--dump " + dump } }}
 
 # The scenario LANGUAGE: parsing, diagnostics, and the parity oracle that holds an interpreted condition
 # to the same verdicts as a hand-written Odin one. No engine and no bidding system in it — the vocabulary

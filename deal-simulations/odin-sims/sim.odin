@@ -38,14 +38,9 @@ import "suit_book"
 // (logging, allocators, profiling). Returns the process exit code.
 run_sim :: proc() -> int {
 	// Double-dummy solver lifecycle: one-time init, teardown on return. Cheap when unused — nothing
-	// solves unless --dd is passed and a hook fires. See the `deal_solve` package.
+	// solves unless a scenario with a double-dummy hook runs, or `--par` is passed. See `deal_solve`.
 	deal_solve.init()
 	defer deal_solve.shutdown()
-
-	// The per-scenario --dd filters and annotators. In their own package because `workbench.odin`
-	// generates deals too and a second copy of the table is one a new scenario gets added to once.
-	hooks := sim_hooks.make_hooks()
-	defer sim_hooks.free_hooks(&hooks)
 
 	// USER-AUTHORED SCENARIOS, from wherever the user keeps them. `--scenarios <dir>` is consumed HERE
 	// rather than in norn's parser, and that is deliberate: `norn:cli` must not know about
@@ -68,6 +63,12 @@ run_sim :: proc() -> int {
 	registry := make([dynamic]cli.Scenario, 0, len(bidding.registry) + len(loaded.scenarios), context.temp_allocator)
 	append(&registry, ..bidding.registry)
 	append(&registry, ..loaded.scenarios)
+
+	// The per-scenario double-dummy filters and annotators - the compiled ones, and those the scenario files
+	// ask for with a `double-dummy:` line. In their own package because the workbench generates deals too,
+	// and a second copy of the table is one a new scenario gets added to once.
+	hooks := sim_hooks.make_hooks(loaded.programs, bidding.registry)
+	defer sim_hooks.free_hooks(&hooks)
 
 	return cli.main_program(registry[:], sim_hooks.gen_hooks(&hooks), arguments)
 }

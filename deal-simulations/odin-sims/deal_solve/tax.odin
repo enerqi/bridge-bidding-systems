@@ -6,9 +6,9 @@ package deal_solve
 	The problem (COMBO_ANALYSER.md "★ 2-hand advisor", NOT-DONE #1). sample.odin's make-% is a per-layout
 	DOUBLE-DUMMY census: every sampled layout is solved with declarer PEEKING at the defenders, so the
 	aggregate is a CEILING. The honest number a player wants is lower — declarer must commit ONE blind
-	policy across all layouts (a whole-deal POMDP). The industry estimator of that gap is PIMC (pimc.odin,
-	the spike), but full PIMC is BOTH expensive (~50-500x the ceiling) AND finicky (naive PIMC undershoots
-	via DD-value-tie procrastination). This file is the DECIDED cheaper alternative: estimate the tax the
+	policy across all layouts (a whole-deal POMDP). The industry estimator of that gap is PIMC (spiked as
+	pimc.odin, deleted 2026-10-09 - see git history), but full PIMC is BOTH expensive (~50-500x the ceiling)
+	AND finicky (naive PIMC undershoots via DD-value-tie procrastination). This file is the DECIDED cheaper alternative: estimate the tax the
 	blind two-way GUESSES cost, WITHOUT a play-out, reusing sample.odin's sampling loop.
 
 	THE MODEL (candidate #1, "per-layout DD-vs-fixed-guess delta").

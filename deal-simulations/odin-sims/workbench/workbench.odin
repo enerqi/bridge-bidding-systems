@@ -82,6 +82,7 @@ PAGE :: uintptr(5) // a card page is ready in `App.page`; show it in the frame
 DEAL :: uintptr(6) // OCR read a deal out of a dropped image; it is in `App.deal`, put it in the box
 LIVE :: uintptr(7) // the live preview`s debounce ran out; render the buffer (see `on_frame_event`)
 FOLLOW :: uintptr(8) // the hand page follow`s debounce ran out; load the selection`s page (same reason)
+ANALYSE_STEP :: uintptr(9) // lparam = boards done << 16 | boards in all, from `analyse`'s progress hook
 
 Job_Kind :: enum {
 	Generate,
@@ -170,6 +171,9 @@ App :: struct {
 	// (measured: it kept the old theme's colours when shown again), so `show_view` restyles each of these
 	// the first time it is shown afterwards — see `theme.odin`.
 	theme_stale:        bit_set[View],
+	// What THIS run draws with (`choose_graphics_layer`): `gpu`, `software` or `env:<WORKBENCH_GFX>`. The
+	// Settings choice applies at the next start, so the two can differ, and the settings note says which.
+	graphics_started:   string,
 
 	// What the LAST hand-page load cost, which is what the follow's debounce is scaled by. These pages run
 	// from a few KB to ~86MB, so no fixed delay suits both ends (see `page_follow_delay`).
@@ -188,6 +192,12 @@ App :: struct {
 	// The file currently in the pane, so the chip for it can say so. Empty for a page that came from
 	// `analyse` rather than off disk - that page is not a format of a scenario, and no chip should claim it.
 	shown_path:         string,
+
+	// The last page `analyse` built, kept so it can be put back without analysing again (`show last`), and
+	// whether the pane is showing it now. An analysed page is something somebody ASKED for, so it keeps the
+	// pane until something else is asked for: opening the pane or widening it does not replace it.
+	analysed_page:      string,
+	showing_analysed:   bool,
 
 	// What is in the deals folder, scenario name -> the formats generated for it. One `read_dir` fills it
 	// (see `scan_outputs`); the list rows and the format chips are both projections of it.
@@ -211,6 +221,13 @@ App :: struct {
 	bml_open:           string,
 	bml_crlf:           bool, // the line endings the file arrived with, so saving does not rewrite all of them
 	bml_armed:          bool, // a switch away from unsaved text was refused once; the next one goes through
+	// The open file's quiz page when one exists on disk (`refresh_quiz`), which `open quiz in browser`
+	// opens; "" when there is none.
+	quiz_path:          string,
+	// A follow of the selection is ARMED (`arm_page_follow`) and its debounce has not run yet.
+	follow_pending:     bool,
+	// `WORKBENCH_DRAG_LOG=1`: log every divider drag (see `drag_log`). Off otherwise, in every build.
+	drag_log_on:        bool,
 	// Check `[label](#Anchor)` as well? Off by default, and the button says so: a CHAPTER of this corpus
 	// links to headings in its sibling files on purpose, so on one chapter the check is mostly noise. On
 	// `bidding-system.bml`, which includes them all, every warning it raises is a real broken link.
@@ -307,10 +324,12 @@ work :: proc(app: ^App) {
 }
 
 work_generate :: proc(app: ^App) {
-	// The --dd hooks, shared with sim.odin (see the `sim_hooks` package). Built once per job: `cli`
-	// borrows the maps for the length of each run.
-	hooks := sim_hooks.make_hooks()
+	// The double-dummy hooks, shared with sim.odin (see the `sim_hooks` package): the compiled scenarios'
+	// and those the scenario files ask for. Built once per job: `cli` borrows the maps for the length of
+	// each run.
+	hooks := sim_hooks.make_hooks(app.loaded.programs, bidding.registry)
 	defer sim_hooks.free_hooks(&hooks)
+	gen_hooks := sim_hooks.gen_hooks(&hooks)
 
 	dds_up := false
 	defer if dds_up {
@@ -343,15 +362,18 @@ work_generate :: proc(app: ^App) {
 			fail(app, fmt.tprintf("%s: %s", name, message))
 			return
 		}
-		// Wire the consumer's hooks in exactly where `cli.main_program` does — behind the flag, so the
-		// default generator path never touches a solver.
-		if opts.dd {
-			opts.dd_filters = hooks.filters
-			opts.dd_annotators = hooks.annotators
-			if !dds_up {
-				deal_solve.init()
-				dds_up = true
-			}
+		// Wire the consumer's hooks in exactly as `cli.main_program` does: a scenario's own always, the par
+		// caption with `--par`. The solver starts the first time a scenario of this job needs it.
+		opts.dd_filters = gen_hooks.dd_filters
+		opts.dd_annotators = gen_hooks.dd_annotators
+		if opts.par {
+			opts.par_annotator = gen_hooks.par_annotator
+		}
+		_, has_filter := opts.dd_filters[name]
+		_, has_annotator := opts.dd_annotators[name]
+		if !dds_up && (opts.par || has_filter || has_annotator) {
+			deal_solve.init()
+			dds_up = true
 		}
 
 		// `app.scenarios`, NOT `bidding.registry`: the list this window generates from is the concatenation
@@ -421,17 +443,27 @@ run_analysis :: proc(app: ^App, argv: []string) {
 	b := strings.builder_make()
 	defer strings.builder_destroy(&b)
 
-	// "as card page": the same run, with the page asked for as TEXT rather than as a file
+	// The hand page (unless `as text report`): the same run, with the page asked for as TEXT rather than as a file
 	// (`analyse.builder_page_sink`), so nothing is written to disk and no temp file is involved. The
 	// diagnostics still land in the transcript; the document goes to the frame.
 	page_b: strings.Builder
 	sink := analyse.builder_sink(&b)
 	if app.job.want_page {
-		page_b = strings.builder_make()
+		// In the APP's allocator, because the page is not copied on its way to the pane: the handler takes this
+		// very buffer as `analysed_page` (a whole event's page is tens of MB, and it used to be copied three
+		// times). `app.allocator` is the process heap here, which any thread may use.
+		page_b = strings.builder_make(app.allocator)
 		sink = analyse.builder_page_sink(&b, &page_b)
 	}
-	defer if app.job.want_page {
+	handed_over := false
+	defer if app.job.want_page && !handed_over {
 		strings.builder_destroy(&page_b)
+	}
+	// "board 3 of 16" beside the analyse button: a match is minutes, not seconds.
+	sink.progress_data = app
+	sink.progress = proc(data: rawptr, done, total: int) {
+		app := (^App)(data)
+		sa.post_callback(app.window, ANALYSE_STEP, uintptr(min(done, 0xffff) << 16 | min(total, 0xffff)))
 	}
 
 	result := analyse.run(sink, &args)
@@ -443,8 +475,9 @@ run_analysis :: proc(app: ^App, argv: []string) {
 	}
 	if app.job.want_page {
 		sync.lock(&app.mutex)
-		delete(app.page)
-		app.page = strings.clone(strings.to_string(page_b))
+		delete(app.page, app.allocator)
+		app.page = strings.to_string(page_b) // handed over, not copied: the PAGE handler owns it now
+		handed_over = true
 		sync.unlock(&app.mutex)
 		sa.post_callback(app.window, PAGE)
 	}
@@ -614,6 +647,15 @@ on_posted :: proc(handler: ^sa.Host_Handler, posted: sa.Posted) {
 	case PROGRESS:
 		set_progress(app, int(posted.lparam))
 
+	case ANALYSE_STEP:
+		done, total := int(posted.lparam >> 16), int(posted.lparam & 0xffff)
+		if total > 0 {
+			set_progress(app, done * 100 / total)
+		}
+		if total > 1 {
+			set_text_at(app, "#analyse-busy-text", fmt.tprintf("board %d of %d", min(done + 1, total), total))
+		}
+
 	case TRANSCRIPT:
 		// Cleared BEFORE the draw, not after: a line written while this redraw is running belongs to the
 		// next one, and clearing afterwards would drop it.
@@ -627,7 +669,7 @@ on_posted :: proc(handler: ^sa.Host_Handler, posted: sa.Posted) {
 		app.failure = ""
 		sync.unlock(&app.mutex)
 
-		set_status(app, fmt.tprintf("failed: %s", message))
+		set_job_status(app, fmt.tprintf("failed: %s", message))
 		job_ended(app)
 
 	case DEAL:
@@ -640,18 +682,24 @@ on_posted :: proc(handler: ^sa.Host_Handler, posted: sa.Posted) {
 		set_input(app, "#deal", deal)
 
 	case PAGE:
+		// TAKEN, not copied: the worker built it in `app.allocator` and handed the buffer over.
 		sync.lock(&app.mutex)
-		page := strings.clone(app.page, context.temp_allocator)
-		delete(app.page)
+		page := app.page
 		app.page = ""
 		sync.unlock(&app.mutex)
 
-		if !show_page_html(app, page, "analysed deal") {
+		if app.analysed_page != "" {
+			delete(app.analysed_page, app.allocator)
+		}
+		app.analysed_page = page
+		if !show_analysed_page(app) {
 			set_status(app, "the hand page could not be loaded into the pane")
 		}
 
 	case FINISHED:
-		set_status(app, "cancelled" if posted.lparam == 1 else "done")
+		// Nothing on success: what a run made is on screen (the page, the report, the chips), and a bare
+		// `done` beside the button said nothing more (reported: "what was done, don't care just look").
+		set_job_status(app, "cancelled" if posted.lparam == 1 else "")
 		draw_transcript(app)
 		job_ended(app, show_result = posted.lparam != 1)
 
@@ -687,6 +735,7 @@ job_ended :: proc(app: ^App, show_result := false) {
 	set_enabled(app, "#generate", true)
 	set_enabled(app, "#analyse", true)
 	set_enabled(app, "#cancel", false)
+	set_analyse_busy(app, false)
 
 	// The pane segment IS re-asked here, and this is the one place it must be: a run writes pages to disk
 	// without putting any of them in the frame, so "is there a page to show" has just changed for a control
@@ -696,7 +745,13 @@ job_ended :: proc(app: ^App, show_result := false) {
 	scan_outputs(app) // the run just wrote files; the tags and the chips are how that shows
 	draw_scenarios(app)
 	refresh_pane_segment(app)
-	note_selected_page(app)
+	// The chips and the status line catch up after ANY run, but the PANE only follows the selection after a
+	// generate. Reported: "analyse as hand page is being overridden by the cards view page for the selected
+	// scenario" - an analyse run puts its page in the pane (built in memory, so no file and no chip owns it),
+	// and re-arming the follow here then loaded the selected scenario's page over it a moment later. The
+	// analysed page is what the person just asked for; only a deliberate act - a new selection, a chip, a
+	// generate - replaces it.
+	note_selected_page(app, follow = generated)
 
 	// AND THE RESULT IS SHOWN. Reported: generate with the hand page open changed nothing on screen - the
 	// run rewrote the file the pane was showing and the pane kept the old load of it, so a new set of deals
@@ -793,10 +848,14 @@ start_job :: proc(app: ^App, job: Job, status: string) {
 	// The pump outranks the work while the work is on - see `ui_thread_priority`.
 	ui_thread_priority(true)
 	set_progress(app, 0)
-	set_status(app, status)
+	set_job_status(app, status)
 	set_enabled(app, "#generate", false)
 	set_enabled(app, "#analyse", false)
 	set_enabled(app, "#cancel", job.kind == .Generate)
+	set_analyse_busy(app, job.kind != .Generate)
+	if job.kind != .Generate {
+		set_text_at(app, "#analyse-busy-text", status) // "analysing match.lin…" until the boards are counted
+	}
 	app.worker = thread.create_and_start_with_poly_data(app, work)
 }
 
@@ -827,8 +886,8 @@ generate_job :: proc(app: ^App) -> (job: Job, err: string) {
 		}
 		append(&argv, "-s", seed)
 	}
-	if read_bool(app, "#dd") {
-		append(&argv, "--dd")
+	if read_bool(app, "#par") {
+		append(&argv, "--par")
 	}
 	if read_bool(app, "#fixed") {
 		append(&argv, "--fixed-table")
@@ -872,14 +931,26 @@ analyse_job :: proc(app: ^App) -> (job: Job, err: string) {
 	if flag_err != "" {
 		return {}, flag_err
 	}
-	// The deal goes last, as one argument: the parser's positional overflow. Quoting is not a concern
-	// here (there is no shell), so the `-` hands of a two-hand deal arrive intact inside this one string.
-	append(&argv, deal)
+	// A box holding nothing but the path of a file is THAT FILE: a dropped `.pbn` / `.lin` leaves its path
+	// here, so analysing it again (other settings, a different sample) is one press. No deal text is ever a
+	// file's path, so this cannot steal one.
+	if deal_file_path(deal) {
+		append(&argv, "--file", deal)
+	} else {
+		// The deal goes last, as one argument: the parser's positional overflow. Quoting is not a concern
+		// here (there is no shell), so the `-` hands of a two-hand deal arrive intact inside this one string.
+		append(&argv, deal)
+	}
 
 	// No `--html`: the page is asked for in memory (see `analyse.builder_page_sink`) and goes to the
 	// frame. Nothing here writes a file, so there is no path to compose and nothing to clean up.
-	return Job{kind = .Analyse, argv = clone_strings(argv[:], app.allocator), want_page = read_bool(app, "#as-page")},
+	return Job{kind = .Analyse, argv = clone_strings(argv[:], app.allocator), want_page = !read_bool(app, "#as-text")},
 		""
+}
+
+// Is the analyse box's text the path of a file to read, rather than a deal? One line, and a file that exists.
+deal_file_path :: proc(text: string) -> bool {
+	return text != "" && !strings.contains_any(text, "\r\n") && os.is_file(text)
 }
 
 // The analyse panel's flags, WITHOUT a deal — everything the two ways in have in common. The analyse
@@ -904,7 +975,7 @@ analyse_flags :: proc(app: ^App) -> (argv: [dynamic]string, err: string) {
 
 // A dropped hand-diagram image: the analyse panel's flags, plus the picture to read them against. The
 // panel's controls apply unchanged — a drop is the analyse button with the deal arriving from a picture
-// instead of the clipboard, so `sample`, `contract`, `target` and `as card page` all still mean what they
+// instead of the clipboard, so `sample`, `contract`, `target` and `as text report` all still mean what they
 // say on screen.
 ocr_job :: proc(app: ^App, image: string) -> (job: Job, err: string) {
 	argv, flag_err := analyse_flags(app)
@@ -914,7 +985,7 @@ ocr_job :: proc(app: ^App, image: string) -> (job: Job, err: string) {
 	return Job {
 			kind = .Ocr,
 			argv = clone_strings(argv[:], app.allocator),
-			want_page = read_bool(app, "#as-page"),
+			want_page = !read_bool(app, "#as-text"),
 			image = strings.clone(image, app.allocator),
 		},
 		""
@@ -1189,7 +1260,7 @@ that leaves the window carries an ↗ mark, so pressing it is a deliberate act b
 is about to do. The standalone `browser` button that used to appear for this went with it — it said the same
 thing for the newest output only, in a second place, and two controls for one act is one too many.
 */
-note_selected_page :: proc(app: ^App) {
+note_selected_page :: proc(app: ^App, follow := true) {
 	if app.running {
 		return // the status line belongs to the run while one is going
 	}
@@ -1201,7 +1272,7 @@ note_selected_page :: proc(app: ^App) {
 		return
 	}
 	set_status(app, fmt.tprintf("output: %s", path))
-	if page_pane_shown(app) {
+	if follow && page_pane_shown(app) {
 		arm_page_follow(app)
 	}
 }
@@ -1241,12 +1312,20 @@ arm_page_follow :: proc(app: ^App) {
 	if frame == nil {
 		return
 	}
+	app.follow_pending = true
 	_ = sa.set_timer(frame, page_follow_delay(app), PAGE_FOLLOW_TIMER)
 }
 
 // The countdown ran out: the arrows stopped. Loads the selection's page unless the pane is already showing
 // it — which is the common case after a burst that ended where it started.
 follow_selection_tick :: proc(app: ^App) {
+	// Only a follow that was ASKED FOR loads anything. The timer is the engine's, so a tick with nothing
+	// pending - a stale one, or a test firing the debounce by hand after a path that chose not to follow -
+	// must not load the selection over whatever the pane holds.
+	if !app.follow_pending {
+		return
+	}
+	app.follow_pending = false
 	if !page_pane_shown(app) || current_view(app) != .Panes {
 		return // the pane was closed, or the view left, while the timer ran
 	}
@@ -1275,6 +1354,8 @@ remember_shown_path :: proc(app: ^App, path: string) {
 		delete(app.shown_path, app.allocator)
 	}
 	app.shown_path = strings.clone(path, app.allocator) if path != "" else ""
+	app.showing_analysed = false // every show passes through here; the analysed one says so afterwards
+	refresh_show_analysed(app)
 	// The pane`s own `browser` button acts on this, so it is alive exactly when there is a FILE behind what
 	// is on screen - not for a page `analyse` built in memory - AND WHEN THAT FILE IS A PAGE.
 	//
@@ -1310,6 +1391,7 @@ html formats share the extension and a HANDVIEWER page has to be marked as going
 into the pane.
 */
 draw_output_chips :: proc(app: ^App) {
+	refresh_generate_label(app) // the same question asked of the next run: is its file already there?
 	row := find(app, "#outputs")
 	if row == nil {
 		return
@@ -1334,7 +1416,13 @@ draw_output_chips :: proc(app: ^App) {
 	}
 
 	b := strings.builder_make(context.temp_allocator)
-	fmt.sbprintf(&b, `<span class="head">%s</span>`, escape_html(name, context.temp_allocator))
+	// "view generated formats", not "on disk for <name>": the chips are buttons that SHOW a file, and the label
+	// should say so (reported). The scenario is the one selected in the list; its name stays in the tooltip.
+	fmt.sbprintf(
+		&b,
+		`<span class="head" title="What generate has written for %s">view generated formats:</span>`,
+		escape_html(name, context.temp_allocator),
+	)
 	for format in Deal_Format {
 		exists := format in have
 		path := ""
@@ -1381,6 +1469,37 @@ draw_output_chips :: proc(app: ^App) {
 	}
 	sa.set_html(row, strings.to_string(b))
 	set_shown(app, "#outputs", true)
+}
+
+/*
+`generate` SAYS `regenerate` WHEN THE RUN WOULD REPLACE A FILE (asked for: "if a format deal file already
+exists then perhaps the button should be regenerate, implying the overwrite"). The file is `<scenario><ext>`
+in the deals folder, for the format in the dropdown; with `generate every scenario` on, it is enough that ANY
+scenario has one, since the batch replaces it. Read from the same `read_dir` the chips are drawn from, so it
+costs nothing, and redrawn wherever they are plus on the two controls that change the question (the format
+dropdown, the every-scenario box).
+*/
+refresh_generate_label :: proc(app: ^App) {
+	_, format, known := format_of_extension(fmt.tprintf("x%s", extension_for(read_text(app, "#format"))))
+	exists := false
+	if known {
+		if read_bool(app, "#all") {
+			for _, have in app.outputs {
+				if format in have {
+					exists = true
+					break
+				}
+			}
+		} else if app.selected >= 0 && app.selected < len(app.scenarios) {
+			exists = format in formats_for(app, app.scenarios[app.selected].name)
+		}
+	}
+	set_text_at(app, "#generate", "regenerate" if exists else "generate")
+	if button := find(app, "#generate"); button != nil {
+		title :=
+			"Deal again and REPLACE the pages already written in this format" if exists else "Deal and write the pages"
+		_ = sa.set_attribute(button, "title", title)
+	}
 }
 
 // Open one named format for the selected scenario - the chip`s own file, rather than whichever output is
@@ -1839,7 +1958,15 @@ set_pane_mode :: proc(app: ^App, mode: Pane_Mode) {
 	scenario and is replaced too - the pane is a view of the deals view's selection whenever the deals view
 	opens it.
 	*/
-	if mode != .Closed && !shown_page_is_the_selection(app) {
+	//
+	// ONLY WHEN IT OPENS, and NOT OVER AN ANALYSED PAGE. Reported: "clicking the give the hand page the whole
+	// screen button just closes the output of the lin analyse and puts the selected scenario back on view".
+	// `split` <-> `wide` moves a page that is already on screen; it is not a request for a different one.
+	// And a page `analyse` built is what somebody asked for last, so it keeps the pane until they ask for
+	// something else (a chip, the list with the pane open, generate, another analyse) - and `show last` puts
+	// it back after that.
+	opening := pane_mode(app) == .Closed
+	if mode != .Closed && opening && !app.showing_analysed && !shown_page_is_the_selection(app) {
 		show_selected_page(app, follow = false)
 	}
 	switch mode {
@@ -1856,6 +1983,68 @@ set_pane_mode :: proc(app: ^App, mode: Pane_Mode) {
 		set_pane_wide(app, true)
 	}
 	refresh_overlay_controls(app)
+	refresh_show_analysed(app)
+}
+
+// WHILE AN ANALYSE RUNS, A SPINNER STANDS WHERE `show last` IS (asked for: "analyse can be slow on multiple
+// boards (or large sample I guess for one board), needs some sort of spinner"). It is beside the button that
+// started it - the status line and the bar are in the generate panel, out of sight of an analyse - and
+// `show last` has nothing to offer mid-run anyway. A whole match counts its boards; one board with a big
+// sample has no count to give, so the spinner is what says it is alive.
+set_analyse_busy :: proc(app: ^App, busy: bool) {
+	set_text_at(app, "#analyse-busy-text", "analysing…")
+	set_shown(app, "#analyse-busy", busy)
+	set_shown(app, "#show-analysed", !busy)
+	set_shown(app, "#analyse-status", !busy) // the spinner says it while running
+}
+
+// Put the last analysed page back in the pane, opening it, without analysing again.
+show_analysed_page :: proc(app: ^App) -> bool {
+	if app.analysed_page == "" {
+		return false
+	}
+	if !show_page_html(app, app.analysed_page, analysed_title(app.analysed_page)) {
+		return false
+	}
+	app.showing_analysed = true
+	refresh_show_analysed(app)
+	set_enabled(app, "#page-browser", true) // `page-browser` writes it out first
+	return true
+}
+
+// The analysed page as a file a browser can open: `workbench-analysed.html` in the temp folder, replaced on
+// every write (one file, not one per press). The page is self-contained, so it needs nothing beside it.
+write_analysed_page :: proc(page: string) -> (path: string, ok: bool) {
+	dir, derr := os.temp_directory(context.temp_allocator)
+	if derr != nil {
+		return "", false
+	}
+	joined, jerr := filepath.join({dir, "workbench-analysed.html"}, context.temp_allocator)
+	if jerr != nil {
+		return "", false
+	}
+	if os.write_entire_file(joined, transmute([]u8)page) != nil {
+		return "", false
+	}
+	return joined, true
+}
+
+// The pane's title for an analysed page: how many boards it holds, since one analyse can read a whole match
+// (a vugraph `.lin`, a PBN file of boards). Each board of a card page is one `.compass`.
+analysed_title :: proc(page: string) -> string {
+	boards := strings.count(page, `<div class="compass">`)
+	if boards == 1 {
+		return "analysed: 1 board"
+	}
+	if boards == 0 {
+		return "analysed"
+	}
+	return fmt.tprintf("analysed: %d boards", boards)
+}
+
+// `show last` is alive when there is an analysed page and the pane is not already showing it.
+refresh_show_analysed :: proc(app: ^App) {
+	set_enabled(app, "#show-analysed", app.analysed_page != "" && !(app.showing_analysed && page_pane_shown(app)))
 }
 
 /*
@@ -2003,7 +2192,6 @@ list_width :: proc(app: ^App) -> i32 {
 DEAL_SPLIT_SELECTORS :: [DEAL_SPLIT_PANES]string{"#scenario-list", ".work", "#pageview"}
 
 
-
 /*
 SHOWING OR HIDING A PANE NEEDS THE FRAMESET RE-LAID OUT BY HAND.
 
@@ -2122,13 +2310,15 @@ apply_deal_layout :: proc(app: ^App, loc := #caller_location) {
 }
 
 // A line in the DRAG LOG — the script's console, so the host's half lands beside the script's half in the
-// order they happened. Debug builds only, like the log itself; see `WB_DRAG_LOG` in the document.
+// order they happened. Only with `WORKBENCH_DRAG_LOG=1`, like the log itself; see `WB_DRAG_LOG` in the
+// document.
 drag_log :: proc(app: ^App, line: string) {
-	when ODIN_DEBUG {
-		escaped, _ := strings.replace_all(line, `"`, `'`, context.temp_allocator)
-		if result, err := sa.eval(app.window, fmt.tprintf(`wbDragLog("host %s")`, escaped)); err == nil {
-			sa.value_clear(&result)
-		}
+	if !app.drag_log_on {
+		return
+	}
+	escaped, _ := strings.replace_all(line, `"`, `'`, context.temp_allocator)
+	if result, err := sa.eval(app.window, fmt.tprintf(`wbDragLog("host %s")`, escaped)); err == nil {
+		sa.value_clear(&result)
 	}
 }
 
@@ -2357,9 +2547,140 @@ current_view :: proc(app: ^App) -> View {
 
 // Load a document into the frame from memory and show it. False if the frame or its behavior is not there,
 // which is a document/CSS problem rather than a page problem — hence the caller's status message.
+/*
+`WORKBENCH_PAGE_CSS` and `WORKBENCH_PAGE_STRIP`: change a page built in memory (an analysed page, not one
+loaded from a file) before it is shown - a way to bisect a cost in the REAL window without a rebuild, because
+some costs do not exist in the windowless harness. They found the slow window resize (2026-10-10): every frame
+of a resize cost ~150ms more with a card page loaded, even hidden or with the pane closed, and windowless did
+not show it at all. Hiding the body, stripping the font link, the script or the media queries changed nothing;
+`STRIP=style` and then `STRIP=vunits` took it back to ~45ms - the page's `vw`/`vh` lengths, which the card
+page's desktop CSS now replaces with script-set variables. For example:
+
+	WORKBENCH_FRAME_LOG=1 WORKBENCH_PAGE_STRIP=vunits WORKBENCH_PAGE_CSS="body>*{display:none!important}" just sims workbench
+
+`PAGE_CSS` goes in as given, inside a <style> of its own just before `</head>`: a <style> added by SCRIPT does
+not apply in this engine (measured). `PAGE_STRIP` takes a comma list of `font` (the web-font link), `style`
+(the page's stylesheet), `script`, `media` (every `@media` block), `vunits` (`vw`/`vh` to fixed px), or is
+`all` (the page replaced by a one-line document).
+*/
+// `WORKBENCH_PAGE_STRIP=vunits`: every `<number>vw` / `<number>vh` becomes a fixed px length (1vw = 25px,
+// 1vh = 15px, about right for a large window), so nothing in the page depends on the window's size.
+page_without_viewport_units :: proc(html: string) -> string {
+	b := strings.builder_make(context.temp_allocator)
+	i := 0
+	for i < len(html) {
+		c := html[i]
+		if c >= '0' && c <= '9' || c == '.' {
+			j := i
+			for j < len(html) && (html[j] >= '0' && html[j] <= '9' || html[j] == '.') {
+				j += 1
+			}
+			if j + 1 < len(html) && html[j] == 'v' && (html[j + 1] == 'w' || html[j + 1] == 'h') &&
+			   (j + 2 >= len(html) || !(html[j + 2] >= 'a' && html[j + 2] <= 'z')) {
+				if n, ok := strconv.parse_f64(html[i:j]); ok {
+					fmt.sbprintf(&b, "%.1fpx", n * (25 if html[j + 1] == 'w' else 15))
+					i = j + 2
+					continue
+				}
+			}
+			strings.write_string(&b, html[i:j])
+			i = j
+			continue
+		}
+		strings.write_byte(&b, c)
+		i += 1
+	}
+	return strings.to_string(b)
+}
+
+// `WORKBENCH_PAGE_STRIP=media`: every `@media … { … }` block cut out whole (braces balanced).
+page_without_media_blocks :: proc(html: string) -> string {
+	b := strings.builder_make(context.temp_allocator)
+	rest := html
+	for {
+		at := strings.index(rest, "@media")
+		if at < 0 {
+			break
+		}
+		open := strings.index_byte(rest[at:], '{')
+		if open < 0 {
+			break
+		}
+		depth, k := 0, at + open
+		for ; k < len(rest); k += 1 {
+			if rest[k] == '{' {
+				depth += 1
+			} else if rest[k] == '}' {
+				depth -= 1
+				if depth == 0 {
+					break
+				}
+			}
+		}
+		strings.write_string(&b, rest[:at])
+		rest = rest[min(k + 1, len(rest)):]
+	}
+	strings.write_string(&b, rest)
+	return strings.to_string(b)
+}
+
+with_page_css :: proc(page: string) -> string {
+	html := page
+	// The same idea for what a page LOADS: `WORKBENCH_PAGE_STRIP=font,script` takes out the web-font
+	// <link> and/or the page's <script>, to find which one makes a loaded page slow the window's resizing.
+	strip := os.get_env("WORKBENCH_PAGE_STRIP", context.temp_allocator)
+	if strip == "all" {
+		log.info("WORKBENCH_PAGE_STRIP: the page is replaced by a one-line document")
+		return "<html><body><p>a one-line document</p></body></html>"
+	}
+	if strings.contains(strip, "font") {
+		if at := strings.index(html, "<link href=\"https://fonts.googleapis.com"); at >= 0 {
+			if end := strings.index(html[at:], ">"); end >= 0 {
+				html = strings.concatenate({html[:at], html[at + end + 1:]}, context.temp_allocator)
+				log.info("WORKBENCH_PAGE_STRIP: the web-font link is out")
+			}
+		}
+	}
+	if strings.contains(strip, "vunits") {
+		html = page_without_viewport_units(html)
+		log.info("WORKBENCH_PAGE_STRIP: vw/vh lengths are now fixed px")
+	}
+	if strings.contains(strip, "media") {
+		html = page_without_media_blocks(html)
+		log.info("WORKBENCH_PAGE_STRIP: the @media blocks are out")
+	}
+	if strings.contains(strip, "style") {
+		if at := strings.index(html, "<style>"); at >= 0 {
+			if end := strings.index(html[at:], "</style>"); end >= 0 {
+				html = strings.concatenate({html[:at], html[at + end + len("</style>"):]}, context.temp_allocator)
+				log.info("WORKBENCH_PAGE_STRIP: the page stylesheet is out")
+			}
+		}
+	}
+	if strings.contains(strip, "script") {
+		if at := strings.index(html, "<script>"); at >= 0 {
+			if end := strings.index(html[at:], "</script>"); end >= 0 {
+				html = strings.concatenate({html[:at], html[at + end + len("</script>"):]}, context.temp_allocator)
+				log.info("WORKBENCH_PAGE_STRIP: the page script is out")
+			}
+		}
+	}
+	css := os.get_env("WORKBENCH_PAGE_CSS", context.temp_allocator)
+	if css == "" {
+		return html
+	}
+	at := strings.index(html, "</head>")
+	if at < 0 {
+		return html
+	}
+	log.infof("WORKBENCH_PAGE_CSS added to the page: %s", css)
+	return strings.concatenate({html[:at], "<style>", css, "</style>", html[at:]}, context.temp_allocator)
+}
+
 show_page_html :: proc(app: ^App, html: string, title: string, take_keyboard := true) -> bool {
 	asset := page_frame_asset(app) or_return
-	html_value := sa.value_from(html)
+	styled := with_page_css(html)
+	html_value := sa.value_from(styled)
 	defer sa.value_clear(&html_value)
 	// The base URL a relative link in the page would resolve against. The page is self-contained, so this
 	// only ever shows up in the engine's own diagnostics — which is a reason to make it say where it came
@@ -2695,6 +3016,7 @@ open_bml :: proc(app: ^App, name: string, repreview := true) -> (ok: bool, why: 
 
 	delete(app.bml_open, app.allocator)
 	app.bml_open = strings.clone(name, app.allocator)
+	refresh_quiz(app)
 	// A new file gets its own scope decision: what was remembered for THIS file, else what its size suggests.
 	app.bml_scope_set = false
 	app.bml_crlf = strings.contains(source, "\r\n")
@@ -4451,7 +4773,8 @@ set_shown :: proc(app: ^App, selector: string, shown: bool) {
 		// A PANE OF A SPLIT takes its divider with it: every show/hide in the window comes through here, so
 		// the dividers follow the panes in all three views without any caller having to remember them.
 		if parent, perr := sa.parent(element); perr == nil && parent != nil {
-			if classes, _ := sa.attribute(parent, "class", context.temp_allocator); strings.contains(classes, "split") {
+			if classes, _ := sa.attribute(parent, "class", context.temp_allocator);
+			   strings.contains(classes, "split") {
 				if id, _ := sa.attribute(parent, "id", context.temp_allocator); id != "" {
 					show_needed_dividers(app, fmt.tprintf("#%s", id))
 				}
@@ -4757,10 +5080,30 @@ set_status :: proc(app: ^App, text: string) {
 	set_text_at(app, "#status", text)
 }
 
-// The fill's width in px, not %: the track is a fixed 200px (see the CSS), and the host knows that.
+// A RUN's status, said in the panel that started it: an analyse (or a dropped screenshot, which ends in one)
+// reports beside the analyse button, a generate in the generate panel. Reported: the analyse used the
+// generate panel's bar and status line - "it mostly works but scope is wrong".
+set_job_status :: proc(app: ^App, text: string) {
+	if analysing(app) {
+		set_text_at(app, "#analyse-status", text)
+	} else {
+		set_status(app, text)
+	}
+}
+
+analysing :: proc(app: ^App) -> bool {
+	return app.job.kind == .Analyse || app.job.kind == .Ocr
+}
+
+// The fill's width in px, not %: the tracks are fixed widths (see the CSS - 200px for generate, 80px for
+// analyse), and the host knows that. Which bar is the running job's, as for `set_job_status`.
 set_progress :: proc(app: ^App, percent: int) {
-	if fill := find(app, "#fill"); fill != nil {
-		sa.set_style(fill, "width", fmt.tprintf("%dpx", 2 * clamp(percent, 0, 100))) // 200px track
+	selector, track := "#fill", 200
+	if analysing(app) {
+		selector, track = "#analyse-fill", 80
+	}
+	if fill := find(app, selector); fill != nil {
+		sa.set_style(fill, "width", fmt.tprintf("%dpx", track * clamp(percent, 0, 100) / 100))
 	}
 }
 
@@ -5265,6 +5608,7 @@ set_tag_picker :: proc(app: ^App, open: bool) {
 	// size, both being `size: *` children of `.work`.
 	set_shown(app, "#tagpicker", open)
 	set_shown(app, "#report", !open)
+	set_shown(app, "#report-head", !open)
 	if !open {
 		// Back to the list, which is where the next thing anybody does lives.
 		if list := find(app, "#scenarios"); list != nil {
@@ -5488,12 +5832,6 @@ filter_scenarios :: proc(app: ^App) {
 		}
 		note_selected_page(app) // the chips, the status line and the pane follow the new selection
 	}
-	// The count, and only while a query is up: the status line's other job is naming the selected
-	// scenario's output, which is the more useful thing to be saying once the typing has stopped.
-	if app.running || outline.is_blank_query(read_text(app, "#scenario-filter")) {
-		return
-	}
-	set_status(app, fmt.tprintf("%d of %d scenarios", len(shown), len(app.scenarios)))
 }
 
 /*
@@ -5924,6 +6262,12 @@ draw_scenarios :: proc(app: ^App) {
 	// same rule `current_view` and the pane segment follow) and scoring a hundred names costs less than
 	// keeping a second copy of the answer in step with it.
 	shown := visible_scenarios(app, context.temp_allocator)
+	total := len(app.scenarios)
+	set_text_at(
+		app,
+		"#scenario-count",
+		fmt.tprintf("%d scenario%s", total, "" if total == 1 else "s") if len(shown) == total else fmt.tprintf("%d of %d scenarios", len(shown), total),
+	)
 	if len(shown) == 0 {
 		sa.set_html(list, `<div class="empty">no scenario matches</div>`)
 		return
@@ -6120,9 +6464,16 @@ handle_drop :: proc(app: ^App, data: ^sa.Value) {
 			return
 		}
 		append(&argv, "--file", path)
+		// Remembered in the box (reported: a dropped file was gone once analysed), so `analyse` reads it
+		// again - `analyse_job` takes a box holding a path as that file.
+		set_input(app, "#deal", path)
 		start_job(
 			app,
-			Job{kind = .Analyse, argv = clone_strings(argv[:], app.allocator), want_page = read_bool(app, "#as-page")},
+			Job {
+				kind = .Analyse,
+				argv = clone_strings(argv[:], app.allocator),
+				want_page = !read_bool(app, "#as-text"),
+			},
 			fmt.tprintf("analysing %s…", filepath.base(path)),
 		)
 
@@ -6259,11 +6610,15 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		// share this field points at by default. A half-typed path resolves to nothing anyway, so the
 		// answer during typing would be noise as well as work.
 		if fe.code == .LOST {
-			if id, _ := sa.attribute(fe.target, "id", context.temp_allocator); id == "outdir" {
+			id, _ := sa.attribute(fe.target, "id", context.temp_allocator)
+			if id == "outdir" {
 				scan_outputs(app) // a different folder is a different set of files
 				draw_scenarios(app)
 				note_selected_page(app)
+				refresh_quiz(app) // and, when quizzes go there too, a different quiz page
 			}
+			// The settings' quiz fields are remembered on the way out too: a path is typed or pasted whole.
+			remember_quiz_pref(app, id)
 		}
 		return false
 	}
@@ -6299,8 +6654,15 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		}
 		return false
 	}
-	if be.code == .VALUE_CHANGED {
+	if be.code == .VALUE_CHANGED || be.code == .SELECTION_CHANGED {
 		id, _ := sa.attribute(be.target, "id", context.temp_allocator)
+		if id == "format" {
+			refresh_generate_label(app) // `regenerate` is per format
+			return false
+		}
+		if be.code != .VALUE_CHANGED {
+			return false
+		}
 		if id == "bml-goto-input" {
 			app.goto_sel = 0 // a new query is a new list; keeping the old row would highlight a stranger
 			draw_goto_list(app)
@@ -6328,6 +6690,10 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 	// that might not be there at all.
 	// A THEME button in the preferences view. By attribute, like the tabs: the three buttons are one
 	// control and their word is the pref's value.
+	if word, _ := sa.attribute(be.target, "data-gfx", context.temp_allocator); word != "" {
+		choose_graphics(app, word)
+		return true
+	}
 	if word, _ := sa.attribute(be.target, "data-theme", context.temp_allocator); word != "" {
 		if theme, known := theme_of(word); known {
 			choose_theme(app, theme)
@@ -6383,6 +6749,12 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 
 	case "analyse":
 		start_analyse(app)
+		return true
+
+	case "show-analysed":
+		if !show_analysed_page(app) {
+			set_status(app, "nothing analysed yet in this window")
+		}
 		return true
 
 	case "cancel":
@@ -6442,7 +6814,19 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		// cards page you were LOOKING at had no way out at all, and a browser is where a 48-deal page has
 		// more room, a find-in-page and a print. It acts on `shown_path` rather than on the selection, so
 		// what leaves is what is on screen; a page built in memory by `analyse` has no file and the button
-		// is dead for it, which is the honest answer rather than writing a temp file nobody asked for.
+		// was dead for it at first ("rather than writing a temp file nobody asked for") - and then it was asked
+		// for: an analysed match is a page like any other, and a browser is where it has room. So the analysed
+		// page is written to ONE file in the temp folder, replaced each time, and that is opened.
+		if app.showing_analysed && app.analysed_page != "" {
+			path, written := write_analysed_page(app.analysed_page)
+			if !written {
+				set_status(app, "the analysed page could not be written to the temp folder")
+				return true
+			}
+			open_in_browser(path)
+			set_status(app, fmt.tprintf("opened the analysed page in your browser (%s)", path))
+			return true
+		}
 		if app.shown_path == "" {
 			set_status(app, "nothing in the pane has a file to open — generate or pick one first")
 			return true
@@ -6466,6 +6850,7 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		// The list is the projection of what the run will cover. Read from the CHECKBOX rather than
 		// remembered - the same rule the pane segment and `current_view` follow.
 		draw_scenario_scope(app)
+		refresh_generate_label(app)
 		return true
 
 	case "deal-list-toggle":
@@ -6566,8 +6951,23 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		}
 		return true
 
+	case "bml-quiz":
+		made, why := generate_quiz(app)
+		bml_status(app, why)
+		if !made {
+			log.warnf("no quiz was written: %s", why)
+		}
+		return true
+
+	case "bml-quiz-open":
+		if app.quiz_path != "" {
+			open_in_browser(app.quiz_path)
+		}
+		return true
+
 	case "bml-save":
 		written, why := save_bml(app)
+		refresh_quiz(app) // a save can make the quiz older than its notes
 		bml_status(app, why)
 		if !written {
 			log.warnf("the bml file was not saved: %s", why)
@@ -6810,7 +7210,10 @@ main :: proc() {
 	//
 	// And what costs the most on this page is not the raster at all — it is layout. The card page's own board
 	// parking took a resize step at 48 boards from 124ms to 9ms. Reach for that first and this second.
-	choose_graphics_layer()
+	// The remembered choice (Settings, Graphics) is read HERE, from the prefs file, because the layer has to
+	// be set before the window exists - the full prefs load comes later, with the app.
+	early_prefs := prefs.load(prefs.default_path(context.temp_allocator), context.temp_allocator)
+	graphics_started := choose_graphics_layer(graphics_choice(&early_prefs))
 
 	window, werr := sa.create_window({width = 1120, height = 780, flags = flags})
 	if werr != nil {
@@ -6825,6 +7228,7 @@ main :: proc() {
 	app.on_posted = on_posted
 	app.allocator = context.allocator
 	app.selected = 0
+	app.graphics_started = graphics_started
 	// THE PREFS BEFORE THE SCENARIOS. The remembered pref (a file rather than the document's `@storage`:
 	// see `prefs/prefs.odin`) holds the scenario folders as well as the layout, and this used to be read a
 	// hundred lines further down — so `load_user_scenarios` saw no folders at startup, the deals list had
@@ -6919,9 +7323,22 @@ main :: proc() {
 		}
 	}
 
-	// The drag log, in debug builds: see `WB_DRAG_LOG` in the document's script.
-	when ODIN_DEBUG {
+	// The drag log: see `WB_DRAG_LOG` in the document's script. OPT-IN with `WORKBENCH_DRAG_LOG=1`, in any
+	// build. It was on for every debug build, and a debug build is what the other debug affordances need -
+	// so every drag of every divider printed a line per mouse move to the console. Reported: "all this
+	// debug should require some toggle".
+	app.drag_log_on = os.get_env("WORKBENCH_DRAG_LOG", context.temp_allocator) == "1"
+	if app.drag_log_on {
+		log.info("WORKBENCH_DRAG_LOG=1: every divider press, move and release is logged")
 		if result, err := sa.eval(window, "WB_DRAG_LOG = true"); err == nil {
+			sa.value_clear(&result)
+		}
+	}
+
+	// The frame log: see `wbFrameLog` in the document's script. OPT-IN with `WORKBENCH_FRAME_LOG=1`, for the
+	// question a windowless test cannot answer - how long a real window's frames take while it is resized.
+	if os.get_env("WORKBENCH_FRAME_LOG", context.temp_allocator) == "1" {
+		if result, err := sa.eval(window, "wbFrameLog()"); err == nil {
 			sa.value_clear(&result)
 		}
 	}
@@ -6944,7 +7361,6 @@ main :: proc() {
 	engine_text := fmt.tprintf("sciter %d.%d.%d.%d", engine[0], engine[1], engine[2], engine[3])
 	// Just the scenario count. The engine's version belongs to the About panel (which prints it, along with
 	// Odin's), and putting it here too crowded the About button on a narrow window — the two overlapped.
-	set_text_at(app, "#engine", fmt.tprintf("%d scenarios", len(app.scenarios)))
 
 	// The About panel's dynamic lines. The static ones — the Sciter attribution above all — are in the
 	// document, where they cannot be reworded by a format string.
@@ -6976,7 +7392,7 @@ main :: proc() {
 	show_view(app, .Panes)
 	transcribe_local(
 		app,
-		"Pick a scenario and press generate, or paste a deal below and press analyse. Everything runs in this process.",
+		"Pick a scenario and press generate, or put deals in the analyse box (paste them, or drop a .pbn, .lin or screenshot on the window) and press analyse. Everything runs in this process.",
 	)
 	if docs_note != "" {
 		transcribe_local(app, docs_note)
@@ -7006,7 +7422,7 @@ main :: proc() {
 	}
 	job_free(&app.job, app.allocator)
 	strings.builder_destroy(&app.transcript)
-	delete(app.page)
+	delete(app.page, app.allocator)
 	for name in app.bml_names {
 		delete(name, app.allocator)
 	}
@@ -7014,6 +7430,7 @@ main :: proc() {
 	delete(app.bml_open, app.allocator)
 	delete(app.docs, app.allocator)
 	delete(app.shown_path, app.allocator)
+	delete(app.analysed_page, app.allocator)
 	for name in app.scn_names {
 		delete(name, app.allocator)
 	}
@@ -7126,9 +7543,16 @@ spin :: proc(frames: int) {
 //
 // The `caps` number is the Direct2D-era rating (see the caller), not the layer in use, so it is labelled as
 // what it is rather than presented as an answer.
-choose_graphics_layer :: proc() {
+//
+// `remembered` is the Settings choice (`gpu` or `software`); `WORKBENCH_GFX` overrides it. Returns what this
+// run uses, for the settings view's note: `gpu`, `software`, or `env:<value>`.
+choose_graphics_layer :: proc(remembered: string) -> string {
 	caps, caps_ok := sa.graphics_caps()
 	wanted := strings.to_lower(os.get_env("WORKBENCH_GFX", context.temp_allocator), context.temp_allocator)
+	started := fmt.aprintf("env:%s", wanted) if wanted != "" else remembered // for the life of the app
+	if wanted == "" && remembered == "software" {
+		wanted = "raster"
+	}
 
 	layer: sciter.Gfx_Layer
 	switch wanted {
@@ -7140,7 +7564,7 @@ choose_graphics_layer :: proc() {
 			caps,
 			caps_ok,
 		)
-		return
+		return started
 	case "raster":
 		layer = .SKIA_RASTER
 	case "gpu":
@@ -7151,7 +7575,7 @@ choose_graphics_layer :: proc() {
 		layer = .SKIA_OPENGL
 	case:
 		fmt.eprintfln("graphics: WORKBENCH_GFX=%q is not one of gpu|vulkan|opengl|raster; using the default", wanted)
-		return
+		return started
 	}
 
 	err := sa.set_option(.SET_GFX_LAYER, uintptr(layer))
@@ -7163,6 +7587,7 @@ choose_graphics_layer :: proc() {
 		caps,
 		caps_ok,
 	)
+	return started
 }
 
 // Turn on the `sciter` media flag for a window. Its own document does not use it — `ui/workbench.css` is

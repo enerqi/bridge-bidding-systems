@@ -23,6 +23,7 @@ package main
 */
 
 import "core:fmt"
+import "core:strings"
 import win "core:sys/windows"
 
 import "../prefs"
@@ -165,4 +166,46 @@ draw_prefs :: proc(app: ^App) {
 	}
 	system := "light" if system_prefers_light() else "dark"
 	set_text_at(app, "#prefs-theme-note", fmt.tprintf("system is currently %s", system))
+	draw_graphics_prefs(app)
+	draw_quiz_prefs(app)
+}
+
+// The graphics choice: the remembered one lit, and a note saying whether it is what this run is using - it
+// is read once, before the window exists, so a change waits for the next start.
+draw_graphics_prefs :: proc(app: ^App) {
+	chosen := graphics_choice(&app.prefs)
+	for word in ([]string{"gpu", "software"}) {
+		if button := find(app, fmt.tprintf(`#prefs-panel [data-gfx="%s"]`, word)); button != nil {
+			sa.set_attribute(button, "class", "segbtn on" if word == chosen else "segbtn")
+		}
+	}
+	note := "in use now"
+	switch {
+	case strings.has_prefix(app.graphics_started, "env:"):
+		note = fmt.tprintf("WORKBENCH_GFX=%s is overriding this", app.graphics_started[len("env:"):])
+	case app.graphics_started != chosen:
+		note = "applies when the workbench next starts"
+	}
+	set_text_at(app, "#prefs-gfx-note", note)
+}
+
+// A graphics button was pressed: remember it. Nothing changes until the next start (see the note).
+choose_graphics :: proc(app: ^App, word: string) {
+	if app.prefs.values != nil {
+		prefs.set(&app.prefs, GRAPHICS_PREF, word)
+		if app.prefs_path != "" {
+			_ = prefs.save(&app.prefs, app.prefs_path)
+		}
+	}
+	draw_graphics_prefs(app)
+}
+
+GRAPHICS_PREF :: "graphics"
+
+// The remembered graphics choice, `gpu` (the default) or `software`.
+graphics_choice :: proc(p: ^prefs.Prefs) -> string {
+	if word, found := prefs.get(p, GRAPHICS_PREF); found && word == "software" {
+		return "software"
+	}
+	return "gpu"
 }

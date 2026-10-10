@@ -50,7 +50,6 @@
       <button class="tab" data-view="scenarios" title="Write and edit .scenario files"
               data-hint="Write your own scenarios as text: edit a .scenario file, check what it means and how often it happens, then save - saving puts it in the deals list.">scenarios</button>
     </div>
-    <span class="engine" id="engine"></span>
     <!-- SETTINGS, then ABOUT: the conventional top-right pair. Both are errands rather than places, opened
          from anywhere and left by going back (close, esc, ctrl+w). -->
     <button id="prefs" class="ghost small icon-text" title="Settings: theme"
@@ -118,6 +117,35 @@
         The notes preview and the hand pages keep their own light look in either theme: they are the
         published pages, shown as a reader will see them.
       </div>
+      <!-- GRAPHICS. The engine's drawing layer, chosen BEFORE the window exists, so a change applies at the
+           next start. (A slow resize first blamed on the GPU layer was the card page's vw/vh lengths - see
+           CLAUDE.md; the choice stays for a machine where one layer misbehaves.) -->
+      <div class="about-head">Graphics</div>
+      <div class="line">
+        <div class="seg" id="prefs-gfx">
+          <button class="segbtn" data-gfx="gpu" title="The graphics card (the engine's default)"
+                  data-hint="Draw with the graphics card - the engine's default. Fastest for scrolling and animation; on some machines resizing the window is slow.">gpu</button>
+          <button class="segbtn" data-gfx="software" title="Software drawing"
+                  data-hint="Draw in software. Resizing the window is much smoother; scrolling and animation can be a little slower on a very large window.">software</button>
+        </div>
+        <span class="barlabel" id="prefs-gfx-note"></span>
+      </div>
+      <!-- QUIZ. Where quiz pages go, and an OVERRIDE for the quiz template, which is otherwise built into the
+           program (see `workbench/quiz.odin`). Both remembered on leaving the field. -->
+      <div class="about-head">Quiz</div>
+      <div class="line">
+        <label for="prefs-quiz-dir" class="barlabel field-label">written to</label>
+        <input type="text" id="prefs-quiz-dir" class="wide" title="Where quiz pages are written"
+               data-hint="The folder the notes view's quiz button writes its pages to, as <file>-quiz.html. Empty means the deals folder."
+               placeholder="empty: the deals folder">
+      </div>
+      <div class="line">
+        <label for="prefs-quiz-template" class="barlabel field-label">template</label>
+        <input type="text" id="prefs-quiz-template" class="wide" title="A different quiz template (normally empty)"
+               data-hint="Normally empty: the quiz page's template is built into this program. A path here uses a different template file instead, for trying a newer quiz before it is built in. If that file cannot be used, the built-in one is."
+               placeholder="empty: the built-in template">
+      </div>
+      <div class="line"><span class="barlabel" id="prefs-quiz-note"></span></div>
       <div class="line">
         <button id="prefs-close" title="Close (esc, ctrl+w)">close</button>
       </div>
@@ -242,6 +270,20 @@
               data-hint="Explain what this editor is for and what the preview shows.">?</button>
       <!-- No close here either; the header's tabs are the way out, and the text stays in the editor. -->
       <span class="title" id="bml-status"></span>
+    </div>
+    <!-- THE QUIZ STRIP: a bidding quiz page made from the open file's bid tables, under the bar rather than in
+         it. The bar is one line by rule (`test_the_editor_bar_survives_a_narrow_window`) and was already full
+         at 720px; these two buttons say in WORDS what they do - "browser" alone read as "show the notes in a
+         browser" - and the line after them says whether this file has a quiz page and how old it is, so the
+         strip is where the quiz's state lives. Topics will go here too. The page runs WebAssembly, which this
+         engine does not, so it opens in a browser and is never shown in a pane. See `workbench/quiz.odin`. -->
+    <div class="quizbar" id="bml-quizbar" style="display: none">
+      <span class="barlabel quizlabel">quiz</span>
+      <button id="bml-quiz" class="ghost small" title="Make a bidding quiz page from this file's bid tables"
+              data-hint="Write a bidding quiz from this file's bid tables - the text in the editor, unsaved edits included - as one HTML page you can open in a browser or send to someone. Generating again replaces the page.">generate quiz</button>
+      <button id="bml-quiz-open" class="ghost small icon-text" style="display: none" title="Open the quiz page in your web browser"
+              data-hint="Open this file's quiz page in your web browser. The page is one self-contained file: copy it anywhere, it needs no server."><span class="away">↗</span>open quiz in browser</button>
+      <span class="barlabel quizstate" id="bml-quiz-state"></span>
     </div>
     <div class="panel-help" id="help-bml-text">
       These are the notes themselves - the <code>.bml</code> chapters this whole repository is written in,
@@ -515,15 +557,6 @@
              placeholder="created if missing; a relative path resolves against the working directory">
     </div>
 
-    <!-- WHICH FORMATS EXIST FOR THE SELECTED SCENARIO, and a way to open each of them. The window's
-         hierarchy is folder (the bar above) -> scenario (the list) -> FORMAT, and this is the level that
-         had nothing showing it: the pane could only ever open the NEWEST output, so a pbn written before
-         the page was unreachable without changing the format dropdown - which says what the next run will
-         write, not what is on disk. Filled by the host from one `read_dir`; hidden when the selection has
-         nothing. -->
-    <div class="outputs" id="outputs" style="display:none"
-         data-hint="The files that exist for the scenario selected in the list. Press one to open that format - the page in the pane, a pbn or text file as text, a handviewer page in your browser."></div>
-
     <!-- A PLAIN HORIZONTAL FLOW with ordinary `.divider` elements, NOT a `<frameset>` (2026-10-04). The frameset
          behavior was dropped after a run of measured faults, each found by a fix for the last: its `state`
          did not match its panes, a hidden pane still reported its old box, a `display: none` splitter broke
@@ -545,6 +578,10 @@
       </div>
       <div id="scenarios"
            data-hint="Each scenario is a bidding situation from this system. Pick one, then press generate."></div>
+      <!-- HOW MANY, under the list it counts: `111 scenarios`, or `12 of 111 scenarios` while the filter or
+           a group narrows it. It used to sit in the window's header beside settings/about, a long way from
+           the list, and the status line said the same thing only while typing. -->
+      <div class="foot" id="scenario-count"></div>
     </aside>
 
     <div class="divider"></div>
@@ -584,9 +621,14 @@
                  data-hint="Leave empty for different deals every run. Put a number in to get the SAME deals back — for comparing a change, or re-finding a hand.">
         </div>
         <div class="line">
-          <input type="checkbox" id="dd" title="Also run the double-dummy solver"
-                 data-hint="Also run the solver: it filters deals the scenario asks it to (only hands where game actually makes, say) and prints the par result on the page. Slower.">
-          <label for="dd">double-dummy hooks (--dd)</label>
+          <!-- PAR ON EVERY PAGE, not "double-dummy hooks (--dd)" (2026-10-09). That box switched on the
+               solver checks a FEW scenarios carry ("N/S make slam"), and nobody could remember what it
+               meant - without it those scenarios were not what their names said. Their checks are now
+               part of them, always on, and a scenario file asks for one with a `double-dummy:` line.
+               What is left to choose per run is whether every page shows its par. -->
+          <input type="checkbox" id="par" title="Solve every deal and show its par under the hand"
+                 data-hint="Solve every deal double dummy and show its par contract and what each side makes under the hand - for any scenario, your own included. Slower: every deal is solved. Scenarios that ask for the solver themselves (a slam that must make, say) always have it.">
+          <label for="par">par for every deal (slower)</label>
           <input type="checkbox" id="fixed" title="Same dealer and vulnerability every deal"
                  data-hint="Keep dealer and vulnerability the same on every deal instead of rotating them — one less thing changing while you practise.">
           <label for="fixed">fixed table</label>
@@ -600,19 +642,34 @@
                data-hint="How far through the scenarios this run is."><div id="fill"></div></div>
           <span class="status" id="status" data-hint="What the last run did, or why it would not start.">idle</span>
         </div>
+        <!-- WHICH FORMATS EXIST FOR THE SELECTED SCENARIO, and a way to open each of them. The window's
+             hierarchy is folder (the bar) -> scenario (the list) -> FORMAT, and this is the level that had
+             nothing showing it: the pane could only ever open the NEWEST output, so a pbn written before the
+             page was unreachable without changing the format dropdown - which says what the next run will
+             write, not what is on disk. Filled by the host from one `read_dir`; hidden when the selection has
+             nothing.
+
+             IN THE GENERATE PANEL, not a strip across the top of the view (2026-10-09). There it sat above the
+             analyse panel and the pane too, and read as a setting of everything below it (reported: "the
+             format buttons ... seem like they affect everything below given the positioning in the layout
+             hierarchy, but they are more relevant to the generate deals control box"). They are what
+             GENERATING has written for the selected scenario, so they sit with generate. -->
+        <div class="line outputs" id="outputs" style="display:none"
+             data-hint="What generate has already written for the scenario selected in the list. Press one to open that format - the page in the pane, a pbn or text file as text, a handviewer page in your browser."></div>
       </div>
 
-      <!-- Analyse: one deal you already have. PBN tag, bare N:..., a LIN record, or a pasted
-           bridge-site hand URL — whatever `analyse.resolve_boards` accepts. -->
+      <!-- Analyse: deals you already have, one or a whole file of boards. PBN tags, bare N:..., LIN
+           records (a vugraph .lin is a match), or a pasted bridge-site hand URL — whatever
+           `analyse.resolve_boards` accepts. -->
       <div class="panel">
         <div class="legend">
-          analyse one deal
+          analyse deals
           <button class="help-toggle ghost small" id="help-analyse" title="What does analysing do?"
                   data-hint="Explain what this panel is for.">?</button>
         </div>
         <div class="panel-help" id="help-analyse-text">
-          Takes one deal you already have — from a club result, a screenshot, a hand you misplayed — and
-          reports how the play goes. Give it declarer and dummy only (write both defenders as a single
+          Takes deals you already have — a hand from a club result, a screenshot or one you misplayed, or a
+          whole file of boards such as a match record — and reports how the play goes, board by board. Give it declarer and dummy only (write both defenders as a single
           <code>-</code>) and it works out every way the defenders' cards can lie. Give it all four hands
           and it solves the deal exactly. With <b>sample</b> above 0 it also deals the unknown cards out
           hundreds of times and solves each one, which is the honest "how often does this contract make".
@@ -621,8 +678,8 @@
           corrected and re-analysed); a .pbn or .lin is analysed straight; an .html page is opened.
         </div>
         <div class="line">
-          <textarea id="deal" title="A PBN tag, a bare N:..., a LIN record, or a hand URL"
-                    data-hint="Paste a deal: a PBN [Deal] tag, a bare N:… value, a LIN record, or the whole URL of a hand from BBO or IntoBridge — or drop a screenshot of a hand diagram anywhere on this window."
+          <textarea id="deal" title="PBN, a bare N:..., LIN, or a hand URL - one board or many"
+                    data-hint="Paste a deal or several: PBN (one [Deal] tag per board), a bare N:… value, LIN (a vugraph record holds a whole match), or the whole URL of a hand from BBO or IntoBridge — or drop a screenshot of a hand diagram, a .pbn or a .lin anywhere on this window."
                     placeholder='[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]  ·  or a bare N:..., a LIN record, a hand URL — or drop a screenshot on the window'></textarea>
         </div>
         <div class="line">
@@ -635,14 +692,36 @@
           <label for="target">target</label>
           <input type="text" id="target" class="num" value="0" title="Highlight the column for this many tricks"
                  data-hint="Highlight the trick count you need: 9 for 3NT, 10 for four of a major, 12 for a small slam.">
-          <input type="checkbox" id="as-page" title="Show the interactive hand page instead of the text report"
-                 data-hint="Draw the deal as the interactive hand page in the pane beside these controls — cards, the trick table and the play advice — instead of writing the text report into the pane below.">
-          <label for="as-page">as hand page</label>
-          <button id="analyse" title="Analyse the deal above"
-                  data-hint="Read the deal above and write the report into the pane below.">analyse</button>
-          <button id="clear" class="ghost" title="Empty the transcript"
-                  data-hint="Empties the pane below. Nothing on disk is touched.">clear</button>
         </div>
+        <!-- Three lines, as the generate panel has: the inputs, the option, then the buttons. On ONE line a
+             narrow controls column clipped the analyse button and broke "as text report" word by word
+             (reported with a screenshot). -->
+        <div class="line">
+          <!-- The hand page is what an analysis is FOR, so it is the default and the box names the exception
+               (asked for: "as hand page should be implicit ... as text report would be the new option"). -->
+          <input type="checkbox" id="as-text" title="Write the text report instead of showing the hand page"
+                 data-hint="Write the analysis as a text report into the report pane below instead of drawing the interactive hand page beside these controls.">
+          <label for="as-text">as text report</label>
+        </div>
+        <div class="line">
+          <button id="analyse" title="Analyse the deals in the box above"
+                  data-hint="Read the deal or deals above and write the report into the pane below.">analyse</button>
+          <button id="show-analysed" class="ghost" disabled title="Put the last analysed hand page back in the pane"
+                  data-hint="Shows the last hand page analyse made again - after a scenario's page has taken the pane - without analysing again.">show last</button>
+          <span class="busy" id="analyse-busy" style="display:none"
+                data-hint="An analysis is running. A file of boards counts them; one board with a big sample just takes a while."><i class="spinner"></i><span id="analyse-busy-text">analysing…</span><span class="track mini"><span id="analyse-fill"></span></span></span>
+          <span class="status" id="analyse-status" data-hint="What the last analyse did, or why it would not start."></span>
+        </div>
+      </div>
+
+      <!-- THE REPORT PANE'S OWN HEADER, holding the one control that acts on it. `clear` used to sit at the
+           end of the analyse panel's last line, where it read as clearing the analyse box (reported: "why
+           is the clear button in the analyze box when it affects the output pane"); generate writes here
+           too. Hidden with the pane while the group picker borrows its space. -->
+      <div class="report-head" id="report-head">
+        <span class="barlabel">report</span>
+        <button id="clear" class="ghost small" title="Empty the report pane"
+                data-hint="Empties the report pane below. Nothing on disk is touched.">clear</button>
       </div>
 
       <!-- `readonly`, because `<plaintext>` IS AN EDITOR. It was chosen for the report pane as a widget that
@@ -804,7 +883,10 @@
   function bmlColorizeLine(el) {
     var text = bmlLineText(el);
     if (text === null) return;
-    bmlClear(el, text.length, BML_MARKS);
+    // Only a line that was marked before has marks to clear. A freshly loaded buffer is all new line
+    // elements (no `bmlSeen` yet), and the clear's Range was ~40% of opening a chapter. A line element the
+    // widget REUSES still carries its `bmlSeen`, so it is still cleared.
+    if (typeof el.bmlSeen == "string") bmlClear(el, text.length, BML_MARKS);
     if (!text.length) return;
 
     if (BML_DIRECTIVE.test(text)) { bmlMark(el, 0, text.length, "bml-key"); return; }
@@ -1389,6 +1471,46 @@
   var WB_DRAG_LOG = false;
   function wbDragLog(what) {
     if (WB_DRAG_LOG) console.log("wb-drag " + what);
+  }
+
+  /* THE FRAME LOG (`WORKBENCH_FRAME_LOG=1`): while the window is being RESIZED, every gap between painted
+     frames longer than 40ms, with the window's size and whether the hand page is open - and, when a resize
+     stops, the burst's frame count and worst gap. Reported: "moving the workbench window around is smooth,
+     resizing is not". The cost is layout and paint inside the engine, which no host call can time; the gap
+     between animation frames is where it shows. Off otherwise: an endless frame loop is not free. */
+  function wbFrameLog() {
+    var last = Date.now(), resized = 0, frames = 0, worst = 0, slow = 0;
+    // The SIZE is compared on every frame rather than heard from a `resize` event: in this engine the event
+    // did not arrive (measured - the first version of this log printed nothing through a whole resize).
+    var root = document.documentElement, seenW = root.clientWidth, seenH = root.clientHeight;
+    function pageOpen() {
+      var p = document.$("#pageview");
+      if (!(p && p.style.getPropertyValue("display") != "none")) return "page closed";
+      var title = document.$("#page-title");
+      return "page open: " + (title ? title.textContent : "?");
+    }
+    function tick() {
+      var now = Date.now(), gap = now - last;
+      last = now;
+      if (root.clientWidth != seenW || root.clientHeight != seenH) {
+        seenW = root.clientWidth; seenH = root.clientHeight; resized = now;
+      }
+      if (now - resized < 300) {
+        frames += 1;
+        if (gap > worst) worst = gap;
+        if (gap > 40) {
+          slow += 1;
+          console.log("wb-frame " + gap + "ms at " + document.documentElement.clientWidth + "x" +
+                      document.documentElement.clientHeight + " (" + pageOpen() + ")");
+        }
+      } else if (frames > 0) {
+        console.log("wb-frame resize done: " + frames + " frames, " + slow + " over 40ms, worst " + worst + "ms (" + pageOpen() + ")");
+        frames = 0; worst = 0; slow = 0;
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    console.log("wb-frame logging frame gaps while the window is resized");
   }
 
   function wbIsDivider(element) {

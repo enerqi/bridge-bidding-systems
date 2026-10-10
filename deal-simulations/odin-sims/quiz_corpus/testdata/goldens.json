@@ -1,0 +1,78 @@
+{
+ "1c-opening.bml": {
+  "count": 1255,
+  "sha256": "b75f26766dec92effde20e1e070ffd2df2c92b5e9e4c6f91f42fc002fbf6a498"
+ },
+ "2club-opening.bml": {
+  "count": 407,
+  "sha256": "8fe4d915b1b95d2bb284064416e9de113f9efef4c04bb3959c07abdb09e070a1"
+ },
+ "2diamond-opening.bml": {
+  "count": 276,
+  "sha256": "41e5b9ca0120a1397659e4f6906248c237ed1f84d63808505ba80a124b969c1b"
+ },
+ "2level-preempts.bml": {
+  "count": 130,
+  "sha256": "4cd9e26b2890c0d54b417feb05cad7fbd123df797af741fbe987c022a1a4df78"
+ },
+ "2n-opening.bml": {
+  "count": 192,
+  "sha256": "e5ae0db696725bb039e695814a4223f4fddabffd057a0723d68eaa3dab134b3f"
+ },
+ "alternatives.bml": {
+  "count": 1014,
+  "sha256": "464b081c3d1c859674f5146cc944550dcc78531ba660af19271d2b89285e1b61"
+ },
+ "announcing.bml": {
+  "count": 0,
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "bidding-system.bml": {
+  "count": 7676,
+  "sha256": "f008d7e80358dcf4fa1739ac4b6e3e5d937c93e45187ec1ce043ec5001520bff"
+ },
+ "carding.bml": {
+  "count": 0,
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "competitive-bidding.bml": {
+  "count": 1756,
+  "sha256": "595b220b1f746695c30d47b209fe8c7d4a5519abb7c886f38a1a74eac3b28fba"
+ },
+ "high-openings.bml": {
+  "count": 142,
+  "sha256": "7ac0e97661fbc6ea88444c7b4f831824ecc4e622746186882e5c52d5b5ba5ca3"
+ },
+ "natural-system.bml": {
+  "count": 35,
+  "sha256": "68aadffa3b6db1a874df5b29c4ceddbc465889afc1eecffae6e8d635ab6a1fea"
+ },
+ "nt-bidding.bml": {
+  "count": 919,
+  "sha256": "9e2521dcf0d32148ff712481dcc0dafd4777c5a4cec96dabbeebe58d77148508"
+ },
+ "opening-summary.bml": {
+  "count": 155,
+  "sha256": "457c0c499fcc8e90f9730185890195bae57f2e05fa46e08d4eb95ad8f4fbea7e"
+ },
+ "scanian-natural.bml": {
+  "count": 1336,
+  "sha256": "d31c8aafa4239f95c1a0045b55fe0ecfd06de8de09468c18e334464877ae4426"
+ },
+ "slam-bidding.bml": {
+  "count": 200,
+  "sha256": "d73bb517e0860e26ff32b655f42fbceac5e1db0ca9f8f5fc1f1157df7d1d7ec7"
+ },
+ "squad-system.bml": {
+  "count": 1652,
+  "sha256": "1ce01424afde4e885ae36b4984494eea37a878c31e4ecda6b3f97769d477e232"
+ },
+ "uncontested-bidding.bml": {
+  "count": 2244,
+  "sha256": "0d645ee6111cd560a31cd2314a32ca5404f948ed460a40e4c05576ae586a448b"
+ },
+ "youth-improvements.bml": {
+  "count": 2097,
+  "sha256": "89db9e4e72d160e7e82df743743a558645e8d304ab7aae3055502a56b9286b44"
+ }
+}

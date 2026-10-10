@@ -69,10 +69,16 @@ render_page :: proc(
 	} else if n_full > 0 {
 		title = "Bridge deal analysis"
 	}
+	// A match record names itself: the event, the stage and the two teams, when every board is from it.
+	if match := match_title(boards); match != "" {
+		title = match
+	}
 	norn.render_page_prologue(&b, .Html_Cards, title)
-	for board in boards {
+	for board, i in boards {
+		report_progress(sink, i, len(boards))
 		render_board_body(&b, board, args, contract, has_contract, sink)
 	}
+	report_progress(sink, len(boards), len(boards))
 	norn.render_page_epilogue(&b, .Html_Cards)
 	return strings.to_string(b)
 }
@@ -91,6 +97,7 @@ render_full_deal_body :: proc(
 	has_contract: bool,
 ) {
 	norn.render_deal_html_cards(b, board.deal, false, board.known)
+	write_table_element(b, board.table) // after the compass: the page groups a board's elements from it
 	deal_solve.annotate(b, board.deal, .Html_Cards)
 	// Exact double-dummy grids (one per side) so the card page's contract picker + trick slider come alive
 	// on the known deal (spikes at each strain's DD tricks; the band relabels to "double-dummy (exact)").
@@ -110,7 +117,26 @@ render_full_deal_body :: proc(
 		strings.write_string(b, `></div>`)
 	}
 	strings.write_string(b, `<div class="cca-meta" data-known="all" hidden></div>`)
+	write_play_element(b, board)
 	combo.annotate(b, board.deal, .Html_Cards)
+}
+
+// The board's recorded play as the hidden `.play` element the card page replays it from, every card solved
+// double dummy (see deal_solve/play_cost.odin). Nothing for a board with no play or no contract. A failed
+// solve still writes the play, without the per-card numbers.
+write_play_element :: proc(b: ^strings.Builder, board: norn.Board) {
+	contract, has_contract := board.contract.?
+	play, has_play := board.play.?
+	if !has_contract || !has_play || play.count == 0 {
+		return
+	}
+	cost: Maybe(deal_solve.Play_Cost)
+	if c, ok := deal_solve.play_cost(board.deal, contract, play); ok {
+		cost = c
+	}
+	strings.write_string(b, `<div class="play" hidden data-play='`)
+	deal_solve.write_play_json(b, board.deal, contract, play, cost)
+	strings.write_string(b, `'></div>`)
 }
 
 // Bake the BLIND (DDS-sampled) advisor grids for BOTH partnerships of a known deal: `{"ns":<sim>,"ew":<sim>}`
@@ -212,6 +238,7 @@ render_board_body :: proc(
 	}
 
 	norn.render_deal_html_cards(b, board.deal, false, board.known)
+	write_table_element(b, board.table) // after the compass: the page groups a board's elements from it
 	// The real known side, so the CCA panel locks its toggle here (the other side is this pair duplicated).
 	fmt.sbprintf(b, `<div class="cca-meta" data-known="%s" hidden></div>`, deal_solve.side_key(side))
 
@@ -245,4 +272,107 @@ render_board_body :: proc(
 	strings.write_string(b, " hidden></div>\n")
 
 	combo.annotate(b, synth_deal(board, side), .Html_Cards)
+}
+
+// The board's identity, for the page: a hidden `.board-table` the script reads to label the board ("Board 13 ·
+// Open") and to put the players' names by their seats. Nothing for a board whose record names none of it.
+//
+//	{"n":13,"room":"Open","players":{"N":"BG PIT","E":"WEWEN","S":"JONI","W":"ANDRI"}}
+write_table_element :: proc(b: ^strings.Builder, table: norn.Board_Table) {
+	named := false
+	for name in table.players {
+		named = named || name != ""
+	}
+	if table.number == 0 && table.room == .Unknown && !named {
+		return
+	}
+	strings.write_string(b, `<div class="board-table" hidden data-table='`)
+	strings.write_byte(b, '{')
+	fmt.sbprintf(b, `"n":%d`, table.number)
+	if table.room != .Unknown {
+		fmt.sbprintf(b, `,"room":"%v"`, table.room)
+	}
+	if named {
+		strings.write_string(b, `,"players":{`)
+		for seat, i in norn.Seat {
+			if i > 0 {
+				strings.write_byte(b, ',')
+			}
+			fmt.sbprintf(b, `"%c":`, deal_solve.seat_letter(seat))
+			write_attr_json_string(b, table.players[seat])
+		}
+		strings.write_byte(b, '}')
+	}
+	strings.write_string(b, `}'></div>`)
+}
+
+// A JSON string that is safe inside a SINGLE-quoted HTML attribute: JSON's own escapes, plus `'`, `&` and `<`
+// as character references (the attribute is decoded before the script parses it). Names come from the record.
+write_attr_json_string :: proc(b: ^strings.Builder, s: string) {
+	strings.write_byte(b, '"')
+	for r in s {
+		switch r {
+		case '"':
+			strings.write_string(b, `\"`)
+		case '\\':
+			strings.write_string(b, `\\`)
+		case '\'':
+			strings.write_string(b, "&#39;")
+		case '&':
+			strings.write_string(b, "&amp;")
+		case '<':
+			strings.write_string(b, "&lt;")
+		case:
+			if r < 0x20 {
+				fmt.sbprintf(b, `\u%04x`, r)
+			} else {
+				strings.write_rune(b, r)
+			}
+		}
+	}
+	strings.write_byte(b, '"')
+}
+
+// "PORPROV SUMBAR X16 2026 · RR1-2 · KAB TANAH DATAR v KOTA PADANG", when every board shares one event; "" when
+// the boards name none, or several. Plain text: the page shell escapes nothing, so `<` and `&` are dropped.
+match_title :: proc(boards: []norn.Board) -> string {
+	if len(boards) == 0 || boards[0].table.event == "" {
+		return ""
+	}
+	first := boards[0].table
+	for board in boards[1:] {
+		if board.table.event != first.event || board.table.stage != first.stage {
+			return ""
+		}
+	}
+	parts := make([dynamic]string, context.temp_allocator)
+	append(&parts, first.event)
+	if first.stage != "" {
+		append(&parts, first.stage)
+	}
+	if first.teams[0] != "" && first.teams[1] != "" {
+		append(&parts, fmt.tprintf("%s v %s", collapse_spaces(first.teams[0]), collapse_spaces(first.teams[1])))
+	}
+	title := strings.join(parts[:], " \u00b7 ", context.temp_allocator)
+	title, _ = strings.remove_all(title, "<", context.temp_allocator)
+	title, _ = strings.remove_all(title, "&", context.temp_allocator)
+	return title
+}
+
+// "Board 13, open room" for the text report; "" when the record says neither.
+table_heading :: proc(table: norn.Board_Table) -> string {
+	switch {
+	case table.number > 0 && table.room != .Unknown:
+		return fmt.tprintf("board %d, %s room", table.number, table.room == .Open ? "open" : "closed")
+	case table.number > 0:
+		return fmt.tprintf("board %d", table.number)
+	}
+	return ""
+}
+
+// Runs of spaces as one ("KOTA  PADANG" as the operator typed it).
+@(private = "file")
+collapse_spaces :: proc(s: string) -> string {
+	fields := strings.fields(s, context.temp_allocator)
+	return strings.join(fields, " ", context.temp_allocator)
 }

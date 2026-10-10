@@ -57,6 +57,21 @@ write_program_into :: proc(b: ^strings.Builder, program: ^Program) {
 		strings.write_byte(b, '\n')
 	}
 
+	if dd, has := program.double_dummy.?; has {
+		strings.write_string(b, "  double-dummy: ")
+		strings.write_string(b, "north-south" if dd.side == .North_South else "east-west")
+		strings.write_string(b, " make ")
+		switch dd.goal {
+		case .Game:
+			strings.write_string(b, "game")
+		case .Slam:
+			strings.write_string(b, "slam")
+		case .Grand:
+			strings.write_string(b, "grand")
+		}
+		strings.write_byte(b, '\n')
+	}
+
 	for rule in program.rules {
 		strings.write_string(b, "  ")
 		strings.write_string(b, pair_word(rule.seat) if rule.pair else seat_word(rule.seat))

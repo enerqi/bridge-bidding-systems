@@ -143,6 +143,7 @@ parse_scenario :: proc(p: ^Parser) -> (program: Program, ok: bool) {
 	nodes := make([dynamic]Node, 0, 16, p.allocator)
 	rules := make([dynamic]Seat_Rule, 0, 4, p.allocator)
 	tags := make([dynamic]string, 0, 4, p.allocator)
+	double_dummy: Maybe(Double_Dummy)
 	p.nodes = nodes
 
 	for p.line_index < len(p.lines) {
@@ -158,7 +159,7 @@ parse_scenario :: proc(p: ^Parser) -> (program: Program, ok: bool) {
 
 		colon := strings.index_byte(line, ':')
 		if colon < 0 {
-			report(p, p.line_index, 1, "expected `key: value` — a seat, a partnership, or `tags:`")
+			report(p, p.line_index, 1, "expected `key: value` — a seat, a partnership, `double-dummy:` or `tags:`")
 			p.line_index += 1
 			continue
 		}
@@ -167,6 +168,19 @@ parse_scenario :: proc(p: ^Parser) -> (program: Program, ok: bool) {
 		value_col := strings.index(raw, value) + 1 if value != "" else colon + 2
 
 		switch {
+		case key == "double-dummy":
+			if _, already := double_dummy.?; already {
+				report(p, p.line_index, 1, "a scenario has one `double-dummy:` line")
+			} else if dd, dd_ok := parse_double_dummy(value); dd_ok {
+				double_dummy = dd
+			} else {
+				report(
+					p,
+					p.line_index,
+					value_col,
+					"expected `double-dummy: <north-south|east-west> make <game|slam|grand>`",
+				)
+			}
 		case key == "tags":
 			for tag in strings.split(value, ",", context.temp_allocator) {
 				trimmed := strings.trim_space(tag)
@@ -185,7 +199,7 @@ parse_scenario :: proc(p: ^Parser) -> (program: Program, ok: bool) {
 					p,
 					p.line_index,
 					1,
-					"unknown key — expected a seat (north/east/south/west), a partnership (north-south/east-west) or `tags`",
+					"unknown key — expected a seat (north/east/south/west), a partnership (north-south/east-west), `double-dummy` or `tags`",
 				)
 				p.line_index += 1
 				continue
@@ -223,10 +237,41 @@ parse_scenario :: proc(p: ^Parser) -> (program: Program, ok: bool) {
 			tags = tags[:],
 			rules = rules[:],
 			nodes = p.nodes[:],
+			double_dummy = double_dummy,
 			source = strings.clone(p.file, p.allocator),
 			allocator = p.allocator,
 		},
 		true
+}
+
+// `north-south make slam`: a side, `make` (or `makes`), and game / slam / grand. `small slam` and
+// `grand slam` are the same goals spelled out, since that is how people say them.
+@(private)
+parse_double_dummy :: proc(value: string) -> (dd: Double_Dummy, ok: bool) {
+	words := strings.fields(folded(value), context.temp_allocator)
+	if len(words) < 3 || (words[1] != "make" && words[1] != "makes") {
+		return {}, false
+	}
+	switch words[0] {
+	case "north-south":
+		dd.side = .North_South
+	case "east-west":
+		dd.side = .East_West
+	case:
+		return {}, false
+	}
+	goal := strings.join(words[2:], " ", context.temp_allocator)
+	switch goal {
+	case "game":
+		dd.goal = .Game
+	case "slam", "small slam", "small-slam":
+		dd.goal = .Slam
+	case "grand", "grand slam", "grand-slam":
+		dd.goal = .Grand
+	case:
+		return {}, false
+	}
+	return dd, true
 }
 
 // Skip to the next scenario after a bad header, so one broken scenario costs one diagnostic rather than

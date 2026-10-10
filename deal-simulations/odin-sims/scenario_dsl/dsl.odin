@@ -50,6 +50,19 @@ package scenario_dsl
 	nowhere to live. That would need seat-qualified atoms (`north.spades`), not added until a scenario
 	asks for one.
 
+	A DOUBLE-DUMMY LINE asks the solver about the WHOLE deal, after the seat lines have accepted it:
+
+			scenario slam-zone "N-S hold 32+ between them and a major fit"
+			  north-south: hcp >= 32 and (spades >= 8 or hearts >= 8)
+			  double-dummy: north-south make slam
+
+	`<north-south|east-west> make <game|slam|grand>` - game is 3NT, four of a major or five of a minor, slam
+	12 tricks and grand 13, in any strain with either hand declaring. A deal the side cannot make it on is
+	thrown away, and each kept deal's page shows its par and what each side makes. It is the expensive line:
+	every deal the seat lines accept is solved, so the seat lines should do most of the narrowing. This
+	package only RECORDS it (`Program.double_dummy`) - the solver is linked by the consumer (`sim_hooks`),
+	which keeps this language free of it.
+
 	WHY THE VOCABULARY IS INJECTED rather than imported: this package would otherwise depend on
 	`bidding`, which is this repository's editorial content, and a language is not. Same seam as
 	`combo.set_suit_book(suit_book.provider())`. It depends on `norn` freely — that IS the generic layer.
@@ -154,6 +167,23 @@ Node :: union {
 	Or_Node,
 }
 
+// A `double-dummy:` line: which side, and what it must make. See the header.
+Makes_Side :: enum {
+	North_South,
+	East_West,
+}
+
+Makes_Goal :: enum {
+	Game,
+	Slam,
+	Grand,
+}
+
+Double_Dummy :: struct {
+	side: Makes_Side,
+	goal: Makes_Goal,
+}
+
 // One seat's condition: which seat, and the root of its tree. With `pair` set it is a PARTNERSHIP line —
 // `seat` and its partner read as one combined hand — and `seat` is then North or East, the first word of
 // `north-south` / `east-west`.
@@ -171,13 +201,14 @@ as soon as it is parsed and a scenario lives for the whole run; `allocator` is r
 `destroy_program` gives the memory back to the one it came from without the caller having to.
 */
 Program :: struct {
-	name:        string,
-	description: string,
-	tags:        []string,
-	rules:       []Seat_Rule,
-	nodes:       []Node,
-	source:      string, // the file it came from, for diagnostics and for the UI to show
-	allocator:   runtime.Allocator,
+	name:         string,
+	description:  string,
+	tags:         []string,
+	rules:        []Seat_Rule,
+	nodes:        []Node,
+	double_dummy: Maybe(Double_Dummy), // the `double-dummy:` line, if the scenario has one
+	source:       string, // the file it came from, for diagnostics and for the UI to show
+	allocator:    runtime.Allocator,
 }
 
 destroy_program :: proc(program: ^Program) {
