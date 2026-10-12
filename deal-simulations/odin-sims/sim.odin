@@ -29,6 +29,7 @@ import "bidding"
 import "deal_solve"
 import "norn:cli"
 import "norn:combo"
+import "norn:norn"
 import "scenario_dsl"
 import "sim_hooks"
 import "suit_book"
@@ -41,6 +42,9 @@ run_sim :: proc() -> int {
 	// solves unless a scenario with a double-dummy hook runs, or `--par` is passed. See `deal_solve`.
 	deal_solve.init()
 	defer deal_solve.shutdown()
+
+	// Where a card page's Share button sends its link: a published shared-deals player (SHARING_PLAN.md).
+	norn.share_player = os.get_env("SHARE_PLAYER", context.allocator)
 
 	// USER-AUTHORED SCENARIOS, from wherever the user keeps them. `--scenarios <dir>` is consumed HERE
 	// rather than in norn's parser, and that is deliberate: `norn:cli` must not know about

@@ -141,6 +141,10 @@ lint *args:
 	odin check sim.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check analyse_deal.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check sim_hooks {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+	odin check par_caption {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+	odin check share {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+	odin check player {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
+	odin check player {{norn}} -target:js_wasm32 -define:COMBO_THREADS=false -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check workbench {{norn}} {{dds}} {{sciter}} {{markup}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check page_check.odin -file {{norn}} {{dds}} {{sciter}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check bml2html.odin -file {{markup}} -vet -vet-cast -strict-style -vet-tabs {{args}}
@@ -369,3 +373,42 @@ test-golden: mktarget_dirs
 [group('test')]
 test-sanitize kind="address" *args: mktarget_dirs
 	odin test bidding {{norn}} -debug -file -sanitize:{{kind}} -out:{{ target_path("debug", f"sanitize-{{kind}}-{{test_main_name}}") }} {{args}}
+
+
+# =========================================================== share ========
+#
+# SHARING_PLAN.md, Tier B: a card page as a LINK. `share/` is the payload and the page rebuilt from it;
+# `player/` is the one fixed page (norn + combo compiled to wasm) that a link opens.
+
+# Odin's own JS runtime for js_wasm32: it has to match the compiler, so it is read from the toolchain.
+odin_js := join(shell("odin root"), "core", "sys", "wasm", "js", "odin.js")
+player_dir := join("target", "player")
+
+# the share format's unit tests (a generated page -> link -> the same page, byte for byte)
+[group('test')]
+test-share *args: mktarget_dirs
+	odin test share {{norn}} -vet -strict-style -out:{{ target_path("debug", "share-test.exe") }} {{args}}
+
+# build the shared-deals player page -> target/player/player.html (publish it once, anywhere static)
+[group('share')]
+player:
+	uv run --no-project -p 3.14 python -c "import pathlib; pathlib.Path(r'{{ player_dir }}').mkdir(parents=True, exist_ok=True)"
+	odin build player {{norn}} -target:js_wasm32 -o:speed -define:COMBO_THREADS=false -vet -strict-style -out:{{ join(player_dir, "player.wasm") }}
+	uv run --no-project -p 3.14 --script player/build_page.py {{ join(player_dir, "player.wasm") }} "{{ odin_js }}" {{ join(player_dir, "player.html") }}
+
+# rebuild the player and copy it into ui/, where the workbench's `share link` button bundles it (then rebuild the workbench)
+[group('share')]
+[script]
+vendor-player: player
+	import shutil
+	from pathlib import Path
+	target = Path("ui") / "player.html"
+	shutil.copyfile(Path(r"{{ join(player_dir, "player.html") }}"), target)
+	print(f"{target}: {target.stat().st_size:,} bytes - now rebuild the workbench (just sims workbench)")
+
+# the player in wasm against native pages: a generated page's link must rebuild it byte for byte (needs node)
+[group('test')]
+test-player count="48" seed="12345": player
+	odin build player {{norn}} {{dds}} -o:speed -out:{{ join(player_dir, "native.exe") }}
+	{{ join(player_dir, "native.exe") }} {{count}} {{seed}} {{ player_dir }}
+	node player/check.mjs {{ join(player_dir, "player.wasm") }} "{{ odin_js }}" {{ player_dir }} {{ join("share", "testdata", "golden_links.txt") }}

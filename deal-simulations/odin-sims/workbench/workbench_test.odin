@@ -32,6 +32,7 @@ import "../outline"
 import "../prefs"
 import "../preview"
 import "../scenario_dsl"
+import "../share"
 import bml "markup:."
 import "norn:cli"
 import "norn:combo"
@@ -308,6 +309,30 @@ test_the_about_panel_toggles :: proc(t: ^testing.T) {
 	testing.expect_value(t, effective_display(&app, ".panes"), "block")
 }
 
+// Pressing about (or settings) a second time closes it, and the errands never send each other back and
+// forth. Reported: about pressed twice left close/esc/ctrl+w with nowhere to go back to.
+@(test)
+test_an_errand_pressed_again_goes_back :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	show_about(&app, true)
+	show_about(&app, true)
+	testing.expect_value(t, current_view(&app), View.Panes)
+
+	show_prefs(&app, true)
+	show_prefs(&app, true)
+	testing.expect_value(t, current_view(&app), View.Panes)
+
+	// about -> settings -> about, then close: back to the panes, not to settings.
+	show_about(&app, true)
+	show_prefs(&app, true)
+	show_about(&app, true)
+	show_about(&app, false)
+	testing.expect_value(t, current_view(&app), View.Panes)
+}
+
 // An element's `display` as the engine has it — the stylesheet's value until the host sets an inline one.
 @(private = "file")
 effective_display :: proc(app: ^App, selector: string) -> string {
@@ -478,7 +503,11 @@ test_every_control_is_documented :: proc(t: ^testing.T) {
 			"#bml-quiz-open",
 			"#prefs-quiz-template",
 			"#prefs-quiz-dir",
-			"#bml-preview",
+			"#prefs-share-player",
+			"#page-share",
+			`.segbtn[data-preview="closed"]`,
+			`.segbtn[data-preview="split"]`,
+			`.segbtn[data-preview="wide"]`,
 			"#bml-save",
 			"#help-bml",
 			"#bml-text",
@@ -1333,7 +1362,7 @@ test_the_format_key_only_visits_formats_that_exist :: proc(t: ^testing.T) {
 	if formats_for(&app, name) == {} {
 		press_key(&app, .O, ctrl = true)
 		pump(&app)
-		said, _ := sa.text(find(&app, "#status"), context.temp_allocator)
+		said, _ := sa.text(find(&app, "#hint"), context.temp_allocator)
 		testing.expectf(
 			t,
 			strings.contains(said, name),
@@ -1398,7 +1427,7 @@ test_the_groups_button_opens_the_picker_and_lights_when_it_matters :: proc(t: ^t
 	pump(&app)
 
 	button := find(&app, "#deal-groups")
-	testing.expect(t, button != nil, "the deals bar has no groups button")
+	testing.expect(t, button != nil, "the scenario list has no groups button")
 	if button == nil {return}
 
 	// Nothing selected: the button is there and unlit, and the picker is shut.
@@ -1523,7 +1552,7 @@ test_the_filter_keys_reach_the_field :: proc(t: ^testing.T) {
 	testing.expect(t, scenario_list_shown(&app), "CTRL+R should unfold the list it filters")
 
 	input := find(&app, "#scenario-filter")
-	testing.expect(t, input != nil, "the deals bar has no filter field")
+	testing.expect(t, input != nil, "the scenario list has no filter field")
 	if input == nil {return}
 	state, serr := sa.element_state(input)
 	testing.expect_value(t, serr, nil)
@@ -1592,6 +1621,75 @@ test_the_generate_argv_is_valid_to_norns_parser :: proc(t: ^testing.T) {
 	testing.expect_value(t, seed, u64(7))
 	_, is_generate := opts.mode.(cli.Generate)
 	testing.expect(t, is_generate)
+}
+
+// The window's note lives in the hint bar, and a hover hint covers it only for as long as the hover.
+@(test)
+test_the_note_comes_back_after_a_hover :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	set_note(&app, "zoom 120%")
+	shown, _ := sa.text(find(&app, "#hint"), context.temp_allocator)
+	testing.expect_value(t, shown, "zoom 120%")
+	show_hint(&app, "a control's hint")
+	hovered, _ := sa.text(find(&app, "#hint"), context.temp_allocator)
+	testing.expect_value(t, hovered, "a control's hint")
+	show_hint(&app, "")
+	back, _ := sa.text(find(&app, "#hint"), context.temp_allocator)
+	testing.expect_value(t, back, "zoom 120%")
+}
+
+// An analyse refused before it starts (nothing in the box) says so in the ANALYSE panel, not beside the
+// generate button (reported: "why is this section used as a user feedback ... it's the wrong section").
+@(test)
+test_a_refused_analyse_says_so_in_its_own_panel :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	set_status(&app, "idle")
+	set_input(&app, "#deal", "")
+	start_analyse(&app)
+	said, _ := sa.text(find(&app, "#analyse-status"), context.temp_allocator)
+	testing.expectf(t, strings.contains(said, "paste a deal"), "the analyse panel should say why: %q", said)
+	status, _ := sa.text(find(&app, "#status"), context.temp_allocator)
+	testing.expect_value(t, status, "idle")
+	testing.expect(t, !app.running, "nothing should have started")
+}
+
+// A format with no use for par or a fixed table greys the box and leaves the flag out of the run, even
+// with the box still ticked (asked for: "par for every deal does not apply to all formats").
+@(test)
+test_switches_a_format_has_no_use_for_are_greyed :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	type_into(&app, "#outdir", "C:/tmp/deals")
+	tick(&app, "#par")
+	tick(&app, "#fixed")
+	for c in ([]struct {
+			format:     string,
+			par, fixed: bool,
+		}{{"html-cards", true, true}, {"pbn", true, false}, {"lin", false, true}, {"line", false, false}}) {
+		set_input(&app, "#format", c.format)
+		refresh_generate_label(&app)
+		testing.expectf(t, is_disabled(&app, "#par") == !c.par, "%s: par box enabled should be %v", c.format, c.par)
+		testing.expectf(t, is_disabled(&app, "#fixed") == !c.fixed, "%s: fixed box enabled should be %v", c.format, c.fixed)
+		job, err := generate_job(&app)
+		testing.expect_value(t, err, "")
+		testing.expectf(t, slice.contains(job.argv, "--par") == c.par, "%s: --par in the run should be %v", c.format, c.par)
+		testing.expectf(
+			t,
+			slice.contains(job.argv, "--fixed-table") == c.fixed,
+			"%s: --fixed-table in the run should be %v",
+			c.format,
+			c.fixed,
+		)
+		job_free(&job, app.allocator)
+	}
 }
 
 // `every scenario` is what turns one job into the whole registry — the batch the `gen-all` recipe runs.
@@ -2071,6 +2169,11 @@ test_the_formats_that_exist_are_visible_and_pressable :: proc(t: ^testing.T) {
 		refresh_generate_label(&app)
 		label, _ := sa.text(find(&app, "#generate"), context.temp_allocator)
 		testing.expectf(t, label == c.label, "%s: the button says %q, want %q", c.format, label, c.label)
+		// And the line under the format says where the run writes, in THAT format, and whether it replaces.
+		note, _ := sa.text(find(&app, "#output-note"), context.temp_allocator)
+		want := fmt.tprintf("%s%s", app.scenarios[app.selected].name, extension_for(c.format))
+		testing.expectf(t, strings.has_suffix(note, want), "%s: the note says %q, want it to end %q", c.format, note, want)
+		testing.expectf(t, strings.has_prefix(note, "replaces " if c.label == "regenerate" else "writes "), "%s: %q", c.format, note)
 	}
 	set_input(&app, "#format", "html-cards")
 	refresh_generate_label(&app)
@@ -2606,16 +2709,14 @@ check_the_bar_lines_up :: proc(t: ^testing.T, app: ^App, step: int) {
 	bar_centre := bar_box.y + bar_box.height / 2
 
 	// ONE CENTRE LINE for everything in the row.
+	// (The filter, the groups, the folder and `every scenario` left the bar on 2026-10-10 - the first three
+	// for the head of the scenario list, the last for the generate panel. What is left is the window's
+	// layout: the list fold and the pane segment.)
 	for selector in ([]string {
 			"#deal-list-toggle",
-			".bar #scenario-filter",
-			"#all",
-			".barlabel-check",
-			// SCOPED to the deals bar: the settings view has a `.seg` and a label of its own, and an unscoped
-			// `find` takes the first in the document - a hidden one, at 0.
+			// SCOPED to the deals bar: the settings view has a `.seg` of its own, and an unscoped `find` takes
+			// the first in the document - a hidden one, at 0.
 			".panes .bar .seg",
-			".panes .bar .barlabel",
-			".bar #outdir",
 		}) {
 		element := find(app, selector)
 		testing.expectf(t, element != nil, "the bar is missing %s", selector)
@@ -2944,9 +3045,9 @@ test_every_scenario_shows_itself_in_the_list :: proc(t: ^testing.T) {
 	defer sa.detach_window_handler(app.window, &app.handler)
 	pump(&app)
 
-	// It lives in the BAR, beside the list control - not in the generate panel with the run settings.
-	box := find(&app, ".bar #all")
-	testing.expect(t, box != nil, "`every scenario` is not in the bar")
+	// A setting of the generate run (it was in the bar until 2026-10-10), and the list shows it.
+	box := find(&app, "#generate-body #all")
+	testing.expect(t, box != nil, "`every scenario` is not in the generate panel")
 	if box == nil {return}
 	list := find(&app, "#scenarios")
 	testing.expect(t, list != nil, "no scenario list")
@@ -3003,28 +3104,24 @@ test_the_deals_folder_decides_what_there_is_to_show :: proc(t: ^testing.T) {
 	defer sa.detach_window_handler(app.window, &app.handler)
 	pump(&app)
 
-	// It lives in the BAR now, on the same row as the pane segment, rather than in the generate panel.
-	field := find(&app, ".bar #outdir")
-	testing.expect(t, field != nil, "the deals folder is not in the bar")
+	// It heads the SCENARIO LIST (2026-10-10; it was in the bar): above the rows it decides the tags of.
+	field := find(&app, "#scenario-list #outdir")
+	testing.expect(t, field != nil, "the deals folder is not at the head of the scenario list")
+	rows := find(&app, "#scenarios")
 	segment := find(&app, `.segbtn[data-pane="split"]`)
-	if field == nil || segment == nil {return}
+	if field == nil || rows == nil || segment == nil {return}
 	field_box, ferr := sa.location(field, .Border, .Root)
-	segment_box, serr := sa.location(segment, .Border, .Root)
+	rows_box, rerr := sa.location(rows, .Border, .Root)
 	testing.expect_value(t, ferr, nil)
-	testing.expect_value(t, serr, nil)
+	testing.expect_value(t, rerr, nil)
 	testing.expectf(
 		t,
-		abs(field_box.y - segment_box.y) < field_box.height,
-		"the folder (y=%d) and the segment (y=%d) should share the bar's row",
-		field_box.y,
-		segment_box.y,
+		field_box.y + field_box.height <= rows_box.y,
+		"the folder (bottom %d) should sit above the rows (top %d)",
+		field_box.y + field_box.height,
+		rows_box.y,
 	)
-	testing.expectf(
-		t,
-		field_box.width > 100,
-		"the folder field is %dpx wide - it takes the bar's slack",
-		field_box.width,
-	)
+	testing.expectf(t, field_box.width > 100, "the folder field is %dpx wide - it takes the row's slack", field_box.width)
 
 	app.selected = 0
 	name := app.scenarios[0].name
@@ -3660,6 +3757,37 @@ test_the_bml_corpus_is_found_by_walking_up :: proc(t: ^testing.T) {
 	}
 	// Sorted, because the picker shows them in this order and the first one is what the editor opens.
 	testing.expect(t, slice.is_sorted(names), "the file list should be sorted by name")
+}
+
+// The file list is an INCLUDE TREE: roots alphabetical, each followed by what it includes, one level deeper.
+// A file two documents include is under both; a cycle is not followed round, and its files are still listed.
+@(test)
+test_the_bml_files_are_listed_as_an_include_tree :: proc(t: ^testing.T) {
+	dir := scratch_scenario_dir(t, "wb-bml-tree")
+	if dir == "" {return}
+	files := [][2]string {
+		{"zeta.bml", "#INCLUDE beta.bml\n#INCLUDE alpha.bml\n"},
+		{"alpha.bml", "* alpha\n#INCLUDE gamma.bml\n"},
+		{"beta.bml", "* beta\n"},
+		{"gamma.bml", "* gamma\n"},
+		{"solo.bml", "#INCLUDE beta.bml\n#INCLUDE missing.bml\n"},
+		{"x.bml", "#INCLUDE y.bml\n"},
+		{"y.bml", "#INCLUDE x.bml\n"},
+	}
+	for f in files {
+		if !write_scenario_file(dir, f[0], f[1]) {return}
+	}
+	names := list_bml_files(dir, context.temp_allocator)
+	rows := bml_file_tree(dir, names, context.temp_allocator)
+	got := strings.builder_make(context.temp_allocator)
+	for row in rows {
+		fmt.sbprintf(&got, "%d:%s ", row.depth, row.name)
+	}
+	testing.expect_value(
+		t,
+		strings.to_string(got),
+		"0:solo.bml 1:beta.bml 0:zeta.bml 1:alpha.bml 2:gamma.bml 1:beta.bml 0:x.bml 1:y.bml ",
+	)
 }
 
 // Opening a file fills the widget and the picker agrees with it afterwards.
@@ -4465,6 +4593,11 @@ test_the_editor_split_gives_both_halves_a_box :: proc(t: ^testing.T) {
 
 	if !editor_corpus(t, &app) {return}
 	show_editor(&app)
+	// The preview pane starts CLOSED (2026-10-10: it carries its own head now, and an empty pane with a
+	// fold button over nothing said the preview was up when `preview` said it was not). Open, as `preview`
+	// would.
+	set_shown(&app, "#bml-preview-pane", true)
+	defer set_shown(&app, "#bml-preview-pane", false)
 	pump(&app)
 
 	view, verr := sa.location(find(&app, "#editview"), .Border, .Root)
@@ -4792,7 +4925,9 @@ test_the_editor_bar_survives_a_narrow_window :: proc(t: ^testing.T) {
 			"#bml-links",
 			"#bml-quiz",
 			"#bml-quiz-open",
-			"#bml-preview",
+			`.segbtn[data-preview="closed"]`,
+			`.segbtn[data-preview="split"]`,
+			`.segbtn[data-preview="wide"]`,
 			"#bml-save",
 		}) {
 		element := find(&app, selector)
@@ -5528,7 +5663,7 @@ test_a_document_with_a_diagnostic_still_shows_the_preview_pane :: proc(t: ^testi
 	rendered, why := preview_bml(&app)
 	testing.expectf(t, rendered, "a document with a diagnostic still renders: %s", why)
 	testing.expect(t, app.bml_showing, "the pane has to be up, diagnostic or not")
-	testing.expect(t, !effective_display_is_hidden(&app, "#bml-page"), "the frame must be on screen")
+	testing.expect(t, !effective_display_is_hidden(&app, "#bml-preview-pane"), "the frame must be on screen")
 	// And the diagnostic is still what the status line reports, since that is the useful half.
 	testing.expect(t, len(why) > 0 && strings.contains(why, "marked"), fmt.tprintf("no diagnostic reported: %q", why))
 }
@@ -6345,7 +6480,7 @@ test_ctrl_plus_and_minus_and_zero_are_the_zoom_keys :: proc(t: ^testing.T) {
 
 	// And the status line says what happened, since a zoom has no other announcement.
 	press(root, .EQUAL, true)
-	status, _ := sa.text(find(&app, "#status"), context.temp_allocator)
+	status, _ := sa.text(find(&app, "#hint"), context.temp_allocator)
 	testing.expectf(t, strings.contains(status, "zoom"), "the status should report the zoom: %q", status)
 	press(root, .NUM_0, true)
 }
@@ -6470,9 +6605,11 @@ test_a_big_document_opens_on_one_section :: proc(t: ^testing.T) {
 	testing.expect(t, strings.contains(why, "folded"), "a big document should open folded")
 }
 
-// The preview is a TOGGLE, and closing it is what hands the rendered document back to the engine.
+// The preview is the deals view's three-position control: closed, beside the source, the whole width. The lit
+// segment is where it IS, wide puts the source away (not the file list), and closing hands the rendered
+// document back and brings the source back.
 @(test)
-test_the_preview_button_closes_the_preview :: proc(t: ^testing.T) {
+test_the_preview_segment_has_three_positions :: proc(t: ^testing.T) {
 	app: App
 	if !test_app(t, &app) {return}
 	defer test_app_destroy(&app)
@@ -6489,19 +6626,59 @@ test_the_preview_button_closes_the_preview :: proc(t: ^testing.T) {
 	set_bml_source(&app, "* One\n\n1C = strong\n")
 	pump(&app)
 
-	click(&app, "#bml-preview")
-	pump(&app)
-	testing.expect(t, app.bml_showing, "the first press should show the preview")
-	testing.expect(t, !effective_display_is_hidden(&app, "#bml-page"), "the pane should be on screen")
-	label, _ := sa.text(find(&app, "#bml-preview"), context.temp_allocator)
-	testing.expect_value(t, strings.trim_space(label), "close")
+	lit :: proc(app: ^App) -> string {
+		for name in ([]string{"closed", "split", "wide"}) {
+			class, _ := sa.attribute(find(app, fmt.tprintf(`.segbtn[data-preview="%s"]`, name)), "class", context.temp_allocator)
+			if strings.contains(class, "on") {
+				return name
+			}
+		}
+		return ""
+	}
+	testing.expect_value(t, lit(&app), "closed")
 
-	click(&app, "#bml-preview")
+	click(&app, `.segbtn[data-preview="split"]`)
 	pump(&app)
-	testing.expect(t, !app.bml_showing, "the second press should close it")
-	testing.expect(t, effective_display_is_hidden(&app, "#bml-page"), "the pane should be off screen")
-	closed_label, _ := sa.text(find(&app, "#bml-preview"), context.temp_allocator)
-	testing.expect_value(t, strings.trim_space(closed_label), "preview")
+	testing.expect(t, app.bml_showing, "beside should show the preview")
+	testing.expect(t, !effective_display_is_hidden(&app, "#bml-preview-pane"), "the pane should be on screen")
+	testing.expect(t, !effective_display_is_hidden(&app, "#bml-source"), "beside keeps the source")
+	testing.expect_value(t, lit(&app), "split")
+
+	click(&app, `.segbtn[data-preview="wide"]`)
+	pump(&app)
+	testing.expect(t, effective_display_is_hidden(&app, "#bml-source"), "wide puts the source away")
+	testing.expect(t, !effective_display_is_hidden(&app, "#bml-files"), "wide leaves the file list to ctrl+b")
+	testing.expect_value(t, lit(&app), "wide")
+
+	click(&app, `.segbtn[data-preview="closed"]`)
+	pump(&app)
+	testing.expect(t, !app.bml_showing, "closed should close it")
+	testing.expect(t, effective_display_is_hidden(&app, "#bml-preview-pane"), "the pane should be off screen")
+	testing.expect(t, !effective_display_is_hidden(&app, "#bml-source"), "closing a wide preview brings the source back")
+	testing.expect_value(t, lit(&app), "closed")
+
+	// And the key steps round in the segment's order.
+	for want in ([]string{"split", "wide", "closed"}) {
+		cycle_preview_mode(&app)
+		pump(&app)
+		testing.expect_value(t, lit(&app), want)
+	}
+	// And SHIFT steps it back the other way round.
+	for want in ([]string{"wide", "split", "closed"}) {
+		cycle_preview_mode(&app, back = true)
+		pump(&app)
+		testing.expect_value(t, lit(&app), want)
+	}
+}
+
+// CTRL+T and CTRL+SHIFT+T step both views' panes round the same ring, in opposite directions.
+@(test)
+test_the_pane_key_steps_both_ways :: proc(t: ^testing.T) {
+	for mode in Pane_Mode {
+		testing.expect_value(t, next_pane_mode(next_pane_mode(mode, false), true), mode)
+	}
+	testing.expect_value(t, next_pane_mode(.Closed, false), Pane_Mode.Split)
+	testing.expect_value(t, next_pane_mode(.Closed, true), Pane_Mode.Wide)
 }
 
 
@@ -7910,7 +8087,7 @@ test_every_toolbar_icon_paints :: proc(t: ^testing.T) {
 		choose_theme(&app, theme)
 		show_view(&app, .Scenarios)
 		pump(&app)
-		icons, err := sa.select_all(find(&app, "#scnview .bar"), "svg.ic", context.temp_allocator)
+		icons, err := sa.select_all(find(&app, "#scnview"), "svg.ic", context.temp_allocator)
 		testing.expect_value(t, err, nil)
 		testing.expect_value(t, len(icons), 6) // new, folder, save, check, rescan, words
 		sa.paint_windowless(&g_view)
@@ -7941,25 +8118,48 @@ test_every_toolbar_icon_paints :: proc(t: ^testing.T) {
 	choose_theme(&app, .Dark)
 }
 
-// The scenarios bar is in the order every editor uses: new, open, save — then the commands of its own.
+// The scenario view's actions are on the panes they act on, not in one bar.
 @(test)
-test_the_file_actions_come_first_in_the_familiar_order :: proc(t: ^testing.T) {
+test_each_scenario_action_sits_on_what_it_acts_on :: proc(t: ^testing.T) {
 	app: App
 	if !test_app(t, &app) {return}
 	defer test_app_destroy(&app)
 	show_view(&app, .Scenarios)
 	pump(&app)
-	order := []string{"#scn-new", "#scn-folder", "#scn-save", "#scn-check", "#scn-reload", "#scn-words"}
-	last := -1
-	for selector in order {
-		element := find(&app, selector)
-		if element == nil {
-			testing.expectf(t, false, "%s is missing", selector)
+	// Each action sits on what it acts on (2026-10-10): the folder actions head the sidebar, `new…` the files
+	// of the folder being edited, save and check the source, words the report it writes into.
+	places := [][2]string {
+		{"#scn-folder", "#scn-files"},
+		{"#scn-reload", "#scn-files"},
+		{"#scn-new", "#scn-files"},
+		{"#scn-save", "#scn-source"},
+		{"#scn-check", "#scn-source"},
+		{"#scn-words", "#scn-report-pane"},
+	}
+	for place in places {
+		element := find(&app, place[0])
+		pane := find(&app, place[1])
+		if element == nil || pane == nil {
+			testing.expectf(t, false, "%s or %s is missing", place[0], place[1])
 			continue
 		}
 		box, _ := sa.location(element, .Border, .Root)
-		testing.expectf(t, int(box.x) > last, "%s is not to the right of the one before it", selector)
-		last = int(box.x)
+		area, _ := sa.location(pane, .Border, .Root)
+		testing.expectf(
+			t,
+			box.x >= area.x && box.x + box.width <= area.x + area.width && box.y >= area.y && box.y < area.y + area.height,
+			"%s (%v) is not inside %s (%v)",
+			place[0],
+			box,
+			place[1],
+			area,
+		)
+	}
+	// And in the familiar order where two share a row: open before rescan, save before check.
+	for pair in ([][2]string{{"#scn-folder", "#scn-reload"}, {"#scn-save", "#scn-check"}}) {
+		a, _ := sa.location(find(&app, pair[0]), .Border, .Root)
+		b, _ := sa.location(find(&app, pair[1]), .Border, .Root)
+		testing.expectf(t, a.x < b.x, "%s should be left of %s", pair[0], pair[1])
 	}
 }
 
@@ -8225,7 +8425,7 @@ test_the_notes_editor_and_preview_divider_drags :: proc(t: ^testing.T) {
 	if !test_app(t, &app) {return}
 	defer test_app_destroy(&app)
 	show_view(&app, .Editor)
-	set_shown(&app, "#bml-page", true)
+	set_shown(&app, "#bml-preview-pane", true)
 	relayout := find(&app, "#bml-split")
 	testing.expect(t, relayout != nil, "the notes view should be a frameset")
 	if relayout == nil {return}
@@ -8253,7 +8453,7 @@ test_the_notes_editor_and_preview_divider_drags :: proc(t: ^testing.T) {
 		"the editor changed by %d, not -120",
 		text1.width - text0.width,
 	)
-	set_shown(&app, "#bml-page", false)
+	set_shown(&app, "#bml-preview-pane", false)
 }
 
 /*
@@ -8509,11 +8709,11 @@ test_the_notes_view_has_no_stray_dividers :: proc(t: ^testing.T) {
 	for files in ([]bool{true, false}) {
 		for preview in ([]bool{true, false}) {
 			set_shown(&app, "#bml-files", files)
-			set_shown(&app, "#bml-page", preview)
+			set_shown(&app, "#bml-preview-pane", preview)
 			_ = sa.update_element(find(&app, "#bml-split"), render = true)
 			pump(&app)
 			left, right := 100000, 0
-			for selector in ([]string{"#bml-files", "#bml-text", "#bml-page"}) {
+			for selector in ([]string{"#bml-files", "#bml-source", "#bml-preview-pane"}) {
 				if effective_display_is_hidden(&app, selector) {continue}
 				box := pane_box(&app, selector)
 				left = min(left, int(box.x))
@@ -8524,7 +8724,7 @@ test_the_notes_view_has_no_stray_dividers :: proc(t: ^testing.T) {
 		}
 	}
 	set_shown(&app, "#bml-files", true)
-	set_shown(&app, "#bml-page", false)
+	set_shown(&app, "#bml-preview-pane", false)
 }
 
 /*
@@ -9323,4 +9523,95 @@ test_the_graphics_setting_is_remembered_for_the_next_start :: proc(t: ^testing.T
 	click(&app, `#prefs-panel [data-gfx="gpu"]`)
 	pump(&app)
 	testing.expect_value(t, note(&app), "in use now")
+}
+
+// A deals panel folds to its title and opens again (asked for: an open/close button per section). The
+// title is the button; the body goes, the chevron turns, and both come back.
+@(test)
+test_a_panel_folds_to_its_title :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	app.handler = sa.Event_Handler {
+		subscription = {.BEHAVIOR_EVENT, .MOUSE, .FOCUS, .KEY},
+		on_event     = on_event,
+		user_data    = &app,
+	}
+	sa.attach_window_handler(app.window, &app.handler)
+	defer sa.detach_window_handler(app.window, &app.handler)
+
+	for key in ([]string{"generate", "analyse"}) {
+		body := fmt.tprintf("#%s-body", key)
+		chev := fmt.tprintf("#fold-%s-chev", key)
+		testing.expectf(t, !effective_display_is_hidden(&app, body), "%s starts open", key)
+		click(&app, fmt.tprintf("#fold-%s", key))
+		pump(&app)
+		testing.expectf(t, effective_display_is_hidden(&app, body), "%s folds", key)
+		folded, _ := sa.text(find(&app, chev), context.temp_allocator)
+		testing.expect_value(t, folded, "▸")
+		click(&app, fmt.tprintf("#fold-%s", key))
+		pump(&app)
+		testing.expectf(t, !effective_display_is_hidden(&app, body), "%s opens again", key)
+		opened, _ := sa.text(find(&app, chev), context.temp_allocator)
+		testing.expect_value(t, opened, "▾")
+	}
+}
+
+// THE `share link` BUTTON's link: the boards come back out of the page, and the address in front is the
+// player's, with any fragment it already had dropped.
+@(test)
+test_a_card_page_becomes_a_share_link :: proc(t: ^testing.T) {
+	b := strings.builder_make(context.temp_allocator)
+	norn.render_page_prologue(&b, .Html_Cards, "Two boards")
+	for _ in 0 ..< 2 {
+		norn.render_deal_html_cards(&b, norn.deal_hands(), randomize_table = true)
+		strings.write_byte(&b, '\n')
+	}
+	norn.render_page_epilogue(&b, .Html_Cards)
+
+	link, boards, left_behind, ok := share_link_for(
+		strings.to_string(b),
+		"https://example.org/player.html#old",
+		context.temp_allocator,
+	)
+	testing.expect(t, ok)
+	testing.expect_value(t, boards, 2)
+	testing.expect(t, !left_behind, "a plain page has no solver figures")
+	testing.expect(t, strings.has_prefix(link, "https://example.org/player.html#v1."), link)
+
+	shared, err := share.decode(link[strings.index_byte(link, '#') + 1:], context.temp_allocator)
+	testing.expect_value(t, err, share.Decode_Error.None)
+	testing.expect_value(t, shared.title, "Two boards")
+	testing.expect_value(t, len(shared.boards), 2)
+	testing.expect(t, !shared.analyse)
+}
+
+// What the player cannot rebuild is said to be left behind - the advisor's figures, or a par caption that could
+// not be read back; what is not a card page is refused.
+@(test)
+test_a_share_link_says_what_it_leaves_behind :: proc(t: ^testing.T) {
+	b := strings.builder_make(context.temp_allocator)
+	norn.render_page_prologue(&b, .Html_Cards, "")
+	norn.render_deal_html_cards(&b, norn.deal_hands())
+	strings.write_string(&b, `<div class="par" data-target="9">Par: 3NT by N, +400</div>`) // no trick table
+	norn.render_page_epilogue(&b, .Html_Cards)
+	_, _, left_behind, ok := share_link_for(strings.to_string(b), "p.html", context.temp_allocator)
+	testing.expect(t, ok)
+	testing.expect(t, left_behind, "a par caption that cannot be read back stays behind")
+
+	sampled, _ := strings.replace(strings.to_string(b), `data-target="9"`, `data-target="9" data-sim='{}'`, 1, context.temp_allocator)
+	_, _, sampled_behind, _ := share_link_for(sampled, "p.html", context.temp_allocator)
+	testing.expect(t, sampled_behind, "the advisor's figures stay behind")
+
+	_, _, _, text_ok := share_link_for("<html><plaintext>N:AKQ...", "p.html", context.temp_allocator)
+	testing.expect(t, !text_ok, "a page with no boards has no link")
+}
+
+@(test)
+test_a_path_becomes_a_file_url :: proc(t: ^testing.T) {
+	testing.expect_value(
+		t,
+		file_url(`C:\Users\me\my deals\player.html`, context.temp_allocator),
+		"file:///C:/Users/me/my%20deals/player.html",
+	)
 }

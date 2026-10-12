@@ -266,6 +266,52 @@ aside .head {
 	border-bottom: 1px solid var(--line);
 }
 
+/* The list's head: the deals folder, then the filter and the groups (see the markup). */
+aside .side-head {
+	flow: vertical;
+	padding: 0.5em 0.6em 0.3em;
+	border-bottom: 1px solid var(--line);
+}
+aside .side-row {
+	flow: horizontal;
+	margin-bottom: 0.35em;
+}
+aside .side-row > * {
+	vertical-align: middle;
+}
+aside .side-label {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 0.45em;
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+	white-space: nowrap;
+}
+/* A label that takes the row's slack (the controls after it go to the right-hand end), and may wrap: the
+   scenario view's "files in <folder>" is a path. */
+aside .side-grow {
+	width: *;
+	white-space: normal;
+	word-wrap: break-word;
+}
+/* The folder under its row, a long path in a 250px column: wrapped rather than cut, since the tail of a
+   path is the informative half. */
+aside .side-path {
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+	word-wrap: break-word;
+	margin-bottom: 0.2em;
+}
+aside .side-row > * + button {
+	margin-left: 0.35em;
+}
+aside input.filter, aside #outdir {
+	width: *;
+}
+aside .tagchips {
+	flow: horizontal-flow;
+}
+
 /* The scenario count, under the list it counts (`12 of 111 scenarios` while narrowed). */
 aside .foot {
 	padding: 0.35em 0.8em;
@@ -368,8 +414,84 @@ aside .foot {
 .panel > .legend {
 	color: var(--accent);
 	font-weight: bold;
-	font-size: 1.3em;
-	margin-bottom: 0.45em;
+	font-size: 1.6em;
+	margin-bottom: 0.4em;
+}
+
+/* The title IS the fold button: the whole heading is the target, drawn as the heading rather than as a
+   button. The `?` keeps its own (small) size inside the bigger title. */
+.panel > .legend .fold {
+	font: inherit;
+	color: inherit;
+	background: transparent;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	vertical-align: middle;
+}
+.panel > .legend .fold:hover {
+	color: var(--ink);
+}
+.panel > .legend .chev {
+	display: inline-block;
+	width: 1em;
+	color: var(--ink-dim);
+}
+.panel > .legend .help-toggle {
+	font-size: 0.6em;
+	font-weight: normal;
+	vertical-align: middle;
+}
+
+/* ONE SETTING PER LINE: a label column of one width, then a box of one width, everything centred on the
+   line (a horizontal flow does not centre children of different heights by itself). */
+.line.field > * {
+	vertical-align: middle;
+}
+.line.field > label:first-child {
+	display: inline-block;
+	width: 6em;
+	margin-right: 0.5em;
+}
+.line.field input[type="text"] {
+	width: 11em;
+}
+/* The same outer width as the boxes: a select's width does not count what an input's does (measured 190px
+   against 178 at 11em), and `box-sizing: border-box` is no way out - it collapsed the inputs' height. */
+.line.field select {
+	width: 10.25em;
+	/* The dropdown's own padding plus its arrow made it 43px against the boxes' 33; 0.05em matches them
+	   (measured: 33 = 33 at 100%, 43 against 44 at 133%). */
+	padding-top: 0.05em;
+	padding-bottom: 0.05em;
+}
+/* The buttons that RUN the panel stand apart from what they run with: a line's worth of space above them
+   (reported: the action buttons sat right up against the settings). */
+.line.actions {
+	margin-top: 1.8em;
+}
+/* The output path: under the boxes, one dim line, never wrapping a path a letter at a time. */
+.line.field.note {
+	margin-left: 6.5em;
+	margin-top: -0.2em;
+}
+.output-note {
+	width: *;
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+	white-space: nowrap;
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+}
+
+/* A switch the chosen format has no use for (`refresh_format_switches`). */
+.line label.off {
+	color: var(--ink-dim);
+}
+
+/* A checkbox line starts under the boxes, not under the labels. */
+.line.field.check {
+	margin-left: 6.5em;
 }
 
 .line {
@@ -1095,21 +1217,60 @@ aside .head.keys b {
 	flow: horizontal-flow;
 }
 
-/* The notes view's QUIZ STRIP: the `.outputs` line's shape, under the bar, for the open file's quiz page.
-   The state text takes what is left and gives way first, as the bar's status line does. */
-.quizbar {
+/* A PANE OF AN EDITOR VIEW: a one-line head of the controls that act on it, then the widget taking the rest.
+   The split sizes the WRAPPER (the drag and `set_shown` act on it), so the widget inside is `size: *`. */
+.split > .pane {
+	width: *;
+	flow: vertical;
+}
+.pane-head {
 	flow: horizontal;
 	padding: 0.25em 0.6em;
 	border-bottom: 1px solid var(--line);
 	background: var(--surface);
+	white-space: nowrap;
+}
+.pane-head > * {
+	vertical-align: middle;
+	margin-right: 0.5em;
+}
+.pane-head > .barlabel {
+	color: var(--ink-dim);
+}
+
+/* The notes source's QUIZ GROUP, in the source pane's head after save: the state text takes what is left
+   and gives way first, as the bar's status line does. */
+.quizbar {
+	flow: horizontal;
+	width: *;
+	vertical-align: middle;
+	padding-left: 0.6em;
+	border-left: 1px solid var(--line);
 }
 
 .quizbar > button {
 	margin-right: 0.5em;
 }
 
-.quizbar .quizlabel {
-	margin-left: 0;
+/* The open file's name, as the source pane's title. Gives way before the buttons do (a long name is
+   cut, the buttons stay whole), and carries the same unsaved dot the file list does. */
+.pane-head > .pane-title {
+	width: max-content;
+	max-width: 50%;
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-weight: 600;
+	color: var(--ink);
+}
+
+.pane-head > .pane-title:empty {
+	display: none;
+}
+
+.pane-head > .pane-title.dirty::after {
+	content: " \25CF";
+	color: var(--accent);
 }
 
 .quizbar .quizstate {
@@ -1334,6 +1495,24 @@ frame#page {
 	text-overflow: ellipsis;
 }
 
+/* The window's NOTE (`set_note`) - what a key, a drop or a zoom says back - in the same bar, in full ink so
+   it reads as an answer rather than as a hover hint. */
+.hintbar.note {
+	color: var(--ink);
+}
+
+/* A panel's status, on its own line under the buttons: wraps across the panel, not a word per line. */
+.line.status-line {
+	margin-top: 0.3em;
+}
+.line.status-line .status {
+	width: *;
+	white-space: normal;
+}
+.line.status-line:empty, .line.status-line .status:empty {
+	display: none;
+}
+
 /* The `?` next to a panel's legend. `margin-left: 0.5em` rather than a gap, as ever. */
 .help-toggle {
 	margin-left: 0.5em;
@@ -1342,13 +1521,35 @@ frame#page {
 
 /* Hidden until the host sets an inline `display` — same mechanism as the About panel, for the same
    reason (the `hidden` attribute cannot be read back). */
+/* A `?` box is a LEAD SENTENCE and then one short item per control, the control's name first - so it is
+   scanned rather than read (reported: "often too much wall of text"). Internals (environment variables,
+   memory figures) belong in the docs, not here. */
 .panel-help {
 	display: none;
-	margin-bottom: 0.5em;
-	padding: 0.5em 0.6em;
+	margin-bottom: 0.6em;
+	padding: 0.6em 0.8em;
 	border-left: 3px solid var(--accent);
 	background: var(--sunken);
 	color: var(--ink-soft);
+	line-height: 1.45;
+	max-width: 46em;
+}
+.panel-help p {
+	margin: 0 0 0.5em;
+	color: var(--ink);
+}
+.panel-help ul {
+	margin: 0;
+	padding-left: 1.2em;
+}
+.panel-help li {
+	margin-bottom: 0.4em;
+}
+.panel-help li ul {
+	margin-top: 0.3em;
+}
+.panel-help li li {
+	margin-bottom: 0.15em;
 }
 
 .panel-help code {
@@ -1440,8 +1641,27 @@ popup[role="tooltip"] {
 	white-space: nowrap;
 }
 
-/* The file name and the save/preview state. `width: *` pushes `close` to the right-hand end of the bar,
-   the way `.pagebar .title` does. */
+/* The editors' STATUS LINE, under the panes (an editor's mode line): what just happened - saved,
+   previewed, refused, the squiggle under the pointer. Fixed height, so a message arriving or clearing moves
+   nothing above it; one line, cut with an ellipsis rather than wrapped. */
+.statusbar {
+	height: 1.7em;
+	padding: 0.2em 0.7em 0;
+	border-top: 1px solid var(--line);
+	background: var(--surface);
+}
+
+.statusbar > .status-text {
+	display: block;
+	width: *;
+	color: var(--ink-soft);
+	font-size: var(--text-small);
+	white-space: nowrap;
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+}
+
+/* A title in a bar (the hand page's). `width: *` pushes what follows to the right-hand end of the bar. */
 .bar .title {
 	width: *;
 	color: var(--ink-soft);
@@ -1464,10 +1684,6 @@ aside.files {
 /* The folder, above its files. It can be a long path in a 250px column, so it wraps rather than being
    clipped: the tail of a path is the informative half, and `text-overflow: ellipsis` would eat exactly
    that. */
-#bml-dir {
-	color: var(--ink-dim);
-	word-wrap: break-word;
-}
 
 #bml-list {
 	width: *;
@@ -1484,6 +1700,13 @@ aside.files {
 	color: var(--ink-soft);
 	font-size: var(--text-small);
 	cursor: pointer;
+}
+
+/* The first file of each unrelated group of documents (a top-level file and what it includes): a gap and a
+   firmer seam above it, so the groups in one folder read as separate things. */
+#bml-list .row.top {
+	margin-top: 0.7em;
+	border-top: 1px solid var(--line);
 }
 
 #bml-list .row:hover {
@@ -1607,9 +1830,10 @@ textarea {
    gets no colours, only a size and the seam between the two halves. A frame with no size collapses to
    nothing, which reads as "preview did nothing". */
 frame#bml-page {
-	width: *;
-	height: *;
+	size: *;
 	border: 0;
+}
+#bml-preview-pane {
 	border-left: 1px solid var(--line);
 }
 
@@ -1694,10 +1918,6 @@ frame#bml-page {
 	background: var(--surface);
 }
 
-#scn-dir {
-	color: var(--ink-dim);
-	word-wrap: break-word;
-}
 
 #scn-list {
 	width: *;
@@ -1807,11 +2027,13 @@ frame#bml-page {
 /* The check's answer. `readonly` in the markup rather than here, because `<plaintext>` IS an editor and
    without it the report takes a caret and typing the next check throws away — the same rule `#report`
    in the deals view follows. */
+#scn-report-pane {
+	border-left: 1px solid var(--line);
+}
 #scn-report {
 	width: *;
 	height: *;
 	padding: 0.4em 0.5em;
-	border-left: 1px solid var(--line);
 	background: var(--sunken);
 	color: var(--ink-soft);
 	font-family: monospace;
@@ -1882,4 +2104,9 @@ frame#bml-page {
 	to {
 		transform: rotate(360deg);
 	}
+}
+
+/* A label naming a segment group sits against it (the notes bar's `preview`), not a gap away. */
+.barlabel + .seg {
+	margin-left: 0;
 }

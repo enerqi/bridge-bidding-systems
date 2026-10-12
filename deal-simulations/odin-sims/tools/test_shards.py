@@ -80,6 +80,9 @@ def plan(names: list[str], shared: set[str], measured: dict[str, float], shards:
 
 
 def main(argv: list[str]) -> int:
+    # A failure message can carry any character a test prints (a chevron did), and the Windows console
+    # codepage cannot encode most of them.
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     exe, shards = Path(argv[1]).resolve(), max(1, int(argv[2]))
     names, shared = discover()
     measured = weights()

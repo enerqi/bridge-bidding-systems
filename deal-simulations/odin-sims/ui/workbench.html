@@ -40,15 +40,15 @@
     <div class="tabs" id="tabs">
       <button class="tab" data-view="panes" title="Generate deals, and analyse one"
               data-hint="The controls: pick a scenario and generate a set of practice deals, or analyse a single deal you already have.">deals</button>
-      <button class="tab" data-view="editor" title="Edit the bidding-system notes"
+      <button class="tab" data-view="editor" title="Edit and preview the .bml system notes"
               data-hint="Edit the .bml notes of this bidding system, with a live preview of the rendered page beside them.">notes</button>
       <!-- THE THIRD PLACE, and it is a place rather than a pane for the same reason the notes are one: it is
            a FOLDER OF FILES you edit, and the thing beside the text is the answer to "is this file any good"
            rather than a second view of the deals. What the deals view lists is SCENARIOS (compiled and
            loaded, in one list); what this lists is the `.scenario` FILES in one folder. Two different
            questions, so two different lists. -->
-      <button class="tab" data-view="scenarios" title="Write and edit .scenario files"
-              data-hint="Write your own scenarios as text: edit a .scenario file, check what it means and how often it happens, then save - saving puts it in the deals list.">scenarios</button>
+      <button class="tab" data-view="scenarios" title="Write your own deal scenarios: saved ones join the deals list"
+              data-hint="Write your own scenarios as text: edit a .scenario file, check what it means and how often it happens, then save - saving puts it in the deals list beside the built-in ones.">my scenarios</button>
     </div>
     <!-- SETTINGS, then ABOUT: the conventional top-right pair. Both are errands rather than places, opened
          from anywhere and left by going back (close, esc, ctrl+w). -->
@@ -72,8 +72,8 @@
         The deal generator and the single-deal advisor of this bidding-system repository, in one window.
       </div>
       <div class="about-line">
-        Everything scales: <b>CTRL+wheel</b>, or <b>CTRL+plus</b> / <b>CTRL+minus</b>, and
-        <b>CTRL+0</b> back to normal.
+        Every keyboard shortcut - zoom, moving between views, the hand page, the scenario list - is listed
+        by <b>CTRL+/</b>. Hover over any control for what it does; the bar at the bottom says more.
       </div>
 
       <div class="about-head">Third-party components</div>
@@ -146,6 +146,15 @@
                placeholder="empty: the built-in template">
       </div>
       <div class="line"><span class="barlabel" id="prefs-quiz-note"></span></div>
+      <!-- SHARING. Where the shared-deals player is published: the address every `share link` opens. Empty
+           means the copy built into this program, written to the deals folder (this computer only). -->
+      <div class="about-head">Sharing</div>
+      <div class="line">
+        <label for="prefs-share-player" class="barlabel field-label">player at</label>
+        <input type="text" id="prefs-share-player" class="wide" title="Where the shared-deals player page is published"
+               data-hint="The web address of a published player.html (just sims player builds it; any static host will do, and it never changes). Share links open it. Empty: links open the copy in the deals folder, which only works on this computer."
+               placeholder="empty: the copy in the deals folder (this computer only)">
+      </div>
       <div class="line">
         <button id="prefs-close" title="Close (esc, ctrl+w)">close</button>
       </div>
@@ -183,7 +192,7 @@
            block. This is the shape `.tagrow` already uses and it was right there. -->
       <div class="keysgrid">
         <div class="group">the window</div>
-        <div class="krow"><span class="k"><b>ctrl+1</b><b>ctrl+2</b><b>ctrl+3</b></span><span class="d">the deals view · the notes · your scenario files</span></div>
+        <div class="krow"><span class="k"><b>ctrl+1</b><b>ctrl+2</b><b>ctrl+3</b></span><span class="d">deals · notes · my scenarios</span></div>
         <div class="krow"><span class="k"><b>ctrl+tab</b></span><span class="d">the next place along the tab strip (shift: the previous one)</span></div>
         <div class="krow"><span class="k"><b>ctrl+=</b><b>ctrl+-</b><b>ctrl+0</b></span><span class="d">zoom in · out · back to normal</span></div>
         <div class="krow"><span class="k"><b>ctrl+/</b></span><span class="d">this list</span></div>
@@ -193,7 +202,7 @@
         <div class="krow"><span class="k"><b>ctrl+r</b></span><span class="d">filter the scenario list, by name or description</span></div>
         <div class="krow"><span class="k"><b>ctrl+g</b></span><span class="d">pick which groups the list is drawn from</span></div>
         <div class="krow"><span class="k"><b>ctrl+b</b></span><span class="d">fold the scenario list away, or bring it back</span></div>
-        <div class="krow"><span class="k"><b>ctrl+\</b></span><span class="d">the hand page: closed → beside the controls → the whole width</span></div>
+        <div class="krow"><span class="k"><b>ctrl+t</b><b>ctrl+\</b></span><span class="d">the hand page: closed → beside the controls → the whole width (shift: back the other way)</span></div>
         <div class="krow"><span class="k"><b>ctrl+o</b></span><span class="d">open the next format this scenario has (shift: the previous one)</span></div>
         <div class="krow"><span class="k"><b>ctrl+enter</b></span><span class="d">generate — shift: analyse the deal instead</span></div>
 
@@ -212,6 +221,9 @@
 
         <div class="group">the notes view</div>
         <div class="krow"><span class="k"><b>ctrl+r</b></span><span class="d">go to any heading in the corpus, by name</span></div>
+        <div class="krow"><span class="k"><b>ctrl+s</b></span><span class="d">save the file</span></div>
+        <div class="krow"><span class="k"><b>ctrl+b</b></span><span class="d">fold the file list away, or bring it back</span></div>
+        <div class="krow"><span class="k"><b>ctrl+t</b><b>ctrl+\</b></span><span class="d">the preview: closed, beside the source, full width (shift: back the other way)</span></div>
 
         <div class="group">the scenarios view</div>
         <div class="krow"><span class="k"><b>ctrl+enter</b></span><span class="d">check — parse what is in the editor and measure how often it happens</span></div>
@@ -234,81 +246,51 @@
        Odin implementation of BML) parses the BUFFER, so what is previewed is what is on screen rather
        than what was last saved. The reference python renders a FILE and could not do this. -->
   <div class="editview" id="editview">
+    <!-- EACH CONTROL SITS ON THE THING IT ACTS ON (2026-10-10), the deals view's rule: there the folder heads
+         the scenario list and the bar keeps only the window's layout. This bar used to hold everything -
+         folder, save, preview, fold, links - with the quiz in a strip under it spanning both panes, so a
+         FOLDER action, a FILE action and two PREVIEW settings read as one row of equals (reported: "the input
+         widget layout probably needs more hierarchy", "quiz buttons seem weirdly placed"). Now: the bar is
+         the layout (fold the files away, open/close the preview) plus the help and the status; the folder
+         heads the file list; save and the quiz head the SOURCE, since both act on the open file; fold and
+         links head the PREVIEW, since they only change what it renders. -->
     <div class="bar">
-      <!-- The files are a LIST IN A SIDEBAR rather than a dropdown, because a dropdown answers "which of
-           these" and the question here is "what is in this folder" — the names are worth having on screen
-           while editing, and a chapter is picked far more often than a folder is. This button folds the
-           sidebar away when the two panes want the width instead. -->
       <!-- The glyph is the settled convention for "toggle the side panel": a rectangle with one edge band
            filled, which is what VS Code's `layout-sidebar-left`, JetBrains and the GNOME sidebar buttons all
-           draw. `◧` (SQUARE WITH LEFT HALF BLACK) is unicode's nearest, so no icon font is needed — a
-           hamburger would be wrong, since that means "menu" rather than "side panel". The word stays beside
-           it: every other control in this window is a word, and one bare glyph in a row of them reads as an
-           ornament. -->
-      <button id="bml-files-toggle" class="ghost" title="Show or hide the list of files"
+           draw. `◧` (SQUARE WITH LEFT HALF BLACK) is unicode's nearest, so no icon font is needed. -->
+      <button id="bml-files-toggle" class="ghost" title="Show or hide the list of files (ctrl+b)"
               data-hint="Fold the list of files away to give the source and the preview the whole window, or bring it back.">◧ files</button>
-      <!-- FILE ACTIONS FIRST, in the order every editor uses - open, save - with the standard pictures;
-           the commands particular to this editor come after them. -->
-      <button id="bml-folder" class="ghost icon-text" title="Choose a folder of .bml files"
-              data-hint="Pick a different folder to edit the .bml notes of. The system's own notes are found at startup, so this is for a copy, a branch, or somebody else's."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>folder…</button>
-      <button id="bml-save" class="ghost icon-text" title="Write the editor's text back to the file (ctrl+s)"
-              data-hint="Overwrite the .bml file on disk with the text in the editor. There is no undo for this beyond the editor's own."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>save</button>
-      <!-- A TOGGLE: the second press closes the pane, which is also how the document's memory is handed back.
-           The label is rewritten by the host to say which of the two the next press does. -->
-      <button id="bml-preview" title="Render the text as it stands, or close the preview"
-              data-hint="Render the text in the editor - not the saved file - into the panel on the right. Once it is up it FOLLOWS what you type, re-rendering when the typing stops. Press it again to close the preview, which gives the source the whole width and frees what the rendered page was holding.">preview</button>
-      <!-- ONE toggle, lit while the document is folded - the same shape as `links` beside it. Two buttons
-           (`section`/`whole`) came first and read as two unrelated commands rather than as two halves of one
-           state. FOLDED means: every heading, in order, the section the caret is in open, and the other
-           bodies shown as an ellipsis. Whether a file starts folded depends on its SIZE, and whichever way
-           you leave it is remembered for that file. -->
-      <button id="bml-fold" class="ghost" title="Fold the document to its headings, with the caret's section open"
-              data-hint="Fold the preview: every heading stays, the section the caret is in is open, and the other bodies become an ellipsis - so the outline is still there to navigate by. Big documents cost hundreds of MB rendered in full, so they start folded.">fold</button>
-      <button id="bml-links" class="ghost" title="Also check that every [label](#Anchor) resolves"
-              data-hint="Also report cross-references that land on no heading. Off by default: a CHAPTER links to headings in its sibling files on purpose, so this is only meaningful on a whole document (bidding-system.bml) or once you know the anchor should be here.">links</button>
+      <!-- WHERE THE PREVIEW IS: the deals view's three-position control, for this view's pane (2026-10-10).
+           It was one toggle whose label turned into `close`, and a word in the bar did not read as closing
+           the pane on the right. The lit segment says where the preview IS; ctrl+t / ctrl+\ step round it
+           the same way as on the deals view. Closing is also what hands the rendered page's memory back. -->
+      <span class="barlabel">preview</span>
+      <div class="seg" id="bml-preview-mode">
+        <button class="segbtn on" data-preview="closed" title="Close the preview (ctrl+t or ctrl+\ cycles closed, beside, full width; ctrl+shift+t steps back)"
+                data-hint="Close the preview: the source gets the whole width, and what the rendered page was holding is handed back."><i class="icon"></i></button>
+        <button class="segbtn" data-preview="split" title="Render the notes beside the source (ctrl+t or ctrl+\ cycles closed, beside, full width; ctrl+shift+t steps back)"
+                data-hint="Render the text in the editor - not the saved file - into a pane beside it. Once it is up it FOLLOWS what you type, re-rendering when the typing stops."><i class="icon"><i class="gap"></i><i class="fill"></i></i></button>
+        <button class="segbtn" data-preview="wide" title="Give the preview the whole width (ctrl+t or ctrl+\ cycles closed, beside, full width; ctrl+shift+t steps back)"
+                data-hint="Let the preview have everything except the file list, for reading. The source is put away, not closed: coming back finds it as it was."><i class="icon"><i class="fill"></i></i></button>
+      </div>
       <button class="help-toggle ghost small" id="help-bml" title="What is this editor for?"
               data-hint="Explain what this editor is for and what the preview shows.">?</button>
       <!-- No close here either; the header's tabs are the way out, and the text stays in the editor. -->
-      <span class="title" id="bml-status"></span>
-    </div>
-    <!-- THE QUIZ STRIP: a bidding quiz page made from the open file's bid tables, under the bar rather than in
-         it. The bar is one line by rule (`test_the_editor_bar_survives_a_narrow_window`) and was already full
-         at 720px; these two buttons say in WORDS what they do - "browser" alone read as "show the notes in a
-         browser" - and the line after them says whether this file has a quiz page and how old it is, so the
-         strip is where the quiz's state lives. Topics will go here too. The page runs WebAssembly, which this
-         engine does not, so it opens in a browser and is never shown in a pane. See `workbench/quiz.odin`. -->
-    <div class="quizbar" id="bml-quizbar" style="display: none">
-      <span class="barlabel quizlabel">quiz</span>
-      <button id="bml-quiz" class="ghost small" title="Make a bidding quiz page from this file's bid tables"
-              data-hint="Write a bidding quiz from this file's bid tables - the text in the editor, unsaved edits included - as one HTML page you can open in a browser or send to someone. Generating again replaces the page.">generate quiz</button>
-      <button id="bml-quiz-open" class="ghost small icon-text" style="display: none" title="Open the quiz page in your web browser"
-              data-hint="Open this file's quiz page in your web browser. The page is one self-contained file: copy it anywhere, it needs no server."><span class="away">↗</span>open quiz in browser</button>
-      <span class="barlabel quizstate" id="bml-quiz-state"></span>
     </div>
     <div class="panel-help" id="help-bml-text">
-      These are the notes themselves - the <code>.bml</code> chapters this whole repository is written in,
-      the ones that build into the html system documents. Edit one here and press <b>preview</b> to see the
-      rendered page beside it, without saving and without a build. The preview parses the text in the
-      editor, so it shows what you have typed rather than what is on disk, and once it is open it is LIVE:
-      it re-renders itself when the typing stops. It waits longer on a document that is expensive to render
-      (the assembled system takes about a second), and <code>WORKBENCH_LIVE_MS</code> sets that wait - 0
-      turns it off and leaves <b>preview</b> as the only thing that renders. <b>save</b> writes the file.
-      <b>preview</b> is a toggle: pressing it again closes the panel, which also hands back what the rendered
-      page was holding. <b>fold</b> collapses the document to its headings, leaving the section the caret
-      is in open and the other bodies as an ellipsis, so the whole outline is still there to navigate by.
-      A small chapter opens unfolded and a big one starts folded (the assembled system costs a few hundred
-      MB rendered in full); whichever way you leave it is remembered for that file.
-      <b>CTRL+R</b> opens the heading palette: type part of a heading's name and the caret jumps there, in
-      this file or any other chapter in the folder (the letters only have to be in order, so <code>lbn</code>
-      finds Lebensohl). Spaces and punctuation are <i>separators</i>, not characters, so
-      <code>1h 1s</code> finds <code>1H-1S</code>, <code>1H--1S</code> and <code>1H/1S</code> alike — you
-      never have to type the dashes. It is how to get about a 1000-heading corpus without scrolling: up/down
-      choose, enter jumps the caret there (and scrolls the preview to the same heading), esc closes.
-      Anything the parser objects to is <b>underlined in the source</b> as well as written to the transcript
-      below - hover a squiggle to read it. A red one means something is being DROPPED from the page (a
-      misspelled directive, an <code>#INCLUDE</code> that cannot be read); a yellow one is a warning. Press
-      <b>links</b> to check cross-references too: that one is off by default because a chapter links to
-      headings in its sibling chapters on purpose, so it only tells the truth on a whole document.
+      <p>The <code>.bml</code> chapters these notes are written in: edit one, see it rendered, save it.</p>
+      <ul>
+        <li><b>preview</b> shows the rendered page beside the text, and keeps up as you type (it re-renders when
+            you pause). Press it again to close it.</li>
+        <li><b>save</b> writes the file.</li>
+        <li><b>fold</b> collapses the chapter to its headings, keeping the caret's section open. Remembered per file.</li>
+        <li><b>CTRL+R</b> jumps to any heading in any chapter. The letters only need to be in order
+            (<code>lbn</code> finds Lebensohl), and dashes don't matter (<code>1h 1s</code> finds 1H-1S).</li>
+        <li><b>Squiggles</b> are problems the parser found — hover one to read it. Red means something will be
+            missing from the page; yellow is a warning.</li>
+        <li><b>links</b> also checks cross-references. It is off by default because a chapter links to its
+            sibling chapters, so it only gives a true answer on a whole document.</li>
+      </ul>
     </div>
     <!-- The heading palette (CTRL+R). IN THE FLOW, between the bar and the panes, rather than floating over
          them: an out-of-flow percentage height lays out 1px tall in this engine (the same reason the four
@@ -323,26 +305,73 @@
       <div id="bml-goto-list"
            data-hint="The headings that match, best first. The name is on the left and the chapter it is in on the right; the leading dots are how deep the heading is."></div>
     </div>
-    <!-- DRAGGABLE DIVIDERS, the same plain flow as the deals view (reported: "the divider between the notes
-         editor and the preview is not moving" - there was none). The drag is the script's, at the end of
-         this file; a pane the host hides takes its divider with it (`show_needed_dividers`). -->
+    <!-- DRAGGABLE DIVIDERS, the same plain flow as the deals view. The drag is the script's, at the end of
+         this file; a pane the host hides takes its divider with it (`show_needed_dividers`). The source and the
+         preview are WRAPPERS (`.pane`: a head, then the widget) so each can carry its own controls; the drag
+         and `set_shown` act on the wrapper. -->
     <div class="split" id="bml-split">
-      <!-- The folder's .bml files, one clickable row each, filled by the host from `app.bml_names`. Same
-           shape as the scenario list on the left of the deals view, and for the same reason: a row needs
-           `behavior: button` to be clickable at all in this engine, and the host reads the name back off
-           the `data-file` the render wrote. -->
+      <!-- The folder's .bml files, one clickable row each, filled by the host from `app.bml_names`, under the
+           folder they come from. A row needs `behavior: button` to be clickable at all in this engine, and the
+           host reads the name back off the `data-file` the render wrote. -->
       <aside class="files" id="bml-files">
-        <div class="head" id="bml-dir" title="The folder these files are in"
-             data-hint="The folder the list below is from. Press folder… in the bar to change it."></div>
+        <div class="side-head">
+          <div class="side-row">
+            <span class="side-label side-grow">notes folder</span>
+            <button id="bml-folder" class="ghost icon-text" title="Choose a folder of .bml files"
+              data-hint="Pick a different folder to edit the .bml notes of. The system's own notes are found at startup, so this is for a copy, a branch, or somebody else's."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>folder…</button>
+          </div>
+          <div class="side-path" id="bml-dir" title="The folder these files are in"
+               data-hint="The folder the list below is from. Press folder… above to change it."></div>
+        </div>
         <div id="bml-list"
              data-hint="The .bml files in this folder. Click one to edit it; unsaved changes are kept until you pick the same file again."></div>
       </aside>
       <div class="divider"></div>
-      <plaintext id="bml-text" title="The .bml source"
-                 data-hint="The .bml source. Headers, directives, bids and suit symbols are coloured; press preview to render it."></plaintext>
+      <div class="pane" id="bml-source">
+        <!-- THE OPEN FILE, NAMED, and what acts on it: save it, and make a quiz page from its bid tables.
+             The name is the pane's title (the preview's head says `preview`, the report's `report`) and
+             carries the unsaved dot; it was only in the bar's status line, among messages (2026-10-10).
+             The quiz is a real button with its own icon and a whole label, not a `generate` beside a dim
+             `quiz` - it makes a shareable page, which is more than its size said. The line after it says
+             whether this file has a quiz page and how old it is. Hidden while no file is open. The page runs
+             WebAssembly, which this engine does not, so it opens in a browser and is never shown in a pane.
+             See `workbench/quiz.odin`. -->
+        <div class="pane-head">
+          <span class="pane-title" id="bml-title" title="The file being edited"></span>
+          <button id="bml-save" class="ghost icon-text" title="Write the editor's text back to the file (ctrl+s)"
+              data-hint="Overwrite the .bml file on disk with the text in the editor. There is no undo for this beyond the editor's own."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>save</button>
+          <div class="quizbar" id="bml-quizbar" style="display: none">
+            <button id="bml-quiz" class="icon-text" title="Make a bidding quiz page from this file's bid tables"
+              data-hint="Write a bidding quiz from this file's bid tables - the text in the editor, unsaved edits included - as one HTML page you can open in a browser or send to someone. Making it again replaces the page."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5.99 13c-.59 0-1.05-.47-1.05-1.05 0-.59.47-1.04 1.05-1.04.59 0 1.04.45 1.04 1.04-.01.58-.45 1.05-1.04 1.05zm2.5-6.17c-.63.93-1.23 1.21-1.56 1.81-.13.24-.18.4-.18 1.18h-1.52c0-.41-.06-1.08.26-1.65.41-.73 1.18-1.16 1.63-1.8.48-.68.21-1.94-1.14-1.94-.88 0-1.32.67-1.5 1.23l-1.37-.57C11.51 5.96 12.52 5 13.99 5c1.23 0 2.08.56 2.51 1.26.37.61.58 1.73.01 2.57z"/></svg><span id="bml-quiz-label">make quiz</span></button>
+            <button id="bml-quiz-open" class="ghost icon-text" style="display: none" title="Open the quiz page in your web browser"
+              data-hint="Open this file's quiz page in your web browser. The page is one self-contained file: copy it anywhere, it needs no server."><span class="away">↗</span>open</button>
+            <span class="barlabel quizstate" id="bml-quiz-state"></span>
+          </div>
+        </div>
+        <plaintext id="bml-text" title="The .bml source"
+                   data-hint="The .bml source. Headers, directives, bids and suit symbols are coloured; press preview to render it."></plaintext>
+      </div>
       <div class="divider"></div>
-      <frame id="bml-page"></frame>
+      <!-- THE PREVIEW AND ITS TWO SETTINGS. Fold is ONE toggle, lit while the document is folded: every
+           heading, the caret's section open, the other bodies an ellipsis; whether a file starts folded
+           depends on its size, and how you leave it is remembered per file. Links also checks that every
+           cross-reference lands on a heading. Both re-render a preview that is up. -->
+      <div class="pane" id="bml-preview-pane" style="display: none">
+        <div class="pane-head">
+          <span class="barlabel">preview</span>
+          <button id="bml-fold" class="ghost" title="Fold the document to its headings, with the caret's section open"
+              data-hint="Fold the preview: every heading stays, the section the caret is in is open, and the other bodies become an ellipsis - so the outline is still there to navigate by. Big documents cost hundreds of MB rendered in full, so they start folded.">fold</button>
+          <button id="bml-links" class="ghost" title="Also check that every [label](#Anchor) resolves"
+              data-hint="Also report cross-references that land on no heading. Off by default: a CHAPTER links to headings in its sibling files on purpose, so this is only meaningful on a whole document (bidding-system.bml) or once you know the anchor should be here.">links</button>
+        </div>
+        <frame id="bml-page"></frame>
+      </div>
     </div>
+    <!-- THE STATUS LINE IS AT THE BOTTOM, as an editor's is (2026-10-10): it said what just happened (saved,
+         previewed, a squiggle's message under the pointer) squeezed in beside the layout buttons in the bar,
+         where it read as one more control. One full-width line under the panes, the same height whether it
+         has anything to say or not, so nothing above it moves. -->
+    <div class="statusbar"><span class="status-text" id="bml-status"></span></div>
   </div>
 
   <!-- THE SCENARIO EDITOR: `.scenario` files, and what they mean.
@@ -363,48 +392,30 @@
        the deals view is the same widget for the same reason. `readonly` because a `<plaintext>` IS an
        editor - without it the report takes a caret and typing that the next check throws away. -->
   <div class="scnview" id="scnview">
+    <!-- THE NOTES VIEW'S HIERARCHY (2026-10-10): the bar is the layout plus help and status; the FOLDER
+         actions (add one, rescan them all) head the folders list, NEW heads the files of the folder being
+         edited; save and check head the SOURCE they act on; words, the reference, heads the REPORT pane it
+         writes into. -->
     <div class="bar">
-      <button id="scn-files-toggle" class="ghost" title="Show or hide the list of files"
+      <button id="scn-files-toggle" class="ghost" title="Show or hide the list of files (ctrl+b)"
               data-hint="Fold the list of files away to give the source and the report the whole window, or bring it back.">◧ files</button>
-      <!-- FILE ACTIONS FIRST, in the order every editor uses - new, open, save - with the standard
-           pictures; then what is particular to scenarios (check, rescan), then the reference (words).
-           RESCAN, NOT RELOAD: saving, new... and folder... already rebuild the deals list from the folders,
-           so this is only for files that changed OUTSIDE this window. It was called `reload`, which read
-           as "reload this file into the editor". The id stays `scn-reload`. -->
-      <button id="scn-new" class="ghost icon-text" title="Create a new .scenario file"
-              data-hint="Create a new .scenario file. It starts as a working scenario with the grammar in a comment above it, so there is something to edit rather than an empty buffer."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"/></svg>new…</button>
-      <button id="scn-folder" class="ghost icon-text" title="Add a folder of .scenario files"
-              data-hint="Pick a folder your .scenario files live in. It is added to the folders the deals list reads, and remembered for the next start."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>folder…</button>
-      <button id="scn-save" class="ghost icon-text" title="Write the file, and put it in the deals list (ctrl+s)"
-              data-hint="Overwrite the .scenario file on disk with the text in the editor, and rebuild the deals list from it. There is no undo for this beyond the editor's own."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>save</button>
-      <span class="barsep"></span>
-      <button id="scn-check" class="icon-text" title="Parse what is in the editor, and measure how often it happens (ctrl+enter)"
-              data-hint="Parse the text in the editor - not the saved file - and report what it means, anything wrong with it, and how often each scenario happens in a sample of random deals."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>check</button>
-      <button id="scn-reload" class="ghost icon-text" title="Read every scenario folder again"
-              data-hint="Read every scenario folder again and rebuild the deals list from them. Saving already does this - rescan is for files changed outside this window."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>rescan</button>
-      <span class="barsep"></span>
-      <button id="scn-words" class="ghost icon-text" title="List the words a scenario file may use"
-              data-hint="List the grammar and every named helper this bidding system exposes to scenario files - the vocabulary is what a form of ranges and checkboxes fundamentally cannot say."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>words</button>
       <button class="help-toggle ghost small" id="help-scn" title="What is this editor for?"
               data-hint="Explain what a .scenario file is and what check, save and rescan do.">?</button>
-      <span class="title" id="scn-status"></span>
     </div>
     <div class="panel-help" id="help-scn-text">
-      A <code>.scenario</code> file is a scenario written as TEXT instead of compiled into this program. Each
-      one is a name, a description and one line per seat; the seat lines AND together, and within a line the
-      operators are <b>and</b>, <b>or</b>, <b>not</b> and parentheses over <code>hcp</code>, the four suits,
-      <code>controls</code>, <code>longest</code>, <code>balanced</code>, <code>holds(spades, ace)</code>,
-      comparisons and ranges (<code>hcp in 15..17</code>) — plus this bidding system's own named helpers,
-      which are what a form of ranges and checkboxes cannot express. Press <b>words</b> for the whole list.
-      <b>check</b> parses what is in the editor and says three things: what it UNDERSTOOD, spelled back in
-      canonical form; anything wrong with it, underlined in the source as well as listed; and how often each
-      scenario happens over a sample of random deals — which is how you find out that a condition is too
-      tight before a generate run sits there all afternoon. <b>save</b> writes the file AND puts it in the deals
-      list (at the bottom, after the built-in scenarios; type its name in the deals filter to find it).
-      The deals list reads every folder listed under <b>folders</b> at the top of the sidebar — click one
-      to edit the files in it, × to forget it. <b>folder…</b> adds a folder there and remembers it for the next start;
-      <code>BRIDGE_SCENARIOS</code> adds more from the environment. <b>rescan</b> reads them all again, for
-      files changed outside this window.
+      <p>A <code>.scenario</code> file describes the deals you want in plain text: a name, a description,
+      and one line per seat.</p>
+      <ul>
+        <li>A seat line combines <code>hcp</code>, the suit lengths, <code>controls</code>, <code>balanced</code>,
+            <code>holds(spades, ace)</code> and more with <b>and</b>, <b>or</b>, <b>not</b>, comparisons and ranges
+            (<code>hcp in 15..17</code>). All the seat lines must hold. <b>words</b> lists everything you can use.</li>
+        <li><b>check</b> spells back what it understood, underlines anything wrong, and measures how often the
+            scenario happens — so you find out a condition is too tight before generating.</li>
+        <li><b>save</b> writes the file and adds the scenario to the deals list (at the end; filter by its name).</li>
+        <li><b>folders</b> in the sidebar are the ones the deals list reads: click one to edit its files, × to
+            forget it. <b>folder…</b> adds one; <b>rescan</b> re-reads them after edits made elsewhere;
+            <b>new…</b> starts a file in the folder being edited.</li>
+      </ul>
     </div>
     <div class="split" id="scn-split">
       <aside class="files" id="scn-files">
@@ -412,20 +423,58 @@
              it reads top-down. Several folders feed the deals list (the remembered ones and
              BRIDGE_SCENARIOS) while this view edits one, and nothing on screen used to say so. Drawn by the
              host (`draw_scenario_sources`); clicking a row edits that folder, its × forgets it. -->
+        <div class="side-head">
+          <div class="side-row">
+            <span class="side-label" data-hint="Every folder listed below feeds the deals list; the marked one is the folder being edited.">scenario folders</span>
+          </div>
+          <div class="side-row">
+            <button id="scn-folder" class="ghost icon-text" title="Add a folder of .scenario files to the ones the deals list reads"
+              data-hint="Pick a folder your .scenario files live in. It is added to the folders the deals list reads, and remembered for the next start."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>folder…</button>
+            <button id="scn-reload" class="ghost icon-text" title="Read every scenario folder again"
+              data-hint="Read every scenario folder again and rebuild the deals list from them. Saving already does this - rescan is for files changed outside this window."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>rescan</button>
+          </div>
+        </div>
         <div id="scn-sources"
              data-hint="Every folder the deals list reads .scenario files from, where it was configured, and what it gave. Click one to edit the files in it; × forgets a remembered folder."></div>
-        <div class="head" id="scn-dir" title="The folder these files are in"
-             data-hint="The folder the files below are from - the one marked in the folders list above."></div>
+        <div class="side-head">
+          <div class="side-row">
+            <span class="side-label side-grow" id="scn-dir" title="The folder these files are in"
+                  data-hint="The folder the files below are from - the one marked in the folders list above."></span>
+            <button id="scn-new" class="ghost icon-text" title="Create a new .scenario file"
+              data-hint="Create a new .scenario file. It starts as a working scenario with the grammar in a comment above it, so there is something to edit rather than an empty buffer."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"/></svg>new…</button>
+          </div>
+        </div>
         <div id="scn-list"
              data-hint="The .scenario files in this folder. Click one to edit it; unsaved changes are kept until you pick the same file again."></div>
       </aside>
       <div class="divider"></div>
-      <plaintext id="scn-text" title="The .scenario source"
-                 data-hint="The .scenario source. Keywords, seat names, quantities and the system's own helper names are coloured; press check to parse it."></plaintext>
+      <div class="pane" id="scn-source">
+        <div class="pane-head">
+          <span class="pane-title" id="scn-title" title="The file being edited"></span>
+          <button id="scn-save" class="ghost icon-text" title="Write the file, and put it in the deals list (ctrl+s)"
+              data-hint="Overwrite the .scenario file on disk with the text in the editor, and rebuild the deals list from it. There is no undo for this beyond the editor's own."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>save</button>
+          <button id="scn-check" class="icon-text" title="Parse what is in the editor, and measure how often it happens (ctrl+enter)"
+              data-hint="Parse the text in the editor - not the saved file - and report what it means, anything wrong with it, and how often each scenario happens in a sample of random deals."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>check</button>
+        </div>
+        <plaintext id="scn-text" title="The .scenario source"
+                   data-hint="The .scenario source. Keywords, seat names, quantities and the system's own helper names are coloured; press check to parse it."></plaintext>
+      </div>
       <div class="divider"></div>
-      <plaintext id="scn-report" readonly title="What the parse understood, and how often it happens"
-                 data-hint="What check found: the scenarios it parsed, spelled back canonically, anything wrong with them, and how often each one happens."></plaintext>
+      <div class="pane" id="scn-report-pane">
+        <div class="pane-head">
+          <span class="barlabel">report</span>
+          <button id="scn-words" class="ghost icon-text" title="List the words a scenario file may use"
+              data-hint="List the grammar and every named helper this bidding system exposes to scenario files - the vocabulary is what a form of ranges and checkboxes fundamentally cannot say."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>words</button>
+        </div>
+        <plaintext id="scn-report" readonly title="What the parse understood, and how often it happens"
+                   data-hint="What check found: the scenarios it parsed, spelled back canonically, anything wrong with them, and how often each one happens."></plaintext>
+      </div>
     </div>
+    <!-- THE STATUS LINE IS AT THE BOTTOM, as an editor's is (2026-10-10): it said what just happened (saved,
+         previewed, a squiggle's message under the pointer) squeezed in beside the layout buttons in the bar,
+         where it read as one more control. One full-width line under the panes, the same height whether it
+         has anything to say or not, so nothing above it moves. -->
+    <div class="statusbar"><span class="status-text" id="scn-status"></span></div>
   </div>
 
   <!-- THE DEALS VIEW: the controls, the scenario list, and the HAND PAGE beside them.
@@ -460,65 +509,10 @@
            VS Code, JetBrains and GNOME all draw - as a drawing rather than as `◧`, whose shape was whatever
            the system font had. The word stays beside it: this is the only labelled control in the bar and
            the segments below have no room for one. -->
-      <button id="deal-list-toggle" class="ghost icon-text" title="Show or hide the list of scenarios"
+      <button id="deal-list-toggle" class="ghost icon-text" title="Show or hide the list of scenarios (ctrl+b)"
               data-hint="Fold the scenario list away to give the controls and the hand page the whole window, or bring it back."><i class="icon"><i class="fill"></i><i class="gap"></i></i>scenarios</button>
 
-      <!-- TYPE TO FIND A SCENARIO. A hundred rows two lines tall is a wall, and the only instrument
-           against it was the scrollbar - which is the wrong one for a list whose NAMES are the thing
-           somebody knows (`1c-any-2h-or-2n`) and whose POSITION is the thing they do not.
 
-           The matching is the heading palette's, `outline.score_name` unchanged: a subsequence, and the
-           query's spaces and punctuation are SEPARATORS rather than characters. So `1c 2h` finds
-           `1c-any-2h-or-2n` without anyone typing the dashes the registry happens to spell it with - the
-           same failure that rule was written for in the notes (`1h 1s` against `1H-1S`, `1H--1S`, `1H/1S`).
-
-           A FIELD IN THE BAR RATHER THAN A PALETTE OVER THE LIST, and the difference is not decoration.
-           The notes view's CTRL+R is modal because it GOES somewhere and closes behind you; a filter is a
-           STATE of the list - narrowed to the swedish-club auctions, you stay narrowed while you generate,
-           read the chips and come back - and an overlay cannot be a state you leave on. CTRL+R still puts
-           the caret here, so one key means "find a place by name" in both halves of the window.
-
-           The placeholder carries the key. The notes palette has no visible trigger at all and had to be
-           found in the help panel, which is the same complaint one level down: a shortcut nothing on
-           screen mentions is a shortcut for whoever wrote it. -->
-      <input type="text" id="scenario-filter" class="filter"
-             title="Narrow the list to the scenarios you name (CTRL+R)"
-             data-hint="Narrow the list to the scenarios whose name or description matches what you type. Spaces and dashes are separators, so `1c 2h` finds `1c-any-2h-or-2n`. CTRL+R puts the caret here, the up and down arrows move the selection, and escape clears it."
-             placeholder="filter  (ctrl+r)">
-
-      <!-- THE GROUPS THAT ARE SELECTED, one removable chip each, and NOTHING AT ALL when none are. They
-           sit here beside the text filter because the two compose - the groups widen, the typing narrows -
-           and deliberately NOT in the `.outputs` chip row below, which is a few pixels away and means the
-           opposite thing: a format chip is a file that exists and pressing it OPENS it, a group chip is a
-           filter and pressing it REMOVES it. Same shape, opposite sense, so they get a different place and
-           the × these have and those have not. Filled by the host; CTRL+G is what turns one on. -->
-      <!-- THE PICKER NEEDS A DOOR. CTRL+G is the way it is meant to be opened, and a shortcut nothing on
-           screen mentions is a shortcut for whoever wrote it - which is the complaint already recorded
-           against the notes view's CTRL+R palette, one level down. The text filter got away with a
-           placeholder because a field IS visible; a picker that only exists once a key is pressed has
-           nothing to put a placeholder on, so it gets a button.
-
-           `.on` while any group is selected, so the control says the list is narrowed even when the chips
-           beside it have scrolled out of a cramped bar. -->
-      <button id="deal-groups" class="ghost icon-text" title="Pick the scenario groups (CTRL+G)"
-              data-hint="Choose which groups of scenarios the list is drawn from — several at once shows the scenarios in any of them. CTRL+G opens it too."><i class="icon stack"><i class="lane on"></i><i class="lane"></i><i class="lane on"></i></i>groups</button>
-
-      <div class="tagchips" id="tagchips" style="display:none"
-           data-hint="The scenario groups the list is narrowed to. Press one to stop filtering by it. CTRL+G picks them."></div>
-
-      <!-- WHAT THE RUN WILL COVER, beside the list rather than inside the generate panel. It sat between
-           `double-dummy hooks` and `fixed table` there, which are settings of a run; this is not one. It
-           OVERRIDES THE SELECTION - 101 scenarios, one page each, minutes of work and a folder full of
-           files - and it read as a third harmless switch two rows below the thing it contradicts.
-
-           Here it is next to the list, and it SHOWS ITSELF IN THE LIST: while it is on, every row carries
-           the soft highlight that says "this one too", with the selected row still marked on top of it. So
-           the answer to "what will generate do" is on screen as a shape rather than as a checkbox somebody
-           has to remember ticking. The selection is not cleared or disabled while it is on - it still says
-           which scenario the chips and the pane are about, and that is a different question. -->
-      <input type="checkbox" id="all" class="barcheck" title="Every scenario, one page each"
-             data-hint="Ignore the selection and generate every scenario in the list, one page each — the batch that fills the deals folder. While it is on, every row in the list is highlighted to show what the run will cover.">
-      <label for="all" class="barlabel-check">generate every scenario</label>
 
       <!-- WHERE THE HAND PAGE IS, as ONE control with three positions rather than two toggles that had to
            be pressed in the right order. `closed` / `beside the controls` / `the whole width` are three
@@ -531,30 +525,14 @@
            the place EXISTS, which one that appears and disappears does not - and nothing moves when a page
            arrives. -->
       <div class="seg" id="deal-pane-mode">
-        <button class="segbtn" data-pane="closed" disabled title="Close the hand page"
+        <button class="segbtn" data-pane="closed" disabled title="Close the hand page (ctrl+t or ctrl+\ cycles closed, beside, full width; ctrl+shift+t steps back)"
                 data-hint="Close the hand page. That is also what hands back what it was holding - a 48-deal page is about 86MB of laid-out document."><i class="icon"></i></button>
-        <button class="segbtn" data-pane="split" disabled title="Show the hand page beside the controls"
+        <button class="segbtn" data-pane="split" disabled title="Show the hand page beside the controls (ctrl+t or ctrl+\ cycles closed, beside, full width; ctrl+shift+t steps back)"
                 data-hint="Put the hand page beside these controls - the cards, the trick table and the play advice for the deals you just generated. Drag the bar between them to give either one more room."><i class="icon"><i class="gap"></i><i class="fill"></i></i></button>
-        <button class="segbtn" data-pane="wide" disabled title="Give the hand page the whole width"
+        <button class="segbtn" data-pane="wide" disabled title="Give the hand page the whole width (ctrl+t or ctrl+\ cycles closed, beside, full width; ctrl+shift+t steps back)"
                 data-hint="Let the hand page have everything except the scenario list, for reading a set of deals. Coming back restores the width you last dragged it to."><i class="icon"><i class="fill"></i></i></button>
       </div>
 
-      <!-- THE FOLDER IS IN THE BAR, not in the generate panel, because it is not a setting of generating.
-           It says where this window WRITES and where it READS, and the second half is what moved it: the
-           pane segment above is alive or dead according to whether the selected scenario has a page IN THIS
-           FOLDER, so a control that decides what the whole view can show cannot be the fifth row of one
-           panel. It is the deals view's answer to the notes view's `folder…` - the same question asked of
-           the other half of the window.
-
-           `deals folder` rather than `output dir`: what is in it is deals, and it is read at least as often
-           as it is written to, so naming it after the writing half was only ever half true. The id stays
-           `outdir` - it is what every flag, test and host lookup already calls it, and renaming a contract
-           to match a label is how the two drift. -->
-      <label for="outdir" class="barlabel">deals folder</label>
-      <input type="text" id="outdir" class="wide"
-             title="Where the pages are written, and where this window looks for the ones already there"
-             data-hint="Where the pages are written and where they are read back from. The scenario list and the hand page both look here, so this decides what there is to look at. Created if it does not exist; a relative path is taken from this program's working directory."
-             placeholder="created if missing; a relative path resolves against the working directory">
     </div>
 
     <!-- A PLAIN HORIZONTAL FLOW with ordinary `.divider` elements, NOT a `<frameset>` (2026-10-04). The frameset
@@ -568,6 +546,66 @@
     <div class="split" id="deal-split">
     <!-- Filled by the host from `bidding.registry`: one row per scenario, carrying its index. -->
     <aside id="scenario-list">
+      <!-- WHAT THE LIST IS DRAWN FROM, at the head of the list (2026-10-10). The folder, the filter and the
+           groups were a strip across the top of the deals view and read as governing everything under it -
+           the panels and the hand page too (reported: "filter, groups, deals folder etc are at the top of
+           page but hierarchically looks wrong"). Each of them acts on THIS list: the folder decides what
+           its rows' format tags and the chips can show, the filter and the groups decide which rows there
+           are. So they sit on it, folder first (it is the level above the scenario). The bar keeps only the
+           window's own layout: fold this list, and where the hand page is. -->
+      <div class="side-head">
+        <div class="side-row">
+        <label for="outdir" class="side-label">deals folder</label>
+        <input type="text" id="outdir" class="wide"
+               title="Where the pages are written, and where this window looks for the ones already there"
+               data-hint="Where the pages are written and where they are read back from. The scenario list and the hand page both look here, so this decides what there is to look at. Created if it does not exist; a relative path is taken from this program's working directory."
+               placeholder="created if missing">
+        </div>
+        <div class="side-row">
+        <!-- TYPE TO FIND A SCENARIO. A hundred rows two lines tall is a wall, and the only instrument
+             against it was the scrollbar - which is the wrong one for a list whose NAMES are the thing
+             somebody knows (`1c-any-2h-or-2n`) and whose POSITION is the thing they do not.
+
+             The matching is the heading palette's, `outline.score_name` unchanged: a subsequence, and the
+             query's spaces and punctuation are SEPARATORS rather than characters. So `1c 2h` finds
+             `1c-any-2h-or-2n` without anyone typing the dashes the registry happens to spell it with - the
+             same failure that rule was written for in the notes (`1h 1s` against `1H-1S`, `1H--1S`, `1H/1S`).
+
+             A FIELD IN THE BAR RATHER THAN A PALETTE OVER THE LIST, and the difference is not decoration.
+             The notes view's CTRL+R is modal because it GOES somewhere and closes behind you; a filter is a
+             STATE of the list - narrowed to the swedish-club auctions, you stay narrowed while you generate,
+             read the chips and come back - and an overlay cannot be a state you leave on. CTRL+R still puts
+             the caret here, so one key means "find a place by name" in both halves of the window.
+
+             The placeholder carries the key. The notes palette has no visible trigger at all and had to be
+             found in the help panel, which is the same complaint one level down: a shortcut nothing on
+             screen mentions is a shortcut for whoever wrote it. -->
+        <input type="text" id="scenario-filter" class="filter"
+               title="Narrow the list to the scenarios you name (CTRL+R)"
+               data-hint="Narrow the list to the scenarios whose name or description matches what you type. Spaces and dashes are separators, so `1c 2h` finds `1c-any-2h-or-2n`. CTRL+R puts the caret here, the up and down arrows move the selection, and escape clears it."
+               placeholder="filter  (ctrl+r)">
+
+        <!-- THE GROUPS THAT ARE SELECTED, one removable chip each, and NOTHING AT ALL when none are. They
+             sit here beside the text filter because the two compose - the groups widen, the typing narrows -
+             and deliberately NOT in the `.outputs` chip row below, which is a few pixels away and means the
+             opposite thing: a format chip is a file that exists and pressing it OPENS it, a group chip is a
+             filter and pressing it REMOVES it. Same shape, opposite sense, so they get a different place and
+             the × these have and those have not. Filled by the host; CTRL+G is what turns one on. -->
+        <!-- THE PICKER NEEDS A DOOR. CTRL+G is the way it is meant to be opened, and a shortcut nothing on
+             screen mentions is a shortcut for whoever wrote it - which is the complaint already recorded
+             against the notes view's CTRL+R palette, one level down. The text filter got away with a
+             placeholder because a field IS visible; a picker that only exists once a key is pressed has
+             nothing to put a placeholder on, so it gets a button.
+
+             `.on` while any group is selected, so the control says the list is narrowed even when the chips
+             beside it have scrolled out of a cramped bar. -->
+        <button id="deal-groups" class="ghost icon-text" title="Pick the scenario groups (CTRL+G)"
+                data-hint="Choose which groups of scenarios the list is drawn from — several at once shows the scenarios in any of them. CTRL+G opens it too."><i class="icon stack"><i class="lane on"></i><i class="lane"></i><i class="lane on"></i></i>groups</button>
+
+        </div>
+        <div class="tagchips" id="tagchips" style="display:none"
+             data-hint="The scenario groups the list is narrowed to. Press one to stop filtering by it. CTRL+G picks them."></div>
+      </div>
       <!-- THE HEADER EARNS ITS LINE. It used to say `scenarios`, which the button in the bar above it
            already says and the list below it makes obvious - a whole row spent repeating the one thing
            nobody could be confused about. It carries the two keys that act on this list instead, always on
@@ -590,23 +628,45 @@
            re-implements a flag. -->
       <div class="panel">
         <div class="legend">
-          generate deals
+          <button class="fold" id="fold-generate"><span class="chev" id="fold-generate-chev">▾</span>generate deals</button>
           <button class="help-toggle ghost small" id="help-generate" title="What does generating do?"
                   data-hint="Explain what this panel is for.">?</button>
         </div>
+        <!-- Everything under the title, so the fold is one `display`. -->
+        <div class="panel-body" id="generate-body">
         <div class="panel-help" id="help-generate-text">
-          Deals thousands of random hands, keeps only the ones that fit the scenario you picked — "North
-          opens 1C", say — and writes the survivors to a page you can click through, one deal at a time.
-          48 is a normal practice set. The page draws each hand as cards and, on the html-cards format,
-          adds the trick table and the card-combination advice for the play.
+          <p>Deals random hands, keeps the ones that fit the selected scenario, and writes them to a file in the
+          deals folder.</p>
+          <ul>
+            <li><b>deals</b> is how many to keep — 48 is a normal practice set.</li>
+            <li><b>format</b> is what kind of file:
+              <ul>
+                <li><b>html-cards</b> — the interactive page, shown here: cards, trick table, play advice.</li>
+                <li><b>html-handviewer</b> — a page of BBO hand viewers, one per deal; opens in your browser and needs
+                    the internet.</li>
+                <li><b>pretty</b> — the deals as readable text diagrams.</li>
+                <li><b>pbn</b> — Portable Bridge Notation, which other bridge programs import.</li>
+                <li><b>lin</b> — BBO's format: each line opens in the BBO or IntoBridge hand viewer.</li>
+                <li><b>handviewer</b> — BBO hand-viewer links, one per line.</li>
+                <li><b>line</b>, <b>numeric</b> — one deal per line in compact text, for scripts.</li>
+              </ul>
+            </li>
+            <li><b>seed</b>: leave it empty for new deals each time; a number gives the same deals back.</li>
+            <li><b>every scenario</b> writes one file per scenario instead of just the selected one.</li>
+          </ul>
         </div>
-        <div class="line">
+        <!-- ONE SETTING PER LINE, label column then a box of one width (reported: "deals / format / seed
+             have different size boxes" and "looks like a random collection of options"). The checkboxes
+             line up under the boxes. -->
+        <div class="line field">
           <label for="count">deals</label>
           <input type="text" id="count" class="num" value="48" title="How many matching deals to keep"
                  data-hint="How many deals to KEEP. The generator keeps dealing until it has this many that fit the scenario, so a rare scenario deals many more than this.">
+        </div>
+        <div class="line field">
           <label for="format">format</label>
           <select id="format" title="What kind of page or file to write"
-                  data-hint="html-cards is the interactive page — cards, trick table, play advice. html-handviewer is lighter. The rest are text, each with its own extension (.txt .line .lin .hv.txt .pbn .num) so two formats of one scenario cannot overwrite each other; a small text run is also shown in the pane below. lin writes BBO records - paste a line after play.intobridge.com/hand?lin= - while handviewer writes bridgebase query strings.">
+                  data-hint="What kind of file to write. html-cards is the interactive page shown here; html-handviewer is a page of BBO hand viewers for your browser; pretty, pbn, lin, handviewer, line and numeric are text files, each with its own extension so formats never overwrite each other. The ? above says what each one is for.">
             <option value="html-cards">html-cards</option>
             <option value="html-handviewer">html-handviewer</option>
             <option value="pretty">pretty</option>
@@ -616,11 +676,28 @@
             <option value="lin">lin</option>
             <option value="numeric">numeric</option>
           </select>
+        </div>
+        <!-- WHERE GENERATE WILL WRITE, under the format it depends on (`writes …` / `replaces …`). What is ON
+             SCREEN is the pane's to say - its title names the file. This was the status text at the end of the
+             button row, which in a narrow column wrapped a letter or two per line (reported). One line here,
+             cut with an ellipsis, the whole path on hover. -->
+        <div class="line field note">
+          <span class="output-note" id="output-note"
+                data-hint="Where generate will write, in the format above - and whether that replaces a file already there."></span>
+        </div>
+        <div class="line field">
           <label for="seed">seed</label>
           <input type="text" id="seed" class="num" placeholder="fresh" title="Repeat the same deals"
                  data-hint="Leave empty for different deals every run. Put a number in to get the SAME deals back — for comparing a change, or re-finding a hand.">
         </div>
-        <div class="line">
+        <!-- EVERY SCENARIO, a setting of THIS run (2026-10-10; it was in the bar). It overrides the selection,
+             and the list still shows that: every row takes a soft wash while it is on. -->
+        <div class="line field check">
+          <input type="checkbox" id="all" title="Every scenario, one page each"
+               data-hint="Ignore the selection and generate every scenario in the list, one page each — the batch that fills the deals folder. While it is on, every row in the list is highlighted to show what the run will cover.">
+        <label for="all">every scenario, one page each</label>
+        </div>
+        <div class="line field check">
           <!-- PAR ON EVERY PAGE, not "double-dummy hooks (--dd)" (2026-10-09). That box switched on the
                solver checks a FEW scenarios carry ("N/S make slam"), and nobody could remember what it
                meant - without it those scenarios were not what their names said. Their checks are now
@@ -629,17 +706,23 @@
           <input type="checkbox" id="par" title="Solve every deal and show its par under the hand"
                  data-hint="Solve every deal double dummy and show its par contract and what each side makes under the hand - for any scenario, your own included. Slower: every deal is solved. Scenarios that ask for the solver themselves (a slam that must make, say) always have it.">
           <label for="par">par for every deal (slower)</label>
+        </div>
+        <div class="line field check">
           <input type="checkbox" id="fixed" title="Same dealer and vulnerability every deal"
                  data-hint="Keep dealer and vulnerability the same on every deal instead of rotating them — one less thing changing while you practise.">
           <label for="fixed">fixed table</label>
         </div>
-        <div class="line">
+        <div class="line actions">
           <button id="generate" title="Deal and write the pages"
                   data-hint="Start dealing. Progress is per scenario, and the transcript below names each page as it is written.">generate</button>
           <button id="cancel" class="ghost" disabled title="Stop after the current scenario"
                   data-hint="Asks the run to stop. It finishes the scenario it is on first — one page, not the whole batch.">cancel</button>
           <div class="track" title="Progress through the scenarios"
                data-hint="How far through the scenarios this run is."><div id="fill"></div></div>
+        </div>
+        <!-- THE STATUS HAS A LINE OF ITS OWN, the panel's width: beside the buttons it got whatever the bar
+             left, and a narrow column wrapped a sentence a word per line (reported twice). -->
+        <div class="line status-line">
           <span class="status" id="status" data-hint="What the last run did, or why it would not start.">idle</span>
         </div>
         <!-- WHICH FORMATS EXIST FOR THE SELECTED SCENARIO, and a way to open each of them. The window's
@@ -656,6 +739,7 @@
              GENERATING has written for the selected scenario, so they sit with generate. -->
         <div class="line outputs" id="outputs" style="display:none"
              data-hint="What generate has already written for the scenario selected in the list. Press one to open that format - the page in the pane, a pbn or text file as text, a handviewer page in your browser."></div>
+        </div>
       </div>
 
       <!-- Analyse: deals you already have, one or a whole file of boards. PBN tags, bare N:..., LIN
@@ -663,54 +747,66 @@
            `analyse.resolve_boards` accepts. -->
       <div class="panel">
         <div class="legend">
-          analyse deals
+          <button class="fold" id="fold-analyse"><span class="chev" id="fold-analyse-chev">▾</span>analyse deals</button>
           <button class="help-toggle ghost small" id="help-analyse" title="What does analysing do?"
                   data-hint="Explain what this panel is for.">?</button>
         </div>
+        <!-- Everything under the title, so the fold is one `display`. -->
+        <div class="panel-body" id="analyse-body">
         <div class="panel-help" id="help-analyse-text">
-          Takes deals you already have — a hand from a club result, a screenshot or one you misplayed, or a
-          whole file of boards such as a match record — and reports how the play goes, board by board. Give it declarer and dummy only (write both defenders as a single
-          <code>-</code>) and it works out every way the defenders' cards can lie. Give it all four hands
-          and it solves the deal exactly. With <b>sample</b> above 0 it also deals the unknown cards out
-          hundreds of times and solves each one, which is the honest "how often does this contract make".
-          <b>Or drop a file on this window</b>: a screenshot of a hand diagram is read by hand-ocr and
-          analysed with the settings below (the deal it read lands in the box, so a misread card can be
-          corrected and re-analysed); a .pbn or .lin is analysed straight; an .html page is opened.
+          <p>Analyses deals you already have — one hand, or a whole match file — board by board.</p>
+          <ul>
+            <li><b>All four hands</b>: the deal is solved exactly.</li>
+            <li><b>Declarer and dummy only</b>: put a dash (<code>-</code>) in place of each defender's hand, as in
+                <code>N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -</code>. Each suit is then analysed over every way
+                the defenders' cards in it can split.</li>
+            <li><b>sample</b> (declarer and dummy only): 0 stops at that suit-by-suit analysis. Above 0, it also
+                deals the defenders' cards that many times and solves each layout, for a whole-hand chance of making
+                the contract — 200 to 500 is plenty, and more takes longer.</li>
+            <li><b>contract</b> and <b>target</b> choose what to score and the trick count to highlight;
+                <code>auto</code> picks the contract.</li>
+            <li><b>Drop a file</b> on the window: a screenshot of a hand diagram is read into the box (fix a misread
+                card and analyse again); a .pbn or .lin is analysed directly.</li>
+          </ul>
         </div>
         <div class="line">
           <textarea id="deal" title="PBN, a bare N:..., LIN, or a hand URL - one board or many"
                     data-hint="Paste a deal or several: PBN (one [Deal] tag per board), a bare N:… value, LIN (a vugraph record holds a whole match), or the whole URL of a hand from BBO or IntoBridge — or drop a screenshot of a hand diagram, a .pbn or a .lin anywhere on this window."
                     placeholder='[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]  ·  or a bare N:..., a LIN record, a hand URL — or drop a screenshot on the window'></textarea>
         </div>
-        <div class="line">
+        <div class="line field">
           <label for="sample">sample</label>
           <input type="text" id="sample" class="num" value="0" title="How many layouts to solve; 0 = off"
-                 data-hint="0 means card-combination advice only, no solver. 200 to 500 deals the unknown cards out that many times and solves each, giving a real make percentage.">
+                 data-hint="Declarer and dummy only. 0: suit-by-suit analysis alone. Above 0: also deal the defenders' cards that many times and solve each, for a whole-hand chance of making - 200 to 500 is plenty. Ignored when all four hands are given (that deal is solved exactly).">
+        </div>
+        <div class="line field">
           <label for="contract">contract</label>
           <input type="text" id="contract" class="num" placeholder="auto" title="The contract to score, e.g. 4H"
                  data-hint="Which contract to score, e.g. 4H or 3NT. Leave it empty and the best one for the sample is picked for you.">
+        </div>
+        <div class="line field">
           <label for="target">target</label>
           <input type="text" id="target" class="num" value="0" title="Highlight the column for this many tricks"
                  data-hint="Highlight the trick count you need: 9 for 3NT, 10 for four of a major, 12 for a small slam.">
         </div>
-        <!-- Three lines, as the generate panel has: the inputs, the option, then the buttons. On ONE line a
-             narrow controls column clipped the analyse button and broke "as text report" word by word
-             (reported with a screenshot). -->
-        <div class="line">
+        <div class="line field check">
           <!-- The hand page is what an analysis is FOR, so it is the default and the box names the exception
                (asked for: "as hand page should be implicit ... as text report would be the new option"). -->
           <input type="checkbox" id="as-text" title="Write the text report instead of showing the hand page"
                  data-hint="Write the analysis as a text report into the report pane below instead of drawing the interactive hand page beside these controls.">
           <label for="as-text">as text report</label>
         </div>
-        <div class="line">
+        <div class="line actions">
           <button id="analyse" title="Analyse the deals in the box above"
                   data-hint="Read the deal or deals above and write the report into the pane below.">analyse</button>
           <button id="show-analysed" class="ghost" disabled title="Put the last analysed hand page back in the pane"
                   data-hint="Shows the last hand page analyse made again - after a scenario's page has taken the pane - without analysing again.">show last</button>
           <span class="busy" id="analyse-busy" style="display:none"
                 data-hint="An analysis is running. A file of boards counts them; one board with a big sample just takes a while."><i class="spinner"></i><span id="analyse-busy-text">analysing…</span><span class="track mini"><span id="analyse-fill"></span></span></span>
+        </div>
+        <div class="line status-line">
           <span class="status" id="analyse-status" data-hint="What the last analyse did, or why it would not start."></span>
+        </div>
         </div>
       </div>
 
@@ -797,6 +893,12 @@
              behind it: a page `analyse` built in memory has nothing to hand over. -->
         <button id="page-browser" class="ghost small icon-text" disabled title="Open this page in your web browser"
                 data-hint="Open what the pane is showing in your web browser — more room for a big page, and the only way to read a handviewer page, which embeds bridgebase.com."><span class="away">↗</span>browser</button>
+        <!-- A LINK TO WHAT IS IN THE PANE (SHARING_PLAN.md, Tier B). The boards are read back out of the page
+             and packed into the link itself, which opens the shared-deals player - nothing is uploaded. Alive
+             exactly when `browser` is; a page with no boards in it is refused with a reason. See
+             `workbench/share.odin`. -->
+        <button id="page-share" class="ghost small" disabled title="Copy a link to these deals"
+                data-hint="Copy a link that opens these deals, as this page, in any browser. Nothing is uploaded: the deals travel in the link itself, about 19 characters a board. It opens the player page set in Settings - or, until one is published, the copy in the deals folder, which works on this computer only.">share link</button>
         <!-- Debug builds only (the host shows it; the stylesheet hides it): writes the hosted page`s
              geometry and the handful of computed styles that differ in this engine into the transcript and
              to stderr. A windowless probe cannot see a real window`s hover, drag or scrollbars, so this is
@@ -1469,6 +1571,9 @@
      window has repeatedly failed to reproduce in the windowless harness, so the real window has to be able
      to say what it saw. */
   var WB_DRAG_LOG = false;
+  // The `share link` button's clipboard (workbench/share.odin): the host has no clipboard API in this engine.
+  function wbCopyText(text) { return Clipboard.writeText(text) ? true : false; }
+
   function wbDragLog(what) {
     if (WB_DRAG_LOG) console.log("wb-drag " + what);
   }

@@ -228,6 +228,8 @@ App :: struct {
 	follow_pending:     bool,
 	// `WORKBENCH_DRAG_LOG=1`: log every divider drag (see `drag_log`). Off otherwise, in every build.
 	drag_log_on:        bool,
+	// `WORKBENCH_SCROLL_LOG=1`: say what each preview scroll measured (see `scroll_preview_to_heading`).
+	scroll_log_on:      bool,
 	// Check `[label](#Anchor)` as well? Off by default, and the button says so: a CHAPTER of this corpus
 	// links to headings in its sibling files on purpose, so on one chapter the check is mostly noise. On
 	// `bidding-system.bml`, which includes them all, every warning it raises is a real broken link.
@@ -693,7 +695,7 @@ on_posted :: proc(handler: ^sa.Host_Handler, posted: sa.Posted) {
 		}
 		app.analysed_page = page
 		if !show_analysed_page(app) {
-			set_status(app, "the hand page could not be loaded into the pane")
+			set_analyse_status(app, "the hand page could not be loaded into the pane")
 		}
 
 	case FINISHED:
@@ -826,7 +828,9 @@ start_generate :: proc(app: ^App) {
 start_analyse :: proc(app: ^App) {
 	job, err := analyse_job(app)
 	if err != "" {
-		set_status(app, err)
+		// In the ANALYSE panel: a refusal is an analyse message like any other (reported: "paste a deal…"
+		// came up beside the generate button - "it's the wrong section").
+		set_analyse_status(app, err)
 		return
 	}
 	start_job(app, job, "analysing…")
@@ -886,10 +890,11 @@ generate_job :: proc(app: ^App) -> (job: Job, err: string) {
 		}
 		append(&argv, "-s", seed)
 	}
-	if read_bool(app, "#par") {
+	// Only where the format has a use for them: a greyed box that is still ticked must not change a run.
+	if read_bool(app, "#par") && format_takes_par(format) {
 		append(&argv, "--par")
 	}
-	if read_bool(app, "#fixed") {
+	if read_bool(app, "#fixed") && format_takes_fixed_table(format) {
 		append(&argv, "--fixed-table")
 	}
 
@@ -1135,6 +1140,7 @@ scan_outputs :: proc(app: ^App) {
 	if read_err != nil {
 		return
 	}
+	ensure_local_player(dir)
 	for file in files {
 		if file.type == .Directory {
 			continue
@@ -1264,14 +1270,13 @@ note_selected_page :: proc(app: ^App, follow := true) {
 	if app.running {
 		return // the status line belongs to the run while one is going
 	}
-	path, _, ok, why := selected_output(app)
+	_, _, ok, why := selected_output(app)
 	refresh_pane_segment(app)
 	draw_output_chips(app)
 	if !ok {
 		set_status(app, why)
 		return
 	}
-	set_status(app, fmt.tprintf("output: %s", path))
 	if follow && page_pane_shown(app) {
 		arm_page_follow(app)
 	}
@@ -1365,6 +1370,7 @@ remember_shown_path :: proc(app: ^App, path: string) {
 	// a file association this window has no business firing. A page is the only thing a browser is the
 	// right answer for, and the pane can already show the rest as text.
 	set_enabled(app, "#page-browser", browsable_page(app.shown_path))
+	set_enabled(app, "#page-share", browsable_page(app.shown_path))
 	draw_output_chips(app)
 }
 
@@ -1480,6 +1486,7 @@ costs nothing, and redrawn wherever they are plus on the two controls that chang
 dropdown, the every-scenario box).
 */
 refresh_generate_label :: proc(app: ^App) {
+	refresh_format_switches(app)
 	_, format, known := format_of_extension(fmt.tprintf("x%s", extension_for(read_text(app, "#format"))))
 	exists := false
 	if known {
@@ -1499,6 +1506,79 @@ refresh_generate_label :: proc(app: ^App) {
 		title :=
 			"Deal again and REPLACE the pages already written in this format" if exists else "Deal and write the pages"
 		_ = sa.set_attribute(button, "title", title)
+	}
+
+	// The line under `format`: WHERE THIS RUN WILL WRITE, in the dropdown's format. What is on screen is the
+	// pane's to say (its own title names the file); this says what pressing the button will produce
+	// (asked for: "the path should show target the file would be put").
+	typed := strings.trim_space(read_text(app, "#outdir"))
+	dir, abs_err := filepath.abs(typed, context.temp_allocator)
+	extension := extension_for(read_text(app, "#format"))
+	verb := "replaces" if exists else "writes"
+	switch {
+	case abs_err != nil:
+		set_output_note(app, fmt.tprintf("deals folder: %q is not a usable path", typed))
+	case read_bool(app, "#all"):
+		target, _ := filepath.join({dir, fmt.tprintf("<scenario>%s", extension)}, context.temp_allocator)
+		set_output_note(app, fmt.tprintf("%s %s, one per scenario", verb, target))
+	case app.selected >= 0 && app.selected < len(app.scenarios):
+		target, _ := filepath.join({dir, fmt.tprintf("%s%s", app.scenarios[app.selected].name, extension)}, context.temp_allocator)
+		set_output_note(app, fmt.tprintf("%s %s", verb, target))
+	case:
+		set_output_note(app, "")
+	}
+}
+
+// WHICH PER-RUN SWITCHES A FORMAT HAS A USE FOR (asked for: "par for every deal does not apply to all
+// formats so should be greyed out"). norn writes the par caption for the html formats, pretty and pbn
+// (`deal_solve.annotate` skips line, numeric, handviewer and lin), and draws a dealer and vulnerability only
+// for the handviewer-based formats, html-cards and lin (`render_deal`) - the rest have none to fix.
+format_takes_par :: proc(format: string) -> bool {
+	switch format {
+	case "html-cards", "html-handviewer", "pretty", "pbn":
+		return true
+	}
+	return false
+}
+
+format_takes_fixed_table :: proc(format: string) -> bool {
+	switch format {
+	case "html-cards", "html-handviewer", "handviewer", "lin":
+		return true
+	}
+	return false
+}
+
+// Grey the two boxes the dropdown's format has no use for, with a tooltip that says why.
+refresh_format_switches :: proc(app: ^App) {
+	format := read_text(app, "#format")
+	Switch :: struct {
+		box, label, on, off: string,
+		takes:               bool,
+	}
+	for s in ([]Switch {
+			{
+				"#par",
+				`label[for="par"]`,
+				"Solve every deal and show its par under the hand",
+				"Only the html, pretty and pbn formats have a place for the par",
+				format_takes_par(format),
+			},
+			{
+				"#fixed",
+				`label[for="fixed"]`,
+				"Same dealer and vulnerability every deal",
+				"This format has no dealer or vulnerability to fix",
+				format_takes_fixed_table(format),
+			},
+		}) {
+		set_enabled(app, s.box, s.takes)
+		if box := find(app, s.box); box != nil {
+			sa.set_attribute(box, "title", s.on if s.takes else s.off)
+		}
+		if label := find(app, s.label); label != nil {
+			sa.set_attribute(label, "class", "" if s.takes else "off")
+		}
 	}
 }
 
@@ -1527,7 +1607,7 @@ open_output_format :: proc(app: ^App, extension: string) {
 	switch file_kind(path) {
 	case .Cards:
 		if show_page_file(app, path) {
-			set_status(app, path)
+			set_status(app, "") // the pane's title names the file
 		} else {
 			set_status(app, "the hand page could not be loaded into the pane")
 		}
@@ -1536,7 +1616,7 @@ open_output_format :: proc(app: ^App, extension: string) {
 		set_status(app, fmt.tprintf("handviewer pages embed bridgebase.com — opened %s in your browser", path))
 	case .Text:
 		if show_text_file(app, path) {
-			set_status(app, path)
+			set_status(app, "") // the pane's title names the file
 		} else {
 			set_status(app, fmt.tprintf("could not read %s", path))
 		}
@@ -1750,12 +1830,30 @@ SCITER_SITE :: "https://sciter.com/"
 // `show_view` leaves the marking alone for About — and not to the panes, which would throw away the chapter
 // or a half-typed chapter's worth of context for no reason.
 show_about :: proc(app: ^App, shown: bool) {
-	if shown {
-		app.before_about = current_view(app)
+	// Pressing `about` again CLOSES it. It used to re-open it, which recorded About itself as where to go
+	// back to, so close/esc/ctrl+w then went nowhere (reported: "pressed about twice, now seems stuck").
+	if shown && current_view(app) != .About {
+		app.before_about = place_underneath(app)
 		show_view(app, .About)
 		return
 	}
 	show_view(app, app.before_about)
+}
+
+// WHERE "BACK" IS when an errand (About, the settings, the keys list) opens: the place you are in, never
+// another errand. Opened from one another they would otherwise send each other back and forth for good
+// (about -> settings -> about), so an errand opened over an errand inherits that one's place.
+place_underneath :: proc(app: ^App) -> View {
+	#partial switch view := current_view(app); view {
+	case .About:
+		return app.before_about
+	case .Prefs:
+		return app.before_prefs
+	case .Keys:
+		return app.before_keys
+	case:
+		return view
+	}
 }
 
 // The one place a view is chosen. Every other caller names a `View`, so no combination of buttons can
@@ -2009,6 +2107,7 @@ show_analysed_page :: proc(app: ^App) -> bool {
 	app.showing_analysed = true
 	refresh_show_analysed(app)
 	set_enabled(app, "#page-browser", true) // `page-browser` writes it out first
+	set_enabled(app, "#page-share", true)
 	return true
 }
 
@@ -2032,7 +2131,7 @@ write_analysed_page :: proc(page: string) -> (path: string, ok: bool) {
 // The pane's title for an analysed page: how many boards it holds, since one analyse can read a whole match
 // (a vugraph `.lin`, a PBN file of boards). Each board of a card page is one `.compass`.
 analysed_title :: proc(page: string) -> string {
-	boards := strings.count(page, `<div class="compass">`)
+	boards := strings.count(page, `<div class="compass"`)
 	if boards == 1 {
 		return "analysed: 1 board"
 	}
@@ -2476,6 +2575,25 @@ remember_deals_layout :: proc(app: ^App) {
 
 // And restored at startup. The PANE is not restored open: there is nothing in it until something has been
 // generated or analysed, and an empty pane beside the controls would be a promise the window cannot keep.
+// A deals-view panel FOLDED to its title (the title is the button): the body hidden, the chevron turned,
+// and remembered as `fold.<key>` so the window opens the way it was left.
+fold_panel :: proc(app: ^App, key: string, folded: bool) {
+	set_shown(app, fmt.tprintf("#%s-body", key), !folded)
+	set_text_at(app, fmt.tprintf("#fold-%s-chev", key), "▸" if folded else "▾")
+	if app.prefs_path != "" {
+		prefs.set(&app.prefs, fmt.tprintf("fold.%s", key), "folded" if folded else "open")
+		_ = prefs.save(&app.prefs, app.prefs_path)
+	}
+}
+
+restore_folds :: proc(app: ^App) {
+	for key in ([]string{"generate", "analyse"}) {
+		if word, found := prefs.get(&app.prefs, fmt.tprintf("fold.%s", key)); found && word == "folded" {
+			fold_panel(app, key, true)
+		}
+	}
+}
+
 restore_deals_layout :: proc(app: ^App) {
 	if remembered, found := prefs.get(&app.prefs, DEALS_LIST_PREF); found {
 		show_scenario_list(app, remembered != "closed")
@@ -2861,6 +2979,89 @@ list_bml_files :: proc(dir: string, allocator := context.allocator) -> []string 
 	return names[:]
 }
 
+// One row of the file list: a file, and how deep in the `#INCLUDE` tree it is drawn.
+Bml_Tree_Row :: struct {
+	name:  string,
+	depth: int,
+}
+
+/*
+THE FILE LIST AS AN INCLUDE TREE (reported: "start with alphabetical ordering of bml files but indent include
+childs"). The ROOTS are the files nothing in the folder includes, alphabetical; under each come the files it
+`#INCLUDE`s, alphabetical too, one level deeper - so `bidding-system.bml` carries its chapters and the
+standalone systems sit beside it. A file two documents include is listed under BOTH: it is part of both,
+and the row is a link to the same file either way.
+
+Includes are read from DISK, not the buffer - the list is redrawn on open, save and folder changes, which is
+when the tree can change. BML has no include cycles, but the walk does not trust a folder to obey that: a
+name already on the path is not followed again, and a file only reachable from inside a cycle (so never a
+root) is added as a root at the end rather than left off the list.
+
+`names` is the folder's sorted listing; the rows' names are those same strings.
+*/
+bml_file_tree :: proc(dir: string, names: []string, allocator := context.allocator) -> []Bml_Tree_Row {
+	context.allocator = context.temp_allocator
+	children := make([][dynamic]string, len(names))
+	included := make([]bool, len(names))
+	for name, i in names {
+		file, _ := filepath.join({dir, name})
+		data, err := os.read_entire_file_from_path(file, context.temp_allocator)
+		if err != nil {
+			continue
+		}
+		text := string(data)
+		for line in strings.split_lines_iterator(&text) {
+			trimmed := strings.trim_space(line)
+			if !strings.has_prefix(trimmed, "#INCLUDE") {
+				continue
+			}
+			target := filepath.base(strings.trim_space(trimmed[len("#INCLUDE"):]))
+			for other, j in names {
+				if j != i && strings.equal_fold(other, target) && !slice.contains(children[i][:], other) {
+					append(&children[i], other)
+					included[j] = true
+				}
+			}
+		}
+		slice.sort(children[i][:])
+	}
+
+	rows := make([dynamic]Bml_Tree_Row, 0, len(names), allocator)
+	seen := make([]bool, len(names))
+	path := make([dynamic]string)
+	walk :: proc(
+		name: string,
+		depth: int,
+		names: []string,
+		children: [][dynamic]string,
+		seen: []bool,
+		path: ^[dynamic]string,
+		rows: ^[dynamic]Bml_Tree_Row,
+	) {
+		index, _ := slice.linear_search(names, name)
+		append(rows, Bml_Tree_Row{name = names[index], depth = depth})
+		seen[index] = true
+		append(path, name)
+		for child in children[index] {
+			if !slice.contains(path[:], child) {
+				walk(child, depth + 1, names, children, seen, path, rows)
+			}
+		}
+		pop(path)
+	}
+	for name, i in names {
+		if !included[i] {
+			walk(name, 0, names, children, seen, &path, &rows)
+		}
+	}
+	for name, i in names {
+		if !seen[i] {
+			walk(name, 0, names, children, seen, &path, &rows)
+		}
+	}
+	return rows[:]
+}
+
 // The file list, and the folder above it. One row per file carrying its NAME — `data-file` rather than an
 // index, because the list is re-read whenever the folder changes and an index would silently point at a
 // different file. Same shape as `draw_scenarios`, including `escape_html` on everything: `set_html` is a
@@ -2886,14 +3087,25 @@ draw_bml_files :: proc(app: ^App) {
 		return
 	}
 	modified := app.bml_open != "" && bml_modified(app)
+	draw_file_title(app, "#bml-title", app.bml_open, modified)
 	b := strings.builder_make(context.temp_allocator)
-	for name in app.bml_names {
-		escaped := escape_html(name, context.temp_allocator)
-		classes := "row"
-		if name == app.bml_open {
-			classes = "row sel dirty" if modified else "row sel"
+	// In include-tree order, an included file indented under the file that includes it (`bml_file_tree`).
+	// A top-level file after the first starts a new GROUP (`.top`, a gap and a seam): unrelated documents in
+	// one folder - the main system and its chapters, then each standalone system - read as separate things.
+	for row, i in bml_file_tree(app.docs, app.bml_names, context.temp_allocator) {
+		escaped := escape_html(row.name, context.temp_allocator)
+		classes := "row top" if row.depth == 0 && i > 0 else "row"
+		if row.name == app.bml_open {
+			classes = fmt.tprintf("%s sel dirty" if modified else "%s sel", classes)
 		}
-		fmt.sbprintf(&b, `<div class="%s" data-file="%s">%s</div>`, classes, escaped, escaped)
+		fmt.sbprintf(
+			&b,
+			`<div class="%s" data-file="%s" style="padding-left: %.1fem">%s</div>`,
+			classes,
+			escaped,
+			0.8 + 1.2 * f64(row.depth),
+			escaped,
+		)
 	}
 	sa.set_html(list, strings.to_string(b))
 }
@@ -3034,9 +3246,9 @@ open_bml :: proc(app: ^App, name: string, repreview := true) -> (ok: bool, why: 
 	// The text in the widget is not the text the last parse saw, so nothing that was marked still applies.
 	clear_bml_problems(app)
 	draw_bml_files(app)
-	// The file, and not the folder: the folder is named above the list, and saying it twice cost the status
-	// line the room it needs for what actually happened next (previewed, saved, refused).
-	bml_status(app, name)
+	// The name is the source pane's TITLE now (`draw_file_title`, from `draw_bml_files` above), so the
+	// status line is cleared for what happens next (previewed, saved, refused) rather than repeating it.
+	bml_status(app, "")
 
 	// A preview ON SCREEN is showing the file that WAS open. Re-render it rather than leaving it: the panes
 	// are side by side and nothing in the window would say the right-hand one is a file behind. Only when
@@ -3076,7 +3288,7 @@ save_bml :: proc(app: ^App) -> (ok: bool, why: string) {
 		return false, fmt.tprintf("could not write %s: %v", app.bml_open, werr)
 	}
 	app.bml_armed = false
-	return true, fmt.tprintf("saved %s · %d bytes", app.bml_open, len(body))
+	return true, fmt.tprintf("saved · %d bytes", len(body))
 }
 
 // Render what is IN THE EDITOR — not what is on disk — into the preview frame.
@@ -3143,7 +3355,7 @@ preview_bml :: proc(app: ^App) -> (ok: bool, why: string) {
 	// see, which reads as "preview does nothing on this file". And the scroll below needs the frame to be
 	// on screen: a `display: none` frame has no layout, so nothing can be measured or scrolled in it.
 	app.bml_showing = true
-	set_shown(app, "#bml-page", true)
+	set_shown(app, "#bml-preview-pane", true)
 	show_preview_button(app)
 	follow_preview_to_caret(app)
 
@@ -3170,7 +3382,7 @@ preview_bml :: proc(app: ^App) -> (ok: bool, why: string) {
 		scope =
 			first == last ? fmt.tprintf("folded · section %d of %d open", first + 1, sections) : fmt.tprintf("folded · sections %d-%d of %d open", first + 1, last + 1, sections)
 	}
-	return true, fmt.tprintf("%s · previewed %d blocks · %s", app.bml_open, len(doc.blocks), scope)
+	return true, fmt.tprintf("previewed %d blocks · %s", len(doc.blocks), scope)
 }
 
 // `#INCLUDE name`: the corpus directory first, then the working directory. The other way round from
@@ -3312,15 +3524,24 @@ next file click re-render rather than sit there showing nothing. `bml_showing` i
 */
 close_preview :: proc(app: ^App) {
 	app.bml_showing = false
-	set_shown(app, "#bml-page", false)
+	set_shown(app, "#bml-preview-pane", false)
+	set_shown(app, "#bml-source", true) // a WIDE preview had put the source away
 	_ = show_preview_html(app, "<html><body></body></html>")
 	show_preview_button(app)
 }
 
-// The preview button says which of its two jobs a press will do. Written here rather than in the document,
-// because the state it names is the host's.
+// The lit segment says where the preview IS (the deals view's `draw_deal_bar`, for this pane). Derived from
+// the document on every call, so it cannot drift from what is on screen.
 show_preview_button :: proc(app: ^App) {
-	set_text_at(app, "#bml-preview", app.bml_showing ? "close" : "preview")
+	mode := preview_mode(app)
+	for name in ([]string{"closed", "split", "wide"}) {
+		element := find(app, fmt.tprintf(`.segbtn[data-preview="%s"]`, name))
+		if element == nil {
+			continue
+		}
+		lit := name == pane_mode_name(mode)
+		_ = sa.set_attribute(element, "class", "segbtn on" if lit else "segbtn")
+	}
 }
 
 // The preview document: the library's html made SELF-CONTAINED.
@@ -3607,6 +3828,33 @@ set_bml_source :: proc(app: ^App, text: string) {
 		}
 	}
 	sa.set_text(element, text)
+}
+
+// The open file's name at the head of its source pane, with the unsaved dot (`.dirty`). Drawn with the file
+// list, which every open / save / discard redraws, and on each key in an editor (`refresh_file_title`), since
+// typing redraws nothing else. Writes only on a change, so a keystroke that changes neither costs no restyle.
+draw_file_title :: proc(app: ^App, selector: string, name: string, modified: bool) {
+	element := find(app, selector)
+	if element == nil {
+		return
+	}
+	class := "pane-title dirty" if modified else "pane-title"
+	if old, _ := sa.attribute(element, "class", context.temp_allocator); old != class {
+		_ = sa.set_attribute(element, "class", class)
+	}
+	if old, _ := sa.text(element, context.temp_allocator); old != name {
+		sa.set_text(element, name)
+	}
+}
+
+// After a key in either editor: has the title's unsaved dot come or gone?
+refresh_file_title :: proc(app: ^App) {
+	#partial switch current_view(app) {
+	case .Editor:
+		draw_file_title(app, "#bml-title", app.bml_open, app.bml_open != "" && bml_modified(app))
+	case .Scenarios:
+		draw_file_title(app, "#scn-title", app.scn_open, app.scn_open != "" && scenario_modified(app))
+	}
 }
 
 // Has the buffer been edited since it was loaded or saved? The widget's own flag (`isModified`), so
@@ -4211,7 +4459,7 @@ retry_pending_scroll :: proc(app: ^App) {
 		// Said out loud in EVERY build, not only in a debug one: the bug this replaced was a scroll that
 		// quietly did not happen, and "the preview is showing the top of the chapter and nothing says why"
 		// is the shape that wasted the time.
-		bml_status(app, fmt.tprintf("%s · the preview would not scroll to %s", app.bml_open, app.scroll_want))
+		bml_status(app, fmt.tprintf("the preview would not scroll to %s", app.scroll_want))
 		forget_pending_scroll(app)
 		return
 	}
@@ -4389,15 +4637,14 @@ scroll_preview_to_heading :: proc(app: ^App, text: string) -> (found: bool) {
 			// `content` still equals its `view`, so every candidate clamps to nothing). Ask again shortly.
 			want_scroll_again(app, text)
 		}
-		_ = note
-		when ODIN_DEBUG {
-			// The numbers, in the transcript, because this is the one part of the jump no test can watch:
-			// a windowless view must not reach into a DISPLAYED frame, and a hidden frame has no layout to
-			// scroll. So the real window is the only witness, and it says what it measured.
-			transcribe_local(app, fmt.tprintf("preview scroll: %q %s", text, note))
-			// And in the editor's own status line, because the transcript lives on the DEALS view and this
-			// is being read while looking at the notes.
-			bml_status(app, fmt.tprintf("scroll %s", note))
+		// The numbers, because this is the one part of the jump no test can watch: a windowless view must
+		// not reach into a DISPLAYED frame, and a hidden frame has no layout to scroll. So the real window is
+		// the only witness. OPT-IN with `WORKBENCH_SCROLL_LOG=1`: this runs on EVERY preview render (the
+		// preview follows the caret), so in every debug build it filled the deals view's report with
+		// notes-view lines while typing - reported 2026-10-10. To the console, not the transcript, which
+		// belongs to the deals view.
+		if app.scroll_log_on {
+			log.infof("preview scroll: %q %s", text, note)
 		}
 		return true
 	}
@@ -4545,6 +4792,78 @@ scroller_of :: proc(element: sa.Element, root: sa.Element) -> sa.Element {
 }
 
 /*
+WHERE THE NOTES PREVIEW IS: closed, beside the source, or the whole width - the deals view's `Pane_Mode`, for
+this view's pane (2026-10-10). It was a toggle whose label became `close` while the pane was up, and a word in
+the bar did not read as closing the pane on the right ("not really positioned to suggest closing of the
+preview"). One control on both views, and CTRL+T / CTRL+\ step round it the same way on both.
+
+WIDE puts the SOURCE away (`#bml-source` hidden) and leaves the file list to CTRL+B, as the deals view's wide
+leaves its scenario list. The buffer is untouched: the source pane is hidden, not closed.
+
+Derived from the document like `pane_mode`: `bml_showing` is the preview pane, the source's display says wide.
+*/
+preview_mode :: proc(app: ^App) -> Pane_Mode {
+	if !app.bml_showing {
+		return .Closed
+	}
+	return .Wide if effective_display_is_hidden(app, "#bml-source") else .Split
+}
+
+// Closing hands the rendered document back to the engine (tens to hundreds of MB - see `preview/preview.odin`).
+// Opening renders the BUFFER; `split` <-> `wide` only moves a page that is already up, so it does not re-render.
+set_preview_mode :: proc(app: ^App, mode: Pane_Mode) {
+	if mode == .Closed {
+		if app.bml_showing {
+			close_preview(app)
+			bml_status(app, "preview closed")
+		}
+		show_preview_button(app)
+		return
+	}
+	if !app.bml_showing {
+		rendered, why := preview_bml(app)
+		bml_status(app, why)
+		if !rendered {
+			log.warnf("the bml preview did not render: %s", why)
+		}
+		if !app.bml_showing {
+			// Nothing to widen: a preview that never came up leaves the source where it is.
+			show_preview_button(app)
+			return
+		}
+	}
+	set_shown(app, "#bml-source", mode != .Wide)
+	// Back from wide, the source takes the caret again: a hidden widget loses the focus, and this engine paints
+	// a caret only in a focused one.
+	if mode == .Split {
+		if text := find(app, "#bml-text"); text != nil {
+			_ = sa.set_focus(text)
+		}
+	}
+	show_preview_button(app)
+}
+
+// Closed -> beside -> wide -> closed: the segment's own order, as `cycle_pane_mode` steps the deals view's.
+// `back` (CTRL+SHIFT+T) walks it the other way round.
+cycle_preview_mode :: proc(app: ^App, back := false) {
+	set_preview_mode(app, next_pane_mode(preview_mode(app), back))
+}
+
+// One step round closed -> split -> wide -> closed, or back the other way. Shared by both views' panes so
+// the key steps them identically.
+next_pane_mode :: proc(mode: Pane_Mode, back: bool) -> Pane_Mode {
+	switch mode {
+	case .Closed:
+		return .Wide if back else .Split
+	case .Split:
+		return .Closed if back else .Wide
+	case .Wide:
+		return .Split if back else .Closed
+	}
+	return .Closed
+}
+
+/*
 The palette's keys. Reported like `zoom_key` so the caller can leave everything else alone.
 
 INTERCEPTED AT THE SINKING PHASE by the caller, which is the whole trick: the query is typed into an
@@ -4567,7 +4886,7 @@ goto_key :: proc(app: ^App, key_code: u32, modifiers: sciter.Keyboard_States) ->
 	#partial switch sciter.Sc_Kb_Codes(key_code) {
 	case .ESCAPE:
 		close_goto(app)
-		bml_status(app, app.bml_open)
+		bml_status(app, "") // the file's name is the source pane's title
 		return true
 	case .DOWN:
 		move_goto(app, 1)
@@ -4819,8 +5138,34 @@ hint_for :: proc(element: sa.Element) -> string {
 	return ""
 }
 
+// A hover hint, or - with nothing hovered ("") - the window's NOTE back again.
 show_hint :: proc(app: ^App, text: string) {
-	set_text_at(app, "#hint", text)
+	hint := find(app, "#hint")
+	if hint == nil {
+		return
+	}
+	if text != "" {
+		_ = sa.set_text(hint, text)
+		sa.set_attribute(hint, "class", "hintbar")
+		return
+	}
+	note, _ := sa.attribute(hint, "data-note", context.temp_allocator)
+	_ = sa.set_text(hint, note)
+	sa.set_attribute(hint, "class", "hintbar note" if note != "" else "hintbar")
+}
+
+// THE WINDOW'S NOTE: what a key, a drop, a zoom or the pane says back, in the hint bar at the bottom. It
+// used to be the generate panel's status line, which made every one of them read as being about generating
+// - and in a narrow column, a sentence a word per line beside the buttons (reported twice: "the wrong
+// section", "vertical text very thin column still ugly"). Kept on the bar itself (`data-note`), so a hover
+// hint covers it for a moment and the pointer leaving brings it back.
+set_note :: proc(app: ^App, text: string) {
+	hint := find(app, "#hint")
+	if hint == nil {
+		return
+	}
+	sa.set_attribute(hint, "data-note", text)
+	show_hint(app, "")
 }
 
 // Open the Terra Informatica site in the user's own browser. Done from the HOST rather than by letting
@@ -4972,7 +5317,7 @@ page_zoom_step :: proc(app: ^App, direction: int) {
 	if ferr != nil {
 		return
 	}
-	set_status(app, fmt.tprintf("hand page %d%%", int(factor * 100 + 0.5)))
+	set_note(app, fmt.tprintf("hand page %d%%", int(factor * 100 + 0.5)))
 	remember_page_zoom(app, factor)
 }
 
@@ -5071,13 +5416,28 @@ zoom_key :: proc(app: ^App, key_code: u32, modifiers: sciter.Keyboard_States) ->
 		return false
 	}
 	factor := zoom_step(app, direction)
-	set_status(app, fmt.tprintf("zoom %d%%", int(factor * 100 + 0.5)))
+	set_note(app, fmt.tprintf("zoom %d%%", int(factor * 100 + 0.5)))
 	remember_zoom(app, factor)
 	return true
 }
 
 set_status :: proc(app: ^App, text: string) {
 	set_text_at(app, "#status", text)
+}
+
+// The analyse panel's own status, beside its buttons - for what is said outside a run (a refusal, `show
+// last` with nothing to show); during a run `set_job_status` routes there by itself.
+set_analyse_status :: proc(app: ^App, text: string) {
+	set_text_at(app, "#analyse-status", text)
+}
+
+// The line under `format`: the selected scenario's file, or why there is none. The text is cut to one
+// line by the stylesheet, so the whole of it is the tooltip too.
+set_output_note :: proc(app: ^App, text: string) {
+	set_text_at(app, "#output-note", text)
+	if note := find(app, "#output-note"); note != nil {
+		sa.set_attribute(note, "title", text)
+	}
 }
 
 // A RUN's status, said in the panel that started it: an analyse (or a dropped screenshot, which ends in one)
@@ -5347,6 +5707,7 @@ load_user_scenarios :: proc(app: ^App) {
 load_prefs_and_scenarios :: proc(app: ^App, prefs_path: string) {
 	app.prefs_path = prefs_path
 	app.prefs = prefs.load(app.prefs_path, app.allocator)
+	apply_share_player(app)
 	load_user_scenarios(app)
 }
 
@@ -5597,7 +5958,7 @@ tag_picker_open :: proc(app: ^App) -> bool {
 
 toggle_tag_picker :: proc(app: ^App) {
 	if !overlays_have_room(app) {
-		set_status(app, "the hand page has the whole width — ctrl+\\ brings the controls back")
+		set_note(app, "the hand page has the whole width — ctrl+\\ brings the controls back")
 		return
 	}
 	set_tag_picker(app, !tag_picker_open(app))
@@ -5622,7 +5983,7 @@ set_tag_picker :: proc(app: ^App, open: bool) {
 	if picker := find(app, "#tagpicker"); picker != nil {
 		_ = sa.set_focus(picker)
 	}
-	set_status(app, "groups: a number or space toggles, enter closes, backspace clears")
+	set_note(app, "groups: a number or space toggles, enter closes, backspace clears")
 }
 
 // CTRL+/ — the list of every key, from ANY view. `About`'s shape: remember where you were, show it, go
@@ -5633,12 +5994,12 @@ toggle_keys_panel :: proc(app: ^App) {
 		show_view(app, app.before_keys)
 		return
 	}
-	app.before_keys = current_view(app)
+	app.before_keys = place_underneath(app)
 	show_view(app, .Keys)
 	if panel := find(app, "#keyspanel"); panel != nil {
 		_ = sa.set_focus(panel)
 	}
-	set_status(app, "keys: esc or ctrl+/ goes back")
+	set_note(app, "keys: esc or ctrl+/ goes back")
 }
 
 // The rows. Drawn from `bidding.tags` every time rather than kept, so the tick and the count cannot lag the
@@ -5943,6 +6304,30 @@ window_shortcut_key :: proc(app: ^App, key_code: u32, modifiers: sciter.Keyboard
 		return true
 	}
 
+	// The notes editor's own keys: the same two the scenario editor has, for the same two things (the button
+	// titles promised ctrl+s here long before it was wired).
+	if current_view(app) == .Editor {
+		#partial switch code {
+		case .S:
+			written, why := save_bml(app)
+			refresh_quiz(app) // a save can make the quiz older than its notes
+			bml_status(app, why)
+			if !written {
+				log.warnf("the bml file was not saved: %s", why)
+			}
+			return true
+		case .B:
+			set_shown(app, "#bml-files", effective_display_is_hidden(app, "#bml-files"))
+			return true
+		case .BACKSLASH, .T:
+			// The deals view's pane key, for this view's pane, and the same three steps: closed, beside, wide.
+			// SHIFT steps back.
+			cycle_preview_mode(app, back = shift)
+			return true
+		}
+		return false
+	}
+
 	// The scenario editor's own keys, before the deals view's: a view that is on screen owns its keys.
 	if current_view(app) == .Scenarios {
 		#partial switch code {
@@ -5970,8 +6355,8 @@ window_shortcut_key :: proc(app: ^App, key_code: u32, modifiers: sciter.Keyboard
 	case .B:
 		show_scenario_list(app, !scenario_list_shown(app))
 		return true
-	case .BACKSLASH:
-		cycle_pane_mode(app)
+	case .BACKSLASH, .T:
+		cycle_pane_mode(app, back = shift) // SHIFT steps back
 		return true
 	case .O:
 		step_output_format(app, -1 if shift else 1)
@@ -6008,18 +6393,18 @@ asked to go there is the opposite of that.
 */
 swap_focus_between_list_and_page :: proc(app: ^App) {
 	if !page_pane_shown(app) {
-		set_status(app, "no hand page open — ctrl+\\ opens it beside the list")
+		set_note(app, "no hand page open — ctrl+\\ opens it beside the list")
 		return
 	}
 	if page_document_has_focus(app) {
 		if list := find(app, "#scenarios"); list != nil {
 			_ = sa.set_focus(list)
 		}
-		set_status(app, "the scenario list has the keys — the arrows step scenarios")
+		set_note(app, "the scenario list has the keys — the arrows step scenarios")
 		return
 	}
 	focus_page(app, force = true)
-	set_status(app, "the hand page has the keys — the arrows step boards, a/n/e/s/w pick a seat")
+	set_note(app, "the hand page has the keys — the arrows step boards, a/n/e/s/w pick a seat")
 }
 
 // Is the focus inside the framed page? Asked of the FRAME element, since the focused element is inside a
@@ -6035,19 +6420,13 @@ page_document_has_focus :: proc(app: ^App) -> bool {
 
 // Closed → split → wide → closed. The segment's own order, so the key and the three buttons step the same
 // way round; `set_pane_mode` does the refusing (a pane with nothing in it stays shut and says why).
-cycle_pane_mode :: proc(app: ^App) {
+// `back` (CTRL+SHIFT+T) walks it the other way round.
+cycle_pane_mode :: proc(app: ^App, back := false) {
 	if !page_available(app) {
-		set_status(app, "no hand page yet — generate or analyse something, or pick a scenario that has one")
+		set_note(app, "no hand page yet — generate or analyse something, or pick a scenario that has one")
 		return
 	}
-	switch pane_mode(app) {
-	case .Closed:
-		set_pane_mode(app, .Split)
-	case .Split:
-		set_pane_mode(app, .Wide)
-	case .Wide:
-		set_pane_mode(app, .Closed)
-	}
+	set_pane_mode(app, next_pane_mode(pane_mode(app), back))
 }
 
 /*
@@ -6059,13 +6438,13 @@ repeatedly walks the scenario's outputs in order rather than restarting from the
 */
 step_output_format :: proc(app: ^App, step: int) {
 	if app.selected < 0 || app.selected >= len(app.scenarios) {
-		set_status(app, "pick a scenario in the list first")
+		set_note(app, "pick a scenario in the list first")
 		return
 	}
 	name := app.scenarios[app.selected].name
 	have := formats_for(app, name)
 	if have == {} {
-		set_status(app, fmt.tprintf("nothing generated for %s yet", name))
+		set_note(app, fmt.tprintf("nothing generated for %s yet", name))
 		return
 	}
 
@@ -6151,11 +6530,9 @@ focus_scenario_filter :: proc(app: ^App) {
 	if input := find(app, "#scenario-filter"); input != nil {
 		_ = sa.set_focus(input)
 	}
-	// AND IT SAYS SO. Reported from the window as "the palette is missing on CTRL+R": the key moved the
-	// caret into a small field in the bar and announced itself nowhere, so a person who pressed it saw an
-	// accent ring appear somewhere and reasonably concluded the key had done nothing. The picker had a
-	// status line from the start and reads as a control being entered; this had none.
-	set_status(app, "filter: type to narrow the list, ↑↓ move the selection, esc clears")
+	// No status message: the field is at the head of the list it filters now, and its placeholder and
+	// tooltip say the keys. (It used to announce itself in the generate panel's status line, from when the
+	// field was a small box in the bar that nobody could see take the caret.)
 }
 
 // Escape: the whole registry back, and the keyboard handed to the list — the same courtesy `close_goto`
@@ -6438,11 +6815,11 @@ drop_action :: proc(path: string) -> Drop_Action {
 handle_drop :: proc(app: ^App, data: ^sa.Value) {
 	path, ok := drop_file_path(data, context.temp_allocator)
 	if !ok {
-		set_status(app, "that drop carried no file the window could read")
+		set_note(app, "that drop carried no file the window could read")
 		return
 	}
 	if app.running {
-		set_status(app, fmt.tprintf("busy — %s dropped, try again when this run finishes", filepath.base(path)))
+		set_note(app, fmt.tprintf("busy — %s dropped, try again when this run finishes", filepath.base(path)))
 		return
 	}
 
@@ -6450,7 +6827,7 @@ handle_drop :: proc(app: ^App, data: ^sa.Value) {
 	case .Read_Image:
 		job, err := ocr_job(app, path)
 		if err != "" {
-			set_status(app, err)
+			set_analyse_status(app, err)
 			return
 		}
 		start_job(app, job, fmt.tprintf("reading %s…", filepath.base(path)))
@@ -6460,7 +6837,7 @@ handle_drop :: proc(app: ^App, data: ^sa.Value) {
 		// PBN arrives as the carousel it is instead of as a textarea full of tags.
 		argv, flag_err := analyse_flags(app)
 		if flag_err != "" {
-			set_status(app, flag_err)
+			set_analyse_status(app, flag_err)
 			return
 		}
 		append(&argv, "--file", path)
@@ -6481,14 +6858,14 @@ handle_drop :: proc(app: ^App, data: ^sa.Value) {
 		switch file_kind(path) {
 		case .Cards:
 			if !show_page_file(app, path) {
-				set_status(app, "that page could not be loaded into the frame")
+				set_note(app, "that page could not be loaded into the frame")
 			}
 		case .Handviewer:
 			open_in_browser(path)
-			set_status(app, fmt.tprintf("handviewer pages embed bridgebase.com — opened %s in your browser", path))
+			set_note(app, fmt.tprintf("handviewer pages embed bridgebase.com — opened %s in your browser", path))
 		case .Text:
 			if !show_text_file(app, path) {
-				set_status(app, fmt.tprintf("could not read %s", path))
+				set_note(app, fmt.tprintf("could not read %s", path))
 			}
 		}
 
@@ -6517,7 +6894,7 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 			// BOTH, or the drag source is told no and the drop never lands. Not a redundant pair.
 			return true
 		case .DRAG_ENTER:
-			set_status(app, "drop a hand-diagram image, a .pbn/.lin deal, or a page")
+			// What a drop does is in the report pane's opening lines, not announced on every drag.
 			return false
 		case .DROP:
 			handle_drop(app, xe.data)
@@ -6561,6 +6938,10 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		// wrong: a key that changed no text is answered by the fingerprint when the timer fires.
 		if ke.code == .DOWN && ke.phase == .Bubbling && current_view(app) == .Editor {
 			arm_live_preview(app)
+		}
+		// On the way UP, when the widget has applied the key: the title's unsaved dot follows the typing.
+		if ke.code == .UP && ke.phase == .Bubbling {
+			refresh_file_title(app)
 		}
 		return false
 	}
@@ -6619,6 +7000,7 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 			}
 			// The settings' quiz fields are remembered on the way out too: a path is typed or pasted whole.
 			remember_quiz_pref(app, id)
+			remember_share_pref(app, id)
 		}
 		return false
 	}
@@ -6636,12 +7018,12 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		switch sa.event_name(be, context.temp_allocator) {
 		case "wb-zoom":
 			factor := zoom_factor(app)
-			set_status(app, fmt.tprintf("zoom %d%%", int(factor * 100 + 0.5)))
+			set_note(app, fmt.tprintf("zoom %d%%", int(factor * 100 + 0.5)))
 			remember_zoom(app, factor)
 			return true
 		case "wb-page-zoom":
 			factor := page_zoom_factor(app)
-			set_status(app, fmt.tprintf("hand page %d%%", int(factor * 100 + 0.5)))
+			set_note(app, fmt.tprintf("hand page %d%%", int(factor * 100 + 0.5)))
 			remember_page_zoom(app, factor)
 			return true
 		}
@@ -6724,6 +7106,16 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 	// THE PANE SEGMENT, before the ids and for the same reason the tabs are: the document names the
 	// destination (`data-pane`) and this is the only place that spelling is decoded, so a fourth position
 	// would be a button plus an enum member and no new case here.
+	// The notes view's preview segment: the same three positions, spelled `data-preview`.
+	if wanted, _ := sa.attribute(be.target, "data-preview", context.temp_allocator); wanted != "" {
+		mode, known := pane_mode_of(wanted)
+		if !known {
+			return false
+		}
+		set_preview_mode(app, mode)
+		return true
+	}
+
 	if wanted, _ := sa.attribute(be.target, "data-pane", context.temp_allocator); wanted != "" {
 		mode, known := pane_mode_of(wanted)
 		if !known {
@@ -6734,7 +7126,7 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		// `page_available` and not `page_ready`: a page sitting on disk for the selected scenario counts,
 		// and opening the pane is what loads it.
 		if !page_available(app) {
-			set_status(app, "no hand page yet — generate or analyse something, or pick a scenario that has one")
+			set_note(app, "no hand page yet — generate or analyse something, or pick a scenario that has one")
 			return true
 		}
 		set_pane_mode(app, mode)
@@ -6753,7 +7145,7 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 
 	case "show-analysed":
 		if !show_analysed_page(app) {
-			set_status(app, "nothing analysed yet in this window")
+			set_analyse_status(app, "nothing analysed yet in this window")
 		}
 		return true
 
@@ -6771,6 +7163,11 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		sync.unlock(&app.mutex)
 		draw_transcript(app)
 		set_status(app, "idle")
+		return true
+
+	case "fold-generate", "fold-analyse":
+		key := id[len("fold-"):]
+		fold_panel(app, key, !effective_display_is_hidden(app, fmt.tprintf("#%s-body", key)))
 		return true
 
 	case "help-generate", "help-analyse", "help-bml", "help-scn":
@@ -6808,6 +7205,9 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		show_prefs(app, false)
 		return true
 
+	case "page-share":
+		share_shown_page(app)
+		return true
 	case "page-browser":
 		// WHATEVER IS IN THE PANE, IN A REAL BROWSER. Reported as a gap and it was one: the chips could put
 		// a page in the pane and, for the one kind this window cannot host, hand it to a browser - but a
@@ -6820,25 +7220,25 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		if app.showing_analysed && app.analysed_page != "" {
 			path, written := write_analysed_page(app.analysed_page)
 			if !written {
-				set_status(app, "the analysed page could not be written to the temp folder")
+				set_note(app, "the analysed page could not be written to the temp folder")
 				return true
 			}
 			open_in_browser(path)
-			set_status(app, fmt.tprintf("opened the analysed page in your browser (%s)", path))
+			set_note(app, fmt.tprintf("opened the analysed page in your browser (%s)", path))
 			return true
 		}
 		if app.shown_path == "" {
-			set_status(app, "nothing in the pane has a file to open — generate or pick one first")
+			set_note(app, "nothing in the pane has a file to open — generate or pick one first")
 			return true
 		}
 		// The MODEL refuses too, not just the dimmed button: `do_click` runs a disabled button's behavior
 		// and delivers the click like any other.
 		if !browsable_page(app.shown_path) {
-			set_status(app, "only a page opens in a browser — this is text, and the pane is showing it")
+			set_note(app, "only a page opens in a browser — this is text, and the pane is showing it")
 			return true
 		}
 		open_in_browser(app.shown_path)
-		set_status(app, fmt.tprintf("opened %s in your browser", app.shown_path))
+		set_note(app, fmt.tprintf("opened %s in your browser", app.shown_path))
 		return true
 
 	case "page-dump":
@@ -6935,21 +7335,6 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		}
 		return true
 
-	case "bml-preview":
-		// A TOGGLE, because the pane is the expensive thing in this window: closing it hands the document back
-		// to the engine (tens to hundreds of MB - see `preview/preview.odin`) and gives the source the whole
-		// width. The button's own label says which of the two a press does.
-		if app.bml_showing {
-			close_preview(app)
-			bml_status(app, "preview closed")
-			return true
-		}
-		rendered, why := preview_bml(app)
-		bml_status(app, why)
-		if !rendered {
-			log.warnf("the bml preview did not render: %s", why)
-		}
-		return true
 
 	case "bml-quiz":
 		made, why := generate_quiz(app)
@@ -7335,6 +7720,9 @@ main :: proc() {
 		}
 	}
 
+	// The preview-scroll log: see `scroll_preview_to_heading`. OPT-IN, in any build.
+	app.scroll_log_on = os.get_env("WORKBENCH_SCROLL_LOG", context.temp_allocator) == "1"
+
 	// The frame log: see `wbFrameLog` in the document's script. OPT-IN with `WORKBENCH_FRAME_LOG=1`, for the
 	// question a windowless test cannot answer - how long a real window's frames take while it is resized.
 	if os.get_env("WORKBENCH_FRAME_LOG", context.temp_allocator) == "1" {
@@ -7379,6 +7767,7 @@ main :: proc() {
 	restore_zoom(app)
 	restore_page_zoom(app)
 	restore_deals_layout(app)
+	restore_folds(app)
 
 	// What is already in the deals folder, BEFORE the list is drawn: the rows carry their format tags from
 	// the first frame, so a window opened on a folder from an earlier session says what is in it rather
@@ -7392,7 +7781,13 @@ main :: proc() {
 	show_view(app, .Panes)
 	transcribe_local(
 		app,
-		"Pick a scenario and press generate, or put deals in the analyse box (paste them, or drop a .pbn, .lin or screenshot on the window) and press analyse. Everything runs in this process.",
+		"Pick a scenario and press generate, or paste deals into the analyse box and press analyse.",
+	)
+	// DROPPING IS THE WINDOW'S, not either panel's, so it is said here once (it was a drag-over message in a
+	// panel's status line, which read as belonging to that panel - reported).
+	transcribe_local(
+		app,
+		"Or drop a file anywhere on the window: a screenshot of a hand diagram or a .pbn/.lin file is analysed, an .html deals page is opened.",
 	)
 	if docs_note != "" {
 		transcribe_local(app, docs_note)

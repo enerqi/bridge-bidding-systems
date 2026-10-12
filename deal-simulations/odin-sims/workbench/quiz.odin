@@ -9,8 +9,8 @@ package main
 	reading the bid tables out of the editor's buffer (`quiz_corpus`, held auction for auction to the python
 	quiz over every file in the corpus), writing them as JSON into that slot, and saving the result.
 
-	THE QUIZ STRIP is a line under the notes bar (not in it: the bar is one line by rule and was full):
-	`generate quiz`, `open quiz in browser` when a page exists, and a sentence saying whether this file has a
+	THE QUIZ GROUP is in the source pane's head, after `save` - both act on the open file: `make quiz`
+	(`remake quiz` once a page exists), `↗ open` when a page exists, and a sentence saying whether this file has a
 	quiz page, how old it is, and whether the notes were saved after it.
 
 	THE TEMPLATE IS BUILT IN. `ui/quiz-template.html` is a VENDORED copy, `#load`ed into the exe, so the
@@ -26,7 +26,7 @@ package main
 	included — `#INCLUDE`s are resolved from disk as the preview resolves them.
 
 	THE PAGE IS NOT SHOWN HERE. The quiz runs WebAssembly, which this engine's script does not; it is a page
-	for a browser, so the view offers `open quiz in browser` rather than loading it into a pane.
+	for a browser, so the view offers `↗ open` (in a browser) rather than loading it into a pane.
 
 	THE VIEW KNOWS WHETHER A QUIZ EXISTS. Whenever a file is opened (and after a save, a generate, or a change
 	to where quizzes go) `refresh_quiz` looks for that file's page on disk: the open button is there exactly
@@ -317,7 +317,11 @@ refresh_quiz :: proc(app: ^App) {
 	if path != "" {
 		quiz, qerr = os.stat(path, context.temp_allocator)
 	}
-	if qerr != nil || quiz.type == .Directory {
+	// `make quiz` for a file with no page, `remake quiz` for one that has - the deals view's
+	// generate / regenerate, for the same reason: the press replaces a file.
+	exists := qerr == nil && quiz.type != .Directory
+	set_text_at(app, "#bml-quiz-label", "remake quiz" if exists else "make quiz")
+	if !exists {
 		set_shown(app, "#bml-quiz-open", false)
 		set_quiz_state(app, "no quiz page for this file yet", false)
 		return

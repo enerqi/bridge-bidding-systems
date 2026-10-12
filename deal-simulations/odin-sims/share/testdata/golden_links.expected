@@ -1,0 +1,21 @@
+== plain
+title "Shared deals", analyse false, 3 boards
+1: North:AT953 T5 Q863 54 East:4 AKQJ8 AK752 96 South:K6 742 JT9 KJT32 West:QJ872 963 4 AQ87 | vul North_South, dealer North
+2: North:AQT2 Q4 KQJ843 J East:J954 9 9762 K965 South:83 J8752 T5 Q432 West:K76 AKT63 A AT87 | vul East_West, dealer East
+3: North:T97 Q4 Q7643 943 East:QJ86 75 J AKQT62 South:A32 863 985 J875 West:K54 AKJT92 AKT2  | vul None, dealer East
+== analysed
+title "Shared deals", analyse true, 3 boards
+1: North:AT953 T5 Q863 54 East:4 AKQJ8 AK752 96 South:K6 742 JT9 KJT32 West:QJ872 963 4 AQ87 | vul North_South, dealer North
+2: North:AQT2 Q4 KQJ843 J East:J954 9 9762 K965 South:83 J8752 T5 Q432 West:K76 AKT63 A AT87 | vul East_West, dealer East
+3: North:T97 Q4 Q7643 943 East:QJ86 75 J AKQT62 South:A32 863 985 J875 West:K54 AKJT92 AKT2  | vul None, dealer East
+== par
+title "Shared deals", analyse true, 3 boards
+1: North:AT953 T5 Q863 54 East:4 AKQJ8 AK752 96 South:K6 742 JT9 KJT32 West:QJ872 963 4 AQ87 | vul North_South, dealer North | par -980 6Hearts EW +0 -0 | tricks Spades 4 9 4 9 Hearts 1 12 1 12 Diamonds 3 10 3 10 Clubs 4 9 4 9 NT 3 9 3 9
+2: North:AQT2 Q4 KQJ843 J East:J954 9 9762 K965 South:83 J8752 T5 Q432 West:K76 AKT63 A AT87 | vul East_West, dealer East | par -140 2Spades EW +1 -0 | tricks Spades 4 9 4 9 Hearts 5 8 5 8 Diamonds 7 5 7 6 Clubs 3 10 3 10 NT 6 7 6 7
+3: North:T97 Q4 Q7643 943 East:QJ86 75 J AKQT62 South:A32 863 985 J875 West:K54 AKJT92 AKT2  | vul None, dealer East | par -990 6NT EW +0 -0 | tricks Spades 1 12 1 12 Hearts 0 12 0 12 Diamonds 3 10 3 10 Clubs 2 11 2 11 NT 1 12 1 12
+== twohand
+title "Two-hand advisor (declarer + dummy)", analyse true, 1 boards
+1: North:- East:KQ74 753 KJ962 4 South:- West:J98 K64 AQT53 AK | vul None, dealer none, target 10
+== twohand-ns
+title "Two-hand advisor (declarer + dummy)", analyse true, 1 boards
+1: North:AK32 QJ4 T98 A76 East:- South:Q54 AK32 KJ7 K32 West:- | vul None, dealer none, target 10

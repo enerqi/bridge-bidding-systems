@@ -20,12 +20,12 @@ package deal_solve
 
 import "core:fmt"
 import "core:os"
-import "core:slice"
 import "core:strconv"
 import "core:strings"
 
 import dds "dds:."
 import "norn:norn"
+import "../par_caption"
 
 /*
 One-time DDS setup: size the per-thread transposition tables and build its constant lookups. MUST be
@@ -180,396 +180,39 @@ annotate :: proc(builder: ^strings.Builder, deal: norn.Deal, format: norn.Output
 	have_par := dds.SidesParBin(res, &sides, .None) == .NO_FAULT
 	ns_par := &sides[dds.Side.NS]
 
-	// Per-hand summaries feed the naive combined-OPC figure in the par guide (see write_par_opc_guide).
+	// Per-hand summaries feed the naive combined-OPC figure in the par guide.
 	ds := norn.summarize_deal(deal)
+	// The caption is WRITTEN by `par_caption`, from these numbers, so the shared-deals player (which has no
+	// DDS) can write the same caption from numbers a link carries.
+	tricks := caption_tricks(res)
+	par := caption_par(ns_par)
 
 	// Also a full switch: the machine formats are unreachable here (filtered above) but listed so a
 	// newly added annotating format must add its own emission case rather than fall through silently.
 	switch format {
 	case .Html_Handviewer, .Html_Cards:
-		// Visible caption. The two HTML formats wrap it differently: the iframe `Html_Handviewer` tucks
-		// the caption under the iframe above with a negative top margin (inline-styled so norn's page
-		// CSS needs no change); the `Html_Cards` carousel gives each caption a `.par` class its script
-		// pairs with the deal above and its stylesheet already positions.
-		if format == .Html_Handviewer {
-			strings.write_string(
-				builder,
-				`<div style="max-width:900px;margin:-3.5rem auto 0;text-align:center;color:#555;font-size:0.9rem">`,
-			)
-		} else {
-			// Tag the caption with NS's par trick count so the card page can DEFAULT the per-deal
-			// combo (CCA) slider to it (data attribute, ignored by everything but that script).
-			tgt := ns_par_target_tricks(ns_par, have_par, res)
-			fmt.sbprintf(builder, `<div class="par" data-target="%d">`, tgt)
-		}
-		strings.write_string(builder, "Par: ")
-		write_par(builder, ns_par, have_par, glyphs = true)
-		strings.write_string(builder, " &mdash; NS make:")
-		write_makeable(builder, res, glyphs = true)
-		write_par_opc_guide(builder, ns_par, have_par, ds, " &middot; ", true)
-		strings.write_string(builder, "</div>")
-		// Machine-readable form: full trick table as a comment (strain x N/E/S/W).
-		strings.write_string(builder, "<!-- deal_solve tricks[strain]NESW")
-		for strain in dds.Strain {
-			fmt.sbprintf(builder, " %s:", strain_label(strain))
-			for hand in dds.Hand {
-				fmt.sbprintf(builder, "%d/", res.resTable[strain][hand])
-			}
-		}
-		strings.write_string(builder, " -->")
+		par_caption.write_html_caption(builder, &tricks, &par, have_par, ds, cards = format == .Html_Cards)
 
 	case .Pretty:
 		strings.write_string(builder, "\n  Par: ")
-		write_par(builder, ns_par, have_par)
+		par_caption.write_par(builder, &par, have_par)
 		strings.write_string(builder, " - NS make:")
-		write_makeable(builder, res)
-		write_par_opc_guide(builder, ns_par, have_par, ds, "\n  ", false)
+		par_caption.write_makeable(builder, &tricks)
+		par_caption.write_par_opc_guide(builder, &par, have_par, ds, "\n  ", false)
 
 	case .Pbn:
 		// Braces must NOT go through a printf format string — Odin's fmt reads `{` as an argument
 		// reference — so the PBN `{ ... }` comment delimiters are written literally.
 		strings.write_string(builder, " { par ")
-		write_par(builder, ns_par, have_par)
+		par_caption.write_par(builder, &par, have_par)
 		strings.write_string(builder, "; NS make:")
-		write_makeable(builder, res)
-		write_par_opc_guide(builder, ns_par, have_par, ds, "; ", false)
+		par_caption.write_makeable(builder, &tricks)
+		par_caption.write_par_opc_guide(builder, &par, have_par, ds, "; ", false)
 		strings.write_string(builder, " }")
 
 	case .Line, .Numeric, .Handviewer, .Lin:
 	// unreachable: filtered out by the classifier switch above
 	}
-}
-
-// The trick count NS's par contract needs — the natural DEFAULT target for the card page's per-deal
-// combo (CCA) slider. Prefer a MAKING par contract that NS declares (its `level + 6` tricks; the
-// highest if several qualify). When par is an EW contract (e.g. a doubled sacrifice against NS's game,
-// so `sides[NS]` lists the EW contract), fall back to NS's best MAKEABLE strain — the contract EW is
-// sacrificing over, i.e. the tricks NS would take. Clamped to 1..13; 9 (3NT/game) if all else fails.
-@(private)
-ns_par_target_tricks :: proc(m: ^dds.Par_Results_Master, have: bool, res: ^dds.Table_Results) -> int {
-	best := 0
-	if have {
-		for i in 0 ..< m.number {
-			c := m.contracts[i]
-			if c.underTricks > 0 {
-				continue // a sacrifice: not a making NS contract
-			}
-			#partial switch c.seats {
-			case .N, .S, .NS:
-				if t := int(c.level) + 6; t > best {
-					best = t
-				}
-			}
-		}
-	}
-	if best == 0 {
-		// No NS-declared making par contract: use NS's best makeable strain (max N/S declarer tricks).
-		for strain in dds.Strain {
-			if t := int(max(res.resTable[strain][.North], res.resTable[strain][.South])); t > best {
-				best = t
-			}
-		}
-	}
-	if best < 1 {
-		return 9
-	}
-	return clamp(best, 1, 13)
-}
-
-// One makeable contract: the highest level NS can make in a strain (level = the better of N/S
-// declarer tricks minus the 6-trick book), tagged with its bridge score for ranking.
-@(private)
-Makeable_Contract :: struct {
-	strain: dds.Strain,
-	level:  i32,
-	score:  i32,
-}
-
-// Write the contracts NS can make double-dummy as " <level><strain>" tokens, ordered BEST-SCORING
-// first (6NT before 6S before 6C before 1H, etc.); "nothing" if none reach the 1-level.
-@(private)
-write_makeable :: proc(builder: ^strings.Builder, res: ^dds.Table_Results, glyphs := false) {
-	list: [dds.DDS_STRAINS]Makeable_Contract
-	n := 0
-	for strain in dds.Strain {
-		best := max(res.resTable[strain][.North], res.resTable[strain][.South])
-		if best >= 7 { 	// 7 tricks = a 1-level contract; below that there is nothing to make
-			level := best - 6
-			list[n] = Makeable_Contract{strain, level, contract_score(strain, level)}
-			n += 1
-		}
-	}
-	if n == 0 {
-		strings.write_string(builder, " nothing")
-		return
-	}
-	// Best score first. n <= 5, so the sort is trivial; ties (e.g. 6H vs 6S, same score) keep an
-	// arbitrary-but-deterministic order, which is fine — they are genuinely equal.
-	slice.sort_by(list[:n], proc(a, b: Makeable_Contract) -> bool {return a.score > b.score})
-	for m in list[:n] {
-		fmt.sbprintf(builder, " %d", m.level)
-		write_strain(builder, strain_label(m.strain), glyphs)
-	}
-}
-
-// Duplicate-bridge score for making `level` (bid = tricks - 6, made exactly) in `strain`, NOT
-// vulnerable and undoubled — matching the neutral vulnerability the par call uses. Only ever compared
-// against other contracts to ORDER the makeable list, so the absolute value need not be authoritative
-// (overtricks, doubling, vulnerability are irrelevant to the ranking of max-level makeables).
-@(private)
-contract_score :: proc(strain: dds.Strain, level: i32) -> i32 {
-	trick_pts: i32
-	switch strain {
-	case .Clubs, .Diamonds:
-		trick_pts = level * 20
-	case .Hearts, .Spades:
-		trick_pts = level * 30
-	case .NT:
-		trick_pts = 40 + (level - 1) * 30
-	}
-	bonus: i32 = 300 if trick_pts >= 100 else 50 // game vs part-score (not vulnerable)
-	if level == 7 {
-		bonus += 1000 // grand slam (not vulnerable)
-	} else if level == 6 {
-		bonus += 500 // small slam (not vulnerable)
-	}
-	return trick_pts + bonus
-}
-
-// Short label for a DDS strain (suit letter, or NT), used in the caption and the trick-table comment.
-@(private)
-strain_label :: proc(strain: dds.Strain) -> string {
-	switch strain {
-	case .Spades:
-		return "S"
-	case .Hearts:
-		return "H"
-	case .Diamonds:
-		return "D"
-	case .Clubs:
-		return "C"
-	case .NT:
-		return "NT"
-	}
-	return "?"
-}
-
-// OPC "trick conversion" reference (docs: optimal_point_count.py TRICK_CONVERSIONS): for a contract
-// level and strain type, the three combined-partnership Optimal-Point-Count totals at which it makes
-// with a roughly ~40-45% / ~50-55% / ~60%+ chance (the slam and grand rows use higher success bands).
-// Thresholds are indexed by level; only 2..7 are populated (a level-1 contract is off the table). A
-// "+"-capped top threshold (levels 6/7) is stored as a large sentinel. `opc_make_band` reads these to
-// turn a combined total into one success band.
-OPC_LEVELS_MIN :: 2
-OPC_LEVELS_MAX :: 7
-OPC_TOP :: 99 // stand-in for the table's open-ended "+" top threshold
-
-@(private)
-OPC_NT_THRESHOLDS := [8][3]int {
-	2 = {22, 23, 24},
-	3 = {25, 26, 27},
-	4 = {28, 29, 30},
-	5 = {31, 32, 33},
-	6 = {33, 34, 35},
-	7 = {36, 37, OPC_TOP},
-}
-@(private)
-OPC_SUIT_THRESHOLDS := [8][3]int {
-	2 = {20, 21, 22},
-	3 = {23, 24, 25},
-	4 = {26, 27, 28},
-	5 = {29, 30, 31},
-	6 = {32, 33, 34},
-	7 = {35, 36, OPC_TOP},
-}
-@(private)
-OPC_SUCCESS_BANDS := [8][3]string {
-	2 = {"~40-45%", "~50-55%", "~60%+"},
-	3 = {"~40-45%", "~50-55%", "~60%+"},
-	4 = {"~40-45%", "~50-55%", "~60%+"},
-	5 = {"~40-45%", "~50-55%", "~60%+"},
-	6 = {"~50%", "~55-60%", "~65%+"},
-	7 = {"~70%", "~70-75%", "~75%+"},
-}
-// The success band for a combined OPC total `x` at `level`/strain: which of the level's three
-// thresholds `x` reaches (top band at/above the third). Below the FIRST (lowest listed) threshold the
-// table gives no figure — the contract is well against the odds on points — so we say "LOW" rather
-// than extrapolate a bogus percentage. `level` is assumed in OPC_LEVELS_MIN..MAX.
-@(private)
-opc_make_band :: proc(x: f32, level: int, is_nt: bool) -> string {
-	t := OPC_NT_THRESHOLDS[level] if is_nt else OPC_SUIT_THRESHOLDS[level]
-	bands := OPC_SUCCESS_BANDS[level]
-	switch {
-	case x >= f32(t[2]):
-		return bands[2]
-	case x >= f32(t[1]):
-		return bands[1]
-	case x >= f32(t[0]):
-		return bands[0]
-	}
-	return "LOW"
-}
-
-// Append the par contract's OPC make-estimate after `sep` (written once, before the first entry;
-// further entries joined with "; "). One entry per distinct (level, strain-type) among the MAKING par
-// contracts — a doubled sacrifice (underTricks > 0) has no "make" chance and a level-1 par is off the
-// table, so both are skipped, and identical contracts (e.g. par 4S and 4H) are de-duplicated. Each
-// entry reads `OPC total (naive) = X; make chance Y`, where X is the declaring side's combined OPC and
-// Y its success band from the reference table (or "LOW" when X is under the level's lowest threshold).
-//
-// X is the declaring side's true partnership OPC (norn `combined_opc`): the stronger hand opens, the
-// weaker responds with a capped base, then fit / misfit / semi-fit / wasted-honour / mirror adjustments
-// are applied over both hands, keyed by the par contract's strain. Writes nothing (and no `sep`) when
-// no par contract qualifies.
-@(private)
-write_par_opc_guide :: proc(
-	builder: ^strings.Builder,
-	m: ^dds.Par_Results_Master,
-	have: bool,
-	ds: norn.Deal_Summary,
-	sep: string,
-	html: bool,
-) {
-	if !have {
-		return
-	}
-	shown: [8][2]bool // [level][is_nt] already-emitted marker; levels 1..7, two strain types
-	wrote := false
-	for i in 0 ..< m.number {
-		c := m.contracts[i]
-		if c.underTricks > 0 {
-			continue // doubled sacrifice: nothing to "make"
-		}
-		level := int(c.level)
-		if level < OPC_LEVELS_MIN || level > OPC_LEVELS_MAX {
-			continue
-		}
-		is_nt := c.denom == .NT
-		ti := 1 if is_nt else 0
-		if shown[level][ti] {
-			continue
-		}
-		side, ok := declaring_pair(c.seats)
-		if !ok {
-			continue // no side -> can't state a combined total
-		}
-		shown[level][ti] = true
-		br := norn.combined_opc_breakdown(ds[side[0]], ds[side[1]], denom_trump(c.denom))
-		band := opc_make_band(br.total, level, is_nt)
-		strings.write_string(builder, "; " if wrote else sep)
-		strings.write_string(builder, "OPC total = ")
-		// In HTML the figure is a dotted-underlined <abbr>: hovering shows the per-adjustment breakdown
-		// (opener/responder bases plus each fit / misfit / honour / ruffing / mirror term). Plain text
-		// formats (Pretty/Pbn) just print the number.
-		if html {
-			strings.write_string(builder, `<abbr style="text-decoration:underline dotted;cursor:help" title="`)
-			write_opc_breakdown_title(builder, br)
-			fmt.sbprintf(builder, `">%.1f</abbr>`, br.total)
-		} else {
-			fmt.sbprintf(builder, "%.1f", br.total)
-		}
-		fmt.sbprintf(builder, "; make chance %s", band)
-		wrote = true
-	}
-}
-
-// The hover-tooltip text for an OPC breakdown — the full reference render_summary detail, one item per
-// line (title-attribute newlines render as tooltip line breaks). The two bases show their H/L/D split,
-// then every labelled adjustment entry ("<suit> <signed value> <reason>"), closing with the total:
-//
-//   opener 19.5 = H 12.0 + L 4.0 + D 3.5
-//   responder 12.0 = H 10.0 + L 2.0 + D 0.0
-//   S -2.0 singleton opp long
-//   H +1.0 Kx/Qx/Jx/JT opp long
-//   ... = 25.5
-//
-// Suit glyphs (norn.suit_glyph) are UTF-8; the card pages declare <meta charset=utf-8>, so they render
-// in the native tooltip. The whole-hand mirror entry has no suit.
-@(private)
-write_opc_breakdown_title :: proc(builder: ^strings.Builder, br: norn.Opc_Breakdown) {
-	fmt.sbprintf(
-		builder,
-		"opener %.1f = H %.1f + L %.1f + D %.1f",
-		br.opener_base,
-		br.opener_h,
-		br.opener_l,
-		br.opener_d,
-	)
-	fmt.sbprintf(
-		builder,
-		"\nresponder %.1f = H %.1f + L %.1f + D %.1f",
-		br.responder_base,
-		br.responder_h,
-		br.responder_l,
-		br.responder_d,
-	)
-	for i in 0 ..< br.n_entries {
-		e := br.entries[i]
-		strings.write_string(builder, "\n")
-		if e.has_suit {
-			strings.write_string(builder, norn.suit_glyph(e.suit))
-			strings.write_string(builder, " ")
-		}
-		fmt.sbprintf(builder, "%+.1f %s", e.value, opc_entry_phrase(e))
-	}
-	fmt.sbprintf(builder, "\n= %.1f", br.total)
-}
-
-// The reason phrase for a breakdown entry — norn's reason text, except a fit is narrated by its combined
-// length (value 1/2/3 -> 8/9/10+ -card fit) which the flat reason label cannot carry.
-@(private)
-opc_entry_phrase :: proc(e: norn.Opc_Entry) -> string {
-	if e.reason == .Fit {
-		switch e.value {
-		case 1:
-			return "8-card fit"
-		case 2:
-			return "9-card fit"
-		case:
-			return "10+card fit"
-		}
-	}
-	return norn.opc_reason_text(e.reason)
-}
-
-// The two partners declaring a par contract, from its seat field: a single declarer or a partnership
-// both resolve to the N/S or E/W pair. ok=false should never happen (every contract has a side).
-@(private)
-declaring_pair :: proc(s: dds.Seat) -> (pair: [2]norn.Seat, ok: bool) {
-	switch s {
-	case .N, .S, .NS:
-		return {.North, .South}, true
-	case .E, .W, .EW:
-		return {.East, .West}, true
-	}
-	return {}, false
-}
-
-// "NS" or "EW" for a par contract's declaring side (partnership, whichever single seat declares).
-@(private)
-pair_label :: proc(s: dds.Seat) -> string {
-	#partial switch s {
-	case .E, .W, .EW:
-		return "EW"
-	}
-	return "NS"
-}
-
-// The trump suit for `combined_opc` from a par contract's denomination: the matching norn suit, or nil
-// for notrump (its shortage handling differs). NB dds.Contract_Denom and norn.Suit are distinct enums.
-@(private)
-denom_trump :: proc(d: dds.Contract_Denom) -> Maybe(norn.Suit) {
-	#partial switch d {
-	case .Spades:
-		return norn.Suit.Spades
-	case .Hearts:
-		return norn.Suit.Hearts
-	case .Diamonds:
-		return norn.Suit.Diamonds
-	case .Clubs:
-		return norn.Suit.Clubs
-	}
-	return nil // NT
 }
 
 // A `norn.Deal_Filter`: keep the deal only if North-South can make a game double-dummy — 3NT (9
@@ -687,100 +330,40 @@ declarer_makes :: proc(deal: norn.Deal, strain: dds.Strain, declarer: dds.Hand, 
 	return 13 - fut.score[0] >= tricks // declaring side's tricks = 13 - leading side's max
 }
 
-// Write one side's par: the NS-view score plus its par contract(s). `have` is false when SidesParBin
-// failed, in which case we emit "n/a" rather than garbage.
-@(private)
-write_par :: proc(builder: ^strings.Builder, m: ^dds.Par_Results_Master, have: bool, glyphs := false) {
-	if !have {
-		strings.write_string(builder, "n/a")
-		return
-	}
-	fmt.sbprintf(builder, "NS %d", m.score)
-	for i in 0 ..< m.number {
-		if i == 0 {
-			strings.write_string(builder, " [")
-		} else {
-			strings.write_string(builder, ", ")
+// DDS's trick table as `par_caption`'s. The enums mirror DDS's orders, so this is a value copy.
+caption_tricks :: proc(res: ^dds.Table_Results) -> (tricks: par_caption.Tricks) {
+	for strain in dds.Strain {
+		for hand in dds.Hand {
+			tricks[par_caption.Strain(strain)][par_caption.Hand(hand)] = int(res.resTable[strain][hand])
 		}
-		write_contract(builder, m.contracts[i], glyphs)
 	}
-	if m.number > 0 {
-		strings.write_string(builder, "]")
-	}
+	return
 }
 
-// Write a structured par contract, e.g. "4S NS", "3NT NS+1", "5Cx EW-2". A doubled sacrifice (par
-// only ever doubles a non-making contract) is flagged by `underTricks > 0`: append "x" and the
-// undertricks; a making contract shows its overtricks (if any) instead.
-@(private)
-write_contract :: proc(builder: ^strings.Builder, c: dds.Contract_Type, glyphs := false) {
-	fmt.sbprintf(builder, "%d", c.level)
-	write_strain(builder, denom_label(c.denom), glyphs)
-	if c.underTricks > 0 {
-		strings.write_string(builder, "x") // doubled sacrifice
+// DDS's par result as `par_caption`'s.
+caption_par :: proc(m: ^dds.Par_Results_Master) -> (par: par_caption.Par) {
+	par.score = int(m.score)
+	par.number = clamp(int(m.number), 0, len(m.contracts))
+	for i in 0 ..< par.number {
+		c := m.contracts[i]
+		par.contracts[i] = {
+			under_tricks = int(c.underTricks),
+			over_tricks  = int(c.overTricks),
+			level        = int(c.level),
+			denom        = par_caption.Denom(c.denom),
+			seats        = par_caption.Seats(c.seats),
+		}
 	}
-	fmt.sbprintf(builder, " %s", seats_label(c.seats))
-	if c.underTricks > 0 {
-		fmt.sbprintf(builder, "-%d", c.underTricks)
-	} else if c.overTricks > 0 {
-		fmt.sbprintf(builder, "+%d", c.overTricks)
-	}
+	return
 }
 
-// A strain as the caption writes it: the letter (S H D C NT) in text, and in a page a suit's GLYPH, in the
-// card page's suit colour (`.ssym.s` etc.) - `4♠`, `3NT`.
+// The two `par_caption` helpers the rest of this package uses, in DDS's types.
 @(private)
-write_strain :: proc(builder: ^strings.Builder, letter: string, glyphs: bool) {
-	if !glyphs || letter == "NT" {
-		strings.write_string(builder, letter)
-		return
-	}
-	entity := "&spades;"
-	switch letter {
-	case "H":
-		entity = "&hearts;"
-	case "D":
-		entity = "&diams;"
-	case "C":
-		entity = "&clubs;"
-	}
-	fmt.sbprintf(builder, `<span class="ssym %s">%s</span>`, strings.to_lower(letter, context.temp_allocator), entity)
+contract_score :: proc(strain: dds.Strain, level: i32) -> i32 {
+	return i32(par_caption.contract_score(par_caption.Strain(strain), int(level)))
 }
 
-// Contract_Denom label. NB its ordering differs from dds.Strain (NT is 0 here), hence a separate map.
 @(private)
-denom_label :: proc(d: dds.Contract_Denom) -> string {
-	switch d {
-	case .NT:
-		return "NT"
-	case .Spades:
-		return "S"
-	case .Hearts:
-		return "H"
-	case .Diamonds:
-		return "D"
-	case .Clubs:
-		return "C"
-	}
-	return "?"
-}
-
-// Declaring seat(s) of a par contract (a single hand or a partnership).
-@(private)
-seats_label :: proc(s: dds.Seat) -> string {
-	switch s {
-	case .N:
-		return "N"
-	case .E:
-		return "E"
-	case .S:
-		return "S"
-	case .W:
-		return "W"
-	case .NS:
-		return "NS"
-	case .EW:
-		return "EW"
-	}
-	return "?"
+strain_label :: proc(strain: dds.Strain) -> string {
+	return par_caption.strain_label(par_caption.Strain(strain))
 }

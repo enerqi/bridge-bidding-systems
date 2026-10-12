@@ -48,6 +48,7 @@ import "analyse"
 import "norn:combo"
 import sciter "sciter:."
 import sa "sciter:sciter_app"
+import "share"
 import "suit_book"
 
 // A two-hand board: declarer + dummy, defenders unknown. No `--sample`, so no solver and no DDS lifecycle
@@ -85,8 +86,13 @@ PANE_HEIGHT :: 1250
 // The thresholds. Generous on purpose — this is a "did the stylesheet apply at all" check, not a pixel
 // snapshot, and the two failure modes it names are an order of magnitude away from the passing numbers
 // (measured on 6.0.4.9 at this view size: a ported board is ~400x560, an unported one 71x835).
+//
+// The HEIGHT gap has narrowed since (re-measured 2026-10-12: ported 535x521, unported 71x661). The card page's
+// viewport lengths moved into `:where(html)` copies this engine drops (2026-10-10), so with the override block
+// cut out the hands fall back to a 16px face rather than a viewport-sized one and the collapsed board is shorter
+// than it was. 700 then sat ABOVE the unported board and `-unported` failed; 600 is between the two again.
 MIN_BOARD_WIDTH :: 200
-MAX_BOARD_HEIGHT :: 700
+MAX_BOARD_HEIGHT :: 600
 
 // The line the override block opens with, tabs and all: the anchor both the presence check and the
 // `-unported` cut use.
@@ -367,6 +373,18 @@ check_the_window_bugs :: proc(view: ^sa.Windowless_View, root: sa.Element) {
 		check(
 			pb.width * 2 < sb.width,
 			fmt.tprintf("the seat pill hugs its letter (%dpx inside a %dpx card)", pb.width, sb.width),
+		)
+		// 2b. AND THE LETTER IS IN THE MIDDLE OF IT, measured in PAINTED pixels: the rows of the pill that
+		//     hold white ink. Where a glyph sits in its line box is the font's own ascent and descent, which
+		//     differ between engines (reported: centred in Chrome, low in the workbench).
+		above, below, inked := pill_ink_margins(view, pb)
+		gap := above - below
+		if gap < 0 {
+			gap = -gap
+		}
+		check(
+			inked && gap <= 1,
+			fmt.tprintf("the seat letter is centred in its pill (%dpx above the ink, %dpx below)", above, below),
 		)
 	}
 
@@ -1189,8 +1207,11 @@ check_the_trick_target_row :: proc(root: sa.Element) {
 		if (!h || !s || !f) { return '-1 -1'; }
 		var hr = h.getBoundingClientRect(), sr = s.getBoundingClientRect(), fr = f.getBoundingClientRect();
 		if (!(sr.width > 0)) { return '-1 -1'; }
-		// how far the row's right edge is from the slider's, and how much clear air is left of the slider
-		return Math.round(fr.right - sr.right) + ' ' + Math.round(sr.left - hr.right);
+		// how far the row's right edge is from the slider's, and how much clear air is left of the slider - in
+		// the PANEL's px: it is zoomed up when the view has room, and a fixed gap then reads bigger on screen
+		var p = document.querySelector('.cca-panel'), z = p ? (p.getBoundingClientRect().width / p.offsetWidth) : 1;
+		var pz = parseFloat(p ? p.style.getPropertyValue('zoom') : '') || 1;
+		return Math.round((fr.right - sr.right) / pz) + ' ' + Math.round((sr.left - hr.right) / pz);
 	})()`,
 	)
 	if err != nil {
@@ -1602,7 +1623,25 @@ render_page :: proc(deal: string) -> (page: string, ok: bool) {
 		strings.builder_destroy(&page_b)
 		return "", false
 	}
-	return strings.to_string(page_b), true
+	// THE HARNESS PUTS BACK THE WEB-FONT <link> THE PAGE DROPPED (2026-10-10). In this windowless, software
+	// engine an element with an opacity below 1 paints wrongly or not at all unless an external stylesheet
+	// is still loading while the page's script builds the carousel: the neighbouring boards come out
+	// unscaled and opaque, the face-down West/East row is missing and its pills cannot be clicked - with
+	// the DOM and the computed styles identical to a correct run. Bisected: any SLOW external sheet hides
+	// it (the real Google one, or a nonexistent family there), an instant `data:` one does not (valid, or
+	// with a CSS error), and a repaint, a root class toggle, appending a `<style>` (worse), no transitions
+	// and a delayed first paint all changed nothing. The REAL window draws the page correctly without the
+	// link (checked the same day), so it is the harness that gets it back - and with it the same network
+	// dependence these checks always had, since the page itself carried this link until then.
+	rendered := strings.to_string(page_b)
+	if at := strings.index(rendered, "<style>"); at >= 0 {
+		patched := strings.concatenate(
+			{rendered[:at], `<link href="https://fonts.googleapis.com/css?family=Open Sans" rel="stylesheet">`, rendered[at:]},
+		)
+		strings.builder_destroy(&page_b)
+		return patched, true
+	}
+	return rendered, true
 }
 
 // Layout, style resolution and the behavior attachment that depends on them. A behavior goes live at style
@@ -1685,6 +1724,28 @@ check_the_par_toggle :: proc(view: ^sa.Windowless_View) {
 		before == "block" && off == "none" && back == "block",
 		fmt.tprintf("the Par button hides the caption and brings it back (%s -> %s -> %s)", before, off, back),
 	)
+
+	// The Share button's link, made by the page's own script in THIS engine (whose script has no atob/btoa),
+	// must be the one `share` makes from the same page - the format has one owner, and this holds the page's
+	// copy of the packing to it.
+	v, verr := sa.eval_element(root, `window.ncShareFragment ? (window.ncShareFragment() || 'refused') : 'missing'`)
+	from_page := "?"
+	if verr == nil {
+		from_page, _ = sa.value_to_string(&v, context.temp_allocator)
+	}
+	title, boards, boards_ok := share.boards_from_page(page, context.temp_allocator)
+	want := share.encode(
+		{title = title, analyse = strings.contains(page, `<div class="combo"`), boards = boards},
+		context.temp_allocator,
+	)
+	if boards_ok && from_page == want {
+		check(true, fmt.tprintf("the page's Share link is the one `share` makes (%d characters)", len(from_page)))
+	} else {
+		check(
+			false,
+			fmt.tprintf("the page's Share link is the one `share` makes\n        page:  %s\n        share: %s", from_page, want),
+		)
+	}
 }
 
 // The play-through bar: it is built by the page's script, so this is the check that its DOM work (innerHTML
@@ -1914,6 +1975,9 @@ check_the_play_through :: proc(view: ^sa.Windowless_View) {
 
 	// The trick grid keeps its size and its cards keep their places as the trick fills: "next card that
 	// cost a trick" left West's ♦8 alone on the table, and two more cards must not move it.
+	// Settled first: the page re-sizes its cards once a view size has SETTLED (`setViewUnits`, up to ~550ms
+	// after the last resize), and a measurement taken before that moved by 2px under the presses below.
+	pump(view, 320)
 	grid_before := element_box(root, ".table .trk")
 	lead_before := element_box(root, ".table .trk tr:nth-child(2) td:first-child .pc")
 	press(view, root, "next", 136)
@@ -2102,3 +2166,56 @@ play_info :: proc(root: sa.Element) -> string {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+// How much of a pill lies above and below its letter's white ink, in PAINTED rows. The pill is found by its
+// colour (ForestGreen, a board with no one vulnerable) in a band round its layout box, since what is painted can sit
+// a little off the box; ink is near-white BETWEEN green pixels on the same row, so the white card around the pill
+// is not counted. `inked` is false when the pill or its letter is not found.
+pill_ink_margins :: proc(view: ^sa.Windowless_View, pill: sa.Rect) -> (above, below: i32, inked: bool) {
+	green :: proc(r, g, b: u8) -> bool {return near(r, 34) && near(g, 139) && near(b, 34)}
+	top, bottom, first, last := i32(-1), i32(-1), i32(-1), i32(-1)
+	for y := max(pill.y - 20, 0); y < min(pill.y + pill.height + 20, VIEW_HEIGHT); y += 1 {
+		left, right := i32(-1), i32(-1)
+		for x := max(pill.x - 20, 0); x < min(pill.x + pill.width + 20, VIEW_WIDTH); x += 1 {
+			r, g, b, _ := sa.windowless_pixel(view, x, y)
+			if green(r, g, b) {
+				if left < 0 {
+					left = x
+				}
+				right = x
+			}
+		}
+		if left < 0 {
+			continue
+		}
+		if top < 0 {
+			top = y
+		}
+		bottom = y
+		for x := left; x <= right; x += 1 {
+			r, g, b, _ := sa.windowless_pixel(view, x, y)
+			if r > 200 && g > 200 && b > 200 {
+				if first < 0 {
+					first = y
+				}
+				last = y
+				break
+			}
+		}
+	}
+	if top < 0 || first < 0 {
+		return 0, 0, false
+	}
+	return first - top, bottom - last, true
+}

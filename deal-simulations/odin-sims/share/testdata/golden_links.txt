@@ -1,0 +1,15 @@
+# GOLDEN SHARE LINKS - real links, as the workbench and the card page's Share button wrote them on 2026-10-12.
+#
+# THE RULE: every player must read every link it ever wrote. Links are pasted into chats and forum posts and
+# live forever; the player at the published address is replaced whenever the card page changes. So a link
+# format is FROZEN once shipped: a change is a new version (`v2.`), the reader for `v1.` stays, and these lines
+# are never edited or re-recorded to make a test pass - only appended to, when a new kind of link appears.
+#
+# `share_test.odin` decodes each one and compares what it carries (deals, tables, par numbers, CCA targets,
+# title, flags) with `golden_links.expected`; `just sims test-player` has the wasm player open each one.
+# One link a line: <name> <fragment>.
+plain v1.AAxTaGFyZWQgZGVhbHMKfbrHESrlsk3VhA8vAWp9YwcWCey4tjzWGzEGgSlZDYIev2T-vH4EtQQ
+analysed v1.AQxTaGFyZWQgZGVhbHMKfbrHESrlsk3VhA8vAWp9YwcWCey4tjzWGzEGgSlZDYIev2T-vH4EtQQ
+par v1.AQxTaGFyZWQgZGVhbHMKfbrHESrlsk3VhA8vgZSUwcGjo5SUk5OBLPwWBQBqfWMHFgnsuLY81hsxhpSUhYVXZ6OjdnaBdP8KDQCBKVkNgh6_ZP68fgS1hMHBwMCjo7KywcGBIvwGBQA
+twohand v1.ASNUd28taGFuZCBhZHZpc29yIChkZWNsYXJlciArIGR1bW15KRAAwDcH3W13qq6mvZfQCg
+twohand-ns v1.ASNUd28taGFuZCBhZHZpc29yIChkZWNsYXJlciArIGR1bW15KVpQlVQlYK78Pyjo_wuwCg

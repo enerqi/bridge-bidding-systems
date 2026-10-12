@@ -215,10 +215,11 @@ list_scenario_files :: proc(dir: string, allocator := context.allocator) -> []st
 draw_scenario_files :: proc(app: ^App) {
 	draw_scenario_sources(app)
 	folder := app.scn_dir if app.scn_dir != "" else "no folder chosen"
-	// "files in", because the folders are listed just above and this line is the label for the second level.
+	// The label for the second level. Not the path: the folder is the marked row just above, path and all, and
+	// in a 250px column beside `new…` a path wrapped to three lines. The path stays as the tooltip.
 	// With no folder there is no second level, and the heading would only repeat the list's own "no folder
 	// chosen" — the window said it three times — so it is left empty.
-	set_text_at(app, "#scn-dir", fmt.tprintf("files in %s", folder) if app.scn_dir != "" else "")
+	set_text_at(app, "#scn-dir", "files" if app.scn_dir != "" else "")
 	set_shown(app, "#scn-dir", app.scn_dir != "")
 	if head := find(app, "#scn-dir"); head != nil {
 		sa.set_attribute(head, "title", folder)
@@ -236,6 +237,7 @@ draw_scenario_files :: proc(app: ^App) {
 		return
 	}
 	modified := app.scn_open != "" && scenario_modified(app)
+	draw_file_title(app, "#scn-title", app.scn_open, modified)
 	b := strings.builder_make(context.temp_allocator)
 	for name in app.scn_names {
 		escaped := escape_html(name, context.temp_allocator)
@@ -308,7 +310,7 @@ use_scenario_dir :: proc(app: ^App, path: string) {
 		return
 	}
 	// A NEW FOLDER IS A NEW SOURCE for the deals list, so it is read now rather than at the next start.
-	scenario_status(app, fmt.tprintf("%s · %s", app.scn_open, update_deals_list(app)))
+	scenario_status(app, update_deals_list(app))
 }
 
 /*
@@ -368,7 +370,6 @@ draw_scenario_sources :: proc(app: ^App) {
 		return
 	}
 	b := strings.builder_make(context.temp_allocator)
-	strings.write_string(&b, `<div class="head">folders · the deals list reads all of these</div>`)
 	if len(app.scenario_dirs) == 0 {
 		strings.write_string(&b, `<div class="empty">no folders yet — folder… adds one</div>`)
 		sa.set_html(box, strings.to_string(b))
@@ -558,7 +559,7 @@ open_scenario_file :: proc(app: ^App, name: string) -> (ok: bool, why: string) {
 	clear_scenario_problems(app)
 	set_scenario_report(app, "")
 	draw_scenario_files(app)
-	scenario_status(app, name)
+	scenario_status(app, "") // the name is the source pane's title (`draw_file_title`)
 	return true, ""
 }
 
@@ -588,7 +589,7 @@ save_scenario_file :: proc(app: ^App) -> (ok: bool, why: string) {
 	draw_scenario_files(app) // the dirty dot goes
 	// SAVING PUTS IT IN THE DEALS LIST. It used to stop at the file and say "press reload", which was how
 	// somebody generated the previous version of a scenario, or looked for a new one that was not there.
-	return true, fmt.tprintf("saved %s · %s", app.scn_open, update_deals_list(app))
+	return true, fmt.tprintf("saved · %s", update_deals_list(app))
 }
 
 /*

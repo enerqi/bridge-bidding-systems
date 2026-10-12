@@ -141,8 +141,8 @@ choose_theme :: proc(app: ^App, theme: Theme) {
 // escape or ctrl+w.
 
 show_prefs :: proc(app: ^App, shown: bool) {
-	if shown {
-		app.before_prefs = current_view(app)
+	if shown && current_view(app) != .Prefs { // pressed again, it closes (see `show_about`)
+		app.before_prefs = place_underneath(app)
 		show_view(app, .Prefs)
 		draw_prefs(app)
 		return
@@ -168,6 +168,7 @@ draw_prefs :: proc(app: ^App) {
 	set_text_at(app, "#prefs-theme-note", fmt.tprintf("system is currently %s", system))
 	draw_graphics_prefs(app)
 	draw_quiz_prefs(app)
+	draw_share_prefs(app)
 }
 
 // The graphics choice: the remembered one lit, and a note saying whether it is what this run is using - it
