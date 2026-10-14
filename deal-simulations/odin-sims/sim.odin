@@ -31,6 +31,7 @@ import "norn:cli"
 import "norn:combo"
 import "norn:norn"
 import "scenario_dsl"
+import "share"
 import "sim_hooks"
 import "suit_book"
 
@@ -43,8 +44,15 @@ run_sim :: proc() -> int {
 	deal_solve.init()
 	defer deal_solve.shutdown()
 
-	// Where a card page's Share button sends its link: a published shared-deals player (SHARING_PLAN.md).
+	// Where a card page's Share button sends its link: a published shared-deals player (SHARING_PLAN.md) -
+	// this project's own unless SHARE_PLAYER names another. One that is not an address writes none, and the
+	// button then links to the `player.html` beside the page.
 	norn.share_player = os.get_env("SHARE_PLAYER", context.allocator)
+	if norn.share_player == "" {
+		norn.share_player = share.PUBLISHED_PLAYER
+	} else if !share.usable_player_address(norn.share_player) {
+		norn.share_player = ""
+	}
 
 	// USER-AUTHORED SCENARIOS, from wherever the user keeps them. `--scenarios <dir>` is consumed HERE
 	// rather than in norn's parser, and that is deliberate: `norn:cli` must not know about

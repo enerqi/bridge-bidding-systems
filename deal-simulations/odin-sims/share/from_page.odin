@@ -4,6 +4,8 @@ import "core:encoding/base64"
 import "core:strings"
 import "norn:norn"
 import "../par_caption"
+import "../replay"
+import "../sampled"
 
 // The boards of a card page, read back out of the page itself: what makes ANY page shareable - a file on disk,
 // an analysed page held in memory - without regenerating it or keeping its deals anywhere else.
@@ -104,8 +106,13 @@ board_from_query :: proc(query, block: string) -> (board: Board, ok: bool) {
 	board.table.dealer = marked_dealer(block)
 	if board.known == ALL_SEATS {
 		board.par = read_par(block)
+		board.play = read_play(block, board.deal)
 	} else {
 		board.target = read_target(block)
+		if board.target > 0 {
+			board.contract = read_contract(block)
+			board.constraints = read_constraints(block)
+		}
 	}
 	return board, true
 }
@@ -141,6 +148,37 @@ read_par :: proc(block: string) -> Maybe(Board_Par) {
 	return par
 }
 
+// A whole deal's recorded play, from the bytes its `.play` element carries (`data-pack`, written by `replay`).
+// Nothing when the board has no play or one this cannot read (a page written before the bytes were): the link
+// then carries the board without it.
+@(private)
+read_play :: proc(block: string, deal: norn.Deal) -> Maybe(Board_Play) {
+	ATTRIBUTE :: ` data-pack="`
+	at := strings.index(block, ATTRIBUTE)
+	if at < 0 {
+		return nil
+	}
+	rest := block[at + len(ATTRIBUTE):]
+	end := strings.index_byte(rest, '"')
+	if end < 0 {
+		return nil
+	}
+	bytes, err := base64.decode(
+		rest[:end],
+		base64.DEC_URL_TABLE,
+		allocator = context.temp_allocator,
+		options = {.No_Padding},
+	)
+	if err != nil {
+		return nil
+	}
+	contract, play, used, ok := replay.unpack_play(bytes, deal)
+	if !ok || used != len(bytes) {
+		return nil
+	}
+	return Board_Play{contract, play}
+}
+
 // A 2-hand board's CCA target: the advisor's `.par` div's `data-target`, or 0 when there is none.
 @(private)
 read_target :: proc(block: string) -> int {
@@ -157,6 +195,49 @@ read_target :: proc(block: string) -> int {
 		n = n * 10 + int(c - '0')
 	}
 	return n if n >= 1 && n <= 13 else 0
+}
+
+// A 2-hand board's named contract: its `.par` div's `data-contract` (`sampled.write_contract_key`), else none.
+@(private)
+read_contract :: proc(block: string) -> Maybe(sampled.Contract) {
+	if c, ok := sampled.parse_contract_key(par_attribute(block, ` data-contract="`)); ok {
+		return c
+	}
+	return nil
+}
+
+// A 2-hand board's defender inferences: its `.par` div's `data-held` and `data-shape`
+// (`sampled.write_advisor_par`), else none - and none if either does not read.
+@(private)
+read_constraints :: proc(block: string) -> sampled.Board_Constraints {
+	held, shape := par_attribute(block, ` data-held="`), par_attribute(block, ` data-shape="`)
+	if bc, ok := sampled.parse_board_constraints(held, shape); ok {
+		return bc
+	}
+	return {}
+}
+
+// An attribute's value on a 2-hand board's `.par` div (`attribute` is ` name="`), or "".
+@(private)
+par_attribute :: proc(block: string, attribute: string) -> string {
+	PAR :: `<div class="par" data-target="`
+	at := strings.index(block, PAR)
+	if at < 0 {
+		return ""
+	}
+	tag := block[at:]
+	if end := strings.index_byte(tag, '>'); end >= 0 {
+		tag = tag[:end]
+	}
+	from := strings.index(tag, attribute)
+	if from < 0 {
+		return ""
+	}
+	value := tag[from + len(attribute):]
+	if quote := strings.index_byte(value, '"'); quote >= 0 {
+		return value[:quote]
+	}
+	return ""
 }
 
 // One hand's `s<ranks>h<ranks>d<ranks>c<ranks>` into `hand`; false unless it is 13 cards nobody else holds.

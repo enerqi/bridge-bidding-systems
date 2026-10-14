@@ -138,8 +138,8 @@ solve_table :: proc(deal: norn.Deal) -> (table: ^dds.Table_Results, ok: bool) {
 	return &g_cache_table, true
 }
 
-// A `norn.Deal_Annotator`: append the deal's double-dummy summary after its rendered deal, in a
-// form valid for the active `format`. Annotation is format-specific by nature — an HTML caption
+// The body of a `norn.Deal_Annotator` (par scored at `vulnerability`, the board's table): append the deal's
+// double-dummy summary after its rendered deal, in a form valid for the active `format`. Annotation is format-specific by nature — an HTML caption
 // would corrupt a PBN tag or a machine-parsed line — so this switches on the format and emits
 // nothing for the machine formats whose grammar has no room for it:
 //   - Html_Handviewer : a visible caption div (par + makeable contracts) plus a greppable trick-table comment
@@ -147,7 +147,12 @@ solve_table :: proc(deal: norn.Deal) -> (table: ^dds.Table_Results, ok: bool) {
 //   - Pretty  : a plain trailing "Par (NS): ..." line (the layout is human-facing already)
 //   - Pbn     : a PBN `{ ... }` inline comment (the only annotation PBN's grammar accepts)
 //   - Line / Numeric / Handviewer : nothing — these are consumed by parsers; any extra text breaks them
-annotate :: proc(builder: ^strings.Builder, deal: norn.Deal, format: norn.Output_Format) {
+annotate :: proc(
+	builder: ^strings.Builder,
+	deal: norn.Deal,
+	format: norn.Output_Format,
+	vulnerability: norn.Vulnerability = .None,
+) {
 	// Classify the format. A FULL switch (no #partial) is deliberate: if norn gains a new
 	// Output_Format, this fails to compile until the new format is put on one side or the other, so
 	// annotation can never silently skip — or corrupt — a format nobody classified here.
@@ -174,10 +179,17 @@ annotate :: proc(builder: ^strings.Builder, deal: norn.Deal, format: norn.Output
 	// Par from the full table. SidesParBin gives the STRUCTURED par (level/denom/seats + undertricks)
 	// for each side; we render the declaring seats and doubling ourselves so a par that is a doubled
 	// EW sacrifice reads as e.g. "5Cx EW-2" rather than a plain score. The two sides agree except on
-	// rare deals; we show the NS-first result. Neutral vulnerability (deals carry v=- unless
-	// --fixed-table), which matters because sacrifice economics are vulnerability-sensitive.
+	// rare deals; we show the NS-first result. At `vulnerability` - neutral unless the caller knows the board's
+	// (an analysed record does) - which matters because sacrifice economics are vulnerability-sensitive.
+	DDS_VULNERABILITY :: [norn.Vulnerability]dds.Vulnerability {
+		.None        = .None,
+		.North_South = .NS,
+		.East_West   = .EW,
+		.Both        = .Both,
+	}
+	dds_vulnerability := DDS_VULNERABILITY
 	sides: [2]dds.Par_Results_Master
-	have_par := dds.SidesParBin(res, &sides, .None) == .NO_FAULT
+	have_par := dds.SidesParBin(res, &sides, dds_vulnerability[vulnerability]) == .NO_FAULT
 	ns_par := &sides[dds.Side.NS]
 
 	// Per-hand summaries feed the naive combined-OPC figure in the par guide.

@@ -129,6 +129,84 @@ write_html_caption :: proc(
 	strings.write_string(builder, " -->")
 }
 
+// A contract to preselect in the card page's picker: the one the board's record names.
+Named_Contract :: struct {
+	level:  int,
+	strain: Strain,
+}
+
+// The EXACT double-dummy grid for a whole deal - the `data-sim` of the card page's `.sim-exact` element, which
+// turns its contract picker and trick slider into a live double-dummy explorer:
+//   {"n":1,"exact":true,"lvl":4,"strain":"s","ns":{"s":[p0..p13],"h":..,"d":..,"c":..,"nt":..},"ew":{..}}
+// Each side's distribution is a single spike at its double-dummy tricks (the better of its two declarers), n=1:
+// the deal is known, so there is nothing to sample. `lvl`/`strain` preselect the named contract, else N/S's
+// best-making one (most tricks; the first strain in `Strain` order on a tie, NT when N/S make nothing).
+//
+// Here and not in `deal_solve` for the same reason as the caption: it is written from the trick table alone,
+// so the shared-deals player, which solves the table in the reader's browser, writes the same element.
+write_exact_sim :: proc(builder: ^strings.Builder, tricks: ^Tricks, named: Maybe(Named_Contract) = nil) {
+	side_tricks :: proc(tricks: ^Tricks, strain: Strain, a, b: Hand) -> int {
+		return clamp(max(tricks[strain][a], tricks[strain][b]), 0, 13)
+	}
+	best_strain := Strain.NT
+	best_tricks := 0
+	for strain in Strain {
+		if k := side_tricks(tricks, strain, .North, .South); k > best_tricks {
+			best_tricks = k
+			best_strain = strain
+		}
+	}
+	level, strain := clamp(best_tricks - 6, 1, 7), best_strain
+	if n, ok := named.?; ok {
+		level, strain = n.level, n.strain
+	}
+	strings.write_byte(builder, '{')
+	fmt.sbprintf(builder, `"n":1,"exact":true,"lvl":%d,"strain":"%s"`, level, exact_key(strain))
+	sides := [2]struct {
+		key:  string,
+		a, b: Hand,
+	}{{"ns", .North, .South}, {"ew", .East, .West}}
+	for side in sides {
+		fmt.sbprintf(builder, `,"%s":`, side.key)
+		strings.write_byte(builder, '{')
+		order := [5]Strain{.Spades, .Hearts, .Diamonds, .Clubs, .NT}
+		for s, i in order {
+			if i > 0 {
+				strings.write_byte(builder, ',')
+			}
+			fmt.sbprintf(builder, `"%s":[`, exact_key(s))
+			spike := side_tricks(tricks, s, side.a, side.b)
+			for k in 0 ..< 14 {
+				if k > 0 {
+					strings.write_byte(builder, ',')
+				}
+				strings.write_string(builder, "1.0000" if k == spike else "0.0000")
+			}
+			strings.write_byte(builder, ']')
+		}
+		strings.write_byte(builder, '}')
+	}
+	strings.write_byte(builder, '}')
+}
+
+// The card page's lowercase key for a strain.
+@(private)
+exact_key :: proc(s: Strain) -> string {
+	switch s {
+	case .Spades:
+		return "s"
+	case .Hearts:
+		return "h"
+	case .Diamonds:
+		return "d"
+	case .Clubs:
+		return "c"
+	case .NT:
+		return "nt"
+	}
+	return "nt"
+}
+
 // The trick count NS's par contract needs — the natural DEFAULT target for the card page's per-deal
 // combo (CCA) slider. Prefer a MAKING par contract that NS declares (its `level + 6` tricks; the
 // highest if several qualify). When par is an EW contract (e.g. a doubled sacrifice against NS's game,

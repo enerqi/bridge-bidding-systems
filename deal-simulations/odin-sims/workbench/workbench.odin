@@ -167,6 +167,8 @@ App :: struct {
 	before_about:       View,
 	before_keys:        View, // the same, for the keys list — see the `Keys` member of `View`
 	before_prefs:       View, // and for the preferences view
+	before_qr:          View, // and for the QR panel
+	qr_keep_par:        bool, // the QR panel shows the code WITH par, bigger (its `keep par` button)
 	// Views that were HIDDEN when the theme last changed. A hidden subtree is not restyled with the rest
 	// (measured: it kept the old theme's colours when shown again), so `show_view` restyles each of these
 	// the first time it is shown afterwards — see `theme.odin`.
@@ -305,6 +307,9 @@ View :: enum {
 	Keys,
 	// PREFERENCES, the same errand shape again: entered from the header's gear, left by going back.
 	Prefs,
+	// THE QR CODE of what the hand pane shows (`workbench/share.odin`), the errand shape once more: entered from
+	// the pane's `QR` button, left by going back. It replaces the panes because an overlay cannot be had here.
+	Qr,
 }
 
 // ---------------------------------------------------------------------------------------------------
@@ -975,7 +980,74 @@ analyse_flags :: proc(app: ^App) -> (argv: [dynamic]string, err: string) {
 	if target := strings.trim_space(read_text(app, "#target")); target != "" && target != "0" {
 		append(&argv, "--target", target)
 	}
+	defenders := read_text(app, "#defenders")
+	for word in strings.fields_iterator(&defenders) {
+		flag, ok := defender_flag(word)
+		if !ok {
+			return nil, fmt.tprintf(
+				"defenders: %q is not a card (W:3S), a void (E:S) or a length (W:H:5+, E:D:2, E:C:1-3)",
+				word,
+			)
+		}
+		append(&argv, flag, word)
+	}
+	remember_analyse_settings(app)
 	return argv, ""
+}
+
+/*
+THE ANALYSE PANEL'S SETTINGS ARE REMEMBERED, as `analyse.<id>` in the prefs file: the sample size, contract,
+target, defenders and `as text report`, so a window opens with the settings the last analysis used rather than
+with empty boxes to type again. They are saved when they are USED - by `analyse_flags`, which the analyse
+button, a dropped deal file and a dropped picture all go through - and only once they have been read without
+an error, so a box with a typo in it is not what the next session starts with. The deal itself is not
+remembered: it is the thing being analysed, not a setting.
+*/
+ANALYSE_TEXT_SETTINGS :: [?]string{"sample", "contract", "target", "defenders"}
+ANALYSE_AS_TEXT_PREF :: "analyse.as-text"
+
+remember_analyse_settings :: proc(app: ^App) {
+	if app.prefs.values == nil {
+		return
+	}
+	for id in ANALYSE_TEXT_SETTINGS {
+		prefs.set(&app.prefs, fmt.tprintf("analyse.%s", id), strings.trim_space(read_text(app, fmt.tprintf("#%s", id))))
+	}
+	prefs.set(&app.prefs, ANALYSE_AS_TEXT_PREF, "on" if read_bool(app, "#as-text") else "off")
+	if app.prefs_path != "" {
+		_ = prefs.save(&app.prefs, app.prefs_path)
+	}
+}
+
+// And put back at startup. A setting never saved leaves the document's own default (`0`, empty, unticked).
+restore_analyse_settings :: proc(app: ^App) {
+	for id in ANALYSE_TEXT_SETTINGS {
+		if remembered, found := prefs.get(&app.prefs, fmt.tprintf("analyse.%s", id)); found {
+			set_input(app, fmt.tprintf("#%s", id), remembered)
+		}
+	}
+	if remembered, found := prefs.get(&app.prefs, ANALYSE_AS_TEXT_PREF); found {
+		if element := find(app, "#as-text"); element != nil {
+			on := sa.value_from(remembered == "on")
+			defer sa.value_clear(&on)
+			sa.set_element_value(element, &on)
+		}
+	}
+}
+
+// Which of the advisor's flags one word of the `defenders` box is: a length (`W:H:5+`, two colons), a void
+// (`E:S`, a suit after the seat) or a card a defender holds (`W:3S`) - checked by the advisor's own parsers, so
+// a word the box accepts is one the analysis reads.
+defender_flag :: proc(word: string) -> (flag: string, ok: bool) {
+	if strings.count(word, ":") == 2 {
+		_, ok = analyse.parse_len_spec(word)
+		return "--len", ok
+	}
+	if _, void := analyse.parse_void_spec(word); void {
+		return "--void", true
+	}
+	_, ok = analyse.parse_lead_spec(word)
+	return "--lead", ok
 }
 
 // A dropped hand-diagram image: the analyse panel's flags, plus the picture to read them against. The
@@ -1371,6 +1443,7 @@ remember_shown_path :: proc(app: ^App, path: string) {
 	// right answer for, and the pane can already show the rest as text.
 	set_enabled(app, "#page-browser", browsable_page(app.shown_path))
 	set_enabled(app, "#page-share", browsable_page(app.shown_path))
+	set_enabled(app, "#page-qr", browsable_page(app.shown_path))
 	draw_output_chips(app)
 }
 
@@ -1849,6 +1922,8 @@ place_underneath :: proc(app: ^App) -> View {
 		return app.before_about
 	case .Prefs:
 		return app.before_prefs
+	case .Qr:
+		return app.before_qr
 	case .Keys:
 		return app.before_keys
 	case:
@@ -1875,6 +1950,7 @@ show_view :: proc(app: ^App, view: View) {
 	set_shown(app, "#scnview", view == .Scenarios)
 	set_shown(app, "#keyspanel", view == .Keys)
 	set_shown(app, "#prefs-panel", view == .Prefs)
+	set_shown(app, "#qr-panel", view == .Qr)
 	if view in app.theme_stale {
 		app.theme_stale -= {view}
 		if root, err := sa.root(app.window); err == nil && root != nil {
@@ -1883,7 +1959,7 @@ show_view :: proc(app: ^App, view: View) {
 	}
 	// Neither About nor the keys list is a tab, so neither disturbs the strip: both are entered from
 	// anywhere and left by going back, and the strip should go on saying where "back" is.
-	if view != .About && view != .Keys {
+	if view != .About && view != .Keys && view != .Qr {
 		mark_tab(app, view)
 	}
 }
@@ -2108,6 +2184,7 @@ show_analysed_page :: proc(app: ^App) -> bool {
 	refresh_show_analysed(app)
 	set_enabled(app, "#page-browser", true) // `page-browser` writes it out first
 	set_enabled(app, "#page-share", true)
+	set_enabled(app, "#page-qr", true)
 	return true
 }
 
@@ -2639,6 +2716,9 @@ current_view :: proc(app: ^App) -> View {
 	}
 	if !effective_display_is_hidden(app, "#prefs-panel") {
 		return .Prefs
+	}
+	if !effective_display_is_hidden(app, "#qr-panel") {
+		return .Qr
 	}
 	if !effective_display_is_hidden(app, "#editview") {
 		return .Editor
@@ -6240,6 +6320,10 @@ window_shortcut_key :: proc(app: ^App, key_code: u32, modifiers: sciter.Keyboard
 		show_prefs(app, false)
 		return true
 	}
+	if code == .ESCAPE && current_view(app) == .Qr {
+		show_share_qr(app, false)
+		return true
+	}
 	// CTRL+W closes whichever of those two is up — the browser's "close this tab", which is what both
 	// panels feel like. Only those two: on a working view the key does nothing rather than closing the
 	// WINDOW, which would be a costly way to find out what it does.
@@ -6253,6 +6337,9 @@ window_shortcut_key :: proc(app: ^App, key_code: u32, modifiers: sciter.Keyboard
 			return true
 		case .Prefs:
 			show_prefs(app, false)
+			return true
+		case .Qr:
+			show_share_qr(app, false)
 			return true
 		}
 	}
@@ -7097,7 +7184,7 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 			show_scenario_editor(app)
 		case .Panes:
 			show_view(app, view)
-		case .About, .Keys, .Prefs:
+		case .About, .Keys, .Prefs, .Qr:
 		// neither is a tab: About is entered from its own button, the keys list from CTRL+/
 		}
 		return true
@@ -7207,6 +7294,18 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 
 	case "page-share":
 		share_shown_page(app)
+		return true
+	case "page-qr":
+		show_share_qr(app, true)
+		return true
+	case "qr-copy":
+		copy_qr_link(app)
+		return true
+	case "qr-par":
+		toggle_qr_par(app)
+		return true
+	case "qr-close":
+		show_share_qr(app, false)
 		return true
 	case "page-browser":
 		// WHATEVER IS IN THE PANE, IN A REAL BROWSER. Reported as a gap and it was one: the chips could put
@@ -7768,6 +7867,7 @@ main :: proc() {
 	restore_page_zoom(app)
 	restore_deals_layout(app)
 	restore_folds(app)
+	restore_analyse_settings(app)
 
 	// What is already in the deals folder, BEFORE the list is drawn: the rows carry their format tags from
 	// the first frame, so a window opened on a folder from an earlier session says what is in it rather

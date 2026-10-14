@@ -46,8 +46,11 @@ import "core:time"
 
 import "analyse"
 import "norn:combo"
+import "norn:norn"
 import sciter "sciter:."
 import sa "sciter:sciter_app"
+import "qr"
+import "sampled"
 import "share"
 import "suit_book"
 
@@ -340,6 +343,7 @@ main :: proc() {
 		check_the_panel_parks_clear_of_the_board(&view)
 		check_the_play_through(&view)
 		check_the_par_toggle(&view)
+		check_the_two_hand_share_link(&view)
 	}
 
 	if g_failures > 0 {
@@ -428,7 +432,7 @@ check_the_window_bugs :: proc(view: ^sa.Windowless_View, root: sa.Element) {
 	if btn, err := sa.select_first(root, ".cca-head .help"); err == nil {
 		sa.do_click(btn)
 		pump(view, 64)
-		if card, cerr := sa.select_first(root, ".cca-help-card"); cerr == nil {
+		if card, cerr := sa.select_first(root, "#nc-cca-help-modal .cca-help-card"); cerr == nil {
 			cb, _ := sa.location(card, .Border, .Root)
 			check(cb.height > 200, fmt.tprintf("the help card has a real box (%dx%d)", cb.width, cb.height))
 			check(
@@ -1746,12 +1750,113 @@ check_the_par_toggle :: proc(view: ^sa.Windowless_View) {
 			fmt.tprintf("the page's Share link is the one `share` makes\n        page:  %s\n        share: %s", from_page, want),
 		)
 	}
+
+	// The QR button: its modal opens in THIS engine, the code is drawn with a real box (an svg sized on its
+	// container laid out 1x1 here, in the workbench), and the drawing is the one `qr/` makes from the same link -
+	// the page carries a JS port of it, held to the goldens by `just sims test-qr-js`; this holds the two
+	// together on a real link, painted.
+	qr_button, qerr := sa.select_first(root, "#nc-qr")
+	if qerr != nil {
+		check(false, "the toolbar has a QR button")
+		return
+	}
+	sa.do_click(qr_button)
+	pump(view, 64)
+	eval_text :: proc(root: sa.Element, script: string) -> string {
+		v, err := sa.eval_element(root, script)
+		if err != nil {
+			return "?"
+		}
+		text, _ := sa.value_to_string(&v, context.temp_allocator)
+		return text
+	}
+	link := eval_text(root, `window.ncQrLink ? window.ncQrLink() : ''`)
+	drawn := eval_text(root, `(function(){ var p = document.querySelector('#nc-qr-code path'); return p ? p.getAttribute('d') : ''; })()`)
+	code, code_ok := qr.encode_string(link, {ecc = .L, boost_ecc = true, mask = -1}, context.temp_allocator)
+	native := qr.svg(code, allocator = context.temp_allocator) if code_ok else ""
+	d_at := strings.index(native, ` d="`)
+	want_d := native[d_at + 4:len(native) - len(`"/></svg>`)] if d_at >= 0 else "-"
+	check(
+		link != "" && (strings.contains(link, "#v1.") || strings.contains(link, "#v2.") || strings.contains(link, "#v3.")) && drawn == want_d,
+		fmt.tprintf("the QR code drawn is the one `qr` makes from its link (version %d, %d-character link)", code.version, len(link)),
+	)
+	if svg_el, serr := sa.select_first(root, "#nc-qr-code svg"); serr == nil {
+		box, _ := sa.location(svg_el, .Border, .Root)
+		width := int(box.width)
+		side := code.size + 8
+		check(
+			code_ok && width >= side * 3 && int(box.height) == width,
+			fmt.tprintf("the QR code is painted square, at %d px for %d modules", width, side),
+		)
+	} else {
+		check(false, "the QR modal has its svg")
+	}
+	if close, cerr := sa.select_first(root, "#nc-qr-close"); cerr == nil {
+		sa.do_click(close)
+		pump(view, 32)
+		closed := eval_text(root, `(function(){ var m = document.getElementById('nc-qr-modal'); return m && m.hasAttribute('hidden') ? 'hidden' : 'shown'; })()`)
+		check(closed == "hidden", fmt.tprintf("its close button closes it (%s)", closed))
+	}
 }
 
 // The play-through bar: it is built by the page's script, so this is the check that its DOM work (innerHTML
 // tables, classList on the seats, the delegated clicks) runs in this engine too. Two tricks forward, then
 // "next card that cost a trick": the trick in the middle of the table has its four cards, West's hand has
 // lost what West played, the note names the card that cost a trick, and the bar sits inside the view.
+// A 2-hand board's named contract and defender inferences (`data-contract`, `data-held`, `data-shape`) travel in
+// the page's own Share link as `share` writes them (`v3.`): bytes after the target, zeros for a board without them.
+check_the_two_hand_share_link :: proc(view: ^sa.Windowless_View) {
+	boards := []share.Board {
+		{deal = norn.deal_hands(), known = share.NORTH_SOUTH, target = 10, contract = sampled.Contract{4, .Hearts}},
+		{deal = norn.deal_hands(), known = share.EAST_WEST, target = 8},
+		{deal = norn.deal_hands(), known = share.EAST_WEST, target = 9, contract = sampled.Contract{3, .NT}},
+	}
+	boards[1].constraints.held[0] = {.South, boards[1].deal[.South][7]}
+	boards[1].constraints.held[1] = {.North, boards[1].deal[.North][0]}
+	boards[1].constraints.shape[0] = {.North, .Diamonds, 0, 0}
+	boards[1].constraints.held_count, boards[1].constraints.shape_count = 2, 1
+	boards[2].constraints.shape[0] = {.South, .Spades, 5, 13}
+	boards[2].constraints.shape_count = 1
+	shared := share.Shared {
+		title   = "Two-hand advisor (declarer + dummy)",
+		analyse = true,
+		boards  = boards,
+	}
+	b := strings.builder_make()
+	defer strings.builder_destroy(&b)
+	share.render(&b, shared)
+	if err := sa.load_html(view.window, strings.to_string(b), "file://page-check/two-hand.html"); err != nil {
+		check(false, fmt.tprintf("the 2-hand page loads (%v)", err))
+		return
+	}
+	pump(view, 32)
+	root, rerr := sa.root(view.window)
+	if rerr != nil {
+		check(false, "the 2-hand page has a root")
+		return
+	}
+	v, verr := sa.eval_element(root, `window.ncShareFragment ? (window.ncShareFragment() || 'refused') : 'missing'`)
+	from_page := "?"
+	if verr == nil {
+		from_page, _ = sa.value_to_string(&v, context.temp_allocator)
+	}
+	// From the page, as the workbench reads it: the hidden hands are dealt in card order, as the script deals them.
+	title, read, read_ok := share.boards_from_page(strings.to_string(b), context.temp_allocator)
+	want := share.encode({title = title, analyse = true, boards = read}, context.temp_allocator)
+	if read_ok && strings.has_prefix(want, "v3.") && from_page == want {
+		check(true, fmt.tprintf("the 2-hand page's Share link carries its contracts as `share` does (%s...)", want[:3]))
+	} else {
+		check(
+			false,
+			fmt.tprintf(
+				"the 2-hand page's Share link carries its contracts as `share` does\n        page:  %s\n        share: %s",
+				from_page,
+				want,
+			),
+		)
+	}
+}
+
 check_the_play_through :: proc(view: ^sa.Windowless_View) {
 	page, ok := render_page(CHECK_PLAY_DEAL)
 	if !ok {

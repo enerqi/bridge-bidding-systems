@@ -28,8 +28,11 @@ import "core:time"
 
 import "../analyse"
 import "../bidding"
+import "../deal_solve"
 import "../outline"
+import "../par_caption"
 import "../prefs"
+import "../qr"
 import "../preview"
 import "../scenario_dsl"
 import "../share"
@@ -373,6 +376,7 @@ test_the_document_carries_every_control_the_host_touches :: proc(t: ^testing.T) 
 			"#sample",
 			"#contract",
 			"#target",
+			"#defenders",
 			"#as-text",
 			"#analyse",
 			"#clear",
@@ -484,6 +488,7 @@ test_every_control_is_documented :: proc(t: ^testing.T) {
 			"#sample",
 			"#contract",
 			"#target",
+			"#defenders",
 			"#analyse",
 			"#clear",
 			"#about",
@@ -505,6 +510,9 @@ test_every_control_is_documented :: proc(t: ^testing.T) {
 			"#prefs-quiz-dir",
 			"#prefs-share-player",
 			"#page-share",
+			"#page-qr",
+			"#qr-copy",
+			"#qr-par",
 			`.segbtn[data-preview="closed"]`,
 			`.segbtn[data-preview="split"]`,
 			`.segbtn[data-preview="wide"]`,
@@ -2696,6 +2704,60 @@ test_the_deals_bar_lines_up :: proc(t: ^testing.T) {
 			pump(&app)
 		}
 		check_the_bar_lines_up(t, &app, step)
+	}
+}
+
+// THE HAND PAGE'S BAR, the same checks (reported: the zoom group, `browser`, `share link`, `QR` and `dump` each
+// a different height, butted together, on different centres). Every control one height, one centre line, and
+// a gap between neighbours - at every zoom step.
+@(test)
+test_the_page_bar_lines_up :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	if !show_page_html(&app, MINIMAL_PAGE, "a page") {
+		testing.fail_now(t, "the page did not load into the frame")
+	}
+	set_shown(&app, "#page-dump", true) // as a debug build shows it
+	pump(&app)
+
+	CONTROLS :: []string{"#page-zoom", "#page-browser", "#page-share", "#page-qr", "#page-dump"}
+	defer for _ in 0 ..< 8 {_ = zoom_step(&app, -1)}
+	for step in 0 ..= 6 {
+		if step > 0 {
+			_ = zoom_step(&app, 1)
+			pump(&app)
+		}
+		first: sa.Rect
+		previous_right := min(i32)
+		for selector, i in CONTROLS {
+			element := find(&app, selector)
+			if !testing.expectf(t, element != nil, "the page bar is missing %s", selector) {
+				continue
+			}
+			box, _ := sa.location(element, .Border, .Root)
+			if i == 0 {
+				first = box
+			}
+			testing.expectf(
+				t,
+				abs(box.height - first.height) <= 1,
+				"at zoom step %d, %s is %dpx tall against the zoom group's %dpx",
+				step,
+				selector,
+				box.height,
+				first.height,
+			)
+			testing.expectf(
+				t,
+				abs((box.y + box.height / 2) - (first.y + first.height / 2)) <= 1,
+				"at zoom step %d, %s is off the zoom group's centre line",
+				step,
+				selector,
+			)
+			testing.expectf(t, i == 0 || box.x - previous_right >= 3, "at zoom step %d, %s touches its neighbour", step, selector)
+			previous_right = box.x + box.width
+		}
 	}
 }
 
@@ -9607,6 +9669,199 @@ test_a_share_link_says_what_it_leaves_behind :: proc(t: ^testing.T) {
 	testing.expect(t, !text_ok, "a page with no boards has no link")
 }
 
+// A page of `count` boards, each with a par caption (made-up numbers: `par_caption` writes what the generator
+// writes from real ones), as the QR tests need: par is what the QR drops first.
+@(private = "file")
+page_with_par :: proc(count: int) -> string {
+	b := strings.builder_make(context.temp_allocator)
+	norn.render_page_prologue(&b, .Html_Cards, "Par set")
+	for i in 0 ..< count {
+		par := share.Board_Par {
+			have = true,
+			par = {score = 420, number = 1, contracts = {0 = {level = 4, denom = .Spades, seats = .NS}}},
+		}
+		for strain in par_caption.Strain {
+			for hand in par_caption.Hand {
+				par.tricks[strain][hand] = (i + int(strain) + int(hand)) % 14
+			}
+		}
+		deal := norn.deal_hands()
+		norn.render_deal_html_cards(&b, deal, randomize_table = true)
+		par_caption.write_html_caption(&b, &par.tricks, &par.par, par.have, norn.summarize_deal(deal), cards = true)
+		strings.write_byte(&b, '\n')
+	}
+	norn.render_page_epilogue(&b, .Html_Cards)
+	return strings.to_string(b)
+}
+
+// THE `QR` BUTTON's code: a small set keeps its par; a full 48-board set drops it to get under the readable
+// size, and still carries every board; a page with no boards has no code.
+@(test)
+test_a_share_qr_drops_par_only_when_it_must :: proc(t: ^testing.T) {
+	PLAYER :: "https://example.github.io/bridge/player.html"
+	small, small_ok := share_qr_for(page_with_par(3), PLAYER, context.temp_allocator)
+	testing.expect(t, small_ok)
+	testing.expect(t, !small.par_dropped, "three boards with par fit a small code")
+	testing.expect(t, small.code.size > 0 && small.code.version <= 10, "three boards are a small code")
+
+	// error correction L is what lets a session of 24 boards keep its par (version 23; at M it is 26)
+	session, session_ok := share_qr_for(page_with_par(24), PLAYER, context.temp_allocator)
+	testing.expect(t, session_ok)
+	testing.expectf(t, !session.par_dropped, "24 boards with par fit: version %d", session.code.version)
+
+	big, big_ok := share_qr_for(page_with_par(48), PLAYER, context.temp_allocator)
+	testing.expect(t, big_ok)
+	testing.expect_value(t, big.boards, 48)
+	testing.expect(t, big.par_dropped, "48 boards with par are over the readable size")
+	testing.expectf(t, big.code.size > 0 && big.code.version <= QR_READABLE_VERSION, "version %d", big.code.version)
+	shared, err := share.decode(big.link[strings.index_byte(big.link, '#') + 1:], context.temp_allocator)
+	testing.expect_value(t, err, share.Decode_Error.None)
+	testing.expect_value(t, len(shared.boards), 48)
+	for board in shared.boards {
+		_, has_par := board.par.?
+		testing.expect(t, !has_par, "the dropped link carries no par")
+	}
+
+	// ... unless the reader asks to keep it: the same boards, a bigger code
+	kept, kept_ok := share_qr_for(page_with_par(48), PLAYER, context.temp_allocator, keep_par = true)
+	testing.expect(t, kept_ok && kept.has_par && !kept.par_dropped)
+	testing.expectf(t, kept.code.version > QR_READABLE_VERSION, "48 boards with par are version %d", kept.code.version)
+	testing.expect(t, len(kept.link) > len(big.link) + 900, "the kept link carries ~16 bytes of par a board")
+
+	_, text_ok := share_qr_for("<html><plaintext>N:AKQ...", PLAYER, context.temp_allocator)
+	testing.expect(t, !text_ok, "a page with no boards has no code")
+}
+
+// The panel's `keep par`: hidden when there is nothing to choose, offered when par was dropped, and pressing
+// it shows the bigger code with par (and the button then offers the way back).
+@(test)
+test_the_qr_panel_can_keep_par :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	attach_for_test(&app)
+	defer sa.detach_window_handler(app.window, &app.handler)
+	app.prefs = prefs.load("", context.allocator)
+	defer prefs.destroy(&app.prefs)
+	prefs.set(&app.prefs, SHARE_PLAYER_PREF, "https://example.github.io/bridge/player.html")
+	show_view(&app, .Panes)
+	app.showing_analysed = true
+
+	app.analysed_page = strings.clone(page_with_par(4), app.allocator)
+	show_share_qr(&app, true)
+	pump(&app)
+	testing.expect(t, effective_display_is_hidden(&app, "#qr-par"), "4 boards keep par anyway: nothing to choose")
+	show_share_qr(&app, false)
+
+	delete(app.analysed_page, app.allocator)
+	app.analysed_page = strings.clone(page_with_par(48), app.allocator)
+	show_share_qr(&app, true)
+	pump(&app)
+	testing.expect(t, !effective_display_is_hidden(&app, "#qr-par"), "48 boards dropped par: `keep par` is offered")
+	small, _ := sa.text(find(&app, "#qr-link"), context.temp_allocator)
+	small = strings.clone(small, context.temp_allocator)
+
+	click(&app, "#qr-par")
+	pump(&app)
+	testing.expect(t, app.qr_keep_par)
+	kept, _ := sa.text(find(&app, "#qr-link"), context.temp_allocator)
+	testing.expect(t, len(kept) > len(small) + 900, "the code now holds the link with par")
+	label, _ := sa.text(find(&app, "#qr-par"), context.temp_allocator)
+	testing.expect_value(t, label, "drop par (smaller code)")
+	testing.expect_value(t, current_view(&app), View.Qr)
+
+	// closing and opening again starts from the small code
+	show_share_qr(&app, false)
+	show_share_qr(&app, true)
+	pump(&app)
+	testing.expect(t, !app.qr_keep_par, "a new opening starts small")
+}
+
+// The panel: the pane's page as a code, the link under it, and the errand shape - esc goes back.
+@(test)
+test_the_qr_panel_shows_the_code_and_closes_like_about :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	attach_for_test(&app)
+	defer sa.detach_window_handler(app.window, &app.handler)
+	app.prefs = prefs.load("", context.allocator)
+	defer prefs.destroy(&app.prefs)
+	prefs.set(&app.prefs, SHARE_PLAYER_PREF, "https://example.github.io/bridge/player.html")
+
+	show_view(&app, .Panes)
+	app.analysed_page = strings.clone(page_with_par(4), app.allocator)
+	app.showing_analysed = true
+	show_share_qr(&app, true)
+	pump(&app)
+	testing.expect_value(t, current_view(&app), View.Qr)
+
+	// THE CODE AS PAINTED, module by module: the centre of every module's cell is dark exactly where the
+	// encoder's matrix is. What a phone sees is the paint, so a path the engine drew wrong (or scaled into
+	// blur) would fail here even with the right SVG text in the document.
+	expected, _ := share_qr_for(app.analysed_page, "https://example.github.io/bridge/player.html", context.temp_allocator)
+	svg := find(&app, "#qr-code svg")
+	testing.expect(t, svg != nil && find(&app, "#qr-code svg path") != nil, "the panel holds the code's svg")
+	if svg == nil {return}
+	sa.paint_windowless(&g_view)
+	located, _ := sa.location(svg, .Border, .Root)
+	bx, by, w, h := int(located.x), int(located.y), int(located.width), int(located.height)
+	side := expected.code.size + 8 // the SVG's quiet zone is 4 modules each side
+	testing.expectf(t, w == h && w >= side * 4, "the code is %dx%d px for %d modules", w, h, side)
+	wrong := 0
+	for y in 0 ..< expected.code.size {
+		for x in 0 ..< expected.code.size {
+			px := bx + (2 * (x + 4) + 1) * w / (2 * side)
+			py := by + (2 * (y + 4) + 1) * h / (2 * side)
+			r, g, b, _ := sa.windowless_pixel(&g_view, i32(px), i32(py))
+			if (int(r) + int(g) + int(b) < 384) != qr.is_dark(expected.code, x, y) {
+				wrong += 1
+			}
+		}
+	}
+	testing.expectf(t, wrong == 0, "%d of %d modules painted wrong", wrong, expected.code.size * expected.code.size)
+	link, _ := sa.text(find(&app, "#qr-link"), context.temp_allocator)
+	testing.expect(t, strings.has_prefix(link, "https://example.github.io/bridge/player.html#v1."), link)
+	facts, _ := sa.text(find(&app, "#qr-facts"), context.temp_allocator)
+	testing.expect(t, strings.has_prefix(facts, "4 boards, "), facts)
+	testing.expect(t, effective_display_is_hidden(&app, "#qr-notes"), "a published player and par kept: nothing to say")
+
+	press_key(&app, .ESCAPE)
+	pump(&app)
+	testing.expect_value(t, current_view(&app), View.Panes)
+}
+
+// WHERE LINKS POINT: an empty setting is this project's published player, an address is used as given, and
+// only something that is not an address falls back to the copy in the deals folder - written into the pages'
+// own Share button the same way (none, so it links to the `player.html` beside the page).
+@(test)
+test_the_player_defaults_to_the_published_one :: proc(t: ^testing.T) {
+	app: App
+	app.prefs = prefs.load("", context.allocator)
+	defer prefs.destroy(&app.prefs)
+	defer {
+		prefs.set(&app.prefs, SHARE_PLAYER_PREF, "not an address")
+		apply_share_player(&app) // frees what the test set
+	}
+
+	address, ok := published_player(&app)
+	testing.expect(t, ok && address == share.PUBLISHED_PLAYER, address)
+	apply_share_player(&app)
+	testing.expect_value(t, norn.share_player, share.PUBLISHED_PLAYER)
+
+	prefs.set(&app.prefs, SHARE_PLAYER_PREF, "  https://example.github.io/bridge/player.html ")
+	address, ok = published_player(&app)
+	testing.expect(t, ok && address == "https://example.github.io/bridge/player.html", address)
+
+	for wrong in ([]string{"bridge-workbench.netlify.app/player.html", `C:\deals\player.html`, "htps://x/player.html"}) {
+		prefs.set(&app.prefs, SHARE_PLAYER_PREF, wrong)
+		_, ok = published_player(&app)
+		testing.expectf(t, !ok, "%q is not an address", wrong)
+		apply_share_player(&app)
+		testing.expect_value(t, norn.share_player, "")
+	}
+}
+
 @(test)
 test_a_path_becomes_a_file_url :: proc(t: ^testing.T) {
 	testing.expect_value(
@@ -9614,4 +9869,79 @@ test_a_path_becomes_a_file_url :: proc(t: ^testing.T) {
 		file_url(`C:\Users\me\my deals\player.html`, context.temp_allocator),
 		"file:///C:/Users/me/my%20deals/player.html",
 	)
+}
+
+// The `defenders` box is the advisor's `--lead` / `--void` / `--len`, one word each, told apart by shape: what it
+// composes is what the advisor's parser reads, and a word it cannot read stops the analysis with a message.
+@(test)
+test_the_defenders_box_is_the_advisors_constraints :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	type_into(&app, "#deal", `[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]`)
+	type_into(&app, "#defenders", " W:3H  E:S W:D:5+	E:C:1-3 ")
+	job, err := analyse_job(&app)
+	testing.expect_value(t, err, "")
+	app.job = job
+	args, perr := analyse.parse_args(job.argv, allow_stdin = false)
+	defer analyse.args_free(&args)
+	testing.expectf(t, perr == "", "the advisor rejected the composed argv: %s", perr)
+	testing.expect_value(t, len(args.held), 1)
+	if len(args.held) == 1 {
+		testing.expect_value(t, args.held[0], deal_solve.Held_Card{.West, norn.make_card(.Hearts, .Three)})
+	}
+	testing.expect_value(t, len(args.constraints), 3)
+	if len(args.constraints) == 3 {
+		testing.expect_value(t, args.constraints[0], deal_solve.Card_Constraint{.East, .Spades, 0, 0})
+		testing.expect_value(t, args.constraints[1], deal_solve.Card_Constraint{.West, .Diamonds, 5, 13})
+		testing.expect_value(t, args.constraints[2], deal_solve.Card_Constraint{.East, .Clubs, 1, 3})
+	}
+
+	type_into(&app, "#defenders", "W:3H E:X")
+	_, bad := analyse_job(&app)
+	testing.expect(t, strings.contains(bad, `"E:X"`), bad)
+}
+
+// The analyse panel's settings survive a restart: saved when an analysis reads them, put back at startup.
+@(test)
+test_the_analyse_settings_are_remembered :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	app.prefs = prefs.load("", context.allocator)
+	defer prefs.destroy(&app.prefs)
+
+	type_into(&app, "#deal", `[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]`)
+	type_into(&app, "#sample", "200")
+	type_into(&app, "#contract", "4S")
+	type_into(&app, "#target", "10")
+	type_into(&app, "#defenders", "W:3H E:S")
+	tick := sa.value_from(true)
+	defer sa.value_clear(&tick)
+	sa.set_element_value(find(&app, "#as-text"), &tick)
+	job, err := analyse_job(&app)
+	testing.expect_value(t, err, "")
+	app.job = job // the app frees it
+
+	// A setting with a mistake in it is not saved over the last good one.
+	type_into(&app, "#defenders", "W:3H E:X")
+	_, bad := analyse_job(&app)
+	testing.expect(t, bad != "", "the bad word should be refused")
+	saved, _ := prefs.get(&app.prefs, "analyse.defenders")
+	testing.expect_value(t, saved, "W:3H E:S")
+
+	// The next session's boxes, from the prefs alone.
+	for id in ([]string{"sample", "contract", "target", "defenders"}) {
+		type_into(&app, fmt.tprintf("#%s", id), "")
+	}
+	untick := sa.value_from(false)
+	defer sa.value_clear(&untick)
+	sa.set_element_value(find(&app, "#as-text"), &untick)
+	restore_analyse_settings(&app)
+	testing.expect_value(t, read_text(&app, "#sample"), "200")
+	testing.expect_value(t, read_text(&app, "#contract"), "4S")
+	testing.expect_value(t, read_text(&app, "#target"), "10")
+	testing.expect_value(t, read_text(&app, "#defenders"), "W:3H E:S")
+	testing.expect(t, read_bool(&app, "#as-text"), "as text report should be ticked again")
 }

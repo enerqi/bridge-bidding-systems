@@ -13,6 +13,8 @@ import "core:os"
 import "core:strings"
 
 import "../deal_solve"
+import "../replay"
+import "../sampled"
 import "norn:combo"
 import "norn:norn"
 
@@ -96,9 +98,10 @@ render_full_deal_body :: proc(
 	contract: deal_solve.Contract,
 	has_contract: bool,
 ) {
-	norn.render_deal_html_cards(b, board.deal, false, board.known)
+	// At the record's dealer and vulnerability (`conditions`), which the par is worked out at too.
+	norn.render_deal_html_cards_at(b, board.deal, board.conditions, board.known)
 	write_table_element(b, board.table) // after the compass: the page groups a board's elements from it
-	deal_solve.annotate(b, board.deal, .Html_Cards)
+	deal_solve.annotate(b, board.deal, .Html_Cards, board.conditions.vulnerability)
 	// Exact double-dummy grids (one per side) so the card page's contract picker + trick slider come alive
 	// on the known deal (spikes at each strain's DD tricks; the band relabels to "double-dummy (exact)").
 	// Carried on its own hidden element — deal_solve.annotate owns the `.par` div — which render.odin reads as the
@@ -123,7 +126,8 @@ render_full_deal_body :: proc(
 
 // The board's recorded play as the hidden `.play` element the card page replays it from, every card solved
 // double dummy (see deal_solve/play_cost.odin). Nothing for a board with no play or no contract. A failed
-// solve still writes the play, without the per-card numbers.
+// solve still writes the play, without the per-card numbers. The element carries the play's bytes too
+// (`data-pack`), which is what puts it in a share link.
 write_play_element :: proc(b: ^strings.Builder, board: norn.Board) {
 	contract, has_contract := board.contract.?
 	play, has_play := board.play.?
@@ -134,9 +138,7 @@ write_play_element :: proc(b: ^strings.Builder, board: norn.Board) {
 	if c, ok := deal_solve.play_cost(board.deal, contract, play); ok {
 		cost = c
 	}
-	strings.write_string(b, `<div class="play" hidden data-play='`)
-	deal_solve.write_play_json(b, board.deal, contract, play, cost)
-	strings.write_string(b, `'></div>`)
+	replay.write_play_element(b, board.deal, contract, play, cost)
 }
 
 // Bake the BLIND (DDS-sampled) advisor grids for BOTH partnerships of a known deal: `{"ns":<sim>,"ew":<sim>}`
@@ -237,39 +239,33 @@ render_board_body :: proc(
 		fmt.wprintfln(sink.err, "%s: %s", PROGRAM, serr)
 	}
 
-	norn.render_deal_html_cards(b, board.deal, false, board.known)
+	norn.render_deal_html_cards_at(b, board.deal, board.conditions, board.known)
 	write_table_element(b, board.table) // after the compass: the page groups a board's elements from it
 	// The real known side, so the CCA panel locks its toggle here (the other side is this pair duplicated).
 	fmt.sbprintf(b, `<div class="cca-meta" data-known="%s" hidden></div>`, deal_solve.side_key(side))
 
-	// Seed the CCA target slider. Prefer the contract level (level+6 tricks) when sampling, else the
-	// user's --target, else a sensible default = the achievable single-dummy expected total.
+	named: Maybe(deal_solve.Contract)
+	if c, has := sampled.named_contract(board, side, contract, has_contract); has {
+		named = c
+	}
+	// Seed the CCA target slider. Prefer the contract level (level+6 tricks) when sampling or when the board
+	// names one, else the user's --target, else a sensible default = the achievable single-dummy expected total.
 	tgt := args.target
 	if bs.have && tgt <= 0 {
 		tgt = clamp(bs.contract.level + 6, 1, 13)
 	}
+	if c, has := named.?; has && tgt <= 0 {
+		tgt = clamp(c.level + 6, 1, 13)
+	}
 	if tgt <= 0 {
 		tgt = clamp(int(combo.expected_tricks(sd.totsd) + 0.5), 1, 13)
 	}
-	strings.write_string(b, "\n<div class=\"par\"")
-	fmt.sbprintf(b, " data-target=\"%d\"", tgt)
-	if bs.have {
-		strings.write_string(b, " data-sim='")
-		deal_solve.write_sim_json(b, &bs.grid, bs.contract, bs.tax, bs.tax_ok)
-		strings.write_string(b, "'")
-		strings.write_string(b, " data-sim-leads='")
-		deal_solve.write_leads_json(b, bs.leads, side, bs.lead_tax)
-		strings.write_string(b, "'")
-		// Per-suit blind two-way GUESS notes (Option C1 narration): the misguess-tax pivots keyed by suit,
-		// merged client-side into that suit's line tooltip. Only when a guess actually COSTS something at
-		// this contract (a cushioned/non-pivotal guess has nothing to narrate).
-		if bs.tax_ok && deal_solve.tax_has_narratable_guess(bs.tax) {
-			strings.write_string(b, " data-sim-guess='")
-			deal_solve.write_sim_guess_json(b, side, bs.tax)
-			strings.write_string(b, "'")
-		}
-	}
-	strings.write_string(b, " hidden></div>\n")
+	// The `.par` carries the target, the named contract and the defender inferences the sampling is conditioned
+	// on (all of which a share link carries) and, when sampled, the grid, the lead sub-grids and the per-suit
+	// blind two-way GUESS notes (only when a guess costs something at this contract) - written by `sampled`, as
+	// the shared-deals player writes it. `parse_args` holds the inferences to what fits.
+	cons, _ := sampled.board_constraints({shape = args.constraints[:], held = held_cards(board, args)})
+	sampled.write_advisor_par(b, tgt, side, &bs, named, cons)
 
 	combo.annotate(b, synth_deal(board, side), .Html_Cards)
 }

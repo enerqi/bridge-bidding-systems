@@ -42,8 +42,8 @@ E2E_SEED :: #config(E2E_SEED, 42)
 E2E_MAX_ATTEMPTS :: 20_000_000 // matches cli's HTML_EXPORT_MAX_ATTEMPTS; a rare filter under-fills instead of hanging
 
 // The deal_solve par caption followed by the combo table — the same annotator sim registers for this scenario.
-e2e_annotate :: proc(b: ^strings.Builder, deal: norn.Deal, format: norn.Output_Format) {
-	deal_solve.annotate(b, deal, format)
+e2e_annotate :: proc(b: ^strings.Builder, deal: norn.Deal, format: norn.Output_Format, table: norn.Table) {
+	deal_solve.annotate(b, deal, format, table.vulnerability)
 	combo.annotate(b, deal, format)
 }
 

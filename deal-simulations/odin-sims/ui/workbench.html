@@ -147,16 +147,39 @@
       </div>
       <div class="line"><span class="barlabel" id="prefs-quiz-note"></span></div>
       <!-- SHARING. Where the shared-deals player is published: the address every `share link` opens. Empty
-           means the copy built into this program, written to the deals folder (this computer only). -->
+           means this project's own (share.PUBLISHED_PLAYER); something that is not an address falls back to the
+           copy built into this program, written to the deals folder (this computer only). -->
       <div class="about-head">Sharing</div>
       <div class="line">
         <label for="prefs-share-player" class="barlabel field-label">player at</label>
         <input type="text" id="prefs-share-player" class="wide" title="Where the shared-deals player page is published"
-               data-hint="The web address of a published player.html (just sims player builds it; any static host will do, and it never changes). Share links open it. Empty: links open the copy in the deals folder, which only works on this computer."
-               placeholder="empty: the copy in the deals folder (this computer only)">
+               data-hint="Normally empty: share links open the player published at bridge-workbench.netlify.app. A web address here uses a player.html published somewhere else instead. If it is not a web address, links open the copy in the deals folder, which only works on this computer."
+               placeholder="empty: https://bridge-workbench.netlify.app/player.html">
       </div>
       <div class="line">
         <button id="prefs-close" title="Close (esc, ctrl+w)">close</button>
+      </div>
+    </div>
+  </div>
+
+<!-- THE QR CODE of the hand pane's page (SHARING_PLAN.md, Tier C): the `share link` link, for a phone to scan.
+     The About panel's shape again - it replaces the panes, and is left by going back. The code is an SVG the
+     host writes (`qr/`), always dark on white whatever the theme: a scanner wants the contrast, and a code
+     drawn light-on-dark is one many readers refuse. Filled by `show_share_qr` (workbench/share.odin). -->
+  <div class="about" id="qr-panel">
+    <div class="about-card">
+      <div class="legend">QR code</div>
+      <div class="qr-code" id="qr-code"></div>
+      <div class="about-line" id="qr-facts"></div>
+      <div class="about-line" id="qr-notes"></div>
+      <div class="qr-link" id="qr-link"></div>
+      <div class="line">
+        <!-- Shown only when the set has par and the code without it is the smaller choice (`draw_share_qr`). -->
+        <button id="qr-par" class="ghost" title="Put par back in the code, or take it out"
+                data-hint="Par makes a link about twice as long, so a big set leaves it out to keep the code easy to scan. Keep par puts it back - a bigger code, which a phone reads less easily, from paper especially. Drop par goes back to the smaller one.">keep par (bigger code)</button>
+        <button id="qr-copy" title="Copy the link this code holds"
+                data-hint="Copy the link the code holds - the same one a phone opens by scanning it.">copy link</button>
+        <button id="qr-close" title="Close (esc, ctrl+w)">close</button>
       </div>
     </div>
   </div>
@@ -638,7 +661,7 @@
           <p>Deals random hands, keeps the ones that fit the selected scenario, and writes them to a file in the
           deals folder.</p>
           <ul>
-            <li><b>deals</b> is how many to keep — 48 is a normal practice set.</li>
+            <li><b>deals</b> is how many to keep — 32 is a long session.</li>
             <li><b>format</b> is what kind of file:
               <ul>
                 <li><b>html-cards</b> — the interactive page, shown here: cards, trick table, play advice.</li>
@@ -660,7 +683,7 @@
              line up under the boxes. -->
         <div class="line field">
           <label for="count">deals</label>
-          <input type="text" id="count" class="num" value="48" title="How many matching deals to keep"
+          <input type="text" id="count" class="num" value="32" title="How many matching deals to keep"
                  data-hint="How many deals to KEEP. The generator keeps dealing until it has this many that fit the scenario, so a rare scenario deals many more than this.">
         </div>
         <div class="line field">
@@ -765,6 +788,10 @@
                 the contract — 200 to 500 is plenty, and more takes longer.</li>
             <li><b>contract</b> and <b>target</b> choose what to score and the trick count to highlight;
                 <code>auto</code> picks the contract.</li>
+            <li><b>defenders</b> (declarer and dummy, one board): what you know of their hands - a card held
+                (<code>W:3S</code>, the opening lead), a void (<code>E:S</code>) or a length (<code>W:H:5+</code>,
+                <code>E:D:2</code>, <code>E:C:1-3</code>). The sample deals only layouts that fit; a record's own
+                opening lead is added for you.</li>
             <li><b>Drop a file</b> on the window: a screenshot of a hand diagram is read into the box (fix a misread
                 card and analyse again); a .pbn or .lin is analysed directly.</li>
           </ul>
@@ -788,6 +815,11 @@
           <label for="target">target</label>
           <input type="text" id="target" class="num" value="0" title="Highlight the column for this many tricks"
                  data-hint="Highlight the trick count you need: 9 for 3NT, 10 for four of a major, 12 for a small slam.">
+        </div>
+        <div class="line field">
+          <label for="defenders">defenders</label>
+          <input type="text" id="defenders" placeholder="e.g. W:3S E:S W:H:5+" title="What you know about the defenders' hands"
+                 data-hint="What the defenders are known to hold, separated by spaces: a card (W:3S - West led the three of spades), a void (E:S - East has no spades) or a length (W:H:5+ five or more hearts, E:D:2 exactly two, E:C:1-3). The sample only deals layouts that fit, and a shared link carries them. One board at a time.">
         </div>
         <div class="line field check">
           <!-- The hand page is what an analysis is FOR, so it is the default and the box names the exception
@@ -899,6 +931,9 @@
              `workbench/share.odin`. -->
         <button id="page-share" class="ghost small" disabled title="Copy a link to these deals"
                 data-hint="Copy a link that opens these deals, as this page, in any browser. Nothing is uploaded: the deals travel in the link itself, about 19 characters a board. It opens the player page set in Settings - or, until one is published, the copy in the deals folder, which works on this computer only.">share link</button>
+        <!-- The same link as a QR code, for phones at the table (Tier C). Alive exactly when `share link` is. -->
+        <button id="page-qr" class="ghost small" disabled title="Show these deals as a QR code"
+                data-hint="Show a QR code of the share link, for a phone to scan - the deals open on it with nothing to type. A big set leaves its par out to keep the code readable, and says so.">QR</button>
         <!-- Debug builds only (the host shows it; the stylesheet hides it): writes the hosted page`s
              geometry and the handful of computed styles that differ in this engine into the transcript and
              to stderr. A windowless probe cannot see a real window`s hover, drag or scrollbars, so this is

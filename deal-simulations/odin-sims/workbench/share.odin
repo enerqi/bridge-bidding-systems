@@ -9,15 +9,24 @@ the reader's browser. Nothing is uploaded anywhere; the deals travel in the link
 
 WHERE THE PLAYER IS. A link is only as good as the address in front of it, so:
   - the `share.player` setting: the address of a published `player.html` (any static host - it never
-    changes, so it is published once). This is what makes a link someone else can open.
-  - otherwise the copy BUILT INTO this program (`ui/player.html`, vendored by `just sims vendor-player`), written
-    to the deals folder and linked as a `file:///` address. That opens on this computer only, and the status
-    line says so - it is for trying a link, not for sending one.
+    changes, so it is published once). EMPTY means this project's own, `share.PUBLISHED_PLAYER`
+    (bridge-workbench.netlify.app, deployed by `just sims publish-player`). This is what makes a link someone
+    else can open.
+  - only when the setting is not an address at all (`share.usable_player_address`), the copy BUILT INTO this
+    program (`ui/player.html`, vendored by `just sims vendor-player`), written to the deals folder and linked as
+    a `file:///` address. That opens on this computer only, and the status line says so and why.
 
 WHAT A LINK CARRIES. The player has norn and the card-combination analysis (`combo`), so a page that had that
 analysis gets it again, recomputed. Par comes from DDS, which the player does not have, so a board's par travels
 as the solver's NUMBERS (~16 bytes) and the player writes the caption from them (`par_caption`). The analysed
 advisor's sampled and exact figures (`data-sim`) do not travel; the status line says when something stays behind.
+
+THE `QR` BUTTON: the same link as a QR code (SHARING_PLAN.md, Tier C), for phones at the table - scan, no
+typing, no server. It opens a panel with the code, the link and what was left out of it. A link is long
+(~19 characters a board, ~22 more with par), and a phone reads a big symbol badly, so the panel first tries
+the whole link and, when that needs more than `QR_READABLE_VERSION`, drops the par numbers (the player still
+draws every board) and says so; a set still too big gets the code anyway, with a warning to share fewer boards.
+The encoder is `qr/`, pure Odin, held to a reference encoder's matrices.
 */
 package main
 
@@ -30,6 +39,7 @@ import sa "sciter:sciter_app"
 
 import "norn:norn"
 import "../prefs"
+import "../qr"
 import "../share"
 
 // The player page, compiled in (`just sims vendor-player` refreshes it).
@@ -44,6 +54,7 @@ share_link_for :: proc(
 	page: string,
 	player: string,
 	allocator := context.allocator,
+	with_par := true, // false leaves every board's par numbers out (the player then draws no caption)
 ) -> (
 	link: string,
 	boards: int,
@@ -53,6 +64,11 @@ share_link_for :: proc(
 	title, found, read_ok := share.boards_from_page(page, context.temp_allocator)
 	if !read_ok {
 		return
+	}
+	if !with_par {
+		for &board in found {
+			board.par = nil
+		}
 	}
 	fragment := share.encode(
 		{title = title, analyse = strings.contains(page, `<div class="combo"`), boards = found},
@@ -122,12 +138,24 @@ ensure_local_player :: proc(dir: string) {
 	_ = os.write_entire_file(path, transmute([]u8)string(PLAYER_BUILTIN))
 }
 
-// The player's address: the setting, else the built-in copy written to the deals folder (rewritten only when
-// it differs, so a link made earlier keeps working). `local` says the address is only good on this computer.
+// The published player's address: the setting, or this project's own (`share.PUBLISHED_PLAYER`) when it is
+// empty. Not `ok` when the setting holds something no link can start with.
+published_player :: proc(app: ^App) -> (address: string, ok: bool) {
+	setting, _ := prefs.get(&app.prefs, SHARE_PLAYER_PREF)
+	setting = strings.trim_space(setting)
+	if setting == "" {
+		return share.PUBLISHED_PLAYER, true
+	}
+	return setting, share.usable_player_address(setting)
+}
+
+// The player's address: the published one, else - when the setting is not an address at all - the built-in copy
+// written to the deals folder (rewritten only when it differs, so a link made earlier keeps working). `local`
+// says the address is only good on this computer.
 @(private = "file")
 player_address :: proc(app: ^App) -> (address: string, local: bool, err: string) {
-	if published, found := prefs.get(&app.prefs, SHARE_PLAYER_PREF); found && strings.trim_space(published) != "" {
-		return strings.trim_space(published), false, ""
+	if published, ok := published_player(app); ok {
+		return published, false, ""
 	}
 	dir, derr := resolve_out_dir(strings.trim_space(read_text(app, "#outdir")))
 	if derr != "" {
@@ -143,21 +171,30 @@ player_address :: proc(app: ^App) -> (address: string, local: bool, err: string)
 	return file_url(path, context.temp_allocator), true, ""
 }
 
-// The button.
-share_shown_page :: proc(app: ^App) {
-	page: string
+// What the hand pane shows, as page text: the analysed page in memory, or the file behind the pane. Says why
+// not in the status line.
+@(private = "file")
+shown_page :: proc(app: ^App) -> (page: string, ok: bool) {
 	switch {
 	case app.showing_analysed && app.analysed_page != "":
-		page = app.analysed_page
+		return app.analysed_page, true
 	case app.shown_path != "":
 		data, err := os.read_entire_file_from_path(app.shown_path, context.temp_allocator)
 		if err != nil {
 			set_note(app, fmt.tprintf("could not read %s", app.shown_path))
 			return
 		}
-		page = string(data)
+		return string(data), true
 	case:
 		set_note(app, "nothing in the pane to share - generate, analyse or pick a page first")
+		return
+	}
+}
+
+// The button.
+share_shown_page :: proc(app: ^App) {
+	page, have_page := shown_page(app)
+	if !have_page {
 		return
 	}
 	player, local, perr := player_address(app)
@@ -185,11 +222,179 @@ share_shown_page :: proc(app: ^App) {
 	}
 	if local {
 		note = fmt.tprintf(
-			"%s - it opens the player in the deals folder, so only on this computer: set where the player is published in Settings to send it",
+			"%s - Settings' `player at` is not a web address, so it opens the player in the deals folder, on this computer only",
 			note,
 		)
 	}
 	set_note(app, note)
+}
+
+// ---------------------------------------------------------------------------------------------------
+// The QR code
+
+// The error correction asked for: L restores ~7% of the code. The code is read off a screen, clean and flat, where
+// M's ~15% is almost never used, and L is 3-4 versions smaller at every size: with par, 28 boards are version 25
+// at L and 28 at M (measured 2026-10-12). It is raised when the link still fits the same version (`boost_ecc`),
+// which costs nothing. A printed code would want M back.
+QR_ECC :: qr.Ecc.L
+
+// THE BIGGEST CODE OFFERED WITHOUT A WARNING, and the point at which par is dropped to get under it. 25 is 117
+// modules a side, and measured as the ceiling (2026-10-12): a phone camera read version 25 off the workbench
+// screen, struggled with 26 and read 38 only with the window zoomed in and much patience. 48 boards without par
+// come to ~960 characters: version 22 at L.
+QR_READABLE_VERSION :: 25
+
+Share_Qr :: struct {
+	link:        string,
+	code:        qr.Code, // empty (`size` 0) when even version 40 cannot hold the link
+	boards:      int,
+	has_par:     bool, // the page's boards carry par numbers, so there is a smaller link without them
+	par_dropped: bool, // this is that smaller link: the one with par was over `QR_READABLE_VERSION`
+	left_behind: bool, // solver figures the link cannot carry at all (as `share_link_for`)
+}
+
+// The QR code for `page`'s link. Par is dropped when the code with it would be over `QR_READABLE_VERSION`,
+// unless `keep_par` (the panel's `keep par` button: a bigger code, the reader's choice). Everything is
+// allocated with `allocator`.
+share_qr_for :: proc(
+	page, player: string,
+	allocator := context.allocator,
+	keep_par := false,
+) -> (
+	result: Share_Qr,
+	ok: bool,
+) {
+	link, boards, left_behind := share_link_for(page, player, allocator) or_return
+	bare, _, _, _ := share_link_for(page, player, allocator, with_par = false)
+	result = {
+		link        = link,
+		boards      = boards,
+		has_par     = bare != link,
+		left_behind = left_behind,
+	}
+	options := qr.DEFAULT_OPTIONS
+	options.ecc = QR_ECC
+	code, fits := qr.encode_string(link, options, allocator)
+	if keep_par || !result.has_par || (fits && code.version <= QR_READABLE_VERSION) {
+		delete(bare, allocator)
+		result.code = code if fits else {}
+		return result, true
+	}
+	if fits {
+		qr.destroy(code, allocator)
+	}
+	delete(link, allocator)
+	result.link = bare
+	result.par_dropped = true
+	result.code, _ = qr.encode_string(result.link, options, allocator)
+	return result, true
+}
+
+share_qr_destroy :: proc(result: Share_Qr, allocator := context.allocator) {
+	delete(result.link, allocator)
+	qr.destroy(result.code, allocator)
+}
+
+// The `QR` button: the panel, filled. Pressed again it closes (as `about` does). Each opening starts from the
+// small code; `keep par` is a choice made for the code on screen.
+show_share_qr :: proc(app: ^App, shown: bool) {
+	if !shown || current_view(app) == .Qr {
+		show_view(app, app.before_qr)
+		return
+	}
+	app.qr_keep_par = false
+	if !draw_share_qr(app) {
+		return
+	}
+	app.before_qr = place_underneath(app)
+	show_view(app, .Qr)
+}
+
+// The panel's `keep par` / `drop par`: the same boards, the other code.
+toggle_qr_par :: proc(app: ^App) {
+	app.qr_keep_par = !app.qr_keep_par
+	draw_share_qr(app)
+}
+
+// Fill the panel from what the pane shows. False (with the reason in the status line) when there is no code.
+@(private = "file")
+draw_share_qr :: proc(app: ^App) -> bool {
+	page, have_page := shown_page(app)
+	if !have_page {
+		return false
+	}
+	player, local, perr := player_address(app)
+	if perr != "" {
+		set_note(app, perr)
+		return false
+	}
+	result, ok := share_qr_for(page, player, context.temp_allocator, keep_par = app.qr_keep_par)
+	if !ok {
+		set_note(app, "only a hand page can be shared - this one has no boards in it")
+		return false
+	}
+
+	code := result.code
+	if box := find(app, "#qr-code"); box != nil {
+		sa.set_html(box, qr.svg(code, allocator = context.temp_allocator) if code.size > 0 else "")
+	}
+	facts := fmt.tprintf("%d board%s, %d characters", result.boards, "" if result.boards == 1 else "s", len(result.link))
+	if code.size > 0 {
+		facts = fmt.tprintf(
+			"%s - version %d, %d modules a side, error correction %v",
+			facts,
+			code.version,
+			code.size,
+			code.ecc,
+		)
+	}
+	set_text_at(app, "#qr-facts", facts)
+	set_text_at(app, "#qr-link", result.link)
+
+	// The par button: only for a set that HAS par, and only when it changes something - a code already
+	// small enough with par has nothing to choose.
+	set_shown(app, "#qr-par", result.par_dropped || (app.qr_keep_par && result.has_par))
+	set_text_at(app, "#qr-par", "drop par (smaller code)" if app.qr_keep_par else "keep par (bigger code)")
+
+	notes := make([dynamic]string, context.temp_allocator)
+	switch {
+	case code.size == 0:
+		append(&notes, "Too many boards for any QR code: send the link instead, or share a page with fewer boards.")
+	case code.version > QR_READABLE_VERSION:
+		append(&notes, "A code this big is hard for a phone to read, from paper especially: a page with fewer boards makes a smaller one.")
+	}
+	if result.par_dropped {
+		append(&notes, "Par is left out to keep the code small enough to scan: every board is there, without its par caption. `keep par` puts it back, in a bigger code.")
+	}
+	if result.left_behind {
+		append(&notes, "The double-dummy figures a link cannot carry stay behind.")
+	}
+	if local {
+		append(&notes, "A phone cannot open this: Settings' `player at` is not a web address, so the link points at the player in the deals folder, on this computer. Correct it, or empty it for the published player.")
+	}
+	set_text_at(app, "#qr-notes", strings.join(notes[:], " ", context.temp_allocator))
+	set_shown(app, "#qr-notes", len(notes) > 0)
+	if element := find(app, "#qr-notes"); element != nil {
+		sa.set_attribute(element, "class", "about-line qr-warn" if local || code.size == 0 else "about-line")
+	}
+	return true
+}
+
+// The panel's `copy link`: the link it shows, which may be the one without par.
+copy_qr_link :: proc(app: ^App) {
+	element := find(app, "#qr-link")
+	if element == nil {
+		return
+	}
+	link, _ := sa.text(element, context.temp_allocator)
+	if link == "" {
+		return
+	}
+	if copy_text(app, link) {
+		set_note(app, fmt.tprintf("link copied: %d characters", len(link)))
+	} else {
+		set_note(app, "the link could not be put on the clipboard")
+	}
 }
 
 // Put `text` on the system clipboard. The clipboard has no host API in this engine; the document's script
@@ -234,16 +439,24 @@ remember_share_pref :: proc(app: ^App, id: string) -> bool {
 
 // The card pages this window writes carry the player's address too, for their own Share button
 // (`norn.share_player`, the page's `<meta name="nc-share-player">`). Set from the setting at startup and when
-// it changes; a page written before keeps the address it was written with.
+// it changes; a page written before keeps the address it was written with. An unusable setting writes none, and
+// the page's button then links to the `player.html` beside it.
 apply_share_player :: proc(app: ^App) {
-	published, _ := prefs.get(&app.prefs, SHARE_PLAYER_PREF)
-	published = strings.trim_space(published)
+	published, ok := published_player(app)
+	if !ok {
+		published = ""
+	}
 	if published == norn.share_player {
 		return
 	}
-	if norn.share_player != "" {
+	if norn.share_player != "" && norn.share_player != share.PUBLISHED_PLAYER {
 		delete(norn.share_player)
 	}
-	// Empty is the literal, not an allocation: a window that never sets one holds nothing.
-	norn.share_player = strings.clone(published) if published != "" else ""
+	// Empty and the published address are literals, not allocations: a window left on the default holds nothing.
+	switch published {
+	case "", share.PUBLISHED_PLAYER:
+		norn.share_player = published
+	case:
+		norn.share_player = strings.clone(published)
+	}
 }

@@ -16,6 +16,7 @@ import "core:strconv"
 import "core:strings"
 
 import "../deal_solve"
+import "../sampled"
 import "norn:norn"
 
 // Parsed command line: the PBN text plus the analysis options. `sample` > 0 turns on the DDS-sampling
@@ -162,6 +163,14 @@ parse_args :: proc(argv: []string, allow_stdin := true) -> (out: Args, err: stri
 			return out, fmt.tprintf("--lead %q is not <seat>:<card> (card rank-first, e.g. KH, TS)", spec)
 		}
 		append(&out.held, h)
+	}
+	// A page names its inferences and a share link carries them, at most MAX_LISTED of each kind - and a
+	// record's opening lead can add one more held card.
+	if len(out.constraints) > sampled.MAX_LISTED {
+		return out, fmt.tprintf("at most %d --void/--len", sampled.MAX_LISTED)
+	}
+	if len(out.held) > sampled.MAX_LISTED - 1 {
+		return out, fmt.tprintf("at most %d --lead/--card", sampled.MAX_LISTED - 1)
 	}
 
 	if cli.file != "" {

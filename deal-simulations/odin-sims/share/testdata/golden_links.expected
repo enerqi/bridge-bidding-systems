@@ -19,3 +19,14 @@ title "Two-hand advisor (declarer + dummy)", analyse true, 1 boards
 == twohand-ns
 title "Two-hand advisor (declarer + dummy)", analyse true, 1 boards
 1: North:AK32 QJ4 T98 A76 East:- South:Q54 AK32 KJ7 K32 West:- | vul None, dealer none, target 10
+== vugraph-play
+title "Spring Cup · Final · LIONS v BIG TIGERS", analyse true, 2 boards
+1: North:42 AQ986 AT74 A6 East:Q965 J753 6 KJ32 South:KT87 T2 J3 QT754 West:AJ3 K4 KQ9852 98 | vul None, dealer none | par -90 2Diamonds W +0 -0 | tricks Spades 7 6 7 6 Hearts 7 6 7 6 Diamonds 5 7 5 8 Clubs 8 5 8 5 NT 5 6 5 6 | play 2D West: 4S 5S KS AS QD 4D 6D 3D 8D 7D 3H JD 2H 4H QH 5H AC 2C 4C 8C AH 7H TH KH 9H JH 5C 9C 3C, result 7
+2: North:A98 K4 T98 JT753 East:KJ542 T6 J5 AKQ6 South:QT63 852 KQ72 92 West:7 AQJ973 A643 84 | vul None, dealer none | par -420 4Hearts EW +0 -0 | tricks Spades 6 7 5 7 Hearts 3 10 3 10 Diamonds 6 7 6 7 Clubs 5 7 5 7 NT 3 8 3 8 | play 4H West: TD 5D QD AD 8C 3C KC 2C AC 9C 4C 5C QC 2H 3H 7C 3D 8D JD KD 5H AH 4H 6H 4D 9D TH 2D 6C 3S 7H TC 7S AS 2S 6S JC 4S 7D 9H QH KH 5S 8H 8S JS TS JH 6D, result 10
+== twohand-contract
+title "Club night", analyse true, 2 boards
+1: North:AQ95 K82 T63 A74 East:- South:KJ6 AQJ93 A4 K52 West:- | vul North_South, dealer South, target 10, contract 4Hearts, West holds 3S
+2: North:KQ7 AJ6 KQJ52 83 East:- South:A84 K75 A8 AQJ62 West:- | vul None, dealer none, target 9, contract 3NT
+== twohand-constraints
+title "Club night", analyse true, 1 boards
+1: North:AQ95 K82 T63 A74 East:- South:KJ6 AQJ93 A4 K52 West:- | vul North_South, dealer South, target 10, contract 4Hearts, East holds QD, West holds 3S, West has 0-0 Clubs, East has 2-4 Spades

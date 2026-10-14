@@ -10,6 +10,8 @@ import "core:testing"
 import "norn:combo"
 import "norn:norn"
 import "../par_caption"
+import "../replay"
+import "../sampled"
 
 // A page as the generator writes one (`norn.render_deals`): a random table for every board, optionally the
 // card-combination analysis after each. Seeded, so a failure is the same failure next run.
@@ -75,6 +77,89 @@ test_a_generated_page_rebuilds_byte_for_byte :: proc(t: ^testing.T) {
 	defer strings.builder_destroy(&b)
 	render(&b, shared)
 	testing.expect(t, strings.to_string(b) == page, "the rebuilt page differs from the generated one")
+}
+
+// A page with RECORDED PLAY (the advisor's, from a LIN or PBN record) travels as a `v2.` link and rebuilds byte for
+// byte: whole plays and cut ones, a claim's result, a play stopped at a bad card, and boards with no play between
+// them. Without a play in the set the link stays `v1.`.
+@(test)
+test_a_page_with_play_rebuilds_byte_for_byte :: proc(t: ^testing.T) {
+	state := rand.create(21)
+	context.random_generator = rand.default_random_generator(&state)
+	boards := make([]Board, 8)
+	defer delete(boards)
+	for &board, i in boards {
+		board = {deal = norn.deal_hands(), known = ALL_SEATS}
+		board.table.vulnerability = norn.Vulnerability(i % 4)
+		if i % 3 == 2 {
+			continue // no play
+		}
+		contract := norn.Contract {
+			level    = 1 + rand.int_max(7),
+			strain   = norn.Contract_Strain(rand.int_max(5)),
+			declarer = norn.Seat(rand.int_max(4)),
+		}
+		play := replay.random_play(board.deal, contract, 52 if i % 2 == 0 else 1 + rand.int_max(51))
+		if i == 1 {
+			play.result = 9
+		}
+		if i == 4 {
+			play.error, play.error_index = .Revoke, play.count
+		}
+		board.play = Board_Play{contract, play}
+	}
+	b := strings.builder_make()
+	defer strings.builder_destroy(&b)
+	render(&b, {title = "Played", boards = boards})
+	page := strings.to_string(b)
+	testing.expect_value(t, strings.count(page, `<div class="play" hidden data-play='`), 6)
+
+	title, read, ok := boards_from_page(page)
+	defer delete(read)
+	testing.expect(t, ok)
+	for board, i in read {
+		testing.expect_value(t, board.play, boards[i].play)
+	}
+	fragment := encode({title = title, boards = read})
+	defer delete(fragment)
+	testing.expect(t, strings.has_prefix(fragment, VERSION_2_PREFIX), fragment[:3])
+	shared, err := decode(fragment)
+	defer destroy(shared)
+	testing.expect_value(t, err, Decode_Error.None)
+	again := strings.builder_make()
+	defer strings.builder_destroy(&again)
+	render(&again, shared)
+	testing.expect(t, strings.to_string(again) == page, "the rebuilt page with play differs")
+
+	// The same boards without their plays are a `v1.` link, as before there were any.
+	for &board in read {
+		board.play = nil
+	}
+	plain := encode({title = title, boards = read})
+	defer delete(plain)
+	testing.expect(t, strings.has_prefix(plain, VERSION_PREFIX), plain[:3])
+}
+
+// Every card of many random plays packs and unpacks to itself, and a card its player cannot hold is refused.
+@(test)
+test_a_play_packs_card_for_card :: proc(t: ^testing.T) {
+	state := rand.create(4)
+	context.random_generator = rand.default_random_generator(&state)
+	for _ in 0 ..< 300 {
+		deal := norn.deal_hands()
+		contract := norn.Contract{1 + rand.int_max(7), norn.Contract_Strain(rand.int_max(5)), norn.Seat(rand.int_max(4))}
+		play := replay.random_play(deal, contract, 1 + rand.int_max(52))
+		bytes := make([dynamic]u8, context.temp_allocator)
+		replay.pack_play(&bytes, deal, contract, play)
+		testing.expect(t, len(bytes) <= 2 + 26, "a whole play is 28 bytes at most")
+		back_contract, back, used, ok := replay.unpack_play(bytes[:], deal)
+		testing.expect(t, ok && used == len(bytes))
+		testing.expect_value(t, back_contract, contract)
+		testing.expect_value(t, back, play)
+	}
+	// An opening lead at index 13: no hand holds 14 cards.
+	_, _, _, ok := replay.unpack_play([]u8{1, 0, 13}, norn.deal_hands())
+	testing.expect(t, !ok)
 }
 
 // The same with the card-combination analysis, which the player computes rather than carries.
@@ -164,7 +249,7 @@ test_what_is_not_a_link_is_refused_by_name :: proc(t: ^testing.T) {
 		testing.expect_value(t, err, want, loc = loc)
 	}
 	expect_error(t, "", .Not_A_Share)
-	expect_error(t, "v2.AAAA", .Not_A_Share)
+	expect_error(t, "v4.AAAA", .Not_A_Share)
 	expect_error(t, "v1.not*base64", .Bad_Text)
 	expect_error(t, fragment[:len(fragment) - 4], .Truncated)
 
@@ -284,6 +369,79 @@ test_a_two_hand_board_keeps_its_cca :: proc(t: ^testing.T) {
 	combo.shutdown()
 }
 
+// A 2-hand board's named contract and defender inferences travel (`v3.`): the page carries them as
+// `data-contract`, `data-held` and `data-shape`, the link as bytes after the target, and a board without them
+// reads as none. Bytes no encoder writes are refused.
+@(test)
+test_a_two_hand_contract_travels :: proc(t: ^testing.T) {
+	state := rand.create(11)
+	context.random_generator = rand.default_random_generator(&state)
+	boards := []Board {
+		{deal = norn.deal_hands(), known = NORTH_SOUTH, target = 10, contract = sampled.Contract{4, .Hearts}},
+		{deal = norn.deal_hands(), known = EAST_WEST, target = 9},
+		{deal = norn.deal_hands(), known = EAST_WEST, target = 9, contract = sampled.Contract{3, .NT}},
+	}
+	first := &boards[0].constraints
+	first.held[0] = {.East, boards[0].deal[.East][2]}
+	first.held[1] = {.West, boards[0].deal[.West][9]}
+	first.shape[0] = {.West, .Spades, 0, 3}
+	first.held_count, first.shape_count = 2, 1
+	boards[1].constraints.shape[0] = {.North, .Hearts, 5, 13}
+	boards[1].constraints.shape[1] = {.South, .Clubs, 0, 0}
+	boards[1].constraints.shape_count = 2
+	b := strings.builder_make()
+	defer strings.builder_destroy(&b)
+	render(&b, {title = "Two-hand advisor (declarer + dummy)", analyse = true, boards = boards})
+	page := strings.to_string(b)
+	testing.expect(t, strings.contains(page, `data-target="9" data-shape="N:H:5-13 S:C:0-0" hidden></div>`))
+	testing.expect(t, strings.contains(page, `<div class="par" data-target="9" data-contract="3nt" hidden></div>`))
+	testing.expect(t, strings.contains(page, `data-target="10" data-contract="4h" data-held="E:`), "the held cards are on the page")
+	testing.expect(t, strings.contains(page, ` data-shape="W:S:0-3" hidden>`))
+
+	title, read, ok := boards_from_page(page)
+	defer delete(read)
+	testing.expect(t, ok)
+	fragment := encode({title = title, analyse = true, boards = read})
+	defer delete(fragment)
+	testing.expect(t, strings.has_prefix(fragment, VERSION_3_PREFIX), "a named 2-hand contract makes a v3. link")
+	shared, err := decode(fragment)
+	defer destroy(shared)
+	testing.expect_value(t, err, Decode_Error.None)
+	for board, i in shared.boards {
+		testing.expectf(t, board.contract == boards[i].contract, "board %d: %v, want %v", i + 1, board.contract, boards[i].contract)
+		testing.expectf(t, board.constraints == boards[i].constraints, "board %d: %v, want %v", i + 1, board.constraints, boards[i].constraints)
+	}
+	again := strings.builder_make()
+	defer strings.builder_destroy(&again)
+	render(&again, shared)
+	testing.expect(t, strings.to_string(again) == page, "the rebuilt 2-hand page differs")
+
+	// Without a contract or an inference the same boards are a v1. link, as before.
+	boards[1].constraints = {}
+	plain := encode({title = title, analyse = true, boards = boards[1:2]})
+	defer delete(plain)
+	testing.expect(t, strings.has_prefix(plain, VERSION_PREFIX))
+
+	// The first board's bytes after its target: the contract, the count (2 held, 1 length), the two held cards,
+	// the length's two bytes. Each broken alone is refused.
+	at := 2 + len(title) + BOARD_BYTES + 1
+	refused :: proc(t: ^testing.T, fragment: string, at: int, value: u8, why: string) {
+		bytes, _ := base64.decode(fragment[3:], base64.DEC_URL_TABLE, allocator = context.temp_allocator, options = {.No_Padding})
+		bytes[at] = value
+		broken := strings.concatenate({VERSION_3_PREFIX, base64.encode(bytes, base64.ENC_URL_TABLE, context.temp_allocator, {.No_Padding})})
+		defer delete(broken)
+		bad, err := decode(broken)
+		defer destroy(bad)
+		testing.expectf(t, err == .Bad_Table, "%s: %v", why, err)
+	}
+	refused(t, fragment, at, u8(sampled.Strain.Hearts) << 3, "a contract of level 0")
+	refused(t, fragment, at + 2, 1 | u8(norn.Seat.North) << 6, "a held card on a known seat")
+	refused(t, fragment, at + 4, u8(norn.Seat.North), "a length on a known seat")
+	refused(t, fragment, at + 4, u8(norn.Seat.West) | 5 << 4, "a length's fewest above its most")
+	refused(t, fragment, at + 5, 14, "a length above 13")
+	combo.shutdown()
+}
+
 // THE GOLDEN LINKS: every link in `testdata/golden_links.txt` must still decode to exactly what it carried
 // (`testdata/golden_links.expected`). See that file's header for the rule this holds: a shipped link format is
 // frozen, and a new one is a new version, not an edit.
@@ -369,6 +527,16 @@ describe :: proc(b: ^strings.Builder, shared: Shared) {
 		if board.target > 0 {
 			fmt.sbprintf(b, ", target %d", board.target)
 		}
+		if c, has := board.contract.?; has {
+			fmt.sbprintf(b, ", contract %d%v", c.level, c.strain)
+		}
+		cons := board.constraints
+		for h in cons.held[:cons.held_count] {
+			fmt.sbprintf(b, ", %v holds %s", h.seat, replay.card_word(h.card))
+		}
+		for c in cons.shape[:cons.shape_count] {
+			fmt.sbprintf(b, ", %v has %d-%d %v", c.seat, c.min, c.max, c.suit)
+		}
 		if par, has := board.par.?; has {
 			if par.have {
 				fmt.sbprintf(b, " | par %d", par.par.score)
@@ -384,6 +552,24 @@ describe :: proc(b: ^strings.Builder, shared: Shared) {
 				for hand in par_caption.Hand {
 					fmt.sbprintf(b, " %d", par.tricks[strain][hand])
 				}
+			}
+		}
+		if p, has := board.play.?; has {
+			fmt.sbprintf(
+				b,
+				" | play %d%s %v:",
+				p.contract.level,
+				replay.contract_strain_word(p.contract.strain),
+				p.contract.declarer,
+			)
+			for card in p.play.cards[:p.play.count] {
+				fmt.sbprintf(b, " %s", replay.card_word(card))
+			}
+			if res, has_res := p.play.result.?; has_res {
+				fmt.sbprintf(b, ", result %d", res)
+			}
+			if p.play.error != .None {
+				fmt.sbprintf(b, ", %v at %d", p.play.error, p.play.error_index)
 			}
 		}
 		strings.write_byte(b, '\n')

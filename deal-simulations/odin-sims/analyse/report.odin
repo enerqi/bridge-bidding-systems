@@ -23,7 +23,7 @@ import "norn:norn"
 report_full_deal :: proc(w: io.Writer, board: norn.Board) {
 	b := strings.builder_make(context.temp_allocator)
 	norn.render_deal_pretty(&b, board.deal)
-	deal_solve.annotate(&b, board.deal, .Pretty)
+	deal_solve.annotate(&b, board.deal, .Pretty, board.conditions.vulnerability)
 	combo.annotate(&b, board.deal, .Pretty)
 	fmt.wprintln(w, strings.to_string(b))
 	report_play(w, board)
@@ -132,14 +132,15 @@ report_board :: proc(sink: Sink, board: norn.Board, args: ^Args, contract: deal_
 	print_report(sink.out, &a, &sd, advice, side, args.target, sim_total)
 	if bs.have {
 		print_sample_verdict(sink.out, &a, &sd, &sample, bs.auto, bs.tax, bs.tax_ok, bs.leads, side, bs.contract)
-		if len(args.constraints) > 0 || len(args.held) > 0 {
+		recorded, has_recorded := recorded_lead(board, args)
+		if len(args.constraints) > 0 || len(args.held) > 0 || has_recorded {
 			fmt.wprint(sink.out, "  (sampled only layouts where")
 			first := true
 			for con in args.constraints {
 				fmt.wprintf(
 					sink.out,
 					"%s %v %s %d-%d",
-					" " if first else ",",
+					"" if first else ",",
 					con.seat,
 					suit_word(con.suit),
 					con.min,
@@ -148,8 +149,17 @@ report_board :: proc(sink: Sink, board: norn.Board, args: ^Args, contract: deal_
 				first = false
 			}
 			for h in args.held {
-				fmt.wprintf(sink.out, "%s %v holds %s", " " if first else ",", h.seat, deal_solve.card_word(h.card))
+				fmt.wprintf(sink.out, "%s %v holds %s", "" if first else ",", h.seat, deal_solve.card_word(h.card))
 				first = false
+			}
+			if has_recorded {
+				fmt.wprintf(
+					sink.out,
+					"%s %v holds %s (the record's opening lead)",
+					"" if first else ",",
+					recorded.leader,
+					deal_solve.card_word(recorded.card),
+				)
 			}
 			fmt.wprintln(sink.out, ")")
 		}

@@ -1438,6 +1438,41 @@ button.chip .icon {
 	cursor: pointer;
 }
 
+/* ---- the QR panel ----------------------------------------------------------------------------------- */
+
+/* The code is black on white in EVERY theme (a scanner wants the contrast; many refuse a light-on-dark code),
+   so its box is not themed. The SVG carries its own quiet zone and white ground; this only sizes it. Big on
+   purpose: a phone held at arm's length reads ~2-3px a module badly, and a 48-board code is ~117 modules. */
+.qr-code {
+	margin: 0.4em 0 0.8em;
+}
+
+/* The size goes on the svg ITSELF: `size: *` inside a sized box laid it out 1x1 here (measured, by the panel
+   test that reads the painted modules back). */
+.qr-code svg {
+	display: block;
+	width: 26em;
+	height: 26em;
+}
+
+.qr-link {
+	max-height: 5.5em;
+	overflow-y: auto;
+	margin: 0.4em 0 0.6em;
+	padding: 0.3em 0.5em;
+	border: 1px solid var(--line);
+	border-radius: 4px;
+	background: var(--sunken);
+	color: var(--ink-soft);
+	font-family: monospace;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+.qr-warn {
+	color: var(--syn-warn);
+}
+
 /* ---- the card page, hosted in a <frame> ---------------------------------------------------------- */
 
 /* A PANE of the deals view, not a view of its own: it sits beside the work in the `.split` and the bar`s
@@ -1457,6 +1492,28 @@ button.chip .icon {
 	flow: horizontal;
 	padding: 0.4em 0.7em;
 	border-bottom: 1px solid var(--line);
+}
+
+/* ONE ROW, ONE HEIGHT, ONE GAP. Not a `.bar`, so none of its spacing applies here, and the row mixed three
+   shapes: the zoom group (normal text, a 1px border), `browser` (`icon-text`, 0.3em padding) and the plain
+   `small` buttons (0.15em, no border) - each its own height, butted together, on its own baseline (reported).
+   So every control here takes the small text, the same padding and a 1px border in the group's border colour,
+   which is also the ghost button's ground, so it reads as no border at all. `vertical-align: middle` because
+   a horizontal flow does not centre children of different heights (see `.seg`). */
+.pagebar > button,
+.pagebar > .seg {
+	vertical-align: middle;
+	margin-left: 0.4em;
+}
+
+.pagebar > button.small,
+.pagebar > .seg > button.segbtn {
+	padding: 0.3em 0.7em;
+	font-size: var(--text-small);
+}
+
+.pagebar > button.small {
+	border: 1px solid var(--line);
 }
 
 /* The geometry dump is a DEBUG affordance: hidden here, and shown by the host only in a `-debug` build

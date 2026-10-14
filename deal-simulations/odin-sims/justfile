@@ -87,7 +87,7 @@ target_path(dir, name) := join("target", dir, name)
 linker := env_var_or_default("ODIN_LINKER", "default")
 
 # Where the batch `gen-all*` / `gen-some` recipes write per-scenario HTML; also a trailing recipe
-# argument, e.g. `just gen-all 48 ./out/`. `export`ed because the workbench has no recipe argument to
+# argument, e.g. `just gen-all 32 ./out/`. `export`ed because the workbench has no recipe argument to
 # take it from: it pre-fills its output-directory field from this variable.
 export DEALS_OUTPUT_DIR := env_var_or_default("DEALS_OUTPUT_DIR", "w:/deals/")
 deals_output_dir := DEALS_OUTPUT_DIR
@@ -142,7 +142,10 @@ lint *args:
 	odin check analyse_deal.odin -file {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check sim_hooks {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check par_caption {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+	odin check replay {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+	odin check sampled {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check share {{norn}} -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
+	odin check qr -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check player {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check player {{norn}} -target:js_wasm32 -define:COMBO_THREADS=false -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check workbench {{norn}} {{dds}} {{sciter}} {{markup}} -vet -vet-cast -strict-style -vet-tabs {{args}}
@@ -389,12 +392,32 @@ player_dir := join("target", "player")
 test-share *args: mktarget_dirs
 	odin test share {{norn}} -vet -strict-style -out:{{ target_path("debug", "share-test.exe") }} {{args}}
 
+# the QR encoder against a reference's matrices (qr/testdata/goldens.txt, each one scanned by a real reader)
+[group('test')]
+test-qr *args: mktarget_dirs
+	odin test qr -vet -strict-style -out:{{ target_path("debug", "qr-test.exe") }} {{args}}
+
+# the card page's QR encoder (norn's html_cards_qr.js, a JS port of qr/) against the same goldens (needs node)
+[group('test')]
+test-qr-js:
+	node qr/check_js.mjs "{{ join(norn_home, "norn", "html_cards_qr.js") }}" {{ join("qr", "testdata", "goldens.txt") }}
+
+# re-record the QR goldens (qrcodegen + zxing-cpp, via uv) - only when adding cases
+[group('share')]
+qr-goldens:
+	uv run --script qr/testdata/make_goldens.py
+
 # build the shared-deals player page -> target/player/player.html (publish it once, anywhere static)
 [group('share')]
-player:
-	uv run --no-project -p 3.14 python -c "import pathlib; pathlib.Path(r'{{ player_dir }}').mkdir(parents=True, exist_ok=True)"
+player: player-dds
 	odin build player {{norn}} -target:js_wasm32 -o:speed -define:COMBO_THREADS=false -vet -strict-style -out:{{ join(player_dir, "player.wasm") }}
-	uv run --no-project -p 3.14 --script player/build_page.py {{ join(player_dir, "player.wasm") }} "{{ odin_js }}" {{ join(player_dir, "player.html") }}
+	uv run --no-project -p 3.14 --script player/build_page.py {{ join(player_dir, "player.wasm") }} "{{ odin_js }}" {{ join(player_dir, "player.html") }} {{ join(player_dir, "dds.wasm") }}
+
+# DDS (the double-dummy solver) compiled to wasm for the player -> target/player/dds.wasm. Needs `zig` on PATH,
+# and the odin-dds checkout's DDS sources (DDS_HOME). See player/dds/build.py.
+[group('share')]
+player-dds:
+	uv run --no-project -p 3.14 --script player/dds/build.py "{{ join(dds_home, "external", "dds", "src") }}" {{ join(player_dir, "dds.wasm") }}
 
 # rebuild the player and copy it into ui/, where the workbench's `share link` button bundles it (then rebuild the workbench)
 [group('share')]
@@ -405,6 +428,32 @@ vendor-player: player
 	target = Path("ui") / "player.html"
 	shutil.copyfile(Path(r"{{ join(player_dir, "player.html") }}"), target)
 	print(f"{target}: {target.stat().st_size:,} bytes - now rebuild the workbench (just sims workbench)")
+
+# Rebuilds the player and the phone speed test (dds_wasm_spike/) into target/netlify/ and deploys that folder
+# to production on Netlify with its CLI (via npx, so only node is needed). SITE is the Netlify project's name
+# or id (NETLIFY_SITE overrides the default). Signing in is once per machine - `npx netlify-cli login` - or
+# set NETLIFY_AUTH_TOKEN (a personal access token) instead. `index.html` is the player too, so the bare
+# address opens it; links made for a Drop site's root still work at `/`.
+# ---
+# build the player and deploy it (and the DDS speed test) to Netlify
+[group('share')]
+[script]
+publish-player site=env_var_or_default("NETLIFY_SITE", "bridge-workbench"): player
+	import shutil, subprocess, sys
+	from pathlib import Path
+	out = Path("target") / "netlify"
+	out.mkdir(parents=True, exist_ok=True)
+	player = Path(r"{{ join(player_dir, "player.html") }}")
+	shutil.copyfile(player, out / "player.html")
+	shutil.copyfile(player, out / "index.html")
+	subprocess.run(["uv", "run", "--no-project", "-p", "3.14", "--script", "dds_wasm_spike/build_bench_page.py",
+	                r"{{ join(player_dir, "dds.wasm") }}", str(out / "dds-bench.html")], check=True)
+	npx = shutil.which("npx")
+	if not npx:
+	    sys.exit("npx not found: install node")
+	result = subprocess.run([npx, "-y", "netlify-cli", "deploy", "--prod", "--no-build", "--dir", str(out), "--site", "{{ site }}",
+	                         "--message", "just sims publish-player"])
+	sys.exit(result.returncode)
 
 # the player in wasm against native pages: a generated page's link must rebuild it byte for byte (needs node)
 [group('test')]

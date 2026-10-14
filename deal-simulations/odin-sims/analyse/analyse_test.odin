@@ -10,8 +10,12 @@ package analyse
 	`test-golden` recipe, which diffs the real program's `data-sim` bake.
 */
 
+import "core:fmt"
 import "core:strings"
 import "core:testing"
+
+import "../deal_solve"
+import "../sampled"
 
 import "norn:norn"
 
@@ -369,4 +373,57 @@ test_run_reports_progress_per_board :: proc(t: ^testing.T) {
 			testing.expect_value(t, seen.calls[len(seen.calls) - 1], [2]int{2, 2})
 		}
 	}
+}
+
+// A 2-hand board's recorded opening lead (a PBN `[Play]` section) conditions the sampling as `--lead` would - the
+// leader holds the card - unless a `--lead` already names that card; a full deal's lead does not (it is exact).
+@(test)
+test_the_records_lead_is_a_held_card :: proc(t: ^testing.T) {
+	two_hand := `[Deal "N:AQ95.K82.T63.A74 - KJ6.AQJ93.A4.K52 -"]` + "\n" + `[Play "W"]` + "\nD5 D3 DQ DA\n*"
+	boards, berr := resolve_boards(two_hand)
+	defer delete(boards)
+	testing.expect_value(t, berr, "")
+	args: Args
+	held := held_cards(boards[0], &args)
+	testing.expect_value(t, len(held), 1)
+	testing.expect_value(t, held[0].seat, norn.Seat.West)
+	testing.expect_value(t, held[0].card, norn.make_card(.Diamonds, .Five))
+
+	// `--lead W:5D` says the same: one constraint, not two.
+	append(&args.held, deal_solve.Held_Card{seat = .West, card = norn.make_card(.Diamonds, .Five)})
+	defer delete(args.held)
+	testing.expect_value(t, len(held_cards(boards[0], &args)), 1)
+
+	whole := `[Deal "N:AQ95.K82.T63.A74 T87.T76.KQJ9.QJT KJ6.AQJ93.A4.K52 432.54.8752.9863"]` + "\n" + `[Contract "4H"]` + "\n" + `[Declarer "S"]` + "\n" + `[Play "W"]` + "\nD5 D3 DQ DA\n*"
+	full, ferr := resolve_boards(whole)
+	defer delete(full)
+	testing.expect_value(t, ferr, "")
+	clear(&args.held)
+	testing.expect_value(t, len(held_cards(full[0], &args)), 0)
+}
+
+// A page names its defender inferences and a share link carries them, at most `sampled.MAX_LISTED` of each kind
+// (one fewer `--lead`, since a record's opening lead can add one): more is refused rather than dropped.
+@(test)
+test_parse_args_holds_the_inferences_to_what_a_link_carries :: proc(t: ^testing.T) {
+	argv := make([dynamic]string, context.temp_allocator)
+	for _ in 0 ..< sampled.MAX_LISTED {
+		append(&argv, "--len", "E:S:0-6")
+	}
+	fits, ferr := parse_args(argv[:], allow_stdin = false)
+	args_free(&fits)
+	testing.expect_value(t, ferr, "")
+	append(&argv, "--void", "W:C")
+	over, oerr := parse_args(argv[:], allow_stdin = false)
+	args_free(&over)
+	testing.expect(t, oerr != "", "one --void/--len too many")
+
+	clear(&argv)
+	ranks := "23456789TJQKA"
+	for i in 0 ..< sampled.MAX_LISTED {
+		append(&argv, "--lead", fmt.tprintf("E:%cS", ranks[i % 13]))
+	}
+	leads, lerr := parse_args(argv[:], allow_stdin = false)
+	args_free(&leads)
+	testing.expect(t, lerr != "", "as many --lead as fit leaves no room for the record's")
 }

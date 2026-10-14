@@ -10,33 +10,14 @@ package analyse
 import "core:fmt"
 
 import "../deal_solve"
+import "../sampled"
 import "norn:combo"
 import "norn:norn"
 
-// One board's DDS-sample results (empty when --sample is off or the board is not a 2-hand advisor input).
-// `leads` is heap-allocated (~118 KB — kept off the stack); the caller frees it with `board_sample_free`.
-Board_Sample :: struct {
-	have:     bool,
-	grid:     deal_solve.Grid_Result,
-	leads:    ^deal_solve.Lead_Grids,
-	contract: deal_solve.Contract,
-	auto:     bool, // contract was auto-picked (no --contract)
-	tax:      deal_solve.Tax_Result, // the misguess-tax achievable-SD estimate for `contract` (valid iff tax_ok)
-	tax_ok:   bool,
-	lead_tax: ^deal_solve.Lead_Tax, // per-opening-lead conditioned tax for `contract` (heap; freed with the sample)
-}
-
-// Release a Board_Sample's heap grids (no-op when sampling was off).
-board_sample_free :: proc(bs: ^Board_Sample) {
-	if bs.leads != nil {
-		free(bs.leads)
-		bs.leads = nil
-	}
-	if bs.lead_tax != nil {
-		free(bs.lead_tax)
-		bs.lead_tax = nil
-	}
-}
+// One board's DDS-sample results (empty when --sample is off or the board is not a 2-hand advisor input):
+// `sampled.Advice`, shared with the shared-deals player. Free with `board_sample_free`.
+Board_Sample :: sampled.Advice
+board_sample_free :: sampled.advice_free
 
 // Sample one board if --sample is on: validate any constraints against THIS board's defenders, run the
 // lead grids, and resolve the contract (explicit or auto). Returns have=false with "" when sampling is
@@ -45,8 +26,8 @@ sample_board :: proc(
 	board: norn.Board,
 	side: bit_set[norn.Seat],
 	args: ^Args,
-	contract: deal_solve.Contract,
-	has_contract: bool,
+	asked: deal_solve.Contract,
+	has_asked: bool,
 ) -> (
 	bs: Board_Sample,
 	err: string,
@@ -57,20 +38,16 @@ sample_board :: proc(
 	// When no --contract was given, fall back to the contract the board itself names (LIN auction / PBN
 	// [Contract]) — but only if its declarer is on the side being analysed, so a board where the OTHER
 	// pair declares still auto-picks THIS side's best contract. An explicit --contract still overrides
-	// (has_contract is already true then). auto stays false: this is the real contract, not a guess.
-	contract, has_contract := contract, has_contract
-	if !has_contract {
-		if c, decl, ok := deal_solve.board_contract(board); ok && decl in side {
-			contract, has_contract = c, true
-		}
-	}
+	// (has_asked is true then). auto stays false: this is the real contract, not a guess.
+	contract, has_contract := sampled.named_contract(board, side, asked, has_asked)
 	defenders := bit_set[norn.Seat]{.North, .East, .South, .West} - side
 	for con in args.constraints {
 		if con.seat not_in defenders {
 			return {}, fmt.tprintf("--void/--len seat %v is a known hand, not a defender", con.seat)
 		}
 	}
-	for h in args.held {
+	held := held_cards(board, args)
+	for h in held {
 		if h.seat not_in defenders {
 			return {}, fmt.tprintf("--lead seat %v is a known hand, not a defender", h.seat)
 		}
@@ -80,7 +57,7 @@ sample_board :: proc(
 	}
 	cons := deal_solve.Sample_Constraints {
 		shape = args.constraints[:],
-		held  = args.held[:],
+		held  = held,
 	}
 	// Solve the sampled layouts ONCE, with adaptive early-stop: `args.sample` is a CAP — sampling stops as soon
 	// as the picked contract's make-% is statistically resolved (lopsided boards stop short; knife-edge boards
@@ -101,27 +78,36 @@ sample_board :: proc(
 			"DDS sampling failed — the constraints are too rare or impossible for these hands (could not draw enough consistent deals)"
 	}
 	defer deal_solve.solved_sample_free(&s)
-	lg := new(deal_solve.Lead_Grids)
-	deal_solve.lead_grids_from_sample(&s, lg)
-	bs.leads = lg
-	bs.grid = lg.base
-	bs.have = true
-	if has_contract {
-		bs.contract = contract
-	} else {
-		bs.contract, bs.auto = gating, true
-	}
-	// Achievable single-dummy (the misguess-tax 4th rung) for the resolved contract — a FILTER over the SAME
-	// solved batch as the lead grids (no extra solves). A failure just drops the achievable rung — the ceiling
-	// verdict still stands.
-	bs.tax, bs.tax_ok = deal_solve.tax_from_sample(board, &s, bs.contract)
-	// Per-opening-lead conditioned tax for the resolved contract — another FILTER over the same solved batch
-	// (no extra solves). Lets the card page show a coupled, lead-conditioned achievable when a lead is picked
-	// (a lead that reveals the trapped honour resolves its guess → tax 0). Heap-held like `leads`.
-	lt := new(deal_solve.Lead_Tax)
-	deal_solve.lead_tax_from_sample(board, &s, bs.contract, lt)
-	bs.lead_tax = lt
+	// The lead grids, the misguess tax and the per-lead tax are FILTERS over that one solved batch (no extra
+	// solves), for the named contract or else `gating`, the one the sampling stopped on.
+	bs = sampled.advise(board, &s, contract, has_contract, gating)
 	return bs, ""
+}
+
+// The defenders' cards the sampling is conditioned on: `--lead`, plus, on a 2-hand board, the opening lead its
+// record gives (`norn.Board.opening_lead`: a PBN `[Play]` section) - the one card of a defender's hand the
+// record shows - unless a `--lead` already names that card. Temp memory.
+held_cards :: proc(board: norn.Board, args: ^Args) -> []deal_solve.Held_Card {
+	held := make([dynamic]deal_solve.Held_Card, 0, len(args.held) + 1, context.temp_allocator)
+	append(&held, ..args.held[:])
+	if lead, has := recorded_lead(board, args); has {
+		append(&held, deal_solve.Held_Card{seat = lead.leader, card = lead.card})
+	}
+	return held[:]
+}
+
+// A 2-hand board's recorded opening lead, when it conditions the sampling (see `held_cards`).
+recorded_lead :: proc(board: norn.Board, args: ^Args) -> (lead: norn.Opening_Lead, ok: bool) {
+	if board_fully_known(board) {
+		return
+	}
+	lead = board.opening_lead.? or_return
+	for h in args.held {
+		if h.card == lead.card {
+			return
+		}
+	}
+	return lead, true
 }
 
 // True iff all four hands are present — a complete deal, not the declarer+dummy (2-hand) advisor input.

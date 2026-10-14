@@ -40,9 +40,10 @@ Hooks :: struct {
 
 // The double-dummy par caption (deal_solve) followed by the naive combined-holding trick table (combo). Both
 // are `norn.Deal_Annotator`s writing to the same builder; combo needs no DDS, so the combo half still
-// renders when a deal reaches here. Registered for scenarios that want both (see `make_hooks`).
-dd_and_combo_annotate :: proc(builder: ^strings.Builder, deal: norn.Deal, format: norn.Output_Format) {
-	deal_solve.annotate(builder, deal, format)
+// renders when a deal reaches here. Registered for scenarios that want both (see `make_hooks`). Par is scored at
+// the vulnerability the board was drawn at.
+dd_and_combo_annotate :: proc(builder: ^strings.Builder, deal: norn.Deal, format: norn.Output_Format, table: norn.Table) {
+	deal_solve.annotate(builder, deal, format, table.vulnerability)
 	combo.annotate(builder, deal, format)
 }
 
