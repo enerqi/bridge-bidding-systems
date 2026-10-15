@@ -24,6 +24,9 @@ import "../sampled"
 import "../share"
 
 main :: proc() {
+	// The reference pages must be what the wasm player writes, and a js build has no suit-solver table.
+	combo.set_suit_solver_table(false)
+
 	// `native --link <page.html>`: the link fragment for a page already written, as the workbench's `share
 	// link` makes it - for a page from anywhere (the analysed advisor's, say), and for checking the page's own
 	// Share button against it.

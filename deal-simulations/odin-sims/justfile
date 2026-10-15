@@ -387,10 +387,12 @@ test-sanitize kind="address" *args: mktarget_dirs
 odin_js := join(shell("odin root"), "core", "sys", "wasm", "js", "odin.js")
 player_dir := join("target", "player")
 
-# the share format's unit tests (a generated page -> link -> the same page, byte for byte)
+# the share format's unit tests (a generated page -> link -> the same page, byte for byte). ONE test thread:
+# three tests end with `combo.shutdown()`, which tears down combo's shared pool, and run in parallel that hung
+# about one run in four (another test's `annotate` waiting on tasks handed to the dying pool). Serial is 2s.
 [group('test')]
 test-share *args: mktarget_dirs
-	odin test share {{norn}} -vet -strict-style -out:{{ target_path("debug", "share-test.exe") }} {{args}}
+	odin test share {{norn}} -vet -strict-style -define:ODIN_TEST_THREADS=1 -out:{{ target_path("debug", "share-test.exe") }} {{args}}
 
 # the QR encoder against a reference's matrices (qr/testdata/goldens.txt, each one scanned by a real reader)
 [group('test')]

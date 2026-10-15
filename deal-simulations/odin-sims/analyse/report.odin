@@ -486,12 +486,19 @@ print_priority_sketch :: proc(w: io.Writer, sd: ^combo.Sd_Bundle) {
 // (a finesse to guess or a duck to concede — do early) vs a solid cash (can wait).
 line_role :: proc(name: string) -> (role: string, develop: bool) {
 	switch {
-	case strings.has_prefix(name, "finesse"):
+	case strings.has_prefix(name, "finesse"), name == "cash-then-finesse":
 		return "finesse - guess", true
+	case name == "run":
+		return "run a card - guess", true
+	case name == "toward":
+		return "cash, leading toward", false
 	case strings.has_prefix(name, "duck"), name == "ducking":
 		return "develop by duck", true
 	case name == "top-down":
 		return "cash top winners", false
+	case name == combo.SOLVER_LINE:
+		// The suit solver's line: only holdings with a real decision reach its table, never a plain cash.
+		return "solver line - develop", true
 	}
 	return name, false
 }
