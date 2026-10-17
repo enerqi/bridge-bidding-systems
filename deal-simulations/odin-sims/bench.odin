@@ -37,6 +37,8 @@ import "suit_book"
 COUNT_SUIT :: #config(COUNT_SUIT, 2_000) // per-suit Phase 1 and Phase 2 line benches
 COUNT_OPT :: #config(COUNT_OPT, 100) // per-suit optimal-search bench (heavier)
 COUNT_DEAL :: #config(COUNT_DEAL, 200) // per-deal benches (annotate, adaptive curve)
+// `-define:SOLVER_TABLE=false` runs without the suit solver table, to see what its candidate costs.
+SOLVER_TABLE :: #config(SOLVER_TABLE, true)
 
 POOL :: 1 << 11 // 2048 pre-dealt deals — enough variety to avoid cache-hot bias
 POOL_MASK :: POOL - 1
@@ -215,6 +217,7 @@ main :: proc() {
 	// Bench the same configuration the real programs run: combo with this project's published
 	// suit-combination table registered (an override lookup per suit, see suit_book/suit_book.odin).
 	combo.set_suit_book(suit_book.provider())
+	combo.set_suit_solver_table(SOLVER_TABLE)
 
 	state: rand.Xoshiro256_Random_State
 	context.random_generator = norn.seeded_xoshiro(&state, 42)

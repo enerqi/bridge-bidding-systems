@@ -373,6 +373,7 @@ work_generate :: proc(app: ^App) {
 		// caption with `--par`. The solver starts the first time a scenario of this job needs it.
 		opts.dd_filters = gen_hooks.dd_filters
 		opts.dd_annotators = gen_hooks.dd_annotators
+		opts.prepare = gen_hooks.prepare
 		if opts.par {
 			opts.par_annotator = gen_hooks.par_annotator
 		}

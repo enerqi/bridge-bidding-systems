@@ -1889,6 +1889,10 @@ test_the_generate_path_writes_the_same_page_the_cli_does :: proc(t: ^testing.T) 
 	type_into(&app, "#seed", "42")
 	type_into(&app, "#outdir", PARITY_DIR)
 	tick(&app, "#fixed")
+	// The page carries the player's address (`norn.share_player`, a process global that startup sets from the
+	// settings). Set it as startup does, with the default settings `sim` matches: left to whichever test ran
+	// before, the page said `content=""` and `wb-cli-parity` failed on it.
+	apply_share_player(&app)
 
 	job, err := generate_job(&app)
 	testing.expect_value(t, err, "")

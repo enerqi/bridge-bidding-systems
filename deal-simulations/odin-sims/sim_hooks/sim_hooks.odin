@@ -54,8 +54,10 @@ dd_and_combo_annotate :: proc(builder: ^strings.Builder, deal: norn.Deal, format
 // *implementations* live in the `deal_solve` package; this is just the name -> filter binding.
 //
 // Per-scenario double-dummy ANNOTATORS (policy: which scenarios get the DD caption in their HTML).
-// Per-scenario, not global, so the batch export still pools every scenario NOT listed here (annotators,
-// like filters, make the scenario call DDS -> serial). `--par` captions the rest (see `gen_hooks`).
+// Per-scenario, not global, so the batch export still pools every scenario NOT listed here. Neither hook makes
+// its scenario serial, because `gen_hooks` hands norn `deal_solve.prepare_tables`: a filtered scenario is
+// dealt in rounds whose survivors are solved 40 at a time, and every deal is then solved in one batch before
+// the pages are written on the pool. `--par` captions the rest.
 //
 // `programs` are the scenarios loaded from FILES: each one with a `double-dummy:` line gets the matching
 // `deal_solve.makes_filter` and the caption, keyed by its name. A file scenario named like a COMPILED one
@@ -123,5 +125,10 @@ free_hooks :: proc(h: ^Hooks) {
 
 // The `cli` view of the tables, for `cli.main_program` / a hand-wired `Options`.
 gen_hooks :: proc(h: ^Hooks) -> cli.Gen_Hooks {
-	return cli.Gen_Hooks{dd_filters = h.filters, dd_annotators = h.annotators, par_annotator = dd_and_combo_annotate}
+	return cli.Gen_Hooks {
+		dd_filters = h.filters,
+		dd_annotators = h.annotators,
+		par_annotator = dd_and_combo_annotate,
+		prepare = deal_solve.prepare_tables,
+	}
 }

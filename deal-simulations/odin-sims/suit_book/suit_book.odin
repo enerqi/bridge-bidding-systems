@@ -25,8 +25,15 @@ package suit_book
 	(`combo.book_line_applies`); otherwise it is a MISS and combo falls back to its engine line. A key can
 	map to SEVERAL entries (the odds-equivalent-but-different-honour ones); the map stores every candidate
 	and the lookup returns the first card-compatible one. Percentages are the book's (best defence).
+
+	THE KEY IS DEAR AND MOST HOLDINGS MISS. Building it values every candidate line in the suit (~0.7ms), and
+	the lookup runs for all eight holdings of a deal. So a holding is first checked against the SHAPES the
+	entries have (`shape`: who holds each honour from the ten up, and each hand's length) - the very things
+	`combo.book_line_applies` compares, so a holding whose shape no entry has cannot be accepted whatever its
+	key. Only the rest build one. Measured 2026-10-16: the card analysis went from 24ms to 16ms a deal.
 */
 
+import "base:intrinsics"
 import "core:sync"
 
 import "norn:combo"
@@ -43,11 +50,26 @@ provider :: proc() -> combo.Suit_Book {
 g_map: map[string][dynamic]int
 @(private)
 g_once: sync.Once
+// The `shape` of every entry, either way round (see the header).
+@(private)
+g_shapes: map[u32]struct {}
+
+// `combo.book_line_applies`' terms for a holding: each hand's honours from the ten up and its length. Two
+// holdings it would match have equal shapes, North and South in the same order or swapped.
+@(private)
+shape :: proc(n, s: u16) -> u32 {
+	HONOURS :: u16(0x1F00) // ten to ace, as `book_line_applies` reads them
+	honours := u32((n & HONOURS) >> 8) | u32((s & HONOURS) >> 8) << 5
+	return honours | u32(intrinsics.count_ones(n)) << 10 | u32(intrinsics.count_ones(s)) << 14
+}
 
 @(private)
 build :: proc() {
 	g_map = make(map[string][dynamic]int)
+	g_shapes = make(map[u32]struct {})
 	for e, i in book_entries {
+		g_shapes[shape(e.n, e.s)] = {}
+		g_shapes[shape(e.s, e.n)] = {}
 		k := combo.book_key(e.n, e.s, context.allocator) // interned; process-lifetime
 		if cur, exists := &g_map[k]; exists {
 			append(cur, i)
@@ -71,6 +93,8 @@ shutdown :: proc() {
 	}
 	delete(g_map)
 	g_map = nil
+	delete(g_shapes)
+	g_shapes = nil
 	g_once = {}
 }
 
@@ -81,6 +105,9 @@ shutdown :: proc() {
 // thread-safely.
 lookup :: proc(n, s: u16) -> (combo.Book_Entry, bool) {
 	sync.once_do(&g_once, build)
+	if shape(n, s) not_in g_shapes {
+		return {}, false
+	}
 	k := combo.book_key(n, s, context.temp_allocator)
 	if cands, ok := g_map[k]; ok {
 		for i in cands {

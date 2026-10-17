@@ -12,24 +12,30 @@ package deal_solve
 	Lifecycle: DDS is statically linked, so it has no DllMain auto-init. `init` MUST run once at
 	startup (before any solve) and `shutdown` once at exit — see sim.odin's main.
 
-	Threading: `CalcDDtable`/`Par` share DDS's process-global transposition tables and are NOT safe
-	to call concurrently. norn's batch HTML export forces single-threaded generation whenever a DD
-	hook is set (see cli/run.odin), so the hooks here can assume they run one at a time — which is
-	also what makes the single-slot `solve_table` cache below safe as a package global.
+	Threading: `CalcDDtable`/`CalcAllTables` share DDS's process-global transposition tables and are NOT
+	safe to call concurrently (the par scoring, `SidesParBin`, works on its arguments alone and is). norn's
+	batch export runs a scenario with a filter one at a time; a scenario with only an annotator is BATCHED
+	(`prepare_tables`, norn's `cli.Annotation_Prepare`): every deal it will annotate solved in one
+	`CalcAllTables` run, after which the annotators run on several threads at once and only read. A solve
+	that still happens deal by deal (a filter, or a deal the batch did not cover) takes `g_solve_lock`.
 */
 
 import "core:fmt"
 import "core:os"
 import "core:strconv"
 import "core:strings"
+import "core:sync"
+import si "core:sys/info"
 
 import dds "dds:."
 import "norn:norn"
 import "../par_caption"
+import "../sampled"
 
 /*
 One-time DDS setup: size the per-thread transposition tables and build its constant lookups. MUST be
-called before any solve. `threads = 0` lets DDS pick a count from the core count.
+called before any solve. `threads = 0` is every logical core but two (`DDS_SPARE_THREADS`): a batch keeps
+every DDS thread busy, and the desktop it runs on should stay usable.
 
 MEASURED COST, on a 24-core machine: `SetMaxThreads(0)` commits **172MB** at init and a real `--dd`
 generation peaks at **542MB**, all of it held until `shutdown`. `DDS_MAX_MB` swaps that for
@@ -52,7 +58,16 @@ An env var rather than an argument because it is a property of the MACHINE the p
 rather than of what any one caller is doing: every program here (sim, analyse_deal, the workbench)
 wants the same answer, and none of them should have to have an opinion about it.
 */
+// The logical cores `init` leaves to everything else by default.
+DDS_SPARE_THREADS :: 2
+
 init :: proc(threads: i32 = 0) {
+	threads := threads
+	if threads == 0 {
+		if _, logical, ok := si.cpu_core_count(); ok {
+			threads = i32(max(logical - DDS_SPARE_THREADS, 1))
+		}
+	}
 	// Below this DDS does not run slowly, it dies mid-batch. Measured at 16MB; 32 is the smallest value
 	// that completed, and it was slower than no cap at all.
 	DDS_FLOOR_MB :: 32
@@ -77,6 +92,8 @@ init :: proc(threads: i32 = 0) {
 
 // Release DDS's memory. Call once at process exit, after the last solve.
 shutdown :: proc() {
+	delete(g_prepared)
+	g_prepared = nil
 	dds.FreeMemory()
 }
 
@@ -105,9 +122,8 @@ to_table_deal :: proc(deal: norn.Deal) -> dds.Table_Deal {
 // scenario is solved twice. `solve_table` memoises the last deal's table and returns it unchanged
 // on a repeat call for an identical deal.
 //
-// Safe as a package global: every scenario that reaches DDS runs SINGLE-THREADED (the export/freq
-// partition serialises DDS scenarios — the same non-reentrancy reason DDS itself needs), so only one
-// thread touches this.
+// One slot PER THREAD: the filter and the annotator of a deal run on one thread, and batched annotators on
+// several threads must not overwrite a table another is reading. The solve itself takes `g_solve_lock`.
 //
 // NEVER needs invalidation. The cache key is the full 52-card deal value, so a HIT occurs only on a
 // byte-identical deal, which by definition has the identical DD table; a MISS (any other deal, incl.
@@ -115,20 +131,73 @@ to_table_deal :: proc(deal: norn.Deal) -> dds.Table_Deal {
 // earlier deal) just recomputes. deal and table are written together after a successful solve, so a
 // valid hit can never return a mismatched table. Nothing to clear "after annotation".
 @(private)
+@(thread_local)
 g_cache_deal: norn.Deal
 @(private)
+@(thread_local)
 g_cache_table: dds.Table_Results
 @(private)
+@(thread_local)
 g_cache_valid: bool
 
+// Held around a one-deal solve: DDS is not reentrant, and batched annotators run on several threads.
+@(private)
+g_solve_lock: sync.Mutex
+
+/*
+THE BATCH (`prepare_tables`): the tables of the deals a batched export is about to filter or annotate, solved
+by `CalcAllTables` 40 deals at a time, each call spread over all of DDS's threads. Filled on one thread while
+nothing reads it, and only read while the annotators run, so it needs no lock. Each fill keeps exactly the
+deals it was given: those already here are carried over rather than solved again (a filtered scenario's
+rounds solve its deals before the export's final fill names them all).
+*/
+@(private)
+g_prepared: map[norn.Deal]dds.Table_Results
+
+/*
+Solve every deal's table now, in batches, so the filters and annotators that follow read them instead of
+solving one deal at a time: norn's `cli.Annotation_Prepare`. One deal at a time kept ~3 of the machine's
+threads busy; a batch of 40 keeps every DDS thread busy. False when DDS failed (the deals it did not solve
+are not kept, and each filter or annotator then solves its own).
+*/
+prepare_tables :: proc(deals: []norn.Deal) -> bool {
+	kept := make(map[norn.Deal]dds.Table_Results, len(deals))
+	unsolved := make([dynamic]norn.Deal, 0, len(deals))
+	defer delete(unsolved)
+	for deal in deals {
+		if table, found := g_prepared[deal]; found {
+			kept[deal] = table
+		} else if deal not_in kept {
+			append(&unsolved, deal)
+		}
+	}
+	delete(g_prepared)
+	g_prepared = kept
+	solved := make([]sampled.Table, len(unsolved))
+	defer delete(solved)
+	if !solve_layouts(unsolved[:], solved) {
+		return false
+	}
+	for deal, i in unsolved {
+		g_prepared[deal] = transmute(dds.Table_Results)solved[i]
+	}
+	return true
+}
+
 // Solve — or reuse — the full double-dummy table for `deal`. Returns a pointer to the cached table;
-// ok=false only if DDS itself failed. The pointer stays valid until the next distinct deal is solved.
+// ok=false only if DDS itself failed. The pointer stays valid until this thread solves another deal (or,
+// for a batched deal, until the next `prepare_tables`).
 @(private)
 solve_table :: proc(deal: norn.Deal) -> (table: ^dds.Table_Results, ok: bool) {
+	if prepared, found := &g_prepared[deal]; found {
+		return prepared, true
+	}
 	if g_cache_valid && deal == g_cache_deal {
 		return &g_cache_table, true
 	}
 	td := to_table_deal(deal)
+	sync.mutex_lock(&g_solve_lock)
+	defer sync.mutex_unlock(&g_solve_lock)
 	if dds.CalcDDtable(td, &g_cache_table) != .NO_FAULT {
 		g_cache_valid = false
 		return nil, false
