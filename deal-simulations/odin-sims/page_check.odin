@@ -342,6 +342,7 @@ main :: proc() {
 		check_the_toolbar_fits_a_narrow_pane(&view)
 		check_the_panel_parks_clear_of_the_board(&view)
 		check_the_play_through(&view)
+		check_the_match_table(&view)
 		check_the_par_toggle(&view)
 		check_the_two_hand_share_link(&view)
 	}
@@ -1762,14 +1763,6 @@ check_the_par_toggle :: proc(view: ^sa.Windowless_View) {
 	}
 	sa.do_click(qr_button)
 	pump(view, 64)
-	eval_text :: proc(root: sa.Element, script: string) -> string {
-		v, err := sa.eval_element(root, script)
-		if err != nil {
-			return "?"
-		}
-		text, _ := sa.value_to_string(&v, context.temp_allocator)
-		return text
-	}
 	link := eval_text(root, `window.ncQrLink ? window.ncQrLink() : ''`)
 	drawn := eval_text(root, `(function(){ var p = document.querySelector('#nc-qr-code path'); return p ? p.getAttribute('d') : ''; })()`)
 	code, code_ok := qr.encode_string(link, {ecc = .L, boost_ecc = true, mask = -1}, context.temp_allocator)
@@ -2224,6 +2217,101 @@ element_height :: proc(root: sa.Element, selector: string) -> int {
 	}
 	box, _ := sa.location(element, .Border, .Root)
 	return int(box.height)
+}
+
+// A page of several played boards carries a match table (`analyse/match.odin`), opened by the toolbar's
+// Table button. In this engine the help modal it borrows is the shape that needed porting (a fixed backdrop
+// lays out 1px tall), so: the button is shown, the open table has a real box inside the view, and a click on
+// a row - the mouse, at the row - closes it on that row's board with the play at the row's step.
+check_the_match_table :: proc(view: ^sa.Windowless_View) {
+	// The play deal twice, as the open and the closed room.
+	one := CHECK_PLAY_DEAL
+	at := strings.index(one, "md|")
+	match := strings.concatenate({one, "\nqx|c13|", one[at:]})
+	defer delete(match)
+	page, ok := render_page(match)
+	if !ok {
+		check(false, "a match of two played boards renders")
+		return
+	}
+	defer delete(page)
+	if err := sa.load_html(view.window, page, "file://page-check/match.html"); err != nil {
+		check(false, fmt.tprintf("the match page loads (%v)", err))
+		return
+	}
+	pump(view, 32)
+	root, rerr := sa.root(view.window)
+	if rerr != nil {
+		check(false, "the match page has a root")
+		return
+	}
+	button, berr := sa.select_first(root, "#nc-match")
+	button_box := element_box(root, "#nc-match")
+	check(berr == nil && button_box.width > 0, fmt.tprintf("the Table button is shown (%v)", button_box))
+	if berr != nil {
+		return
+	}
+	sa.do_click(button)
+	pump(view, 64)
+	card := element_box(root, ".nc-match-card")
+	rows, _ := sa.select_all(root, ".match-table .boards tbody tr", context.temp_allocator)
+	check(len(rows) == 2, fmt.tprintf("the table has a row a board (%d)", len(rows)))
+	check(
+		card.height > 120 && card.x >= 0 && card.x + card.width <= VIEW_WIDTH,
+		fmt.tprintf("the open table has a box inside the view (%v)", card),
+	)
+	if len(rows) < 2 {
+		return
+	}
+	step, _ := sa.attribute(rows[1], "data-step", context.temp_allocator)
+	row, _ := sa.location(rows[1], .Border, .Root)
+	point := [2]i32{row.x + 20, row.y + row.height / 2}
+	sa.windowless_mouse(view, .MOUSE_DOWN, point)
+	sa.windowless_mouse(view, .MOUSE_UP, point)
+	pump(view, 96)
+	pump(view, 128)
+	// By its attribute: a hidden element can go on reporting its old box in this engine.
+	closed := eval_text(root, `(function(){ var m = document.getElementById('nc-match-modal'); return m && m.hasAttribute('hidden') ? 'hidden' : 'shown'; })()`)
+	check(closed == "hidden", fmt.tprintf("a click on a row closes the table (%s)", closed))
+	check(board_number(root) == 2, fmt.tprintf("the second row opens the second board (board %d)", board_number(root)))
+	// The row's step is the card just after the first that cost a trick: the bar is that far in.
+	cur, cur_err := sa.select_first(root, ".slide.active .ptricks button.cur")
+	cur_text := ""
+	if cur_err == nil {
+		cur_text, _ = sa.text(cur, context.temp_allocator)
+	}
+	n, _ := strconv.parse_int(step)
+	check(
+		n > 0 && cur_text == fmt.tprintf("%d", (n - 1) / 4 + 1),
+		fmt.tprintf("the play opens at the row's step (step %s, trick button %q)", step, cur_text),
+	)
+	// The same deal in both rooms is a pair: each room's contract opens its own board. Back to board 1 by the
+	// open room's, then the closed room's again.
+	rooms, _ := sa.select_all(root, ".match-table .rooms td[data-board]", context.temp_allocator)
+	check(len(rooms) == 2, fmt.tprintf("the two rooms' table has a contract a room (%d)", len(rooms)))
+	if len(rooms) != 2 {
+		return
+	}
+	for want in ([]int{1, 2}) {
+		sa.do_click(button)
+		pump(view, 160 + want * 64)
+		cell, _ := sa.location(rooms[want - 1], .Border, .Root)
+		at_cell := [2]i32{cell.x + cell.width / 2, cell.y + cell.height / 2}
+		sa.windowless_mouse(view, .MOUSE_DOWN, at_cell)
+		sa.windowless_mouse(view, .MOUSE_UP, at_cell)
+		pump(view, 192 + want * 64)
+		check(board_number(root) == want, fmt.tprintf("room %d's contract opens board %d (board %d)", want, want, board_number(root)))
+	}
+}
+
+// A script's answer as text, "?" when it throws.
+eval_text :: proc(root: sa.Element, script: string) -> string {
+	v, err := sa.eval_element(root, script)
+	if err != nil {
+		return "?"
+	}
+	text, _ := sa.value_to_string(&v, context.temp_allocator)
+	return text
 }
 
 // The border box of the first element `selector` matches, zero when there is none.

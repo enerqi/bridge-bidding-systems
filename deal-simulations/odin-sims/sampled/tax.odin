@@ -9,6 +9,7 @@ package sampled
 import "base:intrinsics"
 import "core:slice"
 
+import "norn:combo"
 import "norn:norn"
 
 // The maximum number of distinct two-way guesses we track on one board. Real deals have at most a small
@@ -40,20 +41,8 @@ Tax_Result :: struct {
 	pivots:         [TAX_MAX_PIVOTS]Tax_Pivot,
 }
 
-// Per-suit rank bitmask (bit r = the declaring side holds rank r, deuce=0 .. ace=12) over the two KNOWN
-// hands combined — the holding the guess geometry is read from.
-@(private = "file")
-side_suit_masks :: proc(deal: norn.Deal, a, b: norn.Seat) -> (masks: [norn.Suit]u16) {
-	for seat in ([2]norn.Seat{a, b}) {
-		for card in deal[seat] {
-			masks[norn.card_suit(card)] |= u16(1) << u16(norn.card_rank(card))
-		}
-	}
-	return
-}
-
-// Per-suit mask for ONE hand — used to require a card ABOVE the guessed honour in BOTH hands, the test
-// that separates a genuine TWO-WAY guess (finessable either direction) from a one-way (forced) finesse.
+// One hand's cards in one suit as a rank mask (bit r = rank r, deuce=0 .. ace=12), the form
+// `combo.two_way_guesses` reads.
 @(private = "file")
 hand_suit_mask :: proc(hand: norn.Hand, suit: norn.Suit) -> (m: u16) {
 	for card in hand {
@@ -64,48 +53,20 @@ hand_suit_mask :: proc(hand: norn.Hand, suit: norn.Suit) -> (m: u16) {
 	return
 }
 
-// True iff `mask` has any bit set for a rank strictly ABOVE `r`.
-@(private = "file")
-has_above :: proc(mask: u16, r: int) -> bool {
-	for hi in r + 1 ..< norn.RANK_COUNT {
-		if mask & (u16(1) << u16(hi)) != 0 {
-			return true
-		}
-	}
-	return false
-}
-
-// Identify the blind TWO-WAY guesses in the two known hands: a defender-held honour C (rank Ten..King)
-// that declarer can finesse EITHER way. Geometry:
-//   * combined: declarer holds BOTH immediate neighbours of C (C+1 and C-1) — a tight tenace that traps C
-//     (this excludes "solid tops" like AKQ missing J, where the card just below J is a defender card), AND
-//   * per-hand: EACH declaring hand holds a card ranked above C — so declarer can lead toward a trap from
-//     either side, i.e. the guess is genuinely two-way rather than a single forced finesse.
-// The floor is the TEN: a two-way finesse for the ten (declarer holding the J and 9 around it, with a card
-// above in both hands — e.g. K9 opp AJ, missing QT) is a genuine binary guess, and it is the case that
-// yields two INDEPENDENT same-suit pivots (Q and T, separated by the held J). Deeper cards (a two-way for
-// the nine) are essentially never a trick-deciding guess, so the range stops at the ten. The Ace is never a
-// target (nothing outranks it); a King is never two-way (it would need the Ace above it in BOTH hands);
-// adjacent missing honours (e.g. missing KQ together) fail the neighbour test and are left untaxed. Returns
-// the pivot CARDS (up to TAX_MAX_PIVOTS).
+// Identify the blind TWO-WAY guesses in the two known hands: each defender-held honour declarer can finesse
+// for EITHER way, as `combo.two_way_guesses` defines it (the one definition, shared with the suit's
+// pattern note): a tight tenace around it, in each hand a card above it and a card to finesse with, and a suit
+// where playing blind costs something against double dummy (else a show-out settles it, no guess). Ten to
+// King: a two-way for the nine is essentially never trick-deciding, the Ace is never a target and a King never
+// two-way. With that rule two pivots cannot share a suit (with the T missing, the run below the Q is the J
+// alone, in one hand), so the joint model's additive -1 a misguess is exact. Returns the pivot CARDS (up to
+// TAX_MAX_PIVOTS).
 two_way_guess_pivots :: proc(deal: norn.Deal, a, b: norn.Seat) -> (out: [TAX_MAX_PIVOTS]norn.Card, n: int) {
-	combined := side_suit_masks(deal, a, b)
 	for suit in norn.Suit {
-		held := combined[suit]
-		ha := hand_suit_mask(deal[a], suit)
-		hb := hand_suit_mask(deal[b], suit)
+		two_way := combo.two_way_guesses(hand_suit_mask(deal[a], suit), hand_suit_mask(deal[b], suit))
 		for r in int(norn.Rank.Ten) ..= int(norn.Rank.King) {
-			bit := u16(1) << u16(r)
-			if held & bit != 0 {
-				continue // declarer holds C -> not a defender card, no guess
-			}
-			above_held := held & (u16(1) << u16(r + 1)) != 0 // C+1 (in range: r <= King, so r+1 <= Ace)
-			below_held := r > 0 && (held & (u16(1) << u16(r - 1)) != 0)
-			if !above_held || !below_held {
-				continue // not a tight two-sided tenace around C
-			}
-			if !has_above(ha, r) || !has_above(hb, r) {
-				continue // not finessable from BOTH hands -> one-way (forced), not a guess
+			if two_way & (u16(1) << u16(r)) == 0 {
+				continue
 			}
 			if n < TAX_MAX_PIVOTS {
 				out[n] = norn.make_card(suit, norn.Rank(r))

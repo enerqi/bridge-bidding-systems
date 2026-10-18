@@ -188,6 +188,12 @@ run :: proc(sink: Sink, args: ^Args) -> Result {
 		}
 	}
 
+	// The set judged one line a board: a report of its own, so it takes no page and no per-board report.
+	if args.table != "" {
+		report_match(sink, boards[:], args.table)
+		return .Ok
+	}
+
 	// The page in memory (a windowed host). Same `render_page` `write_html` calls, minus the file — so
 	// what the frame shows and what `--html` writes cannot drift.
 	if wants_page(sink) {

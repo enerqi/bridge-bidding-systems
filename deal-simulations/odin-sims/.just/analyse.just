@@ -38,6 +38,19 @@ analyse-deal deal *flags: mktarget_dirs
 	argv = [exe] + r'''{{flags}}'''.split() + [r'''{{deal}}''']
 	raise SystemExit(subprocess.run(argv).returncode)
 
+# A whole set of boards - a vugraph `.lin` segment, a PBN of many games - judged against double dummy: one
+# line a board (tricks against double dummy, what the lead, declarer and the defence gave away, a claim,
+# the score and par in IMPs) and the totals, overall and by kind of contract. FORMAT is `text` or `csv`.
+# Boards without a contract or all four hands are skipped. See analyse/match.odin.
+# e.g. just match-report ~/dev/norn/norn/testdata/vugraph-87351.lin
+# e.g. just match-report event.lin csv > event.csv
+# ---
+# judge every board of a match file against double dummy: one line a board plus totals (text or csv)
+[group('analyse')]
+match-report file format="text": mktarget_dirs
+	odin build analyse_deal.odin -file {{norn}} {{dds}} -o:speed -microarch:native -linker:{{linker}} -out:{{ target_path("release", analyse_name) }}
+	{{ target_path("release", analyse_name) }} --table {{format}} --file "{{file}}"
+
 # Bridges to the sibling hand-ocr repo (uv) at HAND_OCR_DIR. declarer+dummy uses '-' for the unknown
 # hands. A real image needs hand-ocr's vision extra there: (cd "$HAND_OCR_DIR" && just sync-vision).
 # <image> may be `--clipboard` to read straight from the OS clipboard (screenshot, no temp file).

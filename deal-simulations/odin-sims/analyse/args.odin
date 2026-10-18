@@ -29,6 +29,7 @@ Args :: struct {
 	sample:      int,
 	contract:    string,
 	seed:        u64,
+	table:       string, // "", "text" or "csv": the whole set judged one line a board (match.odin)
 	constraints: [dynamic]deal_solve.Card_Constraint, // defender-shape inferences from --void / --len
 	held:        [dynamic]deal_solve.Held_Card, // specific-card locations from --lead / --card
 	help:        bool, // -h / --help was given: the caller prints the usage and exits 0
@@ -66,6 +67,7 @@ Cli :: struct {
 	sample:   int `usage:"DDS-sample this many layouts for the whole-hand make-% (0 = off; 200-500 is plenty)"`,
 	contract: string `usage:"contract to score under --sample, e.g. 4H, 3NT (default: auto-pick the best)"`,
 	seed:     u64 `usage:"seed the --sample RNG (reproducible)"`,
+	table:    string `usage:"judge every board against double dummy, one line each plus totals: text or csv"`,
 	void:     [dynamic]string `usage:"<seat>:<suit> — that defender is void, e.g. E:S. Repeatable"`,
 	len:      [dynamic]string `usage:"<seat>:<suit>:<n|n-m|n+> — defender suit length, e.g. W:H:6. Repeatable"`,
 	lead:     [dynamic]string `usage:"<seat>:<card> — that defender holds/led it, e.g. W:KH (rank-first). Repeatable"`,
@@ -133,6 +135,10 @@ parse_args :: proc(argv: []string, allow_stdin := true) -> (out: Args, err: stri
 	if cli.c != "" {
 		cli.contract = cli.c
 	}
+	if cli.table != "" && cli.table != "text" && cli.table != "csv" {
+		return out, fmt.tprintf("--table %q is not text or csv", cli.table)
+	}
+	out.table = cli.table
 	if cli.sample < 0 {
 		return out, fmt.tprintf("--sample %d is not a positive number", cli.sample)
 	}

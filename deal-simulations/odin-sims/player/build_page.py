@@ -75,7 +75,7 @@ PAGE = r"""<!doctype html>
 		const length = wasm.pl_analysis(i);
 		return new TextDecoder().decode(new Uint8Array(wasm.memory.buffer, wasm.pl_piece(), length).slice());
 	};
-	// THE WORKERS, one per lane (below), each answering one board at a time, whichever the page asks for next:
+	// THE WORKERS, a lane's (below), each answering one board at a time, whichever the page asks for next:
 	// `{init}` -> `{ready}`, then `{board, ...}` -> `{board, result}`. The card-combination analysis runs this
 	// same module (~0.1s a board); DDS's (`dds.js`) solves a whole deal's table (~0.15s) or every position of a
 	// recorded play (~50 solves, ~1-4s).
@@ -139,12 +139,12 @@ PAGE = r"""<!doctype html>
 		// analysis and, when the whole deal is known, its double-dummy table (the contract picker's exact
 		// explorer; DDS in wasm, ~0.15s a board on a desktop and ~0.3s on a 2018 phone).
 		//
-		// A LANE is one kind of that work: a Web Worker of its own, started on the first request (DDS's module is
-		// not even unpacked before then), working its asked-for boards out one at a time, nearest the board in
-		// view first, idle between requests. A browser without workers (or one refusing a worker from this page)
-		// gets the same loop on the page's own thread, with a breath between boards. A small note in a corner
-		// counts the boards still to do. A lane may do more than one kind of job a board (`kinds`): job `k * boards + i`
-		// is board `i`'s `k`th, and the order is still the boards' - nearest the one in view first.
+		// A LANE is one kind of that work: Web Workers of its own (`workers` of them), started on the first request
+		// (DDS's module is not even unpacked before then), each working an asked-for board out at a time, nearest
+		// the board in view first, idle between requests. A browser without workers (or one refusing a worker from
+		// this page) gets the same loop on the page's own thread, with a breath between boards. A small note in a
+		// corner counts the boards still to do. A lane may do more than one kind of job a board (`kinds`): job
+		// `k * boards + i` is board `i`'s `k`th, and the order is still the boards' - nearest the one in view first.
 		//
 		// A RECORDED PLAY's costs are asked for separately, from the play bar under the board
 		// (`window.ncRequestPlay`): what each card cost, double dummy, is every position of the play solved
@@ -164,12 +164,20 @@ PAGE = r"""<!doctype html>
 				.filter((t) => t).join(" · ");
 			if (!note.isConnected) document.body.appendChild(note);
 		};
-		const lane = ({ kinds = 1, source, init, job, here, take }) => {
+		const lane = ({ kinds = 1, workers = 1, source, init, job, here, take }) => {
 			const done = new Array(kinds * boards).fill(false), wanted = new Array(kinds * boards).fill(false);
-			let thread = null, busy = false, onPage = false;
+			const running = new Array(kinds * boards).fill(false); // given to a worker, its answer not back yet
+			let pool = null, starting = false, busy = false, onPage = false;
 			const open = (i) => {
-				for (let k = 0; k < kinds; k++) if (wanted[k * boards + i] && !done[k * boards + i]) return k * boards + i;
+				for (let k = 0; k < kinds; k++) {
+					const id = k * boards + i;
+					if (wanted[id] && !done[id] && !running[id]) return id;
+				}
 				return -1;
+			};
+			const pending = (i) => {
+				for (let k = 0; k < kinds; k++) if (wanted[k * boards + i] && !done[k * boards + i]) return true;
+				return false;
 			};
 			const next = () => {
 				const at = typeof window.ncActiveBoard === "function" ? window.ncActiveBoard() : 0;
@@ -180,6 +188,7 @@ PAGE = r"""<!doctype html>
 				return -1;
 			};
 			const finish = (board, result) => {
+				running[board] = false;
 				if (done[board]) return;
 				done[board] = true;
 				take(board, result);
@@ -194,40 +203,62 @@ PAGE = r"""<!doctype html>
 				}
 				busy = false;
 			};
-			const fallBack = () => { if (thread) thread.terminate(); thread = null; onPage = true; busy = false; loop(); };
+			const fallBack = () => {
+				if (pool) pool.forEach((t) => t.worker.terminate());
+				pool = null;
+				running.fill(false); // what the workers held is asked again, on this thread
+				onPage = true;
+				busy = false;
+				loop();
+			};
 			const pump = async () => {
 				if (onPage) { loop(); return; }
-				if (busy) return;
-				if (!thread) {
-					busy = true;
+				if (!pool) {
+					if (starting) return;
+					starting = true;
 					try {
-						thread = new Worker(URL.createObjectURL(new Blob([source()], { type: "text/javascript" })));
-						thread.onmessage = (event) => {
-							const message = event.data;
-							if (!message.ready) finish(message.board, message.result);
-							busy = false;
-							pump();
-						};
-						thread.onerror = fallBack;
-						thread.postMessage({ init: await init() });
+						const url = URL.createObjectURL(new Blob([source()], { type: "text/javascript" }));
+						const message = { init: await init() };
+						const made = Array.from({ length: workers }, () => ({ worker: new Worker(url), idle: false }));
+						for (const t of made) {
+							t.worker.onmessage = (event) => {
+								const answer = event.data;
+								if (!answer.ready) finish(answer.board, answer.result);
+								t.idle = true;
+								pump();
+							};
+							t.worker.onerror = fallBack;
+							t.worker.postMessage(message);
+						}
+						pool = made;
 					} catch (error) {
 						fallBack();
 					}
+					starting = false;
 					return;
 				}
-				const board = next();
-				if (board < 0) return;
-				busy = true;
-				thread.postMessage(job(board));
+				for (const t of pool) {
+					if (!t.idle) continue;
+					const id = next();
+					if (id < 0) return;
+					t.idle = false;
+					running[id] = true;
+					t.worker.postMessage(job(id));
+				}
 			};
-			const it = { pending: (i) => open(i) >= 0, want: (i, k = 0) => { wanted[k * boards + i] = true; }, pump };
+			const it = { pending, want: (i, k = 0) => { wanted[k * boards + i] = true; }, pump };
 			lanes.push(it);
 			return it;
 		};
 		// odin.js installs itself on `window` and looks for elements by id, as in the page.
 		const workerPrelude = "self.window = self;\nself.document = { getElementById: () => null };\n";
 		let combosDone = 0;
+		// The card-combination analysis is a board's own work (~65 ms a board in a desktop's wasm), so boards can be
+		// done side by side: a worker per processor, less two (the DDS lane and the page), at most four (each holds
+		// a copy of this module and its memory). One worker did 48 boards in turn.
+		const comboWorkers = Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 2) - 2));
 		const comboLane = lane({
+			workers: comboWorkers,
 			source: () => workerPrelude + odinSource + "\nconst start = " + start.toString() + ";\nconst analysis = " +
 				analysis.toString() + ";\n(" + comboWorker.toString() + ")();",
 			init: async () => ({ module, fragment }),
@@ -254,8 +285,11 @@ PAGE = r"""<!doctype html>
 		};
 		// The DDS lane's two kinds of job: a board's table (0), and its play's positions (1).
 		const ddsJob = (id) => (id < boards ? { board: id, cards: tableDeal(id) } : { board: id, ...playPositions(id - boards) });
+		// The same for DDS: with the analysis spread over workers, a deal's table (~0.2s) was what the reader waited
+		// for. Each DDS worker holds ~50 MB.
 		const ddsLane = lane({
 			kinds: 2,
+			workers: comboWorkers,
 			source: () => ddsSource + "\n(" + ddsWorker.toString() + ")();",
 			init: async () => ({ module: await ddsCompiled() }),
 			job: ddsJob,

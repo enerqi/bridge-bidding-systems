@@ -147,7 +147,7 @@ test_a_play_packs_card_for_card :: proc(t: ^testing.T) {
 	context.random_generator = rand.default_random_generator(&state)
 	for _ in 0 ..< 300 {
 		deal := norn.deal_hands()
-		contract := norn.Contract{1 + rand.int_max(7), norn.Contract_Strain(rand.int_max(5)), norn.Seat(rand.int_max(4))}
+		contract := norn.Contract{1 + rand.int_max(7), norn.Contract_Strain(rand.int_max(5)), norn.Seat(rand.int_max(4)), .None}
 		play := replay.random_play(deal, contract, 1 + rand.int_max(52))
 		bytes := make([dynamic]u8, context.temp_allocator)
 		replay.pack_play(&bytes, deal, contract, play)

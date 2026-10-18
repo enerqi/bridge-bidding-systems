@@ -207,6 +207,36 @@ solve_table :: proc(deal: norn.Deal) -> (table: ^dds.Table_Results, ok: bool) {
 	return &g_cache_table, true
 }
 
+@(private)
+DDS_VULNERABILITY :: [norn.Vulnerability]dds.Vulnerability {
+	.None        = .None,
+	.North_South = .NS,
+	.East_West   = .EW,
+	.Both        = .Both,
+}
+
+// A deal's double-dummy numbers, for a caller that scores rather than captions: every declarer's tricks in
+// every strain, and par at `vulnerability` (N/S's score; `have_par` false when the solver gave none). ok=false
+// when DDS failed the table. Reads a table `prepare_tables` solved, when there is one.
+board_par :: proc(
+	deal: norn.Deal,
+	vulnerability: norn.Vulnerability,
+) -> (
+	tricks: par_caption.Tricks,
+	par_ns: int,
+	have_par: bool,
+	ok: bool,
+) {
+	res, solved := solve_table(deal)
+	if !solved {
+		return
+	}
+	dds_vulnerability := DDS_VULNERABILITY
+	sides: [2]dds.Par_Results_Master
+	have_par = dds.SidesParBin(res, &sides, dds_vulnerability[vulnerability]) == .NO_FAULT
+	return caption_tricks(res), int(sides[dds.Side.NS].score), have_par, true
+}
+
 // The body of a `norn.Deal_Annotator` (par scored at `vulnerability`, the board's table): append the deal's
 // double-dummy summary after its rendered deal, in a form valid for the active `format`. Annotation is format-specific by nature — an HTML caption
 // would corrupt a PBN tag or a machine-parsed line — so this switches on the format and emits
@@ -250,12 +280,6 @@ annotate :: proc(
 	// EW sacrifice reads as e.g. "5Cx EW-2" rather than a plain score. The two sides agree except on
 	// rare deals; we show the NS-first result. At `vulnerability` - neutral unless the caller knows the board's
 	// (an analysed record does) - which matters because sacrifice economics are vulnerability-sensitive.
-	DDS_VULNERABILITY :: [norn.Vulnerability]dds.Vulnerability {
-		.None        = .None,
-		.North_South = .NS,
-		.East_West   = .EW,
-		.Both        = .Both,
-	}
 	dds_vulnerability := DDS_VULNERABILITY
 	sides: [2]dds.Par_Results_Master
 	have_par := dds.SidesParBin(res, &sides, dds_vulnerability[vulnerability]) == .NO_FAULT

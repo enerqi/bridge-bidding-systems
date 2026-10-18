@@ -181,29 +181,25 @@ test_tax_pivot_geometry :: proc(t: ^testing.T) {
 	}
 }
 
-// Two genuine two-way guesses in the SAME suit are BOTH flagged and are genuinely independent: spades K9
-// opp AJ is missing Q AND T, and declarer's J sits BETWEEN them, so each is a separate finesse whose
-// misguess costs its own trick. The tight-tenace geometry GUARANTEES a declarer card separates any two
-// same-suit pivots (adjacent missing honours fail the neighbour test), so the joint model's additive
-// -1-per-misguess is exact here — no same-suit interaction to special-case.
+// A card above the missing honour in each hand is NOT a two-way guess: the finessing card must be in each hand
+// too. K9 opposite AJ (missing Q and T) has one finesse for the queen, the jack's, and KJ85 opposite A4 one, low
+// to the jack - neither is a guess to tax. (It also means two same-suit pivots cannot happen: with the T missing,
+// the run below the Q is the J alone, which one hand holds.) AJx opposite KTx is the two-way finesse.
 @(test)
-test_tax_same_suit_double_pivot :: proc(t: ^testing.T) {
-	board, err := norn.parse_pbn_deal(`[Deal "N:K9.AKQ2.AKQ2.A32 - AJ.543.543.KQJ54 -"]`)
-	testing.expect_value(t, err, norn.Pbn_Parse_Error.None)
-	pivots, n := two_way_guess_pivots(board.deal, .North, .South)
-	testing.expect_value(t, n, 2)
-
-	seen_q, seen_t := false, false
-	for i in 0 ..< n {
-		testing.expect_value(t, norn.card_suit(pivots[i]), norn.Suit.Spades)
-		#partial switch norn.card_rank(pivots[i]) {
-		case .Queen:
-			seen_q = true
-		case .Ten:
-			seen_t = true
-		}
+test_tax_one_way_is_not_a_guess :: proc(t: ^testing.T) {
+	for deal in ([]string{
+			`[Deal "N:K9.AKQ2.AKQ2.A32 - AJ.543.543.KQJ54 -"]`,
+			`[Deal "N:972.T7.AT73.KJ85 - AK6.A9653.J52.A4 -"]`,
+		}) {
+		board, err := norn.parse_pbn_deal(deal)
+		testing.expect_value(t, err, norn.Pbn_Parse_Error.None)
+		_, n := two_way_guess_pivots(board.deal, .North, .South)
+		testing.expectf(t, n == 0, "%s: %d pivots, want none", deal, n)
 	}
-	testing.expect(t, seen_q && seen_t)
+	board, _ := norn.parse_pbn_deal(`[Deal "N:AJ2.AKQ2.AKQ2.A2 - KT3.543.543.K543 -"]`)
+	pivots, n := two_way_guess_pivots(board.deal, .North, .South)
+	testing.expect_value(t, n, 1)
+	testing.expect_value(t, pivots[0], norn.make_card(.Spades, .Queen))
 }
 
 // Per-lead conditioned tax (option (a)): conditioning on a defender HOLDING the trapped honour resolves that

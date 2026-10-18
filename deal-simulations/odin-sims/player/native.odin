@@ -74,7 +74,7 @@ main :: proc() {
 			// cost goes to `play.txt` for the player's DDS to match.
 			board := norn.Board{deal = deal}
 			if kind == .Played && i % 4 != 3 {
-				contract := norn.Contract{1 + rand.int_max(7), norn.Contract_Strain(rand.int_max(5)), norn.Seat(rand.int_max(4))}
+				contract := norn.Contract{1 + rand.int_max(7), norn.Contract_Strain(rand.int_max(5)), norn.Seat(rand.int_max(4)), .None}
 				play := replay.random_play(deal, contract, 52 if i % 2 == 0 else 1 + rand.int_max(51))
 				if i % 5 == 1 {
 					play.result = rand.int_max(14)

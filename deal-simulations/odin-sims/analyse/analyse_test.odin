@@ -17,6 +17,7 @@ import "core:testing"
 import "../deal_solve"
 import "../sampled"
 
+import "norn:combo"
 import "norn:norn"
 
 // A two-hand advisor board: declarer + dummy known, both defenders written `-`. The same board the
@@ -345,6 +346,7 @@ test_run_reports_progress_per_board :: proc(t: ^testing.T) {
 	}
 	seen: Seen
 	defer delete(seen.calls)
+	defer combo.shutdown() // the page run starts combo's pool on this test's allocator
 
 	two := TWO_HAND + "\n\n" + TWO_HAND
 	argv := []string{two}

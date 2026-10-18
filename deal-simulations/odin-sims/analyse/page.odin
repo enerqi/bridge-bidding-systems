@@ -76,9 +76,35 @@ render_page :: proc(
 		title = match
 	}
 	norn.render_page_prologue(&b, .Html_Cards, title)
+	// Each board with a contract and all four hands is judged against double dummy as it is drawn (its table is
+	// the one just solved for the caption, its play's cost the one just baked), for the page's match table.
+	judged := make([dynamic]Judged)
+	defer delete(judged)
+	skipped, slide := 0, 0
 	for board, i in boards {
 		report_progress(sink, i, len(boards))
-		render_board_body(&b, board, args, contract, has_contract, sink)
+		drawn, cost := render_board_body(&b, board, args, contract, has_contract, sink)
+		judge: if board.contract != nil && board_fully_known(board) {
+			tricks, par_ns, have_par, ok := deal_solve.board_par(board.deal, board.conditions.vulnerability)
+			if !ok {
+				skipped += 1
+				break judge
+			}
+			par: Maybe(int)
+			if have_par {
+				par = par_ns
+			}
+			append(&judged, Judged{judge_board(board, "", tricks, par, cost), i, slide})
+		} else {
+			skipped += 1
+		}
+		if drawn {
+			slide += 1
+		}
+	}
+	// A table of one board says nothing the board does not.
+	if len(judged) >= 2 {
+		write_match_element(&b, boards, judged[:], skipped)
 	}
 	report_progress(sink, len(boards), len(boards))
 	norn.render_page_epilogue(&b, .Html_Cards)
@@ -97,6 +123,8 @@ render_full_deal_body :: proc(
 	args: ^Args,
 	contract: deal_solve.Contract,
 	has_contract: bool,
+) -> (
+	cost: Maybe(deal_solve.Play_Cost),
 ) {
 	// At the record's dealer and vulnerability (`conditions`), which the par is worked out at too.
 	norn.render_deal_html_cards_at(b, board.deal, board.conditions, board.known)
@@ -120,25 +148,26 @@ render_full_deal_body :: proc(
 		strings.write_string(b, `></div>`)
 	}
 	strings.write_string(b, `<div class="cca-meta" data-known="all" hidden></div>`)
-	write_play_element(b, board)
+	cost = write_play_element(b, board)
 	combo.annotate(b, board.deal, .Html_Cards)
+	return
 }
 
 // The board's recorded play as the hidden `.play` element the card page replays it from, every card solved
 // double dummy (see deal_solve/play_cost.odin). Nothing for a board with no play or no contract. A failed
 // solve still writes the play, without the per-card numbers. The element carries the play's bytes too
-// (`data-pack`), which is what puts it in a share link.
-write_play_element :: proc(b: ^strings.Builder, board: norn.Board) {
+// (`data-pack`), which is what puts it in a share link. Returns the costs, for the match table.
+write_play_element :: proc(b: ^strings.Builder, board: norn.Board) -> (cost: Maybe(deal_solve.Play_Cost)) {
 	contract, has_contract := board.contract.?
 	play, has_play := board.play.?
 	if !has_contract || !has_play || play.count == 0 {
 		return
 	}
-	cost: Maybe(deal_solve.Play_Cost)
 	if c, ok := deal_solve.play_cost(board.deal, contract, play); ok {
 		cost = c
 	}
 	replay.write_play_element(b, board.deal, contract, play, cost)
+	return
 }
 
 // Bake the BLIND (DDS-sampled) advisor grids for BOTH partnerships of a known deal: `{"ns":<sim>,"ew":<sim>}`
@@ -213,7 +242,8 @@ write_blind_sides_json :: proc(
 // `.par` div carrying the CCA slider target and — when --sample is on — the `data-sim` contract grid and
 // `data-sim-leads` opening-lead sub-grids, then the `.combo` analysis blob. combo.annotate reads a full
 // Deal, so it is fed the known pair duplicated into both sides (synth_deal). A non-2-hand board writes a
-// note instead. Reports (does not fail the page) a per-board sampling error to `sink.err`.
+// note instead. Reports (does not fail the page) a per-board sampling error to `sink.err`. `drawn` says whether
+// the board has a slide on the page (a note has none); `cost` is its play's, for a four-hand board with one.
 render_board_body :: proc(
 	b: ^strings.Builder,
 	board: norn.Board,
@@ -221,16 +251,19 @@ render_board_body :: proc(
 	contract: deal_solve.Contract,
 	has_contract: bool,
 	sink: Sink,
+) -> (
+	drawn: bool,
+	cost: Maybe(deal_solve.Play_Cost),
 ) {
 	_, side, ok := combo.analyse_board(board)
 	if !ok {
 		if board_fully_known(board) {
-			render_full_deal_body(b, board, args, contract, has_contract)
-			return
+			return true, render_full_deal_body(b, board, args, contract, has_contract)
 		}
 		strings.write_string(b, `<div class="par">Not a 2-hand board (need declarer + dummy, defenders '-').</div>`)
 		return
 	}
+	drawn = true
 	sd, _, _ := combo.sd_bundle_board(board)
 
 	bs, serr := sample_board(board, side, args, contract, has_contract)
@@ -268,6 +301,7 @@ render_board_body :: proc(
 	sampled.write_advisor_par(b, tgt, side, &bs, named, cons)
 
 	combo.annotate(b, synth_deal(board, side), .Html_Cards)
+	return
 }
 
 // The board's identity, for the page: a hidden `.board-table` the script reads to label the board ("Board 13 ·
@@ -367,7 +401,7 @@ table_heading :: proc(table: norn.Board_Table) -> string {
 }
 
 // Runs of spaces as one ("KOTA  PADANG" as the operator typed it).
-@(private = "file")
+@(private)
 collapse_spaces :: proc(s: string) -> string {
 	fields := strings.fields(s, context.temp_allocator)
 	return strings.join(fields, " ", context.temp_allocator)

@@ -685,13 +685,14 @@ constraints, seeded RNG, ONE CalcDDtable/layout — **no extra solves**, ~1× th
   NEVER two-way (needs the Ace above it in BOTH hands — impossible), so even AQ-opp-JT9 is correctly a
   one-way; missing-KQ / drop-vs-finesse percentage plays are NOT binary misguesses and stay untaxed
   (taxing them would corrupt cold contracts, and there is no single-dummy ground truth here to validate a
-  looser filter against). The tight-tenace + above-in-both-hands filter thus captures exactly the set of
-  genuine binary two-way guesses.
-- **Same-suit multi-guess needs no special handling.** When a suit has two pivots (Q and T), the tight-
-  neighbour geometry GUARANTEES a declarer card (the J) sits between them — adjacent missing honours fail
-  the neighbour test — so they are independent finesses whose misguesses cost their own tricks. The joint
-  model's additive −1-per-misguess is therefore exact for same-suit pivots, same as cross-suit ones
-  (`test_tax_same_suit_double_pivot`).
+  looser filter against). The tight-tenace + above-in-both-hands filter (plus, since 2026-10-17, the
+  finessing card in both hands - see below) captures the genuine binary two-way guesses.
+- **Same-suit multi-guess cannot happen** (corrected 2026-10-17). The filter was "tight tenace + a card
+  above C in both hands", which flagged KJ85 opposite A4 and AJ opposite K9 - one-way finesses, the second
+  not even a guess (two doubletons take two tricks). A two-way finesse needs the finessing card in each
+  hand too: each holds a card of the run declarer holds just below C (AJx opposite KTx). With that, two
+  pivots in one suit are impossible: with the T missing the run below the Q is the J alone, in one hand
+  (`test_tax_one_way_is_not_a_guess`). `combo`'s `combination_note` uses the same rule.
 - **Why only TWO-WAY guesses.** A one-way (forced) finesse is NOT a guess — declarer just takes it and
   wins exactly when the DD solver does — so the −1-on-misguess penalty would over-tax it. Restricting to
   two-way tenaces is what keeps a COLD contract cold (the estimator's whole advantage over naive PIMC).
@@ -1189,6 +1190,107 @@ already-tested combo describers):**
 only for a teaching-grade "textbook optimal line is X" oracle); entry-aware line selection (C3 — medium,
 realism redundant, per-suit entry budget is the cross-suit fudge DDS does correctly); Option B tree/
 conditional narration (honest but fuzzy to render, partial coverage). These stay parked above.
+
+## The finesse lines were broken (found and fixed 2026-10-17) — why it survived, and the guards now in place
+
+**Found by a user** looking at a 2-hand page: clubs KJ85 opposite A4 recommended "duck", and the ⓘ note called it
+a two-way finesse. It is one finesse: low to the jack.
+
+**What was wrong** — five faults, in two families:
+
+1. The finesse lines (`combo/lines.odin`) did not finesse. `finesse_insert` put in the cheapest card that beat the
+   second hand (the 5 of KJ85 over West's 2), not the finesse card; it overtook its partner's winning top card
+   (double-dummy West threw the queen under South's ace, North "covered" with the king); `line_finesse` aimed at
+   the hand with the highest card (the A4) rather than the hand with the tenace; and a line chose its target from
+   the CURRENT holdings, so after the jack won on AJ2 opposite KT3 it switched sides, finessed the ten through the
+   other defender and blocked the ace and king. On KJ85/A4 the finesse made 2.1 tricks, against 2.5 really; the
+   duck (2.36) won the comparison.
+2. The two-way rule (the ⓘ note, `combo.combination_note`, and the misguess tax, `sampled.two_way_guess_pivots`)
+   asked only for a card above the missing honour in each hand; it needs a card to finesse WITH in each hand too
+   (AJx opposite KTx). And it named guesses that cost nothing (QJ86 opposite AK972: a 4-0 split shows on the first
+   round) and finesses in suits that take the same tricks every way (AJ opposite KT as doubletons). The tax priced
+   those guesses, so the page's "achievable" figure was docked for guesses that do not exist (−15% on the board
+   that was reported).
+
+**Why it survived** — none of these failed loudly, and nothing compared the lines with an independent answer:
+
+- **Double-dummy defence hides a broken line.** The defenders play perfectly against the line, so a senseless
+  card is not a crash or nonsense output: it just costs a trick, the line scores low, and another line wins with a
+  plausible label. "Duck" on KJ85/A4 looked like a choice, not a bug.
+- **The tests confirmed the author's intent on hand-picked examples.** `test_combination_note` used AJ/KT as THE
+  two-way example — a holding that is two tricks however it is played. The tax test pinned "K9 opposite AJ has two
+  pivots", the bug's own output. Examples chosen to show a rule working cannot show the rule is wrong.
+- **The oracle existed and was used as a report, not a gate.** The exact single-dummy search
+  (`sd_optimal_distribution`) said for months that it beat the fixed lines — "AQT9542/J6: 6.45 against 6.27", "75 of
+  200 beat the best fixed line" — and that was read as the limit of fixed lines, the reason to build the solver
+  table. Much of it was this bug: AQT9542/J6 is now 6.452 both ways. A gap to the oracle was never asked "is this
+  a bug?".
+- **One rule, three copies.** The two-way test was written twice (combo's note "mirrors" sampled's tax, by
+  comment), and "is there a finesse" a third time (`holding_has_real_finesse`). Copies agree with each other, so
+  they validate each other — including the shared bug.
+- **Lines are pure functions of the current cards.** With no memory of the plan, a "finesse line" re-decided its
+  target each trick; nothing said a line must keep to the finesse it started.
+
+**The guards now in place:**
+
+| guard | where | what it catches |
+|---|---|---|
+| textbook combinations | `combo/lines_test.odin` `test_textbook_combinations` | the recommended line and its odds on the classic cases (KJ85/A4, AQ/xx, the double finesse 76/24, two-way 50/50, 8-ever, 9-never) |
+| a rule no line may break | `test_no_line_overtakes_a_winning_top_card` | every second card of every line on every layout of 300 random holdings: no overtaking partner's winning top card |
+| the ratchet against the optimum | `test_the_fixed_lines_hold_their_ground` | 40 pinned holdings: the best fixed line may not fall below its recorded mean, nor rise above the exact optimum (an evaluator bug) |
+| the sweep | `just combo-line-sweep` in norn (`cmd/line_sweep.odin`) | the fixed lines against the exact optimum over random holdings: the average shortfall and the worst holdings — a gap that should not be there is a bug; the rest is the work list for new lines |
+| one definition | `combo.two_way_finesse_ranks` / `two_way_guesses` (note and tax), `finesse_card` (lines, label, tooltip) | copies drifting, or agreeing on a bug |
+| meaning, not geometry | `two_way_guesses` needs a blind cost; `combination_note` needs something to play for | patterns named where nothing is at stake |
+
+**Modelling change:** a line now sees the starting holding (`Sd_View.start`, the lead's `start`), so the finesse
+lines fix their target at the start (`finesse_target`: the hand with the tenace) and keep to it, then cash.
+
+**Measured** (`just combo-line-sweep`, 400 random holdings, the 265 the search solves exactly): mean shortfall
+against the optimum 0.030 → 0.023 tricks; holdings more than 0.02 short 78 → 70; 21 holdings better, 4 a little
+worse (≤ 0.06 — the old code's quirks happened to unblock there).
+
+**The deep finesse (fixed 2026-10-18).** After the repair `line_finesse` still recommended CASHING on AQJ952
+opposite 8743, a textbook repeated finesse: it inserts the cheapest finesse card, and the 9 is one (against the
+ten), so it took the deep finesse first, and again after the jack lost to East's king — 5.0 tricks against 5.5.
+Neither rule is right everywhere (with AQT opposite 432 the deep finesse first IS the book line), so a tenth line,
+`line_finesse_high`, finesses only against the highest card missing at the start (`top_finesse_card`, the
+cheapest card of the run below it) and then cashes; the comparison picks. AQJ952/8743 5.26 → 5.50 and AQJ64
+opposite 9852 4.08 → 4.40, both now the exact optimum. The second had been put on the work list as "a spot-card
+choice: the best play leads the nine" — a wrong diagnosis of this same bug, the lesson above repeated once more.
+On the sweep it moves 3 random holdings (none worse), mean 0.0222 → 0.0212 (seed 12345, 225 solved). The baked
+solver table did not need a re-bake for it: a new fixed line only raises the fixed lines, so every entry is
+still a valid floor, and the comparison simply no longer picks a few of them.
+
+**Two missing lines, and a tooltip that named the wrong card (2026-10-18).** The sweep's next gaps were not
+bugs in a line but plays no line made, found by playing each holding layout by layout against the optimum
+(`just combo-line-probe J3/KT9842`, `combo/line_probe.odin`: the layouts where a line falls short are where to
+trace it):
+
+- `line_finesse_then_run` - one finesse round, then run the honour. J3 opposite KT9842: low to the 8, then the J.
+  `line_finesse` overtook the J with the K on the second round (it is not a top card while the Q is out) and
+  `line_run` ran it on the first. 4.16 → 4.37, the optimum on every layout.
+- `line_cash_then_discover` - a DISCOVERY: cash one top card, keeping the tenace, and when a defender shows out,
+  finesse through the other (who holds everything out), cashing once one card is left. AKJT86 opposite 9432,
+  KJ8542 opposite A976, K98754 opposite AJT2: 5.78 → 5.89, the optimum. It needed a MODELLING change: a line saw
+  which cards had been played but not who had shown out, so `Sd_View.shown` and the lead's `shown` carry it
+  (`SHOWN_E`/`SHOWN_W`), and the evaluator's memo key carries it too - the memo is shared across every East-West
+  split, and two splits can reach the same holdings with different show-outs. `test_the_shared_memo_matches_a_fresh_one`
+  holds every line to a fresh memo on every split of 200 random holdings, so a line reading anything the key
+  leaves out fails there rather than silently.
+- `describe_finesse` (the tooltip) named the highest card below the top missing honour, not the card the line
+  puts in: "play the K" on J3/KT9842 (the line plays the 8), "play the Q" on AQT/432 (the T). It now uses the
+  lines' own rule (`finesse_card`, `top_finesse_card` for `finesse-high`) and names every card that must sit in
+  front of it ("It wins the trick when the K and J both sit with the opponent who plays before your high hand").
+
+Measured on the same sweep (seed 12345, 225 holdings): `finesse-then-run` 8 holdings better, the discovery 20
+more, none worse; mean shortfall 0.0212 → 0.0128, holdings more than 0.02 short 61 → 44. From the start of
+the repair: **0.030 → 0.013**. A third prototype of the same session, "duck, then finesse the other way", moved
+nothing and was dropped. The table needed a re-bake this time (the drift guard caught a class a fixed line now
+matched).
+
+**What is left on the work list** (`just combo-line-sweep`'s top gaps): K74 opposite Q9865 (0.20: duck unless
+West plays the J or T - a play that depends on which card was shown, which no fixed line reads), A7432
+opposite JT5 (0.15), and a tail of 0.05-0.11 holdings (T32 opposite KJ98654, AJ9853 opposite Q764).
 
 ## Phase-1 bug fixed while building brick 3 (affects shipped output)
 
