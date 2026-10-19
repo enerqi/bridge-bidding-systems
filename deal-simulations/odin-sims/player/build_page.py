@@ -104,7 +104,7 @@ PAGE = r"""<!doctype html>
 				for (let k = 0; k < n; k++) out.set(dds.table(message.batch.subarray(16 * k, 16 * k + 16)), 20 * k);
 				self.postMessage({ board: message.board, result: out });
 			} else {
-				const result = message.cards ? dds.table(message.cards) : dds.solve(message.positions, message.count);
+				const result = message.cards ? dds.table(message.cards) : dds.solve(message.positions, message.count, message.playout);
 				self.postMessage({ board: message.board, result });
 			}
 		};
@@ -254,9 +254,9 @@ PAGE = r"""<!doctype html>
 		const workerPrelude = "self.window = self;\nself.document = { getElementById: () => null };\n";
 		let combosDone = 0;
 		// The card-combination analysis is a board's own work (~65 ms a board in a desktop's wasm), so boards can be
-		// done side by side: a worker per processor, less two (the DDS lane and the page), at most four (each holds
-		// a copy of this module and its memory). One worker did 48 boards in turn.
-		const comboWorkers = Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 2) - 2));
+		// done side by side: a worker per processor, less two (the DDS lane and the page), at most eight. Each holds
+		// a copy of this module and ~9 MB of memory. 48 boards took 3.2s on one worker, 0.84s on four, 0.51s on eight.
+		const comboWorkers = Math.max(1, Math.min(8, (navigator.hardwareConcurrency || 2) - 2));
 		const comboLane = lane({
 			workers: comboWorkers,
 			source: () => workerPrelude + odinSource + "\nconst start = " + start.toString() + ";\nconst analysis = " +
@@ -281,40 +281,50 @@ PAGE = r"""<!doctype html>
 		// Board `i`'s recorded play as the positions DDS solves (`replay.positions`, 96 bytes each), or null.
 		const playPositions = (i) => {
 			const count = wasm.pl_play_positions(i);
-			return count ? { positions: new Uint8Array(wasm.memory.buffer, wasm.pl_positions(), 96 * count).slice(), count } : null;
+			return count ? { positions: new Uint8Array(wasm.memory.buffer, wasm.pl_positions(), 96 * count).slice(), count,
+				playout: wasm.pl_playout_wanted() === 1 } : null;
 		};
 		// The DDS lane's two kinds of job: a board's table (0), and its play's positions (1).
 		const ddsJob = (id) => (id < boards ? { board: id, cards: tableDeal(id) } : { board: id, ...playPositions(id - boards) });
+		// Board `board`'s explorer, from the trick table in `pl_tricks()`.
+		const addExact = (board) => {
+			const length = wasm.pl_exact(board); // first: it may move the buffer `pl_piece` points at
+			const html = new TextDecoder().decode(new Uint8Array(wasm.memory.buffer, wasm.pl_piece(), length).slice());
+			exacts[board] = new TextEncoder().encode(html);
+			if (typeof window.ncAddSim === "function") window.ncAddSim(board, html);
+		};
 		// The same for DDS: with the analysis spread over workers, a deal's table (~0.2s) was what the reader waited
-		// for. Each DDS worker holds ~50 MB.
+		// for. A table is a bigger job than a board's analysis and DDS's instance is smaller than the player's, so
+		// this pool may be twice the size: one worker per processor less two, at most eight (each holds ~50 MB).
+		// Four workers took 3.4s for 48 boards with both lanes running.
+		const ddsWorkers = Math.max(1, Math.min(8, (navigator.hardwareConcurrency || 2) - 2));
 		const ddsLane = lane({
 			kinds: 2,
-			workers: comboWorkers,
+			workers: ddsWorkers,
 			source: () => ddsSource + "\n(" + ddsWorker.toString() + ")();",
 			init: async () => ({ module: await ddsCompiled() }),
 			job: ddsJob,
 			here: async (id) => {
 				ddsHere = ddsHere || await ddsStart(await ddsCompiled());
 				const message = ddsJob(id);
-				return message.cards ? ddsHere.table(message.cards) : ddsHere.solve(message.positions, message.count);
+				return message.cards ? ddsHere.table(message.cards) : ddsHere.solve(message.positions, message.count, message.playout);
 			},
 			take: (id, result) => {
 				if (id >= boards) {
-					const board = id - boards;
-					new Uint8Array(wasm.memory.buffer, wasm.pl_futures(), result.length).set(result);
-					const length = wasm.pl_play(board); // first: it may move the buffer `pl_piece` points at
+					// The answers, then the play-out's cards (dds.js `solve`).
+					const board = id - boards, answers = 216 * wasm.pl_play_positions(board);
+					new Uint8Array(wasm.memory.buffer, wasm.pl_futures(), answers).set(result.subarray(0, answers));
+					const cards = result.subarray(answers);
+					new Uint8Array(wasm.memory.buffer, wasm.pl_playout(), cards.length).set(cards);
+					const length = wasm.pl_play(board, cards.length / 2); // first: it may move the buffer `pl_piece` points at
 					if (!length) return; // answers that make no sense: the page keeps the play it has
 					const html = new TextDecoder().decode(new Uint8Array(wasm.memory.buffer, wasm.pl_piece(), length).slice());
 					plays[board] = new TextEncoder().encode(html);
 					if (typeof window.ncAddPlay === "function") window.ncAddPlay(board, html);
 					return;
 				}
-				const board = id, tricks = result;
-				new Int32Array(wasm.memory.buffer, wasm.pl_tricks(), 20).set(tricks);
-				const length = wasm.pl_exact(board); // first: it may move the buffer `pl_piece` points at
-				const html = new TextDecoder().decode(new Uint8Array(wasm.memory.buffer, wasm.pl_piece(), length).slice());
-				exacts[board] = new TextEncoder().encode(html);
-				if (typeof window.ncAddSim === "function") window.ncAddSim(board, html);
+				new Int32Array(wasm.memory.buffer, wasm.pl_tricks(), 20).set(result);
+				addExact(id);
 			},
 		});
 		if (analyse) {
@@ -322,7 +332,9 @@ PAGE = r"""<!doctype html>
 				for (const i of list) {
 					if (i < 0 || i >= boards) continue;
 					comboLane.want(i);
-					if (wasm.pl_table_deal(i)) ddsLane.want(i);
+					// A link with par carries the table already: the explorer is written now, with no solve.
+					if (wasm.pl_par_tricks(i)) { if (!exacts[i]) addExact(i); }
+					else if (wasm.pl_table_deal(i)) ddsLane.want(i);
 				}
 				showNote();
 				comboLane.pump();

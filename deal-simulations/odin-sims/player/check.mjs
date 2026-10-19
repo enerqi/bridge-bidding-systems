@@ -111,10 +111,20 @@ for (const name of ["plain", "analysed", "par", "played", "twohand"]) {
 	}
 	if (same === boards) console.log(`ok    the double-dummy explorer: ${boards} whole deals solved by DDS in wasm (${(ms / boards).toFixed(0)}ms each) - the advisor's grids`);
 	else { failures++; console.log(`FAIL  the double-dummy explorer: ${same} of ${boards} boards match`); }
+	// The same grids from the trick tables the link's par carries (`pl_par_tricks`), which the page uses instead
+	// of solving.
+	let fromPar = 0;
+	for (let i = 0; i < boards; i++) {
+		if (!wasm.pl_par_tricks(i)) continue;
+		const length = wasm.pl_exact(i);
+		if (new TextDecoder().decode(new Uint8Array(wasm.memory.buffer, wasm.pl_piece(), length).slice()) === want[i]) fromPar++;
+	}
+	if (fromPar === boards) console.log(`ok    the explorer from the link's par: ${boards} boards, no solve - the same grids`);
+	else { failures++; console.log(`FAIL  the explorer from the link's par: ${fromPar} of ${boards} boards match`); }
 
 	// RECORDED PLAY (`played`, a `v2.` link): the page at once with each play unsolved, then what every card cost -
 	// each position solved by DDS in wasm one `SolveBoard` at a time (`pl_play_positions` -> DDS -> `pl_futures` ->
-	// `pl_play`) - must be the `.play` element the native advisor writes from one batched native solve
+	// `pl_play`), and a play the record stops short of played out to the last card - must be the `.play` element the native advisor writes from one batched native solve
 	// (`play.txt`). The explorer on a played board names the contract played (`played-exact.txt`).
 	const playFragment = new TextEncoder().encode(fs.readFileSync(path.join(dir, "played.txt"), "utf8"));
 	const wantPlays = fs.readFileSync(path.join(dir, "play.txt"), "utf8").split("\n");
@@ -122,17 +132,21 @@ for (const name of ["plain", "analysed", "par", "played", "twohand"]) {
 	const at = wasm.pl_alloc(playFragment.length);
 	new Uint8Array(wasm.memory.buffer, at, playFragment.length).set(playFragment);
 	const played = wasm.pl_open(at, playFragment.length);
-	let plays = 0, playsSame = 0, exactsSame = 0, positions = 0, playMs = 0;
+	let plays = 0, playsSame = 0, exactsSame = 0, positions = 0, playMs = 0, playouts = 0;
 	for (let i = 0; i < played; i++) {
 		const count = wasm.pl_play_positions(i);
 		if (count > 0) {
 			plays++;
 			positions += count;
 			const t0 = performance.now();
-			const futures = dds.solve(new Uint8Array(wasm.memory.buffer, wasm.pl_positions(), 96 * count).slice(), count);
+			const playout = wasm.pl_playout_wanted() === 1;
+			const result = dds.solve(new Uint8Array(wasm.memory.buffer, wasm.pl_positions(), 96 * count).slice(), count, playout);
 			playMs += performance.now() - t0;
-			new Uint8Array(wasm.memory.buffer, wasm.pl_futures(), futures.length).set(futures);
-			const length = wasm.pl_play(i);
+			if (playout) playouts++;
+			new Uint8Array(wasm.memory.buffer, wasm.pl_futures(), 216 * count).set(result.subarray(0, 216 * count));
+			const cards = result.subarray(216 * count);
+			new Uint8Array(wasm.memory.buffer, wasm.pl_playout(), cards.length).set(cards);
+			const length = wasm.pl_play(i, cards.length / 2);
 			const got = new TextDecoder().decode(new Uint8Array(wasm.memory.buffer, wasm.pl_piece(), length).slice());
 			if (got === wantPlays[i]) playsSame++;
 			else if (playsSame + 1 >= plays) console.log(`FAIL  board ${i + 1}'s play costs:\n  wasm:   ${got.slice(0, 300)}\n  native: ${wantPlays[i].slice(0, 300)}`);
@@ -144,7 +158,7 @@ for (const name of ["plain", "analysed", "par", "played", "twohand"]) {
 		const length = wasm.pl_exact(i);
 		if (new TextDecoder().decode(new Uint8Array(wasm.memory.buffer, wasm.pl_piece(), length).slice()) === wantExacts[i]) exactsSame++;
 	}
-	if (plays > 0 && playsSame === plays) console.log(`ok    the play-through costs: ${plays} recorded plays, ${positions} positions solved by DDS in wasm (${(playMs / plays).toFixed(0)}ms a play) - the advisor's`);
+	if (plays > 0 && playsSame === plays) console.log(`ok    the play-through costs: ${plays} recorded plays, ${positions} positions solved by DDS in wasm (${(playMs / plays).toFixed(0)}ms a play), ${playouts} of them played out to the last card - the advisor's`);
 	else { failures++; console.log(`FAIL  the play-through costs: ${playsSame} of ${plays} plays match`); }
 	if (exactsSame === played) console.log(`ok    the explorer on played boards names the contract played (${played} boards)`);
 	else { failures++; console.log(`FAIL  the explorer on played boards: ${exactsSame} of ${played} match`); }

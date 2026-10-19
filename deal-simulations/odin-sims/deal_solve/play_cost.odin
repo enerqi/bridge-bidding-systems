@@ -10,7 +10,8 @@ package deal_solve
 	slideshow: "trick 3, East's ♦6 cost a trick — the ♦K kept it".
 
 	One position per card, all solved in ONE batched call (`SolveAllBoardsBin`, which spreads them over DDS's
-	threads) — a whole board is at most 52 positions, under the batch's 200. Mode `.Auto`, not the
+	threads) — a whole board is at most 52 positions, under the batch's 200. Where the record stops early (a
+	claim), the play then goes on to the last card double dummy, one solve a card (`playout`). Mode `.Auto`, not the
 	`.Auto_Skip_Single` used elsewhere: skipping leaves a forced card's score unset (-2), and a forced card
 	is still a position whose value the trajectory needs.
 
@@ -49,7 +50,44 @@ play_cost :: proc(deal: norn.Deal, contract: norn.Contract, play: norn.Play) -> 
 		return {}, false
 	}
 	futures := ([^]replay.Dds_Future)(&solved.solvedBoard[0])[:positions.count]
-	return replay.costs(positions, futures, play)
+	cost = replay.costs(positions, futures, play) or_return
+	if play.count < norn.DECK_SIZE {
+		playout(deal, contract, play, &futures[play.count], &cost, boards, solved)
+	}
+	return cost, true
+}
+
+// The rest of the play double dummy, from where the record stops (`replay.playout_play`): one solve a card,
+// each after the one before. `fut` is DDS's answer for the position after the record's last card, which the
+// batch above solved already. A solve that fails leaves no play-out at all rather than half of one.
+@(private = "file")
+playout :: proc(
+	deal: norn.Deal,
+	contract: norn.Contract,
+	play: norn.Play,
+	fut: ^replay.Dds_Future,
+	cost: ^Play_Cost,
+	boards: ^dds.Boards,
+	solved: ^dds.Solved_Boards,
+) {
+	po := replay.playout_start(deal, contract, play)
+	answer := fut^
+	boards.noOfBoards = 1
+	for {
+		next, more := replay.playout_play(&po, &answer, cost)
+		if !more {
+			break
+		}
+		boards.deals[0] = transmute(dds.Deal)next
+		if dds.SolveAllBoardsBin(boards, solved) != .NO_FAULT {
+			cost.out_count = 0
+			return
+		}
+		answer = (^replay.Dds_Future)(&solved.solvedBoard[0])^
+	}
+	if cost.count + cost.out_count < norn.DECK_SIZE {
+		cost.out_count = 0 // an answer of no use stopped it short
+	}
 }
 
 // The `data-play` JSON (see `replay.write_play_json`).

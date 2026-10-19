@@ -80,6 +80,41 @@ test_play_cost_whole_play :: proc(t: ^testing.T) {
 	testing.expect_value(t, int(cost.value[norn.DECK_SIZE]), walk.declarer_tricks)
 }
 
+// Where the record stops (a claim after 29 cards on O13, 49 on O14), the play goes on to the last card double
+// dummy: every play-out card is legal and the declaring side ends with exactly the double-dummy total at the
+// claim. A whole play has no play-out.
+@(test)
+test_play_cost_plays_out_a_claim :: proc(t: ^testing.T) {
+	init()
+	for record in ([]string{O13, O14}) {
+		board, _ := norn.parse_lin_deal(record)
+		contract := board.contract.?
+		play := board.play.?
+		cost, ok := play_cost(board.deal, contract, play)
+		testing.expect(t, ok)
+		testing.expect_value(t, cost.out_count, norn.DECK_SIZE - play.count)
+		walk := norn.play_tricks(board.deal, contract, play)
+		for k in 0 ..< cost.out_count {
+			testing.expect_value(t, norn.play_walk_card(&walk, cost.out[k]), norn.Play_Error.None)
+		}
+		testing.expect_value(t, walk.trick_count, norn.PLAY_TRICKS)
+		testing.expect_value(t, walk.declarer_tricks, int(cost.value[play.count]))
+
+		whole := play
+		for k in 0 ..< cost.out_count {
+			whole.cards[whole.count] = cost.out[k]
+			whole.count += 1
+		}
+		again, aok := play_cost(board.deal, contract, whole)
+		testing.expect(t, aok)
+		testing.expect_value(t, again.out_count, 0)
+		// No play-out card costs anything: they are best cards.
+		for k in play.count ..< norn.DECK_SIZE {
+			testing.expectf(t, again.cost[k] == 0, "play-out card %d cost %d", k, again.cost[k])
+		}
+	}
+}
+
 // The `data-play` bake: who played what, trick winners, the hands, the trajectory, and the best cards only
 // where a card cost a trick (declarer's ♦8 at trick 3 here).
 @(test)
@@ -97,7 +132,8 @@ test_play_json :: proc(t: ^testing.T) {
 			`{"dec":"W","con":"2D","hands":{"N":"42.AQ986.AT74.A6",`,
 			`"c":["4S","5S","KS","AS","QD",`,
 			`"by":"NESWWNESWNESSWNE`,
-			`"win":"WWSNNNE"`,
+			`"win":"WWSNNNE`, // then the play-out's tricks
+			`"rec":29,`,
 			`"dd":[8,8,8,8,8,8,8,8,8,7,`,
 			`"best":{"8":[`,
 			`"res":7}`,

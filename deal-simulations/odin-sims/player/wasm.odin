@@ -170,6 +170,27 @@ pl_table_deal :: proc "c" (board: i32) -> rawptr {
 	return &table_deal
 }
 
+// A link with par already carries the board's whole trick table (`share`'s par bytes, DDS's answer when the page
+// was made), so its explorer needs no solve: this puts that table into `pl_tricks()` and answers 1, or 0 when the
+// link has no par for the board (then DDS solves `pl_table_deal`).
+@(export)
+pl_par_tricks :: proc "c" (board: i32) -> i32 {
+	context = global_context
+	if board < 0 || int(board) >= len(shared.boards) || shared.boards[board].known != share.ALL_SEATS {
+		return 0
+	}
+	par, has := shared.boards[board].par.?
+	if !has {
+		return 0
+	}
+	for strain in par_caption.Strain {
+		for hand in par_caption.Hand {
+			tricks_in[int(strain) * 4 + int(hand)] = i32(par.tricks[strain][hand])
+		}
+	}
+	return 1
+}
+
 @(export)
 pl_tricks :: proc "c" () -> rawptr {
 	return &tricks_in
@@ -223,8 +244,14 @@ exact_strain :: proc(strain: norn.Contract_Strain) -> par_caption.Strain {
 // `pl_futures()` (DDS's `futureTricks`, 216 bytes each) and `pl_play(i)` writes the board's `.play` element with
 // the costs into `piece` - `replay`'s reading and writing, the native advisor's too. 0 when the answers make no
 // sense, and the page keeps the play it has.
+//
+// When the record stops before the last card (`pl_playout_wanted()` after `pl_play_positions`), DDS also plays
+// the rest out (dds.js, `replay.playout_card`'s rule), and the page writes those cards into `pl_playout()` (DDS's
+// suit 0-3 and rank 2-14, two bytes a card) and passes their count to `pl_play`.
 positions: replay.Positions
 futures: [norn.DECK_SIZE + 1]replay.Dds_Future
+playout_wanted: i32
+playout_cards: [2 * norn.DECK_SIZE]u8
 
 @(export)
 pl_play_positions :: proc "c" (board: i32) -> i32 {
@@ -238,7 +265,18 @@ pl_play_positions :: proc "c" (board: i32) -> i32 {
 		return 0
 	}
 	positions = replay.positions(shared.boards[board].deal, p.contract, p.play)
+	playout_wanted = 1 if positions.count > p.play.count else 0
 	return i32(positions.count)
+}
+
+@(export)
+pl_playout_wanted :: proc "c" () -> i32 {
+	return playout_wanted
+}
+
+@(export)
+pl_playout :: proc "c" () -> rawptr {
+	return &playout_cards
 }
 
 @(export)
@@ -252,7 +290,7 @@ pl_futures :: proc "c" () -> rawptr {
 }
 
 @(export)
-pl_play :: proc "c" (board: i32) -> i32 {
+pl_play :: proc "c" (board: i32, playout: i32) -> i32 {
 	context = global_context
 	strings.builder_reset(&piece)
 	if pl_play_positions(board) == 0 {
@@ -262,6 +300,23 @@ pl_play :: proc "c" (board: i32) -> i32 {
 	cost, ok := replay.costs(&positions, futures[:positions.count], p.play)
 	if !ok {
 		return 0
+	}
+	// The play-out, card by card: every card must be playable and it must reach the last card, or there is none.
+	if playout_wanted == 1 {
+		po := replay.playout_start(shared.boards[board].deal, p.contract, p.play)
+		for k in 0 ..< int(clamp(playout, 0, norn.DECK_SIZE)) {
+			suit, rank := int(playout_cards[2 * k]), int(playout_cards[2 * k + 1])
+			if suit > 3 || rank < 2 || rank > 14 {
+				break
+			}
+			card := norn.make_card(norn.Suit(3 - suit), norn.Rank(rank - 2))
+			if _, more := replay.playout_add(&po, card, &cost); !more {
+				break
+			}
+		}
+		if cost.count + cost.out_count < norn.DECK_SIZE {
+			cost.out_count = 0
+		}
 	}
 	share.render_board_play(&piece, shared.boards[board], cost)
 	return i32(strings.builder_len(piece))

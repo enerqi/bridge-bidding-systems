@@ -38,16 +38,78 @@ async function ddsStart(module) {
 		},
 		// `count` positions, each DDS's `deal` struct (96 bytes, back to back in `positions`), solved for every
 		// legal card with its score (`SolveBoard` target -1, solutions 3, mode 1: `replay`'s DDS_* constants).
-		// The answers are DDS's `futureTricks`, 216 bytes each, back to back.
-		solve(positions, count) {
-			const out = new Uint8Array(216 * count);
-			for (let i = 0; i < count; i++) {
-				new Uint8Array(memory.buffer, position, 96).set(positions.subarray(96 * i, 96 * i + 96));
+		// The answers are DDS's `futureTricks`, 216 bytes each, back to back. With `playout` (the record stops
+		// before the last card, and the last position is the one after it), the play then goes on to the last
+		// card double dummy, one solve a card - `replay.playout_play`'s steps - and its cards follow the answers,
+		// two bytes each (DDS's suit 0-3 and rank 2-14).
+		solve(positions, count, playout) {
+			const answers = new Uint8Array(216 * count), cards = [];
+			const ask = () => {
 				const status = dds.SolveBoard(position, -1, 3, 1, future, 0);
 				if (status !== 1) throw new Error("DDS could not solve a position (" + status + ")");
-				out.set(new Uint8Array(memory.buffer, future, 216), 216 * i);
+			};
+			for (let i = 0; i < count; i++) {
+				new Uint8Array(memory.buffer, position, 96).set(positions.subarray(96 * i, 96 * i + 96));
+				ask();
+				answers.set(new Uint8Array(memory.buffer, future, 216), 216 * i);
 			}
+			if (playout && count > 0) {
+				// `position` still holds the last position and `future` its answer.
+				for (;;) {
+					const [suit, rank] = playoutCard(new Int32Array(memory.buffer, future, 54));
+					if (suit < 0) break;
+					cards.push(suit, rank);
+					if (!playCard(new Int32Array(memory.buffer, position, 24), suit, rank)) break;
+					ask();
+				}
+			}
+			const out = new Uint8Array(answers.length + cards.length);
+			out.set(answers);
+			out.set(cards, answers.length);
 			return out;
 		},
 	};
+}
+
+// The card the play-out plays where DDS answered `f` (`futureTricks` as 54 i32: nodes, cards, suit[13],
+// rank[13], equals[13], score[13]): among the best-scored cards the first suit in DDS's order and its highest
+// card - `replay.playout_card`'s rule. [-1, 0] when there is none.
+function playoutCard(f) {
+	const n = Math.max(0, Math.min(13, f[1])), SUIT = 2, RANK = 15, SCORE = 41;
+	let max = -1, best = -1;
+	for (let i = 0; i < n; i++) max = Math.max(max, f[SCORE + i]);
+	if (max < 0) return [-1, 0];
+	for (let i = 0; i < n; i++) {
+		const suit = f[SUIT + i], rank = f[RANK + i];
+		if (f[SCORE + i] !== max || suit < 0 || suit > 3 || rank < 2 || rank > 14) continue;
+		if (best < 0 || suit < f[SUIT + best] || (suit === f[SUIT + best] && rank > f[RANK + best])) best = i;
+	}
+	return best < 0 ? [-1, 0] : [f[SUIT + best], f[RANK + best]];
+}
+
+// Play DDS's card (suit 0-3, rank 2-14) at the position `d` (DDS's `deal` as 24 i32: trump, first,
+// currentTrickSuit[3], currentTrickRank[3], remainCards[hand][suit]) by the hand on play: the card leaves the
+// hand, joins the trick, and a fourth card gives the trick to its winner, who leads next. False once no card
+// is left (the play-out is over: nothing more to solve).
+function playCard(d, suit, rank) {
+	const TRUMP = 0, FIRST = 1, TSUIT = 2, TRANK = 5, REMAIN = 8;
+	let k = 0;
+	while (k < 3 && d[TRANK + k] !== 0) k++;
+	const hand = (d[FIRST] + k) % 4;
+	d[REMAIN + 4 * hand + suit] &= ~(1 << rank);
+	if (k < 3) {
+		d[TSUIT + k] = suit;
+		d[TRANK + k] = rank;
+	} else {
+		const suits = [d[TSUIT], d[TSUIT + 1], d[TSUIT + 2], suit], ranks = [d[TRANK], d[TRANK + 1], d[TRANK + 2], rank];
+		let win = 0;
+		for (let j = 1; j < 4; j++) {
+			const trumps = suits[j] === d[TRUMP], winTrumps = suits[win] === d[TRUMP];
+			if ((trumps && !winTrumps) || (suits[j] === suits[win] && ranks[j] > ranks[win])) win = j;
+		}
+		d[FIRST] = (d[FIRST] + win) % 4;
+		for (let j = 0; j < 3; j++) d[TSUIT + j] = d[TRANK + j] = 0;
+	}
+	for (let i = 0; i < 16; i++) if (d[REMAIN + i] !== 0) return true;
+	return false;
 }

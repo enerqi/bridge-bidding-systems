@@ -37,6 +37,10 @@ FINISHED trick, `hands` the deal as PBN `S.H.D.C` per seat so the page can shrin
 `dd` (count+1 values, see `Play_Cost.value`), `cost` and `best` (only for cards that cost something) are
 present only when the play was solved; `res` only when the record states one; `err`/`erri` only when the
 record's play was cut at a bad card (`erri` = position of that card in the record).
+
+A solved play that stops before the last card goes on to the end double dummy (`Play_Cost.out`): then `c`,
+`by` and `win` run to the last card, and `rec` is how many of them the record has. `dd`, `cost` and `best`
+still cover the record's cards only.
 */
 write_play_json :: proc(
 	b: ^strings.Builder,
@@ -45,6 +49,15 @@ write_play_json :: proc(
 	play: norn.Play,
 	cost: Maybe(Play_Cost),
 ) {
+	// The record's cards, then the play-out's.
+	shown := play
+	recorded := play.count
+	if c, solved := cost.?; solved {
+		for k in 0 ..< c.out_count {
+			shown.cards[shown.count] = c.out[k]
+			shown.count += 1
+		}
+	}
 	strings.write_byte(b, '{') // never in a format string: `{` is an argument reference to fmt
 	fmt.sbprintf(
 		b,
@@ -63,13 +76,13 @@ write_play_json :: proc(
 		strings.write_byte(b, '"')
 	}
 	strings.write_string(b, `},"c":[`)
-	for i in 0 ..< play.count {
+	for i in 0 ..< shown.count {
 		if i > 0 {
 			strings.write_byte(b, ',')
 		}
-		fmt.sbprintf(b, `"%s"`, card_word(play.cards[i]))
+		fmt.sbprintf(b, `"%s"`, card_word(shown.cards[i]))
 	}
-	walk := norn.play_tricks(deal, contract, play)
+	walk := norn.play_tricks(deal, contract, shown)
 	strings.write_string(b, `],"by":"`)
 	for t in 0 ..< walk.trick_count {
 		trick := walk.tricks[t]
@@ -84,6 +97,9 @@ write_play_json :: proc(
 		}
 	}
 	strings.write_byte(b, '"')
+	if shown.count > recorded {
+		fmt.sbprintf(b, `,"rec":%d`, recorded)
+	}
 	if c, solved := cost.?; solved {
 		strings.write_string(b, `,"dd":[`)
 		for i in 0 ..= c.count {

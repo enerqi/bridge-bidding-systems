@@ -2003,6 +2003,35 @@ check_the_play_through :: proc(view: ^sa.Windowless_View) {
 	check(xl_h * 10 >= line_h * 13, fmt.tprintf("XL cards make a suit line taller (%dpx -> %dpx)", line_h, xl_h))
 	press_cards(view, root, "", 120)
 
+	// THE CLAIM PLAYED OUT: this record stops at a claim after 29 cards, and the solved play goes on double
+	// dummy. `end` stops at the claim first, then goes to the last card, drawn as the play-out.
+	note :: proc(root: sa.Element) -> string {
+		el, err := sa.select_first(root, ".playbar .pnote")
+		if err != nil {
+			return ""
+		}
+		text, _ := sa.text(el, context.temp_allocator)
+		return text
+	}
+	press(view, root, "end", 124)
+	check(
+		strings.contains(note(root), "claim: 7") && strings.contains(note(root), "plays the rest out double dummy"),
+		fmt.tprintf("`end` stops at the claim, which offers the play-out (%q)", note(root)),
+	)
+	press(view, root, "end", 126)
+	out_cards, _ := sa.select_all(root, ".table .trk .pc.dd", context.temp_allocator)
+	check(
+		strings.contains(play_info(root), "trick 13 card 4") &&
+		strings.contains(note(root), "Played out double dummy") &&
+		len(out_cards) == 4,
+		fmt.tprintf(
+			"`end` again plays out to the last card, drawn as the play-out (%q; %q; %d cards marked)",
+			play_info(root),
+			note(root),
+			len(out_cards),
+		),
+	)
+
 	press(view, root, "mistake", 128)
 
 	// A NARROW, TALL PANE, which is where the workbench shows this page and where the trick's grid spilled
