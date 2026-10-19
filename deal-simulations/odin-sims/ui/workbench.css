@@ -68,6 +68,9 @@
 	--syn-bid: #a6e3a1; /* our call, left of the = */
 	--syn-opp: #fab387; /* an opposition call, in brackets */
 	--syn-suit: #f38ba8; /* !c !d !h !s */
+	--suit-c: #a6e3a1; /* the suit glyphs in a rendered heading (the palette); spades take the ink */
+	--suit-d: #fab387;
+	--suit-h: #f38ba8;
 	--syn-link: #94e2d5; /* [label](#Anchor) */
 	--syn-error: #f38ba8; /* the parse said this is wrong */
 	--syn-warn: #f9e2af; /* the parse said this may be wrong */
@@ -122,6 +125,9 @@ html[theme="light"] {
 	--syn-bid: #40a02b;
 	--syn-opp: #fe640b;
 	--syn-suit: #d20f39;
+	--suit-c: #40a02b;
+	--suit-d: #fe640b;
+	--suit-h: #d20f39;
 	--syn-link: #179299;
 	--syn-error: #d20f39;
 	--syn-warn: #df8e1d;
@@ -1861,6 +1867,12 @@ aside.files {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
+
+/* A name is the heading as the PAGE reads it (`bml.render_inline`): suit glyphs in bml.css's spans, coloured
+   for this window's themes rather than the page's (its black spade would vanish on the dark ground). */
+#bml-goto-list .name .ccolor { color: var(--suit-c); }
+#bml-goto-list .name .dcolor { color: var(--suit-d); }
+#bml-goto-list .name .hcolor { color: var(--suit-h); }
 
 /* The chapter the heading is in, on every row: two files can hold the same heading, and this is which one
    this is. Dim, because it is the answer to a question you only sometimes ask. */

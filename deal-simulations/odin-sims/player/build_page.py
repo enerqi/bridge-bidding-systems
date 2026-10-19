@@ -457,7 +457,14 @@ PAGE = r"""<!doctype html>
 				sampleStatus = `sampling board ${i + 1}: ${from} of up to ${count} deals`;
 				showNote();
 				if (typeof window.ncSampleProgress === "function") window.ncSampleProgress(i, from, count);
-				if (settled) break;
+				if (settled || from >= count) break;
+				// THE DEALS SO FAR, while the rest are solved: a hard board takes the best part of a minute, and
+				// its numbers after 40 deals already say most of what the last ones will. `pl_sample_finish` reads
+				// the sampling without ending it.
+				const sofar = wasm.pl_sample_finish(i);
+				if (sofar && typeof window.ncAddSample === "function") {
+					window.ncAddSample(i, new TextDecoder().decode(new Uint8Array(wasm.memory.buffer, wasm.pl_piece(), sofar).slice()), true);
+				}
 			}
 			const length = wasm.pl_sample_finish(i); // first: it may move the buffer `pl_piece` points at
 			if (!length) return;

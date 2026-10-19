@@ -186,6 +186,8 @@ for (const name of ["plain", "analysed", "par", "played", "twohand"]) {
 			solved += n;
 			from += n;
 			if (wasm.pl_sample_round(n)) break;
+			// As the page does between rounds (the deals so far): it must not change where the sampling ends.
+			wasm.pl_sample_finish(i);
 		}
 		const length = wasm.pl_sample_finish(i);
 		return { html: new TextDecoder().decode(new Uint8Array(wasm.memory.buffer, wasm.pl_piece(), length).slice()), solved, ms };

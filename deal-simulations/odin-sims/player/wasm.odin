@@ -332,7 +332,8 @@ pl_play :: proc "c" (board: i32, playout: i32) -> i32 {
 //	pl_sample_deals(from, count)       those layouts in DDS's `ddTableDeal` layout, 16 u32 each
 //	pl_sample_tables()                 where the page writes a round's answers (DDS's `ddTableResults`, 80 bytes)
 //	pl_sample_round(count)             take them; 1 when the sampling has resolved (or reached the cap)
-//	pl_sample_finish(i)                the `.par` element into `piece`, its length
+//	pl_sample_finish(i)                the `.par` element into `piece`, its length (also between rounds: it
+//	                                   reads the sampling so far and does not end it)
 //
 // The contract read is the one the link names for the board (`v3.`), else the grid's best (`best_contract`), as
 // the advisor picks it when given none; the defender inferences the link names (`v3.`: the record's opening

@@ -186,6 +186,7 @@ test_app_destroy :: proc(app: ^App, loc := #caller_location) {
 	job_free(&app.job, app.allocator)
 	free_goto_index(app)
 	delete(app.scroll_want, app.allocator)
+	delete(app.preview_clicked, app.allocator)
 	delete(app.shown_path, app.allocator)
 	delete(app.analysed_page, app.allocator)
 	clear_outputs(app)
@@ -5709,6 +5710,25 @@ test_the_palette_finds_a_heading_that_is_only_in_the_buffer :: proc(t: ^testing.
 	press_key(&app, .ENTER)
 	pump(&app)
 	testing.expect_value(t, caret_row(&app), 4)
+
+	// A row reads as the PAGE reads the heading, suit glyphs and all, while the query matches the source.
+	set_bml_source(&app, "* On disk\n\n1C = strong\n\n** Typed just now\n\n** 1C--1!s glyphs\n")
+	pump(&app)
+	press_key(&app, .R, ctrl = true)
+	pump(&app)
+	type_query(&app, "glyphs")
+	pump(&app)
+	rows := goto_row_elements(&app)
+	testing.expect(t, len(rows) > 0, "the glyph heading should be listed")
+	if len(rows) > 0 {
+		name := sa.select_first(rows[0], ".name") or_else nil
+		testing.expect(t, name != nil)
+		shown, _ := sa.text(name, context.temp_allocator)
+		testing.expect_value(t, shown, "1♣–1♠ glyphs")
+		club := sa.select_first(rows[0], ".name .ccolor") or_else nil
+		testing.expect(t, club != nil, "a suit glyph keeps its colour class")
+	}
+	close_goto(&app)
 }
 
 // A document the parser OBJECTS to still gets previewed, pane and all. This was broken and is exactly the
@@ -7379,6 +7399,63 @@ test_check_reports_what_it_understood_and_how_often_it_happens :: proc(t: ^testi
 		!strings.contains(report, "not once"),
 		"a condition a fifth of hands meet should not be reported as unreachable",
 	)
+}
+
+/*
+THE CHECK FOLLOWS THE TYPING: when the debounce runs out (`live_check_tick`, which the posted timer calls) the
+buffer is checked - but only in the scenarios tab, and only when the text is not what the last check read. The
+timer and the post themselves cannot run windowless (posting segfaults there, see `on_frame_event`), so this
+drives the tick directly, and pins the delay rule: the base, four times the last cost when longer, a cap, and 0
+for off.
+*/
+@(test)
+test_the_check_follows_the_typing :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	dir := scratch_scenario_dir(t, "wb-scn-live-check")
+	if dir == "" {return}
+	if !write_scenario_file(dir, "live.scenario", "scenario wb-live-a \"a\"\n  north: hcp >= 12\n") {return}
+	app.prefs = prefs.load("", context.temp_allocator)
+	defer prefs.destroy(&app.prefs)
+	use_scenario_dir(&app, dir)
+	show_view(&app, .Scenarios)
+	pump(&app)
+	testing.expect_value(t, app.scn_open, "live.scenario")
+
+	live_check_tick(&app)
+	pump(&app)
+	testing.expect(t, strings.contains(read_scenario_report(&app), "happens:"), "a pause should check the buffer")
+
+	// Unchanged text: nothing to do.
+	set_scenario_report(&app, "")
+	live_check_tick(&app)
+	pump(&app)
+	testing.expect_value(t, read_scenario_report(&app), "")
+
+	// Changed text, but another tab on screen: not checked behind somebody's back.
+	set_scenario_source(&app, "scenario wb-live-b \"b\"\n  north: hcp >= 15\n")
+	show_view(&app, .Panes)
+	pump(&app)
+	live_check_tick(&app)
+	testing.expect_value(t, read_scenario_report(&app), "")
+
+	show_view(&app, .Scenarios)
+	pump(&app)
+	live_check_tick(&app)
+	pump(&app)
+	testing.expect(t, strings.contains(read_scenario_report(&app), "wb-live-b"), "the changed text should be checked")
+
+	app.bml_live_base = LIVE_PREVIEW_BASE
+	app.scn_check_cost = 10 * time.Millisecond
+	testing.expect_value(t, live_check_delay(&app), LIVE_PREVIEW_BASE)
+	app.scn_check_cost = 500 * time.Millisecond
+	testing.expect_value(t, live_check_delay(&app), 2 * time.Second)
+	app.scn_check_cost = 2 * time.Second
+	testing.expect_value(t, live_check_delay(&app), LIVE_PREVIEW_MAX)
+	app.bml_live_base = 0
+	testing.expect_value(t, live_check_delay(&app), time.Duration(0))
 }
 
 // A condition nothing meets is reported as such, in the words that say what to do about it. This is the
@@ -10033,4 +10110,128 @@ test_the_analyse_settings_are_remembered :: proc(t: ^testing.T) {
 	testing.expect_value(t, read_text(&app, "#target"), "10")
 	testing.expect_value(t, read_text(&app, "#defenders"), "W:3H E:S")
 	testing.expect(t, read_bool(&app, "#as-text"), "as text report should be ticked again")
+}
+
+// CTRL+BACKSPACE is the script's (`bmlDeleteWordBack`): the engine's own word delete lost the caret and
+// twice froze the window after emptying a line. A word back, then the spaces with it, then the empty line's
+// join with the one above - and the caret stays where the text is, in both editors.
+@(test)
+test_ctrl_backspace_deletes_a_word_back :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	show_view(&app, .Scenarios)
+	pump(&app)
+	set_scenario_source(&app, "scenario a \"a\"\n  north: hcp >= 12\n  zz yy")
+	pump(&app)
+	editor := find(&app, "#scn-text")
+	testing.expect(t, editor != nil)
+	if editor == nil {return}
+	_ = sa.set_focus(editor)
+	at_end, err := sa.eval(app.window, `document.$("#scn-text").plaintext.selectRange(2, 7, 2, 7)`)
+	sa.value_clear(&at_end)
+	testing.expect_value(t, err, nil)
+
+	wanted := []string {
+		"scenario a \"a\"\n  north: hcp >= 12\n  zz ",
+		"scenario a \"a\"\n  north: hcp >= 12\n  ",
+		"scenario a \"a\"\n  north: hcp >= 12\n",
+		"scenario a \"a\"\n  north: hcp >= 12",
+	}
+	for want in wanted {
+		result, eerr := sa.eval(app.window, `bmlDeleteWordBack(document.$("#scn-text"))`)
+		sa.value_clear(&result)
+		testing.expect_value(t, eerr, nil)
+		pump(&app)
+		got, _ := scenario_source(&app, context.temp_allocator)
+		got, _ = strings.replace_all(got, "\r\n", "\n", context.temp_allocator)
+		testing.expect_value(t, got, want)
+	}
+	testing.expect_value(t, caret_row(&app, "#scn-text"), 1)
+
+	// And through a KEY: ctrl+backspace sent to the editor reaches the capture-phase handler.
+	set_scenario_source(&app, "scenario a \"a\"\n  north: hcp >= 12\n  zz yy")
+	pump(&app)
+	_ = sa.set_focus(editor)
+	at_end, err = sa.eval(app.window, `document.$("#scn-text").plaintext.selectRange(2, 7, 2, 7)`)
+	sa.value_clear(&at_end)
+	_, _ = sa.send_key(editor, .DOWN, u32(sciter.Sc_Kb_Codes.BACKSPACE), {.LCONTROL})
+	pump(&app)
+	taken, _ := sa.eval(app.window, "wbWordBacks")
+	count, _ := sa.value_to_int(&taken)
+	sa.value_clear(&taken)
+	testing.expect_value(t, count, 1)
+	got, _ := scenario_source(&app, context.temp_allocator)
+	got, _ = strings.replace_all(got, "\r\n", "\n", context.temp_allocator)
+	testing.expect_value(t, got, "scenario a \"a\"\n  north: hcp >= 12\n  zz ")
+}
+
+// A CLICK ON A HEADING in the preview goes there: the source's caret moves to it and a FOLDED page re-renders
+// with that section open. The click's own dispatch only records the heading and POSTS (a post segfaults in a
+// windowless view), so this drives the two halves either side of it: which heading a click landed in, and
+// the posted jump.
+@(test)
+test_clicking_a_preview_heading_opens_its_section :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	app.docs = ""
+
+	// Each section well over the fold's 2KB window, so only the caret's one is open.
+	source := strings.concatenate(
+		{
+			"* 1!c opening\n\n",
+			strings.repeat("1C = strong, a long enough description to fill the fold window\n", 60, context.temp_allocator),
+			"\n** 1!c-1!s Compromise\n\n",
+			strings.repeat("2N = balanced, a long enough description to fill the fold window\n", 60, context.temp_allocator),
+			"\n*** After a [double](#Takeout)\n\nX = penalty\n",
+		},
+		context.temp_allocator,
+	)
+	set_bml_source(&app, source)
+	app.bml_open = strings.clone("scratch.bml", app.allocator)
+	app.bml_scope = .Folded
+	app.bml_scope_set = true
+	pump(&app)
+	rendered, why := preview_bml(&app)
+	testing.expectf(t, rendered, "the preview did not render: %s", why)
+	pump(&app)
+
+	root, ok := preview_document_root(&app)
+	testing.expect(t, ok, "the preview has a document")
+	if !ok {return}
+	page, _ := sa.text(root, context.temp_allocator)
+	testing.expect(t, !strings.contains(page, "balanced"), "folded on the first section, the second's body is parked")
+
+	// A click on the suit glyph INSIDE the second heading is a click on that heading.
+	glyph := sa.select_first(root, "h2 span") or_else nil
+	testing.expect(t, glyph != nil, "the second heading renders its suits as spans")
+	if glyph == nil {return}
+	heading, rank, found := clicked_heading(glyph)
+	testing.expect(t, found, "a click inside a heading finds the heading")
+	testing.expect_value(t, rank, 0)
+	id, _ := sa.attribute(heading, "id", context.temp_allocator)
+	testing.expect_value(t, id, bml.normalise_header_id("1!c-1!s Compromise", context.temp_allocator))
+
+	// A link inside a heading is the link's, and a click on body text is nobody's.
+	if link := sa.select_first(root, "h3 a") or_else nil; link != nil {
+		_, _, on_link := clicked_heading(link)
+		testing.expect(t, !on_link, "a link inside a heading keeps its click")
+	}
+	if body := sa.select_first(root, "body") or_else nil; body != nil {
+		_, _, on_body := clicked_heading(body)
+		testing.expect(t, !on_body, "a click outside the headings goes nowhere")
+	}
+
+	// The posted half.
+	app.preview_clicked = strings.clone(id, app.allocator)
+	app.preview_click_rank = rank
+	go_to_clicked_heading(&app)
+	pump(&app)
+	testing.expect_value(t, caret_row(&app), 63)
+	root, ok = preview_document_root(&app)
+	if !ok {return}
+	page, _ = sa.text(root, context.temp_allocator)
+	testing.expect(t, strings.contains(page, "balanced"), "the clicked heading's section is open now")
 }

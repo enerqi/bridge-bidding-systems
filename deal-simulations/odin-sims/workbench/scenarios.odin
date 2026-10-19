@@ -43,11 +43,13 @@ package main
 */
 
 import "core:fmt"
+import "core:hash"
 import "core:log"
 import "core:os"
 import "core:path/filepath"
 import "core:slice"
 import "core:strings"
+import "core:time"
 
 import "../bidding"
 import "../prefs"
@@ -1041,6 +1043,11 @@ check_scenario :: proc(app: ^App) {
 		scenario_status(app, "the editor's text could not be read")
 		return
 	}
+	started := time.now()
+	defer {
+		app.scn_check_cost = time.since(started)
+		app.scn_checked = hash.fnv64a(transmute([]u8)text)
+	}
 	scenario_dsl.set_vocabulary(bidding.vocabulary)
 
 	file := app.scn_open if app.scn_open != "" else "the editor"
@@ -1077,6 +1084,79 @@ check_scenario :: proc(app: ^App) {
 		scenario_status(app, fmt.tprintf("%d scenario%s, no problems", len(programs), plural(len(programs))))
 	}
 	_ = marked
+}
+
+/*
+THE CHECK FOLLOWS THE TYPING, as the notes preview does: a key in the scenario editor arms a one-shot timer, and
+when the typing has stopped for long enough the buffer is checked - the marks, the report, the status - unless
+it is the text the last check read.
+
+Measured (2026-10-19, release build): parsing a file is microseconds and measuring one scenario over
+`CHECK_TRIALS` deals ~7.7ms, so a file of a few scenarios costs a few tens of milliseconds - affordable after a
+pause, not on every key. The delay is the preview's rule: `WORKBENCH_LIVE_MS` (default 600ms, 0 turns both
+off), or four times what the last check cost if that is longer, at most three seconds, so a file of many
+scenarios waits longer rather than stalling the typing. The `check` button stays, for a check NOW.
+*/
+LIVE_CHECK_TIMER :: sa.Timer_Id(10)
+
+live_check_delay :: proc(app: ^App) -> time.Duration {
+	if app.bml_live_base <= 0 {
+		return 0
+	}
+	return min(max(app.bml_live_base, app.scn_check_cost * 4), LIVE_PREVIEW_MAX)
+}
+
+arm_live_check :: proc(app: ^App) {
+	delay := live_check_delay(app)
+	if delay <= 0 || app.scn_open == "" {
+		return
+	}
+	// On the PANE, never the editor: see where `scn_handler` is attached.
+	if pane := find(app, "#scn-source"); pane != nil {
+		if app.check_log_on {
+			fmt.eprintfln("wb-check armed %v %s", delay, check_log_state(app))
+		}
+		_ = sa.set_timer(pane, delay, LIVE_CHECK_TIMER)
+	}
+}
+
+// The typing stopped: check the buffer, if the view is still the scenarios tab and the text is not what the
+// last check read (a key that changed nothing, an arrow or a shift, arms the timer too).
+live_check_tick :: proc(app: ^App) {
+	if current_view(app) != .Scenarios || app.scn_open == "" {
+		return
+	}
+	text, got := scenario_source(app, context.temp_allocator)
+	if !got || hash.fnv64a(transmute([]u8)text) == app.scn_checked {
+		if app.check_log_on {
+			fmt.eprintfln("wb-check tick: unchanged %s", check_log_state(app))
+		}
+		return
+	}
+	if !app.check_log_on {
+		check_scenario(app)
+		return
+	}
+	before := check_log_state(app)
+	started := time.now()
+	check_scenario(app)
+	fmt.eprintfln("wb-check ran %v: %s -> %s", time.since(started), before, check_log_state(app))
+}
+
+// What `WORKBENCH_CHECK_LOG` prints about the editor: the caret's row, the scroll offset and what has the
+// focus. Reported 2026-10-19: after deleting a line the caret vanished for a while and came back near the top.
+check_log_state :: proc(app: ^App) -> string {
+	scroll := "?"
+	if editor := find(app, "#scn-text"); editor != nil {
+		if info, err := sa.scroll_info(editor); err == nil {
+			scroll = fmt.tprintf("%v of %v", info.pos, info.content)
+		}
+	}
+	focused := "none"
+	if focus, err := sa.focus_element(app.window); err == nil && focus != nil {
+		focused, _ = sa.attribute(focus, "id", context.temp_allocator)
+	}
+	return fmt.tprintf("caret row %d, scroll %s, focus %q", caret_row(app, "#scn-text"), scroll, focused)
 }
 
 @(private = "file")

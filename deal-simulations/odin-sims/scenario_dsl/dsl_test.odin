@@ -259,6 +259,33 @@ test_a_backwards_range_is_one_diagnostic :: proc(t: ^testing.T) {
 	testing.expect(t, strings.contains(diagnostics[0].message, "way round"), diagnostics[0].message)
 }
 
+// Anything the condition does not use is an error, not ignored: `8..11x` used to read as `8..11`, and a
+// missing `and` dropped the rest of the line.
+@(test)
+test_text_after_the_condition_is_reported :: proc(t: ^testing.T) {
+	install_test_vocabulary()
+	cases := []struct {
+		line, word: string,
+		col:        int,
+	} {
+		{"  south: hearts >= 5 and hcp in 8..11x", "x", 38},
+		{"  north: hcp >= 12 balanced", "balanced", 20},
+		{"  north: (hcp >= 12) )", ")", 22},
+	}
+	for c in cases {
+		programs, diagnostics := parse(
+			strings.concatenate({"scenario x \"y\"\n", c.line, "\n"}, context.temp_allocator),
+			"f.scenario",
+			context.temp_allocator,
+		)
+		testing.expect_value(t, len(programs), 0)
+		testing.expectf(t, len(diagnostics) >= 1, "%q: no diagnostic", c.line)
+		if len(diagnostics) == 0 {continue}
+		testing.expectf(t, strings.contains(diagnostics[0].message, c.word), "%q: %s", c.line, diagnostics[0].message)
+		testing.expect_value(t, diagnostics[0].pos.col, c.col)
+	}
+}
+
 // ---- the parity oracle ---------------------------------------------------------------------------
 
 // The compiled form of the scenario written as text below. Deliberately hand-written, in Odin, the way

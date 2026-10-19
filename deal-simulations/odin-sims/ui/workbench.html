@@ -1252,6 +1252,8 @@
     }
     editor.wbProblems = [];
     editor.wbProblemLines = [];
+    // Taking marks off is a paint the caret's line does not get: the same ghost as below.
+    try { editor.requestPaint(); } catch (x) {}
   }
 
   /* Mark a fresh set of problems, and hand back how many marks were applied - the host's only view of the
@@ -1290,6 +1292,9 @@
       editor.wbProblems.push(d);
       editor.wbProblemLines.push(lines[index]); // what `bmlClearProblems` will take it off again
     }
+    // Marks change what the widget paints without it repainting the caret's line, so a caret on an empty
+    // line is redrawn here too - the scenario check marks while somebody is typing.
+    try { editor.requestPaint(); } catch (x) {}
     return applied;
   }
 
@@ -1362,16 +1367,92 @@
   var BML_CARET_KEYS = {
     "ArrowUp": true, "ArrowDown": true, "ArrowLeft": true, "ArrowRight": true,
     "Home": true, "End": true, "PageUp": true, "PageDown": true,
+    // And the deletes: ctrl+backspace can empty a line, which is where the block caret is drawn.
+    "Backspace": true, "Delete": true,
   };
 
-  document.on("keyup", "#bml-text", function (event) {
+  // Both editors: the scenario editor is the same widget with the same ghost (reported 2026-10-19 as the caret
+  // vanishing after ctrl+backspace and coming back near the top, with the model's caret row unchanged).
+  document.on("keyup", "#bml-text, #scn-text", function (event) {
     if (!BML_CARET_KEYS[event.code]) return false;
     var editor = this;
     try { editor.requestPaint(); } catch (x) {}
     return false;
   });
 
-  document.on("mouseup", "#bml-text", function () {
+  /* CTRL+BACKSPACE IS OURS, in both editors, because the engine's own one breaks the widget (reported
+     2026-10-19): type on a new line, ctrl+backspace it empty, and the caret vanishes until a key brings it
+     back at the top of the text - and twice in a row the window froze. The same in the notes editor, with the
+     colouring off, so it is the widget's `delete-word-prev` and not anything this document does.
+
+     So it is done here as that many PLAIN backspaces, the key that does not break it: back over spaces, then
+     back over the run of non-spaces before them. In one `plaintext.update` transaction, so undo puts the word
+     back in one step. At the start of a line it is one backspace (joining the line to the one above), and a
+     selection that is already there is just deleted. Anything unexpected falls through to the engine's key.
+     (Selecting the word and deleting the selection was the first try: `selectRange` here only MOVES the caret
+     - measured, start and end both read back as the range's end.) */
+  function bmlDeleteWordBack(editor) {
+    var at = editor.plaintext.selectionStart, end = editor.plaintext.selectionEnd;
+    if (!at || !end) return false;
+    var count = 1;
+    if (at[0] === end[0] && at[1] === end[1] && at[1] > 0) {
+      var line = editor.children[at[0]];
+      var text = line ? bmlLineText(line) : null;
+      if (text === null) return false;
+      var col = Math.min(at[1], text.length), from = col;
+      while (from > 0 && /\s/.test(text[from - 1])) from -= 1;
+      while (from > 0 && !/\s/.test(text[from - 1])) from -= 1;
+      count = Math.max(1, col - from);
+    }
+    return editor.plaintext.update(function (tctx) {
+      for (var i = 0; i < count; i++) tctx.execCommand("edit:delete-prev");
+      return true;
+    });
+  }
+
+  // In the CAPTURE (sinking) phase, on each editor: the widget handles its keys at the element itself, so a
+  // bubbling `document.on("keydown")` only heard the key after the engine's word delete had already run (the
+  // first version of this did, and changed nothing).
+  //
+  // `WORKBENCH_KEY_LOG=1` (`wbKeyLog`) prints each key the two editors get, with the caret before and just
+  // after, to the console - the evidence for anything that goes wrong while typing.
+  var wbKeyLogOn = false;
+  var wbWordBacks = 0; // how many ctrl+backspaces this handler took: the test's proof that it, not the widget, ran
+  function wbKeyLog() { wbKeyLogOn = true; }
+
+  function wbCaretText(editor) {
+    try {
+      return JSON.stringify(editor.plaintext.selectionStart) + "-" + JSON.stringify(editor.plaintext.selectionEnd) +
+        " of " + editor.plaintext.lines + " lines";
+    } catch (x) {
+      return "unreadable";
+    }
+  }
+
+  ["#bml-text", "#scn-text"].forEach(function (sel) {
+    var editor = document.$(sel);
+    if (!editor) return;
+    editor.addEventListener("keydown", function (event) {
+      var ours = event.code === "Backspace" && event.ctrlKey && !event.altKey && !event.shiftKey;
+      if (wbKeyLogOn) {
+        var before = wbCaretText(editor);
+        console.log("wb-key " + sel + " " + (event.ctrlKey ? "ctrl+" : "") + (event.shiftKey ? "shift+" : "") +
+                    event.code + (ours ? " (ours)" : "") + " at " + before);
+        setTimeout(function () { console.log("wb-key " + sel + " after: " + wbCaretText(editor)); }, 0);
+      }
+      if (!ours) return false;
+      var done = false;
+      try { done = bmlDeleteWordBack(editor); } catch (x) { done = false; }
+      if (done) {
+        wbWordBacks += 1;
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      return done;
+    }, { capture: true });
+  });
+
+  document.on("mouseup", "#bml-text, #scn-text", function () {
     var editor = this;
     try { editor.requestPaint(); } catch (x) {}
     return false;

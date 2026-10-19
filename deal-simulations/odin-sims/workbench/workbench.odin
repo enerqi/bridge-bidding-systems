@@ -83,6 +83,8 @@ DEAL :: uintptr(6) // OCR read a deal out of a dropped image; it is in `App.deal
 LIVE :: uintptr(7) // the live preview`s debounce ran out; render the buffer (see `on_frame_event`)
 FOLLOW :: uintptr(8) // the hand page follow`s debounce ran out; load the selection`s page (same reason)
 ANALYSE_STEP :: uintptr(9) // lparam = boards done << 16 | boards in all, from `analyse`'s progress hook
+CHECK :: uintptr(10) // the scenario editor`s debounce ran out; check the buffer (see `arm_live_check`)
+HEADING :: uintptr(11) // a heading in the notes preview was clicked; go to it (see `on_preview_click`)
 
 Job_Kind :: enum {
 	Generate,
@@ -232,6 +234,9 @@ App :: struct {
 	drag_log_on:        bool,
 	// `WORKBENCH_SCROLL_LOG=1`: say what each preview scroll measured (see `scroll_preview_to_heading`).
 	scroll_log_on:      bool,
+	// `WORKBENCH_CHECK_LOG=1`: the scenario editor's live check, armed and run, with the caret, the scroll
+	// and the focus either side of it (see `live_check_tick`). To stderr, in any build.
+	check_log_on:       bool,
 	// Check `[label](#Anchor)` as well? Off by default, and the button says so: a CHAPTER of this corpus
 	// links to headings in its sibling files on purpose, so on one chapter the check is mostly noise. On
 	// `bidding-system.bml`, which includes them all, every warning it raises is a real broken link.
@@ -261,6 +266,9 @@ App :: struct {
 	scn_open:           string,
 	scn_crlf:           bool, // the line endings the file arrived with, so saving does not rewrite them all
 	scn_armed:          bool, // a switch away from unsaved text was refused once; the next one goes through
+	scn_handler:        sa.Event_Handler, // the scenario source`s, for the live check`s timer
+	scn_check_cost:     time.Duration, // what the last check took, which sets the next one`s delay
+	scn_checked:        u64, // the fingerprint of the text the last check read
 	bml_live_base:      time.Duration,
 	bml_preview_cost:   time.Duration,
 	bml_rendering:      bool,
@@ -280,6 +288,12 @@ App :: struct {
 	scroll_want:        string,
 	scroll_tries:       int,
 	frame_handler:      sa.Event_Handler,
+	// The preview DOCUMENT's, for a click on a heading: attached to each new document's root, since a render
+	// replaces the document (`watch_preview_clicks`). The clicked heading's anchor id and which of the
+	// headings with that id it was, kept until the posted jump reads them.
+	preview_click_handler: sa.Event_Handler,
+	preview_clicked:    string,
+	preview_click_rank: int,
 	page_handler:       sa.Event_Handler, // the hand page frame`s, for the follow timer
 	prefs:              prefs.Prefs,
 	prefs_path:         string,
@@ -716,6 +730,12 @@ on_posted :: proc(handler: ^sa.Host_Handler, posted: sa.Posted) {
 		// the same hazard: the load REPLACES the framed document, and doing that inside the frame`s own
 		// timer dispatch tears out the tree the engine is dispatching into.
 		follow_selection_tick(app)
+
+	case CHECK:
+		live_check_tick(app)
+
+	case HEADING:
+		go_to_clicked_heading(app)
 
 	case LIVE:
 		// The only message that does not come from a worker thread. It comes from the frame`s TIMER handler,
@@ -3425,6 +3445,7 @@ preview_bml :: proc(app: ^App) -> (ok: bool, why: string) {
 		return false, "the preview could not be loaded into the frame"
 	}
 	app.previewed = true
+	watch_preview_clicks(app)
 	// And a fingerprint of the text the pane is NOW showing, so a debounce that fires over an untouched
 	// buffer costs nothing. After the load rather than before it: a render that failed has not been seen, and
 	// recording it here would leave the live preview waiting for a second edit before trying again.
@@ -3698,7 +3719,10 @@ preview_override_css :: proc(css: string, allocator := context.allocator) -> str
 	if background == "" {
 		// Nothing to mirror: fill the body instead, so a sheet with no page colour of its own at least has
 		// no white gutters where its text is.
-		return strings.clone("<style>html { size: *; } body { size: *; max-width: none; }</style>", allocator)
+		return strings.clone(
+			"<style>html { size: *; } body { size: *; max-width: none; } h1, h2, h3, h4 { cursor: pointer; }</style>",
+			allocator,
+		)
 	}
 	// CONCATENATED, not formatted: `fmt` reads a brace as a directive, and a CSS rule is nothing but
 	// braces — the printf version emitted `html %!(MISSING CLOSE BRACE)size: *` and the sheet was junk the
@@ -3709,7 +3733,9 @@ preview_override_css :: proc(css: string, allocator := context.allocator) -> str
 		{
 			"<style>html { size: *; background: ",
 			background,
-			"; } body { size: *; } .wb-folded { color: #8a8a8a; margin: 2px 0 10px 0; }</style>",
+			"; } body { size: *; } .wb-folded { color: #8a8a8a; margin: 2px 0 10px 0; }",
+			// A heading is clickable (`on_preview_click`): it says so with the pointer.
+			" h1, h2, h3, h4 { cursor: pointer; }</style>",
 		},
 		allocator,
 	)
@@ -4264,14 +4290,15 @@ draw_goto_list :: proc(app: ^App) {
 		// under `Responses` under `1C opening` reads as a place rather than as three unrelated names.
 		// The FILE on every row, always - the request was to disambiguate duplicate names, and "always" is
 		// both simpler than detecting them and more useful, since a corpus-wide list mixes chapters on
-		// purpose.
+		// purpose. The NAME is the heading as the page shows it (`1C--1!s` as 1♣–1♠), via the renderer's
+		// own inline rules; the matching stays on the source text.
 		fmt.sbprintf(
 			&b,
 			`<div class="%s" data-goto="%d"><span class="depth">%s</span><span class="name">%s</span><span class="where">%s</span></div>`,
 			"hit sel" if i == app.goto_sel else "hit",
 			i,
 			strings.repeat("·", entry.level - 1, context.temp_allocator),
-			escape_html(entry.text, context.temp_allocator),
+			bml.render_inline(entry.text, context.temp_allocator),
 			escape_html(entry.file, context.temp_allocator),
 		)
 	}
@@ -4301,8 +4328,16 @@ jump_to_goto :: proc(app: ^App) {
 		return
 	}
 	target := app.goto_rows[clamp(app.goto_sel, 0, len(app.goto_rows) - 1)]
+	go_to_heading(app, target)
+}
+
+// The caret to a heading, loading its chapter first if it is another one; then the preview, if it is up,
+// re-rendered at it - or, with `repreview = false` and the same file still open, only scrolled to it, since
+// an unfolded page already shows every section.
+go_to_heading :: proc(app: ^App, target: outline.Heading, repreview := true) {
 	row, file, text := target.row, target.file, target.text
-	if file != app.bml_open {
+	switched := file != app.bml_open
+	if switched {
 		switch_bml_file(app, file, repreview = false)
 		if file != app.bml_open {
 			return // refused (unsaved changes); the status line says what to do and the list is still up
@@ -4311,6 +4346,12 @@ jump_to_goto :: proc(app: ^App) {
 	close_goto(app)
 	set_caret_row(app, row)
 	bml_status(app, fmt.tprintf("%s - line %d - %s", file, row + 1, text))
+	if !repreview && !switched {
+		if app.previewed && app.bml_showing {
+			follow_preview_to_caret(app)
+		}
+		return
+	}
 
 	// A preview that is UP follows the caret, the same way it follows a file: the section the palette just
 	// jumped into is the one worth looking at, and a folded document would otherwise still be open at the
@@ -4577,6 +4618,13 @@ on_frame_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		sa.post_callback(app.window, FOLLOW)
 		return false
 	}
+	if te, ok := sa.timer_event(event); ok && te.id == LIVE_CHECK_TIMER {
+		// The scenario editor's debounce. Posted like the preview's below: the check rewrites this element's
+		// marks and the report, which is not done from inside the element's own dispatch. `false` stops the
+		// timer; the next key re-arms it.
+		sa.post_callback(app.window, CHECK)
+		return false
+	}
 	if te, ok := sa.timer_event(event); ok && te.id == LIVE_PREVIEW_TIMER {
 		// The debounce ran out. POSTED rather than rendered here: this handler belongs to the frame whose
 		// document the render replaces, and rebuilding it from inside its own event dispatch hangs the window
@@ -4730,6 +4778,158 @@ scroll_preview_to_heading :: proc(app: ^App, text: string) -> (found: bool) {
 		return true
 	}
 	return false
+}
+
+/*
+CLICK A HEADING IN THE PREVIEW TO GO THERE. A folded preview is an outline - every heading, one section open
+- and reading an outline makes you want to open another entry of it. So a click on a heading moves the
+source's caret to that heading, which is what opens its section: the fold follows the caret. Unfolded, the
+same click takes the source to the heading, and the page is left as it is (it already shows everything).
+
+THE PREVIEW IS ANOTHER DOCUMENT, in a `<frame>`, so its clicks never reach a window handler or the frame
+element's: the handler is attached to the framed document's ROOT, and since every render replaces that
+document it is attached again after each one (`watch_preview_clicks`, from `preview_bml`).
+
+THE JUMP IS POSTED, never run in the click's dispatch: going to a folded heading RE-RENDERS the preview, which
+replaces the very document the click is being delivered in - the tear-the-tree-out hang the live preview's
+timer already taught this program (see `on_frame_event`).
+
+A heading is matched to the source by its ANCHOR ID (`bml.normalise_header_id`, the same mapping the scroll
+uses), the n-th heading with that id on the page to the n-th in the source. A heading that is not in the open
+file - a chapter the root `#INCLUDE`s - is looked for across the folder, and opens that chapter, as the
+heading palette does. A click on a LINK inside a heading is left to the link.
+*/
+watch_preview_clicks :: proc(app: ^App) {
+	root, ok := preview_document_root(app)
+	if !ok {
+		return
+	}
+	_ = sa.attach_handler(root, &app.preview_click_handler)
+}
+
+preview_document_root :: proc(app: ^App) -> (root: sa.Element, ok: bool) {
+	element := find(app, "#bml-page")
+	if element == nil {
+		return nil, false
+	}
+	asset, aerr := sa.element_asset(element, "frame")
+	if aerr != nil {
+		return nil, false
+	}
+	document, derr := sa.asset_get(asset, "document")
+	defer sa.value_clear(&document)
+	if derr != nil {
+		return nil, false
+	}
+	found, rerr := sa.element_from_value(&document)
+	return found, rerr == nil && found != nil
+}
+
+on_preview_click :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
+	app := (^App)(handler.user_data)
+	me, ok := sa.mouse_event(event)
+	if !ok || me.code != .MOUSE_CLICK || me.phase != .Bubbling {
+		return false
+	}
+	heading, rank, found := clicked_heading(me.target)
+	if !found {
+		return false
+	}
+	id, _ := sa.attribute(heading, "id", context.temp_allocator)
+	if id == "" {
+		return false
+	}
+	delete(app.preview_clicked, app.allocator)
+	app.preview_clicked = strings.clone(id, app.allocator)
+	app.preview_click_rank = rank
+	sa.post_callback(app.window, HEADING)
+	return true
+}
+
+// The heading a click landed in - the target or an ancestor, `h1`..`h4` - and how many headings with the same
+// id come before it on the page. Not found for a click inside a link, or outside any heading.
+clicked_heading :: proc(target: sa.Element) -> (heading: sa.Element, rank: int, found: bool) {
+	element := target
+	for element != nil {
+		name, _ := sa.tag(element)
+		switch name {
+		case "a", "body", "html":
+			return nil, 0, false
+		case "h1", "h2", "h3", "h4":
+			id, _ := sa.attribute(element, "id", context.temp_allocator)
+			root := element
+			for {
+				up, err := sa.parent(root)
+				if err != nil || up == nil {
+					break
+				}
+				root = up
+			}
+			if all, err := sa.select_all(root, "h1,h2,h3,h4", context.temp_allocator); err == nil {
+				for other in all {
+					if other == element {
+						break
+					}
+					if other_id, _ := sa.attribute(other, "id", context.temp_allocator); other_id == id {
+						rank += 1
+					}
+				}
+			}
+			return element, rank, true
+		}
+		up, err := sa.parent(element)
+		if err != nil {
+			return nil, 0, false
+		}
+		element = up
+	}
+	return nil, 0, false
+}
+
+// The posted half: find the clicked heading in the source and go there.
+go_to_clicked_heading :: proc(app: ^App) {
+	id := app.preview_clicked
+	if id == "" || app.bml_rendering {
+		return
+	}
+	target, found := heading_with_id(app, id, app.preview_click_rank)
+	if !found {
+		bml_status(app, fmt.tprintf("that heading is not in this folder's .bml files (%s)", id))
+		return
+	}
+	go_to_heading(app, target, repreview = app.bml_scope == .Folded)
+}
+
+// The `rank`-th heading in the open file whose anchor id is `id` (the last one if there are fewer), else the
+// first one in any other chapter of the folder.
+heading_with_id :: proc(app: ^App, id: string, rank: int) -> (heading: outline.Heading, found: bool) {
+	if source, got := bml_source(app, context.temp_allocator); got {
+		seen := 0
+		for entry in outline.headings(source, app.bml_open, context.temp_allocator) {
+			if bml.normalise_header_id(entry.text, context.temp_allocator) != id {
+				continue
+			}
+			heading, found = entry, true
+			if seen == rank {
+				return heading, true
+			}
+			seen += 1
+		}
+		if found {
+			return heading, true
+		}
+	}
+	build_goto_index(app)
+	for entry in app.goto_all {
+		if entry.file != app.bml_open && bml.normalise_header_id(entry.text, context.temp_allocator) == id {
+			// Copied out of the index, which the next palette or folder change frees.
+			copy := entry
+			copy.file = strings.clone(entry.file, context.temp_allocator)
+			copy.text = strings.clone(entry.text, context.temp_allocator)
+			return copy, true
+		}
+	}
+	return {}, false
 }
 
 // Is this rendered heading the source heading `text` (whose anchor id is `wanted_id`)? The id first, since
@@ -7037,6 +7237,10 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		if ke.code == .DOWN && ke.phase == .Bubbling && current_view(app) == .Editor {
 			arm_live_preview(app)
 		}
+		// And in the scenario editor, the live check's (see `arm_live_check`).
+		if ke.code == .DOWN && ke.phase == .Bubbling && current_view(app) == .Scenarios {
+			arm_live_check(app)
+		}
 		// On the way UP, when the widget has applied the key: the title's unsaved dot follows the typing.
 		if ke.code == .UP && ke.phase == .Bubbling {
 			refresh_file_title(app)
@@ -7785,6 +7989,12 @@ main :: proc() {
 		on_event     = on_frame_event,
 		user_data    = app,
 	}
+	// The preview document's clicks (`watch_preview_clicks` attaches it to each document as it is rendered).
+	app.preview_click_handler = sa.Event_Handler {
+		subscription = {.MOUSE},
+		on_event     = on_preview_click,
+		user_data    = app,
+	}
 	if frame := sa.select_first(sa.root(window) or_else nil, "#bml-page") or_else nil; frame != nil {
 		sa.attach_handler(frame, &app.frame_handler)
 	}
@@ -7802,6 +8012,19 @@ main :: proc() {
 	}
 	if frame := sa.select_first(sa.root(window) or_else nil, "#page") or_else nil; frame != nil {
 		sa.attach_handler(frame, &app.page_handler)
+	}
+	// AND THE SCENARIO SOURCE'S PANE, for the live check's timer: a third struct, for the same reason. The
+	// PANE (`#scn-source`), not the editor inside it: the editor's script runs its own `timer()` on every edit
+	// (squiggles off, recolour), and a host timer on that same element froze the window after an edit
+	// (reported 2026-10-19: type a line with an error, delete it). The notes editor never shared one either -
+	// its countdown is on the preview frame.
+	app.scn_handler = sa.Event_Handler {
+		subscription = {.TIMER},
+		on_event     = on_frame_event,
+		user_data    = app,
+	}
+	if source := sa.select_first(sa.root(window) or_else nil, "#scn-source") or_else nil; source != nil {
+		sa.attach_handler(source, &app.scn_handler)
 	}
 
 	// Pre-fill the output directory so the field is never a blank the user has to guess at, and so the
@@ -7839,11 +8062,19 @@ main :: proc() {
 
 	// The preview-scroll log: see `scroll_preview_to_heading`. OPT-IN, in any build.
 	app.scroll_log_on = os.get_env("WORKBENCH_SCROLL_LOG", context.temp_allocator) == "1"
+	app.check_log_on = os.get_env("WORKBENCH_CHECK_LOG", context.temp_allocator) == "1"
 
 	// The frame log: see `wbFrameLog` in the document's script. OPT-IN with `WORKBENCH_FRAME_LOG=1`, for the
 	// question a windowless test cannot answer - how long a real window's frames take while it is resized.
 	if os.get_env("WORKBENCH_FRAME_LOG", context.temp_allocator) == "1" {
 		if result, err := sa.eval(window, "wbFrameLog()"); err == nil {
+			sa.value_clear(&result)
+		}
+	}
+	// The key log: see `wbKeyLog`. OPT-IN with `WORKBENCH_KEY_LOG=1`: every key the two editors get, with the
+	// caret either side of it.
+	if os.get_env("WORKBENCH_KEY_LOG", context.temp_allocator) == "1" {
+		if result, err := sa.eval(window, "wbKeyLog()"); err == nil {
 			sa.value_clear(&result)
 		}
 	}
@@ -7960,6 +8191,7 @@ main :: proc() {
 	delete(app.outputs)
 	free_goto_index(app)
 	delete(app.scroll_want, app.allocator)
+	delete(app.preview_clicked, app.allocator)
 	prefs.destroy(&app.prefs)
 	delete(app.prefs_path, app.allocator)
 	free(app)

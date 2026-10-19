@@ -213,7 +213,28 @@ parse_scenario :: proc(p: ^Parser) -> (program: Program, ok: bool) {
 			p.col = value_col
 			p.pair = pair
 			if root, expr_ok := parse_expression(p); expr_ok {
-				append(&rules, Seat_Rule{seat = seat, pair = pair, root = root})
+				// The condition has to be the WHOLE line. The expression stops at the first thing it cannot
+				// read, and that was accepted in silence: `hcp in 8..11x` read as `8..11` (reported
+				// 2026-10-19), and `hcp >= 12 balanced` as `hcp >= 12`, which is worse - a forgotten `and`
+				// that quietly drops half the condition.
+				skip_spaces(p)
+				if p.text != "" {
+					extra := p.text
+					if space := strings.index_any(extra, " \t"); space > 0 {
+						extra = extra[:space]
+					}
+					report(
+						p,
+						p.line_index,
+						p.col,
+						strings.concatenate(
+							{"unexpected `", extra, "` — expected `and`, `or` or the end of the line"},
+							context.temp_allocator,
+						),
+					)
+				} else {
+					append(&rules, Seat_Rule{seat = seat, pair = pair, root = root})
+				}
 			}
 			p.pair = false
 		}
