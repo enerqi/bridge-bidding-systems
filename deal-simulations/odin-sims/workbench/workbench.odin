@@ -1520,7 +1520,7 @@ draw_output_chips :: proc(app: ^App) {
 	// should say so (reported). The scenario is the one selected in the list; its name stays in the tooltip.
 	fmt.sbprintf(
 		&b,
-		`<span class="head" title="What generate has written for %s">view generated formats:</span>`,
+		`<span class="head" title="What generate has written for %s - ctrl+o steps through them">view generated formats <span class="kbd">ctrl+o</span></span>`,
 		escape_html(name, context.temp_allocator),
 	)
 	for format in Deal_Format {
@@ -1595,10 +1595,10 @@ refresh_generate_label :: proc(app: ^App) {
 			exists = format in formats_for(app, app.scenarios[app.selected].name)
 		}
 	}
-	set_text_at(app, "#generate", "regenerate" if exists else "generate")
+	set_text_at(app, "#generate-label", "regenerate" if exists else "generate")
 	if button := find(app, "#generate"); button != nil {
 		title :=
-			"Deal again and REPLACE the pages already written in this format" if exists else "Deal and write the pages"
+			"Deal again and REPLACE the pages already written in this format (ctrl+enter)" if exists else "Deal and write the pages (ctrl+enter)"
 		_ = sa.set_attribute(button, "title", title)
 	}
 
@@ -3251,10 +3251,14 @@ show_editor :: proc(app: ^App) {
 // This call BLOCKS in the modal dialog, so nothing tests it. What is testable is everything after it, which
 // is why `use_bml_dir` is a procedure of its own.
 choose_bml_folder :: proc(app: ^App) {
-	script := `(function () {
-		var picked = Window.this.selectFolder({ caption: "Choose a folder of .bml notes" });
+	// Starting where the notes already are: the dialog's `path` is its first folder.
+	script := fmt.tprintf(
+		`(function () {
+		var picked = Window.this.selectFolder({ caption: "Choose a folder of .bml notes", path: %s });
 		return picked ? String(picked) : "";
-	})()`
+	})()`,
+		json_string(app.docs, context.temp_allocator),
+	)
 	result, err := sa.eval(app.window, script)
 	defer sa.value_clear(&result)
 	if err != nil {
@@ -6552,15 +6556,47 @@ window_shortcut_key :: proc(app: ^App, key_code: u32, modifiers: sciter.Keyboard
 		swap_focus_between_list_and_page(app)
 		return true
 	}
+	// F1 IS HELP on Windows: the `?` paragraph of what you are working in (`toggle_context_help`). The keys
+	// list keeps CTRL+/; settings got CTRL+, (below), the key VS Code, Sublime and most editors use.
+	if code == .F1 {
+		toggle_context_help(app)
+		return true
+	}
+	// And escape puts it away. Only when one is open, so escape stays the editors' otherwise; the filter and
+	// the palettes answer their own escape before this handler is asked.
+	if code == .ESCAPE && close_context_help(app) {
+		return true
+	}
+	// F5 RESCANS the scenario folders, the "refresh" key everywhere on Windows - `rescan`'s button.
+	if code == .F5 && current_view(app) == .Scenarios {
+		reloaded, why := reload_scenarios(app)
+		scenario_status(app, why)
+		if !reloaded {
+			log.warnf("the scenarios were not reloaded: %s", why)
+		}
+		return true
+	}
 	if sciter.KEYBOARD_STATE_CONTROL & modifiers == {} {
 		return false // everything else here is a CTRL key; a bare one belongs to whatever has the focus
 	}
 	shift := sciter.KEYBOARD_STATE_SHIFT & modifiers != {}
 
+	// The QR panel's CTRL+ENTER copies the link its code holds - the panel's one action, and what you came
+	// for if you are not pointing a phone at the screen.
+	if current_view(app) == .Qr && (code == .ENTER || code == .KP_ENTER) {
+		copy_qr_link(app)
+		return true
+	}
+
 	// The keys list itself, before the rest: the one shortcut that has to work when you have forgotten
 	// every other one.
 	if code == .SLASH {
 		toggle_keys_panel(app)
+		return true
+	}
+	// Settings, from anywhere; pressed again it closes, as the button does.
+	if code == .COMMA {
+		show_prefs(app, true)
 		return true
 	}
 
@@ -6612,6 +6648,19 @@ window_shortcut_key :: proc(app: ^App, key_code: u32, modifiers: sciter.Keyboard
 			// SHIFT steps back.
 			cycle_preview_mode(app, back = shift)
 			return true
+		case .ENTER, .KP_ENTER:
+			// The deals view's rule: CTRL+ENTER is what this view MAKES, and SHIFT the action beside it. Here
+			// that is the quiz page, and opening it.
+			if shift {
+				open_quiz(app)
+			} else {
+				make_quiz(app)
+			}
+			return true
+		case .O:
+			// OPEN A FOLDER, in both editors. The deals view's CTRL+O is its formats; "open" either way.
+			choose_bml_folder(app)
+			return true
 		}
 		return false
 	}
@@ -6624,9 +6673,21 @@ window_shortcut_key :: proc(app: ^App, key_code: u32, modifiers: sciter.Keyboard
 			scenario_status(app, why)
 			return true
 		case .ENTER, .KP_ENTER:
-			// The same key the deals view runs with, over the same kind of thing: `check` is this view's
-			// "do the thing I am looking at".
+			// CHECK NOW. The check follows the typing (`live_check_tick`), so this only skips the pause - or is
+			// the whole check when `WORKBENCH_LIVE_MS=0` turns that off. It had a button too, and lost it
+			// (2026-10-19): a button for what already happens on its own read as a step somebody must take.
 			check_scenario(app)
+			return true
+		case .N:
+			new_scenario_file(app)
+			return true
+		case .O:
+			choose_scenario_folder(app)
+			return true
+		case .SPACE:
+			// `words`: the language's words and the system's helpers. CTRL+SPACE is the editors' "what can I type
+			// here", and this list is that question's answer.
+			scenario_words(app)
 			return true
 		case .B:
 			set_shown(app, "#scn-files", effective_display_is_hidden(app, "#scn-files"))
@@ -6641,7 +6702,22 @@ window_shortcut_key :: proc(app: ^App, key_code: u32, modifiers: sciter.Keyboard
 	}
 	#partial switch code {
 	case .B:
-		show_scenario_list(app, !scenario_list_shown(app))
+		// SHIFT+B is the page's `browser` button, B for browser; plain CTRL+B stays the list.
+		if shift {
+			open_shown_in_browser(app)
+		} else {
+			show_scenario_list(app, !scenario_list_shown(app))
+		}
+		return true
+	case .L:
+		// The hand page as a LINK (`share link`), SHIFT the same link as a QR code. L for link, as a
+		// browser's CTRL+L is its address. Both say why when the pane has
+		// no page (`shown_page`).
+		if shift {
+			show_share_qr(app, true)
+		} else {
+			share_shown_page(app)
+		}
 		return true
 	case .BACKSLASH, .T:
 		cycle_pane_mode(app, back = shift) // SHIFT steps back
@@ -6666,6 +6742,40 @@ window_shortcut_key :: proc(app: ^App, key_code: u32, modifiers: sciter.Keyboard
 		return true
 	}
 	return false
+}
+
+// `↗ browser` (and CTRL+SHIFT+B): what the pane shows, in a real browser.
+open_shown_in_browser :: proc(app: ^App) {
+	// WHATEVER IS IN THE PANE, IN A REAL BROWSER. Reported as a gap and it was one: the chips could put
+	// a page in the pane and, for the one kind this window cannot host, hand it to a browser - but a
+	// cards page you were LOOKING at had no way out at all, and a browser is where a 48-deal page has
+	// more room, a find-in-page and a print. It acts on `shown_path` rather than on the selection, so
+	// what leaves is what is on screen; a page built in memory by `analyse` has no file and the button
+	// was dead for it at first ("rather than writing a temp file nobody asked for") - and then it was asked
+	// for: an analysed match is a page like any other, and a browser is where it has room. So the analysed
+	// page is written to ONE file in the temp folder, replaced each time, and that is opened.
+	if app.showing_analysed && app.analysed_page != "" {
+		path, written := write_analysed_page(app.analysed_page)
+		if !written {
+			set_note(app, "the analysed page could not be written to the temp folder")
+			return
+		}
+		open_in_browser(path)
+		set_note(app, fmt.tprintf("opened the analysed page in your browser (%s)", path))
+		return
+	}
+	if app.shown_path == "" {
+		set_note(app, "nothing in the pane has a file to open — generate or pick one first")
+		return
+	}
+	// The MODEL refuses too, not just the dimmed button: `do_click` runs a disabled button's behavior
+	// and delivers the click like any other.
+	if !browsable_page(app.shown_path) {
+		set_note(app, "only a page opens in a browser — this is text, and the pane is showing it")
+		return
+	}
+	open_in_browser(app.shown_path)
+	set_note(app, fmt.tprintf("opened %s in your browser", app.shown_path))
 }
 
 /*
@@ -6693,6 +6803,85 @@ swap_focus_between_list_and_page :: proc(app: ^App) {
 	}
 	focus_page(app, force = true)
 	set_note(app, "the hand page has the keys — the arrows step boards, a/n/e/s/w pick a seat")
+}
+
+/*
+F1: THE HELP OF WHAT YOU ARE IN. Each `?` toggles its own paragraph (`help-<key>` -> `#help-<key>-text`); the
+notes and scenarios views have one each, and the deals view two - generate and analyse - so there the FOCUS
+says which is meant: the caret in the analyse box is a question about analysing. With the focus in neither
+panel F1 toggles both, which costs nothing and needs no second key to tell the two `?`s apart. Escape puts
+away every one open in the view.
+
+A folded panel is unfolded first, since its paragraph is inside the part the fold hides.
+*/
+view_help_keys :: proc(app: ^App) -> (keys: [2]string, n: int) {
+	#partial switch current_view(app) {
+	case .Panes:
+		return {"generate", "analyse"}, 2
+	case .Editor:
+		return {"bml", ""}, 1
+	case .Scenarios:
+		return {"scn", ""}, 1
+	}
+	return
+}
+
+// The view's help narrowed by the focus: in the deals view, the panel the focus is in, if it is in one.
+context_help_keys :: proc(app: ^App) -> (keys: [2]string, n: int) {
+	keys, n = view_help_keys(app)
+	if n < 2 {
+		return
+	}
+	if node, err := sa.focus_element(app.window); err == nil {
+		for key in keys[:n] {
+			if _, perr := sa.select_parent(node, fmt.tprintf("#%s-body", key)); perr == nil {
+				return {key, ""}, 1
+			}
+		}
+	}
+	return
+}
+
+// Is this help paragraph on screen? A panel's is inside its body, so a folded panel's is not, whatever its own
+// display says.
+context_help_open :: proc(app: ^App, key: string) -> bool {
+	if effective_display_is_hidden(app, fmt.tprintf("#help-%s-text", key)) {
+		return false
+	}
+	body := fmt.tprintf("#%s-body", key)
+	return find(app, body) == nil || !effective_display_is_hidden(app, body)
+}
+
+// If any of these is open, put them away; otherwise open them all.
+toggle_context_help :: proc(app: ^App) {
+	keys, n := context_help_keys(app)
+	if close_help(app, keys[:n]) {
+		return
+	}
+	for key in keys[:n] {
+		body := fmt.tprintf("#%s-body", key)
+		if find(app, body) != nil && effective_display_is_hidden(app, body) {
+			fold_panel(app, key, false)
+		}
+		set_shown(app, fmt.tprintf("#help-%s-text", key), true)
+	}
+}
+
+// Escape: every help paragraph open in this view. Reports whether there was one.
+close_context_help :: proc(app: ^App) -> bool {
+	keys, n := view_help_keys(app)
+	return close_help(app, keys[:n])
+}
+
+close_help :: proc(app: ^App, keys: []string) -> bool {
+	closed := false
+	for key in keys {
+		if context_help_open(app, key) {
+			set_shown(app, fmt.tprintf("#help-%s-text", key), false)
+			closed = true
+		}
+	}
+	return closed
 }
 
 // Is the focus inside the framed page? Asked of the FRAME element, since the focused element is inside a
@@ -7523,36 +7712,7 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		show_share_qr(app, false)
 		return true
 	case "page-browser":
-		// WHATEVER IS IN THE PANE, IN A REAL BROWSER. Reported as a gap and it was one: the chips could put
-		// a page in the pane and, for the one kind this window cannot host, hand it to a browser - but a
-		// cards page you were LOOKING at had no way out at all, and a browser is where a 48-deal page has
-		// more room, a find-in-page and a print. It acts on `shown_path` rather than on the selection, so
-		// what leaves is what is on screen; a page built in memory by `analyse` has no file and the button
-		// was dead for it at first ("rather than writing a temp file nobody asked for") - and then it was asked
-		// for: an analysed match is a page like any other, and a browser is where it has room. So the analysed
-		// page is written to ONE file in the temp folder, replaced each time, and that is opened.
-		if app.showing_analysed && app.analysed_page != "" {
-			path, written := write_analysed_page(app.analysed_page)
-			if !written {
-				set_note(app, "the analysed page could not be written to the temp folder")
-				return true
-			}
-			open_in_browser(path)
-			set_note(app, fmt.tprintf("opened the analysed page in your browser (%s)", path))
-			return true
-		}
-		if app.shown_path == "" {
-			set_note(app, "nothing in the pane has a file to open — generate or pick one first")
-			return true
-		}
-		// The MODEL refuses too, not just the dimmed button: `do_click` runs a disabled button's behavior
-		// and delivers the click like any other.
-		if !browsable_page(app.shown_path) {
-			set_note(app, "only a page opens in a browser — this is text, and the pane is showing it")
-			return true
-		}
-		open_in_browser(app.shown_path)
-		set_note(app, fmt.tprintf("opened %s in your browser", app.shown_path))
+		open_shown_in_browser(app)
 		return true
 
 	case "page-dump":
@@ -7585,10 +7745,6 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 
 	case "scn-new":
 		new_scenario_file(app)
-		return true
-
-	case "scn-check":
-		check_scenario(app)
 		return true
 
 	case "scn-save":
@@ -7651,17 +7807,11 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 
 
 	case "bml-quiz":
-		made, why := generate_quiz(app)
-		bml_status(app, why)
-		if !made {
-			log.warnf("no quiz was written: %s", why)
-		}
+		make_quiz(app)
 		return true
 
 	case "bml-quiz-open":
-		if app.quiz_path != "" {
-			open_in_browser(app.quiz_path)
-		}
+		open_quiz(app)
 		return true
 
 	case "bml-save":

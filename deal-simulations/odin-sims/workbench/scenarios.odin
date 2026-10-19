@@ -261,10 +261,13 @@ This BLOCKS in native modal code, so nothing tests it. What is testable is every
 why `use_scenario_dir` is a procedure of its own.
 */
 choose_scenario_folder :: proc(app: ^App) {
-	script := `(function () {
-		var picked = Window.this.selectFolder({ caption: "Choose the folder your .scenario files are in" });
+	script := fmt.tprintf(
+		`(function () {
+		var picked = Window.this.selectFolder({ caption: "Choose the folder your .scenario files are in", path: %s });
 		return picked ? String(picked) : "";
-	})()`
+	})()`,
+		json_string(app.scn_dir, context.temp_allocator),
+	)
 	result, err := sa.eval(app.window, script)
 	defer sa.value_clear(&result)
 	if err != nil {
@@ -712,15 +715,21 @@ what name, and this engine already has the native chooser that answers both. It 
 the testable half is `create_scenario_file`.
 */
 new_scenario_file :: proc(app: ^App) {
-	script := `(function () {
+	// IN THE FOLDER BEING EDITED - the one marked in the folders list, whose files are listed under it. Without
+	// `path` the dialog opened wherever Windows last left it, which read as the new file going somewhere else.
+	script := fmt.tprintf(
+		`(function () {
 		var picked = Window.this.selectFile({
 			mode: "save",
 			caption: "New scenario file",
 			filter: "Scenario files (*.scenario)|*.scenario",
-			extension: "scenario"
+			extension: "scenario",
+			path: %s
 		});
 		return picked ? String(picked) : "";
-	})()`
+	})()`,
+		json_string(app.scn_dir, context.temp_allocator),
+	)
 	result, err := sa.eval(app.window, script)
 	defer sa.value_clear(&result)
 	if err != nil {
@@ -847,8 +856,8 @@ NEW_SCENARIO_TEMPLATE :: `# A scenario is a name, a description, and one line pe
 # kept deal's par on its page (slower - every deal the seat lines accept is solved):
 #   double-dummy: north-south make slam        (or game, or grand; north-south or east-west)
 #
-# Press check to parse this and measure how often it happens. save writes the file;
-# reload then makes it a scenario in the deals list.
+# It is checked as you type: the report says what it means and how often it happens.
+# save writes the file and makes it a scenario in the deals list.
 
 scenario %s "say what this auction is, in a few words"
   tags: mine
@@ -1409,7 +1418,7 @@ reload_scenarios :: proc(app: ^App) -> (ok: bool, why: string) {
 	switch {
 	case problems > 0:
 		return true, fmt.tprintf(
-			"deals list: %d scenario%s from files, %d problem%s — press check on the file to see them",
+			"deals list: %d scenario%s from files, %d problem%s — open the file under my scenarios to see them",
 			loaded,
 			plural(loaded),
 			problems,

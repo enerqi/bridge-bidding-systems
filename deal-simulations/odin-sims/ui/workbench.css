@@ -697,6 +697,20 @@ button.small {
 	font-weight: normal;
 }
 
+/* A shortcut shown on its control, as an editor's menus show them: after the word, smaller, lighter. Only on
+   the main actions (generate, analyse) and the format chips' label - on every button it would be
+   noise, and the notes source's head has no room for one at 720px (`make quiz` had one, and pushed `open`
+   off the window). Every key is in the tooltips and the CTRL+/ list. */
+/* An inline-block, or the margin is dropped and the hint runs into the word (seen: `regeneratectrl+↵`). Words, not
+   ↵ / ⇧: at this size the arrows were unreadable. */
+.kbd {
+	display: inline-block;
+	margin-left: 0.6em;
+	font-size: 0.85em;
+	font-weight: normal;
+	opacity: 0.8;
+}
+
 /* ---- icons, and the three-position pane control -------------------------------------------------- */
 
 /*

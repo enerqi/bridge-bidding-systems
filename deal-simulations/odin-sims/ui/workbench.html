@@ -52,7 +52,7 @@
     </div>
     <!-- SETTINGS, then ABOUT: the conventional top-right pair. Both are errands rather than places, opened
          from anywhere and left by going back (close, esc, ctrl+w). -->
-    <button id="prefs" class="ghost small icon-text" title="Settings: theme"
+    <button id="prefs" class="ghost small icon-text" title="Settings (ctrl+,)"
             data-hint="Settings - the colour theme (dark, light, or whatever Windows is set to). Remembered for the next start."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>settings</button>
     <button id="about" class="ghost small icon-text" title="Versions and third-party credits"
             data-hint="Versions, and the licence credits for the engine and the double-dummy solver."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>about</button>
@@ -177,8 +177,8 @@
         <!-- Shown only when the set has par and the code without it is the smaller choice (`draw_share_qr`). -->
         <button id="qr-par" class="ghost" title="Put par back in the code, or take it out"
                 data-hint="Par makes a link about twice as long, so a big set leaves it out to keep the code easy to scan. Keep par puts it back - a bigger code, which a phone reads less easily, from paper especially. Drop par goes back to the smaller one.">keep par (bigger code)</button>
-        <button id="qr-copy" title="Copy the link this code holds"
-                data-hint="Copy the link the code holds - the same one a phone opens by scanning it.">copy link</button>
+        <button id="qr-copy" title="Copy the link this code holds (ctrl+enter)"
+                data-hint="Copy the link the code holds - the same one a phone opens by scanning it.">copy link<span class="kbd">ctrl+enter</span></button>
         <button id="qr-close" title="Close (esc, ctrl+w)">close</button>
       </div>
     </div>
@@ -219,7 +219,10 @@
         <div class="krow"><span class="k"><b>ctrl+tab</b></span><span class="d">the next place along the tab strip (shift: the previous one)</span></div>
         <div class="krow"><span class="k"><b>ctrl+=</b><b>ctrl+-</b><b>ctrl+0</b></span><span class="d">zoom in · out · back to normal</span></div>
         <div class="krow"><span class="k"><b>ctrl+/</b></span><span class="d">this list</span></div>
-        <div class="krow"><span class="k"><b>esc</b><b>ctrl+w</b></span><span class="d">close this list, or the about panel</span></div>
+        <div class="krow"><span class="k"><b>f1</b></span><span class="d">help for what you are in - in the deals view, the panel with the focus, else both · esc closes it</span></div>
+        <div class="krow"><span class="k"><b>ctrl+,</b></span><span class="d">settings</span></div>
+        <div class="krow"><span class="k"><b>esc</b><b>ctrl+w</b></span><span class="d">close this list, settings, the QR code, or the about panel</span></div>
+        <div class="krow"><span class="k"><b>ctrl+enter</b></span><span class="d">on the QR code: copy its link</span></div>
 
         <div class="group">the deals view</div>
         <div class="krow"><span class="k"><b>ctrl+r</b></span><span class="d">filter the scenario list, by name or description</span></div>
@@ -228,6 +231,8 @@
         <div class="krow"><span class="k"><b>ctrl+t</b><b>ctrl+\</b></span><span class="d">the hand page: closed → beside the controls → the whole width (shift: back the other way)</span></div>
         <div class="krow"><span class="k"><b>ctrl+o</b></span><span class="d">open the next format this scenario has (shift: the previous one)</span></div>
         <div class="krow"><span class="k"><b>ctrl+enter</b></span><span class="d">generate — shift: analyse the deal instead</span></div>
+        <div class="krow"><span class="k"><b>ctrl+l</b></span><span class="d">copy a link to the hand page — shift: show it as a QR code</span></div>
+        <div class="krow"><span class="k"><b>ctrl+shift+b</b></span><span class="d">open the hand page in your web browser</span></div>
 
         <div class="group">while the filter has the caret</div>
         <div class="krow"><span class="k"><b>↑</b><b>↓</b></span><span class="d">move the selection through what is left</span></div>
@@ -247,9 +252,15 @@
         <div class="krow"><span class="k"><b>ctrl+s</b></span><span class="d">save the file</span></div>
         <div class="krow"><span class="k"><b>ctrl+b</b></span><span class="d">fold the file list away, or bring it back</span></div>
         <div class="krow"><span class="k"><b>ctrl+t</b><b>ctrl+\</b></span><span class="d">the preview: closed, beside the source, full width (shift: back the other way)</span></div>
+        <div class="krow"><span class="k"><b>ctrl+enter</b></span><span class="d">make the quiz page from this file — shift: run it in your browser</span></div>
+        <div class="krow"><span class="k"><b>ctrl+o</b></span><span class="d">choose the folder of notes</span></div>
 
         <div class="group">the scenarios view</div>
-        <div class="krow"><span class="k"><b>ctrl+enter</b></span><span class="d">check — parse what is in the editor and measure how often it happens</span></div>
+        <div class="krow"><span class="k"><b>ctrl+enter</b></span><span class="d">check now — it already checks itself once the typing pauses</span></div>
+        <div class="krow"><span class="k"><b>ctrl+n</b></span><span class="d">a new .scenario file, in the folder being edited</span></div>
+        <div class="krow"><span class="k"><b>ctrl+o</b></span><span class="d">add a folder of .scenario files</span></div>
+        <div class="krow"><span class="k"><b>f5</b></span><span class="d">rescan the folders, so the deals list has what is in them now</span></div>
+        <div class="krow"><span class="k"><b>ctrl+space</b></span><span class="d">words: the language and the system's helper names</span></div>
         <div class="krow"><span class="k"><b>ctrl+s</b></span><span class="d">save the file, and put it in the deals list</span></div>
         <div class="krow"><span class="k"><b>ctrl+b</b></span><span class="d">fold the file list away, or bring it back</span></div>
       </div>
@@ -296,7 +307,7 @@
         <button class="segbtn" data-preview="wide" title="Give the preview the whole width (ctrl+t or ctrl+\ cycles closed, beside, full width; ctrl+shift+t steps back)"
                 data-hint="Let the preview have everything except the file list, for reading. The source is put away, not closed: coming back finds it as it was."><i class="icon"><i class="fill"></i></i></button>
       </div>
-      <button class="help-toggle ghost small" id="help-bml" title="What is this editor for?"
+      <button class="help-toggle ghost small" id="help-bml" title="What is this editor for? (f1)"
               data-hint="Explain what this editor is for and what the preview shows.">?</button>
       <!-- No close here either; the header's tabs are the way out, and the text stays in the editor. -->
     </div>
@@ -340,7 +351,7 @@
         <div class="side-head">
           <div class="side-row">
             <span class="side-label side-grow">notes folder</span>
-            <button id="bml-folder" class="ghost icon-text" title="Choose a folder of .bml files"
+            <button id="bml-folder" class="ghost icon-text" title="Choose a folder of .bml files (ctrl+o)"
               data-hint="Pick a different folder to edit the .bml notes of. The system's own notes are found at startup, so this is for a copy, a branch, or somebody else's."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>folder…</button>
           </div>
           <div class="side-path" id="bml-dir" title="The folder these files are in"
@@ -364,10 +375,10 @@
           <button id="bml-save" class="ghost icon-text" title="Write the editor's text back to the file (ctrl+s)"
               data-hint="Overwrite the .bml file on disk with the text in the editor. There is no undo for this beyond the editor's own."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>save</button>
           <div class="quizbar" id="bml-quizbar" style="display: none">
-            <button id="bml-quiz" class="icon-text" title="Make a bidding quiz page from this file's bid tables"
+            <button id="bml-quiz" class="icon-text" title="Make a bidding quiz page from this file's bid tables (ctrl+enter)"
               data-hint="Write a bidding quiz from this file's bid tables - the text in the editor, unsaved edits included - as one HTML page you can open in a browser or send to someone. Making it again replaces the page."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5.99 13c-.59 0-1.05-.47-1.05-1.05 0-.59.47-1.04 1.05-1.04.59 0 1.04.45 1.04 1.04-.01.58-.45 1.05-1.04 1.05zm2.5-6.17c-.63.93-1.23 1.21-1.56 1.81-.13.24-.18.4-.18 1.18h-1.52c0-.41-.06-1.08.26-1.65.41-.73 1.18-1.16 1.63-1.8.48-.68.21-1.94-1.14-1.94-.88 0-1.32.67-1.5 1.23l-1.37-.57C11.51 5.96 12.52 5 13.99 5c1.23 0 2.08.56 2.51 1.26.37.61.58 1.73.01 2.57z"/></svg><span id="bml-quiz-label">make quiz</span></button>
-            <button id="bml-quiz-open" class="ghost icon-text" style="display: none" title="Open the quiz page in your web browser"
-              data-hint="Open this file's quiz page in your web browser. The page is one self-contained file: copy it anywhere, it needs no server."><span class="away">↗</span>open</button>
+            <button id="bml-quiz-open" class="ghost icon-text" style="display: none" title="Run the quiz in your web browser (ctrl+shift+enter)"
+              data-hint="Open this file's quiz page in your web browser. The page is one self-contained file: copy it anywhere, it needs no server."><span class="away">↗</span>run</button>
             <span class="barlabel quizstate" id="bml-quiz-state"></span>
           </div>
         </div>
@@ -422,7 +433,7 @@
     <div class="bar">
       <button id="scn-files-toggle" class="ghost" title="Show or hide the list of files (ctrl+b)"
               data-hint="Fold the list of files away to give the source and the report the whole window, or bring it back.">◧ files</button>
-      <button class="help-toggle ghost small" id="help-scn" title="What is this editor for?"
+      <button class="help-toggle ghost small" id="help-scn" title="What is this editor for? (f1)"
               data-hint="Explain what a .scenario file is and what check, save and rescan do.">?</button>
     </div>
     <div class="panel-help" id="help-scn-text">
@@ -451,9 +462,9 @@
             <span class="side-label" data-hint="Every folder listed below feeds the deals list; the marked one is the folder being edited.">scenario folders</span>
           </div>
           <div class="side-row">
-            <button id="scn-folder" class="ghost icon-text" title="Add a folder of .scenario files to the ones the deals list reads"
+            <button id="scn-folder" class="ghost icon-text" title="Add a folder of .scenario files to the ones the deals list reads (ctrl+o)"
               data-hint="Pick a folder your .scenario files live in. It is added to the folders the deals list reads, and remembered for the next start."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>folder…</button>
-            <button id="scn-reload" class="ghost icon-text" title="Read every scenario folder again"
+            <button id="scn-reload" class="ghost icon-text" title="Read every scenario folder again (f5)"
               data-hint="Read every scenario folder again and rebuild the deals list from them. Saving already does this - rescan is for files changed outside this window."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>rescan</button>
           </div>
         </div>
@@ -463,7 +474,7 @@
           <div class="side-row">
             <span class="side-label side-grow" id="scn-dir" title="The folder these files are in"
                   data-hint="The folder the files below are from - the one marked in the folders list above."></span>
-            <button id="scn-new" class="ghost icon-text" title="Create a new .scenario file"
+            <button id="scn-new" class="ghost icon-text" title="Create a new .scenario file (ctrl+n)"
               data-hint="Create a new .scenario file. It starts as a working scenario with the grammar in a comment above it, so there is something to edit rather than an empty buffer."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"/></svg>new…</button>
           </div>
         </div>
@@ -476,17 +487,15 @@
           <span class="pane-title" id="scn-title" title="The file being edited"></span>
           <button id="scn-save" class="ghost icon-text" title="Write the file, and put it in the deals list (ctrl+s)"
               data-hint="Overwrite the .scenario file on disk with the text in the editor, and rebuild the deals list from it. There is no undo for this beyond the editor's own."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>save</button>
-          <button id="scn-check" class="icon-text" title="Parse what is in the editor, and measure how often it happens (ctrl+enter)"
-              data-hint="Parse the text in the editor - not the saved file - and report what it means, anything wrong with it, and how often each scenario happens in a sample of random deals."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>check</button>
         </div>
         <plaintext id="scn-text" title="The .scenario source"
-                   data-hint="The .scenario source. Keywords, seat names, quantities and the system's own helper names are coloured; press check to parse it."></plaintext>
+                   data-hint="The .scenario source. Keywords, seat names, quantities and the system's own helper names are coloured. It is checked as you type: the report below says what it means, what is wrong with it, and how often it happens (ctrl+enter checks at once)."></plaintext>
       </div>
       <div class="divider"></div>
       <div class="pane" id="scn-report-pane">
         <div class="pane-head">
           <span class="barlabel">report</span>
-          <button id="scn-words" class="ghost icon-text" title="List the words a scenario file may use"
+          <button id="scn-words" class="ghost icon-text" title="List the words a scenario file may use (ctrl+space)"
               data-hint="List the grammar and every named helper this bidding system exposes to scenario files - the vocabulary is what a form of ranges and checkboxes fundamentally cannot say."><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>words</button>
         </div>
         <plaintext id="scn-report" readonly title="What the parse understood, and how often it happens"
@@ -652,7 +661,7 @@
       <div class="panel">
         <div class="legend">
           <button class="fold" id="fold-generate"><span class="chev" id="fold-generate-chev">▾</span>generate deals</button>
-          <button class="help-toggle ghost small" id="help-generate" title="What does generating do?"
+          <button class="help-toggle ghost small" id="help-generate" title="What does generating do? (f1 with the focus in this panel)"
                   data-hint="Explain what this panel is for.">?</button>
         </div>
         <!-- Everything under the title, so the fold is one `display`. -->
@@ -736,8 +745,8 @@
           <label for="fixed">fixed table</label>
         </div>
         <div class="line actions">
-          <button id="generate" title="Deal and write the pages"
-                  data-hint="Start dealing. Progress is per scenario, and the transcript below names each page as it is written.">generate</button>
+          <button id="generate" title="Deal and write the pages (ctrl+enter)"
+                  data-hint="Start dealing. Progress is per scenario, and the transcript below names each page as it is written."><span id="generate-label">generate</span><span class="kbd">ctrl+enter</span></button>
           <button id="cancel" class="ghost" disabled title="Stop after the current scenario"
                   data-hint="Asks the run to stop. It finishes the scenario it is on first — one page, not the whole batch.">cancel</button>
           <div class="track" title="Progress through the scenarios"
@@ -771,7 +780,7 @@
       <div class="panel">
         <div class="legend">
           <button class="fold" id="fold-analyse"><span class="chev" id="fold-analyse-chev">▾</span>analyse deals</button>
-          <button class="help-toggle ghost small" id="help-analyse" title="What does analysing do?"
+          <button class="help-toggle ghost small" id="help-analyse" title="What does analysing do? (f1 with the focus in this panel)"
                   data-hint="Explain what this panel is for.">?</button>
         </div>
         <!-- Everything under the title, so the fold is one `display`. -->
@@ -829,8 +838,8 @@
           <label for="as-text">as text report</label>
         </div>
         <div class="line actions">
-          <button id="analyse" title="Analyse the deals in the box above"
-                  data-hint="Read the deal or deals above and write the report into the pane below.">analyse</button>
+          <button id="analyse" title="Analyse the deals in the box above (ctrl+shift+enter)"
+                  data-hint="Read the deal or deals above and write the report into the pane below.">analyse<span class="kbd">ctrl+shift+enter</span></button>
           <button id="show-analysed" class="ghost" disabled title="Put the last analysed hand page back in the pane"
                   data-hint="Shows the last hand page analyse made again - after a scenario's page has taken the pane - without analysing again.">show last</button>
           <span class="busy" id="analyse-busy" style="display:none"
@@ -923,16 +932,16 @@
              only way to read the one format this window cannot host at all (an html-handviewer page, which
              is an iframe per deal onto bridgebase.com). Disabled until the pane holds something with a FILE
              behind it: a page `analyse` built in memory has nothing to hand over. -->
-        <button id="page-browser" class="ghost small icon-text" disabled title="Open this page in your web browser"
+        <button id="page-browser" class="ghost small icon-text" disabled title="Open this page in your web browser (ctrl+shift+b)"
                 data-hint="Open what the pane is showing in your web browser — more room for a big page, and the only way to read a handviewer page, which embeds bridgebase.com."><span class="away">↗</span>browser</button>
         <!-- A LINK TO WHAT IS IN THE PANE (SHARING_PLAN.md, Tier B). The boards are read back out of the page
              and packed into the link itself, which opens the shared-deals player - nothing is uploaded. Alive
              exactly when `browser` is; a page with no boards in it is refused with a reason. See
              `workbench/share.odin`. -->
-        <button id="page-share" class="ghost small" disabled title="Copy a link to these deals"
+        <button id="page-share" class="ghost small" disabled title="Copy a link to these deals (ctrl+l)"
                 data-hint="Copy a link that opens these deals, as this page, in any browser. Nothing is uploaded: the deals travel in the link itself, about 19 characters a board. It opens the player page set in Settings - or, until one is published, the copy in the deals folder, which works on this computer only.">share link</button>
         <!-- The same link as a QR code, for phones at the table (Tier C). Alive exactly when `share link` is. -->
-        <button id="page-qr" class="ghost small" disabled title="Show these deals as a QR code"
+        <button id="page-qr" class="ghost small" disabled title="Show these deals as a QR code (ctrl+shift+l)"
                 data-hint="Show a QR code of the share link, for a phone to scan - the deals open on it with nothing to type. A big set leaves its par out to keep the code readable, and says so.">QR</button>
         <!-- Debug builds only (the host shows it; the stylesheet hides it): writes the hosted page`s
              geometry and the handful of computed styles that differ in this engine into the transcript and

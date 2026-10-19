@@ -1289,6 +1289,70 @@ test_the_keys_list_opens_from_either_view :: proc(t: ^testing.T) {
 	testing.expect(t, !effective_display_is_hidden(&app, "#report"), "the report pane should be back")
 }
 
+// CTRL+, IS SETTINGS - the editors' convention, a toggle from any view.
+@(test)
+test_ctrl_comma_opens_and_closes_the_settings :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	attach_for_test(&app)
+	defer sa.detach_window_handler(app.window, &app.handler)
+
+	show_scenario_editor(&app)
+	pump(&app)
+	press_key(&app, .COMMA, ctrl = true)
+	pump(&app)
+	testing.expect_value(t, current_view(&app), View.Prefs)
+	press_key(&app, .COMMA, ctrl = true)
+	pump(&app)
+	testing.expect_value(t, current_view(&app), View.Scenarios)
+}
+
+// F1 IS HELP FOR WHAT YOU ARE IN: in the deals view the panel the focus is in, else both; F1 again or escape
+// puts it away, and a folded panel unfolds to show it.
+@(test)
+test_f1_opens_the_help_of_what_has_the_focus :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	attach_for_test(&app)
+	defer sa.detach_window_handler(app.window, &app.handler)
+	show_view(&app, .Panes)
+	pump(&app)
+	open :: proc(app: ^App, key: string) -> bool {return context_help_open(app, key)}
+
+	// The focus in the analyse box: analyse's help, and only that.
+	_ = sa.set_focus(find(&app, "#deal"))
+	press_key(&app, .F1)
+	pump(&app)
+	testing.expect(t, open(&app, "analyse"), "F1 in the analyse box should open analyse's help")
+	testing.expect(t, !open(&app, "generate"), "and not generate's")
+	press_key(&app, .ESCAPE)
+	pump(&app)
+	testing.expect(t, !open(&app, "analyse"), "escape should put it away")
+
+	// The focus in neither panel: both, and F1 again closes both. A folded generate panel unfolds.
+	_ = sa.set_focus(find(&app, "#scenarios"))
+	fold_panel(&app, "generate", true)
+	press_key(&app, .F1)
+	pump(&app)
+	testing.expect(t, open(&app, "generate") && open(&app, "analyse"), "F1 outside the panels should open both")
+	press_key(&app, .F1)
+	pump(&app)
+	testing.expect(t, !open(&app, "generate") && !open(&app, "analyse"), "F1 again should close both")
+	fold_panel(&app, "generate", false)
+
+	// The scenarios view has one.
+	show_scenario_editor(&app)
+	pump(&app)
+	press_key(&app, .F1)
+	pump(&app)
+	testing.expect(t, open(&app, "scn"), "F1 in the scenarios view should open its help")
+	press_key(&app, .ESCAPE)
+	pump(&app)
+	testing.expect(t, !open(&app, "scn"), "and escape close it")
+}
+
 // THE DEALS VIEW'S KEYS DO NOTHING IN THE NOTES VIEW. The gate is one early return in
 // `window_shortcut_key`, and this is what says it is still there.
 @(test)
@@ -1307,7 +1371,9 @@ test_the_deals_shortcuts_are_inert_in_the_notes_view :: proc(t: ^testing.T) {
 
 	show_editor(&app)
 	pump(&app)
-	for key in ([]sciter.Sc_Kb_Codes{.B, .BACKSLASH, .O, .G, .R}) {
+	// Not .O: CTRL+O is the notes view's own key (its folder dialog), and B, \ and R are its own too, answered
+	// there without leaving the view - which is all this asserts of them.
+	for key in ([]sciter.Sc_Kb_Codes{.B, .BACKSLASH, .G, .R}) {
 		press_key(&app, key, ctrl = true)
 		pump(&app)
 		testing.expectf(t, current_view(&app) == .Editor, "a deals key left the notes view (%v)", key)
@@ -1348,6 +1414,9 @@ test_the_keys_panel_names_every_shortcut :: proc(t: ^testing.T) {
 			"ctrl+o",
 			"ctrl+enter",
 			"ctrl+/",
+			"f1",
+			"ctrl+,",
+			"ctrl+n",
 		}) {
 		testing.expectf(t, strings.contains(listed, key), "the keys list does not mention %s", key)
 	}
@@ -2180,7 +2249,7 @@ test_the_formats_that_exist_are_visible_and_pressable :: proc(t: ^testing.T) {
 		}{{"html-cards", "regenerate"}, {"pbn", "regenerate"}, {"lin", "generate"}}) {
 		set_input(&app, "#format", c.format)
 		refresh_generate_label(&app)
-		label, _ := sa.text(find(&app, "#generate"), context.temp_allocator)
+		label, _ := sa.text(find(&app, "#generate-label"), context.temp_allocator)
 		testing.expectf(t, label == c.label, "%s: the button says %q, want %q", c.format, label, c.label)
 		// And the line under the format says where the run writes, in THAT format, and whether it replaces.
 		note, _ := sa.text(find(&app, "#output-note"), context.temp_allocator)
@@ -8317,7 +8386,7 @@ test_every_toolbar_icon_paints :: proc(t: ^testing.T) {
 		pump(&app)
 		icons, err := sa.select_all(find(&app, "#scnview"), "svg.ic", context.temp_allocator)
 		testing.expect_value(t, err, nil)
-		testing.expect_value(t, len(icons), 6) // new, folder, save, check, rescan, words
+		testing.expect_value(t, len(icons), 5) // new, folder, save, rescan, words
 		sa.paint_windowless(&g_view)
 		for icon, i in icons {
 			box, lerr := sa.location(icon, .Border, .Root)
@@ -8355,13 +8424,13 @@ test_each_scenario_action_sits_on_what_it_acts_on :: proc(t: ^testing.T) {
 	show_view(&app, .Scenarios)
 	pump(&app)
 	// Each action sits on what it acts on (2026-10-10): the folder actions head the sidebar, `new…` the files
-	// of the folder being edited, save and check the source, words the report it writes into.
+	// of the folder being edited, save the source, words the report it writes into. (`check` had a button
+	// here until 2026-10-19; the check follows the typing, and CTRL+ENTER is "check now".)
 	places := [][2]string {
 		{"#scn-folder", "#scn-files"},
 		{"#scn-reload", "#scn-files"},
 		{"#scn-new", "#scn-files"},
 		{"#scn-save", "#scn-source"},
-		{"#scn-check", "#scn-source"},
 		{"#scn-words", "#scn-report-pane"},
 	}
 	for place in places {
@@ -8383,8 +8452,8 @@ test_each_scenario_action_sits_on_what_it_acts_on :: proc(t: ^testing.T) {
 			area,
 		)
 	}
-	// And in the familiar order where two share a row: open before rescan, save before check.
-	for pair in ([][2]string{{"#scn-folder", "#scn-reload"}, {"#scn-save", "#scn-check"}}) {
+	// And in the familiar order where two share a row: open before rescan.
+	for pair in ([][2]string{{"#scn-folder", "#scn-reload"}}) {
 		a, _ := sa.location(find(&app, pair[0]), .Border, .Root)
 		b, _ := sa.location(find(&app, pair[1]), .Border, .Root)
 		testing.expectf(t, a.x < b.x, "%s should be left of %s", pair[0], pair[1])

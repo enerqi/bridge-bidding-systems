@@ -10,7 +10,7 @@ package main
 	quiz over every file in the corpus), writing them as JSON into that slot, and saving the result.
 
 	THE QUIZ GROUP is in the source pane's head, after `save` - both act on the open file: `make quiz`
-	(`remake quiz` once a page exists), `↗ open` when a page exists, and a sentence saying whether this file has a
+	(`remake quiz` once a page exists), `↗ run` (in a browser) when a page exists, and a sentence saying whether this file has a
 	quiz page, how old it is, and whether the notes were saved after it.
 
 	THE TEMPLATE IS BUILT IN. `ui/quiz-template.html` is a VENDORED copy, `#load`ed into the exe, so the
@@ -26,7 +26,7 @@ package main
 	included — `#INCLUDE`s are resolved from disk as the preview resolves them.
 
 	THE PAGE IS NOT SHOWN HERE. The quiz runs WebAssembly, which this engine's script does not; it is a page
-	for a browser, so the view offers `↗ open` (in a browser) rather than loading it into a pane.
+	for a browser, so the view offers `↗ run` (in a browser) rather than loading it into a pane.
 
 	THE VIEW KNOWS WHETHER A QUIZ EXISTS. Whenever a file is opened (and after a save, a generate, or a change
 	to where quizzes go) `refresh_quiz` looks for that file's page on disk: the open button is there exactly
@@ -44,6 +44,7 @@ package main
 */
 
 import "core:fmt"
+import "core:log"
 import "core:os"
 import "core:path/filepath"
 import "core:strings"
@@ -233,6 +234,24 @@ quiz_page :: proc(
 	return page, auctions, why
 }
 
+// `make quiz`, from the button or CTRL+ENTER in the notes view: write the page and say what happened.
+make_quiz :: proc(app: ^App) {
+	made, why := generate_quiz(app)
+	bml_status(app, why)
+	if !made {
+		log.warnf("no quiz was written: %s", why)
+	}
+}
+
+// `↗ run`, from the button or CTRL+SHIFT+ENTER: the file's quiz page in the browser, if it has one.
+open_quiz :: proc(app: ^App) {
+	if app.quiz_path == "" || effective_display_is_hidden(app, "#bml-quiz-open") {
+		bml_status(app, "no quiz page for this file yet - make quiz writes one")
+		return
+	}
+	open_in_browser(app.quiz_path)
+}
+
 // The `quiz` button: write the open file's quiz page, and offer it to the browser.
 generate_quiz :: proc(app: ^App) -> (ok: bool, why: string) {
 	if app.bml_open == "" {
@@ -345,7 +364,7 @@ refresh_quiz :: proc(app: ^App) {
 	)
 	if button := find(app, "#bml-quiz-open"); button != nil {
 		sa.set_attribute(button, "data-hint", hint)
-		sa.set_attribute(button, "title", fmt.tprintf("Open the quiz page in your web browser (written %s)", age))
+		sa.set_attribute(button, "title", fmt.tprintf("Run the quiz in your web browser (written %s; ctrl+shift+enter)", age))
 	}
 	set_quiz_state(
 		app,
