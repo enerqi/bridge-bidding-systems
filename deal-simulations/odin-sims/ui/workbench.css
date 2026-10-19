@@ -374,6 +374,22 @@ aside .foot {
 	font-weight: bold;
 }
 
+/* A scenario from one of your .scenario files: the way to its file (`edit_scenario`). A button of its own,
+   like the sources' `×`, so the click is the mark's and not the row's. */
+#scenarios .row .edit {
+	behavior: button;
+	margin-left: 0.5em;
+	padding: 0 0.3em;
+	font-weight: normal;
+	color: var(--accent);
+	cursor: pointer;
+}
+
+#scenarios .row .edit:hover {
+	color: var(--accent-hover);
+	background: var(--field-hover);
+}
+
 #scenarios .row .title {
 	display: block;
 	color: var(--ink-dim);

@@ -164,10 +164,12 @@ PAGE = r"""<!doctype html>
 				.filter((t) => t).join(" · ");
 			if (!note.isConnected) document.body.appendChild(note);
 		};
-		const lane = ({ kinds = 1, workers = 1, source, init, job, here, take }) => {
+		// A lane runs its jobs on a pool of its own workers (`source`, `init`, `workers` of them), or - given `run` -
+		// hands them to a shared one, at most `workers` at a time (`run(message)` -> a promise of the answer).
+		const lane = ({ kinds = 1, workers = 1, source, init, run, job, here, take }) => {
 			const done = new Array(kinds * boards).fill(false), wanted = new Array(kinds * boards).fill(false);
 			const running = new Array(kinds * boards).fill(false); // given to a worker, its answer not back yet
-			let pool = null, starting = false, busy = false, onPage = false;
+			let pool = null, starting = false, busy = false, onPage = false, inFlight = 0;
 			const open = (i) => {
 				for (let k = 0; k < kinds; k++) {
 					const id = k * boards + i;
@@ -213,6 +215,16 @@ PAGE = r"""<!doctype html>
 			};
 			const pump = async () => {
 				if (onPage) { loop(); return; }
+				if (run) {
+					for (let id = inFlight < workers ? next() : -1; id >= 0; id = inFlight < workers ? next() : -1) {
+						inFlight++;
+						running[id] = true;
+						run(job(id)).then(
+							(answer) => { inFlight--; finish(id, answer.result); pump(); },
+							() => { inFlight--; fallBack(); });
+					}
+					return;
+				}
 				if (!pool) {
 					if (starting) return;
 					starting = true;
@@ -278,6 +290,68 @@ PAGE = r"""<!doctype html>
 		const ddsSource = document.getElementById("dds-js").textContent;
 		let ddsModule = null, ddsHere = null;
 		const ddsCompiled = async () => ddsModule || (ddsModule = await inflate("/*DDS_MODULE*/"));
+		// THE DDS WORKERS, ONE SET for everything DDS does here: a whole deal's table and a recorded play (`ddsLane`)
+		// and the 2-hand sampling's layouts. They were two pools, so a page with both kinds of board could hold two
+		// sets of ~50 MB instances at once (up to 16); a phone has least of the memory that cost. One queue, first
+		// come first served, so a sampling round and the tables share the workers rather than one waiting for the
+		// other. Started on the first job; closed after DDS_IDLE_MS with nothing to do, which hands the memory back
+		// (the module stays compiled, so starting again costs milliseconds). One worker per processor less two
+		// (the analysis workers and the page), at most eight: four took 3.4s for 48 tables, eight 1.6s.
+		const ddsWorkers = Math.max(1, Math.min(8, (navigator.hardwareConcurrency || 2) - 2));
+		const DDS_IDLE_MS = 30000;
+		const ddsShared = (() => {
+			let set = null, starting = null, idleTimer = 0, broken = typeof Worker !== "function";
+			const queue = [];
+			const close = () => { if (set) set.forEach((t) => t.worker.terminate()); set = null; };
+			const fail = (error) => {
+				broken = true;
+				const held = (set || []).filter((t) => t.job).map((t) => t.job);
+				close();
+				for (const job of held.concat(queue.splice(0))) job.reject(error);
+			};
+			const dispatch = () => {
+				clearTimeout(idleTimer);
+				for (const t of set) {
+					if (t.job || !queue.length) continue;
+					t.job = queue.shift();
+					t.worker.postMessage(t.job.message);
+				}
+				if (!queue.length && set.every((t) => !t.job)) idleTimer = setTimeout(close, DDS_IDLE_MS);
+			};
+			const start = async () => {
+				const module = await ddsCompiled();
+				const url = URL.createObjectURL(new Blob([ddsSource + "\n(" + ddsWorker.toString() + ")();"], { type: "text/javascript" }));
+				const made = Array.from({ length: ddsWorkers }, () => ({ worker: new Worker(url), job: null }));
+				await Promise.all(made.map((t) => new Promise((resolve, reject) => {
+					t.worker.onmessage = () => resolve();
+					t.worker.onerror = (event) => reject(new Error(event.message || "a DDS worker failed"));
+					t.worker.postMessage({ init: { module } });
+				})));
+				for (const t of made) {
+					t.worker.onmessage = (event) => {
+						const job = t.job;
+						t.job = null;
+						if (job) job.resolve(event.data);
+						if (set) dispatch();
+					};
+					t.worker.onerror = (event) => fail(new Error(event.message || "a DDS worker failed"));
+				}
+				return made;
+			};
+			return {
+				// Whether workers can be had at all (false once they failed, or with no Worker in this browser).
+				usable: () => !broken,
+				// One job for whichever worker is free next: the worker's answer, or a rejection with no workers.
+				run: (message) => new Promise((resolve, reject) => {
+					if (broken) { reject(new Error("no DDS workers")); return; }
+					queue.push({ message, resolve, reject });
+					if (set) { dispatch(); return; }
+					starting = starting || start().then(
+						(made) => { set = made; starting = null; dispatch(); },
+						(error) => { starting = null; console.warn("DDS workers unavailable, solving on the page's thread:", error); fail(error); });
+				}),
+			};
+		})();
 		// Board `i`'s recorded play as the positions DDS solves (`replay.positions`, 96 bytes each), or null.
 		const playPositions = (i) => {
 			const count = wasm.pl_play_positions(i);
@@ -293,16 +367,12 @@ PAGE = r"""<!doctype html>
 			exacts[board] = new TextEncoder().encode(html);
 			if (typeof window.ncAddSim === "function") window.ncAddSim(board, html);
 		};
-		// The same for DDS: with the analysis spread over workers, a deal's table (~0.2s) was what the reader waited
-		// for. A table is a bigger job than a board's analysis and DDS's instance is smaller than the player's, so
-		// this pool may be twice the size: one worker per processor less two, at most eight (each holds ~50 MB).
-		// Four workers took 3.4s for 48 boards with both lanes running.
-		const ddsWorkers = Math.max(1, Math.min(8, (navigator.hardwareConcurrency || 2) - 2));
+		// The same for DDS, on the shared workers: with the analysis spread over workers, a deal's table (~0.2s) was
+		// what the reader waited for.
 		const ddsLane = lane({
 			kinds: 2,
 			workers: ddsWorkers,
-			source: () => ddsSource + "\n(" + ddsWorker.toString() + ")();",
-			init: async () => ({ module: await ddsCompiled() }),
+			run: ddsShared.run,
 			job: ddsJob,
 			here: async (id) => {
 				ddsHere = ddsHere || await ddsStart(await ddsCompiled());
@@ -344,47 +414,28 @@ PAGE = r"""<!doctype html>
 		// THE 2-HAND ADVISOR'S SAMPLING, asked for from the CCA panel's verdict band (`window.ncRequestSample`): the
 		// unseen 26 cards dealt to the defenders up to SAMPLE_CAP times and every layout solved double dummy - the
 		// make-% for every contract, the opening-lead sub-grids and the guess tax, as the advisor's page has them.
-		// It is the heavy one (~20 ms a layout on a desktop's workers, ~110 ms on a 2018 phone), so it gets a POOL
-		// of DDS workers, one per processor but one (at most 8), started for the boards asked for and closed when
-		// they are done (each holds ~50 MB). One board at a time, a round of `sampled.ROUND` layouts at once, split
-		// over the pool; after each round the player says whether the verdict has settled (`pl_sample_round`), so
+		// It is the heavy one (~20 ms a layout on a desktop's workers, ~110 ms on a 2018 phone), on the shared DDS
+		// workers (`ddsShared`). One board at a time, a round of `sampled.ROUND` layouts at once, split
+		// over them; after each round the player says whether the verdict has settled (`pl_sample_round`), so
 		// a lopsided board stops at 200 layouts. Without workers, the page's thread does it, a breath a layout.
 		const SAMPLE_CAP = 300, SAMPLE_ROUND = 40;
 		const sampleWanted = new Set();
-		let sampling = false, pool = null;
-		const poolSize = Math.max(1, Math.min(8, (navigator.hardwareConcurrency || 2) - 1));
-		const call = (worker, message) => new Promise((resolve, reject) => {
-			worker.onmessage = (event) => resolve(event.data);
-			worker.onerror = (event) => reject(new Error(event.message || "a DDS worker failed"));
-			worker.postMessage(message);
-		});
-		const openPool = async () => {
-			try {
-				const module = await ddsCompiled();
-				const url = URL.createObjectURL(new Blob([ddsSource + "\n(" + ddsWorker.toString() + ")();"], { type: "text/javascript" }));
-				const workers = Array.from({ length: poolSize }, () => new Worker(url));
-				await Promise.all(workers.map((w) => call(w, { init: { module } })));
-				return workers;
-			} catch (error) {
-				console.warn("DDS workers unavailable, sampling on the page's thread:", error);
-				return [];
-			}
-		};
-		const closePool = () => { if (pool) pool.forEach((w) => w.terminate()); pool = null; };
-		// `n` layouts (16 u32 each) -> their tables (20 i32 each), over the pool, else on this thread.
+		let sampling = false;
+		// `n` layouts (16 u32 each) -> their tables (20 i32 each), on the shared workers, else on this thread.
 		const solveLayouts = async (deals, n) => {
 			const out = new Int32Array(20 * n);
-			if (pool.length) {
-				// One layout a message, each worker taking the next as it finishes: layouts differ several-fold in
-				// how long they take, and fixed shares left most of the pool waiting for the slowest.
-				let next = 0;
-				await Promise.all(pool.map(async (worker) => {
-					for (let k = next++; k < n; k = next++) {
-						const answer = await call(worker, { board: k, batch: deals.slice(16 * k, 16 * k + 16) });
+			if (ddsShared.usable()) {
+				try {
+					// One layout a job, all queued at once: a free worker takes the next as it finishes, since layouts
+					// differ several-fold in how long they take and fixed shares left most workers waiting.
+					await Promise.all(Array.from({ length: n }, async (_, k) => {
+						const answer = await ddsShared.run({ board: k, batch: deals.slice(16 * k, 16 * k + 16) });
 						out.set(answer.result, 20 * k);
-					}
-				}));
-				return out;
+					}));
+					return out;
+				} catch (error) {
+					// The workers failed: this round again, on this thread.
+				}
 			}
 			ddsHere = ddsHere || await ddsStart(await ddsCompiled());
 			for (let k = 0; k < n; k++) {
@@ -423,13 +474,11 @@ PAGE = r"""<!doctype html>
 					let next = -1;
 					for (const i of sampleWanted) if (next < 0 || Math.abs(i - at) < Math.abs(next - at)) next = i;
 					sampleWanted.delete(next);
-					if (!pool) pool = typeof Worker === "function" ? await openPool() : [];
 					await sampleBoard(next);
 				}
 			} catch (error) {
 				sampleStatus = "sampling failed: " + error.message;
 			} finally {
-				closePool();
 				sampling = false;
 				if (!sampleStatus.startsWith("sampling failed")) sampleStatus = "";
 				showNote();

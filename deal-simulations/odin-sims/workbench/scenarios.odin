@@ -524,6 +524,75 @@ dir_from_env :: proc(dir: string) -> bool {
 }
 
 // ---------------------------------------------------------------------------------------------------
+// From the deals list to the file
+
+// The program behind row `index` of the deals list, when it came from a `.scenario` file: the registry is the
+// compiled scenarios, then `app.loaded.scenarios` in order, and `app.loaded.programs` is parallel to those.
+scenario_program :: proc(app: ^App, index: int) -> (program: ^scenario_dsl.Program, ok: bool) {
+	k := index - len(bidding.registry)
+	if index >= len(app.scenarios) || k < 0 || k >= len(app.loaded.programs) {
+		return nil, false
+	}
+	return app.loaded.programs[k], true
+}
+
+/*
+A row's ✎: the scenarios tab, on the file that scenario came from, with the caret on its `scenario` line.
+
+Before this, the way there was a tab, a folder and a file chosen by hand, and nothing in the deals list said
+which rows were yours. Over unsaved text it is the editor's own two-step: the first press says so and keeps
+the text, the next one discards it - the same guard a click on another file meets.
+*/
+edit_scenario :: proc(app: ^App, index: int) {
+	program, from_file := scenario_program(app, index)
+	if !from_file {
+		return
+	}
+	dir := parent_dir(program.source)
+	name := filepath.base(program.source)
+	show_scenario_editor(app)
+	if !same_dir(dir, app.scn_dir) || app.scn_open != name {
+		if app.scn_open != "" && scenario_modified(app) && !app.scn_armed {
+			app.scn_armed = true
+			scenario_status(
+				app,
+				fmt.tprintf("%s has unsaved changes — save, or press ✎ again to discard them", app.scn_open),
+			)
+			draw_scenario_files(app)
+			return
+		}
+		if !same_dir(dir, app.scn_dir) {
+			adopt_scenario_dir(app, dir)
+		}
+		if ok, why := open_scenario_file(app, name); !ok {
+			scenario_status(app, why)
+			return
+		}
+	}
+	if text, got := scenario_source(app, context.temp_allocator); got {
+		set_caret_row(app, scenario_line(text, program.name), "#scn-text")
+	}
+}
+
+// The row of `text` that starts scenario `name` (`scenario <name> "..."`), 0 when none does.
+scenario_line :: proc(text: string, name: string) -> int {
+	row := 0
+	text := text
+	for line in strings.split_lines_iterator(&text) {
+		rest := strings.trim_left_space(line)
+		if strings.has_prefix(rest, "scenario ") {
+			rest = strings.trim_left_space(rest[len("scenario "):])
+			end := strings.index_any(rest, " \t")
+			if (rest if end < 0 else rest[:end]) == name {
+				return row
+			}
+		}
+		row += 1
+	}
+	return 0
+}
+
+// ---------------------------------------------------------------------------------------------------
 // One file
 
 // Load a file into the editor. The line endings it arrived with are remembered, so saving a one-word

@@ -3497,8 +3497,8 @@ through the plaintext asset rather than from script (measured: `element.selectio
 Returns 0 when there is no caret to ask about, which is the top of the document: a preview of the first
 section is a reasonable thing to be looking at before you have clicked anywhere.
 */
-caret_row :: proc(app: ^App) -> int {
-	element := find(app, "#bml-text")
+caret_row :: proc(app: ^App, widget := "#bml-text") -> int {
+	element := find(app, widget)
 	if element == nil {
 		return 0
 	}
@@ -4343,8 +4343,8 @@ the container's content and does NOT move when the container scrolls. A few line
 because a destination pinned to the very top of the pane has no context above it and reads as the file
 starting there.
 */
-set_caret_row :: proc(app: ^App, row: int) {
-	element := find(app, "#bml-text")
+set_caret_row :: proc(app: ^App, row: int, widget := "#bml-text") {
+	element := find(app, widget)
 	if element == nil {
 		return
 	}
@@ -4363,7 +4363,7 @@ set_caret_row :: proc(app: ^App, row: int) {
 	if _, cerr := sa.asset_call(asset, "selectRange", {start_row, start_col, end_row, end_col}); cerr != nil {
 		log.warnf("the caret could not be moved to row %d: %v", row, cerr)
 	}
-	scroll_source_to_row(app, row)
+	scroll_source_to_row(app, row, widget)
 	// The FOCUS is what makes the caret visible and the arrow keys move it; `selectRange` alone leaves the
 	// selection set on a widget nobody is typing into.
 	_ = sa.set_focus(element)
@@ -4377,8 +4377,8 @@ GOTO_LEAD_IN :: 3
 // plaintext are one per line and in order (the same fact `bml_source` reads them back with), so the line
 // element is the measurement - no line-height arithmetic, which would be wrong the moment the zoom keys
 // were pressed.
-scroll_source_to_row :: proc(app: ^App, row: int) {
-	element := find(app, "#bml-text")
+scroll_source_to_row :: proc(app: ^App, row: int, widget := "#bml-text") {
+	element := find(app, widget)
 	if element == nil {
 		return
 	}
@@ -6751,12 +6751,22 @@ draw_scenarios :: proc(app: ^App) {
 				fmt.sbprintf(&marks, `<span class="tag">%s</span>`, tags[format])
 			}
 		}
+		// A scenario from one of YOUR files says so, and the mark is the way to that file (`edit_scenario`).
+		edit := ""
+		if program, from_file := scenario_program(app, i); from_file {
+			edit = fmt.tprintf(
+				`<span class="edit" data-edit="%d" title="Edit this scenario: %s">✎</span>`,
+				i,
+				escape_html(program.source, context.temp_allocator),
+			)
+		}
 		fmt.sbprintf(
 			&b,
-			`<div class="row %s" data-index="%d"><span class="name">%s</span><span class="title">%s</span><span class="have">%s</span></div>`,
+			`<div class="row %s" data-index="%d"><span class="name">%s%s</span><span class="title">%s</span><span class="have">%s</span></div>`,
 			"sel" if i == app.selected else "",
 			i,
 			escape_html(scenario.name, context.temp_allocator),
+			edit,
 			escape_html(cli.scenario_title(scenario), context.temp_allocator),
 			strings.to_string(marks),
 		)
@@ -7526,6 +7536,13 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		return true
 	}
 
+	// A row's ✎: before the row itself, which the walk would find next - the click edits, it does not select.
+	if raw, _ := sa.attribute(be.target, "data-edit", context.temp_allocator); raw != "" {
+		if index, parsed := strconv.parse_int(raw); parsed {
+			edit_scenario(app, index)
+		}
+		return true
+	}
 	if index, is_row := row_index(be.target); is_row {
 		select_scenario(app, index)
 		return true

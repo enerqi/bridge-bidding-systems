@@ -7886,6 +7886,91 @@ test_the_sources_list_shows_every_folder_and_switches_between_them :: proc(t: ^t
 	testing.expect_value(t, remembered, configured) // looking at a folder does not reorder the sources
 }
 
+/*
+A ROW FROM ONE OF YOUR FILES IS MARKED, AND THE MARK OPENS THE FILE at that scenario's line.
+
+The deals list mixes the compiled scenarios with those read from `.scenario` files, and the way from a row to
+its file was the scenarios tab, a folder and a file chosen by hand. Here the scenario is the SECOND in a file
+in the second folder while the editor is on the first: the ✎ must switch folder and file and put the caret on
+its `scenario` line, a compiled row must have no mark, and over unsaved text the first press must keep it.
+*/
+@(test)
+test_the_edit_mark_opens_a_scenarios_file :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	attach_for_test(&app)
+	defer sa.detach_window_handler(app.window, &app.handler)
+
+	first := scratch_scenario_dir(t, "wb-scn-edit-a")
+	second := scratch_scenario_dir(t, "wb-scn-edit-b")
+	if first == "" || second == "" {return}
+	if !write_scenario_file(first, "a.scenario", "scenario wb-edit-a \"a\"\n  north: hcp >= 12\n") {return}
+	if !write_scenario_file(
+		second,
+		"b.scenario",
+		"# two in one file\nscenario wb-edit-one \"one\"\n  north: hcp >= 12\n\nscenario wb-edit-two \"two\"\n  north: hcp >= 13\n",
+	) {return}
+
+	app.prefs = prefs.load("", context.temp_allocator)
+	defer prefs.destroy(&app.prefs)
+	prefs.set(&app.prefs, SCENARIO_DIRS_PREF, strings.concatenate({first, ";", second}, context.temp_allocator))
+	reloaded, why := reload_scenarios(&app)
+	testing.expectf(t, reloaded, "the reload was refused: %s", why)
+	show_scenario_editor(&app)
+	pump(&app)
+	testing.expect(t, same_dir(app.scn_dir, first), "the editor should start on the first folder")
+
+	index := -1
+	for scenario, i in app.scenarios {
+		if scenario.name == "wb-edit-two" {
+			index = i
+		}
+	}
+	testing.expect(t, index >= 0, "the file's scenario should be in the deals list")
+	if index < 0 {return}
+	show_view(&app, .Panes)
+	draw_scenarios(&app)
+	pump(&app)
+	marks, _ := sa.select_all(find(&app, "#scenarios"), ".row .edit", context.temp_allocator)
+	testing.expect_value(t, len(marks), 3) // the three file scenarios, and no compiled one
+	mark := find(&app, fmt.tprintf(`#scenarios .edit[data-edit="%d"]`, index))
+	testing.expect(t, mark != nil, "the scenario's row has no edit mark")
+	if mark == nil {return}
+
+	// Unsaved text in the editor: the first press keeps it and says so. TYPED, as the file-switch guard's test
+	// does: a host-side write does not set the widget's modified flag, which is what the guard reads.
+	show_view(&app, .Scenarios)
+	pump(&app)
+	if editor := find(&app, "#scn-text"); editor != nil {
+		_ = sa.set_focus(editor)
+		pump(&app)
+		_, _ = sa.send_key(editor, .CHAR, u32('X'))
+		pump(&app)
+	}
+	testing.expect(t, scenario_modified(&app), "a typed character marks the scenario buffer modified")
+	show_view(&app, .Panes)
+	pump(&app)
+	if mark = find(&app, fmt.tprintf(`#scenarios .edit[data-edit="%d"]`, index)); mark == nil {return}
+	sa.do_click(mark)
+	pump(&app)
+	testing.expect_value(t, app.scn_open, "a.scenario")
+	status, _ := sa.text(find(&app, "#scn-status"), context.temp_allocator)
+	testing.expectf(t, strings.contains(status, "unsaved changes"), "the status should say why (%q)", status)
+
+	// The second press discards it and lands on the scenario.
+	show_view(&app, .Panes)
+	pump(&app)
+	if mark = find(&app, fmt.tprintf(`#scenarios .edit[data-edit="%d"]`, index)); mark == nil {return}
+	sa.do_click(mark)
+	pump(&app)
+	testing.expect_value(t, current_view(&app), View.Scenarios)
+	testing.expect(t, same_dir(app.scn_dir, second), "the edit mark should move the editor to the scenario's folder")
+	testing.expect_value(t, app.scn_open, "b.scenario")
+	testing.expect_value(t, caret_row(&app, "#scn-text"), 4)
+	testing.expect_value(t, app.selected, 0) // the press edits, it does not select the row
+}
+
 // ONE FOLDER, HOWEVER IT IS SPELLED, loads once. The environment and the pref can both name a folder, with
 // different slashes; loading it twice would put every scenario in it into the deals list twice.
 @(test)
