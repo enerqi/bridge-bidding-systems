@@ -85,6 +85,7 @@ FOLLOW :: uintptr(8) // the hand page follow`s debounce ran out; load the select
 ANALYSE_STEP :: uintptr(9) // lparam = boards done << 16 | boards in all, from `analyse`'s progress hook
 CHECK :: uintptr(10) // the scenario editor`s debounce ran out; check the buffer (see `arm_live_check`)
 HEADING :: uintptr(11) // a heading in the notes preview was clicked; go to it (see `on_preview_click`)
+LINKED_FILE :: uintptr(12) // a link in the notes preview names another notes file; open it (`on_preview_click`)
 
 Job_Kind :: enum {
 	Generate,
@@ -201,6 +202,7 @@ App :: struct {
 	// whether the pane is showing it now. An analysed page is something somebody ASKED for, so it keeps the
 	// pane until something else is asked for: opening the pane or widening it does not replace it.
 	analysed_page:      string,
+	hand_look_stale:    bool, // the hand page look changed while the page was out of sight (`choose_hand_look`)
 	showing_analysed:   bool,
 
 	// What is in the deals folder, scenario name -> the formats generated for it. One `read_dir` fills it
@@ -220,7 +222,10 @@ App :: struct {
 	// re-renders it, because a preview of the file you were looking at a moment ago is worse than no
 	// preview: it looks like the file you just clicked.
 	previewed:          bool,
+	// Settings changed how the notes look while the preview was hidden: re-render it when it is next shown.
+	notes_look_stale:   bool,
 	docs:               string,
+	notes_found:        string, // the notes folder found at startup: always first in the folders list (`notes_dirs.odin`)
 	bml_names:          []string,
 	bml_open:           string,
 	bml_crlf:           bool, // the line endings the file arrived with, so saving does not rewrite all of them
@@ -737,6 +742,9 @@ on_posted :: proc(handler: ^sa.Host_Handler, posted: sa.Posted) {
 	case HEADING:
 		go_to_clicked_heading(app)
 
+	case LINKED_FILE:
+		switch_bml_file(app, app.preview_clicked)
+
 	case LIVE:
 		// The only message that does not come from a worker thread. It comes from the frame`s TIMER handler,
 		// one dispatch earlier, and this is why: the render REPLACES the document inside that same frame, and
@@ -882,6 +890,7 @@ start_job :: proc(app: ^App, job: Job, status: string) {
 	set_enabled(app, "#generate", false)
 	set_enabled(app, "#analyse", false)
 	set_enabled(app, "#cancel", job.kind == .Generate)
+	set_page_look_for_run(app) // before the worker exists: it reads `norn.page_look_css` and nothing guards it
 	set_analyse_busy(app, job.kind != .Generate)
 	if job.kind != .Generate {
 		set_text_at(app, "#analyse-busy-text", status) // "analysing match.lin…" until the boards are counted
@@ -1972,6 +1981,10 @@ show_view :: proc(app: ^App, view: View) {
 	set_shown(app, "#keyspanel", view == .Keys)
 	set_shown(app, "#prefs-panel", view == .Prefs)
 	set_shown(app, "#qr-panel", view == .Qr)
+	if view == .Panes && app.hand_look_stale {
+		app.hand_look_stale = false
+		reshow_page_for_look(app)
+	}
 	if view in app.theme_stale {
 		app.theme_stale -= {view}
 		if root, err := sa.root(app.window); err == nil && root != nil {
@@ -2898,7 +2911,7 @@ with_page_css :: proc(page: string) -> string {
 
 show_page_html :: proc(app: ^App, html: string, title: string, take_keyboard := true) -> bool {
 	asset := page_frame_asset(app) or_return
-	styled := with_page_css(html)
+	styled := with_hand_look(app, with_page_css(html), context.temp_allocator)
 	html_value := sa.value_from(styled)
 	defer sa.value_clear(&html_value)
 	// The base URL a relative link in the page would resolve against. The page is self-contained, so this
@@ -2926,13 +2939,17 @@ show_page_html :: proc(app: ^App, html: string, title: string, take_keyboard := 
 // resolves the path, and a page too big to want in memory twice is exactly what a batch produces.
 show_page_file :: proc(app: ^App, path: string, take_keyboard := true) -> bool {
 	asset := page_frame_asset(app) or_return
-	path_value := sa.value_from(path)
-	defer sa.value_clear(&path_value)
+	// A chosen hand page LOOK goes into the markup (`hand_look.odin` says why it cannot be added after), so
+	// then the file is read here after all - only then: the original look is no rules, and stays `loadFile`.
+	if !load_file_with_look(app, asset, path) {
+		path_value := sa.value_from(path)
+		defer sa.value_clear(&path_value)
 
-	result, err := sa.asset_call(asset, "loadFile", {path_value})
-	defer sa.value_clear(&result)
-	if err != nil || sa.value_is_error(&result) {
-		return false
+		result, err := sa.asset_call(asset, "loadFile", {path_value})
+		defer sa.value_clear(&result)
+		if err != nil || sa.value_is_error(&result) {
+			return false
+		}
 	}
 	remember_shown_path(app, path)
 	apply_page_zoom(app)
@@ -3171,13 +3188,8 @@ bml_file_tree :: proc(dir: string, names: []string, allocator := context.allocat
 // The row for the open file is marked, and marked DIRTY when the buffer has unsaved changes, so the warning
 // is on the thing that would lose them rather than only in the status line.
 draw_bml_files :: proc(app: ^App) {
-	folder := app.docs if app.docs != "" else "no folder chosen"
-	set_text_at(app, "#bml-dir", folder)
-	// The path is also the tooltip, because a long one wraps to two or three lines in a 250px column and
-	// hovering is then the only way to read it as one string (to copy it, or to tell two checkouts apart).
-	if head := find(app, "#bml-dir"); head != nil {
-		sa.set_attribute(head, "title", folder)
-	}
+	// The folders, the open one marked; each row's path is its tooltip too, since a long one wraps.
+	draw_notes_sources(app)
 
 	list := find(app, "#bml-list")
 	if list == nil {
@@ -3216,7 +3228,7 @@ draw_bml_files :: proc(app: ^App) {
 //
 // A MISSING CORPUS NO LONGER REFUSES. It used to say "set BML_DOCS_DIRECTORY" and stay on the deals, which
 // named an environment variable at somebody holding a mouse; now the view opens with an empty list and the
-// `folder…` button in it, which is the thing to press. The startup search is a convenience, not the only
+// `add…` button in it, which is the thing to press. The startup search is a convenience, not the only
 // way in.
 show_editor :: proc(app: ^App) {
 	show_view(app, .Editor)
@@ -3231,6 +3243,12 @@ show_editor :: proc(app: ^App) {
 			bml_status(app, why)
 			return
 		}
+	}
+	// A look chosen in Settings since the preview last rendered: it re-renders now it can be seen.
+	if app.notes_look_stale && app.bml_showing {
+		app.notes_look_stale = false
+		_, why := preview_bml(app)
+		bml_status(app, why)
 	}
 	// And the source pane takes the FOCUS. Without it the view opens with the text on screen and nothing in
 	// the window holding the caret, which is a pane that answers no keystroke until it is clicked — read,
@@ -3252,13 +3270,7 @@ show_editor :: proc(app: ^App) {
 // is why `use_bml_dir` is a procedure of its own.
 choose_bml_folder :: proc(app: ^App) {
 	// Starting where the notes already are: the dialog's `path` is its first folder.
-	script := fmt.tprintf(
-		`(function () {
-		var picked = Window.this.selectFolder({ caption: "Choose a folder of .bml notes", path: %s });
-		return picked ? String(picked) : "";
-	})()`,
-		json_string(app.docs, context.temp_allocator),
-	)
+	script := dialog_script("selectFolder", "Choose a folder of .bml notes", app.docs)
 	result, err := sa.eval(app.window, script)
 	defer sa.value_clear(&result)
 	if err != nil {
@@ -3275,6 +3287,8 @@ choose_bml_folder :: proc(app: ^App) {
 		bml_status(app, fmt.tprintf("could not read that folder's path (%s)", url))
 		return
 	}
+	// ADDED to the folders list, not swapped for the one that was open (`notes_dirs.odin`).
+	remember_notes_dir(app, path)
 	use_bml_dir(app, path)
 }
 
@@ -3304,6 +3318,7 @@ use_bml_dir :: proc(app: ^App, path: string) {
 	app.bml_open = ""
 	app.bml_armed = false
 	app.previewed = false // whatever is in the frame belongs to the folder we just left
+	remember_open_notes_dir(app)
 	set_bml_source(app, "")
 	draw_bml_files(app)
 
@@ -3650,6 +3665,36 @@ show_preview_button :: proc(app: ^App) {
 	}
 }
 
+/*
+The script that opens a native file or folder dialog (`Window.this.selectFile` / `selectFolder`), STARTING IN
+`path` - the folder being worked in, rather than wherever Windows last left the dialog. `save` adds the save
+dialog's fields, for a `.scenario` file.
+
+CONCATENATED, not formatted: `fmt` reads a brace as a directive, and a script is braces. The first version was
+`fmt.tprintf` and every one of these dialogs came out as `(function () %!(MISSING CLOSE BRACE)...` - which the
+tests could not see, because a dialog blocks and nothing tests it. This is the part that can be.
+*/
+dialog_script :: proc(call: string, caption: string, path: string, save := false) -> string {
+	fields := ""
+	if save {
+		fields = `mode: "save", filter: "Scenario files (*.scenario)|*.scenario", extension: "scenario", `
+	}
+	return strings.concatenate(
+		{
+			"(function () { var picked = Window.this.",
+			call,
+			"({ ",
+			fields,
+			"caption: ",
+			json_string(caption, context.temp_allocator),
+			", path: ",
+			json_string(path, context.temp_allocator),
+			` }); return picked ? String(picked) : ""; })()`,
+		},
+		context.temp_allocator,
+	)
+}
+
 // The preview document: the library's html made SELF-CONTAINED.
 //
 // What comes out of `render_html` is a page for a web server — it `<link>`s `bml.css` relatively and pulls
@@ -3678,6 +3723,7 @@ preview_document :: proc(app: ^App, html: string, section := -1, allocator := co
 	strings.write_string(&b, "<style>")
 	strings.write_string(&b, strip_width_media_blocks(css, context.temp_allocator))
 	strings.write_string(&b, "</style>")
+	strings.write_string(&b, notes_look_css(notes_look(&app.prefs), context.temp_allocator)) // after the sheet: it wins
 	strings.write_string(&b, preview_override_css(css, context.temp_allocator))
 
 	/*
@@ -4831,6 +4877,9 @@ preview_document_root :: proc(app: ^App) -> (root: sa.Element, ok: bool) {
 
 on_preview_click :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 	app := (^App)(handler.user_data)
+	if be, is_behavior := sa.behavior_event(event); is_behavior {
+		return be.code == .HYPERLINK_CLICK && follow_preview_link(app, be.target)
+	}
 	me, ok := sa.mouse_event(event)
 	if !ok || me.code != .MOUSE_CLICK || me.phase != .Bubbling {
 		return false
@@ -4847,6 +4896,47 @@ on_preview_click :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 	app.preview_clicked = strings.clone(id, app.allocator)
 	app.preview_click_rank = rank
 	sa.post_callback(app.window, HEADING)
+	return true
+}
+
+/*
+A LINK in the preview. Left to the engine, every link loads INTO THE FRAME: the notes' `[BML source
+notes](https://github.com/...)` replaced the preview with GitHub's page, unstyled (reported 2026-10-20, and
+it read as the fold button doing it - the page takes a few seconds to arrive). So:
+
+  * `#Anchor` - a heading on this page - is left to the engine, which scrolls to it;
+  * a web address (anything with a scheme) goes to the system's browser, and the status line says so;
+  * a relative `.html` is another notes page (`alternatives.html`): when its `.bml` is in the folder, that
+    file opens in the editor - POSTED, since it re-renders the document this click is delivered in;
+  * anything else is refused, with the address in the status line, rather than taking over the preview.
+*/
+follow_preview_link :: proc(app: ^App, link: sa.Element) -> bool {
+	href, _ := sa.attribute(link, "href", context.temp_allocator)
+	href = strings.trim_space(href)
+	if href == "" || strings.has_prefix(href, "#") {
+		return false
+	}
+	if strings.contains(href, "://") || strings.has_prefix(href, "mailto:") {
+		open_in_browser(href)
+		bml_status(app, fmt.tprintf("opened %s in your browser", href))
+		return true
+	}
+	page := href
+	if hash := strings.index_byte(page, '#'); hash >= 0 {
+		page = page[:hash]
+	}
+	page = filepath.base(page)
+	if strings.has_suffix(page, ".html") {
+		name := strings.concatenate({strings.trim_suffix(page, ".html"), ".bml"}, context.temp_allocator)
+		path, _ := filepath.join({app.docs, name}, context.temp_allocator)
+		if app.docs != "" && os.exists(path) {
+			delete(app.preview_clicked, app.allocator)
+			app.preview_clicked = strings.clone(name, app.allocator)
+			sa.post_callback(app.window, LINKED_FILE)
+			return true
+		}
+	}
+	bml_status(app, fmt.tprintf("that link is not to a notes file here (%s)", href))
 	return true
 }
 
@@ -7106,6 +7196,36 @@ scenario_filter_key :: proc(app: ^App, key_code: u32, modifiers: sciter.Keyboard
 // used at, and the exact number matters less than its being a jump rather than a step.
 SCENARIO_PAGE_STEP :: 10
 
+// The deals folder field has a new value (typed and left, or picked): everything read from the folder again.
+out_dir_changed :: proc(app: ^App) {
+	scan_outputs(app) // a different folder is a different set of files
+	draw_scenarios(app)
+	note_selected_page(app)
+	refresh_quiz(app) // and, when quizzes go there too, a different quiz page
+}
+
+// The folder button beside the deals folder: a dialog, then what leaving the field does.
+pick_out_dir :: proc(app: ^App) {
+	script := dialog_script("selectFolder", "Choose the deals folder", strings.trim_space(read_text(app, "#outdir")))
+	result, err := sa.eval(app.window, script)
+	defer sa.value_clear(&result)
+	if err != nil {
+		set_note(app, "this build cannot open a folder dialog")
+		return
+	}
+	url, serr := sa.value_to_string(&result, context.temp_allocator)
+	if serr != nil || url == "" {
+		return // cancelled
+	}
+	path, ok := file_url_to_path(url, context.temp_allocator)
+	if !ok {
+		set_note(app, fmt.tprintf("could not read that folder's path (%s)", url))
+		return
+	}
+	set_input(app, "#outdir", path)
+	out_dir_changed(app)
+}
+
 draw_scenarios :: proc(app: ^App) {
 	list := find(app, "#scenarios")
 	if list == nil {
@@ -7117,11 +7237,9 @@ draw_scenarios :: proc(app: ^App) {
 	// keeping a second copy of the answer in step with it.
 	shown := visible_scenarios(app, context.temp_allocator)
 	total := len(app.scenarios)
-	set_text_at(
-		app,
-		"#scenario-count",
-		fmt.tprintf("%d scenario%s", total, "" if total == 1 else "s") if len(shown) == total else fmt.tprintf("%d of %d scenarios", len(shown), total),
-	)
+	// The count is part of the list's TITLE ("scenarios · 12 of 101"), and while `every scenario` is ticked the
+	// title says the run covers them all, whatever the filter shows - the rows' wash says it row by row.
+	set_text_at(app, "#scenario-count", fmt.tprintf("· %d", total) if len(shown) == total else fmt.tprintf("· %d of %d", len(shown), total))
 	if len(shown) == 0 {
 		sa.set_html(list, `<div class="empty">no scenario matches</div>`)
 		return
@@ -7174,7 +7292,20 @@ draw_scenario_scope :: proc(app: ^App) {
 	if list == nil {
 		return
 	}
-	_ = sa.set_attribute(list, "class", "all" if read_bool(app, "#all") else "")
+	all := read_bool(app, "#all")
+	_ = sa.set_attribute(list, "class", "all" if all else "")
+	// AND RESTYLE THE ROWS: a class on the LIST does not reach rows already drawn until the subtree is restyled
+	// (the theme's trap, `apply_theme`) - the wash computed and never painted, so ticking the box showed
+	// nothing until the rows were redrawn for another reason (2026-10-20).
+	_ = sa.update_element(list, render = true)
+	// And the TITLE says it, for the scenarios scrolled out of sight or filtered away: the run takes them too.
+	total := len(app.scenarios)
+	set_text_at(app, "#scenario-all", fmt.tprintf("all %d in the run", total) if all else "")
+	// Inline, not `set_shown` (which says `block` and put the pill on a line of its own). `:empty` does not
+	// work for this here: measured, it hid the pill with its text in it.
+	if marker := find(app, "#scenario-all"); marker != nil {
+		sa.set_style(marker, "display", "inline-block" if all else "none")
+	}
 }
 
 // `set_html` is a parser, so anything that reaches it is escaped first. The scenario names are ours, but
@@ -7484,10 +7615,7 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		if fe.code == .LOST {
 			id, _ := sa.attribute(fe.target, "id", context.temp_allocator)
 			if id == "outdir" {
-				scan_outputs(app) // a different folder is a different set of files
-				draw_scenarios(app)
-				note_selected_page(app)
-				refresh_quiz(app) // and, when quizzes go there too, a different quiz page
+				out_dir_changed(app)
 			}
 			// The settings' quiz fields are remembered on the way out too: a path is typed or pasted whole.
 			remember_quiz_pref(app, id)
@@ -7566,6 +7694,31 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 	if word, _ := sa.attribute(be.target, "data-gfx", context.temp_allocator); word != "" {
 		choose_graphics(app, word)
 		return true
+	}
+	if word, _ := sa.attribute(be.target, "data-notes-built", context.temp_allocator); word != "" {
+		set_text_at(app, "#prefs-notes-note", set_built_pages_look(app, word == "on"))
+		draw_notes_look_prefs(app)
+		return true
+	}
+	if word, _ := sa.attribute(be.target, "data-suits", context.temp_allocator); word != "" {
+		choose_suits(app, word)
+		return true
+	}
+	if word, _ := sa.attribute(be.target, "data-hand-built", context.temp_allocator); word != "" {
+		choose_generated_look(app, word == "on")
+		return true
+	}
+	for pair in ([][2]string{{"data-hand-felt", HAND_FELT_PREF}, {"data-hand-card", HAND_CARD_PREF}}) {
+		if word, _ := sa.attribute(be.target, pair[0], context.temp_allocator); word != "" {
+			choose_hand_look(app, pair[1], word)
+			return true
+		}
+	}
+	for pair in ([][2]string{{"data-notes-page", NOTES_PAGE_PREF}, {"data-notes-font", NOTES_FONT_PREF}}) {
+		if word, _ := sa.attribute(be.target, pair[0], context.temp_allocator); word != "" {
+			choose_notes_look(app, pair[1], word)
+			return true
+		}
 	}
 	if word, _ := sa.attribute(be.target, "data-theme", context.temp_allocator); word != "" {
 		if theme, known := theme_of(word); known {
@@ -7704,6 +7857,9 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		return true
 	case "qr-copy":
 		copy_qr_link(app)
+		return true
+	case "outdir-pick":
+		pick_out_dir(app)
 		return true
 	case "qr-par":
 		toggle_qr_par(app)
@@ -7861,6 +8017,19 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		if !forgot {
 			log.warnf("the scenario folder was not forgotten: %s", why)
 		}
+		return true
+	}
+	// The notes view's folders list, the same two clicks: the × first, then the row.
+	if dir, is_forget := row_attribute(be.target, "data-nforget"); is_forget {
+		forgot, why := forget_notes_dir(app, dir)
+		bml_status(app, why)
+		if !forgot {
+			log.warnf("the notes folder was not forgotten: %s", why)
+		}
+		return true
+	}
+	if dir, is_dir := row_attribute(be.target, "data-ndir"); is_dir {
+		switch_notes_dir(app, dir)
 		return true
 	}
 	// A folder in the scenario editor's folders list: edit that folder's files.
@@ -8101,7 +8270,7 @@ main :: proc() {
 	// meant and keeps working if a later engine gets stricter.
 	set_sciter_media_var(window)
 
-	if err := sa.load_html(window, compose_document(context.temp_allocator), "about:blank"); err != nil {
+	if err := sa.load_html(window, with_window_icon(compose_document(context.temp_allocator)), "about:blank"); err != nil {
 		fmt.eprintln("could not load the document:", err)
 		os.exit(1)
 	}
@@ -8141,7 +8310,7 @@ main :: proc() {
 	}
 	// The preview document's clicks (`watch_preview_clicks` attaches it to each document as it is rendered).
 	app.preview_click_handler = sa.Event_Handler {
-		subscription = {.MOUSE},
+		subscription = {.MOUSE, .BEHAVIOR_EVENT}, // the clicks, and `.HYPERLINK_CLICK` (`follow_preview_link`)
 		on_event     = on_preview_click,
 		user_data    = app,
 	}
@@ -8239,8 +8408,10 @@ main :: proc() {
 	// this process is running, not of anything the user does in the window. An empty result is not fatal —
 	// the generator and the advisor do not need the notes — so the editor button simply reports it.
 	docs, docs_note := bml_docs_dir(app.allocator)
-	app.docs = docs
-	app.bml_names = list_bml_files(docs, app.allocator)
+	// The FOUND folder heads the notes' folders list; the one open last time, if it is still there, is opened.
+	app.notes_found = docs
+	app.docs = strings.clone(startup_notes_dir(app, docs), app.allocator)
+	app.bml_names = list_bml_files(app.docs, app.allocator)
 	draw_bml_files(app)
 
 	engine := sa.version()
@@ -8596,6 +8767,27 @@ compose_document :: proc(allocator := context.allocator) -> string {
 	// element and opens one of its own.
 	styled := strings.join(blocks, CSS_JOIN, context.temp_allocator)
 	return strings.concatenate({html[:marker], styled, html[marker + len(CSS_MARKER):]}, allocator)
+}
+
+/*
+THE WINDOW'S ICON - the title bar's, and the taskbar's while it runs: the header's mark as a data URL in the
+engine's own `window-icon` attribute on `<html>`, so the exe needs no file beside it and every platform the
+engine runs on reads it. ADDED HERE, FOR THE REAL WINDOW ONLY: in a windowless view the attribute crashes the
+engine (measured 2026-10-20: every test segfaulted at load), so the test documents never carry it. Keep the
+picture in step with `svg.mark` in ui/workbench.html. The EXE's icon in Explorer and on a pinned shortcut is a
+different thing: a Windows resource (`.ico` via an `.rc` file, `odin build -resource:`).
+*/
+WINDOW_ICON :: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg transform='rotate(-16 12 13)'%3E%3Crect x='3.2' y='4' width='11.5' height='16' rx='2' fill='%2389b4fa'/%3E%3C/g%3E%3Cg transform='rotate(9 12 13)'%3E%3Crect x='8.6' y='3.4' width='11.5' height='16' rx='2' fill='%23f4f4f7'/%3E%3Cpath transform='translate(10.6 8.2) scale(0.32)' fill='%23e64553' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/g%3E%3C/svg%3E"
+
+with_window_icon :: proc(document: string) -> string {
+	at := strings.index(document, "<html>")
+	if at < 0 {
+		return document
+	}
+	return strings.concatenate(
+		{document[:at], `<html window-icon="`, WINDOW_ICON, `">`, document[at + len("<html>"):]},
+		context.temp_allocator,
+	)
 }
 
 // `transcribe` without the cross-thread message: for the engine thread, before any worker exists.

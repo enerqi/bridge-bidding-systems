@@ -36,6 +36,7 @@ import "../qr"
 import "../preview"
 import "../scenario_dsl"
 import "../share"
+import stbi "vendor:stb/image"
 import bml "markup:."
 import "norn:cli"
 import "norn:combo"
@@ -361,6 +362,8 @@ test_the_document_carries_every_control_the_host_touches :: proc(t: ^testing.T) 
 
 	for selector in ([]string {
 			"#scenario-count",
+			"#scenario-all",
+			"#outdir-pick",
 			"#scenarios",
 			"#count",
 			"#format",
@@ -829,14 +832,14 @@ test_the_filter_narrows_the_list_to_the_scenarios_it_names :: proc(t: ^testing.T
 	testing.expect_value(t, app.scenarios[shown[0]].name, name)
 
 	// And a query that names nothing says so, rather than leaving a blank box that reads as a broken list.
-	// The count under the list says how far the filter narrowed it.
+	// The count in the list's title says how far the filter narrowed it.
 	count, _ := sa.text(find(&app, "#scenario-count"), context.temp_allocator)
-	testing.expect_value(t, count, fmt.tprintf("%d of %d scenarios", len(shown), len(app.scenarios)))
+	testing.expect_value(t, count, fmt.tprintf("· %d of %d", len(shown), len(app.scenarios)))
 
 	type_filter(&app, "zzzzqqq")
 	testing.expect_value(t, len(scenario_row_elements(&app)), 0)
 	none, _ := sa.text(find(&app, "#scenario-count"), context.temp_allocator)
-	testing.expect_value(t, none, fmt.tprintf("0 of %d scenarios", len(app.scenarios)))
+	testing.expect_value(t, none, fmt.tprintf("· 0 of %d", len(app.scenarios)))
 	empty, eerr := sa.select_all(find(&app, "#scenarios"), ".empty", context.temp_allocator)
 	testing.expect_value(t, eerr, nil)
 	testing.expect_value(t, len(empty), 1)
@@ -1531,8 +1534,9 @@ test_the_groups_button_opens_the_picker_and_lights_when_it_matters :: proc(t: ^t
 	pump(&app)
 }
 
-// The keys the list is driven by are ON SCREEN, not only in a tooltip or a help panel. Asserted on the
-// rendered text rather than on the markup, because the point is what somebody can read.
+// The keys the list is driven by are where somebody looks for them. The always-on key line over the list went
+// (2026-10-20, the list got a title instead), so the filter's own PLACEHOLDER carries ctrl+r - on screen - and
+// the groups button's tooltip carries ctrl+g.
 @(test)
 test_the_scenario_list_names_its_keys :: proc(t: ^testing.T) {
 	app: App
@@ -1540,14 +1544,42 @@ test_the_scenario_list_names_its_keys :: proc(t: ^testing.T) {
 	defer test_app_destroy(&app)
 	pump(&app)
 
-	head := find(&app, "#scenario-list .head")
-	testing.expect(t, head != nil, "the scenario list has no header")
-	if head == nil {return}
-	shown, err := sa.text(head, context.temp_allocator)
-	testing.expect_value(t, err, nil)
-	lowered := strings.to_lower(shown, context.temp_allocator)
-	testing.expectf(t, strings.contains(lowered, "ctrl+r"), "the filter key is not on screen: %q", shown)
-	testing.expectf(t, strings.contains(lowered, "ctrl+g"), "the groups key is not on screen: %q", shown)
+	filter := find(&app, "#scenario-filter")
+	groups := find(&app, "#deal-groups")
+	testing.expect(t, filter != nil && groups != nil, "the filter and the groups button are in the list's head")
+	if filter == nil || groups == nil {return}
+	placeholder, _ := sa.attribute(filter, "placeholder", context.temp_allocator)
+	testing.expectf(t, strings.contains(strings.to_lower(placeholder, context.temp_allocator), "ctrl+r"), "the filter key is not on screen: %q", placeholder)
+	title, _ := sa.attribute(groups, "title", context.temp_allocator)
+	testing.expectf(t, strings.contains(strings.to_lower(title, context.temp_allocator), "ctrl+g"), "the groups key is not on the button: %q", title)
+	// And the list's TITLE is there, with its count.
+	heading, _ := sa.text(find(&app, "#scenario-title"), context.temp_allocator)
+	testing.expectf(t, strings.has_prefix(heading, "scenarios"), "the list is titled: %q", heading)
+}
+
+// While `every scenario` is ticked the list's title says the run takes them all - the rows filtered away too.
+@(test)
+test_every_scenario_shows_in_the_list_title :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	pump(&app)
+
+	draw_scenarios(&app)
+	draw_scenario_scope(&app)
+	quiet, _ := sa.text(find(&app, "#scenario-all"), context.temp_allocator)
+	testing.expect_value(t, quiet, "")
+	testing.expect(t, effective_display_is_hidden(&app, "#scenario-all"), "no marker while one scenario is the run")
+	tick(&app, "#all")
+	draw_scenario_scope(&app)
+	pump(&app)
+	marker, _ := sa.text(find(&app, "#scenario-all"), context.temp_allocator)
+	testing.expectf(t, strings.contains(marker, "all"), "the title says every scenario is in the run: %q", marker)
+	testing.expect(t, !effective_display_is_hidden(&app, "#scenario-all"), "and the marker is shown")
+	list := find(&app, "#scenarios")
+	class, _ := sa.attribute(list, "class", context.temp_allocator)
+	testing.expectf(t, class == "all", "the list is marked: %q", class)
+
 }
 
 // CTRL+G, the picker, and the report pane it borrows. Through the real handler, because the seam is that
@@ -2909,7 +2941,9 @@ check_the_bar_lines_up :: proc(t: ^testing.T, app: ^App, step: int) {
 		if button == nil {
 			continue
 		}
-		icon, ierr := sa.select_first(button, ".icon")
+		// The list toggle's picture is an svg now (bulleted rows, 2026-10-20: the box it was mirrored the pane's
+		// `split` icon); the pane segments keep their boxes. Either has to sit on its button's middle.
+		icon, ierr := sa.select_first(button, ".icon, svg")
 		if ierr != nil {
 			testing.expectf(t, false, "%s has no icon", selector)
 			continue
@@ -4814,7 +4848,9 @@ test_the_real_stylesheet_survives_the_stripper :: proc(t: ^testing.T) {
 
 	out := strip_width_media_blocks(css, context.temp_allocator)
 	testing.expect(t, len(out) < len(css), "something should have been removed")
-	testing.expect(t, strings.contains(out, "background: antiquewhite"), "the page background must survive")
+	// The background is a token now (`var(--bml-page-bg)`, its value on `:root`): both halves must survive.
+	testing.expect(t, strings.contains(out, "background: var(--bml-page-bg)"), "the page background must survive")
+	testing.expect(t, strings.contains(out, "--bml-page-bg: antiquewhite"), "and the token it names")
 	// Not one `@media` left carrying a width feature — checked by walking what is left rather than by
 	// trusting the count, because one missed block is a crash rather than a wrong colour.
 	rest := out
@@ -6240,8 +6276,13 @@ test_choosing_a_folder_replaces_the_list :: proc(t: ^testing.T) {
 	shown, _ := sa.attribute(rows[0], "data-file", context.temp_allocator)
 	testing.expect_value(t, shown, name)
 
-	folder, ferr := sa.text(find(&app, "#bml-dir"), context.temp_allocator)
-	testing.expect_value(t, ferr, nil)
+	// The open folder is the marked row of the folders list above the files.
+	open_row := find(&app, "#bml-sources .row.sel")
+	testing.expect(t, open_row != nil, "the open folder should be marked in the folders list")
+	folder := ""
+	if open_row != nil {
+		folder, _ = sa.attribute(open_row, "data-ndir", context.temp_allocator)
+	}
 	testing.expect(t, strings.contains(folder, "wb-editor-folder"), "the folder should be named above its files")
 
 	// A folder with no notes in it is reported and KEPT, rather than refused: "did it not work, or is it
@@ -6258,7 +6299,7 @@ test_choosing_a_folder_replaces_the_list :: proc(t: ^testing.T) {
 }
 
 // With no folder found at startup the editor still OPENS, and says what to do. It used to refuse and name an
-// environment variable, which is no use to somebody holding a mouse — the `folder…` button is the answer and
+// environment variable, which is no use to somebody holding a mouse — the `add…` button is the answer and
 // it is in the view being refused.
 @(test)
 test_the_editor_opens_without_a_corpus :: proc(t: ^testing.T) {
@@ -8386,7 +8427,7 @@ test_every_toolbar_icon_paints :: proc(t: ^testing.T) {
 		pump(&app)
 		icons, err := sa.select_all(find(&app, "#scnview"), "svg.ic", context.temp_allocator)
 		testing.expect_value(t, err, nil)
-		testing.expect_value(t, len(icons), 5) // new, folder, save, rescan, words
+		testing.expect_value(t, len(icons), 6) // files (the list), new, folder, save, rescan, words
 		sa.paint_windowless(&g_view)
 		for icon, i in icons {
 			box, lerr := sa.location(icon, .Border, .Root)
@@ -10303,4 +10344,408 @@ test_clicking_a_preview_heading_opens_its_section :: proc(t: ^testing.T) {
 	if !ok {return}
 	page, _ = sa.text(root, context.temp_allocator)
 	testing.expect(t, strings.contains(page, "balanced"), "the clicked heading's section is open now")
+}
+
+// A LINK IN THE PREVIEW NEVER LOADS INTO IT. Reported: the notes' GitHub link replaced the preview with
+// GitHub's page. Web addresses go to the browser (not driven here: it would launch one), a notes page opens
+// its `.bml` (posted, and a post segfaults windowless), and anything else is refused in the status line -
+// which is the path driven here, through the engine's own hyperlink event on the framed document.
+@(test)
+test_a_preview_link_never_takes_over_the_preview :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	app.docs = ""
+	// The window's setup attaches this; a test app has none (`main`'s wiring, the subscription included).
+	app.preview_click_handler = sa.Event_Handler {
+		subscription = {.MOUSE, .BEHAVIOR_EVENT},
+		on_event     = on_preview_click,
+		user_data    = &app,
+	}
+
+	set_bml_source(&app, "* Overview\n\n- [Elsewhere](nowhere-at-all.html)\n- [Back up](#Overview)\n")
+	app.bml_open = strings.clone("scratch.bml", app.allocator)
+	pump(&app)
+	rendered, why := preview_bml(&app)
+	testing.expectf(t, rendered, "the preview did not render: %s", why)
+	pump(&app)
+
+	root, ok := preview_document_root(&app)
+	testing.expect(t, ok, "the preview has a document")
+	if !ok {return}
+	link := sa.select_first(root, `a[href="nowhere-at-all.html"]`) or_else nil
+	testing.expect(t, link != nil, "the preview renders the link")
+	if link == nil {return}
+	sa.do_click(link)
+	pump(&app)
+
+	status, _ := sa.text(find(&app, "#bml-status"), context.temp_allocator)
+	testing.expectf(t, strings.contains(status, "not to a notes file"), "the status line says why: %q", status)
+	root, ok = preview_document_root(&app)
+	testing.expect(t, ok, "the preview still has a document")
+	if !ok {return}
+	page, _ := sa.text(root, context.temp_allocator)
+	testing.expectf(t, strings.contains(page, "Elsewhere"), "the preview is still the notes: %q", page)
+
+	if anchor := sa.select_first(root, `a[href="#Overview"]`) or_else nil; anchor != nil {
+		testing.expect(t, !follow_preview_link(&app, anchor), "an anchor on the page is left to the page")
+	}
+}
+
+// A COPY SAYS SO ON ITS BUTTON. The note went only to the hint bar at the window's foot, and copying the same
+// link twice changed nothing there (reported). The button reads `copied ✓` and keeps its own label to come
+// back to - a second copy inside the 1.5s must not take `copied ✓` as the label (the timer itself runs on the
+// wall clock, so it never fires here).
+@(test)
+test_a_copy_says_so_on_its_button :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	for selector in ([]string{"#qr-copy", "#page-share"}) {
+		button := find(&app, selector)
+		testing.expectf(t, button != nil, "%s is in the document", selector)
+		if button == nil {continue}
+		before, _ := sa.text(button, context.temp_allocator)
+		flash_copied(&app, selector)
+		flash_copied(&app, selector)
+		pump(&app)
+		now, _ := sa.text(button, context.temp_allocator)
+		testing.expectf(t, strings.contains(now, "copied"), "%s says it copied: %q", selector, now)
+		class, _ := sa.attribute(button, "class", context.temp_allocator)
+		testing.expectf(t, strings.contains(class, "copied"), "%s is marked: %q", selector, class)
+		script := strings.concatenate({"document.$('", selector, "').wbLabel"}, context.temp_allocator)
+		kept, err := sa.eval_element(button, script)
+		label, _ := sa.value_to_string(&kept, context.temp_allocator)
+		sa.value_clear(&kept)
+		testing.expectf(t, err == nil && strings.contains(label, strings.trim_space(before[:min(len(before), 4)])), "%s keeps its own label (%q) to come back to, not %q", selector, before, label)
+	}
+}
+
+// THE DIALOG SCRIPTS PARSE. A dialog blocks, so nothing runs one - which is how three of them shipped broken
+// for a day (`fmt.tprintf` over a script reads its braces as directives). So each is PARSED instead: wrapped in
+// a function that is never called, which the engine compiles and does not run.
+@(test)
+test_the_dialog_scripts_are_valid_script :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+
+	path := `C:\Users\someone\notes "and" more`
+	for script in ([]string {
+			dialog_script("selectFolder", "Choose a folder of .bml notes", path),
+			dialog_script("selectFile", "New scenario file", path, save = true),
+		}) {
+		testing.expectf(t, !strings.contains(script, "%!"), "a formatting error in %q", script)
+		testing.expectf(t, strings.contains(script, json_string(path, context.temp_allocator)), "the path is not in %q", script)
+		result, err := sa.eval(app.window, strings.concatenate({"typeof function () { return ", script, "; }"}, context.temp_allocator))
+		defer sa.value_clear(&result)
+		testing.expectf(t, err == nil, "%q did not parse: %v", script, err)
+		kind, _ := sa.value_to_string(&result, context.temp_allocator)
+		testing.expectf(t, kind == "function", "%q compiled to %q", script, kind)
+	}
+}
+
+// THE ORIGINAL LOOK IS THE SHEET'S OWN. The classic / four-colour / open-sans preset writes the same values
+// `bml.css` declares on `:root`, token by token - so choosing it changes nothing, and a change to the sheet's
+// colours that is not made here too fails this rather than drifting.
+@(test)
+test_the_original_notes_look_is_the_stylesheets_own :: proc(t: ^testing.T) {
+	dir, note := bml_docs_dir(context.temp_allocator)
+	if dir == "" {
+		log.warnf("no corpus (%s) — skipping", note)
+		return
+	}
+	path, _ := filepath.join({dir, "bml.css"}, context.temp_allocator)
+	data, err := os.read_entire_file_from_path(path, context.temp_allocator)
+	if !testing.expectf(t, err == nil, "no %s: %v", path, err) {return}
+	sheet := string(data)
+
+	block := notes_look_css({page = "classic", suits = "four-colour", font = "open-sans"}, context.temp_allocator)
+	testing.expect(t, strings.has_prefix(block, "<style>:root {") && !strings.contains(block, "%!"), block)
+	body := block[len("<style>:root {"):strings.index(block, "}</style>")]
+	for part in strings.split(body, ";", context.temp_allocator) {
+		declaration := strings.trim_space(part)
+		if declaration == "" {continue}
+		testing.expectf(t, strings.contains(sheet, declaration), "bml.css does not declare `%s`", declaration)
+	}
+}
+
+// AND A CHOSEN LOOK REACHES THE PAGE: the dark page and colour-blind suits, read back as computed styles from
+// the rendered preview - which is what proves the engine resolves the sheet's `var()`s at all.
+@(test)
+test_a_chosen_notes_look_reaches_the_preview :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	dir, note := bml_docs_dir(context.temp_allocator)
+	if dir == "" {
+		log.warnf("no corpus (%s) — skipping", note)
+		return
+	}
+	app.docs = dir
+	app.prefs = prefs.load("")
+	defer prefs.destroy(&app.prefs)
+	prefs.set(&app.prefs, NOTES_PAGE_PREF, "dark")
+	prefs.set(&app.prefs, NOTES_SUITS_PREF, "colour-blind")
+
+	source := strings.join({"#+TITLE: look", "", "* Openings", "", "1H = 5+ !h, 11-15"}, "\n", context.temp_allocator)
+	doc := bml.parse(source, {resolve_include = bml_include, include_user = &app})
+	defer bml.destroy(doc)
+	page := preview_document(&app, bml.render_html(doc, context.temp_allocator), allocator = context.temp_allocator)
+	testing.expect_value(t, sa.load_html(g_view.window, page, "file://workbench/bml-preview.html"), nil)
+	pump_view()
+
+	computed :: proc(script: string) -> string {
+		value, err := sa.eval(g_view.window, script)
+		defer sa.value_clear(&value)
+		if err != nil {return ""}
+		text, _ := sa.value_to_string(&value, context.temp_allocator)
+		return text
+	}
+	background := computed("String(getComputedStyle(document.body).backgroundColor)")
+	// The engine answers `#1E1F26`; a browser would say `rgb(30, 31, 38)`.
+	lower := strings.to_lower(background, context.temp_allocator)
+	testing.expectf(t, lower == "#1e1f26" || strings.contains(lower, "30, 31, 38"), "the dark page's body is %q, want #1e1f26", background)
+	heart := computed("String(getComputedStyle(document.querySelector('.hcolor')).color)")
+	testing.expectf(t, heart != "" && !strings.contains(heart, "255,0,0") && !strings.contains(heart, "255, 0, 0"), "the heart is %q, want the colour-blind vermillion", heart)
+}
+
+// THE BUILT PAGES' LOOK IS A FILE IN THE NOTES FOLDER, and the switch is whether it is there: `this look` writes
+// the chosen `:root` block to `bml-look.css` (which `just bml` appends to `bml.css`), a change of look rewrites
+// it, and `own look` removes it.
+@(test)
+test_the_built_pages_look_is_a_file_in_the_notes_folder :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	dir := scratch_scenario_dir(t, "wb-notes-look")
+	if dir == "" {return}
+	old_docs := app.docs
+	app.docs = dir
+	defer app.docs = old_docs
+	app.prefs = prefs.load("")
+	defer prefs.destroy(&app.prefs)
+	path := notes_look_file(&app)
+
+	testing.expect(t, !built_pages_use_look(&app), "a fresh folder has no look of its own")
+	prefs.set(&app.prefs, NOTES_PAGE_PREF, "dark")
+	set_built_pages_look(&app, true)
+	testing.expect(t, built_pages_use_look(&app), "`this look` should write the file")
+	data, _ := os.read_entire_file_from_path(path, context.temp_allocator)
+	testing.expectf(t, strings.contains(string(data), "--bml-page-bg: #1e1f26"), "the file holds %q", string(data))
+	testing.expect(t, !strings.contains(string(data), "<style>"), "it is CSS for a stylesheet, not an element")
+
+	// A change of look while the built pages follow it rewrites the file.
+	choose_notes_look(&app, NOTES_PAGE_PREF, "white")
+	data, _ = os.read_entire_file_from_path(path, context.temp_allocator)
+	testing.expectf(t, strings.contains(string(data), "--bml-page-bg: white"), "after choosing white the file holds %q", string(data))
+
+	set_built_pages_look(&app, false)
+	testing.expect(t, !built_pages_use_look(&app), "`own look` should remove the file")
+}
+
+/*
+SNAPSHOTS OF THE WINDOW, opt in: `WB_SNAPSHOTS=<folder> just sims test-workbench-serial
+-define:ODIN_TEST_NAMES=main.test_snapshot_the_views` writes each view as a PNG, for LOOKING at a layout change
+(icons, spacing, hierarchy) rather than asserting it. Software Skia, 1120x780 - the real window is on the GPU
+and may differ in the details, but not in the layout. Without the variable it does nothing.
+*/
+@(private = "file")
+snapshot_png :: proc(name: string) {
+	dir := os.get_env("WB_SNAPSHOTS", context.temp_allocator)
+	if dir == "" || g_view.pixels == nil {return}
+	_ = os.make_directory(dir)
+	rgba := make([]u8, int(g_view.width) * int(g_view.height) * 4, context.temp_allocator)
+	for y in 0 ..< g_view.height {
+		for x in 0 ..< g_view.width {
+			r, g, b, _ := sa.windowless_pixel(&g_view, x, y)
+			i := (int(y) * int(g_view.width) + int(x)) * 4
+			rgba[i], rgba[i + 1], rgba[i + 2], rgba[i + 3] = r, g, b, 255
+		}
+	}
+	path, _ := filepath.join({dir, strings.concatenate({name, ".png"}, context.temp_allocator)}, context.temp_allocator)
+	cpath := strings.clone_to_cstring(path, context.temp_allocator)
+	_ = stbi.write_png(cpath, i32(g_view.width), i32(g_view.height), 4, raw_data(rgba), i32(g_view.width) * 4)
+}
+
+@(test)
+test_snapshot_the_views :: proc(t: ^testing.T) {
+	if os.get_env("WB_SNAPSHOTS", context.temp_allocator) == "" {return}
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	attach_for_test(&app)
+	defer sa.detach_window_handler(app.window, &app.handler)
+
+	show_view(&app, .Panes)
+	draw_scenarios(&app) // the rows and the title's count, as startup draws them
+	pump(&app)
+	snapshot_png("deals")
+	tick(&app, "#all")
+	draw_scenario_scope(&app)
+	pump(&app)
+	snapshot_png("deals-every-scenario")
+	tick(&app, "#all")
+	draw_scenario_scope(&app)
+	pump(&app)
+	if editor_corpus(t, &app) {
+		show_editor(&app)
+		pump(&app)
+		snapshot_png("notes")
+	}
+	show_scenario_editor(&app)
+	pump(&app)
+	snapshot_png("scenarios")
+	show_prefs(&app, true)
+	pump(&app)
+	snapshot_png("settings")
+}
+
+// THE NOTES HAVE A FOLDERS LIST: the found one first and never forgotten, `add…` adding (remembered, and the
+// open one remembered for the next start), a row switching, and the × forgetting an added one - back to the
+// found folder if it was the one open.
+@(test)
+test_the_notes_folders_list :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	attach_for_test(&app)
+	defer sa.detach_window_handler(app.window, &app.handler)
+	app.prefs = prefs.load("")
+	defer prefs.destroy(&app.prefs)
+
+	found := scratch_scenario_dir(t, "wb-notes-found")
+	added := scratch_scenario_dir(t, "wb-notes-added")
+	if found == "" || added == "" {return}
+	for dir in ([]string{found, added}) {
+		path, _ := filepath.join({dir, "a.bml"}, context.temp_allocator)
+		_ = os.write_entire_file(path, transmute([]u8)string("#+TITLE: a\n\n* A\n"))
+	}
+	app.notes_found = found
+	use_bml_dir(&app, found)
+	// What `use_bml_dir` leaves behind is this test's to free (`test_app_destroy` cannot: other tests hand those fields temp memory).
+	defer {
+		for listed in app.bml_names {
+			delete(listed, app.allocator)
+		}
+		delete(app.bml_names, app.allocator)
+		delete(app.docs, app.allocator)
+		app.bml_names = nil
+		app.docs = ""
+	}
+	show_editor(&app)
+	pump(&app)
+
+	// `add…` without the dialog: what it does once a folder is chosen.
+	remember_notes_dir(&app, added)
+	use_bml_dir(&app, added)
+	pump(&app)
+	rows, _ := sa.select_all(find(&app, "#bml-sources"), ".row", context.temp_allocator)
+	testing.expect_value(t, len(rows), 2)
+	open_dir, _ := prefs.get(&app.prefs, NOTES_DIR_PREF)
+	testing.expect(t, same_dir(open_dir, added), "the open folder is remembered for the next start")
+	testing.expect(t, same_dir(startup_notes_dir(&app, found), added), "and a restart opens it")
+
+	switch_notes_dir(&app, found)
+	testing.expect(t, same_dir(app.docs, found), "a row opens its folder")
+
+	ok, _ := forget_notes_dir(&app, found)
+	testing.expect(t, !ok, "the found folder cannot be forgotten")
+	use_bml_dir(&app, added)
+	ok, _ = forget_notes_dir(&app, added)
+	testing.expect(t, ok, "an added folder can")
+	testing.expect(t, same_dir(app.docs, found), "forgetting the open folder opens the found one")
+	pump(&app)
+	rows, _ = sa.select_all(find(&app, "#bml-sources"), ".row", context.temp_allocator)
+	testing.expect_value(t, len(rows), 1)
+}
+
+// THE HAND PAGE'S LOOK reaches the page in the pane, on the page's own selectors - so a page written before the
+// look existed takes it too - and the original look is no rules at all. It is put into the markup as the page
+// loads: added to a loaded document, a style applies nothing in this engine (hand_look.odin).
+@(test)
+test_a_chosen_hand_look_reaches_the_page :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	app.prefs = prefs.load("")
+	defer prefs.destroy(&app.prefs)
+
+	testing.expect_value(t, hand_look_css(hand_look(&app.prefs), context.temp_allocator), "")
+
+	PAGE :: `<html><head><style>body { size: *; } .compass { background: #3f7d5c; } .suit.c { color: MediumSeaGreen; } .seat { background: #fff; }</style></head><body><div class="compass"><div class="seat"><span class="suit c">AKQ</span></div></div></body></html>`
+	if !show_page_html(&app, PAGE, "a page") {
+		testing.fail_now(t, "the frame must accept the page")
+	}
+	pump(&app)
+
+	colour :: proc(app: ^App, selector, property: string) -> string {
+		asset, ok := page_frame_asset(app)
+		if !ok {return ""}
+		document, derr := sa.asset_get(asset, "document")
+		defer sa.value_clear(&document)
+		if derr != nil {return ""}
+		root, rerr := sa.element_from_value(&document)
+		if rerr != nil {return ""}
+		element := sa.select_first(root, selector) or_else nil
+		if element == nil {return ""}
+		value, _ := sa.style(element, property, context.temp_allocator)
+		return strings.to_lower(value, context.temp_allocator)
+	}
+	original_club := colour(&app, ".suit.c", "color")
+	original_felt := colour(&app, ".compass", "background-color")
+
+	prefs.set(&app.prefs, SUITS_PREF, "colour-blind")
+	prefs.set(&app.prefs, HAND_FELT_PREF, "blue")
+	prefs.set(&app.prefs, HAND_CARD_PREF, "cream")
+	// From a FILE, as a generated page arrives (`loadFile` cannot take the look; the file is read instead).
+	dir := scratch_scenario_dir(t, "wb-hand-look")
+	if dir == "" {return}
+	path, _ := filepath.join({dir, "old-page.html"}, context.temp_allocator)
+	_ = os.write_entire_file(path, transmute([]u8)string(PAGE))
+	testing.expect(t, show_page_file(&app, path), "the frame must accept the page file")
+	pump(&app)
+	testing.expectf(t, colour(&app, ".suit.c", "color") != original_club, "the clubs change (%s)", colour(&app, ".suit.c", "color"))
+	testing.expectf(t, strings.contains(colour(&app, ".compass", "background-color"), "2f5f8a"), "the felt is blue: %s", colour(&app, ".compass", "background-color"))
+	testing.expectf(t, strings.contains(colour(&app, ".seat", "background-color"), "fbf4e2"), "the cards are cream: %s", colour(&app, ".seat", "background-color"))
+
+	// Back to the original: the block goes, and the page's own colours return.
+	prefs.set(&app.prefs, SUITS_PREF, "four-colour")
+	prefs.set(&app.prefs, HAND_FELT_PREF, "green")
+	prefs.set(&app.prefs, HAND_CARD_PREF, "white")
+	testing.expect(t, show_page_html(&app, PAGE, "a page"), "the frame must accept the page")
+	pump(&app)
+	testing.expect_value(t, colour(&app, ".suit.c", "color"), original_club)
+	testing.expect_value(t, colour(&app, ".compass", "background-color"), original_felt)
+
+	// The suits are ONE setting: the notes read it too, and the notes' old key still counts when it is absent.
+	prefs.set(&app.prefs, SUITS_PREF, "two-colour")
+	testing.expect_value(t, notes_look(&app.prefs).suits, "two-colour")
+	fresh := prefs.load("")
+	defer prefs.destroy(&fresh)
+	prefs.set(&fresh, NOTES_SUITS_PREF, "colour-blind")
+	testing.expect_value(t, hand_look(&fresh).suits, "colour-blind")
+}
+
+// A run writes the look into its pages only when Settings says so, and only a look that is not the original.
+@(test)
+test_written_pages_carry_the_look_when_asked :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	app.prefs = prefs.load("")
+	defer prefs.destroy(&app.prefs)
+	defer set_page_look_for_run(&app) // leaves the process global as it found it: empty
+
+	prefs.set(&app.prefs, HAND_FELT_PREF, "grey")
+	set_page_look_for_run(&app)
+	testing.expect_value(t, norn.page_look_css, "")
+	prefs.set(&app.prefs, HAND_BUILT_PREF, "on")
+	set_page_look_for_run(&app)
+	testing.expect(t, strings.contains(norn.page_look_css, ".compass"), "the grey felt goes into written pages")
+	prefs.set(&app.prefs, HAND_FELT_PREF, "green")
+	set_page_look_for_run(&app)
+	testing.expect_value(t, norn.page_look_css, "")
+	prefs.set(&app.prefs, HAND_BUILT_PREF, "off")
 }

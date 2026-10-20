@@ -12,9 +12,10 @@ package main
 	does not reach a HIDDEN view, though, and the settings view hides them all — so every view not on screen
 	is marked stale and `show_view` restyles it when it is next shown.
 
-	THE HOSTED PAGES ARE NOT THEMED. The BML preview and the card page bring their own (light) stylesheets
-	inside a `<frame>`, and they are the published pages — what a reader on `w:/deals/` sees. Theming them
-	would make the preview stop being a preview.
+	THE HOSTED PAGES ARE NOT THEMED by this. The BML preview and the card page bring their own stylesheets
+	inside a `<frame>`, and they are the published pages — what a reader on `w:/deals/` sees. The notes have
+	a look of their own instead, chosen separately (`notes_look.odin`), so the preview shows the notes as they
+	are set to look rather than as the window is.
 
 	`system` IS READ ONCE, when the theme is applied: Windows' own app-mode switch
 	(`HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize`, `AppsUseLightTheme`). Following a
@@ -167,6 +168,8 @@ draw_prefs :: proc(app: ^App) {
 	system := "light" if system_prefers_light() else "dark"
 	set_text_at(app, "#prefs-theme-note", fmt.tprintf("system is currently %s", system))
 	draw_graphics_prefs(app)
+	draw_notes_look_prefs(app)
+	draw_hand_look_prefs(app)
 	draw_quiz_prefs(app)
 	draw_share_prefs(app)
 }

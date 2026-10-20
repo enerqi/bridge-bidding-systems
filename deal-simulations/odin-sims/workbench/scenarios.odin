@@ -33,7 +33,7 @@ package main
 	SAVING IS THE SEAM to the rest of the window. The registry is built at startup, so a file on disk means
 	nothing to the deals view until it is built again — and that used to be a separate `reload` button,
 	which read as "reload this file into the editor" and left people saving and then hunting the deals list
-	for a scenario nothing had rebuilt. So `save`, `new…` and `folder…` rebuild it themselves
+	for a scenario nothing had rebuilt. So `save`, `new…` and `add…` rebuild it themselves
 	(`update_deals_list`); the button survives as `rescan`, for files changed outside this window. Rebuilding
 	never touches the editor's buffer, which was the worry that kept it manual.
 
@@ -90,7 +90,7 @@ Later visits leave the buffer alone — the text somebody was editing is the thi
 which is the notes editor's rule, and for the same reason.
 
 A folder is NOT invented if none is configured. `load_user_scenarios` refuses to guess where a person
-keeps their scenario files and so does this: the view opens empty with `folder…` in the bar, which is the
+keeps their scenario files and so does this: the view opens empty with `add…` in the bar, which is the
 thing to press. What it will do is adopt a folder that IS configured (`BRIDGE_SCENARIOS`, or the
 remembered pref), because that folder is already this program's answer to "where are the scenarios" and
 opening a different one by default would be two answers to one question.
@@ -218,7 +218,7 @@ draw_scenario_files :: proc(app: ^App) {
 	draw_scenario_sources(app)
 	folder := app.scn_dir if app.scn_dir != "" else "no folder chosen"
 	// The label for the second level. Not the path: the folder is the marked row just above, path and all, and
-	// in a 250px column beside `new…` a path wrapped to three lines. The path stays as the tooltip.
+	// in a 250px column a path wrapped to three lines. The path stays as the tooltip.
 	// With no folder there is no second level, and the heading would only repeat the list's own "no folder
 	// chosen" — the window said it three times — so it is left empty.
 	set_text_at(app, "#scn-dir", "files" if app.scn_dir != "" else "")
@@ -261,13 +261,7 @@ This BLOCKS in native modal code, so nothing tests it. What is testable is every
 why `use_scenario_dir` is a procedure of its own.
 */
 choose_scenario_folder :: proc(app: ^App) {
-	script := fmt.tprintf(
-		`(function () {
-		var picked = Window.this.selectFolder({ caption: "Choose the folder your .scenario files are in", path: %s });
-		return picked ? String(picked) : "";
-	})()`,
-		json_string(app.scn_dir, context.temp_allocator),
-	)
+	script := dialog_script("selectFolder", "Choose the folder your .scenario files are in", app.scn_dir)
 	result, err := sa.eval(app.window, script)
 	defer sa.value_clear(&result)
 	if err != nil {
@@ -376,7 +370,7 @@ draw_scenario_sources :: proc(app: ^App) {
 	}
 	b := strings.builder_make(context.temp_allocator)
 	if len(app.scenario_dirs) == 0 {
-		strings.write_string(&b, `<div class="empty">no folders yet — folder… adds one</div>`)
+		strings.write_string(&b, `<div class="empty">no folders yet — press add… to choose one</div>`)
 		sa.set_html(box, strings.to_string(b))
 		return
 	}
@@ -472,7 +466,7 @@ remember_scenario_dir :: proc(app: ^App, path: string) {
 /*
 Take a folder OUT of the sources: the `×` on a remembered row.
 
-Without this the remembered list only grows — every `folder…` adds one, nothing removes one, and a folder
+Without this the remembered list only grows — every `add…` adds one, nothing removes one, and a folder
 that was a one-off test stays a source of scenarios forever. Only REMEMBERED folders can be forgotten: one
 from `BRIDGE_SCENARIOS` belongs to the shell that set it, so the row has no `×` and this refuses.
 
@@ -669,7 +663,7 @@ save_scenario_file :: proc(app: ^App) -> (ok: bool, why: string) {
 /*
 Rebuild the deals list from the scenario folders, and say what happened in a few words for the status line.
 
-The one call `save`, `new…` and `folder…` share. A rebuild is REFUSED while a generate run is in progress
+The one call `save`, `new…` and `add…` share. A rebuild is REFUSED while a generate run is in progress
 (see `reload_scenarios`), and that is the one outcome somebody has to act on, so it says what to press.
 */
 update_deals_list :: proc(app: ^App) -> string {
@@ -717,19 +711,7 @@ the testable half is `create_scenario_file`.
 new_scenario_file :: proc(app: ^App) {
 	// IN THE FOLDER BEING EDITED - the one marked in the folders list, whose files are listed under it. Without
 	// `path` the dialog opened wherever Windows last left it, which read as the new file going somewhere else.
-	script := fmt.tprintf(
-		`(function () {
-		var picked = Window.this.selectFile({
-			mode: "save",
-			caption: "New scenario file",
-			filter: "Scenario files (*.scenario)|*.scenario",
-			extension: "scenario",
-			path: %s
-		});
-		return picked ? String(picked) : "";
-	})()`,
-		json_string(app.scn_dir, context.temp_allocator),
-	)
+	script := dialog_script("selectFile", "New scenario file", app.scn_dir, save = true)
 	result, err := sa.eval(app.window, script)
 	defer sa.value_clear(&result)
 	if err != nil {
@@ -847,7 +829,7 @@ NEW_SCENARIO_TEMPLATE :: `# A scenario is a name, a description, and one line pe
 #   quantities   hcp  controls  spades  hearts  diamonds  clubs  longest
 #   comparisons  <  <=  =  !=  >=  >        or a range:  hcp in 15..17
 #   other atoms  balanced   holds(spades, ace)
-#   names        this system's own helpers - press words in the bar to list them
+#   names        ready-made helpers, some written for one bidding system - press words to list them
 #
 # north-south: and east-west: lines read BOTH hands of a side together:
 #   north-south: hcp >= 32 and (spades >= 8 or hearts >= 8)

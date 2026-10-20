@@ -140,6 +140,8 @@ main :: proc() {
 	// here to avoid — it cost a confusing failure of the `-unported` control.
 	check(strings.contains(page, OVERRIDES_AT) == styled, "the page carries the `@media sciter` overrides")
 	check(strings.contains(page, "function setHidden"), "the page carries the desktop JS shims")
+	// See `check_the_page_is_light_in_a_dark_system`: the ground is said in the block, or a dark system shows.
+	check(strings.contains(page, "html { background: #fff; }") == styled, "the page says its own ground (a dark system would show through)")
 
 	// AN INLINE `<style>` IS CAPPED AT 32 KiB in this engine, and an oversized block is dropped ENTIRE — not
 	// truncated at the cap. Bisected twice: 32741 bytes applies, 32769 applies NOTHING, its first rule
@@ -333,6 +335,7 @@ main :: proc() {
 	if styled {
 		// Before `check_the_window_bugs`: that one focuses a hand, and a focused hand is sized by a
 		// different rule (`4vh`) than the board's ordinary cards.
+		check_the_page_is_light_in_a_dark_system(root)
 		check_the_secondary_hand_lines_are_shown(root)
 		check_the_card_size_tracks_the_window(&view, root)
 		check_the_window_bugs(&view, root)
@@ -358,6 +361,68 @@ main :: proc() {
 	}
 }
 
+
+/*
+THE PAGE IS LIGHT WHATEVER THE SYSTEM IS. A browser gives an unstyled page a white ground and black buttons
+unless the page asks for dark; this engine takes the SYSTEM's colours, so with Windows in dark mode the page
+had a black ground (the title, `--ink` on it, unreadable) and the toolbar's buttons light text on their own
+light ground (reported 2026-10-20, the workbench in dark mode). The `@media sciter` block now says the
+ground and the controls' ink. THIS VIEW CANNOT SEE THE BUG: windowless, the engine's system colours are the
+light ones either way (measured: white ground, black buttons without the fix), so this only guards the
+colours from going dark through the page's own rules. That the page SAYS its ground is the cheap check in
+`main`; the dark system itself needs the real window.
+*/
+check_the_page_is_light_in_a_dark_system :: proc(root: sa.Element) {
+	colours := eval_text(
+		root,
+		`(function () {
+		var b = document.querySelector('.toolbar button');
+		var t = document.querySelector('.page-title');
+		return getComputedStyle(document.documentElement).backgroundColor + '|' + (b ? getComputedStyle(b).color : '') + '|' + (t ? getComputedStyle(t).color : '');
+	})()`,
+	)
+	parts := strings.split(colours, "|", context.temp_allocator)
+	check(len(parts) == 3, fmt.tprintf("the page's colours read back (%s)", colours))
+	if len(parts) != 3 {
+		return
+	}
+	fmt.printfln("    page ground %s, toolbar button ink %s, title ink %s", parts[0], parts[1], parts[2])
+	check(light_colour(parts[0]), fmt.tprintf("the page's ground is light (%s)", parts[0]))
+	check(!light_colour(parts[1]), fmt.tprintf("the toolbar's buttons are dark ink (%s)", parts[1]))
+	check(!light_colour(parts[2]), fmt.tprintf("the title is dark ink (%s)", parts[2]))
+}
+
+// Is a computed colour (`#rrggbb`, `rgb(r,g,b)`, `rgba(...)` or a packed number) light? Unreadable is not light.
+light_colour :: proc(text: string) -> bool {
+	t := strings.to_lower(strings.trim_space(text), context.temp_allocator)
+	r, g, b: int
+	if strings.has_prefix(t, "#") && len(t) >= 7 {
+		rv, _ := strconv.parse_int(t[1:3], 16)
+		gv, _ := strconv.parse_int(t[3:5], 16)
+		bv, _ := strconv.parse_int(t[5:7], 16)
+		r, g, b = rv, gv, bv
+	} else if open := strings.index_byte(t, '('); open >= 0 {
+		nums := strings.split(strings.trim_right(t[open + 1:], ")"), ",", context.temp_allocator)
+		if len(nums) < 3 {
+			return false
+		}
+		r, _ = strconv.parse_int(strings.trim_space(nums[0]))
+		g, _ = strconv.parse_int(strings.trim_space(nums[1]))
+		b, _ = strconv.parse_int(strings.trim_space(nums[2]))
+		if len(nums) >= 4 {
+			if alpha, ok := strconv.parse_f64(strings.trim_space(nums[3])); ok && alpha < 0.5 {
+				return false
+			}
+		}
+	} else if packed, ok := strconv.parse_int(t); ok {
+		// What this engine actually answers: the colour as one number. Its channel order is not known here,
+		// and the weighting below barely cares; the alpha byte, if any, is ignored.
+		r, g, b = (packed >> 16) & 0xff, (packed >> 8) & 0xff, packed & 0xff
+	} else {
+		return false
+	}
+	return r * 299 + g * 587 + b * 114 > 160_000
+}
 
 // The six real-window regressions, in the order they were found. Each is a one-line consequence of
 // something this engine does differently, and each was invisible to every earlier test.

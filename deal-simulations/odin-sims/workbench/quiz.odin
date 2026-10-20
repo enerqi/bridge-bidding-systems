@@ -178,7 +178,8 @@ quiz_notes_document :: proc(app: ^App, html: string, allocator := context.alloca
 		return strings.clone(stripped, allocator)
 	}
 	cut := head + len("<head>")
-	return strings.concatenate({stripped[:cut], "<style>", css, "</style>", stripped[cut:]}, allocator)
+	look := notes_look_css(notes_look(&app.prefs), context.temp_allocator) // the look chosen in Settings
+	return strings.concatenate({stripped[:cut], "<style>", css, "</style>", look, stripped[cut:]}, allocator)
 }
 
 // How many different meanings a corpus has to ask about (a row with no description cannot be asked).

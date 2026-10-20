@@ -211,6 +211,7 @@ share_shown_page :: proc(app: ^App) {
 		set_note(app, "the link could not be put on the clipboard")
 		return
 	}
+	flash_copied(app, "#page-share")
 	note := fmt.tprintf(
 		"share link copied: %d board%s, %d characters",
 		boards,
@@ -391,10 +392,19 @@ copy_qr_link :: proc(app: ^App) {
 		return
 	}
 	if copy_text(app, link) {
+		flash_copied(app, "#qr-copy")
 		set_note(app, fmt.tprintf("link copied: %d characters", len(link)))
 	} else {
 		set_note(app, "the link could not be put on the clipboard")
 	}
+}
+
+// The button that copied reads `copied ✓` for a moment (`wbFlashCopied` in ui/workbench.html).
+flash_copied :: proc(app: ^App, selector: string) {
+	value := sa.value_from(selector)
+	defer sa.value_clear(&value)
+	result, _ := sa.call(app.window, "wbFlashCopied", value)
+	sa.value_clear(&result)
 }
 
 // Put `text` on the system clipboard. The clipboard has no host API in this engine; the document's script

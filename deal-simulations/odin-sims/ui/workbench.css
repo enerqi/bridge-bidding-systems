@@ -55,6 +55,7 @@
 
 	/* the one accent, and the three states of it */
 	--accent: #89b4fa;
+	--accent-wash: rgba(137, 180, 250, 0.12); /* the accent as a tint: `every scenario`'s rows */
 	--accent-hover: #a6c8ff;
 	--accent-active: #6c9ce8;
 	--accent-ink: #11111b; /* text ON the accent */
@@ -115,6 +116,7 @@ html[theme="light"] {
 	--ink-dim: #8c8fa1;
 
 	--accent: #1e66f5;
+	--accent-wash: rgba(30, 102, 245, 0.08);
 	--accent-hover: #4a83f7;
 	--accent-active: #1554d6;
 	--accent-ink: #ffffff;
@@ -162,13 +164,6 @@ header {
 	padding: 0.55em 0.9em;
 	border-bottom: 1px solid var(--line);
 	background: var(--surface);
-}
-
-header .title {
-	margin-right: 1.2em;
-	font-weight: bold;
-	color: var(--ink);
-	white-space: nowrap;
 }
 
 /* ---- the tabs ------------------------------------------------------------------------------------ */
@@ -341,6 +336,9 @@ aside .foot {
 	behavior: button;
 	padding: 0.35em 0.8em;
 	border-bottom: 1px solid var(--line-soft);
+	/* Always there, transparent: `every scenario` only COLOURS it. Measured, a class that changes a row's border
+	   WIDTH computes and is never laid out (the text did not move, nothing was drawn), while a colour paints. */
+	border-left: 3px solid transparent;
 	cursor: pointer;
 }
 
@@ -359,22 +357,18 @@ aside .foot {
    The two levels are the point: the run covers everything, and the selection still says which scenario the
    chips and the pane are about. */
 #scenarios.all .row {
-	background: var(--line-soft);
+	background: var(--accent-wash);
+	border-left-color: var(--accent);
 }
 
 #scenarios.all .row.sel {
 	background: var(--line);
 }
 
-/* The marker on the left edge, so the wash is not the only thing carrying it - a background this soft is
-   the first casualty of a bright room or a cheap panel. */
-#scenarios.all .row {
-	border-left: 3px solid var(--line);
-}
-
-#scenarios.all .row.sel {
-	border-left: 3px solid var(--accent);
-}
+/* The left edge in the accent on EVERY row, so the wash is not the only thing carrying it - a tint this soft
+   is the first casualty of a bright room or a cheap panel. It was `--line` on the rows and `--line-soft` for
+   the wash (2026-10-20: "should show all selected somehow" - it did, too faintly to see). The selected row
+   keeps its stronger ground on top. */
 
 #scenarios .row .name {
 	font-weight: bold;
@@ -811,6 +805,24 @@ button.icon-text svg.ic {
 	width: 1.15em;
 	height: 1.15em;
 	margin-right: 0.4em;
+}
+
+/* THE APP'S MARK, before its name in the header: two fanned cards. Its own colours (it is the one picture
+   that is not a control), sized to the title's line. */
+header svg.mark {
+	width: 1.55em;
+	height: 1.55em;
+	margin-right: 1.1em; /* the gap the app's name used to make before the tabs */
+	vertical-align: middle;
+}
+
+/* A SECTION'S PICTURE, in its heading after the fold arrow: a fan of cards for generate, a magnifier for
+   analyse. In the heading's own colour, so the heading reads as one thing. */
+.legend svg.section-ic {
+	width: 0.85em;
+	height: 0.85em;
+	margin-right: 0.3em;
+	vertical-align: middle;
 }
 
 /* A gap between groups of buttons in a bar: file actions | this editor's commands | reference. */
@@ -2050,24 +2062,25 @@ frame#bml-page {
 	color: var(--accent);
 }
 
-/* THE FOLDERS, above the files: every folder the deals list reads, folder -> file being the hierarchy.
+/* THE FOLDERS, above the files (`.sources`, both editors): the scenarios view's are every folder the deals
+   list reads; the notes view's are the folders of notes it can open. Folder -> file being the hierarchy.
    Capped so a long list of folders scrolls rather than squeezing the files out; the file list below takes
    the slack (`height: *`). */
-#scn-sources {
+.sources {
 	max-height: 40%;
 	overflow-y: scroll-indicator;
 	border-bottom: 1px solid var(--line);
 	font-size: var(--text-small);
 }
 
-#scn-sources .head,
-#scn-sources .empty,
+.sources .head,
+.sources .empty,
 #scn-list .empty {
 	padding: 0.35em 0.8em;
 	color: var(--ink-dim);
 }
 
-#scn-sources .row {
+.sources .row {
 	behavior: button;
 	flow: vertical;
 	padding: 0.3em 0.8em;
@@ -2076,37 +2089,37 @@ frame#bml-page {
 	cursor: pointer;
 }
 
-#scn-sources .row:hover {
+.sources .row:hover {
 	background: var(--line-soft);
 	color: var(--ink);
 }
 
-#scn-sources .row.sel {
+.sources .row.sel {
 	color: var(--accent);
 }
 
-#scn-sources .path {
+.sources .path {
 	word-wrap: break-word;
 }
 
-#scn-sources .what {
+.sources .what {
 	flow: horizontal;
 	color: var(--ink-dim);
 }
 
-#scn-sources .what .lbl {
+.sources .what .lbl {
 	width: *;
 }
 
 /* Forget a remembered folder. A button of its own so the click is ITS click, not the row's. */
-#scn-sources .forget {
+.sources .forget {
 	behavior: button;
 	padding: 0 0.4em;
 	color: var(--ink-dim);
 	cursor: pointer;
 }
 
-#scn-sources .forget:hover {
+.sources .forget:hover {
 	color: var(--accent);
 }
 
@@ -2208,4 +2221,90 @@ frame#bml-page {
 /* A label naming a segment group sits against it (the notes bar's `preview`), not a gap away. */
 .barlabel + .seg {
 	margin-left: 0;
+}
+
+/* A copy that worked, for the 1.5s the button says so (`wbFlashCopied`). */
+button.copied {
+	color: var(--good);
+}
+
+/* THE SIDEBARS' HIERARCHY (2026-10-20): a section TITLE ("notes folders", "scenario folders") at body size
+   and full ink, its actions indented under it, then its list; the files of the open folder under a small
+   dim subheading. The title used to be a small dim label sharing a row with its button. */
+aside .side-title {
+	font-weight: 600;
+	color: var(--ink);
+	margin: 0.1em 0 0.45em;
+}
+aside .side-actions {
+	flow: horizontal-flow; /* three buttons are about a 250px column's width: wrap rather than spill */
+	padding-left: 0.7em;
+}
+/* Spaced on the RIGHT, so a wrapped second row starts flush under the first (`* + button` spaces the left). */
+aside .side-actions > button,
+aside .side-actions > * + button {
+	margin: 0 0.35em 0.3em 0;
+}
+aside .side-sub {
+	padding: 0.55em 0.8em 0.3em;
+	color: var(--ink-dim);
+	font-size: var(--text-small);
+	border-bottom: 1px solid var(--line-soft);
+}
+
+/* The bar's slack, between a sidebar's toggle (left) and the pane's controls (right). */
+.bar > .bar-gap {
+	width: *;
+	margin-right: 0;
+}
+
+/* The deals list's title: the count beside the name, dim; and while `every scenario` is ticked, a pill in the
+   accent saying the run takes them all - the same accent as the rows' wash and left edge. */
+aside .side-title .side-count {
+	margin-left: 0.3em;
+	font-weight: normal;
+	color: var(--ink-dim);
+}
+aside .side-title .side-all {
+	display: none; /* until `draw_scenario_scope` shows it */
+	margin-left: 0.6em;
+	padding: 0.05em 0.5em;
+	border-radius: 0.8em;
+	font-size: var(--text-small);
+	font-weight: 600;
+	color: var(--accent-ink);
+	background: var(--accent);
+	vertical-align: middle;
+}
+/* The deals folder as one QUIET line: small dim text that is still the field (click to type into it), and a
+   folder button. A border only while hovered or typed in. */
+aside .side-folder {
+	margin: 0.15em 0 0.1em;
+}
+aside .side-folder > * {
+	vertical-align: middle;
+}
+aside .side-folder > button {
+	padding: 0.15em 0.35em;
+}
+aside .side-folder > button svg {
+	width: 1.05em;
+	height: 1.05em;
+}
+aside input#outdir.quiet {
+	width: *;
+	font-size: var(--text-small);
+	color: var(--ink-dim);
+	background: transparent;
+	border-color: transparent;
+	padding: 0.1em 0.3em;
+}
+aside input#outdir.quiet:hover {
+	background: var(--field-hover);
+	border-color: var(--line);
+}
+aside input#outdir.quiet:focus {
+	color: var(--ink);
+	background: var(--sunken);
+	border-color: var(--accent);
 }

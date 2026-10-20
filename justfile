@@ -78,7 +78,6 @@ watch:
 bml *FILES:
     import os, subprocess, sys
     from glob import glob
-    from shutil import copy2
 
     exe = os.path.normpath(r"{{bml2html_exe}}")
     # Built through the sims module so the collection flag and the target directory stay defined in one
@@ -98,19 +97,27 @@ bml *FILES:
     if subprocess.run([exe] + files).returncode != 0:
     	sys.exit("bml2html failed")
 
-    # CONTENT, not mtime: this build rewrites every output unconditionally, so an mtime comparison
-    # would always say "newer" and the guard would never hold.
-    def same_bytes(a, b):
-    	if not os.path.exists(b) or os.path.getsize(a) != os.path.getsize(b):
-    		return False
-    	with open(a, "rb") as fa, open(b, "rb") as fb:
-    		return fa.read() == fb.read()
-
+    # The stylesheet, plus the look chosen in the workbench's Settings when there is one: `bml-look.css` here is
+    # a `:root` block redefining the sheet's `--bml-*` tokens, appended so it wins. The html is untouched.
+    # Written only when the CONTENT differs, not by mtime: this build rewrites every output unconditionally, so
+    # an mtime comparison would always say "newer" - and `watch` would rebuild forever on its own css write.
     css = "bml.css"
+    look = "bml-look.css"
     source = os.path.join(r"{{bml_home}}", css)
-    if os.path.isfile(source) and not same_bytes(source, css):
-    	copy2(source, css)
-    	print("refreshed " + css)
+    if os.path.isfile(source):
+    	with open(source, "rb") as f:
+    		want = f.read()
+    	if os.path.isfile(look):
+    		with open(look, "rb") as f:
+    			want += b"\n" + f.read()
+    	have = None
+    	if os.path.isfile(css):
+    		with open(css, "rb") as f:
+    			have = f.read()
+    	if have != want:
+    		with open(css, "wb") as f:
+    			f.write(want)
+    		print("refreshed " + css + (" (with " + look + ")" if os.path.isfile(look) else ""))
 
 # The python reference, kept runnable: it is the oracle `bml-parity` compares against, and the escape
 # hatch if the Odin renderer is ever suspected. One subprocess per file because the `bml` module
