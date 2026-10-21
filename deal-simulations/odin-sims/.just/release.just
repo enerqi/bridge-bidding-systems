@@ -5,9 +5,11 @@
 # Shares one namespace with the justfile, so `norn_home` / `dds_home` / `sciter_home` / `markup_home` /
 # `HAND_OCR_DIR` resolve from there.
 
-# Writes packaging/deps.json from the local checkouts' HEADs. Refuses a checkout with uncommitted or
-# untracked files, or with commits not on its upstream: CI checks out from GitHub, so a pin to anything
+# Writes packaging/deps.json from the local checkouts' HEADs. Refuses a checkout with uncommitted changes
+# to tracked files, or with commits not on its upstream: CI checks out from GitHub, so a pin to anything
 # else is a release that cannot be built (or, worse, one built from different code than was tested here).
+# UNTRACKED files are ignored (editor state, scratch): the price is that a new source file nobody added
+# is not caught here - the release workflow's build is what fails on it.
 # Also records the local compiler, as a reminder - the pin CI uses is the `odin` field, edited by hand.
 # ---
 # pin the release's sibling repositories to the local checkouts' pushed HEADs
@@ -29,8 +31,8 @@ pin-deps:
 	    deps = json.load(f)
 	problems = []
 	for name, home in homes.items():
-	    if git(home, "status", "--porcelain"):
-	        problems.append(f"{name} ({home}) has uncommitted or untracked files")
+	    if git(home, "status", "--porcelain", "--untracked-files=no"):
+	        problems.append(f"{name} ({home}) has uncommitted changes")
 	        continue
 	    if not git(home, "rev-parse", "--abbrev-ref", "@{u}"):
 	        problems.append(f"{name} ({home}) has no upstream branch")

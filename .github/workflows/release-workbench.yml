@@ -71,8 +71,8 @@ jobs:
               print(f"{key}_commit={d['commit']}")
           PY
 
-      # SIBLING_REPOS_TOKEN: a fine-grained token with read access to bridge-markup (private). The public
-      # siblings would clone with the default token; the same token is simply used for all five.
+      # All five siblings are public, so the default token clones them. SIBLING_REPOS_TOKEN (a fine-grained
+      # token with read access) is used instead when it is set - only needed if one of them goes private.
       - uses: actions/checkout@v7
         with:
           repository: ${{ steps.deps.outputs.norn_repo }}
