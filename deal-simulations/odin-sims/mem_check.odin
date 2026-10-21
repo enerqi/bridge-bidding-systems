@@ -255,7 +255,7 @@ generate_card_page :: proc(dir: string, count: int) -> (page: string, ok: bool) 
 
 	argv := []string {
 		"-S",
-		"2c-opener",
+		"2c",
 		"-n",
 		fmt.tprintf("%d", count),
 		"-f",

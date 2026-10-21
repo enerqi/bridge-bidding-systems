@@ -1,47 +1,37 @@
 #!/usr/bin/env python3
-"""ocr_analyse.py -- the image -> interactive card page pipeline. Bridges the two sibling projects:
-hand-ocr (uv/Python, a SEPARATE repo at $HAND_OCR_DIR, default ~/dev/bridge-hand-ocr) turns a hand-diagram
-image into a PBN [Deal] tag; analyse_deal (this Odin project) turns that PBN into the card page with the
-DDS-sampling advisor + CCA/DD features.
-
-hand-ocr is run as `uv run --project <ho> python hand-ocr.py` in hand-ocr's PROJECT env (NOT the script's
-isolated PEP-723 env, which has only docopt, no opencv) -- mirrors hand-ocr's own `demo` recipe. A real
-image needs the vision extra there:  (cd "$HAND_OCR_DIR" && just sync-vision).
+"""ocr_analyse.py -- the image -> interactive card page pipeline. Joins two programs:
+hand-ocr (the Odin reader from the sibling bridge-hand-ocr checkout, built into target/release by
+`just build-hand-ocr`) turns a hand-diagram image into a PBN [Deal] tag; analyse_deal (this Odin project)
+turns that PBN into the card page with the DDS-sampling advisor + CCA/DD features.
 
 Usage:  ocr_analyse.py <image> [extra analyse_deal flags...]
   Writes <image-basename>.html (the interactive page) unless an --html is passed in the extra flags.
   Defaults to --sample 400 (the honest whole-hand verdict) unless --sample is passed. Extra flags pass
   straight through, e.g. `ocr_analyse.py hand.png --contract 3NT --seed 7`.
-Special: <image> may be `--demo` to run hand-ocr's hardcoded sample deal (plumbing check, no vision deps),
-  or `--clipboard` to read the diagram straight from the OS clipboard (screenshot -> card page, no temp file).
+Special: <image> may be `--clipboard` to read the diagram straight from the Windows clipboard
+  (screenshot -> card page, no temp file).
 
 Stdlib only + cross-platform (no bash); invoked from the justfile via `uv run --no-project python`.
 """
-import os
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent  # odin-sims/
-# hand-ocr is a separate sibling repo; HAND_OCR_DIR overrides its checkout location (the justfile exports
-# the same env var, so path lives in one place). Default mirrors the norn/dds ~/dev/<repo> convention.
-HO = Path(os.environ.get("HAND_OCR_DIR") or (Path.home() / "dev" / "bridge-hand-ocr"))
 EXE = ROOT / "target" / "release" / "analyse_deal.exe"
+HAND_OCR = ROOT / "target" / "release" / "hand-ocr.exe"
 
 
 def main(argv: list[str]) -> int:
     if not argv:
-        print("usage: ocr_analyse.py <image|--demo|--clipboard> [extra analyse_deal flags...]", file=sys.stderr)
+        print("usage: ocr_analyse.py <image|--clipboard> [extra analyse_deal flags...]", file=sys.stderr)
         return 2
 
     img, extra = argv[0], argv[1:]
 
-    # OCR the image (or the demo/clipboard deal) to a PBN tag, in hand-ocr's project env.
-    ho_cmd = ["uv", "run", "--project", str(HO), "python", str(HO / "hand-ocr.py")]
-    if img == "--demo":
-        ho_cmd += ["--demo", "--format", "pbn"]
-        base = "ocr-demo"
-    elif img == "--clipboard":
+    # OCR the image (or the clipboard's picture) to a PBN tag.
+    ho_cmd = [str(HAND_OCR)]
+    if img == "--clipboard":
         ho_cmd += ["--clipboard", "--format", "pbn"]
         base = "ocr-clipboard"
     else:

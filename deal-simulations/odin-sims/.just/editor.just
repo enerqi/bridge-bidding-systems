@@ -1,5 +1,5 @@
 # Editor setup, imported by the justfile. One-off project setup rather than part of the build/test loop.
-# Shares one namespace with the justfile, so `norn_home` / `dds_home` / `markup_home` resolve from there.
+# Shares one namespace with the justfile, so `norn_home` / `dds_home` / `markup_home` / `hocr_home` resolve from there.
 
 # ols.json is machine-specific (absolute paths) and gitignored - regenerate after cloning or when
 # NORN_HOME / DDS_HOME / MARKUP_HOME change:
@@ -31,7 +31,8 @@ ols-config:
 		{"name": "norn", "path": r"{{norn_home}}"},
 		{"name": "dds", "path": r"{{dds_home}}"},
 		{"name": "markup", "path": r"{{markup_home}}"},
+		{"name": "hocr", "path": r"{{hocr_home}}"},
 	]
 	with open("ols.json", "w", encoding="utf-8", newline="\n") as f:
 		f.write(json.dumps(config, indent=4) + "\n")
-	print("wrote ols.json -> norn collection at {{norn_home}}, dds at {{dds_home}}, markup at {{markup_home}}")
+	print("wrote ols.json -> norn collection at {{norn_home}}, dds at {{dds_home}}, markup at {{markup_home}}, hocr at {{hocr_home}}")

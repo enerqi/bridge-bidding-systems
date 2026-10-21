@@ -42,3 +42,10 @@ has_aqj :: proc(hand: norn.Hand_Summary, suit: norn.Suit) -> bool {
 has_kqj :: proc(hand: norn.Hand_Summary, suit: norn.Suit) -> bool {
 	return norn.holds(hand, suit, .King) && norn.holds(hand, suit, .Queen) && norn.holds(hand, suit, .Jack)
 }
+
+// North-South's combined high-card points. A slam try is a PARTNERSHIP total: written as one, it stays
+// right whatever range the opening shows, where "South 13+" was right only opposite this system's 16-18 NT.
+@(private)
+ns_hcp :: proc(b: norn.Deal_Summary) -> int {
+	return norn.hcp(b[.North]) + norn.hcp(b[.South])
+}

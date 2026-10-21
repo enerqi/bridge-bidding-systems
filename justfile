@@ -21,8 +21,8 @@ bml2html_exe := sims_dir + "/target/release/bml2html.exe"
 
 
 # The deal-simulation recipes live in the odin-sims justfile (it owns the build flags and the output
-# directory defaults), reached from here as a module: `just sims gen-all 48`, `just sims gen-one 2c-opener`,
-# `just sims scenarios`, `just sims sim --scenario 1c-any -n 12`, ... (`just --list sims` lists them all).
+# directory defaults), reached from here as a module: `just sims gen-all 48`, `just sims gen-one 2c`,
+# `just sims scenarios`, `just sims sim --scenario 1c -n 12`, ... (`just --list sims` lists them all).
 # Batch output goes to DEALS_OUTPUT_DIR (default w:/deals/); single-scenario output to the directory
 # just was invoked from. Both are also trailing recipe arguments.
 

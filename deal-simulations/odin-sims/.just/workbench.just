@@ -12,15 +12,73 @@
 # run the desktop workbench (release)
 [group('workbench')]
 workbench *args: mktarget_dirs
-	odin run workbench {{norn}} {{dds}} {{sciter}} {{markup}} -keep-executable -o:speed -microarch:native -linker:{{linker}} -out:{{ target_path("release", workbench_name) }} -- {{args}}
+	odin run workbench {{norn}} {{dds}} {{sciter}} {{markup}} {{hocr}} -keep-executable -o:speed -microarch:native -linker:{{linker}} -out:{{ target_path("release", workbench_name) }} -- {{args}}
 
 # `-debug` for a steppable build with the tracking allocator's leak report at exit; also what to run when
 # attaching the SDK's `inspector` (the window is created with .ENABLE_DEBUG either way).
 # ---
+# THE DISTRIBUTABLE - what a release ships, unlike `workbench`, which is built for THIS machine:
+#  - no `-microarch:native`: a build tuned to this CPU can crash with an illegal instruction on an older one.
+#    Odin's default x86-64 target runs anywhere (DDS's static library is built with MSVC defaults too).
+#  - `-subsystem:windows`: no console window opening beside the app. Its stderr logging goes nowhere, so the
+#    `WORKBENCH_*_LOG` switches need a `workbench` / `workbench-debug` build.
+#  - the version stamped in (`-define:WORKBENCH_VERSION`), shown on the About panel and compared by its
+#    `check for a new version` button. Semver: `0.1.0-alpha.1`, no leading `v`.
+# Writes target/dist/: workbench.exe + sciter.dll (the whole application; prefs live in %LOCALAPPDATA%), plus
+# LICENSE.txt and THIRD_PARTY_NOTICES.txt. The release workflow (.github/workflows/release-workbench.yml)
+# runs exactly this, then zips the folder and builds the installer from it (packaging/windows/workbench.iss).
+# e.g. `just sims dist 0.1.0-alpha.1`
+# ---
+# build the release artifact into target/dist (portable CPU, no console, version stamped)
+[group('workbench')]
+[script]
+dist version="dev":
+	import os, re, shutil, subprocess, sys
+	version = "{{version}}"
+	if version != "dev" and not re.fullmatch(r"\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?", version):
+	    sys.exit(f"version {version!r} is not semver (e.g. 0.1.0 or 0.1.0-alpha.1, no leading v)")
+	out = os.path.join("target", "dist")
+	os.makedirs(out, exist_ok=True)
+	exe = os.path.join(out, "{{workbench_name}}")
+	collections = r"""{{norn}} {{dds}} {{sciter}} {{markup}} {{hocr}}""".split()
+	command = ["odin", "build", "workbench", *collections, "-o:speed", "-subsystem:windows",
+	           f"-define:WORKBENCH_VERSION={version}", "-linker:{{linker}}", f"-out:{exe}"]
+	print(" ".join(command))
+	if subprocess.run(command).returncode != 0:
+	    sys.exit("the build failed")
+	engine = os.path.join(r"""{{SCITER_LIB}}""", "sciter.dll")
+	shutil.copy2(engine, out)
+	shutil.copy2(os.path.join("..", "..", "LICENSE"), os.path.join(out, "LICENSE.txt"))
+	# The licences the shipped code asks to travel with it. Read from the checkouts the exe was built from,
+	# so the text is always the one that applies to what is linked in.
+	odin_root = subprocess.run(["odin", "root"], capture_output=True, text=True, check=True).stdout.strip()
+	def text_of(*parts):
+	    with open(os.path.join(*parts), encoding="utf-8", errors="replace") as f:
+	        return f.read().strip()
+	nl = chr(10)
+	notices = [
+	    ("Sciter Engine", "This Application uses Sciter Engine (http://sciter.com/), copyright Terra Informatica Software, Inc."
+	     + nl + "sciter.dll is distributed under the Sciter Engine EULA: https://sciter.com/prices/"),
+	    ("DDS double-dummy solver (Bo Haglund, Soren Hein) - Apache License 2.0", text_of(r"""{{dds_home}}""", "external", "dds", "LICENSE")),
+	    ("libcurl", text_of(odin_root, "vendor", "curl", "LICENSE")),
+	    ("Odin core and vendor libraries", text_of(odin_root, "LICENSE")),
+	    ("stb_image (Sean Barrett)", "Public domain (Unlicense) or MIT, at your choice: https://github.com/nothings/stb"),
+	    ("Material Icons (Google) - Apache License 2.0", "https://github.com/google/material-design-icons (licence text as for DDS above)"),
+	]
+	rule = "=" * 78
+	with open(os.path.join(out, "THIRD_PARTY_NOTICES.txt"), "w", encoding="utf-8", newline=chr(13) + chr(10)) as f:
+	    f.write("Bridge Workbench includes the following third-party software." + nl)
+	    for title, body in notices:
+	        f.write(nl + rule + nl + title + nl + rule + nl + nl + body + nl)
+	for name in sorted(os.listdir(out)):
+	    path = os.path.join(out, name)
+	    if os.path.isfile(path) and not name.endswith(".pdb"):
+	        print(f"{os.path.getsize(path):>12,}  {path}")
+
 # run the desktop workbench (debug)
 [group('workbench')]
 workbench-debug *args: mktarget_dirs
-	odin run workbench {{norn}} {{dds}} {{sciter}} {{markup}} -keep-executable -debug -linker:{{linker}} -out:{{ target_path("debug", workbench_name) }} -- {{args}}
+	odin run workbench {{norn}} {{dds}} {{sciter}} {{markup}} {{hocr}} -keep-executable -debug -linker:{{linker}} -out:{{ target_path("debug", workbench_name) }} -- {{args}}
 
 # The SDK's inspector: DOM tree, computed styles, script console and debugger, over a socket, against a
 # RUNNING workbench. Needs `just workbench-debug` on the other side (the release build grants neither the
@@ -49,7 +107,7 @@ workbench-norebuild *args:
 # the workbench tests in ONE process - for debugging a test: `just test-workbench-serial -define:ODIN_TEST_NAMES=main.<name>`
 [group('test')]
 test-workbench-serial *args: mktarget_dirs
-	odin test workbench {{norn}} {{dds}} {{sciter}} {{markup}} -debug -define:ODIN_TEST_THREADS=1 -show-timings -linker:{{linker}} -out:{{ target_path("debug", "test-workbench.exe") }} {{args}}
+	odin test workbench {{norn}} {{dds}} {{sciter}} {{markup}} {{hocr}} -debug -define:ODIN_TEST_THREADS=1 -show-timings -linker:{{linker}} -out:{{ target_path("debug", "test-workbench.exe") }} {{args}}
 
 # WHERE THE WORKBENCH TESTS SPEND THEIR TIME. Runs the suite with `-define:WB_TEST_TIMINGS=true`, which logs
 # one `timing` line per windowed test (total, setup, pump count + time, the test's own work), and prints the
@@ -91,7 +149,7 @@ test-workbench-timings TOP="25": mktarget_dirs
 # run the workbench tests as SHARDS parallel processes (one build), with a merged report
 [group('test')]
 test-workbench SHARDS="4": mktarget_dirs
-	odin build workbench {{norn}} {{dds}} {{sciter}} {{markup}} -build-mode:test -debug -define:ODIN_TEST_THREADS=1 -define:WB_TEST_TIMINGS=true -define:ODIN_TEST_FANCY=false -linker:{{linker}} -out:{{ target_path("debug", "test-workbench-sharded.exe") }}
+	odin build workbench {{norn}} {{dds}} {{sciter}} {{markup}} {{hocr}} -build-mode:test -debug -define:ODIN_TEST_THREADS=1 -define:WB_TEST_TIMINGS=true -define:ODIN_TEST_FANCY=false -linker:{{linker}} -out:{{ target_path("debug", "test-workbench-sharded.exe") }}
 	uv run --no-project -p 3.14 --script tools/test_shards.py {{ target_path("debug", "test-workbench-sharded.exe") }} {{SHARDS}}
 
 # Does the norn CARD PAGE still lay out inside Sciter? The workbench hosts it in a <frame>, and it fits
@@ -193,7 +251,7 @@ wb-cli-parity: mktarget_dirs
 
 	# The same flags test_the_generate_path_writes_the_same_page_the_cli_does composes from its controls.
 	subprocess.run(
-	    [str(sim), "-S", "1c-any", "-n", "4", "-f", "html-cards", "-s", "42", "--fixed-table", "-o", str(cli)],
+	    [str(sim), "-S", "1c", "-n", "4", "-f", "html-cards", "-s", "42", "--dealer", "N", "-o", str(cli)],
 	    check=True,
 	)
 

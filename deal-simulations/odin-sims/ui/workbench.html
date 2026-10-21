@@ -71,6 +71,12 @@
     <div class="about-card">
       <div class="legend">Bridge Workbench</div>
       <div class="about-line" id="about-versions"></div>
+      <!-- Asked by hand, never by itself: see update_check.odin. The link is shown when there is a page to offer. -->
+      <div class="about-line about-update">
+        <button id="about-update" class="small" title="Ask GitHub whether a newer release has been published">check for a new version</button>
+        <span id="about-update-status"></span>
+        <a href="#" id="about-update-link" style="display: none">open the release page</a>
+      </div>
       <div class="about-line">
         Practice deals and bidding notes in one window: generate deals that fit an auction (from the built-in
         scenarios or your own), analyse a deal you already have, edit your system notes with a live preview
@@ -491,6 +497,10 @@
         </div>
         <plaintext id="bml-text" title="The .bml source"
                    data-hint="The .bml source. Headers, directives, bids and suit symbols are coloured; press preview to render it."></plaintext>
+        <!-- What the last preview's parse reported, one row a problem; a click goes to its line (in an
+             included chapter, that chapter). Replaced on every render, empty and hidden when there is none. -->
+        <div class="problems" id="bml-problems" style="display: none"
+             data-hint="What the preview's parse found wrong: click a row to go to its line."></div>
       </div>
       <div class="divider"></div>
       <!-- THE PREVIEW AND ITS TWO SETTINGS. Fold is ONE toggle, lit while the document is folded: every
@@ -702,11 +712,11 @@
         <div class="side-row side-actions">
         <!-- TYPE TO FIND A SCENARIO. A hundred rows two lines tall is a wall, and the only instrument
              against it was the scrollbar - which is the wrong one for a list whose NAMES are the thing
-             somebody knows (`1c-any-2h-or-2n`) and whose POSITION is the thing they do not.
+             somebody knows (`1c-2h-or-2n`) and whose POSITION is the thing they do not.
 
              The matching is the heading palette's, `outline.score_name` unchanged: a subsequence, and the
              query's spaces and punctuation are SEPARATORS rather than characters. So `1c 2h` finds
-             `1c-any-2h-or-2n` without anyone typing the dashes the registry happens to spell it with - the
+             `1c-2h-or-2n` without anyone typing the dashes the registry happens to spell it with - the
              same failure that rule was written for in the notes (`1h 1s` against `1H-1S`, `1H--1S`, `1H/1S`).
 
              A FIELD IN THE BAR RATHER THAN A PALETTE OVER THE LIST, and the difference is not decoration.
@@ -720,7 +730,7 @@
              screen mentions is a shortcut for whoever wrote it. -->
         <input type="text" id="scenario-filter" class="filter"
                title="Narrow the list to the scenarios you name (CTRL+R)"
-               data-hint="Narrow the list to the scenarios whose name or description matches what you type. Spaces and dashes are separators, so `1c 2h` finds `1c-any-2h-or-2n`. CTRL+R puts the caret here, the up and down arrows move the selection, and escape clears it."
+               data-hint="Narrow the list to the scenarios whose name or description matches what you type. Spaces and dashes are separators, so `1c 2h` finds `1c-2h-or-2n`. CTRL+R puts the caret here, the up and down arrows move the selection, and escape clears it."
                placeholder="filter  (ctrl+r)">
 
         <!-- THE GROUPS THAT ARE SELECTED, one removable chip each, and NOTHING AT ALL when none are. They
@@ -788,6 +798,13 @@
             </li>
             <li><b>seed</b>: leave it empty for new deals each time; a number gives the same deals back.</li>
             <li><b>every scenario</b> writes one file per scenario instead of just the selected one.</li>
+            <li><b>par for every deal</b> solves each deal double dummy (every card visible, best play by
+                everyone) and shows under the hand its <i>par</i> - the contract and score both sides reach when
+                each bids as high as is worth it and no higher - with how many tricks each side makes in each
+                denomination. Slower, since every deal is solved. Scenarios that need the solver to choose their
+                deals (a slam that must make) always show it.</li>
+            <li><b>North deals</b> makes North the dealer on every deal, so a scenario where North opens is
+                bid from first seat; the vulnerability still varies. Off, the dealer is random too.</li>
           </ul>
         </div>
         <!-- ONE SETTING PER LINE, label column then a box of one width (reported: "deals / format / seed
@@ -843,9 +860,9 @@
           <label for="par">par for every deal (slower)</label>
         </div>
         <div class="line field check">
-          <input type="checkbox" id="fixed" title="Same dealer and vulnerability every deal"
-                 data-hint="Keep dealer and vulnerability the same on every deal instead of rotating them — one less thing changing while you practise.">
-          <label for="fixed">fixed table</label>
+          <input type="checkbox" id="north-deals" title="North deals every deal; the vulnerability still varies"
+                 data-hint="Make North the dealer on every deal, so the scenarios where North opens are bid from first seat. The vulnerability still varies.">
+          <label for="north-deals">North deals</label>
         </div>
         <div class="line actions">
           <button id="generate" title="Deal and write the pages (ctrl+enter)"
@@ -895,33 +912,35 @@
             <li><b>Declarer and dummy only</b>: put a dash (<code>-</code>) in place of each defender's hand, as in
                 <code>N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -</code>. Each suit is then analysed over every way
                 the defenders' cards in it can split.</li>
-            <li><b>sample</b> (declarer and dummy only): 0 stops at that suit-by-suit analysis. Above 0, it also
-                deals the defenders' cards that many times and solves each layout, for a whole-hand chance of making
-                the contract — 200 to 500 is plenty, and more takes longer.</li>
+            <li><b>make chance</b> (declarer and dummy only): the chance of making the contract with the whole hand
+                played out, over that many random layouts of the defenders' cards, each solved — 200 to 500 is
+                plenty, and more takes longer. 0 stops at the suit-by-suit analysis.</li>
             <li><b>contract</b> and <b>target</b> choose what to score and the trick count to highlight;
                 <code>auto</code> picks the contract.</li>
             <li><b>defenders</b> (declarer and dummy, one board): what you know of their hands - a card held
                 (<code>W:3S</code>, the opening lead), a void (<code>E:S</code>) or a length (<code>W:H:5+</code>,
-                <code>E:D:2</code>, <code>E:C:1-3</code>). The sample deals only layouts that fit; a record's own
+                <code>E:D:2</code>, <code>E:C:1-3</code>). The layouts dealt are only ones that fit; a record's own
                 opening lead is added for you.</li>
             <li><b>Drop a file</b> on the window: a screenshot of a hand diagram is read into the box (fix a misread
-                card and analyse again); a .pbn or .lin is analysed directly.</li>
+                card and analyse again); a .pbn or .lin is analysed directly. <b>ctrl+v</b> does the same with a screenshot
+                or a copied file on the clipboard.</li>
           </ul>
         </div>
         <div class="line">
           <textarea id="deal" title="PBN, a bare N:..., LIN, or a hand URL - one board or many"
-                    data-hint="Paste a deal or several: PBN (one [Deal] tag per board), a bare N:… value, LIN (a vugraph record holds a whole match), or the whole URL of a hand from BBO or IntoBridge — or drop a screenshot of a hand diagram, a .pbn or a .lin anywhere on this window."
-                    placeholder='[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]  ·  or a bare N:..., a LIN record, a hand URL — or drop a screenshot on the window'></textarea>
+                    data-hint="Paste a deal or several: PBN (one [Deal] tag per board), a bare N:… value, LIN (a vugraph record holds a whole match), or the whole URL of a hand from BBO or IntoBridge — or drop a screenshot of a hand diagram, a .pbn or a .lin anywhere on this window (or paste a screenshot with ctrl+v)."
+                    placeholder='[Deal "N:AJ54.AK2.A32.AK3 - KT32.543.654.542 -"]  ·  or a bare N:..., a LIN record, a hand URL — or drop a screenshot, .pbn or .lin on the window, or paste a screenshot (ctrl+v)'></textarea>
         </div>
         <div class="line field">
-          <label for="sample">sample</label>
-          <input type="text" id="sample" class="num" value="0" title="How many layouts to solve; 0 = off"
-                 data-hint="Declarer and dummy only. 0: suit-by-suit analysis alone. Above 0: also deal the defenders' cards that many times and solve each, for a whole-hand chance of making - 200 to 500 is plenty. Ignored when all four hands are given (that deal is solved exactly).">
+          <label for="sample">make chance</label>
+          <input type="text" id="sample" class="num" value="0" title="Chance of making, over this many layouts; 0 = off"
+                 data-hint="Chance of making the contract, over this many random layouts of the defenders' cards, each solved - 200 to 500 is plenty. 0 = off (the suit-by-suit analysis alone). Declarer and dummy only: when all four hands are given, that deal is solved exactly.">
+          <span class="unit">layouts</span>
         </div>
         <div class="line field">
           <label for="contract">contract</label>
           <input type="text" id="contract" class="num" placeholder="auto" title="The contract to score, e.g. 4H"
-                 data-hint="Which contract to score, e.g. 4H or 3NT. Leave it empty and the best one for the sample is picked for you.">
+                 data-hint="Which contract to score, e.g. 4H or 3NT. Leave it empty and the best one over the layouts is picked for you.">
         </div>
         <div class="line field">
           <label for="target">target</label>
@@ -931,7 +950,7 @@
         <div class="line field">
           <label for="defenders">defenders</label>
           <input type="text" id="defenders" placeholder="e.g. W:3S E:S W:H:5+" title="What you know about the defenders' hands"
-                 data-hint="What the defenders are known to hold, separated by spaces: a card (W:3S - West led the three of spades), a void (E:S - East has no spades) or a length (W:H:5+ five or more hearts, E:D:2 exactly two, E:C:1-3). The sample only deals layouts that fit, and a shared link carries them. One board at a time.">
+                 data-hint="What the defenders are known to hold, separated by spaces: a card (W:3S - West led the three of spades), a void (E:S - East has no spades) or a length (W:H:5+ five or more hearts, E:D:2 exactly two, E:C:1-3). Only layouts that fit are dealt, and a shared link carries them. One board at a time.">
         </div>
         <div class="line field check">
           <!-- The hand page is what an analysis is FOR, so it is the default and the box names the exception
@@ -946,7 +965,7 @@
           <button id="show-analysed" class="ghost" disabled title="Put the last analysed hand page back in the pane"
                   data-hint="Shows the last hand page analyse made again - after a scenario's page has taken the pane - without analysing again.">show last</button>
           <span class="busy" id="analyse-busy" style="display:none"
-                data-hint="An analysis is running. A file of boards counts them; one board with a big sample just takes a while."><i class="spinner"></i><span id="analyse-busy-text">analysing…</span><span class="track mini"><span id="analyse-fill"></span></span></span>
+                data-hint="An analysis is running. A file of boards counts them; one board with many layouts just takes a while."><i class="spinner"></i><span id="analyse-busy-text">analysing…</span><span class="track mini"><span id="analyse-fill"></span></span></span>
         </div>
         <div class="line status-line">
           <span class="status" id="analyse-status" data-hint="What the last analyse did, or why it would not start."></span>

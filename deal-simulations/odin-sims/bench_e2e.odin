@@ -8,7 +8,7 @@ package main
 	scenario predicate AND the double-dummy filter, then render each to Html_Cards WITH the dd par
 	caption + the combo table (`deal_solve.annotate` + `combo.annotate`). Exactly the work behind
 
-	    sim.exe -S slam-makes-dd --count 48 --format html-cards --dd
+	    sim.exe -S ns-32plus-opc --count 48 --format html-cards --dd
 
 	minus the file write — it renders into a builder and discards it, so the number is pure pipeline
 	compute (generation + DDS filtering + DDS par + combo threading + rendering).
@@ -18,7 +18,7 @@ package main
 	    (or: just bench-e2e)
 
 	Knobs (compile-time -define):
-	    SCENARIO (default "slam-makes-dd"), COUNT (48), ITERS (3), SEED (42, fixed → identical work per
+	    SCENARIO (default "ns-32plus-opc"), COUNT (48), ITERS (3), SEED (42, fixed → identical work per
 	    iteration for stable timing), COMBO_THREADS (true; -define:COMBO_THREADS=false times the serial
 	    combo path for comparison).
 */
@@ -35,7 +35,7 @@ import "norn:combo"
 import "norn:norn"
 import "suit_book"
 
-E2E_SCENARIO :: #config(E2E_SCENARIO, "slam-makes-dd")
+E2E_SCENARIO :: #config(E2E_SCENARIO, "ns-32plus-opc")
 E2E_COUNT :: #config(E2E_COUNT, 48)
 E2E_ITERS :: #config(E2E_ITERS, 3)
 E2E_SEED :: #config(E2E_SEED, 42)
@@ -88,7 +88,7 @@ main :: proc() {
 	// Keep it in step with sim.odin's dd_filters binding; a mismatch would benchmark a different
 	// acceptance rate than the real export.
 	deal_filter: norn.Deal_Filter = counting_slam_filter
-	if E2E_SCENARIO != "slam-makes-dd" {
+	if E2E_SCENARIO != "ns-32plus-opc" {
 		fmt.eprintfln(
 			"bench_e2e: note — the DD filter is hard-wired to ns_makes_slam; override the source for %q",
 			E2E_SCENARIO,

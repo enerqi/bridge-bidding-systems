@@ -3,8 +3,9 @@ package bidding
 /*
 	scenarios.odin — the named-simulation registry (part of package `bidding`; see bidding.odin).
 
-	Each entry is the Odin port of one `deal-simulations/tcl-sims` script: a `name` (the script's
-	base filename), a one-line `description`, and a `predicate` over a whole `norn.Deal_Summary`. The
+	Each entry is the Odin port of one `deal-simulations/tcl-sims` script: a `name` (an id in the
+	auction notation below; the script's base filename is kept as `formerly`), a `label` (the same
+	auction with suit glyphs), a one-line `description`, and a `predicate` over a whole `norn.Deal_Summary`. The
 	predicate is the `main { ... accept/reject ... }` body, re-expressed as a `norn.Predicate` — it
 	composes the parity-verified predicates in this package over the named seats (North opens, South
 	responds, East/West compete).
@@ -14,6 +15,14 @@ package bidding
 	predicate to `norn.generate_accepted`.
 
 	Adding a scenario = adding one `cli.Scenario` literal to `registry`. No driver change needed.
+
+	THE ID NOTATION (2026-10-20). The auction, calls joined by `-`: `1c 1d 1h 1s 1n`, `1hs` for either
+	major and `1cd` for either minor (BML's multi-suit `1HS`), `opp-` before the OPPONENTS' calls (brackets
+	in the label; not in the id, because `(` is syntax in nu and bash), and an opening's style or range
+	as a word after it (`1c-strong`, `2hs-weak`, `1c-19plus-unbal`). The hand being practised, when the
+	scenario names a hand type rather than a call, follows `_` (`1n_two-suiter`, `1hs_slam-try`). Hand
+	types with no auction are named by the hand (`weak-7-card-suit`, `ns-32plus-hcp`). Lower case only:
+	the ids are file names on a case-insensitive file system.
 
 	THE LITERALS USE NAMED FIELDS, and that is not a style choice — it is what stops this file breaking
 	every time the framework grows one. Odin has no partial positional literal: `{a, b, c}` against a
@@ -33,23 +42,31 @@ import "norn:cli"
 import "norn:norn"
 
 // All registered scenarios, ordered roughly as the bidding develops (opener, then responses, then
-// competition). The `name` mirrors the source `.tcl` basename so the two corpora stay diff-able.
+// competition). `name` is the id (a file name and a `-S` argument), `label` the auction as a bridge player
+// writes it, `formerly` the id before the 2026-10-20 rename - which was the source `.tcl` basename, so the
+// two corpora stay diff-able through it.
 registry := []cli.Scenario {
 	// --- 1C opening, any strength ---
 	{
-		name = "1c-any",
+		name = "1c",
+		label = "1♣",
+		formerly = "1c-any",
 		description = "North opens 1C (any strength)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_any_1c_opener(b[.North])}),
 	},
 	{
-		name = "1c-any-1n",
+		name = "1c-1n",
+		label = "1♣ – 1NT",
+		formerly = "1c-any-1n",
 		description = "1C opener; South makes any 1NT response",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_any_1c_opener(b[.North]) && is_any_1n_swedish_club_response(b[.South])
 		}),
 	},
 	{
-		name = "1c-any-1n-unbal",
+		name = "1c-1n_unbal",
+		label = "1♣ – 1NT : unbalanced minor or 4441",
+		formerly = "1c-any-1n-unbal",
 		description = "1C opener; South responds 1NT on an unbalanced-minor or Marmic hand",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			south := b[.South]
@@ -60,21 +77,27 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1c-any-2cd",
+		name = "1c-2cd",
+		label = "1♣ – 2♣/♦",
+		formerly = "1c-any-2cd",
 		description = "1C opener; South responds 2C/2D",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_any_1c_opener(b[.North]) && is_2cd_swedish_club_resp(b[.South])
 		}),
 	},
 	{
-		name = "1c-any-2h-or-2n",
+		name = "1c-2h-or-2n",
+		label = "1♣ – 2♥/2NT",
+		formerly = "1c-any-2h-or-2n",
 		description = "1C opener; South responds 2H/2NT",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_any_1c_opener(b[.North]) && is_2h_or_2n_swedish_club_resp(b[.South])
 		}),
 	},
 	{
-		name = "1c-any-2h-candidates",
+		name = "1c-2h_candidates",
+		label = "1♣ – 2♥ : the 2♥-zone shapes",
+		formerly = "1c-any-2h-candidates",
 		description = "1C opener; South holds one of the 2H-zone positive shapes",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			south := b[.South]
@@ -88,14 +111,18 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1c-any-2s",
+		name = "1c-2s",
+		label = "1♣ – 2♠ (minors)",
+		formerly = "1c-any-2s",
 		description = "1C opener; South responds 2S (both minors)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_any_1c_opener(b[.North]) && is_2s_swedish_club_resp(b[.South])
 		}),
 	},
 	{
-		name = "1c-any-3n-plus",
+		name = "1c-3n-plus",
+		label = "1♣ – 3NT+ : solid suit",
+		formerly = "1c-any-3n-plus",
 		description = "1C opener; South makes a solid-suit 3NT / 4-of-a-suit slam-try response",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			south := b[.South]
@@ -108,14 +135,18 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1c-any-3x-response",
+		name = "1c-3x",
+		label = "1♣ – 3x : preempt",
+		formerly = "1c-any-3x-response",
 		description = "1C opener; South makes a 3-level preempt response",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_any_1c_opener(b[.North]) && is_3x_preempt_swedish_club_response(b[.South])
 		}),
 	},
 	{
-		name = "1c-any-preempted",
+		name = "1c-opp-preempt",
+		label = "1♣ – (preempt)",
+		formerly = "1c-any-preempted",
 		description = "1C opener; East preempts (any weak 6+ or weak/min 7+ suit); South has 4+ hcp",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			east := b[.East]
@@ -127,7 +158,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1c-any-long-suit-preempted",
+		name = "1c-opp-preempt-7",
+		label = "1♣ – (preempt, 7+ suit)",
+		formerly = "1c-any-long-suit-preempted",
 		description = "1C opener; East preempts a long (weak/min 7+) suit; South has 4+ hcp",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return(
@@ -141,11 +174,14 @@ registry := []cli.Scenario {
 	// --- 1C strong (the 16+ artificial opening) ---
 	{
 		name = "1c-strong",
+		label = "1♣ (16+)",
 		description = "North opens a strong 1C",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_strong_1c(b[.North])}),
 	},
 	{
-		name = "1c-19plus-or-marmic",
+		name = "1c-19plus-or-4441",
+		label = "1♣ (19+ or 4441)",
+		formerly = "1c-19plus-or-marmic",
 		description = "Strong 1C that is either Marmic or 19+ hcp",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -153,7 +189,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1c-strong-19plus-unbal",
+		name = "1c-19plus-unbal",
+		label = "1♣ (19+ unbalanced)",
+		formerly = "1c-strong-19plus-unbal",
 		description = "Strong 1C, 19+ and unbalanced",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -161,7 +199,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1c-strong-19plus-asymmetric-10plus-card-two-suiter",
+		name = "1c-19plus-two-suiter",
+		label = "1♣ (19+ two-suiter, 10+ cards)",
+		formerly = "1c-strong-19plus-asymmetric-10plus-card-two-suiter",
 		description = "Strong 1C, 19+ with an asymmetric 10+ card two-suiter",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -169,7 +209,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1c-strong-21plus-unbal",
+		name = "1c-21plus-unbal",
+		label = "1♣ (21+ unbalanced)",
+		formerly = "1c-strong-21plus-unbal",
 		description = "Strong 1C, 21+ and unbalanced",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -177,7 +219,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1c-strong-(overcall)",
+		name = "1c-strong-opp-overcall",
+		label = "1♣ (16+) – (overcall)",
+		formerly = "1c-strong-(overcall)",
 		description = "Strong 1C with East able to overcall (8+ hcp, not flat)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			east := b[.East]
@@ -185,7 +229,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1c-strong-preempted",
+		name = "1c-strong-opp-preempt",
+		label = "1♣ (16+) – (preempt)",
+		formerly = "1c-strong-preempted",
 		description = "Strong 1C; East preempts (weak/min 7+ or weak 6+); South has 4+ hcp",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			east := b[.East]
@@ -197,7 +243,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1c-strong-minor-opening-positive",
+		name = "1c-18plus-minor_positive",
+		label = "1♣ (18+ minor) – ? : positive",
+		formerly = "1c-strong-minor-opening-positive",
 		description = "Strong 1C, 18+ unbalanced minor; South has a 8+ hcp positive",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -211,13 +259,16 @@ registry := []cli.Scenario {
 	},
 	{
 		name = "1c-strong-1d",
+		label = "1♣ (16+) – 1♦",
 		description = "Strong 1C; South gives the 1D negative",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_strong_1c(b[.North]) && is_1d_swedish_club_resp(b[.South])
 		}),
 	},
 	{
-		name = "1c-strong-1d-1h-1s-likely",
+		name = "1c-strong-1d_major-fit",
+		label = "1♣ (16+) – 1♦ : major fit likely",
+		formerly = "1c-strong-1d-1h-1s-likely",
 		description = "Strong 1C; South 1D negative with both sides holding a likely major fit",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -232,13 +283,16 @@ registry := []cli.Scenario {
 	},
 	{
 		name = "1c-strong-1n",
+		label = "1♣ (16+) – 1NT",
 		description = "Strong 1C; South makes any 1NT response",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_strong_1c(b[.North]) && is_any_1n_swedish_club_response(b[.South])
 		}),
 	},
 	{
-		name = "1c-strong-1n-unbal",
+		name = "1c-strong-1n_unbal",
+		label = "1♣ (16+) – 1NT : unbalanced minor or 4441",
+		formerly = "1c-strong-1n-unbal",
 		description = "Strong 1C; South 1NT on an unbalanced-minor or Marmic hand",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			south := b[.South]
@@ -249,7 +303,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1c-strong-1n-2c-2s-minor-response",
+		name = "1c-strong_minor-positive",
+		label = "1♣ (16+) – ? : minor positive",
+		formerly = "1c-strong-1n-2c-2s-minor-response",
 		description = "Strong 1C; South makes a minor-suit positive (2S or 11+ minor)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_strong_1c(b[.North]) && is_minor_swedish_club_positive_response(b[.South])
@@ -257,13 +313,16 @@ registry := []cli.Scenario {
 	},
 	{
 		name = "1c-strong-2cd",
+		label = "1♣ (16+) – 2♣/♦",
 		description = "Strong 1C; South responds 2C/2D",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_strong_1c(b[.North]) && is_2cd_swedish_club_resp(b[.South])
 		}),
 	},
 	{
-		name = "1c-strong-extras-2cd",
+		name = "1c-20plus-2cd",
+		label = "1♣ (20+) – 2♣/♦",
+		formerly = "1c-strong-extras-2cd",
 		description = "Strong 1C, 20+; South responds 2C/2D",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -272,6 +331,7 @@ registry := []cli.Scenario {
 	},
 	{
 		name = "1c-strong-2h-or-2n",
+		label = "1♣ (16+) – 2♥/2NT",
 		description = "Strong 1C; South responds 2H/2NT",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_strong_1c(b[.North]) && is_2h_or_2n_swedish_club_resp(b[.South])
@@ -279,20 +339,25 @@ registry := []cli.Scenario {
 	},
 	{
 		name = "1c-strong-2s",
+		label = "1♣ (16+) – 2♠ (minors)",
 		description = "Strong 1C; South responds 2S (both minors)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_strong_1c(b[.North]) && is_2s_swedish_club_resp(b[.South])
 		}),
 	},
 	{
-		name = "1c-strong-responder-bal-gf",
+		name = "1c-strong-1n_bal-12plus",
+		label = "1♣ (16+) – 1NT : balanced 12+ (old style)",
+		formerly = "1c-strong-responder-bal-gf",
 		description = "Strong 1C; South gives the old balanced 12+ 1NT response",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_strong_1c(b[.North]) && is_old_1n_bal_swedish_club_response(b[.South])
 		}),
 	},
 	{
-		name = "1c-strong-responder-14plus-bal-gf",
+		name = "1c-strong-1n_bal-14plus",
+		label = "1♣ (16+) – 1NT : balanced 14+",
+		formerly = "1c-strong-responder-14plus-bal-gf",
 		description = "Strong 1C; South balanced 1NT response with 14+ hcp",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			south := b[.South]
@@ -300,24 +365,32 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1c-strong-1hs-support",
+		name = "1c-strong-1hs_major-fit",
+		label = "1♣ (16+) – 1♥/♠ : 8+, major fit likely",
+		formerly = "1c-strong-1hs-support",
 		description = "Strong 1C; South has 8+ with a side major and a likely major fit (not NT/solid-suit)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_1hs_support(b, false)}),
 	},
 	{
-		name = "1c-strong-1hs-support-unbal",
-		description = "As 1c-strong-1hs-support but South is also non-flat",
+		name = "1c-strong-1hs_major-fit-unbal",
+		label = "1♣ (16+) – 1♥/♠ : 8+, major fit likely, unbalanced",
+		formerly = "1c-strong-1hs-support-unbal",
+		description = "Strong 1C; South has 8+ with a side major and a likely major fit, non-flat",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_1hs_support(b, true)}),
 	},
 
 	// --- 1D openings ---
 	{
-		name = "1d-unbalanced-opener",
+		name = "1d-unbal",
+		label = "1♦ (unbalanced)",
+		formerly = "1d-unbalanced-opener",
 		description = "North opens an unbalanced 1D",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_1d_unbal_opener(b[.North])}),
 	},
 	{
-		name = "1d-unbalanced-opener-gf-two-suiter",
+		name = "1d-unbal_two-suiter-gf",
+		label = "1♦ (unbalanced) – ? : two-suiter, game force",
+		formerly = "1d-unbalanced-opener-gf-two-suiter",
 		description = "Unbalanced 1D; South a 13+ two-suiter (game force)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
@@ -325,15 +398,19 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1d-unbalanced-opener-slam-try-two-suiter",
-		description = "Unbalanced 1D; South an 18+ two-suiter (slam try)",
+		name = "1d-unbal_two-suiter-slam-try",
+		label = "1♦ (unbalanced) – ? : two-suiter, slam try",
+		formerly = "1d-unbalanced-opener-slam-try-two-suiter",
+		description = "Unbalanced 1D; South a two-suiter, North-South 29+ (slam try)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
-			return is_1d_unbal_opener(b[.North]) && two_suiter(s) && norn.hcp(s) >= 18
+			return is_1d_unbal_opener(b[.North]) && two_suiter(s) && ns_hcp(b) >= 29
 		}),
 	},
 	{
-		name = "1d-any-invitish-no-major-or-inverted",
+		name = "1d_invite-or-inverted",
+		label = "1♦ – ? : flat invite or inverted raise",
+		formerly = "1d-any-invitish-no-major-or-inverted",
 		description = "1D opener (11+); South flat invitational or a possible inverted raise",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -348,7 +425,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1d-any-splinter-preempt-wjs",
+		name = "1d-jump",
+		label = "1♦ – jump : weak jump shift, splinter or preempt",
+		formerly = "1d-any-splinter-preempt-wjs",
 		description = "1D opener; South makes a WJS, splinter, or diamond-preempt response",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			south := b[.South]
@@ -361,7 +440,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1d-weak-minor-minors",
+		name = "1d_weak-no-major",
+		label = "1♦ – ? : weak, no major",
+		formerly = "1d-weak-minor-minors",
 		description = "1D opener; South a weak (5-9) no-major non-flat hand, East not a real opener",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			south := b[.South]
@@ -378,19 +459,25 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1d-then-1x-interference",
+		name = "1d-opp-1x_major-fit",
+		label = "1♦ – (1x) – ? : major fit",
+		formerly = "1d-then-1x-interference",
 		description = "1D opener; East overcalls; South has 6+ hcp with a major and the side has a major fit",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_1d_interference(b, false)}),
 	},
 	{
-		name = "1d-then-1x-interference-6major",
-		description = "As 1d-then-1x-interference but South also holds a 6-card major",
+		name = "1d-opp-1x_6-card-major",
+		label = "1♦ – (1x) – ? : 6-card major",
+		formerly = "1d-then-1x-interference-6major",
+		description = "1D opener; East overcalls; South has 6+ hcp with a 6-card major and the side has a major fit",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_1d_interference(b, true)}),
 	},
 
 	// --- 1-of-a-minor with competition ---
 	{
-		name = "1minor-(1s)",
+		name = "1cd-opp-1s",
+		label = "1♣/♦ – (1♠)",
+		formerly = "1minor-(1s)",
 		description = "1C/1D opener; East overcalls 1S (5+ spades); South has 5+ hcp",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -404,7 +491,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1minor-(overcall)",
+		name = "1cd-opp-overcall",
+		label = "1♣/♦ – (overcall)",
+		formerly = "1minor-(overcall)",
 		description = "1C/1D opener; East able to overcall (8+ hcp, not flat)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -415,17 +504,23 @@ registry := []cli.Scenario {
 
 	// --- 1-of-a-major openings ---
 	{
-		name = "1major-any",
+		name = "1hs",
+		label = "1♥/♠",
+		formerly = "1major-any",
 		description = "North opens 1 of a major",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_1major_opener(b[.North])}),
 	},
 	{
-		name = "1major-light-any",
+		name = "1hs-light",
+		label = "1♥/♠ (light)",
+		formerly = "1major-light-any",
 		description = "North opens a light 1 of a major",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_light_1major_opener(b[.North])}),
 	},
 	{
-		name = "1major-inviteish",
+		name = "1hs_invite",
+		label = "1♥/♠ – ? : invitational",
+		formerly = "1major-inviteish",
 		description = "1 major opener; South invitational (9-12)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			s_hcp := norn.hcp(b[.South])
@@ -433,14 +528,18 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1major-game-force",
+		name = "1hs_game-force",
+		label = "1♥/♠ – ? : game force",
+		formerly = "1major-game-force",
 		description = "1 major opener; South 13+ (game force)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_1major_opener(b[.North]) && norn.hcp(b[.South]) >= 13
 		}),
 	},
 	{
-		name = "1major-gf-3plus-card-support",
+		name = "1hs_game-force-3-support",
+		label = "1♥/♠ – ? : game force, 3+ support",
+		formerly = "1major-gf-3plus-card-support",
 		description = "1 major opener; South 13+ with 3+ card support",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return(
@@ -451,7 +550,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1major-invite-4plus-card-support",
+		name = "1hs_10plus-4-support",
+		label = "1♥/♠ – ? : 10+, 4+ support",
+		formerly = "1major-invite-4plus-card-support",
 		description = "1 major opener; South 10+ with 4+ card support",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return(
@@ -462,7 +563,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1major-10plus-splinterable",
+		name = "1hs_splinter",
+		label = "1♥/♠ – ? : splinter",
+		formerly = "1major-10plus-splinterable",
 		description = "1 major opener; South 10+ with 4+ support and a shortage (splinter)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			south := b[.South]
@@ -475,7 +578,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1major-minisplinter-or-single-suit-invite",
+		name = "1hs_mini-splinter-or-invite",
+		label = "1♥/♠ – ? : mini-splinter or good-suit invite",
+		formerly = "1major-minisplinter-or-single-suit-invite",
 		description = "1 major opener; South a 7-11 4-card-support splinter or a 9-12 good-suit invite",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -490,76 +595,98 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "1major-slam-try",
-		description = "1 major opener; South 18+ (slam try)",
+		name = "1hs_slam-try",
+		label = "1♥/♠ – ? : slam try",
+		formerly = "1major-slam-try",
+		description = "1 major opener; North-South 29+ (slam try)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
-			return is_1major_opener(b[.North]) && norn.hcp(b[.South]) >= 18
+			return is_1major_opener(b[.North]) && ns_hcp(b) >= 29
 		}),
 	},
 	{
-		name = "1major-max-6-carder-maybe-1nt",
+		name = "1hs-1n_opener-14plus-six",
+		label = "1♥/♠ – 1NT : opener 14+ with six",
+		formerly = "1major-max-6-carder-maybe-1nt",
 		description = "Maximum (14+) 1 major opener on a 6-bagger opposite a South hand that might pass 1NT",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_1major_max_6carder(b)}),
 	},
 
 	// --- 1NT opening ---
 	{
-		name = "1n-opener",
+		name = "1n",
+		label = "1NT",
+		formerly = "1n-opener",
 		description = "North opens 1NT",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_1nt_opener(b[.North])}),
 	},
 	{
-		name = "1n-slam-try",
-		description = "1NT opener; South 13+ (slam try)",
+		name = "1n_slam-try",
+		label = "1NT – ? : slam try",
+		formerly = "1n-slam-try",
+		description = "1NT opener; North-South 29+ (slam try)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
-			return is_1nt_opener(b[.North]) && norn.hcp(b[.South]) >= 13
+			return is_1nt_opener(b[.North]) && ns_hcp(b) >= 29
 		}),
 	},
 	{
-		name = "1n-two-suiter",
+		name = "1n_two-suiter",
+		label = "1NT – ? : two-suiter",
+		formerly = "1n-two-suiter",
 		description = "1NT opener; South a two-suiter",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_1nt_opener(b[.North]) && two_suiter(b[.South])
 		}),
 	},
 	{
-		name = "1n-unbalanced",
+		name = "1n_unbal",
+		label = "1NT – ? : unbalanced",
+		formerly = "1n-unbalanced",
 		description = "1NT opener; South unbalanced",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_1nt_opener(b[.North]) && !is_flattish(b[.South])
 		}),
 	},
 
-	// --- 2C opening (strong / artificial) ---
+	// --- 2C opening (6+ clubs, 11-15: NOT a strong 2C) ---
 	{
-		name = "2c-opener",
+		name = "2c",
+		label = "2♣ (6+ clubs)",
+		formerly = "2c-opener",
 		description = "North opens 2C",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_2c_opener(b[.North])}),
 	},
 	{
-		name = "2c-any-slam-try",
-		description = "2C opener; South 18+ (slam try)",
+		name = "2c_slam-try",
+		label = "2♣ – ? : slam try",
+		formerly = "2c-any-slam-try",
+		description = "2C opener; North-South 28+ (slam try)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
-			return is_2c_opener(b[.North]) && norn.hcp(b[.South]) >= 18
+			return is_2c_opener(b[.North]) && ns_hcp(b) >= 28
 		}),
 	},
 	{
-		name = "2c-any-two-suiter-slam-try",
-		description = "2C opener; South a 17+ two-suiter",
+		name = "2c_two-suiter-slam-try",
+		label = "2♣ – ? : two-suiter, slam try",
+		formerly = "2c-any-two-suiter-slam-try",
+		description = "2C opener; South a two-suiter, North-South 27+ (slam try)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
-			return is_2c_opener(b[.North]) && two_suiter(s) && norn.hcp(s) >= 17
+			return is_2c_opener(b[.North]) && two_suiter(s) && ns_hcp(b) >= 27
 		}),
 	},
 	{
-		name = "2c-any-unbalanced",
+		name = "2c_unbal",
+		label = "2♣ – ? : unbalanced",
+		formerly = "2c-any-unbalanced",
 		description = "2C opener; South unbalanced",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_2c_opener(b[.North]) && !is_flattish(b[.South])
 		}),
 	},
 	{
-		name = "2c-positive-nine-plus-major-cards",
+		name = "2c_positive-9-major-cards",
+		label = "2♣ – ? : positive, 9+ major cards",
+		formerly = "2c-positive-nine-plus-major-cards",
 		description = "2C opener; South 8+ with 9+ cards in the majors",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
@@ -567,7 +694,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "2c-positive-two-suiter",
+		name = "2c_positive-two-suiter",
+		label = "2♣ – ? : positive two-suiter",
+		formerly = "2c-positive-two-suiter",
 		description = "2C opener; South an 8+ two-suiter",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
@@ -575,7 +704,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "2c-positive-unbalanced",
+		name = "2c_positive-unbal",
+		label = "2♣ – ? : positive, unbalanced",
+		formerly = "2c-positive-unbalanced",
 		description = "2C opener; South 8+ unbalanced",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
@@ -583,48 +714,62 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "2c-unbal-slam-try",
-		description = "2C opener; South 16+ unbalanced (slam try)",
+		name = "2c_unbal-slam-try",
+		label = "2♣ – ? : unbalanced, slam try",
+		formerly = "2c-unbal-slam-try",
+		description = "2C opener; South unbalanced, North-South 26+ (slam try)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
-			return is_2c_opener(b[.North]) && norn.hcp(s) >= 16 && !is_flattish(s)
+			return is_2c_opener(b[.North]) && ns_hcp(b) >= 26 && !is_flattish(s)
 		}),
 	},
 
 	// --- 2D openings (Precision-style and intermediate) ---
 	{
-		name = "2d-precision-any",
+		name = "2d-precision",
+		label = "2♦ (Precision)",
+		formerly = "2d-precision-any",
 		description = "North opens a Precision 2D",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_2d_opener(b[.North])}),
 	},
 	{
-		name = "2d-precision-any-10-plus",
+		name = "2d-precision_10plus",
+		label = "2♦ (Precision) – ? : 10+",
+		formerly = "2d-precision-any-10-plus",
 		description = "Precision 2D; South 10+",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_2d_opener(b[.North]) && norn.hcp(b[.South]) >= 10
 		}),
 	},
 	{
-		name = "2d-precision-any-18-plus",
+		name = "2d-precision_18plus",
+		label = "2♦ (Precision) – ? : 18+",
+		formerly = "2d-precision-any-18-plus",
 		description = "Precision 2D; South 18+",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_2d_opener(b[.North]) && norn.hcp(b[.South]) >= 18
 		}),
 	},
 	{
-		name = "2d-intermediate-any",
+		name = "2d-intermediate",
+		label = "2♦ (intermediate)",
+		formerly = "2d-intermediate-any",
 		description = "North opens an intermediate 2D",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_2d_intermediate_opener(b[.North])}),
 	},
 	{
-		name = "2d-intermediate-under-invite",
+		name = "2d-intermediate_below-invite",
+		label = "2♦ (intermediate) – ? : below invite",
+		formerly = "2d-intermediate-under-invite",
 		description = "Intermediate 2D; South sub-invitational (<=9)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_2d_intermediate_opener(b[.North]) && norn.hcp(b[.South]) <= 9
 		}),
 	},
 	{
-		name = "2d-intermediate-with-4cM",
+		name = "2d-intermediate-side-major",
+		label = "2♦ (intermediate, side 4-card major)",
+		formerly = "2d-intermediate-with-4cM",
 		description = "Intermediate 2D with a side 4-card major; South 6+",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -636,14 +781,18 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "2d-intermediate-strong",
+		name = "2d-intermediate_16plus",
+		label = "2♦ (intermediate) – ? : 16+",
+		formerly = "2d-intermediate-strong",
 		description = "Intermediate 2D; South 16+",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_2d_intermediate_opener(b[.North]) && norn.hcp(b[.South]) >= 16
 		}),
 	},
 	{
-		name = "2d-intermediate-good-6carder-GF",
+		name = "2d-intermediate_good-suit-gf",
+		label = "2♦ (intermediate) – ? : good 6+ suit, game force",
+		formerly = "2d-intermediate-good-6carder-GF",
 		description = "Intermediate 2D; South 13+ with a good 6+ suit (game force)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
@@ -651,7 +800,9 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "2d-intermediate-twoish-suiters-GF",
+		name = "2d-intermediate_two-suiter-gf",
+		label = "2♦ (intermediate) – ? : two-suiter, game force",
+		formerly = "2d-intermediate-twoish-suiters-GF",
 		description = "Intermediate 2D; South 13+ with a 6-plus-other two-suiter (game force)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
@@ -663,46 +814,60 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "2d-intermediate-unbal-slam-try",
-		description = "Intermediate 2D; South 16+ unbalanced (slam try)",
+		name = "2d-intermediate_unbal-slam-try",
+		label = "2♦ (intermediate) – ? : unbalanced, slam try",
+		formerly = "2d-intermediate-unbal-slam-try",
+		description = "Intermediate 2D; South unbalanced, North-South 25+ (slam try)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
-			return is_2d_intermediate_opener(b[.North]) && norn.hcp(s) >= 16 && !is_flattish(s)
+			return is_2d_intermediate_opener(b[.North]) && ns_hcp(b) >= 25 && !is_flattish(s)
 		}),
 	},
 
 	// --- Weak two-bids in the majors ---
 	{
-		name = "2hs-opener",
+		name = "2hs-weak",
+		label = "2♥/♠ (weak)",
+		formerly = "2hs-opener",
 		description = "North opens a weak 2 in a major",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_weak2_major(b[.North])}),
 	},
 	{
-		name = "2hs-5card-opener",
+		name = "2hs-weak-5",
+		label = "2♥/♠ (weak, 5 cards)",
+		formerly = "2hs-5card-opener",
 		description = "North opens a 5-card weak two in a major",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_weak2_5card_major(b[.North])}),
 	},
 	{
-		name = "2hs-5-or-6-card-opener",
+		name = "2hs-weak-5-or-6",
+		label = "2♥/♠ (weak, 5 or 6 cards)",
+		formerly = "2hs-5-or-6-card-opener",
 		description = "North opens a weak 5-or-6-card major",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_weak_5_or_6_card_major(b[.North])}),
 	},
 	{
-		name = "2hs-any-12-plus",
+		name = "2hs-weak_12plus",
+		label = "2♥/♠ (weak) – ? : 12+",
+		formerly = "2hs-any-12-plus",
 		description = "Weak 2 major; South 12+",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_weak2_major(b[.North]) && norn.hcp(b[.South]) >= 12
 		}),
 	},
 	{
-		name = "2hs-any-20-plus",
+		name = "2hs-weak_20plus",
+		label = "2♥/♠ (weak) – ? : 20+",
+		formerly = "2hs-any-20-plus",
 		description = "Weak 2 major; South 20+",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_weak2_major(b[.North]) && norn.hcp(b[.South]) >= 20
 		}),
 	},
 	{
-		name = "2hs-unbalanced-16-plus",
+		name = "2hs-weak_16plus-unbal",
+		label = "2♥/♠ (weak) – ? : 16+ unbalanced",
+		formerly = "2hs-unbalanced-16-plus",
 		description = "Weak 2 major; South 16+ unbalanced",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			s := b[.South]
@@ -712,26 +877,34 @@ registry := []cli.Scenario {
 
 	// --- 2NT opening ---
 	{
-		name = "2n-opener",
+		name = "2n",
+		label = "2NT",
+		formerly = "2n-opener",
 		description = "North opens 2NT",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_2nt_opener(b[.North])}),
 	},
 	{
-		name = "2n-slam-try",
-		description = "2NT opener; South 11+ (slam try)",
+		name = "2n_slam-try",
+		label = "2NT – ? : slam try",
+		formerly = "2n-slam-try",
+		description = "2NT opener; North-South 30+ (slam try)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
-			return is_2nt_opener(b[.North]) && norn.hcp(b[.South]) >= 11
+			return is_2nt_opener(b[.North]) && ns_hcp(b) >= 30
 		}),
 	},
 	{
-		name = "2n-two-suiter",
+		name = "2n_two-suiter",
+		label = "2NT – ? : two-suiter",
+		formerly = "2n-two-suiter",
 		description = "2NT opener; South a two-suiter",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_2nt_opener(b[.North]) && two_suiter(b[.South])
 		}),
 	},
 	{
-		name = "2n-unbalanced",
+		name = "2n_unbal",
+		label = "2NT – ? : unbalanced",
+		formerly = "2n-unbalanced",
 		description = "2NT opener; South unbalanced",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return is_2nt_opener(b[.North]) && !is_flattish(b[.South])
@@ -740,12 +913,16 @@ registry := []cli.Scenario {
 
 	// --- High openings and preempts ---
 	{
-		name = "3n-opener",
+		name = "3n-gambling",
+		label = "3NT (gambling)",
+		formerly = "3n-opener",
 		description = "North opens a gambling 3NT",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_3n_opener(b[.North])}),
 	},
 	{
-		name = "3x-preempt",
+		name = "weak-7-card-suit",
+		label = "weak, 7-card suit",
+		formerly = "3x-preempt",
 		description = "North opens a 3-level preempt (minor 7-bagger or likely 3-major)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -753,17 +930,23 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "4x-preempt",
+		name = "weak-7-tricks",
+		label = "weak, 7 offensive tricks",
+		formerly = "4x-preempt",
 		description = "North opens a 4-level preempt",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_likely_4level_preempt(b[.North])}),
 	},
 	{
-		name = "4n-opener",
+		name = "4n",
+		label = "4NT (3 losers or fewer)",
+		formerly = "4n-opener",
 		description = "North opens a potential 4NT (two-suited slam invitation)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_potential_4n_opener(b[.North])}),
 	},
 	{
-		name = "5m-opener",
+		name = "weak-8-tricks-7-minor",
+		label = "weak, 8+ offensive tricks, 7+ minor",
+		formerly = "5m-opener",
 		description = "North opens an insane offensive preempt with a 7+ minor",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			north := b[.North]
@@ -774,19 +957,25 @@ registry := []cli.Scenario {
 		}),
 	},
 	{
-		name = "extreme-offensive-opener",
+		name = "weak-8-tricks",
+		label = "weak, 8+ offensive tricks",
+		formerly = "extreme-offensive-opener",
 		description = "North holds an insane offensive preempt",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_insane_offensive_preempt(b[.North])}),
 	},
 	{
-		name = "8plus-pt-mixed",
+		name = "8-playing-tricks",
+		label = "8+ playing tricks",
+		formerly = "8plus-pt-mixed",
 		description = "North holds 8+ playing tricks",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_8_plus_tricks(b[.North])}),
 	},
 
 	// --- Slam-zone and balanced study hands ---
 	{
-		name        = "slam-makes-dd",
+		name        = "ns-32plus-opc",
+		label        = "N-S 32+ OPC",
+		formerly        = "slam-makes-dd",
 		description = "North-South combined opc >= 32",
 		predicate   = norn.Predicate(
 			proc(b: norn.Deal_Summary) -> bool {
@@ -796,21 +985,27 @@ registry := []cli.Scenario {
 		),
 	},
 	{
-		name = "slam-hands-32-plus-hcp",
+		name = "ns-32plus-hcp",
+		label = "N-S 32+ hcp",
+		formerly = "slam-hands-32-plus-hcp",
 		description = "North-South hold a combined 32+ hcp",
 		predicate = norn.Predicate(
 			proc(b: norn.Deal_Summary) -> bool {return norn.hcp(b[.North]) + norn.hcp(b[.South]) >= 32},
 		),
 	},
 	{
-		name = "slam-hands-35-plus-hcp",
+		name = "ns-35plus-hcp",
+		label = "N-S 35+ hcp",
+		formerly = "slam-hands-35-plus-hcp",
 		description = "North-South hold a combined 35+ hcp",
 		predicate = norn.Predicate(
 			proc(b: norn.Deal_Summary) -> bool {return norn.hcp(b[.North]) + norn.hcp(b[.South]) >= 35},
 		),
 	},
 	{
-		name = "acol-lessons-balanced",
+		name = "both-balanced",
+		label = "both balanced : N 11+, S 5+",
+		formerly = "acol-lessons-balanced",
 		description = "Both N and S flat; North 11+, South 5+ (balanced teaching hands)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 				north := b[.North]
@@ -819,7 +1014,9 @@ registry := []cli.Scenario {
 			}),
 	},
 	{
-		name = "roman-2c-related",
+		name = "2c-or-2d-or-1d_not-bal-11-13",
+		label = "2♣ / 2♦ / 1♦ : not 11-13 balanced",
+		formerly = "roman-2c-related",
 		description = "North opens 2C / intermediate 2D / 1D but is NOT an 11-13 balanced hand",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 				north := b[.North]
@@ -832,19 +1029,25 @@ registry := []cli.Scenario {
 
 	// --- Defending opponents' preempts (East/West are the preemptors) ---
 	{
-		name = "defence-vs-3s-or-4s-preempt",
+		name = "opp-3s-or-4s",
+		label = "(3♠/4♠) – ?",
+		formerly = "defence-vs-3s-or-4s-preempt",
 		description = "E or W holds a 7+ spade preempt, limited combined E/W hcp",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_defence_vs_3s4s(b)}),
 	},
 	{
-		name = "defence-vs-high-preempts",
+		name = "opp-3-level-preempt",
+		label = "(3-level preempt) – ?",
+		formerly = "defence-vs-high-preempts",
 		description = "E or W opens any high (2NT-minors / 3-level) preempt",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 			return any_high_preempt(b[.West]) || any_high_preempt(b[.East])
 		}),
 	},
 	{
-		name = "defense-vs-all-preempts",
+		name = "opp-any-preempt",
+		label = "(any preempt) – ?",
+		formerly = "defense-vs-all-preempts",
 		description = "E or W opens any preempt (weak twos through 4-level)",
 		predicate = norn.Predicate(
 			proc(b: norn.Deal_Summary) -> bool {return any_preempt(b[.West]) || any_preempt(b[.East])},
@@ -853,35 +1056,45 @@ registry := []cli.Scenario {
 
 	// --- Defending opponents' notrump openings (East opens the NT) ---
 	{
-		name = "defence-vs-mini-nt",
+		name = "opp-1n-10-12",
+		label = "(1NT 10-12) – ?",
+		formerly = "defence-vs-mini-nt",
 		description = "East opens a 10-12 NT; N-S may overcall",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 				return north_south_may_overcall_1N(b, 12) && nt5cM(b[.East], 10, 12)
 			}),
 	},
 	{
-		name = "defence-vs-weak-nt",
+		name = "opp-1n-12-14",
+		label = "(1NT 12-14) – ?",
+		formerly = "defence-vs-weak-nt",
 		description = "East opens a 12-14 NT; N-S may overcall",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 				return north_south_may_overcall_1N(b, 14) && nt5cM(b[.East], 12, 14)
 			}),
 	},
 	{
-		name = "defence-vs-weak-nt-invitational",
+		name = "opp-1n-12-14_partner-invite",
+		label = "(1NT 12-14) – ? : partner invitational",
+		formerly = "defence-vs-weak-nt-invitational",
 		description = "East opens a 12-14 NT; South may overcall opposite an invitational North",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 				return nt5cM(b[.East], 12, 14) && south_may_overcall_opponents_1N_with_north_invitational(b, 14)
 			}),
 	},
 	{
-		name = "defence-vs-intermediate-nt",
+		name = "opp-1n-14-16",
+		label = "(1NT 14-16) – ?",
+		formerly = "defence-vs-intermediate-nt",
 		description = "East opens a 14-16 NT; N-S may overcall",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 				return north_south_may_overcall_1N(b, 15) && nt5cM(b[.East], 14, 16)
 			}),
 	},
 	{
-		name = "defence-vs-strong-nt",
+		name = "opp-1n-15-17",
+		label = "(1NT 15-17) – ?",
+		formerly = "defence-vs-strong-nt",
 		description = "East opens a 15-17 NT; N-S may overcall",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 				return north_south_may_overcall_1N(b, 16) && nt5cM(b[.East], 15, 17)
@@ -890,7 +1103,9 @@ registry := []cli.Scenario {
 
 	// --- Defending opponents' prepared-minor / strong-club openings ---
 	{
-		name = "defence-vs-prepared-minor",
+		name = "opp-1cd-prepared",
+		label = "(1♣/♦ prepared) – ? : both majors or red weak-two shape",
+		formerly = "defence-vs-prepared-minor",
 		description = "East opens a prepared minor; South has both majors or a red weak-two shape",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 				south := b[.South]
@@ -898,21 +1113,27 @@ registry := []cli.Scenario {
 			}),
 	},
 	{
-		name = "defence-vs-prepared-minor-with-majors",
+		name = "opp-1cd-prepared_majors",
+		label = "(1♣/♦ prepared) – ? : both majors",
+		formerly = "defence-vs-prepared-minor-with-majors",
 		description = "East opens a prepared minor; South has both majors (Michaels)",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 				return opens_std_1minor_prepared(b[.East]) && has_both_majors_michaels(b[.South])
 			}),
 	},
 	{
-		name = "defence-vs-strong-club-unbal-or-major",
+		name = "opp-1c-strong-or-1n-17-19",
+		label = "(1♣ strong / 1NT 17-19) – ? : shapely takeout",
+		formerly = "defence-vs-strong-club-unbal-or-major",
 		description = "East opens a strong club / 17-19 NT; South has a shapely takeout",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {return is_defence_vs_strong_club(b)}),
 	},
 
 	// --- Overcalling an unbalanced 12-19 East opening ---
 	{
-		name = "unbalanced-overcalls",
+		name = "opp-1x-unbal",
+		label = "(1x unbalanced) – ? : 7+, not flat",
+		formerly = "unbalanced-overcalls",
 		description = "East opens 12-19 unbalanced; South 7+ and not flat",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 				if !east_opens_unbalanced(b) {
@@ -923,7 +1144,9 @@ registry := []cli.Scenario {
 			}),
 	},
 	{
-		name = "unbalanced-two-suiter-overcalls",
+		name = "opp-1x-unbal_two-suiter",
+		label = "(1x unbalanced) – ? : two-suiter",
+		formerly = "unbalanced-two-suiter-overcalls",
 		description = "East opens 12-19 unbalanced; South 7+, not flat, two-suiter",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 				if !east_opens_unbalanced(b) {
@@ -934,7 +1157,9 @@ registry := []cli.Scenario {
 			}),
 	},
 	{
-		name = "unbalanced-intermediate-two-suiter-overcall",
+		name = "opp-1x-unbal_two-suiter-11-15",
+		label = "(1x unbalanced) – ? : 11-15 two-suiter",
+		formerly = "unbalanced-intermediate-two-suiter-overcall",
 		description = "East opens 12-19 unbalanced; South 11-15 two-suiter",
 		predicate = norn.Predicate(proc(b: norn.Deal_Summary) -> bool {
 				if !east_opens_unbalanced(b) {

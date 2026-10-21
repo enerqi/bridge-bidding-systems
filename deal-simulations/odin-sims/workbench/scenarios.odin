@@ -1198,7 +1198,7 @@ check_report :: proc(
 	}
 
 	// The name clash is a REPORT rather than a refusal, because it is not an error: `cli.lookup` takes the
-	// first exact match and the compiled registry comes first, so a file may define `1c-any` all it likes
+	// first exact match and the compiled registry comes first, so a file may define `1c` all it likes
 	// and the compiled one is what generates. Silently is the wrong way for that to be true.
 	for &program in programs {
 		if shadowed_by_compiled(app, program.name) {

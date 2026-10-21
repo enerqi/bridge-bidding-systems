@@ -1,0 +1,217 @@
+name: release workbench
+
+# Builds the Bridge Workbench (deal-simulations/odin-sims) for Windows and publishes it as a GitHub release:
+# a portable zip, an Inno Setup installer, SHA256SUMS and a scoop manifest. Plan and install routes:
+# deal-simulations/odin-sims/DEPLOYMENT_PLAN.md.
+#
+# The workbench is built from this repository plus five sibling repositories, each checked out at the
+# commit pinned in deal-simulations/odin-sims/packaging/deps.json (`just sims pin-deps` writes it from clean,
+# pushed local checkouts). The build itself is `just dist`, the same recipe a developer runs locally, so what
+# CI ships and what can be reproduced on a desk cannot drift apart.
+
+on:
+  push:
+    # `v0.1.0-alpha.1`. The About panel's update check compares release tags with the stamped version after
+    # dropping the `v`, so the tag must be exactly `v` + the version. Anchored on a digit so an unrelated
+    # tag starting with `v` is ignored.
+    tags:
+      - "v[0-9]*"
+  # Exercises the whole build without a tag; nothing is published, the files are kept as workflow artifacts.
+  workflow_dispatch:
+
+permissions:
+  contents: write # create the release and attach its files
+
+jobs:
+  release:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: bbs
+
+      # A tag with no CHANGELOG.md section used to be discovered at the very end, after the build. Here it
+      # costs seconds. The version: the tag without its `v`, or a dev stamp for a manual run (still semver,
+      # which `just dist` insists on).
+      - name: version
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "push" ]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version="0.0.0-dev.${GITHUB_SHA::7}"
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          case "$version" in *-*) echo "PRERELEASE=true" >> "$GITHUB_ENV" ;; *) echo "PRERELEASE=false" >> "$GITHUB_ENV" ;; esac
+          echo "building $version"
+
+      - uses: extractions/setup-just@v4
+      - uses: astral-sh/setup-uv@v9.0.0
+
+      - name: release notes from CHANGELOG.md
+        if: startsWith(github.ref, 'refs/tags/')
+        working-directory: bbs/deal-simulations/odin-sims
+        run: just changelog-section "$VERSION" > "$RUNNER_TEMP/release-notes.md"
+
+      # The pins, as step outputs for the checkouts below.
+      - name: read the pins
+        id: deps
+        run: |
+          set -euo pipefail
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          deps = json.load(open("bbs/deal-simulations/odin-sims/packaging/deps.json", encoding="utf-8"))
+          print(f"odin={deps['odin']}")
+          for name, d in deps["siblings"].items():
+              key = name.replace("-", "_")
+              print(f"{key}_repo={d['repo']}")
+              print(f"{key}_commit={d['commit']}")
+          PY
+
+      # SIBLING_REPOS_TOKEN: a fine-grained token with read access to bridge-markup (private). The public
+      # siblings would clone with the default token; the same token is simply used for all five.
+      - uses: actions/checkout@v7
+        with:
+          repository: ${{ steps.deps.outputs.norn_repo }}
+          ref: ${{ steps.deps.outputs.norn_commit }}
+          token: ${{ secrets.SIBLING_REPOS_TOKEN || github.token }}
+          path: norn
+      - uses: actions/checkout@v7
+        with:
+          repository: ${{ steps.deps.outputs.odin_dds_repo }}
+          ref: ${{ steps.deps.outputs.odin_dds_commit }}
+          token: ${{ secrets.SIBLING_REPOS_TOKEN || github.token }}
+          path: odin-dds
+      - uses: actions/checkout@v7
+        with:
+          repository: ${{ steps.deps.outputs.odin_sciter_repo }}
+          ref: ${{ steps.deps.outputs.odin_sciter_commit }}
+          token: ${{ secrets.SIBLING_REPOS_TOKEN || github.token }}
+          path: odin-sciter
+      - uses: actions/checkout@v7
+        with:
+          repository: ${{ steps.deps.outputs.bridge_markup_repo }}
+          ref: ${{ steps.deps.outputs.bridge_markup_commit }}
+          token: ${{ secrets.SIBLING_REPOS_TOKEN || github.token }}
+          path: bridge-markup
+      - uses: actions/checkout@v7
+        with:
+          repository: ${{ steps.deps.outputs.bridge_hand_ocr_repo }}
+          ref: ${{ steps.deps.outputs.bridge_hand_ocr_commit }}
+          token: ${{ secrets.SIBLING_REPOS_TOKEN || github.token }}
+          path: bridge-hand-ocr
+
+      # The justfiles find each sibling through its environment variable, as forward-slash paths (Odin's
+      # `-collection:` wants them).
+      - name: point the build at the checkouts
+        run: |
+          set -euo pipefail
+          ws="$(cygpath -m "$GITHUB_WORKSPACE")"
+          {
+            echo "NORN_HOME=$ws/norn"
+            echo "DDS_HOME=$ws/odin-dds"
+            echo "SCITER_HOME=$ws/odin-sciter"
+            echo "MARKUP_HOME=$ws/bridge-markup"
+            echo "HAND_OCR_DIR=$ws/bridge-hand-ocr"
+          } >> "$GITHUB_ENV"
+
+      - uses: laytan/setup-odin@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release: ${{ steps.deps.outputs.odin }}
+
+      # The Sciter engine is not in odin-sciter's repository: its `fetch-engine` downloads the pinned build
+      # and checks its SHA-256.
+      - name: fetch the Sciter engine
+        working-directory: odin-sciter
+        run: just fetch-engine
+
+      # The hand reader held to its goldens, and the workbench's own tests (a windowless Sciter view), before
+      # anything is built to ship.
+      - name: test the hand reader
+        working-directory: bridge-hand-ocr
+        run: just test
+      - name: test the workbench
+        working-directory: bbs/deal-simulations/odin-sims
+        run: just test-workbench
+
+      - name: build
+        working-directory: bbs/deal-simulations/odin-sims
+        run: just dist "$VERSION"
+
+      # The stamp must have taken: a release reporting "development build" would be useless for bug reports.
+      - name: check the version is in the exe
+        run: grep -a -q -F "$VERSION" bbs/deal-simulations/odin-sims/target/dist/workbench.exe
+
+      - name: portable zip
+        run: |
+          set -euo pipefail
+          mkdir -p dist "stage/Bridge Workbench"
+          cp bbs/deal-simulations/odin-sims/target/dist/{workbench.exe,sciter.dll,LICENSE.txt,THIRD_PARTY_NOTICES.txt} "stage/Bridge Workbench/"
+          (cd stage && 7z a -tzip "../dist/bridge-workbench-$VERSION-windows-x64.zip" "Bridge Workbench" > /dev/null)
+          listing="$(7z l -ba "dist/bridge-workbench-$VERSION-windows-x64.zip")"
+          echo "$listing"
+          for f in workbench.exe sciter.dll THIRD_PARTY_NOTICES.txt; do
+            echo "$listing" | grep -q "Bridge Workbench.$f" || { echo "the zip has no $f" >&2; exit 1; }
+          done
+
+      - name: installer
+        run: |
+          set -euo pipefail
+          choco install innosetup --no-progress -y > /dev/null
+          dist_dir="$(cygpath -w "$GITHUB_WORKSPACE/bbs/deal-simulations/odin-sims/target/dist")"
+          out_dir="$(cygpath -w "$GITHUB_WORKSPACE/dist")"
+          "/c/Program Files (x86)/Inno Setup 6/ISCC.exe" -Q "-DAppVersion=$VERSION" "-DDistDir=$dist_dir" "-O$out_dir" \
+            bbs/deal-simulations/odin-sims/packaging/windows/workbench.iss
+          test -f "dist/bridge-workbench-$VERSION-setup.exe"
+
+      # The binaries are unsigned, so this is the only way to check a download is what CI built.
+      - name: checksums
+        working-directory: dist
+        run: sha256sum * > SHA256SUMS && cat SHA256SUMS
+
+      # After the checksums: the manifest embeds the zip's hash, so it cannot be inside SHA256SUMS too.
+      - name: scoop manifest
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, sys
+          version = os.environ["VERSION"]
+          asset = f"bridge-workbench-{version}-windows-x64.zip"
+          with open("bbs/deal-simulations/odin-sims/packaging/scoop/bridge-workbench.json", encoding="utf-8") as f:
+              manifest = json.load(f)
+          digest = None
+          for line in open("dist/SHA256SUMS", encoding="utf-8"):
+              parts = line.split()
+              if len(parts) == 2 and parts[1].lstrip("*") == asset:
+                  digest = parts[0]
+          if digest is None:
+              sys.exit(asset + " missing from SHA256SUMS")
+          manifest.pop("##", None)
+          manifest["version"] = version
+          manifest["architecture"]["64bit"]["url"] = (
+              f"https://github.com/enerqi/bridge-bidding-systems/releases/download/v{version}/{asset}")
+          manifest["architecture"]["64bit"]["hash"] = digest
+          with open("dist/bridge-workbench.json", "w", encoding="utf-8", newline="\n") as f:
+              json.dump(manifest, f, indent=4)
+              f.write("\n")
+          PY
+          cat dist/bridge-workbench.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bridge-workbench-${{ env.VERSION }}
+          path: dist/*
+          if-no-files-found: error
+
+      - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: Bridge Workbench ${{ env.VERSION }}
+          files: dist/*
+          body_path: ${{ runner.temp }}/release-notes.md
+          prerelease: ${{ env.PRERELEASE }}
+          fail_on_unmatched_files: true

@@ -33,13 +33,13 @@ so they run the same from either directory (drop the `sims ` prefix inside `odin
 
 ```sh
 just sims gen-all                     # every scenario -> $DEALS_OUTPUT_DIR/<name>.html (48 deals, default w:/deals/)
-just sims gen-some 1c-any,2c-opener   # just those two
-just sims gen-one 2c-opener           # one scenario -> ./2c-opener.html (the dir you invoked just from)
+just sims gen-some 1c,2c   # just those two
+just sims gen-one 2c           # one scenario -> ./2c.html (the dir you invoked just from)
 just sims gen-all 48 ./out/           # any recipe takes the output dir as its last argument
 just --list sims                      # all of them (-par and -cards variants, freq, bench, ...)
 ```
 
-Inside `odin-sims/` there is also its own `just` for development: `just sim --scenario 1c-any -n 12`,
+Inside `odin-sims/` there is also its own `just` for development: `just sim --scenario 1c -n 12`,
 `just build`, `just test`, `just lint`. (`just ols-config` regenerates the editor's
 `ols.json` for the `norn:` collection; set `NORN_HOME` if the norn checkout isn't at `~/dev/norn`.)
 
@@ -52,7 +52,7 @@ costs you. Give it a **complete four-hand deal** and it shows the **exact double
 each side can make) plus the per-suit CCA tables. Run these from inside `odin-sims/`:
 
 ```sh
-# From a PHOTO/screenshot of a hand diagram (uses the sibling hand-ocr project):
+# From a screenshot of a hand diagram (hand-ocr's Odin reader, from the sibling checkout):
 just ocr-analyse hand.png                 # -> hand.html  (open it in a browser)
 just ocr-pbn hand.png                     # just print the recognised PBN, don't analyse
 
@@ -66,8 +66,8 @@ lists all four hands (the exact double-dummy case) — the tool picks the right 
 multi-board `.pbn` file works too — every `[Deal]` tag becomes one board in a
 carousel; the other tags (`[Board]`, `[Dealer]`, …) are ignored. **LIN files are not read** (LIN can only
 express a complete four-hand deal; use PBN). The card page has a built-in **Help "?"** button explaining
-every number in plain terms. A real photo needs hand-ocr's vision extra once: `(cd "$HAND_OCR_DIR" && just
-sync-vision)` (hand-ocr is a separate sibling repo; `HAND_OCR_DIR` defaults to `~/dev/bridge-hand-ocr`).
+every number in plain terms. The `ocr-*` recipes build hand-ocr's Odin reader from the sibling checkout
+(`HAND_OCR_DIR`, default `~/dev/bridge-hand-ocr`) into `target/release/hand-ocr.exe` - no python needed.
 
 Legacy (deal.exe):
 

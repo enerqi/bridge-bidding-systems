@@ -20,6 +20,7 @@ import '.just/analyse.just'
 import '.just/markup.just'
 import '.just/workbench.just'
 import '.just/bench.just'
+import '.just/release.just'
 
 # `home_directory()` hands back a NATIVE path (`C:\Users\Enerqi`) and every sibling-checkout variable
 # below wants forward slashes, so the normalisation happens ONCE here. Neither of just's path helpers
@@ -55,11 +56,19 @@ export SCITER_LIB := sciter_home + (if os() == "windows" { "/lib/windows/x64" } 
 markup_home := env_var_or_default("MARKUP_HOME", home / "dev/bridge-markup")
 markup := "-collection:markup=" + markup_home
 
+# hand-ocr's ODIN reader (picture of hands -> PBN): the `odin/` directory of the sibling bridge-hand-ocr
+# checkout, linked into the workbench for its dropped/pasted screenshots. Build-time only - its atlases
+# are compiled in. The `ocr-*` recipes build the same reader's CLI (`build-hand-ocr`). The python
+# hand-ocr at the checkout's root is the reference implementation, used for experiments there only.
+hocr_home := replace(HAND_OCR_DIR, "\\", "/") + "/odin"
+hocr := "-collection:hocr=" + hocr_home
+
 # Only the `inspector` recipe needs this: odin-sciter vendors the ENGINE but not the SDK's tools.
 sciter_sdk_dir := env_var_or_default("SCITER_SDK_DIR", home / "dev/sciter-js-sdk")
 
 sim_name := "sim.exe"
 analyse_name := "analyse_deal.exe"
+hand_ocr_name := "hand-ocr.exe"
 workbench_name := "workbench.exe"
 bml2html_name := "bml2html.exe"
 test_main_name := "test-bidding.exe"
@@ -73,7 +82,7 @@ target_path(dir, name) := join("target", dir, name)
 # `lld`, `radlink` (Windows only, bundled) or `mold` (Linux only). Odin has no build cache and relinks
 # every time, and this project links the DDS static library on top, which makes the link the slower half.
 # An env var rather than a recipe argument because `odin` errors on a repeated flag, so a `-linker:` in a
-# recipe's *args would collide:  ODIN_LINKER=lld just sim --scenario 1c-any   (-lto needs lld on Windows)
+# recipe's *args would collide:  ODIN_LINKER=lld just sim --scenario 1c   (-lto needs lld on Windows)
 #
 # THIS PROJECT CANNOT USE radlink, hence `default` where the skeleton and norn use radlink. radlink dies
 # linking sim.odin with a bare `0xc000001d` (illegal instruction) crash of its own - "Version: 0.9.24" -
@@ -101,15 +110,16 @@ scratch_dir := env_var_or_default("DEALS_SCRATCH_DIR", replace(invocation_direct
 # count: measured on 24 cores that is 172MB at init and a 542MB PEAK during a real `--dd` run, held for the
 # life of the process - which is most of why a workbench session that has generated anything sits near 1GB.
 # `deal_solve.init` reads this and calls `SetResources` instead. The curve (`just dds-timing`, 24 deals of
-# slam-makes-dd): 256MB is 4-6% slower than uncapped at 85MB peak, 128MB the same speed at 72MB, 48-64MB
+# ns-32plus-opc): 256MB is 4-6% slower than uncapped at 85MB peak, 128MB the same speed at 72MB, 48-64MB
 # ~20% slower, 32MB *slower and* smaller, and 16MB kills the solver outright - hence deal_solve's 32MB floor.
 # 256 is the deliberate choice here: the memory that matters is the several hundred MB, and this keeps the
 # solve time indistinguishable from uncapped. Set the variable in the environment to override, including
 # to nothing to get DDS's own sizing back.
 export DDS_MAX_MB := env_var_or_default("DDS_MAX_MB", "256")
 
-# hand-ocr is a SEPARATE sibling repo (image -> PBN/LIN; uv/Python). `export` re-exports it so the
-# `ocr-analyse` recipe's `ocr_analyse.py` reads the SAME value - one place across just and Python.
+# hand-ocr is a SEPARATE sibling repo (image -> PBN/LIN): the reader in its `odin/` (the `hocr` collection
+# above - the workbench links it, the `ocr-*` recipes build its CLI), a python reference implementation at
+# its root. `export` so the workbench tests find its fixtures.
 export HAND_OCR_DIR := env_var_or_default("HAND_OCR_DIR", home / "dev/bridge-hand-ocr")
 
 
@@ -148,7 +158,7 @@ lint *args:
 	odin check qr -vet -vet-cast -strict-style -vet-tabs -no-entry-point {{args}}
 	odin check player {{norn}} {{dds}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check player {{norn}} -target:js_wasm32 -define:COMBO_THREADS=false -vet -vet-cast -strict-style -vet-tabs {{args}}
-	odin check workbench {{norn}} {{dds}} {{sciter}} {{markup}} -vet -vet-cast -strict-style -vet-tabs {{args}}
+	odin check workbench {{norn}} {{dds}} {{sciter}} {{markup}} {{hocr}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check page_check.odin -file {{norn}} {{dds}} {{sciter}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check bml2html.odin -file {{markup}} -vet -vet-cast -strict-style -vet-tabs {{args}}
 	odin check bench.odin -file {{norn}} -vet -vet-cast -strict-style -vet-tabs {{args}}
@@ -198,7 +208,7 @@ clean:
 # Build tiers for the deal generator. `-keep-executable` leaves the binary in place (odin run deletes it
 # by default) so `sim-norebuild` can re-run it - Odin has no build cache, so `just sim` always rebuilds.
 
-# run the deal generator (release). Pass CLI args through, e.g. `just sim --scenario 1c-any -n 12`.
+# run the deal generator (release). Pass CLI args through, e.g. `just sim --scenario 1c -n 12`.
 [group('sim')]
 sim *args: mktarget_dirs
 	odin run sim.odin -file {{norn}} {{dds}} -keep-executable -o:speed -microarch:native -linker:{{linker}} -out:{{ target_path("release", sim_name) }} -- {{args}}
@@ -256,7 +266,7 @@ build *args: mktarget_dirs
 # `sanitize` and `test-sanitize` deliberately omit `-linker:{{linker}}` - do not "fix" the inconsistency.
 # A sanitizer interposes on the runtime and not every linker cooperates: `radlink` links an ASan binary
 # that dies on startup with a bare `0xc000001d` and no usable stack, while `-linker:default` runs it.
-# Usage:  just sanitize   or   just sanitize thread --scenario 1c-any --count 8
+# Usage:  just sanitize   or   just sanitize thread --scenario 1c --count 8
 # ---
 # run the deal generator under a sanitizer (address | memory | thread)
 [group('sim')]

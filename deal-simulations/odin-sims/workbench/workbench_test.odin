@@ -370,7 +370,7 @@ test_the_document_carries_every_control_the_host_touches :: proc(t: ^testing.T) 
 			"#seed",
 			"#outdir",
 			"#par",
-			"#fixed",
+			"#north-deals",
 			"#all",
 			"#generate",
 			"#cancel",
@@ -391,6 +391,9 @@ test_the_document_carries_every_control_the_host_touches :: proc(t: ^testing.T) 
 			"#about-close",
 			"#about-sciter-link",
 			"#about-versions",
+			"#about-update",
+			"#about-update-status",
+			"#about-update-link",
 			"#about-book",
 			"#deal-split",
 			"#pageview",
@@ -484,7 +487,7 @@ test_every_control_is_documented :: proc(t: ^testing.T) {
 			"#seed",
 			"#outdir",
 			"#par",
-			"#fixed",
+			"#north-deals",
 			"#all",
 			"#generate",
 			"#cancel",
@@ -867,7 +870,7 @@ test_a_filtered_row_still_names_its_own_scenario :: proc(t: ^testing.T) {
 	// Deliberately NOT the first row: a bug that used a list position would agree with the registry index
 	// at zero and nowhere else.
 	target := rows[1]
-	named, nerr := sa.select_first(target, ".name")
+	named, nerr := sa.select_first(target, ".name .label")
 	testing.expect_value(t, nerr, nil)
 	wanted, werr := sa.text(named, context.temp_allocator)
 	testing.expect_value(t, werr, nil)
@@ -880,13 +883,68 @@ test_a_filtered_row_still_names_its_own_scenario :: proc(t: ^testing.T) {
 
 	testing.expectf(
 		t,
-		app.scenarios[app.selected].name == wanted,
+		cli.scenario_label(app.scenarios[app.selected]) == wanted,
 		"the second row of the filtered list reads %q but selected %q",
 		wanted,
-		app.scenarios[app.selected].name,
+		cli.scenario_label(app.scenarios[app.selected]),
 	)
 	// And the index really was the registry's, not the row's position in the narrowed list.
-	testing.expect(t, app.selected != 1 || wanted == app.scenarios[1].name, "the row's index is the registry's")
+	testing.expect(
+		t,
+		app.selected != 1 || wanted == cli.scenario_label(app.scenarios[1]),
+		"the row's index is the registry's",
+	)
+}
+
+// A ROW READS AS AN AUCTION. The label (`1NT – ? : slam try`) heads it and the id - the file name a run
+// writes, and what `-S` takes - follows it. And the names from before the 2026-10-20 rename still find
+// their scenario: somebody who typed `1n-slam-try` for months should not meet "no scenario matches".
+@(test)
+test_a_row_shows_the_label_and_an_old_name_still_finds_it :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	attach_for_test(&app)
+	defer sa.detach_window_handler(app.window, &app.handler)
+
+	draw_scenarios(&app)
+	pump(&app)
+	type_filter(&app, "1n-slam-try")
+
+	shown := visible_scenarios(&app, context.temp_allocator)
+	testing.expect(t, len(shown) > 0, "the former name found nothing")
+	if len(shown) == 0 {
+		return
+	}
+	found := app.scenarios[shown[0]]
+	testing.expect_value(t, found.name, "1n_slam-try")
+
+	rows := scenario_row_elements(&app)
+	if len(rows) == 0 {
+		return
+	}
+	label_el, lerr := sa.select_first(rows[0], ".name .label")
+	testing.expect_value(t, lerr, nil)
+	label, _ := sa.text(label_el, context.temp_allocator)
+	testing.expect_value(t, label, "1NT – ? : slam try")
+	id_el, ierr := sa.select_first(rows[0], ".name .id")
+	testing.expect_value(t, ierr, nil)
+	id, _ := sa.text(id_el, context.temp_allocator)
+	testing.expect_value(t, id, "1n_slam-try")
+
+	// The label's suit glyphs carry the palette's colours; its text is unchanged.
+	type_filter(&app, "1hs_slam-try")
+	rows = scenario_row_elements(&app)
+	if len(rows) == 0 {
+		return
+	}
+	heart, herr := sa.select_first(rows[0], ".name .label .suit.h")
+	testing.expect_value(t, herr, nil)
+	glyph, _ := sa.text(heart, context.temp_allocator)
+	testing.expect_value(t, glyph, "♥")
+	whole, _ := sa.select_first(rows[0], ".name .label")
+	whole_text, _ := sa.text(whole, context.temp_allocator)
+	testing.expect_value(t, whole_text, "1♥/♠ – ? : slam try")
 }
 
 // A filter that hides the selection MOVES it; a filter that still shows it leaves it alone. The first is
@@ -989,16 +1047,16 @@ test_no_two_generate_formats_share_an_extension :: proc(t: ^testing.T) {
 // `.lin` to whatever claims it — neither is what a button labelled `browser` promises. Reported.
 @(test)
 test_only_a_page_goes_to_the_browser :: proc(t: ^testing.T) {
-	for path in ([]string{"deals/1c-any.html", "deals/1c-any.hv.html"}) {
+	for path in ([]string{"deals/1c.html", "deals/1c.hv.html"}) {
 		testing.expectf(t, browsable_page(path), "%s is a page and should open in a browser", path)
 	}
 	for path in ([]string {
-			"deals/1c-any.txt",
-			"deals/1c-any.lin",
-			"deals/1c-any.pbn",
-			"deals/1c-any.hv.txt",
-			"deals/1c-any.line",
-			"deals/1c-any.num",
+			"deals/1c.txt",
+			"deals/1c.lin",
+			"deals/1c.pbn",
+			"deals/1c.hv.txt",
+			"deals/1c.line",
+			"deals/1c.num",
 			"",
 		}) {
 		testing.expectf(t, !browsable_page(path), "%s is not a page; a browser is the wrong home for it", path)
@@ -1705,7 +1763,7 @@ test_the_generate_argv_is_valid_to_norns_parser :: proc(t: ^testing.T) {
 	type_into(&app, "#seed", "7")
 	type_into(&app, "#outdir", "C:/tmp/deals")
 	tick(&app, "#par")
-	tick(&app, "#fixed")
+	tick(&app, "#north-deals")
 
 	job, err := generate_job(&app)
 	testing.expect_value(t, err, "")
@@ -1725,7 +1783,8 @@ test_the_generate_argv_is_valid_to_norns_parser :: proc(t: ^testing.T) {
 	testing.expect_value(t, opts.scenario, job.scenarios[0])
 	testing.expect_value(t, opts.output, "C:/tmp/deals/x.html")
 	testing.expect(t, opts.par, "--par must reach the parser")
-	testing.expect(t, !opts.randomize_table, "--fixed-table must clear the randomised table")
+	testing.expect(t, opts.dealer == norn.Seat.North, "the box must make North the dealer")
+	testing.expect(t, opts.randomize_table, "and leave the vulnerability random")
 	seed, has_seed := opts.seed.?
 	testing.expect(t, has_seed)
 	testing.expect_value(t, seed, u64(7))
@@ -1779,7 +1838,7 @@ test_switches_a_format_has_no_use_for_are_greyed :: proc(t: ^testing.T) {
 
 	type_into(&app, "#outdir", "C:/tmp/deals")
 	tick(&app, "#par")
-	tick(&app, "#fixed")
+	tick(&app, "#north-deals")
 	for c in ([]struct {
 			format:     string,
 			par, fixed: bool,
@@ -1787,14 +1846,14 @@ test_switches_a_format_has_no_use_for_are_greyed :: proc(t: ^testing.T) {
 		set_input(&app, "#format", c.format)
 		refresh_generate_label(&app)
 		testing.expectf(t, is_disabled(&app, "#par") == !c.par, "%s: par box enabled should be %v", c.format, c.par)
-		testing.expectf(t, is_disabled(&app, "#fixed") == !c.fixed, "%s: fixed box enabled should be %v", c.format, c.fixed)
+		testing.expectf(t, is_disabled(&app, "#north-deals") == !c.fixed, "%s: fixed box enabled should be %v", c.format, c.fixed)
 		job, err := generate_job(&app)
 		testing.expect_value(t, err, "")
 		testing.expectf(t, slice.contains(job.argv, "--par") == c.par, "%s: --par in the run should be %v", c.format, c.par)
 		testing.expectf(
 			t,
-			slice.contains(job.argv, "--fixed-table") == c.fixed,
-			"%s: --fixed-table in the run should be %v",
+			slice.contains(job.argv, "--dealer") == c.fixed,
+			"%s: --dealer in the run should be %v",
 			c.format,
 			c.fixed,
 		)
@@ -1975,7 +2034,7 @@ test_the_transcript_reaches_the_report_pane :: proc(t: ^testing.T) {
 }
 
 // The generate path, actually run: the worker's per-scenario body (parse args, wire hooks, `cli.run`)
-// against a real scenario, writing a real card page. Seeded and `--fixed-table`, so the bytes are
+// against a real scenario, writing a real card page. Seeded and `--dealer N`, so the bytes are
 // reproducible — which is what lets `just sims wb-cli-parity` diff this file against the same run through
 // `sim.exe` and prove the window and the command line produce the same page.
 //
@@ -1990,7 +2049,7 @@ test_the_generate_path_writes_the_same_page_the_cli_does :: proc(t: ^testing.T) 
 	type_into(&app, "#count", "4")
 	type_into(&app, "#seed", "42")
 	type_into(&app, "#outdir", PARITY_DIR)
-	tick(&app, "#fixed")
+	tick(&app, "#north-deals")
 	// The page carries the player's address (`norn.share_player`, a process global that startup sets from the
 	// settings). Set it as startup does, with the default settings `sim` matches: left to whichever test ran
 	// before, the page said `content=""` and `wb-cli-parity` failed on it.
@@ -2248,9 +2307,9 @@ test_the_formats_that_exist_are_visible_and_pressable :: proc(t: ^testing.T) {
 	testing.expect_value(t, formats_for(&app, name), Format_Set{.Html, .Pbn})
 
 	// `.hv.txt` must beat `.txt`, or every handviewer file reads as pretty text. The longest extension wins.
-	base, format, ok := format_of_extension("2c-opener.hv.txt")
+	base, format, ok := format_of_extension("2c.hv.txt")
 	testing.expect(t, ok, "an .hv.txt file is a format")
-	testing.expect_value(t, base, "2c-opener")
+	testing.expect_value(t, base, "2c")
 	testing.expect_value(t, format, Deal_Format.Handviewer)
 
 	// THE ROW carries the tags, so the list says what is behind each name.
@@ -3806,27 +3865,9 @@ test_a_drop_is_routed_by_what_the_file_is :: proc(t: ^testing.T) {
 	testing.expect_value(t, drop_action("C:/shots/HAND.JPEG"), Drop_Action.Read_Image) // case is not a format
 	testing.expect_value(t, drop_action("C:/deals/board.pbn"), Drop_Action.Deal_File)
 	testing.expect_value(t, drop_action("C:/deals/board.lin"), Drop_Action.Deal_File)
-	testing.expect_value(t, drop_action("w:/deals/2c-opener.html"), Drop_Action.Page)
+	testing.expect_value(t, drop_action("w:/deals/2c.html"), Drop_Action.Page)
 	testing.expect_value(t, drop_action("C:/notes/system.bml"), Drop_Action.Unknown)
 	testing.expect_value(t, drop_action("C:/no-extension"), Drop_Action.Unknown)
-}
-
-// The reader's command line. `--project` is the load-bearing flag: hand-ocr's PROJECT environment has the
-// vision stack, and the script's own PEP-723 environment does not (it carries docopt and nothing else), so
-// running the script without it fails on `import cv2` rather than on anything to do with the picture.
-@(test)
-test_the_ocr_command_runs_hand_ocr_in_its_own_project :: proc(t: ^testing.T) {
-	command := ocr_command("C:/shots/hand.png", "C:/dev/bridge-hand-ocr", context.temp_allocator)
-
-	testing.expect_value(t, command[0], "uv")
-	testing.expect_value(t, command[1], "run")
-	testing.expect_value(t, command[2], "--project")
-	testing.expect_value(t, command[3], "C:/dev/bridge-hand-ocr")
-	testing.expect(t, strings.has_suffix(command[5], "hand-ocr.py"), "the script comes from that checkout")
-	testing.expect(t, strings.contains(command[5], "bridge-hand-ocr"), "and not from anywhere else")
-	testing.expect_value(t, command[6], "C:/shots/hand.png")
-	testing.expect_value(t, command[7], "--format")
-	testing.expect_value(t, command[8], "pbn") // the one format `analyse.parse_args` reads back
 }
 
 // A dropped image is the analyse BUTTON with the deal arriving from a picture: the panel's controls have
@@ -3848,7 +3889,7 @@ test_a_dropped_image_carries_the_analyse_panels_settings :: proc(t: ^testing.T) 
 	testing.expect_value(t, job.image, "C:/shots/hand.png")
 	testing.expect(t, job.want_page, "ticked, the drop draws the card page")
 
-	// The argv carries no deal yet — that is what hand-ocr is for — so it is checked by appending one, which
+	// The argv carries no deal yet — that is what the reader is for — so it is checked by appending one, which
 	// is exactly what `work_ocr` does with what it read.
 	argv := make([dynamic]string, 0, len(job.argv) + 1, context.temp_allocator)
 	append(&argv, ..job.argv)
@@ -3863,37 +3904,107 @@ test_a_dropped_image_carries_the_analyse_panels_settings :: proc(t: ^testing.T) 
 	testing.expect_value(t, args.html_path, "") // the page is asked for in memory, as with the button
 }
 
-// The plumbing, end to end, against the REAL hand-ocr: `--demo` skips the vision stack (it emits a
-// hardcoded deal), so this is `uv` + the checkout + the argv + the format, in about two seconds and with
-// no opencv needed. SKIPPED rather than failed where hand-ocr is not checked out — it is a sibling repo
-// and an optional one, and a test that fails on its absence would fail on every machine but this one.
+// hand-ocr's fixtures (pictures with known deals), in the sibling checkout the workbench links the reader
+// from. Building needs that checkout anyway; the fixtures are looked for at run time, where `just` exports
+// HAND_OCR_DIR, so a test run from elsewhere skips rather than fails.
+@(private = "file")
+hand_ocr_fixture :: proc(name: string) -> (path: string, found: bool) {
+	dir := os.get_env("HAND_OCR_DIR", context.temp_allocator)
+	if dir == "" {
+		home := os.get_env("USERPROFILE", context.temp_allocator)
+		dir = strings.concatenate({home, "/dev/bridge-hand-ocr"}, context.temp_allocator)
+	}
+	path = strings.concatenate({dir, "/fixtures/", name}, context.temp_allocator)
+	if !os.exists(path) {
+		log.warnf("hand-ocr fixture %s is not there — skipping", path)
+		return path, false
+	}
+	return path, true
+}
+
+// The whole exchange: a picture in, and what comes out is what the advisor reads.
 @(test)
-test_hand_ocr_answers_with_a_deal_the_advisor_can_read :: proc(t: ^testing.T) {
-	dir := hand_ocr_dir(context.temp_allocator)
-	if !os.is_dir(dir) {
-		log.warnf("hand-ocr is not at %s — skipping the reader plumbing test", dir)
-		return
-	}
+test_a_dropped_picture_reads_to_a_deal_the_advisor_can_read :: proc(t: ^testing.T) {
+	path, found := hand_ocr_fixture("bridgewebs-4.png")
+	if !found {return}
+	deal, problems, read := read_hand_image(path, context.temp_allocator)
+	testing.expect(t, read, "the picture decodes")
+	testing.expectf(t, len(problems) == 0, "a clean board reads clean: %v", problems)
+	testing.expectf(t, strings.contains(deal, "[Deal \""), "no deal tag in %q", deal)
 
-	command := ocr_command("--demo", dir, context.temp_allocator)
-	state, stdout, stderr, exec_err := os.process_exec({command = command}, context.temp_allocator)
-	if exec_err != nil {
-		log.warnf("could not run uv (%v) — skipping the reader plumbing test", exec_err)
-		return
-	}
-	testing.expectf(t, state.success, "hand-ocr exited with %d: %s", state.exit_code, string(stderr))
-
-	deal := strings.trim_space(string(stdout))
-	testing.expectf(t, strings.contains(deal, "[Deal"), "hand-ocr printed no deal tag: %q", deal)
-
-	// The point of the whole exchange: what it prints is what the advisor reads.
 	args, perr := analyse.parse_args({deal}, allow_stdin = false)
 	defer analyse.args_free(&args)
-	testing.expectf(t, perr == "", "the advisor rejected what hand-ocr printed: %s", perr)
+	testing.expectf(t, perr == "", "the advisor rejected what hand-ocr read: %s", perr)
 	boards, berr := analyse.resolve_boards(args.text)
 	defer delete(boards)
 	testing.expect_value(t, berr, "")
 	testing.expect_value(t, len(boards), 1)
+}
+
+// A grid where some boards read as impossible deals: each is named in `problems`, worded as hand-ocr's
+// command line words it, and still in the text - the box is where a person fixes it.
+@(test)
+test_an_impossible_board_is_reported_and_kept_for_fixing :: proc(t: ^testing.T) {
+	path, found := hand_ocr_fixture("bridgewebs-4-3x3-multi.png")
+	if !found {return}
+	deal, problems, read := read_hand_image(path, context.temp_allocator)
+	testing.expect(t, read)
+	testing.expectf(t, len(problems) > 0, "this grid has misread boards")
+	for p in problems {
+		testing.expectf(t, strings.has_prefix(p, "invalid deal ") || strings.has_prefix(p, "unread deal "), "worded as the CLI: %q", p)
+	}
+	testing.expect(t, strings.contains(problems[0], "card HJ in both N and E"))
+	testing.expect_value(t, strings.count(deal, "[Deal \""), 9) // every board of the 3x3 grid, the bad ones too
+}
+
+// Not a picture: said so, rather than read as a board of nothing.
+@(test)
+test_a_file_that_is_not_a_picture_is_refused :: proc(t: ^testing.T) {
+	_, _, read := read_hand_image(#file, context.temp_allocator)
+	testing.expect(t, !read)
+	_, _, read = read_hand_image("C:/no/such/picture.png", context.temp_allocator)
+	testing.expect(t, !read)
+}
+
+// Versions order as semver says: numbers numerically, a pre-release before its release, a `v` ignored.
+@(test)
+test_versions_compare_as_semver :: proc(t: ^testing.T) {
+	testing.expect(t, version_compare("0.2.0", "0.1.9") > 0)
+	testing.expect(t, version_compare("0.10.0", "0.9.0") > 0, "numerically, not as text")
+	testing.expect(t, version_compare("v1.2.0", "1.2") == 0, "a v and a missing part change nothing")
+	testing.expect(t, version_compare("0.1.0-alpha.1", "0.1.0") < 0, "a pre-release is older than its release")
+	testing.expect(t, version_compare("0.1.0-alpha.10", "0.1.0-alpha.2") > 0)
+	testing.expect(t, version_compare("0.1.0-beta", "0.1.0-alpha.9") > 0)
+	testing.expect(t, version_compare("0.1.0+build.7", "0.1.0") == 0, "build metadata never orders")
+}
+
+// What the About panel says for each answer GitHub can give. No network: `release_news` is the words.
+@(test)
+test_the_release_check_says_what_github_answered :: proc(t: ^testing.T) {
+	context.allocator = context.temp_allocator
+	newest := `[{"tag_name": "v0.2.0-alpha.1", "html_url": "https://example.test/r/0.2.0-alpha.1", "prerelease": true}]`
+
+	text, url := release_news("0.1.0", 200, newest, "")
+	testing.expect_value(t, text, "0.2.0-alpha.1 (pre-release) is out - you have 0.1.0")
+	testing.expect_value(t, url, "https://example.test/r/0.2.0-alpha.1")
+
+	text, url = release_news("0.2.0-alpha.1", 200, newest, "")
+	testing.expect_value(t, text, "you have the newest release (0.2.0-alpha.1)")
+	testing.expect_value(t, url, "")
+
+	text, url = release_news("dev", 200, newest, "")
+	testing.expect(t, strings.has_prefix(text, "this is a development build"), text)
+
+	text, url = release_news("0.1.0", 200, "[]", "")
+	testing.expect_value(t, text, "no release has been published yet")
+	testing.expect_value(t, url, "")
+
+	text, _ = release_news("0.1.0", 403, "rate limited", "")
+	testing.expect(t, strings.contains(text, "403"), text)
+
+	text, url = release_news("0.1.0", 0, "", "E_COULDNT_RESOLVE_HOST")
+	testing.expect_value(t, text, "could not reach GitHub: E_COULDNT_RESOLVE_HOST")
+	testing.expect_value(t, url, "")
 }
 
 // ---- the BML editor -----------------------------------------------------------------------------
@@ -6498,7 +6609,8 @@ test_the_links_toggle_decides_whether_anchors_are_checked :: proc(t: ^testing.T)
 }
 
 // A diagnostic about an INCLUDED file has no line in this buffer, so marking it would put a squiggle on
-// whatever happens to be at that line number. It is reported in the transcript instead.
+// whatever happens to be at that line number. It is listed under the source instead - and NOT written to the
+// deals view's report, which is another view's pane (reported: the live preview filled it up).
 @(test)
 test_a_problem_in_another_file_is_reported_but_not_marked :: proc(t: ^testing.T) {
 	app: App
@@ -6513,11 +6625,92 @@ test_a_problem_in_another_file_is_reported_but_not_marked :: proc(t: ^testing.T)
 
 	// The include's own line IS in this buffer, so that one is marked.
 	testing.expect_value(t, problem_count(&app), 1)
+	listed := problems_text(&app)
+	testing.expectf(t, strings.contains(listed, "nowhere.bml"), "the problems list should name the file: %q", listed)
 	testing.expect(
 		t,
-		strings.contains(strings.to_string(app.transcript), "nowhere.bml"),
-		"the transcript should name the file that could not be read",
+		!strings.contains(strings.to_string(app.transcript), "nowhere.bml"),
+		"the deals report is not where the notes' problems go",
 	)
+
+	// Rendered again (the live preview does this on every pause in typing), the list is REPLACED.
+	rendered, _ = preview_bml(&app)
+	testing.expect_value(t, strings.count(problems_text(&app), "nowhere.bml"), strings.count(listed, "nowhere.bml"))
+}
+
+// The text of the notes' problems list, rows and heading.
+problems_text :: proc(app: ^App) -> string {
+	list := find(app, "#bml-problems")
+	if list == nil {
+		return ""
+	}
+	text, _ := sa.text(list, context.temp_allocator)
+	return text
+}
+
+// A chapter's link to a heading in a SIBLING chapter is a working link on the published page - the root that
+// includes both - so the links check is quiet about it; a heading no including root defines still warns. And
+// a problem's row is a way to its line.
+@(test)
+test_a_link_to_a_sibling_chapter_is_not_a_problem :: proc(t: ^testing.T) {
+	app: App
+	if !test_app(t, &app) {return}
+	defer test_app_destroy(&app)
+	attach_for_test(&app)
+	defer sa.detach_window_handler(app.window, &app.handler)
+
+	dir, jerr := filepath.join({os.get_env("TEMP", context.temp_allocator), "wb-sibling-links"}, context.temp_allocator)
+	testing.expect_value(t, jerr, nil)
+	os.make_directory(dir)
+	files := [][2]string {
+		{"root.bml", "#+TITLE: Root\n\n#INCLUDE one.bml\n\n#INCLUDE two.bml\n"},
+		{"one.bml", "* One\n\nsee [two](#Two Heading)\n\nand [gone](#Nowhere At All)\n"},
+		{"two.bml", "* Two Heading\n\n1C = strong\n"},
+	}
+	for file in files {
+		path, _ := filepath.join({dir, file[0]}, context.temp_allocator)
+		testing.expect_value(t, os.write_entire_file(path, transmute([]u8)file[1]), nil)
+	}
+	defer for file in files {
+		path, _ := filepath.join({dir, file[0]}, context.temp_allocator)
+		os.remove(path)
+	}
+	use_bml_dir(&app, dir)
+	defer {
+		for listed in app.bml_names {
+			delete(listed, app.allocator)
+		}
+		delete(app.bml_names, app.allocator)
+		delete(app.docs, app.allocator)
+		app.bml_names = nil
+		app.docs = ""
+	}
+	pump(&app)
+	opened, why := open_bml(&app, "one.bml")
+	testing.expectf(t, opened, "the chapter did not open: %s", why)
+	app.bml_links = true
+	rendered, _ := preview_bml(&app)
+	testing.expect(t, rendered, "the preview did not render")
+	pump(&app)
+
+	listed := problems_text(&app)
+	testing.expectf(t, !strings.contains(listed, "Two Heading"), "the sibling's heading should resolve: %q", listed)
+	testing.expectf(t, strings.contains(listed, "Nowhere At All"), "a heading no root defines should still warn: %q", listed)
+	testing.expect_value(t, problem_count(&app), 1)
+
+	// The row goes to its line: the caret on line 5 (row 4).
+	set_caret_row(&app, 0)
+	row, rerr := sa.select_first(find(&app, "#bml-problems"), ".row")
+	if rerr == nil {
+		sa.do_click(row)
+		pump(&app)
+	}
+	testing.expect_value(t, caret_row(&app), 4)
+
+	// A render with nothing to report EMPTIES the list (it once left the last file's rows behind, hidden).
+	open_bml(&app, "two.bml")
+	preview_bml(&app)
+	testing.expect_value(t, problems_text(&app), "")
 }
 
 // A squiggle is a position, and a position is only true of the text it was computed from. Opening another
@@ -10748,4 +10941,25 @@ test_written_pages_carry_the_look_when_asked :: proc(t: ^testing.T) {
 	set_page_look_for_run(&app)
 	testing.expect_value(t, norn.page_look_css, "")
 	prefs.set(&app.prefs, HAND_BUILT_PREF, "off")
+}
+
+// A bare PrtScn leaves only a DIB, which is pasted as a .bmp: the file header in front must point past the
+// info header and any BI_BITFIELDS masks to the pixels.
+@(test)
+test_a_clipboard_dib_becomes_a_bmp_file :: proc(t: ^testing.T) {
+	dib := make([]u8, 40 + 12 + 4, context.temp_allocator) // header, three masks, one 32-bit pixel
+	dib[0] = 40
+	dib[4] = 1 // 1 x 1
+	dib[8] = 1
+	dib[12] = 1
+	dib[14] = 32
+	dib[16] = 3 // BI_BITFIELDS
+	bmp, ok := bmp_from_dib(dib, context.temp_allocator)
+	testing.expect(t, ok)
+	testing.expect_value(t, len(bmp), 14 + len(dib))
+	testing.expect_value(t, string(bmp[:2]), "BM")
+	testing.expect_value(t, int(bmp[2]), 14 + len(dib))
+	testing.expect_value(t, int(bmp[10]), 14 + 40 + 12)
+	_, short := bmp_from_dib(dib[:20], context.temp_allocator)
+	testing.expect(t, !short, "a truncated DIB was accepted")
 }

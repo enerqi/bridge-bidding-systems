@@ -78,7 +78,7 @@ test_every_tag_used_is_declared :: proc(t: ^testing.T) {
 	}
 }
 
-// THE PRIMARY SPLIT IS A PARTITION: exactly one of `basic` / `swedish-club` on every scenario. That is
+// THE PRIMARY SPLIT IS A PARTITION: exactly one of `any-system` / `swedish-club` on every scenario. That is
 // what makes those two a real answer to "whose system is this" rather than two more topics — with both,
 // or neither, the question has no answer for that row.
 @(test)
@@ -86,14 +86,14 @@ test_the_primary_split_is_a_partition :: proc(t: ^testing.T) {
 	for tagging in taggings {
 		sides := 0
 		for carried in tagging.tags {
-			if carried == "basic" || carried == "swedish-club" {
+			if carried == "any-system" || carried == "swedish-club" {
 				sides += 1
 			}
 		}
 		testing.expectf(
 			t,
 			sides == 1,
-			"%q carries %d of {basic, swedish-club}; it must carry exactly one",
+			"%q carries %d of {any-system, swedish-club}; it must carry exactly one",
 			tagging.scenario,
 			sides,
 		)
@@ -110,7 +110,7 @@ test_no_tags_selected_admits_everything :: proc(t: ^testing.T) {
 	}
 
 	// Every scenario is admitted by the union of the two halves of the partition, and that IS the registry.
-	both := []string{"basic", "swedish-club"}
+	both := []string{"any-system", "swedish-club"}
 	admitted := 0
 	for scenario in registry {
 		if has_any_tag(scenario.name, both) {

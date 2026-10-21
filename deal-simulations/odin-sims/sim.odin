@@ -9,9 +9,9 @@ package main
 	`-collection:norn=...`; everything system-specific — the predicates and the scenario registry —
 	lives in the local `bidding` package.
 
-	Build/run (from the odin-sims dir): see the justfile, e.g. `just sim --scenario 1c-any -n 12`.
+	Build/run (from the odin-sims dir): see the justfile, e.g. `just sim --scenario 1c -n 12`.
 	The raw form is:
-	  odin run sim.odin -file -collection:norn=C:/Users/Enerqi/dev/norn -- --scenario 1c-any -n 12
+	  odin run sim.odin -file -collection:norn=C:/Users/Enerqi/dev/norn -- --scenario 1c -n 12
 */
 
 import "base:runtime"
@@ -70,7 +70,7 @@ run_sim :: proc() -> int {
 	}
 
 	// COMPILED FIRST, LOADED SECOND. `cli.lookup` takes the first exact match, so a compiled scenario
-	// wins a name clash — a user file cannot silently redefine `1c-any` out from under the recipes,
+	// wins a name clash — a user file cannot silently redefine `1c` out from under the recipes,
 	// `page-check` and the filenames already on `w:/deals/` that name it.
 	registry := make([dynamic]cli.Scenario, 0, len(bidding.registry) + len(loaded.scenarios), context.temp_allocator)
 	append(&registry, ..bidding.registry)

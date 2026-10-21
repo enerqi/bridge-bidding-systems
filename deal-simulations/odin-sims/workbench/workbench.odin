@@ -59,6 +59,7 @@ import "../preview"
 import "../scenario_dsl"
 import "../sim_hooks"
 import "../suit_book"
+import hocr "hocr:hand_ocr"
 import bml "markup:."
 import "norn:cli"
 import "norn:combo"
@@ -86,6 +87,7 @@ ANALYSE_STEP :: uintptr(9) // lparam = boards done << 16 | boards in all, from `
 CHECK :: uintptr(10) // the scenario editor`s debounce ran out; check the buffer (see `arm_live_check`)
 HEADING :: uintptr(11) // a heading in the notes preview was clicked; go to it (see `on_preview_click`)
 LINKED_FILE :: uintptr(12) // a link in the notes preview names another notes file; open it (`on_preview_click`)
+UPDATE :: uintptr(13) // the About panel's release check answered; the sentence is in `App.update_text`
 
 Job_Kind :: enum {
 	Generate,
@@ -303,6 +305,12 @@ App :: struct {
 	prefs:              prefs.Prefs,
 	prefs_path:         string,
 
+	// The About panel's release check (update_check.odin): its thread, and what it found, under `mutex`.
+	update_thread:      ^thread.Thread,
+	update_text:        string,
+	update_found_url:   string,
+	update_url:         string, // engine-thread copy: the release page the link opens
+
 	// Engine-thread only, so no lock.
 	job:                Job,
 	worker:             ^thread.Thread,
@@ -515,44 +523,23 @@ run_analysis :: proc(app: ^App, argv: []string) {
 // A hand-diagram image someone dropped on the window: OCR it to a deal, show what was read, then analyse
 // it exactly as the analyse button would. Worker-side, and terminal on every path.
 //
-// This is the ONE subprocess in the workbench, and it is a deliberate exception rather than a slip: the
-// reader is `hand-ocr`, a SEPARATE python project (a vision stack — opencv, numpy, pillow), so there is
-// nothing to link in-process. It is spawned the same way `tools/ocr_analyse.py` does — `uv run --project
-// <dir>`, hand-ocr's own project environment rather than the script's isolated PEP-723 one, which has no
-// opencv — and the PBN it prints on stdout is fed straight to `analyse.run` in this process. No temp file
-// either way.
+// The reader is hand-ocr's Odin port (`hocr:hand_ocr`, the `odin/` directory of the sibling
+// bridge-hand-ocr checkout), linked in: no python, no subprocess, its atlases compiled into this exe. It
+// used to be the one subprocess the workbench spawned (`uv run --project <dir> python hand-ocr.py`, ~1s a
+// picture, most of it importing opencv); the port reads the same deals as the python, fixture for fixture
+// (its goldens), in ~20-80ms.
 work_ocr :: proc(app: ^App) {
-	dir := hand_ocr_dir(context.temp_allocator)
-	if !os.is_dir(dir) {
-		// Named rather than "OCR failed": the fix is a checkout or an environment variable, and neither is
-		// guessable from a spawn error.
-		fail(app, fmt.tprintf("hand-ocr is not at %s — clone it there, or set HAND_OCR_DIR", dir))
+	transcribe(app, fmt.tprintf("reading %s…", app.job.image))
+	deal, problems, read := read_hand_image(app.job.image, context.temp_allocator)
+	if !read {
+		fail(app, fmt.tprintf("could not open %s as a picture (PNG, JPEG, BMP or GIF)", app.job.image))
 		return
 	}
-
-	command := ocr_command(app.job.image, dir, context.temp_allocator)
-	transcribe(app, fmt.tprintf("reading %s with hand-ocr…", app.job.image))
-
-	state, stdout, stderr, exec_err := os.process_exec({command = command}, context.temp_allocator)
-	if exec_err != nil {
-		// `uv` missing is the common shape of this, and it is worth saying so: the alternative message is
-		// an errno nobody can act on.
-		fail(app, fmt.tprintf("could not run uv (%v) — is uv installed and on PATH?", exec_err))
-		return
+	for p in problems {
+		transcribe(app, p) // a poor read explained, board by board
 	}
-	if len(stderr) > 0 {
-		// hand-ocr writes its diagnostics here; they explain a poor read, so they belong in the transcript
-		// whether or not the run succeeded.
-		transcribe(app, strings.trim_space(string(stderr)))
-	}
-	if !state.success {
-		fail(app, fmt.tprintf("hand-ocr exited with %d — see the transcript", state.exit_code))
-		return
-	}
-
-	deal := strings.trim_space(string(stdout))
-	if !strings.contains(deal, "[Deal") {
-		fail(app, fmt.tprintf("hand-ocr did not produce a deal: %q", deal))
+	if deal == "" {
+		fail(app, "no deal could be read from the picture — see the transcript")
 		return
 	}
 
@@ -566,6 +553,13 @@ work_ocr :: proc(app: ^App) {
 	sa.post_callback(app.window, DEAL)
 	transcribe(app, deal)
 
+	if len(problems) > 0 {
+		// An impossible board (a card twice, a hand of 12) is in the box too, because that is where it gets
+		// fixed - but analysing it would only fail on the same problem, less clearly.
+		fail(app, "the picture read with problems (see the transcript): correct the deal in the box, then analyse")
+		return
+	}
+
 	// The deal goes last, as one argument — the parser's positional overflow, same as the analyse button.
 	argv := make([dynamic]string, 0, len(app.job.argv) + 1, context.temp_allocator)
 	append(&argv, ..app.job.argv)
@@ -573,37 +567,33 @@ work_ocr :: proc(app: ^App) {
 	run_analysis(app, argv[:])
 }
 
-// Where the hand-ocr checkout is. The same variable the justfile exports (`HAND_OCR_DIR`), so the desktop
-// app and the `ocr-analyse` recipe are pointed at one place, with the same `~/dev/<repo>` default the norn
-// and dds collections use.
-hand_ocr_dir :: proc(allocator := context.allocator) -> string {
-	if dir := os.get_env("HAND_OCR_DIR", allocator); dir != "" {
-		return dir
-	}
-	home := os.get_env("USERPROFILE", context.temp_allocator)
-	if home == "" {
-		home = os.get_env("HOME", context.temp_allocator)
-	}
-	joined, _ := filepath.join({home, "dev", "bridge-hand-ocr"}, allocator)
-	return joined
-}
+/*
+A picture of hands -> PBN, the way hand-ocr's command line prints it: one tag block per board, a blank line
+between. `read` is false when the file is not a picture it can decode.
 
-// The hand-ocr command line, as an argv (there is no shell, so a space in the image path needs no quoting).
-// Split out because it is the part worth pinning in a test: `--project <dir>` is what picks hand-ocr's own
-// environment, and `--format pbn` is what `analyse.parse_args` can then read.
-ocr_command :: proc(image: string, dir: string, allocator := context.allocator) -> []string {
-	script, _ := filepath.join({dir, "hand-ocr.py"}, allocator)
-	out := make([]string, 9, allocator)
-	out[0] = "uv"
-	out[1] = "run"
-	out[2] = "--project"
-	out[3] = dir
-	out[4] = "python"
-	out[5] = script
-	out[6] = image
-	out[7] = "--format"
-	out[8] = "pbn"
-	return out
+Each board that is not clean is a line in `problems`, worded as the command line words it. A board that
+could not be read at all is left out (its hands are all unknown: nothing to correct); a board that reads as
+an IMPOSSIBLE deal is kept in the text, so the box shows it for a person to fix.
+*/
+read_hand_image :: proc(path: string, allocator := context.allocator) -> (pbn: string, problems: []string, read: bool) {
+	deals, ok := hocr.read_file(path, 'N', context.temp_allocator)
+	if !ok {
+		return "", nil, false
+	}
+	blocks := make([dynamic]string, 0, len(deals), context.temp_allocator)
+	trouble := make([dynamic]string, 0, 4, allocator)
+	for d, i in deals {
+		label := len(deals) > 1 ? fmt.tprintf("deal %d", i + 1) : "deal"
+		if d.note != "" {
+			append(&trouble, strings.clone(fmt.tprintf("unread %s (flag for manual fix): %s", label, d.note), allocator))
+			continue
+		}
+		if problem := hocr.validate(d, context.temp_allocator); problem != "" {
+			append(&trouble, strings.clone(fmt.tprintf("invalid %s (flag for manual fix): %s", label, problem), allocator))
+		}
+		append(&blocks, hocr.deal_pbn_tags(d, context.temp_allocator))
+	}
+	return strings.join(blocks[:], "\n\n", allocator), trouble[:], true
 }
 
 // Append a line to the shared transcript and ask the engine's thread to redraw it. Worker-side.
@@ -682,6 +672,9 @@ on_posted :: proc(handler: ^sa.Host_Handler, posted: sa.Posted) {
 		if total > 1 {
 			set_text_at(app, "#analyse-busy-text", fmt.tprintf("board %d of %d", min(done + 1, total), total))
 		}
+
+	case UPDATE:
+		show_update_news(app)
 
 	case TRANSCRIPT:
 		// Cleared BEFORE the draw, not after: a line written while this redraw is running belongs to the
@@ -929,8 +922,10 @@ generate_job :: proc(app: ^App) -> (job: Job, err: string) {
 	if read_bool(app, "#par") && format_takes_par(format) {
 		append(&argv, "--par")
 	}
-	if read_bool(app, "#fixed") && format_takes_fixed_table(format) {
-		append(&argv, "--fixed-table")
+	// North deals, the vulnerability still random: every built-in scenario has North open, and a random
+	// dealer shows the hands before North passing - which the scenario never checked.
+	if read_bool(app, "#north-deals") && format_takes_table(format) {
+		append(&argv, "--dealer", "N")
 	}
 
 	// Which scenarios: the whole registry, or the one selected in the list.
@@ -1000,7 +995,7 @@ analyse_flags :: proc(app: ^App) -> (argv: [dynamic]string, err: string) {
 	argv = make([dynamic]string, 0, 8, context.temp_allocator)
 	if sample := strings.trim_space(read_text(app, "#sample")); sample != "" && sample != "0" {
 		if n, ok := strconv.parse_int(sample); !ok || n < 0 {
-			return nil, fmt.tprintf("sample: %q is not a number", sample)
+			return nil, fmt.tprintf("make chance: %q is not a number of layouts", sample)
 		}
 		append(&argv, "--sample", sample)
 	}
@@ -1506,7 +1501,7 @@ draw_output_chips :: proc(app: ^App) {
 		return
 	}
 	if app.selected < 0 || app.selected >= len(app.scenarios) {
-		sa.set_html(row, "")
+		sa.set_text(row, "") // not set_html(""): see `draw_bml_problems`
 		set_shown(app, "#outputs", false)
 		return
 	}
@@ -1644,7 +1639,7 @@ format_takes_par :: proc(format: string) -> bool {
 	return false
 }
 
-format_takes_fixed_table :: proc(format: string) -> bool {
+format_takes_table :: proc(format: string) -> bool {
 	switch format {
 	case "html-cards", "html-handviewer", "handviewer", "lin":
 		return true
@@ -1668,11 +1663,11 @@ refresh_format_switches :: proc(app: ^App) {
 				format_takes_par(format),
 			},
 			{
-				"#fixed",
-				`label[for="fixed"]`,
-				"Same dealer and vulnerability every deal",
-				"This format has no dealer or vulnerability to fix",
-				format_takes_fixed_table(format),
+				"#north-deals",
+				`label[for="north-deals"]`,
+				"North deals every deal; the vulnerability still varies",
+				"This format shows no dealer",
+				format_takes_table(format),
 			},
 		}) {
 		set_enabled(app, s.box, s.takes)
@@ -3433,9 +3428,18 @@ preview_bml :: proc(app: ^App) -> (ok: bool, why: string) {
 	// What the render COST, which is what the live preview scales its debounce by. Written on the way out so
 	// it includes the document build and the scroll, not just the parse.
 	defer app.bml_preview_cost = time.tick_since(started)
+	known: []string
+	if app.bml_links {
+		known = page_anchors(app)
+	}
 	doc := bml.parse(
 		source,
-		{resolve_include = bml_include, include_user = app, check_cross_references = app.bml_links},
+		{
+			resolve_include = bml_include,
+			include_user = app,
+			check_cross_references = app.bml_links,
+			known_anchors = known,
+		},
 	)
 	defer bml.destroy(doc)
 
@@ -3480,13 +3484,12 @@ preview_bml :: proc(app: ^App) -> (ok: bool, why: string) {
 	show_preview_button(app)
 	follow_preview_to_caret(app)
 
-	// The diagnostics are squiggled on the text they are about AND written to the transcript: the marks say
-	// where, the transcript says what, and a problem inside an INCLUDED file has no line in this buffer to
-	// point at, so the transcript is the only place it can be reported at all.
+	// The diagnostics are squiggled on the text they are about AND listed under the source: the marks say
+	// where, the list says what, and a problem inside an INCLUDED file has no line in this buffer to point at,
+	// so the list is the only place it can be shown. NOT the deals view's report (where they went until
+	// 2026-10-21, reported): another view's pane, and appended on every live render, so it filled up.
 	marked := show_bml_problems(app, doc.diagnostics)
-	for diagnostic in doc.diagnostics {
-		transcribe(app, bml.diagnostic_text(diagnostic, context.temp_allocator))
-	}
+	draw_bml_problems(app, doc.diagnostics)
 	if len(doc.diagnostics) > 0 {
 		return true, fmt.tprintf(
 			"%s · %s · %d marked",
@@ -3504,6 +3507,113 @@ preview_bml :: proc(app: ^App) -> (ok: bool, why: string) {
 			first == last ? fmt.tprintf("folded · section %d of %d open", first + 1, sections) : fmt.tprintf("folded · sections %d-%d of %d open", first + 1, last + 1, sections)
 	}
 	return true, fmt.tprintf("previewed %d blocks · %s", len(doc.blocks), scope)
+}
+
+/*
+THE HEADINGS OF THE PAGES THE OPEN FILE IS READ IN, for the `links` check. Only root documents are published
+(`bidding-system.html`, ...), so a chapter's `[2NT](#2NT Opening)` to a sibling chapter is a working link on
+the page a reader has - and was a warning, because the check saw the chapter alone (reported 2026-10-21).
+The roots are the files the include tree puts the open file under; each is parsed with its includes and the
+anchors that EVERY one of them defines are returned, since the link appears on each of those pages. A file
+nothing includes gets nothing: its own headings (includes and all) are the page. Temp memory.
+*/
+page_anchors :: proc(app: ^App) -> []string {
+	if app.docs == "" || app.bml_open == "" {
+		return nil
+	}
+	rows := bml_file_tree(app.docs, app.bml_names, context.temp_allocator)
+	roots := make([dynamic]string, 0, 4, context.temp_allocator)
+	root := ""
+	for row in rows {
+		if row.depth == 0 {
+			root = row.name
+		} else if row.name == app.bml_open && !slice.contains(roots[:], root) {
+			append(&roots, root)
+		}
+	}
+	counts := make(map[string]int, 1024, context.temp_allocator)
+	for name in roots {
+		text, read := bml_include(name, app, context.temp_allocator)
+		if !read {
+			continue
+		}
+		doc := bml.parse(text, {resolve_include = bml_include, include_user = app})
+		defined := make(map[string]bool, 512, context.temp_allocator)
+		for id in bml.heading_anchors(doc, context.temp_allocator) {
+			defined[id] = true
+		}
+		bml.destroy(doc)
+		for id in defined {
+			counts[id] += 1
+		}
+	}
+	known := make([dynamic]string, 0, len(counts), context.temp_allocator)
+	for id, n in counts {
+		if n == len(roots) {
+			append(&known, id)
+		}
+	}
+	return known[:]
+}
+
+// The problems list under the notes source: what the last preview's parse reported, a row each, REPLACED
+// (never appended) on every render; hidden when there is nothing. A row carries its line and, for a problem
+// in an included chapter, that chapter's name, which a click goes to (`go_to_problem`).
+draw_bml_problems :: proc(app: ^App, diagnostics: []bml.Diagnostic) {
+	list := find(app, "#bml-problems")
+	if list == nil {
+		return
+	}
+	if len(diagnostics) == 0 {
+		_ = sa.set_text(list, "") // not set_html(""): an empty string is a nil pointer, and the engine left the old rows
+		set_shown(app, "#bml-problems", false)
+		return
+	}
+	b := strings.builder_make(context.temp_allocator)
+	warnings := 0
+	for diagnostic in diagnostics {
+		if diagnostic.severity == .Warning {
+			warnings += 1
+		}
+	}
+	errors := len(diagnostics) - warnings
+	head := fmt.tprintf("%d %s", errors, errors == 1 ? "error" : "errors")
+	if errors == 0 {
+		head = fmt.tprintf("%d %s", warnings, warnings == 1 ? "warning" : "warnings")
+	} else if warnings > 0 {
+		head = fmt.tprintf("%s, %d %s", head, warnings, warnings == 1 ? "warning" : "warnings")
+	}
+	fmt.sbprintf(&b, `<div class="problems-head">%s</div>`, head)
+	for diagnostic in diagnostics {
+		kind := diagnostic.severity == .Warning ? "warning" : "error"
+		place :=
+			diagnostic.file != "" ? fmt.tprintf("%s:%d", diagnostic.file, diagnostic.line) : fmt.tprintf("line %d", diagnostic.line)
+		fmt.sbprintf(
+			&b,
+			`<div class="row %s" data-pline="%d" data-pfile="%s"><span class="where">%s</span><span class="sev">%s</span> %s</div>`,
+			kind,
+			max(diagnostic.line, 1),
+			escape_html(diagnostic.file, context.temp_allocator),
+			escape_html(place, context.temp_allocator),
+			kind,
+			escape_html(diagnostic.message, context.temp_allocator),
+		)
+	}
+	_ = sa.set_html(list, strings.to_string(b))
+	set_shown(app, "#bml-problems", true)
+}
+
+// A click on a problem: its line, in its file - another chapter is opened first (refused with unsaved changes,
+// as every switch is; the status line says so).
+go_to_problem :: proc(app: ^App, file: string, line: int) {
+	if file != "" && file != app.bml_open {
+		switch_bml_file(app, file, repreview = false)
+		if file != app.bml_open {
+			return
+		}
+	}
+	set_caret_row(app, max(line - 1, 0))
+	bml_status(app, fmt.tprintf("%s - line %d", app.bml_open, line))
 }
 
 // `#INCLUDE name`: the corpus directory first, then the working directory. The other way round from
@@ -5924,7 +6034,7 @@ is the NAME of the auction they want, and the one thing the list would not let t
 
 THE MATCHING IS THE HEADING PALETTE'S, `outline.score_name` with nothing added. It is a subsequence match
 where the query's spaces and punctuation are SEPARATORS rather than characters, which is what makes `1c 2h`
-find `1c-any-2h-or-2n`: the registry spells its auctions with dashes and nobody types dashes. That rule
+find `1c-2h-or-2n`: the registry spells its auctions with dashes and nobody types dashes. That rule
 was written for the notes (`1h 1s` against `1H-1S`, `1H--1S` and `1H/1S`, which the corpus spells all three
 ways) and the problem here is the same one, so it is the same code and not a second dialect of it.
 
@@ -5957,6 +6067,19 @@ fifty characters of prose, and a short query is a subsequence of nearly any fift
 together the prose would drown the names; partitioned, the names are the top of the list and the prose is
 the tail you scroll to when you meant it.
 */
+@(private = "file")
+match_scenario_name :: proc(query: string, scenario: cli.Scenario) -> (score: int, hit: bool) {
+	for text in ([]string{scenario.name, scenario.label, scenario.formerly}) {
+		if text == "" {
+			continue
+		}
+		if points, found := outline.score_name(query, text); found && (!hit || points > score) {
+			score, hit = points, true
+		}
+	}
+	return
+}
+
 visible_scenarios :: proc(app: ^App, allocator := context.allocator) -> []int {
 	query := read_text(app, "#scenario-filter")
 	shown := make([dynamic]int, 0, len(app.scenarios), allocator)
@@ -5980,7 +6103,10 @@ visible_scenarios :: proc(app: ^App, allocator := context.allocator) -> []int {
 		if !in_selected_groups(app, i, wanted) {
 			continue // the groups decide WHICH scenarios are in play; the query only ranks them
 		}
-		if points, hit := outline.score_name(trimmed, scenario.name); hit {
+		// The id, then the label, then the id before the rename: all three NAME the scenario. The label
+		// is what `two suiter` meets; `1h` already meets the id (`1hs`), since the label's glyphs are not
+		// letters anybody types.
+		if points, hit := match_scenario_name(trimmed, scenario); hit {
 			append(&matches, Scenario_Match{index = i, score = points, by_name = true})
 			continue
 		}
@@ -6005,7 +6131,7 @@ visible_scenarios :: proc(app: ^App, allocator := context.allocator) -> []int {
 /*
 THE SCENARIO GROUPS: which sets the list is drawn from.
 
-WHY TAGS AND NOT A FOLDER. A scenario belongs to more than one thing at once — `defence-vs-high-preempts`
+WHY TAGS AND NOT A FOLDER. A scenario belongs to more than one thing at once — `opp-3-level-preempt`
 is honestly basic, competitive AND a preempt — so a tree with one home per scenario would have to pick a
 lie. The membership lives in `bidding/tags.odin` beside the scenarios it describes; what is here is the
 selection and the drawing.
@@ -6032,7 +6158,7 @@ opinion about a person's filesystem.
 
 COMPILED FIRST, LOADED SECOND, the same order `sim` uses and for the same reason: `cli.lookup` takes the
 first exact match, so a compiled scenario wins a name clash and a user file cannot silently redefine
-`1c-any` out from under the recipes and the pages already on `w:/deals/`.
+`1c` out from under the recipes and the pages already on `w:/deals/`.
 
 SAFE WITH NOTHING CONFIGURED, which is the normal case: no directories means no files, an empty `Loaded`,
 and a registry that is exactly `bidding.registry` — the window behaves as it did before any of this.
@@ -7267,12 +7393,19 @@ draw_scenarios :: proc(app: ^App) {
 				escape_html(program.source, context.temp_allocator),
 			)
 		}
+		// THE LABEL HEADS THE ROW, the id follows it dim: the label is the auction as a player writes it
+		// (`1♥/♠ – ? : slam try`), the id is the file name the run writes and what `-S` takes.
+		id := ""
+		if scenario.label != "" && scenario.label != scenario.name {
+			id = fmt.tprintf(`<span class="id">%s</span>`, escape_html(scenario.name, context.temp_allocator))
+		}
 		fmt.sbprintf(
 			&b,
-			`<div class="row %s" data-index="%d"><span class="name">%s%s</span><span class="title">%s</span><span class="have">%s</span></div>`,
+			`<div class="row %s" data-index="%d"><span class="name"><span class="label">%s</span>%s%s</span><span class="title">%s</span><span class="have">%s</span></div>`,
 			"sel" if i == app.selected else "",
 			i,
-			escape_html(scenario.name, context.temp_allocator),
+			suit_glyphs_html(cli.scenario_label(scenario), context.temp_allocator),
+			id,
 			edit,
 			escape_html(cli.scenario_title(scenario), context.temp_allocator),
 			strings.to_string(marks),
@@ -7310,6 +7443,25 @@ draw_scenario_scope :: proc(app: ^App) {
 
 // `set_html` is a parser, so anything that reaches it is escaped first. The scenario names are ours, but
 // the rule does not have exceptions — that is what makes it a rule and not a judgement call.
+// A label as html with its suit glyphs coloured as the palette colours them (`.suit.c` / `.d` / `.h`; spades
+// take the ink). Asked for: the scenario list's `1♥/♠ – ?` labels in suit colours.
+suit_glyphs_html :: proc(s: string, allocator := context.allocator) -> string {
+	b := strings.builder_make(allocator)
+	for r in escape_html(s, context.temp_allocator) {
+		switch r {
+		case '♣':
+			strings.write_string(&b, `<span class="suit c">♣</span>`)
+		case '♦':
+			strings.write_string(&b, `<span class="suit d">♦</span>`)
+		case '♥':
+			strings.write_string(&b, `<span class="suit h">♥</span>`)
+		case:
+			strings.write_rune(&b, r)
+		}
+	}
+	return strings.to_string(b)
+}
+
 escape_html :: proc(s: string, allocator := context.allocator) -> string {
 	b := strings.builder_make(allocator)
 	for r in s {
@@ -7371,9 +7523,69 @@ drop_file_path :: proc(data: ^sa.Value, allocator := context.allocator) -> (path
 			return "", false
 		}
 		defer sa.value_clear(&element)
-		return file_url_to_path(sa.value_to_string(&element, context.temp_allocator) or_else "", allocator)
+		return file_url_to_path(clipboard_string(&element), allocator)
 	}
-	return file_url_to_path(sa.value_to_string(&first, context.temp_allocator) or_else "", allocator)
+	return file_url_to_path(clipboard_string(&first), allocator)
+}
+
+// A string out of a drop or the clipboard. The clipboard's carry a trailing NUL (measured, odin-sciter's
+// docs), which would end up in the path.
+clipboard_string :: proc(v: ^sa.Value) -> string {
+	return strings.trim_right(sa.value_to_string(v, context.temp_allocator) or_else "", "\x00")
+}
+
+// CTRL+V WITH A PICTURE OR A FILE ON THE CLIPBOARD, in the deals view: what a drop of the same thing does
+// (asked for: "would be nice if could read a screenshot from the system clipboard"). A screenshot tool
+// leaves an IMAGE, which is saved as `workbench-pasted.png` in the temp folder (one file, replaced each
+// time; `.bmp` for a bare PrtScn) and read like a dropped one; a file copied in the file manager is opened as
+// a dropped file. Clipboard TEXT is left alone, so pasting a deal into the box is still the box's paste. Read
+// through Win32 (`clipboard_windows.odin`): the engine's script `Clipboard` does not see a screenshot.
+paste_key :: proc(app: ^App, key_code: u32, modifiers: sciter.Keyboard_States) -> bool {
+	// Either CONTROL, nothing else: the constant is BOTH keys (`{.LCONTROL, .RCONTROL}`), so comparing to it
+	// whole matched no real key press - the first version did, and ctrl+v did nothing.
+	ctrl := sciter.KEYBOARD_STATE_CONTROL & modifiers != {}
+	others := (sciter.KEYBOARD_STATE_SHIFT | sciter.KEYBOARD_STATE_ALT) & modifiers != {}
+	if sciter.Sc_Kb_Codes(key_code) != .V || !ctrl || others {
+		return false
+	}
+	if current_view(app) != .Panes {
+		return false
+	}
+	if clipboard_has_text() {
+		return false
+	}
+	path, picture, ok := clipboard_take(context.temp_allocator)
+	if !ok {
+		// SAY so: a paste that does nothing reads as a broken one.
+		set_analyse_status(app, "nothing to paste: the clipboard holds no deal text, picture or file")
+		return true
+	}
+	if path == "" {
+		written: bool
+		path, written = write_pasted_image(picture)
+		if !written {
+			set_analyse_status(app, "the picture on the clipboard could not be saved to the temp folder")
+			return true
+		}
+	}
+	open_dropped_file(app, path, "pasted")
+	return true
+}
+
+write_pasted_image :: proc(picture: Clipboard_Picture) -> (path: string, ok: bool) {
+	dir, derr := os.temp_directory(context.temp_allocator)
+	if derr != nil {
+		return "", false
+	}
+	name := strings.concatenate({"workbench-pasted", picture.extension}, context.temp_allocator)
+	joined, jerr := filepath.join({dir, name}, context.temp_allocator)
+	if jerr != nil {
+		return "", false
+	}
+	if os.write_entire_file(joined, picture.bytes) != nil {
+		return "", false
+	}
+	return joined, true
 }
 
 // `file:///C:/a%20deal.png` -> `C:/a deal.png`. The engine hands over a URL, and a screenshot in a folder
@@ -7411,7 +7623,7 @@ file_url_to_path :: proc(url: string, allocator := context.allocator) -> (path: 
 // knows how to do gets a drop for free: an image is read, a deal file is analysed, a page is shown.
 Drop_Action :: enum {
 	Unknown,
-	Read_Image, // a hand diagram: hand-ocr, then analyse
+	Read_Image, // a hand diagram: hand-ocr (linked in), then analyse
 	Deal_File, // .pbn / .lin / .txt: analyse it directly
 	Page, // .html: show it in the frame (or hand a handviewer page to the browser)
 }
@@ -7419,7 +7631,7 @@ Drop_Action :: enum {
 drop_action :: proc(path: string) -> Drop_Action {
 	lower := strings.to_lower(path, context.temp_allocator)
 	switch filepath.ext(lower) {
-	case ".png", ".jpg", ".jpeg", ".bmp", ".webp", ".gif", ".tif", ".tiff":
+	case ".png", ".jpg", ".jpeg", ".bmp", ".gif": // what hand-ocr's decoder (stb_image) reads
 		return .Read_Image
 	case ".pbn", ".lin", ".txt":
 		return .Deal_File
@@ -7436,8 +7648,14 @@ handle_drop :: proc(app: ^App, data: ^sa.Value) {
 		set_note(app, "that drop carried no file the window could read")
 		return
 	}
+	open_dropped_file(app, path, "dropped")
+}
+
+// A file arriving from outside, dropped or pasted (`verb` says which, for the busy note): what `drop_action`
+// says it is decides what happens to it.
+open_dropped_file :: proc(app: ^App, path: string, verb: string) {
 	if app.running {
-		set_note(app, fmt.tprintf("busy — %s dropped, try again when this run finishes", filepath.base(path)))
+		set_note(app, fmt.tprintf("busy — %s %s, try again when this run finishes", filepath.base(path), verb))
 		return
 	}
 
@@ -7546,6 +7764,9 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		// The window's own shortcuts, LAST of the sinking group: a control that is open owns its keys
 		// first, so a digit is the picker's while the picker is up and a tab switch only after that.
 		if ke.code == .DOWN && ke.phase == .Sinking && window_shortcut_key(app, ke.key_code, ke.modifiers) {
+			return true
+		}
+		if ke.code == .DOWN && ke.phase == .Sinking && paste_key(app, ke.key_code, ke.modifiers) {
 			return true
 		}
 		if ke.code == .DOWN && ke.phase == .Bubbling && zoom_key(app, ke.key_code, ke.modifiers) {
@@ -7829,6 +8050,10 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		show_about(app, false)
 		return true
 
+	case "about-update":
+		start_update_check(app)
+		return true
+
 	case "prefs":
 		show_prefs(app, true)
 		return true
@@ -7984,6 +8209,12 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 		// window (see open_sciter_site).
 		open_sciter_site()
 		return true
+
+	case "about-update-link":
+		if app.update_url != "" {
+			open_in_browser(app.update_url)
+		}
+		return true
 	}
 
 	// A row of the heading palette. Before the file rows: the palette's rows carry `data-goto` and no
@@ -7992,6 +8223,13 @@ on_event :: proc(handler: ^sa.Event_Handler, event: sa.Event) -> bool {
 	if index, is_goto := row_goto(be.target); is_goto {
 		app.goto_sel = index
 		jump_to_goto(app)
+		return true
+	}
+
+	// A row of the notes' problems list: before the file rows, since its chapter name must not be read as one.
+	if line, is_problem := row_attribute(be.target, "data-pline"); is_problem {
+		file, _ := row_attribute(be.target, "data-pfile")
+		go_to_problem(app, file, strconv.parse_int(line) or_else 1)
 		return true
 	}
 
@@ -8424,7 +8662,7 @@ main :: proc() {
 	set_text_at(
 		app,
 		"#about-versions",
-		fmt.tprintf("%s · %d scenarios · Odin %s", engine_text, len(app.scenarios), ODIN_VERSION),
+		fmt.tprintf("%s · %s · %d scenarios · Odin %s", version_label(), engine_text, len(app.scenarios), ODIN_VERSION),
 	)
 	// The page-geometry dump is a development affordance: the stylesheet hides it, and only a `-debug` build
 	// puts it on screen.
@@ -8457,7 +8695,7 @@ main :: proc() {
 	// panel's status line, which read as belonging to that panel - reported).
 	transcribe_local(
 		app,
-		"Or drop a file anywhere on the window: a screenshot of a hand diagram or a .pbn/.lin file is analysed, an .html deals page is opened.",
+		"Or drop a file anywhere on the window: a screenshot of a hand diagram or a .pbn/.lin file is analysed, an .html deals page is opened. ctrl+v pastes a screenshot the same way.",
 	)
 	if docs_note != "" {
 		transcribe_local(app, docs_note)
@@ -8485,6 +8723,7 @@ main :: proc() {
 		thread.destroy(app.worker)
 		app.worker = nil
 	}
+	stop_update_check(app)
 	job_free(&app.job, app.allocator)
 	strings.builder_destroy(&app.transcript)
 	delete(app.page, app.allocator)

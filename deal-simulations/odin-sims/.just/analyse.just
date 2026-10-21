@@ -51,30 +51,37 @@ match-report file format="text": mktarget_dirs
 	odin build analyse_deal.odin -file {{norn}} {{dds}} -o:speed -microarch:native -linker:{{linker}} -out:{{ target_path("release", analyse_name) }}
 	{{ target_path("release", analyse_name) }} --table {{format}} --file "{{file}}"
 
-# Bridges to the sibling hand-ocr repo (uv) at HAND_OCR_DIR. declarer+dummy uses '-' for the unknown
-# hands. A real image needs hand-ocr's vision extra there: (cd "$HAND_OCR_DIR" && just sync-vision).
-# <image> may be `--clipboard` to read straight from the OS clipboard (screenshot, no temp file).
+# hand-ocr's Odin reader (the CLI in the `hocr` checkout, HAND_OCR_DIR/odin), built into target/release.
+# The same reader the workbench links; no python. (The python hand-ocr at the checkout's root is its
+# reference implementation, for experiments there.)
+# ---
+# build hand-ocr's reader -> target/release/hand-ocr.exe
+[group('analyse')]
+build-hand-ocr: mktarget_dirs
+	odin build {{hocr_home}}/cli -o:speed -microarch:native -linker:{{linker}} -out:{{ target_path("release", hand_ocr_name) }}
+
+# declarer+dummy uses '-' for the unknown hands. <image> may be `--clipboard` to read straight from the
+# Windows clipboard (screenshot, no temp file).
 # e.g. `just ocr-pbn hand.png --first E` ; `just ocr-pbn --clipboard`
 # ---
 # OCR a bridge hand-diagram IMAGE to a PBN [Deal] tag, printed to stdout
 [group('analyse')]
-ocr-pbn image *args:
-	uv run --project {{HAND_OCR_DIR}} python {{HAND_OCR_DIR}}/hand-ocr.py {{image}} --format pbn {{args}}
+ocr-pbn image *args: build-hand-ocr
+	{{ target_path("release", hand_ocr_name) }} {{image}} --format pbn {{args}}
 
 # image -> PBN -> analyse_deal with the DDS-sampling advisor + CCA/DD features. Writes
 # <image-basename>.html (override with --html); samples 400 deals (override with --sample). Extra flags
-# pass through to analyse_deal (e.g. --contract 3NT). `--demo` runs hand-ocr's sample deal end to end
-# (plumbing check, no vision deps needed); <image> may be `--clipboard`.
+# pass through to analyse_deal (e.g. --contract 3NT). <image> may be `--clipboard`.
 # ---
 # OCR a hand-diagram IMAGE straight to the interactive card page
 [group('analyse')]
-ocr-analyse image *args: mktarget_dirs
+ocr-analyse image *args: build-hand-ocr
 	odin build analyse_deal.odin -file {{norn}} {{dds}} -o:speed -microarch:native -linker:{{linker}} -out:{{ target_path("release", analyse_name) }}
 	uv run --no-project python tools/ocr_analyse.py {{image}} {{args}}
 
-# same as `ocr-analyse`; requires a prior build of analyse_deal.exe
+# same as `ocr-analyse`; requires prior builds of analyse_deal.exe and hand-ocr.exe
 # ---
-# OCR a hand-diagram IMAGE straight to the interactive card page without recompiling analyse_deal.exe
+# OCR a hand-diagram IMAGE straight to the interactive card page without recompiling anything
 [group('analyse')]
 ocr-analyse-norebuild image *args:
 	uv run --no-project python tools/ocr_analyse.py {{image}} {{args}}

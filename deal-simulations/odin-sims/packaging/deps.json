@@ -1,0 +1,18 @@
+{
+    "##": [
+        "What a workbench release is built from, besides this repository at the release tag.",
+        "Read by .github/workflows/release-workbench.yml. Each sibling is checked out at `commit`; the",
+        "Odin compiler is laytan/setup-odin's `release` (a monthly tag, so a build can be repeated).",
+        "Re-pin with `just sims pin-deps` from clean, pushed checkouts - it refuses dirty or unpushed ones,",
+        "because CI can only check out what is on GitHub. bridge-markup is private: the workflow reads it",
+        "with the SIBLING_REPOS_TOKEN secret (a fine-grained token with read access to it)."
+    ],
+    "odin": "dev-2026-10",
+    "siblings": {
+        "norn":            { "repo": "enerqi/norn",            "commit": "bcc2900cc0114d9b5e540208e361cf3c8aad8cc8", "env": "NORN_HOME" },
+        "odin-dds":        { "repo": "enerqi/odin-dds",        "commit": "9df480b77ee87a8683f80bd46da61719a296a4e2", "env": "DDS_HOME" },
+        "odin-sciter":     { "repo": "enerqi/odin-sciter",     "commit": "fda31c5feb244919994c08b047d84625a76011cb", "env": "SCITER_HOME" },
+        "bridge-markup":   { "repo": "enerqi/bridge-markup",   "commit": "d236dfc87f76cdbfc47440a5c1617f5a802ced52", "env": "MARKUP_HOME" },
+        "bridge-hand-ocr": { "repo": "enerqi/bridge-hand-ocr", "commit": "41392c68e4aa73e68bb671590b2c76ad3f8c0e74", "env": "HAND_OCR_DIR" }
+    }
+}

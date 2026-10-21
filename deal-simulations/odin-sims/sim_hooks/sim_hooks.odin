@@ -10,7 +10,7 @@ package sim_hooks
 
 	A SCENARIO'S HOOKS ARE PART OF IT, always on (2026-10-09). They used to run only behind `--dd`, a
 	"double-dummy hooks" checkbox in the workbench that people could not remember the meaning of - and
-	without it `slam-makes-dd` was just "32+ combined points" under a name that said otherwise. The
+	without it `ns-32plus-opc` (was `slam-makes-dd`) was just "32+ combined points" under a name that said otherwise. The
 	run-level choice that is left is `--par`: caption every deal with its par, at the solver's cost.
 
 	It exists as a package rather than as a block inside `sim.odin` because there are now two programs
@@ -73,18 +73,18 @@ make_hooks :: proc(
 		annotators = make(map[string]norn.Deal_Annotator, allocator),
 	}
 
-	h.filters["1major-game-force"] = deal_solve.ns_makes_game
-	h.filters["slam-makes-dd"] = deal_solve.ns_makes_slam
-	// h.filters["1major-gf-3plus-card-support"] = deal_solve.ns_makes_game
-	// h.filters["1n-slam-try"] = deal_solve.ns_makes_slam
-	// h.filters["2c-any-slam-try"] = deal_solve.ns_makes_slam
-	// h.filters["slam-hands-32-plus-hcp"] = deal_solve.ns_makes_slam
+	h.filters["1hs_game-force"] = deal_solve.ns_makes_game
+	h.filters["ns-32plus-opc"] = deal_solve.ns_makes_slam
+	// h.filters["1hs_game-force-3-support"] = deal_solve.ns_makes_game
+	// h.filters["1n_slam-try"] = deal_solve.ns_makes_slam
+	// h.filters["2c_slam-try"] = deal_solve.ns_makes_slam
+	// h.filters["ns-32plus-hcp"] = deal_solve.ns_makes_slam
 
-	h.annotators["1major-game-force"] = dd_and_combo_annotate
-	h.annotators["slam-makes-dd"] = dd_and_combo_annotate
-	// h.annotators["1n-slam-try"] = deal_solve.annotate
-	// h.annotators["2c-any-slam-try"] = deal_solve.annotate
-	// h.annotators["slam-hands-32-plus-hcp"] = deal_solve.annotate
+	h.annotators["1hs_game-force"] = dd_and_combo_annotate
+	h.annotators["ns-32plus-opc"] = dd_and_combo_annotate
+	// h.annotators["1n_slam-try"] = deal_solve.annotate
+	// h.annotators["2c_slam-try"] = deal_solve.annotate
+	// h.annotators["ns-32plus-hcp"] = deal_solve.annotate
 
 	for program in programs {
 		dd, has := program.double_dummy.?

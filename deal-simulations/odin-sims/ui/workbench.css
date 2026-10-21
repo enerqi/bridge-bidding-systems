@@ -374,6 +374,14 @@ aside .foot {
 	font-weight: bold;
 }
 
+/* The id after the label: the file name a run writes and what `-S` takes, so present but quiet. */
+#scenarios .row .id {
+	margin-left: 0.6em;
+	font-weight: normal;
+	font-size: var(--text-small);
+	color: var(--ink-dim);
+}
+
 /* A scenario from one of your .scenario files: the way to its file (`edit_scenario`). A button of its own,
    like the sources' `×`, so the click is the mark's and not the row's. */
 #scenarios .row .edit {
@@ -471,6 +479,15 @@ aside .foot {
 }
 .line.field input[type="text"] {
 	width: 11em;
+}
+/* A count with its unit after it ("make chance [300] layouts"): the box narrower so the line keeps the
+   others' width. */
+.line.field input#sample {
+	width: 5em;
+}
+.line.field .unit {
+	margin-left: 0.5em;
+	color: var(--ink-soft);
 }
 /* The same outer width as the boxes: a select's width does not count what an input's does (measured 190px
    against 178 at 11em), and `box-sizing: border-box` is no way out - it collapsed the inputs' height. */
@@ -1486,6 +1503,15 @@ button.chip .icon {
 	cursor: pointer;
 }
 
+.about-update {
+	flow: horizontal-flow;
+}
+
+.about-update > * {
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
 /* ---- the QR panel ----------------------------------------------------------------------------------- */
 
 /* The code is black on white in EVERY theme (a scanner wants the contrast; many refuse a light-on-dark code),
@@ -1809,6 +1835,33 @@ aside.files {
 
 /* The first file of each unrelated group of documents (a top-level file and what it includes): a gap and a
    firmer seam above it, so the groups in one folder read as separate things. */
+/* The notes' problems list, under the source: a short scrolling strip, a row a diagnostic. */
+#bml-problems {
+	max-height: 8.5em;
+	overflow-y: auto;
+	border-top: 1px solid var(--line);
+	background: var(--surface);
+	font-size: var(--text-small);
+}
+#bml-problems .problems-head {
+	padding: 0.3em 0.8em;
+	color: var(--ink-dim);
+}
+#bml-problems .row {
+	behavior: button;
+	padding: 0.2em 0.8em;
+	color: var(--ink-soft);
+	cursor: pointer;
+	white-space: nowrap;
+}
+#bml-problems .row:hover {
+	background: var(--line-soft);
+	color: var(--ink);
+}
+#bml-problems .row .where { color: var(--ink-dim); margin-right: 0.6em; }
+#bml-problems .row.warning .sev { color: var(--syn-warn); }
+#bml-problems .row.error .sev { color: var(--syn-error); }
+
 #bml-list .row.top {
 	margin-top: 0.7em;
 	border-top: 1px solid var(--line);
@@ -1899,6 +1952,9 @@ aside.files {
 #bml-goto-list .name .ccolor { color: var(--suit-c); }
 #bml-goto-list .name .dcolor { color: var(--suit-d); }
 #bml-goto-list .name .hcolor { color: var(--suit-h); }
+#scenarios .row .label .suit.c { color: var(--suit-c); }
+#scenarios .row .label .suit.d { color: var(--suit-d); }
+#scenarios .row .label .suit.h { color: var(--suit-h); }
 
 /* The chapter the heading is in, on every row: two files can hold the same heading, and this is which one
    this is. Dim, because it is the answer to a question you only sometimes ask. */
