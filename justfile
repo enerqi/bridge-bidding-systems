@@ -12,23 +12,15 @@ set script-interpreter := ["uv", "run", "--no-project", "-p", "3.14", "python"]
 
 bml_home := env_var_or_default("BML_TOOLS_DIRECTORY", replace(home_directory(), "\\", "/") + "/dev/bml")
 
-# `bridge-markup` is the ODIN implementation of BML and is what `bml` builds with now; the python above
-# stays the reference (`just bml-py` renders with it, `just bml-parity` byte-compares the two over the
-# whole corpus). MARKUP_HOME mirrors the odin-sims justfile's variable of the same name.
+# `bridge-markup` is the ODIN implementation of BML and is what `bml` builds with now: its command-line tool
+# `bml2html` (`cmd/bml2html.odin` there, built by its `build-bml2html` recipe). The python above stays the
+# reference (`just bml-py` renders with it, `just bml-parity` byte-compares the two over the whole corpus).
 markup_home := env_var_or_default("MARKUP_HOME", replace(home_directory(), "\\", "/") + "/dev/bridge-markup")
-sims_dir := "deal-simulations/odin-sims"
-bml2html_exe := sims_dir + "/target/release/bml2html.exe"
+bml2html_exe := markup_home + "/target/release/bml2html.exe"
 
-
-# The deal-simulation recipes live in the odin-sims justfile (it owns the build flags and the output
-# directory defaults), reached from here as a module: `just sims gen-all 48`, `just sims gen-one 2c`,
-# `just sims scenarios`, `just sims sim --scenario 1c -n 12`, ... (`just --list sims` lists them all).
-# Batch output goes to DEALS_OUTPUT_DIR (default w:/deals/); single-scenario output to the directory
-# just was invoked from. Both are also trailing recipe arguments.
-
-# deal simulations (odin/norn engine): regen, regen-cards, deal, scenarios, run, test, ...
-[group('modules')]
-mod sims 'deal-simulations/odin-sims'
+# The deal simulator and the desktop workbench were `deal-simulations/odin-sims` here, reached as the `sims`
+# module, until 2026-10-22. They are their own repository now, enerqi/bridge-workbench (~/dev/bridge-workbench),
+# whose justfile has the `gen-all-cards` / `gen-some` / `gen-one` recipes that regenerate w:/deals.
 
 #
 # BML -> HTML. This used to be a `doit` build (dodo.py, a .doit.db of file hashes and a
@@ -40,7 +32,7 @@ mod sims 'deal-simulations/odin-sims'
 #     python bml2html.py, 19 subprocesses in parallel ...... 0.41s
 #     bml2html.exe, 19 files in ONE process ................ 0.03s
 #
-# The last line is the Odin renderer (`bridge-markup`, `just sims bml2html`). The python needed a process
+# The last line is the Odin renderer (`bridge-markup`'s `bml2html`). The python needed a process
 # PER FILE because its `bml` module keeps parse state in module globals; the Odin library owns its state
 # per parse, so the corpus is 19 tasks on one thread pool. Output is byte-identical, CRLF included.
 #
@@ -80,19 +72,23 @@ bml *FILES:
     from glob import glob
 
     exe = os.path.normpath(r"{{bml2html_exe}}")
-    # Built through the sims module so the collection flag and the target directory stay defined in one
+    # Built by bridge-markup's own recipe, so the build command and the target directory are defined in one
     # place. That recipe compares the exe against its sources and the flags it was built with, so this is
     # ~0.15s when nothing changed - it used to be an unconditional 2.9s odin build, i.e. ~99% of a `watch`
     # iteration, against 0.03s to render all 19 files.
-    if subprocess.run(["just", "sims", "build-bml2html"], stdout=subprocess.DEVNULL).returncode != 0:
-    	sys.exit("could not build " + exe + " - is MARKUP_HOME (enerqi/bridge-markup) cloned?")
+    markup = r"{{markup_home}}"
+    if not os.path.isfile(os.path.join(markup, "justfile")):
+    	sys.exit("no bridge-markup checkout at " + markup + " - clone enerqi/bridge-markup or set MARKUP_HOME")
+    build = ["just", "--justfile", os.path.join(markup, "justfile"), "--working-directory", markup, "build-bml2html"]
+    if subprocess.run(build, stdout=subprocess.DEVNULL).returncode != 0:
+    	sys.exit("could not build " + exe)
 
     files = r"""{{FILES}}""".split() or sorted(glob("*.bml"))
     missing = [f for f in files if not os.path.isfile(f)]
     if missing:
     	sys.exit("no such bml file: " + ", ".join(missing))
 
-    # Run from HERE, not from the sims directory: `#INCLUDE` and the output paths both resolve against
+    # Run from HERE, not from the markup checkout: `#INCLUDE` and the output paths both resolve against
     # the working directory, exactly as they did under bml2html.py. It prints its own count and timing.
     if subprocess.run([exe] + files).returncode != 0:
     	sys.exit("bml2html failed")

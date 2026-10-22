@@ -5,71 +5,38 @@ hand/auction situation (e.g. "North opens a strong 1C, South has a game-forcing 
 random deals are generated and the matching ones kept (reject sampling); the kept deals are rendered
 to HTML (BBO handviewer) or fed to stats scripts.
 
-There are now **two engines** for this:
+## The simulator moved: Bridge Workbench
 
-- **Norn (native, default)** — this bidding system ported to Odin in `odin-sims/`, running on the
-  [`norn`](file:///C:/Users/Enerqi/dev/norn) hand-generation library. No `deal.exe` needed, ~2–3×
-  faster, and it emits line / pretty / BBO-handviewer / full-HTML-page output directly. The port was
-  verified identical to `deal.exe` over 20000 random deals (the parity harness used for that has since
-  been retired — the port is done).
-- **Legacy** — Thomas Andrews' `deal` (`F:\bin\deal319`) interpreting the Tcl condition scripts in
-  `tcl-sims/`. Kept for posterity / ad-hoc Tcl experiments.
+The current engine - this system's scenarios ported to Odin on the [`norn`](https://github.com/enerqi/norn)
+library, the `sim` generator, the single-deal advisor and the desktop workbench - lived in `odin-sims/` here
+until 2026-10-22. It is now its own repository, **[enerqi/bridge-workbench](https://github.com/enerqi/bridge-workbench)**
+(`~/dev/bridge-workbench`), history included. The `w:/deals` regeneration recipes went with it, since they are
+its command line:
 
-## Layout
+```sh
+# from the bridge-workbench checkout
+just gen-all-cards        # every scenario as a card page -> $DEALS_OUTPUT_DIR/<name>.html (default w:/deals/)
+just gen-some 1c,2c       # just those two
+just gen-one 2c           # one scenario -> ./2c.html (the dir you invoked just from)
+just --list               # everything else
+```
+
+The workbench reads these notes (its notes editor, its quiz button, its corpus tests) but nothing here builds
+against it.
+
+## Legacy: deal.exe + Tcl (`tcl-sims/`)
+
+What is left here is the older engine: Thomas Andrews' `deal` (`F:/bin/deal319`) interpreting the Tcl
+condition scripts in `tcl-sims/`. No longer the simulator; kept as the historical cross-check the Odin port
+was verified against, and for ad-hoc Tcl experiments.
 
 | Path | What |
 |------|------|
-| `odin-sims/` | the **Norn consumer** — an Odin project. `bidding/` (this system's predicates + the named-scenario registry), `deal_solve/` (the DDS double-dummy boundary), `suit_book/` (the published suit-combination table, plugged into `norn:combo`'s book hook); `sim.odin` is the generator/exporter program and `analyse_deal.odin` the single-deal advisor. Depends on the `norn` library (incl. the `norn:combo` card-combination engine) via an Odin collection. |
-| `tcl-sims/` | the **legacy Tcl** — `deal-utils.tcl` (the ~85-proc predicate library) + ≈111 condition scripts (one situation each), plus the `run-deal.py` / `regen-html-deals.py` runners. |
-| `tcl-sims/run-deal.py` | legacy: run one `tcl-sims/` script → deals → HTML (handviewer iframes). |
-| `tcl-sims/regen-html-deals.py` | legacy: batch `run-deal.py` over every `tcl-sims/*.tcl`. |
+| `tcl-sims/` | `deal-utils.tcl` (the ~85-proc predicate library) + ≈111 condition scripts (one situation each), plus the runners below. |
+| `tcl-sims/run-deal.py` | run one `tcl-sims/` script → deals → HTML (handviewer iframes). |
+| `tcl-sims/regen-html-deals.py` | batch `run-deal.py` over every `tcl-sims/*.tcl`. |
 
-## Quick start (from the repo root, via `just`)
-
-Norn (native):
-
-All the recipes live in `odin-sims/justfile`; the repo root exposes them as the `sims` just module,
-so they run the same from either directory (drop the `sims ` prefix inside `odin-sims/`):
-
-```sh
-just sims gen-all                     # every scenario -> $DEALS_OUTPUT_DIR/<name>.html (48 deals, default w:/deals/)
-just sims gen-some 1c,2c   # just those two
-just sims gen-one 2c           # one scenario -> ./2c.html (the dir you invoked just from)
-just sims gen-all 48 ./out/           # any recipe takes the output dir as its last argument
-just --list sims                      # all of them (-par and -cards variants, freq, bench, ...)
-```
-
-Inside `odin-sims/` there is also its own `just` for development: `just sim --scenario 1c -n 12`,
-`just build`, `just test`, `just lint`. (`just ols-config` regenerates the editor's
-`ols.json` for the `norn:` collection; set `NORN_HOME` if the norn checkout isn't at `~/dev/norn`.)
-
-### Analyse a real hand (photo / PBN → interactive advisor)
-
-Separate from the scenario generator, `odin-sims/` turns any deal into an interactive card page. Give it a
-**declarer + dummy** (two hands, defenders unknown) and it acts as a **2-hand advisor** — how likely each
-contract is to make (from sampling the unknown defenders), the best line per suit, and where a blind guess
-costs you. Give it a **complete four-hand deal** and it shows the **exact double-dummy** result (par + what
-each side can make) plus the per-suit CCA tables. Run these from inside `odin-sims/`:
-
-```sh
-# From a screenshot of a hand diagram (hand-ocr's Odin reader, from the sibling checkout):
-just ocr-analyse hand.png                 # -> hand.html  (open it in a browser)
-just ocr-pbn hand.png                     # just print the recognised PBN, don't analyse
-
-# From a PBN deal you already have (a string, a file, or piped in):
-just analyse-pbn --sample 400 '[Deal "N:AKQ32.AK2.A32.A32 - Q.QJT98.KQJ.KQJT -"]'
-just analyse-pbn --sample 400 --file board.pbn --html out.html
-```
-
-A **PBN** deal either marks the two unknown defender hands with `-` (the declarer+dummy advisor case) or
-lists all four hands (the exact double-dummy case) — the tool picks the right mode per board. A standard
-multi-board `.pbn` file works too — every `[Deal]` tag becomes one board in a
-carousel; the other tags (`[Board]`, `[Dealer]`, …) are ignored. **LIN files are not read** (LIN can only
-express a complete four-hand deal; use PBN). The card page has a built-in **Help "?"** button explaining
-every number in plain terms. The `ocr-*` recipes build hand-ocr's Odin reader from the sibling checkout
-(`HAND_OCR_DIR`, default `~/dev/bridge-hand-ocr`) into `target/release/hand-ocr.exe` - no python needed.
-
-Legacy (deal.exe):
+From the repo root:
 
 ```sh
 just _py-regen                        # every tcl-sims script -> HTML on the web server
@@ -93,7 +60,7 @@ main {
 ```
 
 The Norn port mirrors each script's `main` body as a `norn.Predicate` over a whole `Deal`, collected
-in the `bidding` package's scenario registry (`odin-sims/bidding/scenarios.odin`). The scenario
+in the workbench's `bidding` package's scenario registry (`bidding/scenarios.odin` there). The scenario
 `name` matches the `.tcl` basename so the two corpora stay diff-able. **109 of 111** scripts are
 ported; `scratch.tcl` (a dev scratchpad) and `slam-hands-mixed.tcl` (uses `rand()` inside the
 predicate, so it isn't a deterministic condition) are intentionally not.

@@ -1,8 +1,5 @@
 __pycache__/
 *.html
-# ...except the workbench's own pages, which are SOURCE: it #loads them into the exe. quiz-template.html is
-# vendored from bridge-system-apps (`just dswasm vendor-template` there), so a fresh clone builds.
-!deal-simulations/odin-sims/ui/*.html
 html/
 deal-simulations/parse-deal
 .ionide/
@@ -14,8 +11,3 @@ bml.css
 .ruff_cache
 .venv
 .playwright*
-
-# ...except the desktop workbench's UI document, which is SOURCE and not a build artifact: `*.html` above
-# is there for the generated BML output, but `deal-simulations/odin-sims/ui/workbench.html` is `#load`ed
-# INTO workbench.exe, so a checkout without it cannot compile the workbench at all.
-!deal-simulations/odin-sims/ui/workbench.html
