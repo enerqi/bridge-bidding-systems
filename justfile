@@ -178,6 +178,15 @@ publish DEST=web_root: bml
     	"bml.css",
     ]
 
+    # A page's own stylesheets (`#+CSS: mine.css`) go with it: every relative stylesheet a published page links,
+    # beside bml.css. Read from the built html, so the list cannot disagree with what the pages ask for.
+    import re
+    for page in [name for name in PUBLISHED if name.endswith(".html") and os.path.isfile(name)]:
+    	with open(page, encoding="utf-8") as f:
+    		for href in re.findall(r'<link rel="stylesheet" type="text/css" href="([^"]+)"', f.read()):
+    			if href not in PUBLISHED and ":" not in href and not href.startswith("/"):
+    				PUBLISHED.append(href)
+
     dest = r"{{DEST}}"
     if not os.path.isdir(dest):
     	sys.exit(dest + " is not mounted - `just bml` builds without publishing")
@@ -194,10 +203,13 @@ publish DEST=web_root: bml
     copied = 0
     for name in PUBLISHED:
     	if not os.path.isfile(name):
+    		if name.endswith(".css") and name != "bml.css":
+    			sys.exit(name + " is linked by a page (#+CSS:) but is not in the notes folder")
     		sys.exit("nothing to publish at " + name + " - run `just bml` first")
     	target = os.path.join(dest, name)
     	if same_bytes(name, target):
     		continue
+    	os.makedirs(os.path.dirname(target) or dest, exist_ok=True)
     	copy2(name, target)
     	copied += 1
     	print("published " + name)
